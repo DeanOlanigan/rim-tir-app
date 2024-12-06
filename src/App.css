@@ -1,9 +1,9 @@
-#root {
+/* #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-}
+} */
 
 .logo {
   height: 6em;
@@ -33,10 +33,27 @@
   }
 }
 
-.card {
-  padding: 2em;
+/* reset */
+button,
+p {
+	all: unset;
 }
 
-.read-the-docs {
-  color: #888;
+.NavigationMenuRoot {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	width: 100vw;
+	z-index: 1;
+}
+
+.NavigationMenuList {
+	display: flex;
+  gap: 1rem;
+	justify-content: center;
+	padding: 4px;
+	border-radius: 6px;
+	list-style: none;
+	
+	margin: 0;
 }

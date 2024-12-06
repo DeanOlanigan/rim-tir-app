@@ -1,0 +1,20 @@
+.sash-wrap-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+
+    &.active {
+        background-color: var(--accent-9);
+    }
+    &.inactive {
+        transition: none;
+    }
+}
+
+.line {
+    display: block;
+    height: 100%;
+    width: 1px;
+    background-color: var(--accent-6);
+}

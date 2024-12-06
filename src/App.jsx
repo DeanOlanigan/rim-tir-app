@@ -1,35 +1,85 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom'
+import { Theme, IconButton, Link as RadixLink, TabNav, Flex, Text } from '@radix-ui/themes'
+import { SunIcon, MoonIcon, GearIcon } from '@radix-ui/react-icons'
 
-function App() {
-  const [count, setCount] = useState(0)
+import ConfigurationPage from './components/pages/ConfigurationPage/ConfigurationPage'
+import MonitoringPage from './components/pages/MonitoringPage'
+import LogPage from './components/pages/LogPage'
+import JournalPage from './components/pages/JournalPage'
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+function Navigation() {
+    const { pathname } = useLocation();
+
+    return (
+    <TabNav.Root defaultValue="config">
+        <TabNav.Link asChild active={pathname === '/'}>
+            <Link to="/">Конфигурация</Link>
+        </TabNav.Link>
+        <TabNav.Link asChild active={pathname === '/monitoring'}>
+            <Link to="/monitoring">Мониторинг</Link>
+        </TabNav.Link>
+        <TabNav.Link asChild active={pathname === '/log'}>
+            <Link to="/log">Логирование</Link>
+        </TabNav.Link>
+        <TabNav.Link asChild active={pathname === '/journal'}>
+            <Link to="/journal">Журналирование</Link>
+        </TabNav.Link>
+    </TabNav.Root>
+    )
 }
 
-export default App
+function App() {
+    const [themeAppearance, setThemeAppearance] = useState('dark');
+
+    const toggleTheme = () => {
+        setThemeAppearance(prev => (prev === 'light' ? 'dark' : 'light'));
+    };
+
+    return (
+    <Theme appearance={themeAppearance} accentColor='grass'>
+        <Router>
+        <header style={{ display: 'flex', justifyContent: 'space-between', padding: '0 1rem 0 1rem' }}>
+            <Flex gap='4'align='center'>
+            <Text weight='medium'>
+                TIR
+            </Text>
+            <IconButton variant='ghost'>
+                <GearIcon width={18} height={18} />
+            </IconButton>
+            </Flex>
+
+            <Navigation />
+
+            <Flex gap='4'align='center'>
+            <RadixLink 
+                weight='medium'
+                href='#'
+                underline='hover'
+            >
+                Выход
+            </RadixLink>
+            <IconButton 
+                variant='ghost'
+                onClick={toggleTheme}
+            >
+                {themeAppearance === 'light' ? <MoonIcon width={18} height={18}/> : <SunIcon width={18} height={18}/>}
+            </IconButton>
+            </Flex>
+
+        </header>
+        <main>
+            <Routes>
+            <Route path='/' element={<ConfigurationPage />} />
+            <Route path='/monitoring' element={<MonitoringPage />} />
+            <Route path='/log' element={<LogPage />} />
+            <Route path='/journal' element={<JournalPage />} />
+            </Routes>
+        </main>
+        </Router>
+    </Theme>
+    )
+}
+
+export default App;
