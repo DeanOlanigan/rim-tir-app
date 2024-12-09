@@ -38,45 +38,47 @@ function App() {
     };
 
     return (
-    <Theme appearance={themeAppearance} accentColor='grass'>
+    <Theme appearance={themeAppearance} accentColor='grass' grayColor='slate'>
         <Router>
-        <header style={{ display: 'flex', justifyContent: 'space-between', padding: '0 1rem 0 1rem' }}>
-            <Flex gap='4'align='center'>
-            <Text weight='medium'>
-                TIR
-            </Text>
-            <IconButton variant='ghost'>
-                <GearIcon width={18} height={18} />
-            </IconButton>
-            </Flex>
+            <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+                <header style={{ display: 'flex', justifyContent: 'space-between', padding: '0 1rem 0 1rem' }}>
+                    <Flex gap='4'align='center'>
+                    <Text weight='medium'>
+                        TIR
+                    </Text>
+                    <IconButton variant='ghost'>
+                        <GearIcon width={18} height={18} />
+                    </IconButton>
+                    </Flex>
 
-            <Navigation />
+                    <Navigation />
 
-            <Flex gap='4'align='center'>
-            <RadixLink 
-                weight='medium'
-                href='#'
-                underline='hover'
-            >
-                Выход
-            </RadixLink>
-            <IconButton 
-                variant='ghost'
-                onClick={toggleTheme}
-            >
-                {themeAppearance === 'light' ? <MoonIcon width={18} height={18}/> : <SunIcon width={18} height={18}/>}
-            </IconButton>
-            </Flex>
+                    <Flex gap='4'align='center'>
+                    <RadixLink 
+                        weight='medium'
+                        href='#'
+                        underline='hover'
+                    >
+                        Выход
+                    </RadixLink>
+                    <IconButton 
+                        variant='ghost'
+                        onClick={toggleTheme}
+                    >
+                        {themeAppearance === 'light' ? <MoonIcon width={18} height={18}/> : <SunIcon width={18} height={18}/>}
+                    </IconButton>
+                    </Flex>
 
-        </header>
-        <main>
-            <Routes>
-            <Route path='/' element={<ConfigurationPage />} />
-            <Route path='/monitoring' element={<MonitoringPage />} />
-            <Route path='/log' element={<LogPage />} />
-            <Route path='/journal' element={<JournalPage />} />
-            </Routes>
-        </main>
+                </header>
+                <main style={{ height: '100%' }}>
+                    <Routes>
+                        <Route path='/' element={<ConfigurationPage />} />
+                        <Route path='/monitoring' element={<MonitoringPage />} />
+                        <Route path='/log' element={<LogPage />} />
+                        <Route path='/journal' element={<JournalPage />} />
+                    </Routes>
+                </main>
+            </div>
         </Router>
     </Theme>
     )

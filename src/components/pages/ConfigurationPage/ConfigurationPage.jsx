@@ -6,7 +6,7 @@ import 'split-pane-react/esm/themes/default.css';
 import './ConfigurationPage.css';
 
 function ConfigurationPage() {
-    const [sizes, setSizes] = useState([200, 'auto', 200]);
+    const [sizes, setSizes] = useState(['12%', 'auto', '18%']);
 
     const data = [
         {
@@ -30,8 +30,8 @@ function ConfigurationPage() {
     ];
 
     return (
-        <Box>
-            <div style={{height: 500}}>
+        <Box height='100%'>
+            <div style={{height: '100%'}}>
                 <SplitPane 
                     split='vertical'
                     sizes={sizes}
@@ -44,8 +44,11 @@ function ConfigurationPage() {
                             <span className='line'/>
                         </SashContent>
                     )}>
-                    <Pane minSize={100} maxSize='30%'>
-                        <Flex height='100%' style={{background: "var(--accent-1)"}}>
+                    <Pane minSize='10%' maxSize='30%'>
+                        <Flex px='5'justify='center'>
+                            <Text>Проводник ИО</Text>
+                        </Flex>
+                        <Flex height='100%'>
                             <Tree initialData={data}/>
                         </Flex>
                     </Pane>
@@ -54,8 +57,11 @@ function ConfigurationPage() {
                             <Text>Конфигурация</Text>
                         </Flex>
                     </Pane>
-                    <Pane minSize={100} maxSize='30%'>
-                        <Flex asChild height='100%' align='center' justify='center' style={{background: "var(--accent-1)"}}>
+                    <Pane minSize='10%' maxSize='30%'>
+                        <Flex px='5'justify='center'>
+                            <Text>Переменные</Text>
+                        </Flex>
+                        <Flex asChild height='100%' align='center' justify='center'>
                             <Text>Переменные</Text>
                         </Flex>
                     </Pane>
