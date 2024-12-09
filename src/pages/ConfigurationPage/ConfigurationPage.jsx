@@ -28,10 +28,10 @@ function ConfigurationPage() {
     ];
 
     return (
-        <Box height='100%'>
+        <Box height='100%' p={'2'}>
             <PanelGroup autoSaveId='persistence' direction='horizontal'>
-                <Panel collapsible={true} collapsedSize={0} minSize={9}>
-                    <Flex px='5' align='center' justify='between' style={{background: 'var(--gray-4)', borderRadius: '0 var(--radius-4) 0 0'}}>
+                <Panel collapsible={true} collapsedSize={0} minSize={9} style={{borderRadius: 'var(--radius-4)'}}>
+                    <Flex px='5' align='center' justify='between' style={{background: 'var(--gray-4)', borderRadius: 'var(--radius-4) var(--radius-4) 0 0'}}>
                         <Text>Проводник ИО</Text>
                         <DropdownMenu.Root>
                             <DropdownMenu.Trigger>
@@ -44,7 +44,7 @@ function ConfigurationPage() {
                         </DropdownMenu.Root>
                     </Flex>
                     <PanelGroup autoSaveId='persistence1' direction='vertical'>
-                        <Panel minSize={15} style={{background: 'var(--gray-4)', borderRadius: '0 0 var(--radius-4) 0'}}>
+                        <Panel minSize={15} style={{background: 'var(--gray-4)', borderRadius: '0 0 var(--radius-4) var(--radius-4)'}}>
                             <Flex px='5'justify='center'>
                                 <Text>Прием</Text>
                             </Flex>
@@ -53,14 +53,14 @@ function ConfigurationPage() {
                             </Flex>
                         </Panel>
                         <PanelResizeHandle className='verticalLine'/>
-                        <Panel minSize={15} style={{background: 'var(--gray-4)', borderRadius: '0 var(--radius-4) 0 0'}}>
+                        <Panel minSize={15} style={{background: 'var(--gray-4)', borderRadius: 'var(--radius-4)'}}>
                             <Flex px='5'justify='center'>
                                 <Text>Передача</Text>
                             </Flex>
                             <Flex asChild height='100%' align='center' justify='center'>
                                 <ContextMenu.Root>
                                     <ContextMenu.Trigger>
-                                        <Text>ИО</Text>        
+                                        <Text>ИО</Text>
                                     </ContextMenu.Trigger>
                                     <ContextMenu.Content>
                                         <ContextMenu.Item>Параметры</ContextMenu.Item>
@@ -71,13 +71,13 @@ function ConfigurationPage() {
                     </PanelGroup>
                 </Panel>
                 <PanelResizeHandle className='verticalLine'/>
-                <Panel minSize={15} style={{background: 'var(--gray-4)', borderRadius: 'var(--radius-4) var(--radius-4) 0 0'}}>
+                <Panel minSize={15} style={{background: 'var(--gray-4)', borderRadius: 'var(--radius-4)'}}>
                     <Flex asChild height='100%' align='center' justify='center'>
                         <Text>Конфигурация</Text>
                     </Flex>
                 </Panel>
                 <PanelResizeHandle className='verticalLine'/>
-                <Panel collapsible={true} collapsedSize={0} defaultSize={30} minSize={9} style={{background: 'var(--gray-4)', borderRadius: 'var(--radius-4) 0 0 0'}}>
+                <Panel collapsible={true} collapsedSize={0} defaultSize={30} minSize={9} style={{background: 'var(--gray-4)', borderRadius: 'var(--radius-4)'}}>
                     <Flex px='5'justify='center'>
                         <Text>Переменные</Text>
                     </Flex>
