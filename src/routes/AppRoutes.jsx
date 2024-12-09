@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import ConfigurationPage from '../pages/ConfigurationPage/ConfigurationPage';
-import MonitoringPage from '../pages/MonitoringPage';
+import MonitoringPage from '../pages/MonitoringPage/MonitoringPage';
 import LogPage from '../pages/LogPage/LogPage';
-import JournalPage from '../pages/JournalPage';
+import JournalPage from '../pages/JournalPage/JournalPage';
 
 const AppRoutes = () => (
     <Suspense fallback={<div>Загрузка...</div>}>

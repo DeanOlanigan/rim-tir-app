@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
+import { Theme } from '@radix-ui/themes';
 import PropTypes from 'prop-types';
 
 const ThemeContext = createContext();
@@ -14,7 +15,9 @@ export const ThemeProvider = ({ children }) => {
 
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
-            {children}
+            <Theme appearance={theme} accentColor='grass' grayColor='slate'>
+                {children}
+            </Theme>
         </ThemeContext.Provider>
     );
 };
@@ -23,4 +26,4 @@ ThemeProvider.propTypes = {
     children: PropTypes.node.isRequired,
 };
 
-export const useTheme = () => useContext(ThemeContext);
+export default ThemeContext;
