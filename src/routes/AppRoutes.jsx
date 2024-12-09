@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
+
 import ConfigurationPage from '../pages/ConfigurationPage/ConfigurationPage';
 import MonitoringPage from '../pages/MonitoringPage/MonitoringPage';
 import LogPage from '../pages/LogPage/LogPage';

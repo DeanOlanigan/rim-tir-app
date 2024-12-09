@@ -1,17 +1,18 @@
-import { Flex, IconButton, Text, Button } from '@radix-ui/themes';
+import { Flex, IconButton, Text, Button, Skeleton } from '@radix-ui/themes';
 import { GearIcon, ExitIcon, SunIcon, MoonIcon } from '@radix-ui/react-icons';
-import { useTheme } from '../../utils/useTheme';
+import { useContext } from 'react';
+import ThemeContext from '../../context/ThemeContext';
 import Navigation from '../Navigation/Navigation';
 import ConnectionStatus from '../ConnectionStatus/ConnectionStatus';
 import './Header.css';
 
 const Header = () => {
-    const { theme, toggleTheme } = useTheme();
+    const { theme, toggleTheme } = useContext(ThemeContext);
 
     return (
         <header className='header'>
             <Flex gap="4" align="center" width="270px" justify="start">
-                <Text weight="medium">0.9.67-1</Text>
+                <Skeleton><Text weight="medium">0.9.67-1</Text></Skeleton>
                 <IconButton variant="ghost">
                     <GearIcon width={18} height={18} />
                 </IconButton>

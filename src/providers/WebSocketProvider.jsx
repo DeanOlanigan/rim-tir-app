@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import PropTypes from "prop-types";
-import { WebSocketContext } from "./WebSocketContext";
+import WebSocketContext from "../context/WebSocketContext";
 
 const WebSocketProvider = ({ children }) => {
     const hostname = '192.168.1.1';

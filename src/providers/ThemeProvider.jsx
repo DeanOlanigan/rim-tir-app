@@ -1,8 +1,7 @@
-import { createContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Theme } from '@radix-ui/themes';
+import ThemeContext from '../context/ThemeContext';
 import PropTypes from 'prop-types';
-
-const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
     const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');

@@ -2,7 +2,7 @@ import { Box, Flex, Text, ContextMenu, DropdownMenu, IconButton } from '@radix-u
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { Tree } from 'react-arborist';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import './ConfigurationPage.module.css';
+import './ConfigurationPage.css';
 
 function ConfigurationPage() {
 
@@ -31,11 +31,11 @@ function ConfigurationPage() {
         <Box height='100%'>
             <PanelGroup autoSaveId='persistence' direction='horizontal'>
                 <Panel collapsible={true} collapsedSize={0} minSize={9}>
-                    <Flex px='5' align='center' justify='between'>
+                    <Flex px='5' align='center' justify='between' style={{background: 'var(--gray-4)', borderRadius: '0 var(--radius-4) 0 0'}}>
                         <Text>Проводник ИО</Text>
                         <DropdownMenu.Root>
                             <DropdownMenu.Trigger>
-                                <IconButton variant='ghost'><DotsHorizontalIcon color='white'/></IconButton>
+                                <IconButton variant='ghost'><DotsHorizontalIcon style={{color: 'var(--gray-12)'}}/></IconButton>
                             </DropdownMenu.Trigger>
                             <DropdownMenu.Content>
                                 <DropdownMenu.CheckboxItem>Прием</DropdownMenu.CheckboxItem>
@@ -43,8 +43,8 @@ function ConfigurationPage() {
                             </DropdownMenu.Content>
                         </DropdownMenu.Root>
                     </Flex>
-                    <PanelGroup direction='vertical'>
-                        <Panel minSize={15}>
+                    <PanelGroup autoSaveId='persistence1' direction='vertical'>
+                        <Panel minSize={15} style={{background: 'var(--gray-4)', borderRadius: '0 0 var(--radius-4) 0'}}>
                             <Flex px='5'justify='center'>
                                 <Text>Прием</Text>
                             </Flex>
@@ -52,8 +52,8 @@ function ConfigurationPage() {
                                 <Tree initialData={data}/>
                             </Flex>
                         </Panel>
-                        <PanelResizeHandle style={{background: "var(--accent-8)", height: "3px"}}/>
-                        <Panel minSize={15}>
+                        <PanelResizeHandle className='verticalLine'/>
+                        <Panel minSize={15} style={{background: 'var(--gray-4)', borderRadius: '0 var(--radius-4) 0 0'}}>
                             <Flex px='5'justify='center'>
                                 <Text>Передача</Text>
                             </Flex>
@@ -70,14 +70,14 @@ function ConfigurationPage() {
                         </Panel>
                     </PanelGroup>
                 </Panel>
-                <PanelResizeHandle style={{background: "var(--accent-8)", width: "3px"}}/>
-                <Panel minSize={15}>
-                    <Flex asChild height='100%' align='center' justify='center' style={{background: "var(--accent-2)"}}>
+                <PanelResizeHandle className='verticalLine'/>
+                <Panel minSize={15} style={{background: 'var(--gray-4)', borderRadius: 'var(--radius-4) var(--radius-4) 0 0'}}>
+                    <Flex asChild height='100%' align='center' justify='center'>
                         <Text>Конфигурация</Text>
                     </Flex>
                 </Panel>
-                <PanelResizeHandle style={{background: "var(--accent-8)", width: "3px"}}/>
-                <Panel collapsible={true} collapsedSize={0} defaultSize={30} minSize={9}>
+                <PanelResizeHandle className='verticalLine'/>
+                <Panel collapsible={true} collapsedSize={0} defaultSize={30} minSize={9} style={{background: 'var(--gray-4)', borderRadius: 'var(--radius-4) 0 0 0'}}>
                     <Flex px='5'justify='center'>
                         <Text>Переменные</Text>
                     </Flex>

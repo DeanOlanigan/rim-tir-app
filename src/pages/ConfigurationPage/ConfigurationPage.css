@@ -1,0 +1,11 @@
+.verticalLine {
+    outline: none;
+    flex: 0 0 .25rem;
+    justify-content: stretch;
+    transition: background-color .2s linear;
+    display: flex;
+}
+.verticalLine:hover,
+.verticalLine[data-resize-handle-active] {
+    background-color: var(--accent-6);
+}
