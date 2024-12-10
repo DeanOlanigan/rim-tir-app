@@ -12,7 +12,7 @@ function App() {
                 <Router>
                     <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
                         <Header />
-                        <main style={{ height: '100%' }}>
+                        <main style={{ height: '100%', paddingTop: '1rem' }}>
                             <AppRoutes />
                         </main>
                     </div>
