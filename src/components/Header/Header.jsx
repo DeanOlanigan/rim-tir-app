@@ -30,6 +30,17 @@ const Header = () => {
         fetchVersion();
     }, []);
 
+    const handleLogout = async () => {
+        const response = await fetch('/api/v1/logout',{ method: 'POST', credentials: 'include' });
+        if (response.ok) {
+            localStorage.removeItem('session_expiration_time');
+            localStorage.removeItem('csrf');
+            window.location.href = '/login';
+        } else {
+            alert('Logout failed');
+        }
+    };
+
     return (
         <header className='header'>
             <Flex gap="4" align="center" width="270px" justify="start">
@@ -43,7 +54,7 @@ const Header = () => {
             <Navigation />
             <Flex gap="4" align="center" width="270px" justify="end">
                 <ConnectionStatus />
-                <Button variant="ghost" weight="medium">
+                <Button variant="ghost" weight="medium" onClick={handleLogout}>
                     <ExitIcon />
                     Выход
                 </Button>
