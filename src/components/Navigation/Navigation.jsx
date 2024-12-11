@@ -7,20 +7,20 @@ function Navigation() {
 
     return (
         <TabNav.Root defaultValue="config">
-            <TabNav.Link asChild active={pathname === '/'}>
+            <TabNav.Link asChild active={pathname === "/"}>
                 <Link to="/">Конфигурация</Link>
             </TabNav.Link>
-            <TabNav.Link asChild active={pathname === '/monitoring'}>
+            <TabNav.Link asChild active={pathname === "/monitoring"}>
                 <Link to="/monitoring">Мониторинг</Link>
             </TabNav.Link>
-            <TabNav.Link asChild active={pathname === '/log'}>
+            <TabNav.Link asChild active={pathname === "/log"}>
                 <Link to="/log">Логирование</Link>
             </TabNav.Link>
-            <TabNav.Link asChild active={pathname === '/journal'}>
+            <TabNav.Link asChild active={pathname === "/journal"}>
                 <Link to="/journal">Журналирование</Link>
             </TabNav.Link>
         </TabNav.Root>
-    )
+    );
 }
 
 export default Navigation;

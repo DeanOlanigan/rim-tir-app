@@ -1,27 +1,27 @@
-import './App.css';
-import { BrowserRouter as Router} from 'react-router-dom';
-import Header from './components/Header/Header';
-import AppRoutes from './routes/AppRoutes';
-import { ThemeProvider } from './providers/ThemeProvider';
-import WebSocketProvider from './providers/WebSocketProvider';
-import { useState, useEffect } from 'react';
-import LoginForm from './pages/LoginPage/LoginPage';
+import "./App.css";
+import { BrowserRouter as Router} from "react-router-dom";
+import Header from "./components/Header/Header";
+import AppRoutes from "./routes/AppRoutes";
+import { ThemeProvider } from "./providers/ThemeProvider";
+import WebSocketProvider from "./providers/WebSocketProvider";
+import { useState, useEffect } from "react";
+import LoginForm from "./pages/LoginPage/LoginPage";
 
 function App() {
     const [isAuth, setIsAuth] = useState(false);
 
     useEffect(() => {
         const checkSession = () => {
-            const currentTime = Math.floor(Date.now() / 1000)
-            const sessionExpirationTime = localStorage.getItem('session_expiration_time')
-            let timeLeft = sessionExpirationTime - currentTime
-            console.log(`checkSession: ${timeLeft}`)
+            const currentTime = Math.floor(Date.now() / 1000);
+            const sessionExpirationTime = localStorage.getItem("session_expiration_time");
+            let timeLeft = sessionExpirationTime - currentTime;
+            console.log(`checkSession: ${timeLeft}`);
             if (sessionExpirationTime && currentTime < parseInt(sessionExpirationTime, 10)) {
-                setIsAuth(true)
+                setIsAuth(true);
             } else {
-                setIsAuth(false)
-                localStorage.removeItem('session_expiration_time')
-                localStorage.removeItem('csrf')
+                setIsAuth(false);
+                localStorage.removeItem("session_expiration_time");
+                localStorage.removeItem("csrf");
             }
         };
         checkSession();
@@ -41,16 +41,16 @@ function App() {
         <WebSocketProvider>
             <ThemeProvider>
                 <Router>
-                    <div style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
+                    <div style={{display: "flex", flexDirection: "column", height: "100vh"}}>
                         <Header />
-                        <main style={{ height: '100%', paddingTop: '1rem' }}>
+                        <main style={{ height: "100%", paddingTop: "1rem" }}>
                             <AppRoutes />
                         </main>
                     </div>
                 </Router>
             </ThemeProvider>
         </WebSocketProvider>
-    )
+    );
 }
 
 export default App;

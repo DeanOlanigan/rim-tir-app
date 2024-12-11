@@ -1,8 +1,7 @@
-import { useState } from "react";
-import { SHA1 } from 'crypto-js';
+import { SHA1 } from "crypto-js";
 import PropTypes from "prop-types";
 import { Button, Input, Stack, Container } from "@chakra-ui/react";
-import { Field } from '../../components/ui/field';
+import { Field } from "../../components/ui/field";
 import { PasswordInput } from "../../components/ui/password-input";
 import { useForm } from "react-hook-form";
 
@@ -16,16 +15,16 @@ function LoginForm({ onLogin }) {
     const onSubmit = handleSubmit(async (data) => {
         let hashPassword = SHA1(data.password).toString();
         try {
-            const response = await fetch('/api/v1/login', {
-                method: 'POST',
+            const response = await fetch("/api/v1/login", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    "Content-Type": "application/x-www-form-urlencoded",
                 },
                 body: new URLSearchParams({
                     login: data.username,
                     password: hashPassword
                 }),
-                credentials: 'include',
+                credentials: "include",
             });
 
             if (response.ok) {
@@ -42,8 +41,8 @@ function LoginForm({ onLogin }) {
                 const sessionTimeLeft = parseInt(data.data.session_time_left, 10);
                 const sessionExpirationTime = clientCurrentTime + timeDiff + sessionTimeLeft;
 
-                localStorage.setItem('csrf', data.data.csrf_token);
-                localStorage.setItem('session_expiration_time', sessionExpirationTime);
+                localStorage.setItem("csrf", data.data.csrf_token);
+                localStorage.setItem("session_expiration_time", sessionExpirationTime);
 
                 onLogin();
             } else {
@@ -66,8 +65,8 @@ function LoginForm({ onLogin }) {
                         errorText={errors.username?.message}
                     >
                         <Input
-                            {...register('username', {
-                                required: 'Username is required',
+                            {...register("username", {
+                                required: "Username is required",
                             })}
                         />
                     </Field>
@@ -77,8 +76,8 @@ function LoginForm({ onLogin }) {
                         errorText={errors.password?.message}
                     >
                         <PasswordInput
-                            {...register('password', {
-                                required: 'Password is required',
+                            {...register("password", {
+                                required: "Password is required",
                             })}
                         />
                     </Field>
@@ -86,9 +85,8 @@ function LoginForm({ onLogin }) {
                 </Stack>
             </form>
         </Container>
-    )
+    );
 }
-
 LoginForm.propTypes = {
     onLogin: PropTypes.func.isRequired,
 };
