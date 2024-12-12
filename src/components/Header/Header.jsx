@@ -1,4 +1,4 @@
-import { Flex, IconButton, Text, Button, Skeleton } from "@radix-ui/themes";
+import { Flex, IconButton, Text, Button, Skeleton } from "@chakra-ui/react";
 import { GearIcon, ExitIcon, SunIcon, MoonIcon } from "@radix-ui/react-icons";
 import { useContext, useEffect, useState } from "react";
 import ThemeContext from "../../context/ThemeContext";

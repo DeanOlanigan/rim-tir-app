@@ -1,4 +1,7 @@
-import { Flex, Container, Heading, IconButton, Text, Grid, ScrollArea, Select, Card, RadioCards, Box, Button, Callout, Spinner } from "@radix-ui/themes";
+import { Flex, Container, Heading, Text, Card, Box, Alert, Stack } from "@chakra-ui/react";
+import { SelectContent, SelectItem, SelectLabel, SelectRoot, SelectTrigger, SelectValueText } from "../../components/ui/select";
+import { Button } from "../../components/ui/button";
+import { RadioCardItem, RadioCardRoot } from "../../components/ui/radio-card";
 import { DownloadIcon, EyeOpenIcon, CrossCircledIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
@@ -39,44 +42,45 @@ function LogPlaceTypeCard({ headingText, logList, loading, selectedLog, onSelect
     };
 
     return (
-        <Card>
-            <Flex direction={"column"} gap={"2"}>
-                <Heading size={"3"}>{headingText}</Heading>
+        <Card.Root w={"100%"}>
+            <Card.Header>
+                <Card.Title>{headingText}</Card.Title>
+            </Card.Header>
+            <Card.Body>
+                <Box h={"30vh"} overflowY={"auto"} pe="0.5em">
+                    {logList && logList.length > 0 ? (
+                        <RadioCardRoot 
+                            gap={"2"}
+                            size={"md"}
+                            variant="subtle"
+                            colorPalette={"red"}
+                            onValueChange={(value) => handleSelect(value)}
+                            value={selectedLog.type === headingText ? selectedLog.name : null}>
+                            {logList.map((log, index) => (
+                                <RadioCardItem 
+                                    key={index}
+                                    value={log}
+                                    label={log}
+                                />
+                            ))}
+                        </RadioCardRoot>
+                    ) : (
+                        <Text weight={"medium"} as="div" align={"center"} color="tomato">Не найдено</Text>
+                    )}
+                </Box>
+            </Card.Body>
+            <Card.Footer>
                 <Button 
                     loading={loading}
-                    size={"2"}
-                    variant="surface"
+                    loadingText="Подождите..."
+                    variant="solid"
                     style={{width: "100%"}}
                     onClick={downloadAllLogFiles}>
                     <DownloadIcon width={18} height={18} /> Скачать все логи из списка
                 </Button>
-                <Spinner loading={loading}>
-                    <ScrollArea type="always" scrollbars="vertical" style={{height: "30vh"}} size={"1"}>
-                        <Box px={"4"}>
-                            {logList && logList.length > 0 ? (
-                                <RadioCards.Root 
-                                    gap={"2"}
-                                    size={"1"}
-                                    variant="surface"
-                                    onValueChange={(value) => handleSelect(value)}
-                                    value={selectedLog.type === headingText ? selectedLog.name : null}>
-                                    {logList.map((log, index) => (
-                                        <RadioCards.Item 
-                                            key={index}
-                                            value={log}
-                                            text={log}>
-                                            {log}
-                                        </RadioCards.Item>
-                                    ))}
-                                </RadioCards.Root>
-                            ) : (
-                                <Text weight={"medium"} as="div" align={"center"} color="tomato">Не найдено</Text>
-                            )}
-                        </Box>
-                    </ScrollArea>
-                </Spinner>
-            </Flex>
-        </Card>
+            </Card.Footer>
+
+        </Card.Root>
     );
 }
 LogPlaceTypeCard.propTypes = {
@@ -89,25 +93,29 @@ LogPlaceTypeCard.propTypes = {
 
 function LogViewChoser({ loading }) {
     return (
-        <>
-            <Text weight={"regular"}>Количество отображаемых строк:</Text>
-            <Flex direction={"column"} width={"5rem"}>
-                <Select.Root defaultValue="500">
-                    <Select.Trigger />
-                    <Select.Content position="popper">
-                        <Select.Item value="100">100</Select.Item>
-                        <Select.Item value="250">250</Select.Item>
-                        <Select.Item value="500">500</Select.Item>
-                        <Select.Item value="1000">1000</Select.Item>
-                        <Select.Item value="2500">2500</Select.Item>
-                        <Select.Item value="5000">5000</Select.Item>
-                    </Select.Content>
-                </Select.Root>
-            </Flex>
-            <IconButton loading={loading} variant="outline">
+        
+        <Flex direction={"row"} align={"end"} justify={"flex-end"} gap={"4"} >
+            <Box>
+                <SelectRoot defaultValue={"500"}>
+                    <SelectLabel>Количество отображаемых строк:</SelectLabel>
+                    <SelectTrigger>
+                        <SelectValueText placeholder="500"/>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem item="100">100</SelectItem>
+                        <SelectItem item="250">250</SelectItem>
+                        <SelectItem item="500">500</SelectItem>
+                        <SelectItem item="1000">1000</SelectItem>
+                        <SelectItem item="2500">2500</SelectItem>
+                        <SelectItem item="5000">5000</SelectItem>
+                    </SelectContent>
+                </SelectRoot>
+            </Box>
+            <Button loading={loading} variant="outline">
                 <EyeOpenIcon width={18} height={18} />
-            </IconButton>
-        </>
+            </Button>
+        </Flex>
+        
     );
 }
 LogViewChoser.propTypes = {
@@ -146,23 +154,24 @@ function LogChooser({ apiEndpoint }) {
     }, [apiEndpoint]);
 
     return (
-        <Flex direction={"column"} gap={"2"}>
-            <Box pl={"4"}>
-                <Heading size={"5"} color="gray">Выберите файл</Heading>
-            </Box>
+        <Stack>
+            
+            <Container maxW={"xl"}>
+                <Heading>Выберите файл</Heading>
+            </Container>
 
             {error ? (
-                <Callout.Root color="red">
-                    <Callout.Icon>
+                <Alert.Root status={"error"}>
+                    <Alert.Indicator>
                         <CrossCircledIcon />
-                    </Callout.Icon>
-                    <Callout.Text>
+                    </Alert.Indicator>
+                    <Alert.Title>
                         {error}
-                    </Callout.Text>
-                </Callout.Root>
+                    </Alert.Title>
+                </Alert.Root>
             ) : <></> }
             
-            <Grid columns={"2"} width={"auto"} gap={"1"}>
+            <Flex gap={"4"} justify={"center"}>
                 <LogPlaceTypeCard 
                     headingText={"Логи на sd карте роутера"}  
                     loading={loading}
@@ -175,11 +184,11 @@ function LogChooser({ apiEndpoint }) {
                     logList={rLogs}
                     selectedLog={selectedLog}
                     onSelectLog={(name) => setSelectedLog({ type: "Логи во внутренней памяти роутера", name })}/>
-            </Grid>
-            <Flex gap={"2"} align={"center"} justify={"end"} direction={"row"}>
-                <LogViewChoser loading={loading} />
             </Flex>
-        </Flex>
+            
+            <LogViewChoser loading={loading} />
+            
+        </Stack>
     );
 }
 LogChooser.propTypes = {
@@ -188,7 +197,7 @@ LogChooser.propTypes = {
 
 function LogPage() {
     return (
-        <Container size={"2"}>
+        <Container maxW={"4xl"}>
             <LogChooser apiEndpoint={"http://192.168.1.1:8080/api/v1/getLogfilesList"} />
         </Container>
     );

@@ -9,7 +9,7 @@ import Gradient from "./Gradient";
 import "./LoginPage.css";
 
 function LoginForm({ onLogin }) {
-    const [sharedError, setSharedError] = useState(null);
+    const [sharedMessage, setSharedMessage] = useState({ type: null, message: null });
     const {
         register,
         handleSubmit,
@@ -38,6 +38,8 @@ function LoginForm({ onLogin }) {
                     return;
                 }
 
+                setSharedMessage({type: "success", message: data.message});
+
                 const serverCurrentTime = parseInt(data.data.server_time, 10);
                 const clientCurrentTime = Math.floor(Date.now() / 1000);
                 const timeDiff = serverCurrentTime - clientCurrentTime;
@@ -48,14 +50,15 @@ function LoginForm({ onLogin }) {
                 localStorage.setItem("csrf", data.data.csrf_token);
                 localStorage.setItem("session_expiration_time", sessionExpirationTime);
 
-                onLogin();
+                setTimeout(()=>onLogin(), 1000);
+                
             } else {
                 const errorData = await response.json();
-                setSharedError(errorData.message);
+                setSharedMessage({type: "error", message: errorData.message});
             }
 
         } catch (error) {
-            setSharedError(error.message);
+            setSharedMessage({ type: "error", message: error.message});
         }
     };
 
@@ -92,12 +95,12 @@ function LoginForm({ onLogin }) {
                                         })}
                                     />
                                 </Field>
-                                {sharedError && (
+                                {sharedMessage.type && (
                         
                                     <Box>
-                                        <Alert.Root status={"error"}>
+                                        <Alert.Root status={sharedMessage.type}>
                                             <Alert.Indicator />
-                                            <Alert.Title>{sharedError}</Alert.Title>
+                                            <Alert.Title>{sharedMessage.message}</Alert.Title>
                                         </Alert.Root>
                                     </Box>
                         

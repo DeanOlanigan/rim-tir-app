@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import WebSocketContext from "../../context/WebSocketContext";
-import { Flex, Text } from "@radix-ui/themes";
+import { Flex, Text } from "@chakra-ui/react";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 function ConnectionStatus() {
