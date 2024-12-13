@@ -7,5 +7,5 @@
 }
 .verticalLine:hover,
 .verticalLine[data-resize-handle-active] {
-    background-color: var(--accent-6);
+    background-color: var(--chakra-colors-color-palette-solid);
 }

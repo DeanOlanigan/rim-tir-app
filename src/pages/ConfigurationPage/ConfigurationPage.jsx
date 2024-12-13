@@ -1,5 +1,4 @@
-import { Box, Flex, Text, ContextMenu, DropdownMenu, IconButton, Card } from "@radix-ui/themes";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { Box, Flex, Text, Card } from "@chakra-ui/react";
 import { Tree } from "react-arborist";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "./ConfigurationPage.css";
@@ -33,63 +32,67 @@ function ConfigurationPage() {
                 <Panel collapsible={true} collapsedSize={0} minSize={9}>
                     <PanelGroup autoSaveId="persistence1" direction="vertical">
                         <Panel minSize={15}>
-                            <Card style={{height: "100%"}}>
-                                <Flex px="5" align="center" justify="between">
-                                    <Text>Проводник ИО</Text>
-                                    <DropdownMenu.Root>
-                                        <DropdownMenu.Trigger>
-                                            <IconButton variant="ghost"><DotsHorizontalIcon style={{color: "var(--gray-12)"}}/></IconButton>
-                                        </DropdownMenu.Trigger>
-                                        <DropdownMenu.Content>
-                                            <DropdownMenu.CheckboxItem>Прием</DropdownMenu.CheckboxItem>
-                                            <DropdownMenu.CheckboxItem>Передача</DropdownMenu.CheckboxItem>
-                                        </DropdownMenu.Content>
-                                    </DropdownMenu.Root>
-                                </Flex>
-                                <Flex px="5"justify="center">
-                                    <Text>Прием</Text>
-                                </Flex>
-                                <Flex height="100%">
-                                    <Tree initialData={data}/>
-                                </Flex>
-                            </Card>
+                            <Card.Root size={"sm"} h={"100%"}>
+                                <Card.Header>
+                                    <Card.Title>
+                                        <Flex align={"center"} justify={"space-between"}>
+                                            <Text textStyle={"sm"}>Прием</Text>
+                                        </Flex>
+                                    </Card.Title>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Flex height="100%">
+                                        <Tree initialData={data}/>
+                                    </Flex>
+                                </Card.Body>
+                            </Card.Root>
                         </Panel>
                         <PanelResizeHandle className="verticalLine"/>
                         <Panel minSize={15}>
-                            <Card style={{height: "100%"}}>
-                                <Flex px="5"justify="center">
-                                    <Text>Передача</Text>
-                                </Flex>
-                                <Flex asChild height="100%" align="center" justify="center">
-                                    <ContextMenu.Root>
-                                        <ContextMenu.Trigger>
-                                            <Text>ИО</Text>
-                                        </ContextMenu.Trigger>
-                                        <ContextMenu.Content>
-                                            <ContextMenu.Item>Параметры</ContextMenu.Item>
-                                        </ContextMenu.Content>
-                                    </ContextMenu.Root>
-                                </Flex>
-                            </Card>
+                            <Card.Root size={"sm"} h={"100%"}>
+                                <Card.Header>
+                                    <Card.Title>
+                                        <Flex align={"center"} justify={"space-between"}>
+                                            <Text textStyle={"sm"}>Передача</Text>
+                                        </Flex>
+                                    </Card.Title>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Flex asChild height="100%" align="center" justify="center">
+                                        <Text>ИО</Text>
+                                    </Flex>
+                                </Card.Body>
+                            </Card.Root>
                         </Panel>
                     </PanelGroup>
                 </Panel>
                 <PanelResizeHandle className="verticalLine"/>
                 <Panel minSize={15}>
-                    <Card style={{height: "100%"}}>
-                        <Text>Конфигурация</Text>
-                    </Card>
+                    <Card.Root h={"100%"} size={"sm"}>
+                        <Card.Header>
+                            <Card.Title>
+                                <Text textStyle={"sm"}>Конфигурация</Text>
+                            </Card.Title>
+                        </Card.Header>
+                        <Card.Body>
+                            
+                        </Card.Body>
+                    </Card.Root>
                 </Panel>
                 <PanelResizeHandle className="verticalLine"/>
-                <Panel collapsible={true} collapsedSize={0} defaultSize={30} minSize={9}>
-                    <Card style={{height: "100%"}}>
-                        <Flex px="5"justify="center">
-                            <Text>Переменные</Text>
-                        </Flex>
-                        <Flex asChild height="100%" align="center" justify="center">
-                            <Text>Переменные</Text>
-                        </Flex>
-                    </Card>
+                <Panel collapsible={true} collapsedSize={0} defaultSize={30} minSize={12}>
+                    <Card.Root h={"100%"} size={"sm"}>
+                        <Card.Header>
+                            <Card.Title>
+                                <Text textStyle={"sm"}>Переменные</Text>
+                            </Card.Title>
+                        </Card.Header>
+                        <Card.Body>
+                            <Flex asChild height="100%" align="center" justify="center">
+                                <Text>Переменные</Text>
+                            </Flex>
+                        </Card.Body>
+                    </Card.Root>
                 </Panel>
             </PanelGroup>
         </Box>

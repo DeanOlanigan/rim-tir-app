@@ -1,6 +1,7 @@
 import { SHA1 } from "crypto-js";
 import PropTypes from "prop-types";
-import { Button, Input, Stack, Box, AbsoluteCenter, Alert, Card } from "@chakra-ui/react";
+import { Input, Stack, Box, AbsoluteCenter, Alert, Card } from "@chakra-ui/react";
+import { Button } from "../../components/ui/button";
 import { Field } from "../../components/ui/field";
 import { PasswordInput } from "../../components/ui/password-input";
 import { useForm } from "react-hook-form";
@@ -9,6 +10,7 @@ import Gradient from "./Gradient";
 import "./LoginPage.css";
 
 function LoginForm({ onLogin }) {
+    const [loading, setLoading] = useState(false);
     const [sharedMessage, setSharedMessage] = useState({ type: null, message: null });
     const {
         register,
@@ -17,6 +19,7 @@ function LoginForm({ onLogin }) {
     } = useForm();
 
     const onSubmit = async (data) => {
+        setLoading(true);
         let hashPassword = SHA1(data.password).toString();
         try {
             const response = await fetch("/api/v1/login", {
@@ -49,15 +52,17 @@ function LoginForm({ onLogin }) {
 
                 localStorage.setItem("csrf", data.data.csrf_token);
                 localStorage.setItem("session_expiration_time", sessionExpirationTime);
-
+                setLoading(false);
                 setTimeout(()=>onLogin(), 1000);
                 
             } else {
                 const errorData = await response.json();
+                setLoading(false);
                 setSharedMessage({type: "error", message: errorData.message});
             }
 
         } catch (error) {
+            setLoading(false);
             setSharedMessage({ type: "error", message: error.message});
         }
     };
@@ -105,7 +110,7 @@ function LoginForm({ onLogin }) {
                                     </Box>
                         
                                 )}
-                                <Button size={"xs"} type="submit">Войти</Button>
+                                <Button loading={loading} size={"xs"} type="submit">Войти</Button>
                             </Stack>
                         </form>
                     </Card.Body>

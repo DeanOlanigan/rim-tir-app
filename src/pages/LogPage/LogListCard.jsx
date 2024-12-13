@@ -1,12 +1,10 @@
-import { Flex, Container, Heading, Text, Card, Box, Alert, Stack, Group, AbsoluteCenter, Spinner } from "@chakra-ui/react";
-import { SelectContent, SelectItem, SelectLabel, SelectRoot, SelectTrigger, SelectValueText } from "../../components/ui/select";
+import { Text, Card, Box, Group, AbsoluteCenter, Spinner } from "@chakra-ui/react";
 import { Button } from "../../components/ui/button";
 import { RadioCardItem, RadioCardRoot } from "../../components/ui/radio-card";
-import { LuDownload, LuEye, LuCircleX } from "react-icons/lu";
-import { useEffect, useState } from "react";
+import { LuDownload} from "react-icons/lu";
 import PropTypes from "prop-types";
 
-function LogPlaceTypeCard({ headingText, logList, loading, selectedLog, onSelectLog }) {
+function LogListCard({ headingText, logList, loading, selectedLog, onSelectLog }) {
     const handleSelect = (log) => {
         onSelectLog(log);
     };
@@ -118,7 +116,7 @@ function LogPlaceTypeCard({ headingText, logList, loading, selectedLog, onSelect
         </Card.Root>
     );
 }
-LogPlaceTypeCard.propTypes = {
+LogListCard.propTypes = {
     headingText: PropTypes.string,
     logList: PropTypes.array,
     loading: PropTypes.bool,
@@ -126,116 +124,4 @@ LogPlaceTypeCard.propTypes = {
     onSelectLog: PropTypes.func
 };
 
-function LogViewChoser({ loading }) {
-    return (
-        
-        <Flex direction={"row"} align={"end"} justify={"flex-end"} gap={"4"} >
-            <Box>
-                <SelectRoot defaultValue={"500"}>
-                    <SelectLabel>Количество отображаемых строк:</SelectLabel>
-                    <SelectTrigger>
-                        <SelectValueText placeholder="500"/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem item="100">100</SelectItem>
-                        <SelectItem item="250">250</SelectItem>
-                        <SelectItem item="500">500</SelectItem>
-                        <SelectItem item="1000">1000</SelectItem>
-                        <SelectItem item="2500">2500</SelectItem>
-                        <SelectItem item="5000">5000</SelectItem>
-                    </SelectContent>
-                </SelectRoot>
-            </Box>
-            <Button loading={loading} variant="outline">
-                <LuEye />
-            </Button>
-        </Flex>
-        
-    );
-}
-LogViewChoser.propTypes = {
-    loading: PropTypes.bool
-};
-
-function LogChooser({ apiEndpoint }) {
-    const [rLogs, setRLogs] = useState([]);
-    const [sLogs, setSLogs] = useState([]);
-    const [selectedLog, setSelectedLog] = useState({type: null, name: null});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const fetchLogs = async () => {
-            try {
-                const response = await fetch(apiEndpoint);
-                if (!response.ok) {
-                    throw new Error(`Ошибка загрузки: ${response.statusText}`);
-                }
-                const result = await response.json();
-                if (result.code === 200) {
-                    setRLogs(result.data.rLog || []);
-                    setSLogs(result.data.sLog || []);
-                } else {
-                    throw new Error(result.message || "Неизвестная ошибка");
-                }
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchLogs();
-    }, [apiEndpoint]);
-
-    return (
-        <Stack>
-            
-            <Container maxW={"xl"}>
-                <Heading>Выберите файл</Heading>
-            </Container>
-
-            {error ? (
-                <Alert.Root status={"error"}>
-                    <Alert.Indicator>
-                        <LuCircleX />
-                    </Alert.Indicator>
-                    <Alert.Title>
-                        {error}
-                    </Alert.Title>
-                </Alert.Root>
-            ) : <></> }
-            
-            <Flex gap={"4"} justify={"center"}>
-                <LogPlaceTypeCard 
-                    headingText={"Логи на SD карте роутера"}  
-                    loading={loading}
-                    logList={sLogs}
-                    selectedLog={selectedLog}
-                    onSelectLog={(name) => setSelectedLog({ type: "Логи на SD карте роутера", name })}/>
-                <LogPlaceTypeCard 
-                    headingText={"Логи во внутренней памяти роутера"} 
-                    loading={loading}
-                    logList={rLogs}
-                    selectedLog={selectedLog}
-                    onSelectLog={(name) => setSelectedLog({ type: "Логи во внутренней памяти роутера", name })}/>
-            </Flex>
-            
-            <LogViewChoser loading={loading} />
-            
-        </Stack>
-    );
-}
-LogChooser.propTypes = {
-    apiEndpoint: PropTypes.string
-};
-
-function LogPage() {
-    return (
-        <Container maxW={"4xl"}>
-            <LogChooser apiEndpoint={"/api/v1/getLogfilesList"} />
-        </Container>
-    );
-}
-
-export default LogPage;
+export default LogListCard;

@@ -1,13 +1,14 @@
-import { Flex, IconButton, Text, Button, Skeleton } from "@chakra-ui/react";
-import { GearIcon, ExitIcon, SunIcon, MoonIcon } from "@radix-ui/react-icons";
-import { useContext, useEffect, useState } from "react";
-import ThemeContext from "../../context/ThemeContext";
+import { Flex, IconButton, Text, Skeleton } from "@chakra-ui/react";
+import { Tooltip } from "../../components/ui/tooltip";
+import { useEffect, useState } from "react";
+import { ColorModeButton } from "../ui/color-mode";
+import { LuSettings, LuLogOut } from "react-icons/lu";
+
 import Navigation from "../Navigation/Navigation";
 import ConnectionStatus from "../ConnectionStatus/ConnectionStatus";
-import "./Header.css";
+import "./Header.css";  
 
 const Header = () => {
-    const { theme, toggleTheme } = useContext(ThemeContext);
     const [ version, setVersion ] = useState("");
 
     useEffect(() => {
@@ -23,8 +24,8 @@ const Header = () => {
                 } else {
                     throw new Error(result.message || "Неизвестная ошибка");
                 }
-            } catch (err) {
-                throw new Error(err.message);
+            } catch (error) {
+                throw new Error(error.message);
             }
         };
         fetchVersion();
@@ -45,22 +46,40 @@ const Header = () => {
         <header className="header">
             <Flex gap="4" align="center" width="270px" justify="start">
                 <Skeleton loading={!version}>
-                    <Text weight="medium">{version || "7.7.77-7"}</Text>
+                    <Text fontWeight={"medium"}>{version || "7.7.77-7"}</Text>
                 </Skeleton>
-                <IconButton variant="ghost">
-                    <GearIcon width={18} height={18} />
+                <IconButton 
+                    size={"sm"}
+                    variant="ghost" 
+                    css={{
+                        _icon: {
+                            width: "5",
+                            height: "5",
+                        },
+                    }}
+                >
+                    <LuSettings />
                 </IconButton>
             </Flex>
             <Navigation />
-            <Flex gap="4" align="center" width="270px" justify="end">
+            <Flex gap="2" align="center" width="270px" justify="end">
                 <ConnectionStatus />
-                <Button variant="ghost" weight="medium" onClick={handleLogout}>
-                    <ExitIcon />
-                    Выход
-                </Button>
-                <IconButton variant="ghost" onClick={toggleTheme}>
-                    {theme === "light" ? <MoonIcon width={18} height={18} /> : <SunIcon width={18} height={18} />}
-                </IconButton>
+                <Tooltip content="Выйти" disabled>
+                    <IconButton 
+                        size={"sm"}
+                        variant={"ghost"}
+                        onClick={handleLogout}
+                        css={{
+                            _icon: {
+                                width: "5",
+                                height: "5",
+                            },
+                        }}
+                    >
+                        <LuLogOut />
+                    </IconButton>
+                </Tooltip>
+                <ColorModeButton />
             </Flex>
         </header>
     );

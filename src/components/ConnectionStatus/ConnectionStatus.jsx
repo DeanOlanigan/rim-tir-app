@@ -1,15 +1,15 @@
 import { useContext } from "react";
 import WebSocketContext from "../../context/WebSocketContext";
 import { Flex, Text } from "@chakra-ui/react";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import { LuTriangleAlert } from "react-icons/lu";
 
 function ConnectionStatus() {
     const { isConnected, serverTime } = useContext(WebSocketContext);
 
     return (
-        <Flex gap={"2"} align={"center"} justify={"between"}>
-            <ExclamationTriangleIcon width={18} height={18} color="orange" display={ isConnected ? "none" : "block"}/>
-            <Text wrap={"nowrap"} weight="medium" color={ isConnected ? "grass" : "orange"}>{ isConnected ? serverTime : "Нет соединения" }</Text>
+        <Flex align={"center"} gap={"2"} justify={"between"}>
+            <LuTriangleAlert color="orange" style={{display: isConnected ? "none" : "" }}/>
+            <Text textStyle={"sm"} fontWeight={"semibold"} textAlign={"center"} textWrap={"nowrap"} color={ isConnected ? "" : "orange"}>{ isConnected ? serverTime : "Нет соединения" }</Text>
         </Flex>        
     );
 }
