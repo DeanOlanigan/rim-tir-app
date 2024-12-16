@@ -6,8 +6,7 @@ import { Field } from "../../components/ui/field";
 import { PasswordInput } from "../../components/ui/password-input";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import Gradient from "./Gradient";
-import "./LoginPage.css";
+import Gradient from "../../components/GradientBackground/GradientBackground";
 
 function LoginForm({ onLogin }) {
     const [loading, setLoading] = useState(false);

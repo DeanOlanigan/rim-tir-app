@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
+import "./GradientBackground.css";
 
-function Gradient() {
+function GradientBackground() {
     const interBubbleRef = useRef(null);
     const curPos = useRef({ x: 0, y: 0 });
     const tgPos = useRef({ x: 0, y: 0 });
@@ -57,4 +58,4 @@ function Gradient() {
     );
 }
 
-export default Gradient;
+export default GradientBackground;
