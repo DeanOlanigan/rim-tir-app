@@ -7,11 +7,11 @@ import "./index.css";
 import "@radix-ui/themes/styles.css";
 
 createRoot(document.getElementById("root")).render(
-    <StrictMode>
-        <Provider>
-            <App />
-        </Provider>
-    </StrictMode>,
+    //<StrictMode>
+    <Provider>
+        <App />
+    </Provider>
+    //</StrictMode>,
 );
 
 //TODO Перенести интерфейс с radix ui на chakra

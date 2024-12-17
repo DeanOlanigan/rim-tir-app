@@ -1,10 +1,19 @@
 import { useLocation, Link } from "react-router-dom";
 import { Tabs } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 
 function Navigation() {
     const { pathname } = useLocation();
-    const lastPathFragment = pathname.substring(pathname.lastIndexOf("/") +1 );
-    const activeTab = lastPathFragment.length > 0 ? lastPathFragment : "configuration";
+    const [activeTab, setActiveTab] = useState("configuration");
+
+    useEffect(() => {
+        const lastPathFragment = pathname.substring(pathname.lastIndexOf("/") + 1);
+        if (lastPathFragment.length > 0) {
+            setActiveTab(lastPathFragment);
+        } else {
+            setActiveTab("configuration");
+        }
+    }, [pathname]);
 
     return (
         <Tabs.Root defaultValue={activeTab}>

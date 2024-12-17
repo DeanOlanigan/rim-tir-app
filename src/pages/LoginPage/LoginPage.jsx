@@ -1,14 +1,16 @@
 import { SHA1 } from "crypto-js";
-import PropTypes from "prop-types";
 import { Input, Stack, Box, AbsoluteCenter, Alert, Card } from "@chakra-ui/react";
 import { Button } from "../../components/ui/button";
 import { Field } from "../../components/ui/field";
 import { PasswordInput } from "../../components/ui/password-input";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Gradient from "../../components/GradientBackground/GradientBackground";
+import { LuLogIn } from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../providers/AuthProvider/AuthContext";
 
-function LoginForm({ onLogin }) {
+function LoginForm() {
     const [loading, setLoading] = useState(false);
     const [sharedMessage, setSharedMessage] = useState({ type: null, message: null });
     const {
@@ -16,6 +18,8 @@ function LoginForm({ onLogin }) {
         handleSubmit,
         formState: { errors },
     } = useForm();
+    const { login } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const onSubmit = async (data) => {
         setLoading(true);
@@ -37,23 +41,18 @@ function LoginForm({ onLogin }) {
                 const data = await response.json();
 
                 if (!data.data.csrf_token) {
+                    setSharedMessage({type: "error", message: data.message});
                     return;
                 }
 
                 setSharedMessage({type: "success", message: data.message});
-
-                const serverCurrentTime = parseInt(data.data.server_time, 10);
-                const clientCurrentTime = Math.floor(Date.now() / 1000);
-                const timeDiff = serverCurrentTime - clientCurrentTime;
-
-                const sessionTimeLeft = parseInt(data.data.session_time_left, 10);
-                const sessionExpirationTime = clientCurrentTime + timeDiff + sessionTimeLeft;
-
-                localStorage.setItem("csrf", data.data.csrf_token);
-                localStorage.setItem("session_expiration_time", sessionExpirationTime);
                 setLoading(false);
-                setTimeout(()=>onLogin(), 1000);
-                
+                login({
+                    serverTime: data.data.server_time,
+                    sessionTimeLeft: data.data.session_time_left,
+                    csrfToken: data.data.csrf_token
+                });
+                setTimeout(() => navigate("/configuration"), 1000);
             } else {
                 const errorData = await response.json();
                 setLoading(false);
@@ -109,7 +108,10 @@ function LoginForm({ onLogin }) {
                                     </Box>
                         
                                 )}
-                                <Button loading={loading} size={"xs"} type="submit">Войти</Button>
+                                <Button loading={loading} size={"xs"} type="submit">
+                                    <LuLogIn />
+                                    Войти
+                                </Button>
                             </Stack>
                         </form>
                     </Card.Body>
@@ -118,8 +120,5 @@ function LoginForm({ onLogin }) {
         </Box>
     );
 }
-LoginForm.propTypes = {
-    onLogin: PropTypes.func.isRequired,
-};
 
 export default LoginForm;

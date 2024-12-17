@@ -3,13 +3,16 @@ import { Tooltip } from "../../components/ui/tooltip";
 import { useEffect, useState } from "react";
 import { ColorModeButton } from "../ui/color-mode";
 import { LuSettings, LuLogOut } from "react-icons/lu";
+import { useContext } from "react";
+import { AuthContext } from "../../providers/AuthProvider/AuthContext";
 
 import Navigation from "../Navigation/Navigation";
 import ConnectionStatus from "../ConnectionStatus/ConnectionStatus";
 import "./Header.css";  
 
-const Header = () => {
+function Header() {
     const [ version, setVersion ] = useState("");
+    const { logout } = useContext(AuthContext);
 
     useEffect(() => {
         const fetchVersion = async () => {
@@ -30,17 +33,6 @@ const Header = () => {
         };
         fetchVersion();
     }, []);
-
-    const handleLogout = async () => {
-        const response = await fetch("/api/v1/logout",{ method: "POST", credentials: "include" });
-        if (response.ok) {
-            localStorage.removeItem("session_expiration_time");
-            localStorage.removeItem("csrf");
-            window.location.href = "/login";
-        } else {
-            alert("Logout failed");
-        }
-    };
 
     return (
         <header className="header">
@@ -68,7 +60,7 @@ const Header = () => {
                     <IconButton 
                         size={"sm"}
                         variant={"ghost"}
-                        onClick={handleLogout}
+                        onClick={logout}
                         css={{
                             _icon: {
                                 width: "5",
