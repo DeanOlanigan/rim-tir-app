@@ -4,7 +4,7 @@ import { Button } from "../../components/ui/button";
 import { Field } from "../../components/ui/field";
 import { PasswordInput } from "../../components/ui/password-input";
 import { useForm } from "react-hook-form";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import Gradient from "../../components/GradientBackground/GradientBackground";
 import { LuLogIn } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ function LoginForm() {
         handleSubmit,
         formState: { errors },
     } = useForm();
-    const { login } = useContext(AuthContext);
+    const { login, isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const onSubmit = async (data) => {
@@ -64,6 +64,12 @@ function LoginForm() {
             setSharedMessage({ type: "error", message: error.message});
         }
     };
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate("/configuration");
+        }
+    },);
 
     return (
         <Box position={"relative"} h={"100vh"}>

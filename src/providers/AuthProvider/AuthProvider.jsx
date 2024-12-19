@@ -43,14 +43,12 @@ function AuthProvider({ children }) {
         setIsAuthenticated(false);
         setSessionExpirationTime(0);
         setSessionTimeLeft(0);
+        localStorage.removeItem("session_expiration_time");
+        localStorage.removeItem("session_time");
+        localStorage.removeItem("csrf");
         /* API запрос на сервер, чтобы тот удалил сессию */
         const response = await fetch("/api/v1/logout",{ method: "POST", credentials: "include" });
-        if (response.ok) {
-            
-            localStorage.removeItem("session_expiration_time");
-            localStorage.removeItem("session_time");
-            localStorage.removeItem("csrf");
-        } else {
+        if (!response.ok) {
             alert("Logout failed");
         }
     };
