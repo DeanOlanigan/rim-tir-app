@@ -27,7 +27,7 @@ function ConfigurationPage() {
     ];
 
     return (
-        <Box height="100%" p={"2"}>
+        <Box height="100%">
             <PanelGroup autoSaveId="persistence" direction="horizontal">
                 <Panel collapsible={true} collapsedSize={0} minSize={9}>
                     <PanelGroup autoSaveId="persistence1" direction="vertical">

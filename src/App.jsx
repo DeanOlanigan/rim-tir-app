@@ -1,12 +1,16 @@
-import "./App.css";
-import AppRoutes from "./routes/AppRoutes";
+import { Provider } from "./components/ui/provider";
 import WebSocketProvider from "./providers/WebSocketProvider";
+import AppRoutes from "./routes/AppRoutes";
+import "@radix-ui/themes/styles.css";
+import "./App.css";
 
 function App() {
     return (
-        <WebSocketProvider>
-            <AppRoutes />  
-        </WebSocketProvider>
+        <Provider>
+            <WebSocketProvider>
+                <AppRoutes />  
+            </WebSocketProvider>
+        </Provider>
     );
 }
 
