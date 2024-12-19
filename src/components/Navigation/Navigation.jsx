@@ -1,38 +1,33 @@
-import { useLocation, Link } from "react-router-dom";
-import { Tabs } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
+import { HStack, Button } from "@chakra-ui/react";
 
 function Navigation() {
-    const { pathname } = useLocation();
-    const [activeTab, setActiveTab] = useState("configuration");
-
-    useEffect(() => {
-        const lastPathFragment = pathname.substring(pathname.lastIndexOf("/") + 1);
-        if (lastPathFragment.length > 0) {
-            setActiveTab(lastPathFragment);
-        } else {
-            setActiveTab("configuration");
-        }
-    }, [pathname]);
+    const navItems = [
+        { name: "Конфигурация", path: "/configuration" },
+        { name: "Мониторинг", path: "/monitoring" },
+        { name: "Логирование", path: "/log" },
+        { name: "Журналирование", path: "/journal" },
+    ];
 
     return (
-        <Tabs.Root defaultValue={activeTab}>
-            <Tabs.List>
-                <Tabs.Trigger asChild value="configuration">
-                    <Link to="/">Конфигурация</Link>
-                </Tabs.Trigger>
-                <Tabs.Trigger asChild value="monitoring">
-                    <Link to="/monitoring">Мониторинг</Link>
-                </Tabs.Trigger>
-                <Tabs.Trigger asChild value="log">
-                    <Link to="/log">Логирование</Link>
-                </Tabs.Trigger>
-                <Tabs.Trigger asChild value="journal">
-                    <Link to="/journal">Журналирование</Link>
-                </Tabs.Trigger>
-                <Tabs.Indicator/>
-            </Tabs.List>    
-        </Tabs.Root>
+        <HStack as="nav" gap={"2"}>
+            {navItems.map((item) => (
+                <NavLink
+                    key={item.name}
+                    to={item.path}
+                >
+                    {({ isActive }) => (
+                        <Button 
+                            size={"xs"}
+                            variant={isActive ? "solid" : "ghost"}
+                            fontSize={"sm"}
+                        >
+                            {item.name}
+                        </Button>
+                    )}
+                </NavLink>
+            ))}
+        </HStack>
     );
 }
 

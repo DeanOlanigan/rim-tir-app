@@ -41,7 +41,7 @@ function Header() {
                     <Text fontWeight={"medium"}>{version || "7.7.77-7"}</Text>
                 </Skeleton>
                 <IconButton 
-                    size={"sm"}
+                    size={"xs"}
                     variant="ghost" 
                     css={{
                         _icon: {
@@ -58,7 +58,7 @@ function Header() {
                 <ConnectionStatus />
                 <Tooltip content="Выйти" disabled>
                     <IconButton 
-                        size={"sm"}
+                        size={"xs"}
                         variant={"ghost"}
                         onClick={logout}
                         css={{
@@ -71,7 +71,7 @@ function Header() {
                         <LuLogOut />
                     </IconButton>
                 </Tooltip>
-                <ColorModeButton />
+                <ColorModeButton size={"xs"} />
             </Flex>
         </header>
     );
