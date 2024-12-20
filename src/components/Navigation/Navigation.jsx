@@ -15,6 +15,7 @@ function Navigation() {
                 <NavLink
                     key={item.name}
                     to={item.path}
+                    tabIndex={-1}
                 >
                     {({ isActive }) => (
                         <Button 
