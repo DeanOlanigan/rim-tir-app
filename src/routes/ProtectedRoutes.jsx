@@ -3,6 +3,7 @@ import { AuthContext } from "../providers/AuthProvider/AuthContext";
 import { Toaster, toaster } from "./../components/ui/toaster";
 import Header from "../components/Header/Header";
 import { Outlet, Navigate } from "react-router-dom";
+import Snowfall from "react-snowfall";
 
 function ProtectedRoutes() {
     const { isAuthenticated, sessionExpirationTime, extendSession, logout } = useContext(AuthContext);
@@ -106,12 +107,13 @@ function ProtectedRoutes() {
 
     return (
         <>
+            <Snowfall/>
             <Toaster />
             <Header />
             <main>
                 <Outlet />
             </main>
-        </>
+        </> 
     );
 }
 
