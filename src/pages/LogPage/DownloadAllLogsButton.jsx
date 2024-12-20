@@ -1,7 +1,19 @@
 import { Button } from "@chakra-ui/react";
 import { LuDownload } from "react-icons/lu";
+import PropTypes from "prop-types";
 
-function DownloadAllLogsButton() {
+function DownloadAllLogsButton({ headingText, loading }) {
+
+    let type = "";
+    switch (headingText) {
+    case "Логи на SD карте роутера":
+        type = "sd";
+        break;
+    case "Логи во внутренней памяти роутера":
+    default:
+        type = "r";
+        break;
+    }
 
     const fetchDownload = async () => {
         try {
@@ -61,5 +73,9 @@ function DownloadAllLogsButton() {
         </Button>
     );
 }
+DownloadAllLogsButton.propTypes = {
+    headingText: PropTypes.string,
+    loading: PropTypes.bool,
+};
 
 export default DownloadAllLogsButton;
