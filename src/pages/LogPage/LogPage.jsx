@@ -1,28 +1,9 @@
 import { useState } from "react";
-import { Container, Text, Box, Em } from "@chakra-ui/react";
-import PropTypes from "prop-types";
+import { Container, Box } from "@chakra-ui/react";
 
 import LogSourceManager from "./LogSourceManager";
 import LogProvider from "../../providers/LogProvider/LogProvider";
-import { useLogContext } from "../../providers/LogProvider/LogContext";
-
-function LogTextArea({ onBackBtnClick }) {
-    const { logData } = useLogContext();
-    return (
-        <Box>
-            <Text>Log name: <Em>{logData.name}</Em></Text>
-            <Text>Log creation date: <Em>{logData.createdAt}</Em></Text>
-            <Text>Log size: <Em>{logData.size}</Em></Text>
-            <Text>Log type: <Em>{logData.type}</Em></Text>
-            <Text>Log rows: <Em>{logData.rows}</Em></Text>
-            <button onClick={onBackBtnClick}>Back</button>
-        </Box>
-    );
-}
-LogTextArea.propTypes = {
-    logParams: PropTypes.string,
-    onBackBtnClick: PropTypes.func,
-};
+import LogViewer from "./LogViewer";
 
 function LogPage() {
     const [viewMode, setViewMode] = useState("manager");
@@ -43,7 +24,7 @@ function LogPage() {
     };
 
     return (
-        <Container maxW={"4xl"}>
+        <Container maxW={"6xl"} h={"100%"}>
             <LogProvider>
                 {
                     viewMode === "manager" ? (
@@ -68,8 +49,9 @@ function LogPage() {
                                 _open: "scale-fade-in",
                                 _closed: "scale-fade-out",
                             }}
+                            h={"100%"}
                         >
-                            <LogTextArea
+                            <LogViewer
                                 onBackBtnClick={handleBackBtnClick}
                             />
                         </Box>

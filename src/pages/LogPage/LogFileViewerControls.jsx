@@ -1,4 +1,4 @@
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex, createListCollection } from "@chakra-ui/react";
 import { Tooltip } from "../../components/ui/tooltip";
 import { LuDownload, LuEye, LuEyeClosed } from "react-icons/lu";
 import { 
@@ -9,7 +9,6 @@ import {
     SelectTrigger,
     SelectValueText
 } from "../../components/ui/select";
-import { createListCollection } from "@chakra-ui/react";
 import { useLogContext } from "../../providers/LogProvider/LogContext";
 import PropTypes from "prop-types";
 
@@ -18,12 +17,12 @@ function LogFileViewerControls({ selectedLog, loading, onViewBtnClick }) {
 
     const rows = createListCollection({
         items: [
-            { label: "100 строк", value: "100" },
-            { label: "250 строк", value: "250" },
-            { label: "500 строк", value: "500" },
-            { label: "1000 строк", value: "1000" },
-            { label: "2500 строк", value: "2500" },
-            { label: "5000 строк", value: "5000" },
+            { label: "100", value: "100" },
+            { label: "250", value: "250" },
+            { label: "500", value: "500" },
+            { label: "1000", value: "1000" },
+            { label: "2500", value: "2500" },
+            { label: "5000", value: "5000" },
         ],
     });
 
@@ -40,27 +39,24 @@ function LogFileViewerControls({ selectedLog, loading, onViewBtnClick }) {
                 </Button>
             </Tooltip>
             <Box>
-                <SelectRoot
+                <SelectRoot 
                     collection={rows}
+                    value={[logData.rows]}
                     size={"xs"}
-                    value={logData.rows}
-                    onValueChange={(e) => {
-                        console.log("onValueChange", e.value);
-                        updateLogData({ rows: e.value });
-                    }}
+                    onValueChange={
+                        (e) => updateLogData({ rows: e.value[0] })
+                    }
                 >
                     <SelectLabel>Количество отображаемых строк:</SelectLabel>
                     <SelectTrigger>
-                        <SelectValueText placeholder="500"/>
+                        <SelectValueText/>
                     </SelectTrigger>
                     <SelectContent>
-                        {
-                            rows.items.map((row) => (
-                                <SelectItem key={row.value} item={row.label}>
-                                    {row.label}
-                                </SelectItem>
-                            ))
-                        }
+                        {rows.items.map((row) => (
+                            <SelectItem item={row} key={row.value}>
+                                {row.label}
+                            </SelectItem>
+                        ))}
                     </SelectContent>
                 </SelectRoot>
             </Box>
