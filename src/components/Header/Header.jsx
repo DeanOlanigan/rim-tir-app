@@ -1,4 +1,4 @@
-import { Flex, IconButton, Text, Skeleton } from "@chakra-ui/react";
+import { Flex, IconButton, Text, Skeleton, Box } from "@chakra-ui/react";
 import { Tooltip } from "../../components/ui/tooltip";
 import { useEffect, useState } from "react";
 import { ColorModeButton } from "../ui/color-mode";
@@ -35,44 +35,48 @@ function Header() {
     }, []);
 
     return (
-        <header className="header">
-            <Flex gap="4" align="center" width="270px" justify="start">
-                <Skeleton loading={!version}>
-                    <Text fontWeight={"medium"}>{version || "7.7.77-7"}</Text>
-                </Skeleton>
-                <IconButton 
-                    size={"xs"}
-                    variant="ghost" 
-                    css={{
-                        _icon: {
-                            width: "5",
-                            height: "5",
-                        },
-                    }}
-                >
-                    <LuSettings />
-                </IconButton>
-            </Flex>
-            <Navigation />
-            <Flex gap="2" align="center" width="270px" justify="end">
-                <ConnectionStatus />
-                <Tooltip content="Выйти" disabled>
-                    <IconButton 
-                        size={"xs"}
-                        variant={"ghost"}
-                        onClick={logout}
-                        css={{
-                            _icon: {
-                                width: "5",
-                                height: "5",
-                            },
-                        }}
-                    >
-                        <LuLogOut />
-                    </IconButton>
-                </Tooltip>
-                <ColorModeButton size={"xs"} />
-            </Flex>
+        <header style={{padding:"0.5rem 0.5rem 0 0.5rem"}}>
+            <Box bg={"bg.subtle"} padding={"0.5rem"} border={"1px solid"} borderColor={"border"} borderRadius={"md"}>
+                <Flex justify={"space-between"}>
+                    <Flex gap="4" align="center" width="270px" justify="start">
+                        <Skeleton loading={!version}>
+                            <Text fontWeight={"medium"}>{version || "7.7.77-7"}</Text>
+                        </Skeleton>
+                        <IconButton 
+                            size={"xs"}
+                            variant="ghost" 
+                            css={{
+                                _icon: {
+                                    width: "5",
+                                    height: "5",
+                                },
+                            }}
+                        >
+                            <LuSettings />
+                        </IconButton>
+                    </Flex>
+                    <Navigation />
+                    <Flex gap="2" align="center" width="270px" justify="end">
+                        <ConnectionStatus />
+                        <Tooltip content="Выйти" disabled>
+                            <IconButton 
+                                size={"xs"}
+                                variant={"ghost"}
+                                onClick={logout}
+                                css={{
+                                    _icon: {
+                                        width: "5",
+                                        height: "5",
+                                    },
+                                }}
+                            >
+                                <LuLogOut />
+                            </IconButton>
+                        </Tooltip>
+                        <ColorModeButton size={"xs"} />
+                    </Flex>
+                </Flex>
+            </Box>
         </header>
     );
 };

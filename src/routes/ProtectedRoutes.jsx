@@ -107,12 +107,12 @@ function ProtectedRoutes() {
 
     return (
         <>
-            <Snowfall/>
             <Toaster />
             <Header />
             <main>
                 <Outlet />
             </main>
+            <Snowfall/>
         </> 
     );
 }

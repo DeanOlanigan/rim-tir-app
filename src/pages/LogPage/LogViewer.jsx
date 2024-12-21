@@ -22,7 +22,7 @@ function LogViewer({ onBackBtnClick }) {
         
         <Card.Root h={"100%"}>
             <Card.Header>
-                <HStack align={"center"} gap={"4"}>
+                <HStack align={"center"} justify={"space-between"} gap={"4"}>
                     <Button size={"xs"} onClick={onBackBtnClick}>Назад</Button>
                     <HStack gap={"0"}>
                         <Heading>{logData.name}</Heading>
