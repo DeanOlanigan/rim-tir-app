@@ -13,7 +13,7 @@ const initialState = {
 function logReducer(state, action) {
     switch (action.type) {
     case "ADD_LOGS":
-        return { ...state, logs: [...state.logs, ...action.payload] };
+        return { ...state, logs: [...action.payload] };
     case "CLEAR_LOGS":
         return { ...state, logs: [] };
     case "TOGGLE_WRAP":
