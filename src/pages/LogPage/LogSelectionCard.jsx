@@ -24,7 +24,7 @@ function LogSelectionCard({ headingText, logList, loading, selectedLog, onSelect
     };
 
     return (
-        <Card.Root w={"100%"}>
+        <Card.Root w={"100%"} shadow={"xl"}>
             <Card.Header>
                 <Card.Title>{headingText}</Card.Title>
             </Card.Header>

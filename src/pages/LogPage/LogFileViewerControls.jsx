@@ -32,6 +32,7 @@ function LogFileViewerControls({ selectedLog, loading, onViewBtnClick }) {
                 content={"Скачать все логи"}
             >    
                 <Button 
+                    shadow={"xl"}
                     size={"xs"}
                     loading={loading}
                     variant="outline">
@@ -48,7 +49,7 @@ function LogFileViewerControls({ selectedLog, loading, onViewBtnClick }) {
                     }
                 >
                     <SelectLabel>Количество отображаемых строк:</SelectLabel>
-                    <SelectTrigger>
+                    <SelectTrigger shadow={"xl"}>
                         <SelectValueText/>
                     </SelectTrigger>
                     <SelectContent>
@@ -64,6 +65,7 @@ function LogFileViewerControls({ selectedLog, loading, onViewBtnClick }) {
                 content={"Просмотр выбранного файла"}
             >
                 <Button 
+                    shadow={"xl"}
                     size={"xs"}
                     disabled={!selectedLog.name}
                     variant="outline"

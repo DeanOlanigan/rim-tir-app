@@ -24,7 +24,7 @@ function LogPage() {
     };
 
     return (
-        <Container maxW={"6xl"} h={"100%"}>
+        <Container maxW={"6xl"} flex={"1"} display={"flex"} flexDirection={"column"} minH={"0"}>
             <LogProvider>
                 {
                     viewMode === "manager" ? (
@@ -49,7 +49,10 @@ function LogPage() {
                                 _open: "scale-fade-in",
                                 _closed: "scale-fade-out",
                             }}
-                            h={"100%"}
+                            display={"flex"}
+                            flexDirection={"column"}
+                            flex={"1"}
+                            minH={"0"}
                         >
                             <LogViewer
                                 onBackBtnClick={handleBackBtnClick}
