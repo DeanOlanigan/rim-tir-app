@@ -18,7 +18,8 @@ function Navigation() {
                     tabIndex={-1}
                 >
                     {({ isActive }) => (
-                        <Button 
+                        <Button
+                            shadow={isActive ? "md" : ""}
                             size={"xs"}
                             variant={isActive ? "solid" : "ghost"}
                             fontSize={"sm"}

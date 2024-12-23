@@ -36,7 +36,7 @@ function Header({onSnowfall}) {
 
     return (
         <header style={{padding:"0.5rem 0.5rem 0 0.5rem"}}>
-            <Box bg={"bg.subtle"} padding={"0.5rem"} border={"1px solid"} borderColor={"border"} borderRadius={"md"}>
+            <Box bg={"bg.subtle"} padding={"0.5rem"} border={"1px solid"} borderColor={"border"} borderRadius={"md"} shadow={"xl"}>
                 <Flex justify={"space-between"}>
                     <Flex gap="4" align="center" width="270px" justify="start">
                         <Skeleton loading={!version}>
