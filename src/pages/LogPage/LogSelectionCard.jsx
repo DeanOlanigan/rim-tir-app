@@ -10,7 +10,10 @@ function LogSelectionCard({ headingText, logList, loading, selectedLog, onSelect
     const handleSelect = (log) => {
         onSelectLog(log);
     };
-
+    
+    const logType = headingText === "Логи во внутренней памяти роутера" ? "r" :
+        headingText === "Логи на SD карте роутера" ? "sd" : "";
+    
     const formatFileSize = (size) => {
         if (size >= 1073741824) {
             return (size / 1073741824).toFixed(2) + " GB";
@@ -44,7 +47,7 @@ function LogSelectionCard({ headingText, logList, loading, selectedLog, onSelect
                                         name: params.name,
                                         size: formatFileSize(params.size),
                                         createdAt: params.created_at,
-                                        type: params.type,
+                                        type: logType,
                                     });
                                 }
                             }

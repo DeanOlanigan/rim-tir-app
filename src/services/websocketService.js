@@ -38,6 +38,7 @@ class WebSocketService {
                     this.messageHandlers.forEach((handler) => handler(message));
                 } catch {
                     console.warn("Invalid JSON received:", event.data);
+                    this.messageHandlers.forEach((handler) => handler(event.data));
                 }
             };
 

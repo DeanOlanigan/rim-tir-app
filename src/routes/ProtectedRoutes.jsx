@@ -37,7 +37,6 @@ function ProtectedRoutes() {
             const interval = setInterval(() => {
                 const currentTime = Math.floor(Date.now() / 1000);
                 const remainingTime = sessionExpirationTime - currentTime;
-                console.log("remainingTime", remainingTime);
                 if (sessionExpirationTime && remainingTime <= 5) {
                     if (!toastId.current) {
                         toastId.current = toaster.create({

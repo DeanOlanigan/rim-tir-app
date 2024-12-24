@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/react";
+import { Button } from "../../components/ui/button";
 import { LuDownload } from "react-icons/lu";
 import PropTypes from "prop-types";
 

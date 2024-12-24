@@ -57,7 +57,7 @@ function Header({onSnowfall}) {
                     </Flex>
                     <Navigation />
                     <Flex gap="2" align="center" width="270px" justify="end">
-                        <ConnectionStatus />
+                        {/*<ConnectionStatus />*/}
                         <Tooltip content="Выйти" disabled>
                             <IconButton 
                                 size={"xs"}

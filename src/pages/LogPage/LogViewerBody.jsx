@@ -1,35 +1,38 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useLogContext } from "../../providers/LogProvider/LogContext";
 import { toaster } from "../../components/ui/toaster"; // Chakra UI toaster
-import { Text, Box } from "@chakra-ui/react";
+import { Text, Box, Badge, Flex } from "@chakra-ui/react";
+import websocketService from "../../services/websocketService";
 
 function LogViewerBody() {
     const { logData, setIsLogLoaded, state, dispatch } = useLogContext();
-    const { isLogTextWrapped, logTextSize, currentFilter, logs } = state;
-    //const [logContent, setLogContent] = useState([]);
+    const { isLogTextWrapped, logTextSize, currentFilter, logs, isPaused } = state;
+    const isPausedRef = useRef(isPaused);
+    const logsContainerRef = useRef(null);
+    let logIndex = 1;
+    
+    useEffect(() => {
+        isPausedRef.current = isPaused; // Обновляем реф при каждом изменении isPaused
+    }, [isPaused]);
+
+    useEffect(() => {
+        if (!isPaused){
+            scrollToBottom();
+        }
+    }, [logs, isPaused]);
 
     useEffect(() => {
         const fetchLogs = async () => {
-            let type = "";
-            switch (logData.type) {
-            case "Логи во внутренней памяти роутера":
-                type = "r";
-                break;
-            case "Логи на SD карте роутера":
-                type = "sd";
-                break;
-            default:
-                break;
-            }
-
+            
             try {
-                const response = await fetch(`/api/v1/getLog?logfile=${logData.name}&limit=${logData.rows}&type=${type}`);
+                const response = await fetch(`/api/v1/getLog?logfile=${logData.name}&limit=${logData.rows}&type=${logData.type}`);
                 if (!response.ok) {
                     throw new Error(`Ошибка получения логов: ${response.statusText}`);
                 }
                 const result = await response.json();
                 if (result.code === 200) {
-                    appendLogs(result.data);
+                    dispatch({type: "CLEAR_LOGS"});
+                    appendLogs("ADD_LOGS", result.data);
                 } else {
                     throw new Error(result.message || "Неизвестная ошибка");
                 }
@@ -52,18 +55,46 @@ function LogViewerBody() {
 
     }, []);
 
-    const appendLogs = (data) => {
-        const logDataArr = data.split("\n").filter((line) => line);
-        const newLogs = logDataArr.map((element, index) => extractLogPart(element, index));
+    useEffect(() => {
+        websocketService.connect();
 
-        //setLogContent((prevLogs) => [...prevLogs, ...newLogs]);
-        dispatch({ type: "ADD_LOGS", payload: newLogs });
+        const messageHandler = (message) => {
+            console.log(message);
+            handleNewLog(message);
+        };
+
+        websocketService.addMessageHandler(messageHandler);
+        if (websocketService.isConnected) {
+            websocketService.sendMessage({ log: {fileName: logData.name, type: logData.type} });
+        }
+
+        return () => {
+            websocketService.removeMessageHandler(messageHandler);
+            websocketService.close();
+        };
+    }, []);
+
+    const handleNewLog = (log) => {
+        console.log(isPausedRef.current);
+        if (isPausedRef.current) {
+            appendLogs("ADD_PAUSED_LOGS", log);
+        } else {
+            appendLogs("ADD_LOGS", log);
+        }
     };
 
-    const extractLogPart = (line, index) => {
+    const appendLogs = (type, data) => {
+        const logDataArr = data.split("\n").filter((line) => line);
+        const newLogs = logDataArr.map((element) => extractLogPart(element));
+
+        //setLogContent((prevLogs) => [...prevLogs, ...newLogs]);
+        dispatch({ type: type, payload: newLogs });
+    };
+
+    const extractLogPart = (line) => {
         const splitData = line.split("\t");
         return ({
-            id: 1 + index,
+            id: logIndex++,
             dateTime: splitData[0]?.slice(1, -1),
             severity: splitData[1]?.slice(1, -1), // Убираем квадратные скобки
             message: splitData[2],
@@ -80,25 +111,49 @@ function LogViewerBody() {
     };
 
     const filteredLogs = useMemo(
-        () => logs.filter((log) => currentFilter[log.severity]),
+        () => logs.filter((log) => log.severity === "STATUS" || currentFilter[log.severity]),
         [logs, currentFilter]
     );
 
+    const scrollToBottom = () => {
+        if (logsContainerRef.current) {
+            logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight;
+        }
+    };
+
     // TODO Идея фильтровать колонки (убирать дату, тип лога и т.д.)
-    const renderLogPart = filteredLogs.map((log) => (
-        <Text
-            key={log.id}
-            whiteSpace={isLogTextWrapped ? "pre-wrap" : "pre"}
-            fontFamily={"monospace"}
-            fontSize={logTextSize}
-            color={getColor(log.severity)}
-        >
-            {`${log.id.toString().padEnd(4)}\t[${log.dateTime}]\t[${log.severity}]\t{${log.message}}`}
-        </Text>
-    ));
+    const renderLogPart = filteredLogs.map((log) => {
+        if (log.severity === "STATUS") {
+            return (
+                <Flex key={`pause-${logIndex++}`} justify={"center"}>
+                    <Badge
+                        colorPalette="green"
+                        textAlign={"center"}
+                        size={"md"}
+                    >
+                        {log.message}
+                    </Badge>
+                </Flex>
+            );
+        }
+
+        return (
+            <Text
+                key={log.id}
+                whiteSpace={isLogTextWrapped ? "pre-wrap" : "pre"}
+                fontFamily={"monospace"}
+                fontSize={logTextSize}
+                color={getColor(log.severity)}
+            >
+                {
+                    `${log.id}\t[${log.dateTime}]\t${("["+log.severity+"]").toString().padStart(9)}\t${log.message}`
+                }
+            </Text>
+        );
+    });
     
     return (
-        <Box flex={"1"} minH={"0"} overflow="auto">
+        <Box ref={logsContainerRef} flex={"1"} minH={"0"} overflow="auto">
             {renderLogPart}
         </Box>
     );

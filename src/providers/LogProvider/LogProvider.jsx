@@ -7,15 +7,20 @@ const initialState = {
     isLogTextWrapped: false,
     logTextSize: 14,
     currentFilter: { WARNING: true, ERROR: true, INFO: true },
-    logs: []
+    logs: [],
+    pausedLogs: [],
 };
 
 function logReducer(state, action) {
     switch (action.type) {
     case "ADD_LOGS":
-        return { ...state, logs: [...action.payload] };
+        return { ...state, logs: [...state.logs, ...action.payload] };
     case "CLEAR_LOGS":
         return { ...state, logs: [] };
+    case "ADD_PAUSED_LOGS":
+        return { ...state, pausedLogs: [...state.pausedLogs, ...action.payload] };
+    case "CLEAR_PAUSED_LOGS":
+        return { ...state, pausedLogs: [] };
     case "TOGGLE_WRAP":
         return { ...state, isLogTextWrapped: !state.isLogTextWrapped };
     case "TOGGLE_PAUSE":

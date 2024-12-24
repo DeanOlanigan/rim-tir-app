@@ -1,4 +1,5 @@
-import { Box, Button, Flex, createListCollection } from "@chakra-ui/react";
+import { Box, Flex, createListCollection } from "@chakra-ui/react";
+import { Button } from "../../components/ui/button";
 import { Tooltip } from "../../components/ui/tooltip";
 import { LuDownload, LuEye, LuEyeClosed } from "react-icons/lu";
 import { 
@@ -12,7 +13,7 @@ import {
 import { useLogContext } from "../../providers/LogProvider/LogContext";
 import PropTypes from "prop-types";
 
-function LogFileViewerControls({ selectedLog, loading, onViewBtnClick }) {
+function LogFileViewerControls({ selectedLog, isLoading, onViewBtnClick }) {
     const { logData, updateLogData } = useLogContext();
 
     const rows = createListCollection({
@@ -34,7 +35,7 @@ function LogFileViewerControls({ selectedLog, loading, onViewBtnClick }) {
                 <Button 
                     shadow={"xl"}
                     size={"xs"}
-                    loading={loading}
+                    loading={isLoading}
                     variant="outline">
                     <LuDownload />
                 </Button>
@@ -80,8 +81,8 @@ function LogFileViewerControls({ selectedLog, loading, onViewBtnClick }) {
     );
 }
 LogFileViewerControls.propTypes = {
-    loading: PropTypes.bool,
-    selectedLog: PropTypes.string,
+    isLoading: PropTypes.bool,
+    selectedLog: PropTypes.object,
     onViewBtnClick: PropTypes.func
 };
 
