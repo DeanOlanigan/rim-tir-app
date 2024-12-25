@@ -3,32 +3,34 @@ import { LuTriangleAlert } from "react-icons/lu";
 import websocketService from "../../services/websocketService";
 import { useEffect, useState } from "react";
 
+const wsService = new websocketService("ws://192.168.1.1:8800");
+
 function ConnectionStatus() {
     const [serverTime, setServerTime] = useState("");
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
-        websocketService.connect();
+        wsService.connect();
 
         const messageHandler = (message) => {
-            console.log(message[0]?.routerTime);
+            //console.log(message[0]?.routerTime);
             setServerTime(message[0]?.routerTime || "");
         };
 
-        websocketService.addMessageHandler(messageHandler);
+        wsService.addMessageHandler(messageHandler);
 
         let t = 0;
         const internal = setInterval(() => {
-            setIsConnected(websocketService.isConnected);
-            if (websocketService.isConnected) {
-                websocketService.sendMessage({ sys: ["OK", t] });
+            setIsConnected(wsService.isConnected);
+            if (wsService.isConnected) {
+                wsService.sendMessage({ sys: ["OK", t] });
                 t++;
             }
         }, 1000);
 
         return () => {
             clearInterval(internal);
-            websocketService.removeMessageHandler(messageHandler);
+            wsService.removeMessageHandler(messageHandler);
         };
     }, []);
 

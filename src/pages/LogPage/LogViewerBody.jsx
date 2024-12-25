@@ -3,6 +3,7 @@ import { useLogContext } from "../../providers/LogProvider/LogContext";
 import { toaster } from "../../components/ui/toaster"; // Chakra UI toaster
 import { Text, Box, Badge, Flex } from "@chakra-ui/react";
 import websocketService from "../../services/websocketService";
+const wsService = new websocketService("ws://192.168.1.1:8800");
 
 function LogViewerBody() {
     const { logData, setIsLogLoaded, state, dispatch } = useLogContext();
@@ -56,26 +57,25 @@ function LogViewerBody() {
     }, []);
 
     useEffect(() => {
-        websocketService.connect();
+        wsService.connect();
 
         const messageHandler = (message) => {
-            console.log(message);
+            //console.log(message);
             handleNewLog(message);
         };
 
-        websocketService.addMessageHandler(messageHandler);
-        if (websocketService.isConnected) {
-            websocketService.sendMessage({ log: {fileName: logData.name, type: logData.type} });
-        }
+        wsService.addMessageHandler(messageHandler);
+        
+        wsService.sendMessage({ log: {fileName: logData.name, type: logData.type} });
 
         return () => {
-            websocketService.removeMessageHandler(messageHandler);
-            websocketService.close();
+            wsService.removeMessageHandler(messageHandler);
+            wsService.close();
         };
     }, []);
 
     const handleNewLog = (log) => {
-        console.log(isPausedRef.current);
+        //console.log(isPausedRef.current);
         if (isPausedRef.current) {
             appendLogs("ADD_PAUSED_LOGS", log);
         } else {

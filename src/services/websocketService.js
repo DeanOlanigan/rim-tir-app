@@ -2,20 +2,12 @@
 //TODO Добавить идентификацию хендлеров по типу
 
 class WebSocketService {
-    static instance;
-
     constructor(url) {
-        if (WebSocketService.instance) {
-            return WebSocketService.instance;
-        }
-
         this.url = url;
         this.socket = null;
         this.reconnectInterval = 5000;
-        this.messageHandlers = [];
+        this.messageHandlers = null;
         this.isConnected = false;
-
-        WebSocketService.instance = this;
     }
 
     connect() {
@@ -35,17 +27,16 @@ class WebSocketService {
 
                 try {
                     const message = JSON.parse(event.data);
-                    this.messageHandlers.forEach((handler) => handler(message));
+                    this.messageHandlers(message);
                 } catch {
-                    console.warn("Invalid JSON received:", event.data);
-                    this.messageHandlers.forEach((handler) => handler(event.data));
+                    //console.warn("Invalid JSON received:", event.data);
+                    this.messageHandlers(event.data);
                 }
             };
 
             this.socket.onclose = () => {
                 console.log("WebSocket closed");
                 this.isConnected = false;
-                setTimeout(() => this.connect(), this.reconnectInterval);
             };
 
             this.socket.onerror = (error) => {
@@ -60,15 +51,16 @@ class WebSocketService {
             this.socket.send(JSON.stringify(message));
         } else {
             console.warn("WebSocket is not open");
+            setTimeout(() => this.sendMessage(message), 500);
         }
     }
 
     addMessageHandler(handler) {
-        this.messageHandlers.push(handler);
+        this.messageHandlers = handler;
     }
 
-    removeMessageHandler(handler) {
-        this.messageHandlers = this.messageHandlers.filter(h => h !== handler);
+    removeMessageHandler() {
+        this.messageHandlers = null;
     }
 
     close() {
@@ -79,4 +71,4 @@ class WebSocketService {
     }
 }
 
-export default new WebSocketService("ws://192.168.1.1:8800");
+export default WebSocketService;
