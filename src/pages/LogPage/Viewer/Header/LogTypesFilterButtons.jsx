@@ -1,9 +1,14 @@
 import { CheckboxCard, CheckboxGroup, Group } from "@chakra-ui/react";
 import { LuCircleAlert, LuInfo, LuTriangleAlert } from "react-icons/lu";
-import { useLogContext } from "../../providers/LogProvider/LogContext";
+import { useLogViewerContext } from "../../../../providers/LogViewerProvider/LogViewerContext";
+import { useEffect } from "react";
 
 function LogTypesFilterButtons() {
-    const { dispatch } = useLogContext();
+    const { setCurrentFilter } = useLogViewerContext();
+
+    useEffect(() => {
+        console.log("LogTypesFilterButtons useEffect triggered");
+    });
 
     return (
         <CheckboxGroup
@@ -13,7 +18,7 @@ function LogTypesFilterButtons() {
                     ERROR: activeFilters.includes("ERROR"),
                     INFO: activeFilters.includes("INFO"),
                 };
-                dispatch({ type: "SET_FILTER", payload: newFilterState });
+                setCurrentFilter(newFilterState);
             }}
             defaultValue={["WARNING", "ERROR", "INFO"]}
         >

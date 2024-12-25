@@ -3,22 +3,25 @@ import { LuArrowLeft } from "react-icons/lu";
 import LogName from "./LogName";
 import LogTypesFilterButtons from "./LogTypesFilterButtons";
 import LogToolBox from "./LogToolBox";
-import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
-function LogViewerHeader({ onBackBtnClick }) {
+function LogViewerHeader() {
     return (
         <HStack align={"center"} justify={"space-between"} gap={"4"}>
-            <IconButton size={"xs"} shadow={"md"} variant={"outline"} onClick={onBackBtnClick}>
-                <LuArrowLeft/>
-            </IconButton>
-            <LogName/>        
+            <Link to="/log" >
+                <IconButton
+                    size={"xs"}
+                    shadow={"md"}
+                    variant={"outline"}
+                >
+                    <LuArrowLeft/>
+                </IconButton>
+            </Link>
+            <LogName/>
             <LogTypesFilterButtons/>
             <LogToolBox/>
         </HStack>
     );
 }
-LogViewerHeader.propTypes = {
-    onBackBtnClick: PropTypes.func
-};
 
 export default LogViewerHeader;

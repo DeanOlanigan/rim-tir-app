@@ -1,15 +1,18 @@
 import { Text, Card, Box, Group, AbsoluteCenter, Spinner } from "@chakra-ui/react";
-import { RadioCardItem, RadioCardRoot } from "../../components/ui/radio-card";
+import { RadioCardItem, RadioCardRoot } from "../../../components/ui/radio-card";
 import PropTypes from "prop-types";
-import { useLogContext } from "../../providers/LogProvider/LogContext";
-
+import { useLogContext } from "../../../providers/LogProvider/LogContext";
+import { useNavigate } from "react-router-dom";
 import DownloadAllLogsButton from "./DownloadAllLogsButton";
+import { useEffect } from "react";
 
-function LogSelectionCard({ headingText, logList, loading, selectedLog, onSelectLog, onChooseLog }) {
-    const { updateLogData } = useLogContext();
-    const handleSelect = (log) => {
-        onSelectLog(log);
-    };
+function LogSelectionCard({ headingText, logList, loading }) {
+    const { logData, updateLogData } = useLogContext();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        console.log("RENDER LogSelectionCard");
+    });
     
     const logType = headingText === "Логи во внутренней памяти роутера" ? "r" :
         headingText === "Логи на SD карте роутера" ? "sd" : "";
@@ -40,9 +43,7 @@ function LogSelectionCard({ headingText, logList, loading, selectedLog, onSelect
                             variant="outline"
                             onValueChange={
                                 (log) => {
-                                    handleSelect(log.value);
                                     let params = logList.filter((item) => item.name === log.value)[0];
-                                    params.type = headingText;
                                     updateLogData({
                                         name: params.name,
                                         size: formatFileSize(params.size),
@@ -54,16 +55,16 @@ function LogSelectionCard({ headingText, logList, loading, selectedLog, onSelect
                             onKeyUp={
                                 (e) => {
                                     if (e.code === "Enter" || e.code === "Space") {
-                                        onChooseLog();
+                                        navigate("viewer");
                                     }
                                 }
                             }
                             onDoubleClick={
                                 () => {
-                                    onChooseLog();
+                                    navigate("viewer");
                                 }
                             }
-                            value={selectedLog.type === headingText ? selectedLog.name : null}>
+                            value={logData.type === logType ? logData.name : null}>
                             <Group attached orientation={"vertical"}>
                                 {logList.map((log, index) => (
                                     <RadioCardItem
@@ -86,7 +87,7 @@ function LogSelectionCard({ headingText, logList, loading, selectedLog, onSelect
                 </AbsoluteCenter>
             </Card.Body>
             <Card.Footer>
-                <DownloadAllLogsButton headingText={headingText} loading={loading} />
+                <DownloadAllLogsButton type={logData.type} loading={loading} />
             </Card.Footer>
 
         </Card.Root>
@@ -96,9 +97,6 @@ LogSelectionCard.propTypes = {
     headingText: PropTypes.string,
     logList: PropTypes.array,
     loading: PropTypes.bool,
-    selectedLog: PropTypes.object,
-    onSelectLog: PropTypes.func,
-    onChooseLog: PropTypes.func
 };
 
 export default LogSelectionCard;

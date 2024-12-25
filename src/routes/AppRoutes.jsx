@@ -41,7 +41,7 @@ function AppRouter() {
                     <Route element={<ProtectedRouter />}>
                         <Route path="/configuration" element={<ConfigurationPage />} />
                         <Route path="/monitoring" element={<MonitoringPage />} />
-                        <Route path="/log" element={<LogPage />} />
+                        <Route path="/log/*" element={<LogPage />} />
                         <Route path="/journal" element={<JournalPage />} />
                         <Route path="*" element={<Navigate to="/configuration" replace />} />
                         <Route path="/" element={<Navigate to="/configuration" replace />} />

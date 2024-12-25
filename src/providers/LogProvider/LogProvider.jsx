@@ -1,38 +1,6 @@
-import { useState, useReducer } from "react";
+import { useState } from "react";
 import { LogContext } from "./LogContext";
 import PropTypes from "prop-types";
-
-const initialState = {
-    isPaused: false,
-    isLogTextWrapped: false,
-    logTextSize: 14,
-    currentFilter: { WARNING: true, ERROR: true, INFO: true },
-    logs: [],
-    pausedLogs: [],
-};
-
-function logReducer(state, action) {
-    switch (action.type) {
-    case "ADD_LOGS":
-        return { ...state, logs: [...state.logs, ...action.payload] };
-    case "CLEAR_LOGS":
-        return { ...state, logs: [] };
-    case "ADD_PAUSED_LOGS":
-        return { ...state, pausedLogs: [...state.pausedLogs, ...action.payload] };
-    case "CLEAR_PAUSED_LOGS":
-        return { ...state, pausedLogs: [] };
-    case "TOGGLE_WRAP":
-        return { ...state, isLogTextWrapped: !state.isLogTextWrapped };
-    case "TOGGLE_PAUSE":
-        return { ...state, isPaused: !state.isPaused };
-    case "SET_FILTER":
-        return { ...state, currentFilter: action.payload };
-    case "SET_TEXT_SIZE":
-        return { ...state, logTextSize: action.payload };
-    default:
-        return state;
-    }
-}
 
 function LogProvider({ children }) {
     const [logData, setLogData] = useState({
@@ -42,8 +10,6 @@ function LogProvider({ children }) {
         type: "",
         rows: "500",
     });
-    const [isLogLoaded, setIsLogLoaded] = useState(false);
-    const [state, dispatch] = useReducer(logReducer, initialState);
 
     const updateLogData = (data) => {
         setLogData((prev) => ({ ...prev, ...data }));
@@ -54,9 +20,6 @@ function LogProvider({ children }) {
             value={{
                 logData,
                 updateLogData,
-                isLogLoaded,
-                setIsLogLoaded,
-                state, dispatch
             }}
         >
             {children}

@@ -1,23 +1,32 @@
 import { useEffect, useMemo, useRef } from "react";
-import { useLogContext } from "../../providers/LogProvider/LogContext";
-import { toaster } from "../../components/ui/toaster"; // Chakra UI toaster
 import { Text, Box, Badge, Flex } from "@chakra-ui/react";
-import websocketService from "../../services/websocketService";
+import { toaster } from "../../../components/ui/toaster"; // Chakra UI toaster
+
+import { useLogContext } from "../../../providers/LogProvider/LogContext";
+import { useLogViewerContext } from "../../../providers/LogViewerProvider/LogViewerContext";
+
+import websocketService from "../../../services/websocketService";
 const wsService = new websocketService("ws://192.168.1.1:8800");
 
 function LogViewerBody() {
-    const { logData, setIsLogLoaded, state, dispatch } = useLogContext();
-    const { isLogTextWrapped, logTextSize, currentFilter, logs, isPaused } = state;
-    const isPausedRef = useRef(isPaused);
-    const logsContainerRef = useRef(null);
-    let logIndex = 1;
+    const { logData } = useLogContext();
+    const {
+        isPaused,
+        isLogTextWrapped,
+        logTextSize,
+        currentFilter,
+        logs,
+        setLogs,
+        pausedLogs,
+        setPausedLogs
+    } = useLogViewerContext();
+    const isPausedRef = useRef();
     
-    useEffect(() => {
-        isPausedRef.current = isPaused; // Обновляем реф при каждом изменении isPaused
-    }, [isPaused]);
+    const logsContainerRef = useRef(null);
+    let logIndex = 0;
 
     useEffect(() => {
-        if (!isPaused){
+        if (!isPaused) {
             scrollToBottom();
         }
     }, [logs, isPaused]);
@@ -32,7 +41,6 @@ function LogViewerBody() {
                 }
                 const result = await response.json();
                 if (result.code === 200) {
-                    dispatch({type: "CLEAR_LOGS"});
                     appendLogs("ADD_LOGS", result.data);
                 } else {
                     throw new Error(result.message || "Неизвестная ошибка");
@@ -43,16 +51,10 @@ function LogViewerBody() {
                     description: error.message,
                     type: "error",
                 });
-            } finally {
-                setIsLogLoaded(true);
             }
         };
 
         fetchLogs();
-
-        return () => {
-            setIsLogLoaded(false);
-        };
 
     }, []);
 
@@ -75,11 +77,11 @@ function LogViewerBody() {
     }, []);
 
     const handleNewLog = (log) => {
-        //console.log(isPausedRef.current);
         if (isPausedRef.current) {
             appendLogs("ADD_PAUSED_LOGS", log);
         } else {
             appendLogs("ADD_LOGS", log);
+            setPausedLogs([]);
         }
     };
 
@@ -88,7 +90,15 @@ function LogViewerBody() {
         const newLogs = logDataArr.map((element) => extractLogPart(element));
 
         //setLogContent((prevLogs) => [...prevLogs, ...newLogs]);
-        dispatch({ type: type, payload: newLogs });
+        
+        switch (type) {
+        case "ADD_LOGS":
+            setLogs(newLogs);
+            break;
+        case "ADD_PAUSED_LOGS":
+            setPausedLogs(newLogs);
+            break;
+        }
     };
 
     const extractLogPart = (line) => {
@@ -111,7 +121,9 @@ function LogViewerBody() {
     };
 
     const filteredLogs = useMemo(
-        () => logs.filter((log) => log.severity === "STATUS" || currentFilter[log.severity]),
+        () => {
+            return logs.filter((log) => log.severity === "STATUS" || currentFilter[log.severity]);
+        },
         [logs, currentFilter]
     );
 
@@ -151,7 +163,7 @@ function LogViewerBody() {
             </Text>
         );
     });
-    
+
     return (
         <Box ref={logsContainerRef} flex={"1"} minH={"0"} overflow="auto">
             {renderLogPart}

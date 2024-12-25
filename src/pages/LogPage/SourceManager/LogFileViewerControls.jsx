@@ -1,6 +1,6 @@
 import { Box, Flex, createListCollection } from "@chakra-ui/react";
-import { Button } from "../../components/ui/button";
-import { Tooltip } from "../../components/ui/tooltip";
+import { Button } from "../../../components/ui/button";
+import { Tooltip } from "../../../components/ui/tooltip";
 import { LuDownload, LuEye, LuEyeClosed } from "react-icons/lu";
 import { 
     SelectContent,
@@ -9,12 +9,18 @@ import {
     SelectRoot,
     SelectTrigger,
     SelectValueText
-} from "../../components/ui/select";
-import { useLogContext } from "../../providers/LogProvider/LogContext";
+} from "../../../components/ui/select";
+import { useLogContext } from "../../../providers/LogProvider/LogContext";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import { useEffect } from "react";
 
-function LogFileViewerControls({ selectedLog, isLoading, onViewBtnClick }) {
+function LogFileViewerControls({ isLoading }) {
     const { logData, updateLogData } = useLogContext();
+
+    useEffect(() => {
+        console.log("RENDER LogFileViewerControls");
+    });
 
     const rows = createListCollection({
         items: [
@@ -31,8 +37,9 @@ function LogFileViewerControls({ selectedLog, isLoading, onViewBtnClick }) {
         <Flex direction={"row"} align={"end"} justify={"start"} gap={"2"} >
             <Tooltip
                 content={"Скачать все логи"}
-            >    
-                <Button 
+            >
+                <Button
+                    hidden
                     shadow={"xl"}
                     size={"xs"}
                     loading={isLoading}
@@ -41,7 +48,7 @@ function LogFileViewerControls({ selectedLog, isLoading, onViewBtnClick }) {
                 </Button>
             </Tooltip>
             <Box>
-                <SelectRoot 
+                <SelectRoot
                     collection={rows}
                     value={[logData.rows]}
                     size={"xs"}
@@ -65,17 +72,18 @@ function LogFileViewerControls({ selectedLog, isLoading, onViewBtnClick }) {
             <Tooltip
                 content={"Просмотр выбранного файла"}
             >
-                <Button 
-                    shadow={"xl"}
-                    size={"xs"}
-                    disabled={!selectedLog.name}
-                    variant="outline"
-                    onClick={() =>onViewBtnClick(selectedLog)}
-                >
-                    {
-                        selectedLog.name ? <LuEye /> : <LuEyeClosed />
-                    }
-                </Button>
+                <Link to="viewer">
+                    <Button
+                        shadow={"xl"}
+                        size={"xs"}
+                        disabled={!logData.name}
+                        variant="outline"
+                    >
+                        {
+                            logData.name ? <LuEye /> : <LuEyeClosed />
+                        }
+                    </Button>
+                </Link>
             </Tooltip>
         </Flex>
     );

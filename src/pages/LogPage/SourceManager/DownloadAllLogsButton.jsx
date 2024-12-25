@@ -1,20 +1,14 @@
-import { Button } from "../../components/ui/button";
+import { useEffect } from "react";
+import { Button } from "../../../components/ui/button";
 import { LuDownload } from "react-icons/lu";
 import PropTypes from "prop-types";
 
-function DownloadAllLogsButton({ headingText, loading }) {
+function DownloadAllLogsButton({ type, loading }) {
 
-    let type = "";
-    switch (headingText) {
-    case "Логи на SD карте роутера":
-        type = "sd";
-        break;
-    case "Логи во внутренней памяти роутера":
-    default:
-        type = "r";
-        break;
-    }
-
+    useEffect(() => {
+        console.log("RENDER DownloadAllLogsButton");
+    });
+            
     const fetchDownload = async () => {
         try {
             const response = await fetch(`/api/v1/getArchive?archive=logs&type=${type}`);
@@ -74,7 +68,7 @@ function DownloadAllLogsButton({ headingText, loading }) {
     );
 }
 DownloadAllLogsButton.propTypes = {
-    headingText: PropTypes.string,
+    type: PropTypes.string,
     loading: PropTypes.bool,
 };
 
