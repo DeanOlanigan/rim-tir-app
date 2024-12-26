@@ -1,18 +1,21 @@
-import { useReducer, useMemo } from "react";
+import { useReducer, useMemo, useEffect } from "react";
 import { LogViewerContext } from "./LogViewerContext";
 import PropTypes from "prop-types";
 
-const initialState = {
-    isPaused: false,
-    isLogTextWrapped: false,
-    logTextSize: 14,
-    currentFilter: {
-        WARNING: true,
-        ERROR: true,
-        INFO: true,
-    },
-    logs: [],
-    pausedLogs: [],
+function initialState() {
+    const savedSettings = JSON.parse(localStorage.getItem("user-settings")) || {};
+    return {
+        isPaused: false,
+        isLogTextWrapped: savedSettings.isLogTextWrapped ?? false,
+        logTextSize: savedSettings.logTextSize ?? 14,
+        currentFilter: {
+            WARNING: true,
+            ERROR: true,
+            INFO: true,
+        },
+        logs: [],
+        pausedLogs: [],
+    };
 };
 
 function reducer(state, action) {
@@ -54,7 +57,17 @@ function reducer(state, action) {
 }
 
 function LogViewerProvider({ children }) {
-    const [state, dispatch] = useReducer(reducer, initialState);
+    const [state, dispatch] = useReducer(reducer, undefined, initialState);
+
+    useEffect(() => {
+        const savedSettings = JSON.parse(localStorage.getItem("user-settings")) || {};
+        const userSettings = {
+            ...savedSettings,
+            isLogTextWrapped: state.isLogTextWrapped,
+            logTextSize: state.logTextSize 
+        };
+        localStorage.setItem("user-settings", JSON.stringify(userSettings));
+    }, [state.isLogTextWrapped, state.logTextSize]);
 
     const value = useMemo(() => ({
         ...state,
