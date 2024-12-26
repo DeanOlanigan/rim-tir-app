@@ -11,7 +11,7 @@ function LogViewerHeader() {
             <Link to="/log" >
                 <IconButton
                     size={"xs"}
-                    shadow={"md"}
+                    shadow={"xs"}
                     variant={"outline"}
                 >
                     <LuArrowLeft/>

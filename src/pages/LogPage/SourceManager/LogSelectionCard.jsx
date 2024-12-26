@@ -1,10 +1,12 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Text, Card, Box, Group, AbsoluteCenter, Spinner } from "@chakra-ui/react";
 import { RadioCardItem, RadioCardRoot } from "../../../components/ui/radio-card";
-import PropTypes from "prop-types";
 import { useLogContext } from "../../../providers/LogProvider/LogContext";
-import { useNavigate } from "react-router-dom";
+
 import DownloadAllLogsButton from "./DownloadAllLogsButton";
-import { useEffect } from "react";
+
+import PropTypes from "prop-types";
 
 function LogSelectionCard({ headingText, logList, loading }) {
     const { logData, updateLogData } = useLogContext();

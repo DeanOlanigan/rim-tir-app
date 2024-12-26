@@ -22,7 +22,7 @@ function LogTypesFilterButtons() {
             }}
             defaultValue={["WARNING", "ERROR", "INFO"]}
         >
-            <Group attached shadow={"md"}>
+            <Group attached shadow={"xs"}>
                 <CheckboxCard.Root variant={"surface"} colorPalette={"yellow"} value={"WARNING"} key={"WARNING"}>
                     <CheckboxCard.HiddenInput />
                     <CheckboxCard.Control p={"0.45rem"}>
