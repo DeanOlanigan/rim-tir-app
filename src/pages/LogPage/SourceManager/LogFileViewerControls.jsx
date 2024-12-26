@@ -34,7 +34,17 @@ function LogFileViewerControls({ isLoading }) {
     });
 
     return (
-        <Flex direction={"row"} align={"end"} justify={"start"} gap={"2"} >
+        <Flex
+            direction={"row"}
+            align={"end"}
+            justify={"start"}
+            gap={"2"}
+            data-state={"open"}
+            animationDuration={"slow"}
+            animationStyle={{
+                _open: "scale-fade-in",
+            }}
+        >
             <Tooltip
                 content={"Скачать все логи"}
             >

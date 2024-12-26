@@ -41,13 +41,7 @@ function LogSourceManager() {
     }, []);
 
     return (
-        <Stack 
-            data-state={"open"}
-            animationDuration={"slow"}
-            animationStyle={{
-                _open: "scale-fade-in",
-            }}
-        >
+        <Stack>
             <Heading>Выберите файл</Heading>
 
             <LogFileViewerControls 

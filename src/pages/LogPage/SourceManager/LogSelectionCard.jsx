@@ -32,7 +32,15 @@ function LogSelectionCard({ headingText, logList, loading }) {
     };
 
     return (
-        <Card.Root w={"100%"} shadow={"xl"}>
+        <Card.Root
+            w={"100%"}
+            shadow={"xl"}
+            data-state={"open"}
+            animationDuration={"slow"}
+            animationStyle={{
+                _open: "scale-fade-in",
+            }}
+        >
             <Card.Header>
                 <Card.Title>{headingText}</Card.Title>
             </Card.Header>
