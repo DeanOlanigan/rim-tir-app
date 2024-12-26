@@ -87,7 +87,7 @@ function LogSelectionCard({ headingText, logList, loading }) {
                 </AbsoluteCenter>
             </Card.Body>
             <Card.Footer>
-                <DownloadAllLogsButton type={logData.type} loading={loading} />
+                <DownloadAllLogsButton type={logType} loading={loading} />
             </Card.Footer>
 
         </Card.Root>

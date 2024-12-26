@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Button } from "../../../components/ui/button";
+import { toaster } from "../../../components/ui/toaster";
 import { LuDownload } from "react-icons/lu";
 import PropTypes from "prop-types";
 
@@ -18,8 +19,7 @@ function DownloadAllLogsButton({ type, loading }) {
             const result = await response.json();
             if (result.code === 202) {
                 localStorage.setItem("logTaskId", result.data.task_id);
-                checkStatus(result.data.task_id);
-                alert(`TASK STARTED ${result.message}`);
+                return result.data.task_id;
             } else {
                 throw new Error(result.message || "Неизвестная ошибка");
             }
@@ -41,19 +41,43 @@ function DownloadAllLogsButton({ type, loading }) {
                 let fileName = result.data.file;
                 let taskId = result.data.task_id;
                 window.location.href = `api/v1/getReadyArchive?file=${fileName}&task_id=${taskId}`;
-                alert(`Файл ${fileName}, Задача ${taskId}`);
+                return `Файл ${fileName} готов`;
             }
             if (response.ok && result.message == "Задача выполняется") {
                 console.log(result.data.status);
-                setTimeout(() =>checkStatus(taskId), 1000);
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                return checkStatus(taskId);
             }
         } catch (err) {
-            alert(err);
+            localStorage.removeItem("logTaskId");
+            throw new Error(`Ошибка: ${err.message}`);
         }
     };
 
     const downloadAllLogFiles = () => {
-        fetchDownload();
+        //fetchDownload();
+        toaster.promise(
+            (
+                async () => {
+                    const taskId = await fetchDownload();
+                    return await checkStatus(taskId);   
+                }
+            )(),
+            {
+                loading: {
+                    title: "Идет формирование архива...",
+                    description: "Пожалуйста, подождите.",
+                },
+                success: (result) => ({
+                    title: "Готово",
+                    description: result,
+                }),
+                error: (error) => ({
+                    title: "Ошибка",
+                    description: error,
+                }),
+            }
+        );
     };
 
     return (
