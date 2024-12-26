@@ -16,11 +16,10 @@ function LogToolBox() {
         isPaused,
         setIsPaused,
         isLogTextWrapped,
-        setIsLogTextWrapped,
+        toggleWrap,
         logTextSize,
         setLogTextSize,
-        setLogs,
-        setPausedLogs
+        clearLogs,
     } = useLogViewerContext();
     const { logData } = useLogContext();
 
@@ -29,7 +28,7 @@ function LogToolBox() {
     };
 
     return (
-        <Group attached>
+        <Group attached shadow={"xs"}>
             <IconButton size={"xs"} variant={"outline"} onClick={handleDownload}><LuDownload/></IconButton>
             <IconButton size={"xs"} variant={"outline"}
                 onClick={() => setLogTextSize(logTextSize + 1)}>
@@ -42,7 +41,7 @@ function LogToolBox() {
             <CheckboxCard.Root
                 variant={"surface"}
                 checked={isLogTextWrapped}
-                onCheckedChange={() => setIsLogTextWrapped(!isLogTextWrapped)}
+                onCheckedChange={() => toggleWrap()}
             >    
                 <CheckboxCard.HiddenInput />   
                 <CheckboxCard.Control p={"0.45rem"}>
@@ -53,9 +52,6 @@ function LogToolBox() {
                 variant={"surface"}
                 checked={isPaused}
                 onCheckedChange={() => {
-                    if (isPaused) {
-                        setPausedLogs([]);
-                    }
                     setIsPaused(!isPaused);
                 }}
             >
@@ -70,8 +66,7 @@ function LogToolBox() {
             </CheckboxCard.Root>
             <IconButton size={"xs"} variant={"outline"}
                 onClick={() => {
-                    setLogs([]);
-                    setPausedLogs([]);
+                    clearLogs();
                 }}>
                 <LuEraser/>
             </IconButton>

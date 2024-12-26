@@ -27,7 +27,7 @@ function reducer(state, action) {
             logs: action.payload 
                 ? [...state.logs, { severity: "STATUS", message: "Paused" }]
                 : [...state.logs, ...state.pausedLogs, { severity: "STATUS", message: "Resumed" }],
-            pausedLogs: action.payload ? [] : [],
+            pausedLogs: [],
         };
     case "TOGGLE_WRAP":
         return { ...state, isLogTextWrapped: action.payload };
@@ -46,13 +46,14 @@ function reducer(state, action) {
             ...state,
             logs: [...state.logs, ...action.payload], 
         };
-    case "SET_PAUSED_LOGS":
+    case "CLEAR_LOGS":
         return {
             ...state,
-            pausedLogs: [ ...state.pausedLogs, ...action.payload]
+            logs: [],
+            pausedLogs: [],
         };
     default:
-        return state;
+        throw new Error(`Unknown action type: ${action.type}`);
     }
 }
 
@@ -76,7 +77,7 @@ function LogViewerProvider({ children }) {
         setLogTextSize: (logTextSize) => dispatch({ type: "SET_TEXT_SIZE", payload: logTextSize }),
         setCurrentFilter: (currentFilter) => dispatch({ type: "SET_FILTER", payload: currentFilter }),
         setLogs: (logs) => dispatch({ type: "ADD_LOGS", payload: logs }),
-        setPausedLogs: (pausedLogs) => dispatch({ type: "SET_PAUSED_LOGS", payload: pausedLogs }),
+        clearLogs: () => dispatch({ type: "CLEAR_LOGS" }),
     }), [state]);
 
     return (

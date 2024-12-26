@@ -17,13 +17,10 @@ function LogViewerBody() {
         currentFilter,
         logs,
         setLogs,
-        pausedLogs,
-        setPausedLogs
     } = useLogViewerContext();
-    const isPausedRef = useRef();
     
     const logsContainerRef = useRef(null);
-    let logIndex = 0;
+    let logIndex = 1;
 
     useEffect(() => {
         if (!isPaused) {
@@ -41,7 +38,7 @@ function LogViewerBody() {
                 }
                 const result = await response.json();
                 if (result.code === 200) {
-                    appendLogs("ADD_LOGS", result.data);
+                    appendLogs(result.data);
                 } else {
                     throw new Error(result.message || "Неизвестная ошибка");
                 }
@@ -63,7 +60,7 @@ function LogViewerBody() {
 
         const messageHandler = (message) => {
             //console.log(message);
-            handleNewLog(message);
+            appendLogs(message);
         };
 
         wsService.addMessageHandler(messageHandler);
@@ -76,29 +73,10 @@ function LogViewerBody() {
         };
     }, []);
 
-    const handleNewLog = (log) => {
-        if (isPausedRef.current) {
-            appendLogs("ADD_PAUSED_LOGS", log);
-        } else {
-            appendLogs("ADD_LOGS", log);
-            setPausedLogs([]);
-        }
-    };
-
-    const appendLogs = (type, data) => {
+    const appendLogs = (data) => {
         const logDataArr = data.split("\n").filter((line) => line);
         const newLogs = logDataArr.map((element) => extractLogPart(element));
-
-        //setLogContent((prevLogs) => [...prevLogs, ...newLogs]);
-        
-        switch (type) {
-        case "ADD_LOGS":
-            setLogs(newLogs);
-            break;
-        case "ADD_PAUSED_LOGS":
-            setPausedLogs(newLogs);
-            break;
-        }
+        setLogs(newLogs);
     };
 
     const extractLogPart = (line) => {
@@ -140,8 +118,10 @@ function LogViewerBody() {
                 <Flex key={`pause-${logIndex++}`} justify={"center"}>
                     <Badge
                         colorPalette="green"
-                        textAlign={"center"}
+                        variant={"surface"}
                         size={"md"}
+                        w={"100%"}
+                        mx={"2"}
                     >
                         {log.message}
                     </Badge>
@@ -158,7 +138,7 @@ function LogViewerBody() {
                 color={getColor(log.severity)}
             >
                 {
-                    `${log.id}\t[${log.dateTime}]\t${("["+log.severity+"]").toString().padStart(9)}\t${log.message}`
+                    `[${log.dateTime}]\t${("["+log.severity+"]").toString().padStart(9)}\t${log.message}`
                 }
             </Text>
         );
