@@ -1,7 +1,32 @@
- main {
-  flex-grow: 1;
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
- }
+main {
+    flex-grow: 1;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: var(--chakra-colors-bg-muted);
+}
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: var(--chakra-colors-bg-inverted);
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+    background: var(--chakra-colors-bg-emphasized);
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
