@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Text, Card, Box, Group, AbsoluteCenter, Spinner } from "@chakra-ui/react";
 import { RadioCardItem, RadioCardRoot } from "../../../components/ui/radio-card";
@@ -9,8 +9,10 @@ import DownloadAllLogsButton from "./DownloadAllLogsButton";
 import PropTypes from "prop-types";
 
 function LogSelectionCard({ headingText, logList, loading }) {
-    const { logData, updateLogData } = useLogContext();
+    const { logData, updateLogData, saveChosenLogToLocalStorage } = useLogContext();
     const navigate = useNavigate();
+    const [scrollShadow, setScrollShadow] = useState("none");
+    const scrollRef = useRef(null);
 
     useEffect(() => {
         console.log("RENDER LogSelectionCard");
@@ -31,6 +33,21 @@ function LogSelectionCard({ headingText, logList, loading }) {
         }
     };
 
+    const handleScroll = () => {
+        if (scrollRef.current) {
+            const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+            const atTop = scrollTop === 0;
+            const atBottom = scrollTop + clientHeight === scrollHeight;
+            if (!atTop && !atBottom) {
+                setScrollShadow("inset 0px 6px 6px -4px rgba(0, 0, 0, 0.2), inset 0px -6px 6px -4px rgba(0, 0, 0, 0.2)");
+            } else if (atTop) {
+                setScrollShadow("inset 0px -6px 6px -4px rgba(0, 0, 0, 0.2)");
+            } else {
+                setScrollShadow("inset 0px 6px 6px -4px rgba(0, 0, 0, 0.2)");
+            }
+        }
+    };
+
     return (
         <Card.Root
             w={"100%"}
@@ -45,12 +62,13 @@ function LogSelectionCard({ headingText, logList, loading }) {
                 <Card.Title>{headingText}</Card.Title>
             </Card.Header>
             <Card.Body position={"relative"}>
-                <Box h={"30vh"} overflowY={"auto"} pe="0.5em">
+                <Box h={"30vh"} overflowY={"auto"} boxShadow={scrollShadow} ref={scrollRef} onScroll={handleScroll} borderRadius={"md"}>
                     {logList && logList.length > 0 ? (
                         <RadioCardRoot 
                             gap={"2"}
-                            size={"md"}
+                            size={"sm"}
                             variant="outline"
+                            p={"0.5"}
                             onValueChange={
                                 (log) => {
                                     let params = logList.filter((item) => item.name === log.value)[0];
@@ -65,12 +83,14 @@ function LogSelectionCard({ headingText, logList, loading }) {
                             onKeyUp={
                                 (e) => {
                                     if (e.code === "Enter" || e.code === "Space") {
+                                        saveChosenLogToLocalStorage();
                                         navigate("viewer");
                                     }
                                 }
                             }
                             onDoubleClick={
                                 () => {
+                                    saveChosenLogToLocalStorage();
                                     navigate("viewer");
                                 }
                             }

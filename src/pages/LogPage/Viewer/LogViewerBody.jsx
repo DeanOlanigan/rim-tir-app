@@ -9,7 +9,7 @@ import websocketService from "../../../services/websocketService";
 const wsService = new websocketService("ws://192.168.1.1:8800");
 
 function LogViewerBody() {
-    const { logData } = useLogContext();
+    const { logData, isLoading } = useLogContext();
     const {
         isPaused,
         isLogTextWrapped,
@@ -29,6 +29,9 @@ function LogViewerBody() {
     }, [logs, isPaused]);
 
     useEffect(() => {
+        if (isLoading) {
+            return;
+        }
         const fetchLogs = async () => {
             
             try {
@@ -53,10 +56,10 @@ function LogViewerBody() {
 
         fetchLogs();
 
-    }, []);
+    }, [isLoading, logData.name, logData.rows, logData.type]);
 
     useEffect(() => {
-        wsService.connect();
+        /* wsService.connect();
 
         const messageHandler = (message) => {
             //console.log(message);
@@ -70,7 +73,7 @@ function LogViewerBody() {
         return () => {
             wsService.removeMessageHandler(messageHandler);
             wsService.close();
-        };
+        }; */
     }, []);
 
     const appendLogs = (data) => {
