@@ -59,7 +59,7 @@ function LogViewerBody() {
     }, [isLoading, logData.name, logData.rows, logData.type]);
 
     useEffect(() => {
-        /* wsService.connect();
+        wsService.connect();
 
         const messageHandler = (message) => {
             //console.log(message);
@@ -73,7 +73,7 @@ function LogViewerBody() {
         return () => {
             wsService.removeMessageHandler(messageHandler);
             wsService.close();
-        }; */
+        };
     }, []);
 
     const appendLogs = (data) => {
