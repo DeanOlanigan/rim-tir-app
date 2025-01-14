@@ -12,7 +12,6 @@ function LogName() {
                 <Text>Дата создания: <Em>{logData.createdAt}</Em></Text>
                 <Text>Размер: <Em>{logData.size}</Em></Text>
                 <Text>Расположение: <Em>{logData.type.toLowerCase()}</Em></Text>
-                <Text>Изначальное количество строк: <Em>{logData.rows}</Em></Text>
             </InfoTip>
         </HStack>
     );

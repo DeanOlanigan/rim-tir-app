@@ -47,12 +47,13 @@ function LoginForm() {
 
                 setSharedMessage({type: "success", message: data.message});
                 setLoading(false);
-                login({
-                    serverTime: data.data.server_time,
-                    sessionTimeLeft: data.data.session_time_left,
-                    csrfToken: data.data.csrf_token
-                });
-                setTimeout(() => navigate("/configuration"), 1000);
+                setTimeout(() => {
+                    login({
+                        serverTime: data.data.server_time,
+                        sessionTimeLeft: data.data.session_time_left,
+                        csrfToken: data.data.csrf_token
+                    });
+                }, 500);
             } else {
                 const errorData = await response.json();
                 setLoading(false);
@@ -104,16 +105,23 @@ function LoginForm() {
                                         })}
                                     />
                                 </Field>
-                                {sharedMessage.type && (
-                        
-                                    <Box>
-                                        <Alert.Root status={sharedMessage.type}>
+                                <Box h={"50px"}>
+                                    {sharedMessage.type && (
+                            
+                                        
+                                        <Alert.Root
+                                            status={sharedMessage.type}
+                                            data-state={"open"}
+                                            animationDuration={"slow"}
+                                            animationStyle={{
+                                                _open: "scale-fade-in",
+                                            }}
+                                        >
                                             <Alert.Indicator />
                                             <Alert.Title>{sharedMessage.message}</Alert.Title>
                                         </Alert.Root>
-                                    </Box>
-                        
-                                )}
+                                    )}
+                                </Box>
                                 <Button loading={loading} size={"xs"} type="submit">
                                     <LuLogIn />
                                     Войти
