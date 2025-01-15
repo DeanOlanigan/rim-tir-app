@@ -3,6 +3,7 @@ import { InfoTip } from "../../../../components/ui/toggle-tip";
 import { useLogContext } from "../../../../providers/LogProvider/LogContext";
 
 function LogName() {
+    console.log("Render LogName");
     const { logData } = useLogContext();
 
     return (

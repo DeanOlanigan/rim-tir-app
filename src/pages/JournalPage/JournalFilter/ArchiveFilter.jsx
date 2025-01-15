@@ -12,10 +12,10 @@ import {
 } from "../../../components/ui/select";
 import { DatePicker } from "../../../components/DatePicker/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { rows, mountType } from "./filterOprions";
-import PropTypes from "prop-types";
+import { rows, mountType } from "./filterOptions";
 
 function ArchiveFilter({ filters, setFilters }) {
+    console.log("Render ArchiveFilter");
     return (
         <Stack p={"1"}>
             <Field orientation="horizontal" label="Архив">
@@ -111,9 +111,6 @@ function ArchiveFilter({ filters, setFilters }) {
             </SelectRoot>
         </Stack>
     );
-};
-ArchiveFilter.propTypes = {
-    setFilters: PropTypes.func,
 };
 
 export default ArchiveFilter;

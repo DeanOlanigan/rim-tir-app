@@ -6,9 +6,10 @@ import {
     SelectTrigger,
     SelectValueText
 } from "../../../components/ui/select";
-import { rows } from "./filterOprions";
+import { rows } from "./filterOptions";
 
 function VariablesChoser({ filters, setFilters }) {
+    console.log("Render VariablesChoser");
     return (
         <SelectRoot
             collection={rows}

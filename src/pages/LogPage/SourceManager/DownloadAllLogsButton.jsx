@@ -1,14 +1,10 @@
-import { useEffect } from "react";
 import { Button } from "../../../components/ui/button";
 import { toaster } from "../../../components/ui/toaster";
 import { LuDownload } from "react-icons/lu";
 import PropTypes from "prop-types";
 
 function DownloadAllLogsButton({ type, loading }) {
-
-    useEffect(() => {
-        console.log("RENDER DownloadAllLogsButton");
-    });
+    console.log("Render DownloadAllLogsButton");
             
     const fetchDownload = async () => {
         try {

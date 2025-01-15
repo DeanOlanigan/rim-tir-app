@@ -1,21 +1,17 @@
-import { useMemo } from "react";
 import { Card, Table, Flex, IconButton, Link, Box, CheckboxGroup } from "@chakra-ui/react";
 import { Checkbox } from "../../../components/ui/checkbox";
 import {
     MenuContent,
-    MenuItem,
     MenuRoot,
     MenuTrigger
 } from "../../../components/ui/menu";
 import { LuPause, LuPlay, LuDownload } from "react-icons/lu";
+import { useJournalContext } from "../../../providers/JournalProvider/JournalContext";
+import { tableColumns } from "../JournalFilter/filterOptions";
 
-function JournalView({ journalData }) {
-    
-    const tableHeaders = useMemo(() => {
-        if (journalData.length === 0) return [];
-        return Object.keys(journalData[0]);
-    }, [journalData]);
-    
+function JournalView() {
+    const { isPaused, journalHeaders, journalRows, setIsPaused, setHeaders } = useJournalContext();
+    console.log("Render JournalView");
     const tableHeadersMap = {
         date: "Дата и время",
         type: "Тип",
@@ -40,7 +36,15 @@ function JournalView({ journalData }) {
                 <Flex justifyContent={"space-between"}>
                     <Flex gap={"1"}>
                         <IconButton variant={"outline"} size={"xs"}><LuDownload/></IconButton>
-                        <IconButton variant={"outline"} size={"xs"}><LuPlay/></IconButton>
+                        <IconButton 
+                            variant={"outline"}
+                            size={"xs"}
+                            onClick={() => setIsPaused(!isPaused)}
+                        >
+                            {
+                                isPaused ? <LuPause/> : <LuPlay/>
+                            }
+                        </IconButton>
                     </Flex>
                     <MenuRoot>
                         <MenuTrigger asChild>
@@ -50,13 +54,13 @@ function JournalView({ journalData }) {
                         </MenuTrigger>
                         <MenuContent>
                             <Box p={"2"}>
-                                <CheckboxGroup>
-                                    <Checkbox value="date">Дата и время</Checkbox>
-                                    <Checkbox value="date">Тип</Checkbox>
-                                    <Checkbox value="date">Переменная   </Checkbox>
-                                    <Checkbox value="date">Описание</Checkbox>
-                                    <Checkbox value="date">Значение</Checkbox>
-                                    <Checkbox value="date">Группа</Checkbox>
+                                <CheckboxGroup
+                                    value={journalHeaders}
+                                    onValueChange={(columns) => setHeaders(columns)}
+                                >
+                                    {tableColumns.map((column) => (
+                                        <Checkbox key={column.value} value={column.value}>{column.label}</Checkbox>
+                                    ))}
                                 </CheckboxGroup>
                             </Box>
                         </MenuContent>
@@ -64,42 +68,40 @@ function JournalView({ journalData }) {
                 </Flex>
             </Card.Header>
             <Card.Body h={"100%"} overflow={"auto"} pt={"0"} mt={"1rem"}>
-                {
-                    // TODO Изменить для постоянного отображения на странице 
-                    // и управлении с помощью чекбоксов выше
-                    tableHeaders && tableHeaders.length > 0 && (
-                        <Table.Root size={"sm"} interactive stickyHeader>
-                            <Table.Header>
-                                <Table.Row justifyContent={"space-between"}>
-                                    {tableHeaders.map((item, index) => {
-                                        return (
-                                            <Table.ColumnHeader key={index}>
-                                                {tableHeadersMap[item]}
-                                            </Table.ColumnHeader>
-                                        );
-                                    })}
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {
-                                    journalData.map((item, index) => {
-                                        return (
-                                            <Table.Row key={index}>
-                                                {
-                                                    tableHeaders.map((column)=> {
-                                                        return (
-                                                            <Table.Cell key={column}>{item[column]}</Table.Cell>
-                                                        );
-                                                    })
-                                                }
-                                            </Table.Row>
-                                        );
-                                    })
-                                }
-                            </Table.Body>
-                        </Table.Root>
-                    )
-                }
+                
+                <Table.Root size={"sm"} interactive stickyHeader>
+                    <Table.Header>
+                        <Table.Row justifyContent={"space-between"}>
+                            {
+                                journalHeaders.map((item) => {
+                                    return (
+                                        <Table.ColumnHeader textAlign={"center"} key={item}>
+                                            {tableHeadersMap[item]}
+                                        </Table.ColumnHeader>
+                                    );
+                                })
+                            }
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {
+                            journalRows.map((item, index) => {
+                                return (
+                                    <Table.Row key={index} background={item.mark ? "green.200" : ""}>
+                                        {
+                                            journalHeaders.map((column)=> {
+                                                return (
+                                                    <Table.Cell textAlign={"center"} key={column}>{item[column]}</Table.Cell>
+                                                );
+                                            })
+                                        }
+                                    </Table.Row>
+                                );
+                            })
+                        }
+                    </Table.Body>
+                </Table.Root>
+
             </Card.Body>
         </Card.Root>
     );

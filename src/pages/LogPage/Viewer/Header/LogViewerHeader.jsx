@@ -8,6 +8,7 @@ import { useLogContext } from "../../../../providers/LogProvider/LogContext";
 
 
 function LogViewerHeader() {
+    console.log("Render LogViewerHeader");
     const { removeChosenLogFromLocalStorage } = useLogContext();
 
     return (

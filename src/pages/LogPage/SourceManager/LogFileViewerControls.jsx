@@ -13,14 +13,10 @@ import {
 import { useLogContext } from "../../../providers/LogProvider/LogContext";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { useEffect } from "react";
 
 function LogFileViewerControls({ isLoading }) {
     const { logData, updateLogData } = useLogContext();
-
-    useEffect(() => {
-        console.log("RENDER LogFileViewerControls");
-    });
+    console.log("Render LogFileViewerControls");
 
     const rows = createListCollection({
         items: [

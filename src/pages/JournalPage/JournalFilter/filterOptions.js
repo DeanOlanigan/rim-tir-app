@@ -12,6 +12,15 @@ export const groups = [
     { label: "Оперативного состояния", value: "groupStateCheck" },
 ];
 
+export const tableColumns = [
+    { label: "Дата и время", value: "date" },
+    { label: "Тип", value: "type" },
+    { label: "Переменная", value: "var" },
+    { label: "Описание", value: "desc" },
+    { label: "Значение", value: "val" },
+    { label: "Группа", value: "group" },
+];
+
 export const rows = createListCollection({
     items: [
         { label: "10", value: "10" },
@@ -43,7 +52,7 @@ endDate.setMinutes(Math.round(endDate.getMinutes() / 15) * 15);
 export const defaultFilters = {
     archiveToggle : true,
     mountType : "search",
-    rowsCount : 100,
+    rowsCount : 50,
     archiveStartDatePick : startDate,
     archiveEndDatePick : endDate,
 
@@ -68,5 +77,13 @@ export const defaultFilters = {
         "eventTypeTUCheck"
     ],
 
-    variables: []
+    variables: [],
+
+    // Убрать
+    archiveStartDate : true,
+    archiveEndDate : true,
+    columnToggle : true,
+    groupsToggle : true,
+    eventTypeToggle : true,
+    tableIdSort : "",
 };

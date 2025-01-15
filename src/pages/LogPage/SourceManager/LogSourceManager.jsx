@@ -9,6 +9,7 @@ import PropTypes from "prop-types";
 function LogSourceManager() {
     const [logs, setLogs] = useState({ internal: [], sd: [] });
     const [loading, setLoading] = useState(true);
+    console.log("Render LogSourceManager");
 
     useEffect(() => {
         const fetchLogs = async () => {

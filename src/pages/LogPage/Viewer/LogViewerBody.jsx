@@ -9,6 +9,7 @@ import websocketService from "../../../services/websocketService";
 const wsService = new websocketService("ws://192.168.1.1:8800");
 
 function LogViewerBody() {
+    console.log("Render LogViewerBody");
     const { logData, isLoading } = useLogContext();
     const {
         isPaused,

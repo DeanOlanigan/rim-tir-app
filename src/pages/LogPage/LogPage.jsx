@@ -5,6 +5,7 @@ import LogSourceManager from "./SourceManager/LogSourceManager";
 import LogViewer from "./Viewer/LogViewer";
 
 function LogPage() {
+    console.log("Render LogPage");
     return (
         <Container
             maxW={"6xl"}

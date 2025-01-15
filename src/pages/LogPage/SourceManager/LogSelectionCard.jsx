@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Text, Card, Box, Group, AbsoluteCenter, Spinner } from "@chakra-ui/react";
 import { RadioCardItem, RadioCardRoot } from "../../../components/ui/radio-card";
@@ -13,10 +13,7 @@ function LogSelectionCard({ headingText, logList, loading }) {
     const navigate = useNavigate();
     const [scrollShadow, setScrollShadow] = useState("none");
     const scrollRef = useRef(null);
-
-    useEffect(() => {
-        console.log("RENDER LogSelectionCard");
-    });
+    console.log("Render LogSelectionCard");
     
     const logType = headingText === "Логи во внутренней памяти роутера" ? "r" :
         headingText === "Логи на SD карте роутера" ? "sd" : "";

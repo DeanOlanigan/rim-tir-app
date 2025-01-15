@@ -1,15 +1,21 @@
-import { useReducer, useMemo } from "react";
+import { useReducer, useMemo, useEffect } from "react";
 import { JournalContext } from "./JournalContext";
 import PropTypes from "prop-types";
-import { defaultFilters } from "../../pages/JournalPage/JournalFilter/filterOprions";
+import { defaultFilters } from "../../pages/JournalPage/JournalFilter/filterOptions";
 
 function initialState() {
     return {
         isPaused: false,
-        journalHeaders: [],
+        journalHeaders: [
+            "date",
+            "type",
+            "var",
+            "desc",
+            "val",
+            "group",
+        ],
         journalRows: [],
         pausedJournalRows: [],
-        filters: defaultFilters
     };
 };
 
@@ -19,6 +25,9 @@ function reducer(state, action) {
         return {
             ...state,
             isPaused: action.payload,
+            journalRows: action.payload
+                ? [...state.journalRows, {mark: true}]
+                : [...state.journalRows, ...state.pausedJournalRows, {mark: true}],
             pausedJournalRows: []
         };
     case "ADD_ROWS":
@@ -43,6 +52,16 @@ function reducer(state, action) {
             ...state,
             filters: action.payload
         };
+    case "RESTORE_FILTERS":
+        return {
+            ...state,
+            filters: defaultFilters
+        };
+    case "SET_HEADERS":
+        return {
+            ...state,
+            journalHeaders: action.payload
+        };
     default:
         throw new Error(`Unhandled action type: ${action.type}`);
     }
@@ -56,8 +75,13 @@ function JournalProvider({ children }) {
         setIsPaused: (isPaused) => dispatch({ type: "SET_PAUSED", payload: isPaused }),
         setJournalRows: (journalRows) => dispatch({ type: "ADD_ROWS", payload: journalRows }),
         clearJournalRows: () => dispatch({ type: "CLEAR_ROWS" }),
-        setFilters: (filters) => dispatch({type: "SET_FILTERS", payload: filters})
+        restoreFilters: () => dispatch({type: "RESTORE_FILTERS"}),
+        setHeaders: (headers) => dispatch({type: "SET_HEADERS", payload: headers})
     }), [state]);
+
+    useEffect(() => {
+        console.log(state);
+    }, [state]);
 
     return (
         <JournalContext.Provider value={value}>

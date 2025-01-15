@@ -1,8 +1,9 @@
 import { Stack, CheckboxGroup } from "@chakra-ui/react";
 import { Checkbox } from "../../../components/ui/checkbox";
-import { messageTypes } from "./filterOprions";
+import { messageTypes } from "./filterOptions";
 
 function MessageTypes({ filters, setFilters }) {
+    console.log("Render MessageTypes");
     return (
         <Stack p={"1"}>
             <CheckboxGroup

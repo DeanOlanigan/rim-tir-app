@@ -5,7 +5,8 @@ import { useEffect } from "react";
 
 function LogTypesFilterButtons() {
     const { setCurrentFilter } = useLogViewerContext();
-
+    console.log("Render LogTypesFilterButtons");
+    
     useEffect(() => {
         console.log("LogTypesFilterButtons useEffect triggered");
     });

@@ -4,6 +4,7 @@ import LogViewerBody from "./LogViewerBody";
 import LogViewerProvider from "../../../providers/LogViewerProvider/LogViewerProvider";
 
 function LogViewer() {
+    console.log("Render LogViewer");
     return (
         <LogViewerProvider>
             <Card.Root

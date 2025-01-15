@@ -12,6 +12,7 @@ import {
 } from "react-icons/lu";
 
 function LogToolBox() {
+    console.log("Render LogToolBox");
     const {
         isPaused,
         setIsPaused,
