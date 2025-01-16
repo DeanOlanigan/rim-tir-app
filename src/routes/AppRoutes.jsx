@@ -7,6 +7,7 @@ import MonitoringPage from "../pages/MonitoringPage/MonitoringPage";
 import LogPage from "../pages/LogPage/LogPage";
 import JournalPage from "../pages/JournalPage/JournalPage";
 import LoginForm from "../pages/LoginPage/LoginPage";
+import GraphsPage from "../pages/GraphsPage/GraphsPage";
 
 /* function AppRoutes() {
     return (
@@ -43,6 +44,7 @@ function AppRouter() {
                         <Route path="/monitoring" element={<MonitoringPage />} />
                         <Route path="/log/*" element={<LogPage />} />
                         <Route path="/journal" element={<JournalPage />} />
+                        <Route path="/graphs/*" element={<GraphsPage />} />
                         <Route path="*" element={<Navigate to="/configuration" replace />} />
                         <Route path="/" element={<Navigate to="/configuration" replace />} />
                     </Route>

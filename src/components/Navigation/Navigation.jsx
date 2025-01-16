@@ -7,6 +7,7 @@ function Navigation() {
         { name: "Мониторинг", path: "/monitoring" },
         { name: "Логирование", path: "/log" },
         { name: "Журналирование", path: "/journal" },
+        { name: "Графики", path: "/graphs" },
     ];
 
     return (
