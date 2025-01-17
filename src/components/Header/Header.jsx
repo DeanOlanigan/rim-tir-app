@@ -73,7 +73,7 @@ function Header({onSnowfall}) {
                                 <LuLogOut />
                             </IconButton>
                         </Tooltip>
-                        <Tooltip content="Снег" disabled>
+                        {/* <Tooltip content="Снег" disabled>
                             <IconButton 
                                 size={"xs"}
                                 variant={"ghost"}
@@ -87,7 +87,7 @@ function Header({onSnowfall}) {
                             >
                                 <LuSnowflake />
                             </IconButton>
-                        </Tooltip>
+                        </Tooltip> */}
                         <ColorModeButton size={"xs"} />
                     </Flex>
                 </Flex>
