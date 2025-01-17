@@ -25,52 +25,56 @@ function ArchiveFilter({ filters, setFilters }) {
                     onCheckedChange={(e)=> setFilters({...filters, archiveToggle: e.checked})}
                 />
             </Field>
-            <DatePicker
-                selected={filters.archiveStartDatePick}
-                portalId="datepicker-portal"
-                popperPlacement="right-start"
-                showPopperArrow={false}
-                disabled={!filters.archiveToggle}
-                onChange={(date) => setFilters({...filters, archiveStartDatePick: date})}
-                locale={ru}
-                timeFormat="HH:mm"
-                timeCaption="Время"
-                timeIntervals={15}
-                showTimeSelect={true}
-                dateFormat={"yyyy-MM-dd HH:mm"}
-                datePickerSize="xs"
-                inputProps={{
-                    size: "xs",
-                }}
-                rootProps={{
-                    p: "2px",
-                }}
-                isClearable
-                placeholderText="Дата начала"
-            />
-            <DatePicker
-                selected={filters.archiveEndDatePick}
-                portalId="datepicker-portal"
-                popperPlacement="right-start"
-                showPopperArrow={false}
-                disabled={!filters.archiveToggle}
-                onChange={(date) => setFilters({...filters, archiveEndDatePick: date})}
-                locale={ru}
-                timeFormat="HH:mm"
-                timeCaption="Время"
-                timeIntervals={15}
-                showTimeSelect={true}
-                dateFormat={"yyyy-MM-dd HH:mm"}
-                datePickerSize="xs"
-                inputProps={{
-                    size: "xs",
-                }}
-                rootProps={{
-                    p: "2px",
-                }}
-                isClearable
-                placeholderText="Дата окончания"
-            />
+            <Field label="Дата начала" disabled={!filters.archiveToggle}>
+                <DatePicker
+                    selected={filters.archiveStartDatePick}
+                    portalId="datepicker-portal"
+                    popperPlacement="right-start"
+                    showPopperArrow={false}
+                    disabled={!filters.archiveToggle}
+                    onChange={(date) => setFilters({...filters, archiveStartDatePick: date})}
+                    locale={ru}
+                    timeFormat="HH:mm"
+                    timeCaption="Время"
+                    timeIntervals={15}
+                    showTimeSelect={true}
+                    dateFormat={"yyyy-MM-dd HH:mm"}
+                    datePickerSize="xs"
+                    inputProps={{
+                        size: "xs",
+                    }}
+                    rootProps={{
+                        p: "2px",
+                    }}
+                    isClearable
+                    placeholderText="Дата начала"
+                />
+            </Field>
+            <Field label="Дата окончания" disabled={!filters.archiveToggle}>
+                <DatePicker
+                    selected={filters.archiveEndDatePick}
+                    portalId="datepicker-portal"
+                    popperPlacement="right-start"
+                    showPopperArrow={false}
+                    disabled={!filters.archiveToggle}
+                    onChange={(date) => setFilters({...filters, archiveEndDatePick: date})}
+                    locale={ru}
+                    timeFormat="HH:mm"
+                    timeCaption="Время"
+                    timeIntervals={15}
+                    showTimeSelect={true}
+                    dateFormat={"yyyy-MM-dd HH:mm"}
+                    datePickerSize="xs"
+                    inputProps={{
+                        size: "xs",
+                    }}
+                    rootProps={{
+                        p: "2px",
+                    }}
+                    isClearable
+                    placeholderText="Дата окончания"
+                />
+            </Field>
             <SelectRoot
                 disabled={!filters.archiveToggle}
                 collection={rows}
