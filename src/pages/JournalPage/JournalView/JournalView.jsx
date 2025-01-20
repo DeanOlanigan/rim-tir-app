@@ -8,13 +8,11 @@ import {
 import { LuPause, LuPlay, LuDownload } from "react-icons/lu";
 import { useJournalContext } from "../../../providers/JournalProvider/JournalContext";
 import { tableColumns } from "../JournalFilter/filterOptions";
-import { memo, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import {
     AutoSizer,
     Table,
     Column,
-    CellMeasurer,
-    CellMeasurerCache
 } from "react-virtualized";
 import "react-virtualized/styles.css";
 
@@ -30,26 +28,14 @@ const columnsConfig = [
 function JournalView() {
     const { isPaused, journalHeaders, journalRows, setIsPaused, setHeaders } = useJournalContext();
     console.log("Render JournalView");
-    const tableHeadersMap = {
-        date: { label: "Дата и время", minWidth: "100px", maxWidth: "120px" },
-        type: { label: "Тип", minWidth: "145px", maxWidth: "100px" },
-        var: { label:"Переменная", minWidth: "100px", maxWidth: "100px" },
-        desc: { label: "Описание", minWidth: "100px", maxWidth: "100px" },
-        val: { label: "Значение", minWidth: "100px", maxWidth: "100px" },
-        group: { label: "Группа", minWidth: "100px", maxWidth: "100px" }
-    };
     
-    const rowData = {
-        journalHeaders,
-        journalRows,
-        tableHeadersMap
-    };
-
-    const RowRenderer = ({ index, style }) => {
-        return (
-            <JournalRow index={index} style={style} data={rowData}/>
-        );
-    };
+    const visibleColumns = useMemo(
+        () => 
+            columnsConfig.filter((col) => 
+                journalHeaders.includes(col.dataKey)
+            ),
+        [journalHeaders]
+    );
 
     return (
         <Card.Root
@@ -89,7 +75,9 @@ function JournalView() {
                                     onValueChange={(columns) => setHeaders(columns)}
                                 >
                                     {tableColumns.map((column) => (
-                                        <Checkbox key={column.value} value={column.value}>{column.label}</Checkbox>
+                                        <Checkbox key={column.value} value={column.value}>
+                                            {column.label}
+                                        </Checkbox>
                                     ))}
                                 </CheckboxGroup>
                             </Box>
@@ -98,75 +86,15 @@ function JournalView() {
                 </Flex>
             </Card.Header>
             <Card.Body h={"100%"} overflow={"auto"} pt={"0"} mt={"1rem"}>
-                <Box
-                    w={"100%"}
-                    h={"100%"}
-                >
-                    <DynamicTable rows={journalRows} columns={columnsConfig}/>
+                <Box w={"100%"} h={"100%"}>
+                    <DynamicTable rows={journalRows} columns={visibleColumns}/>
                 </Box>
-                {/* <Box 
-                    h={"100%"}
-                    w={"100%"}
-                    display={"table"}
-                    tableLayout={"fixed"}
-                >
-                    <Box display={"table-header-group"}>
-                        <Box display={"table-row"}>
-                            {
-                                journalHeaders.map((item) => {
-                                    return (
-                                        <Box
-                                            key={item}
-                                            display={"table-cell"}
-                                            textAlign={"start"}
-                                            fontWeight={"medium"}
-                                            py={"3"}
-                                            minW={tableHeadersMap[item].minWidth}
-                                            maxW={tableHeadersMap[item].maxWidth}
-                                        >
-                                            {tableHeadersMap[item].label}
-                                        </Box>
-                                    );
-                                })
-                            }
-                        </Box>
-                    </Box>
-                    <Box display={"table-row-group"}>
-                        <AutoSizer>
-                            {({ width, height }) => (
-                                <List
-                                    height={height}
-                                    itemCount={journalRows.length}
-                                    itemSize={60}
-                                    width={width}
-                                >
-                                    {RowRenderer}
-                                </List>
-                            )}
-                        </AutoSizer>
-                    </Box>
-                </Box> */}
-                {
-                    /* journalRows.map((item, index) => {
-                        return (
-                            <Table.Row as={"div"} key={index} background={item.mark ? "green.200" : ""}>
-                                {
-                                    journalHeaders.map((column)=> {
-                                        return (
-                                            <Table.Cell as={"div"} textAlign={"center"} key={column}>{item[column]}</Table.Cell>
-                                        );
-                                    })
-                                }
-                            </Table.Row>
-                        );
-                    }) */
-                }
             </Card.Body>
         </Card.Root>
     );
 }
 
-const JournalRow = memo(function JournalRow({index, style, data}) {
+/* const JournalRow = memo(function JournalRow({index, style, data}) {
     const item = data.journalRows[index];
     if (!item) return null;
 
@@ -198,88 +126,78 @@ const JournalRow = memo(function JournalRow({index, style, data}) {
     );
 });
 
+function rowRenderer(props) {
+    const {
+        index,
+        style,
+    } = props;
+    return (
+        <JournalRow index={index} style={style} data={rowData}/>
+    );
+}; */
+
 function DynamicTable({ columns = columnsConfig, rows }) {
-    const cache = useMemo(() => {
-        return new CellMeasurerCache({
-            fixedHeight: true,
-            minWidth: 100, 
-        });
-    }, []);
+    const rowGetter = ({ index }) => rows[index];
 
-    const tableRef = useRef(null);
+    const rowRenderer = (props) => {
+        const {
+            index,
+            style,
+            key,
+            className,
+            columns: renderedColumns,
+        } = props;
 
-    const cellRenderer = ({
-        dataKey,
-        columnIndex,
-        rowIndex,
-        key,
-        parent,
-        style 
-    }) => {
-
-        const rowData = rows[rowIndex];
-        const cellValue = rowData[dataKey];
+        const rowData = rows[index];
+        if (!rowData) return null;
+        const backgroundColor = rowData.mark ? "green.200" : "";
 
         return (
-            <CellMeasurer
+            <Box
                 key={key}
-                cache={cache}
-                columnIndex={columnIndex}
-                rowIndex={rowIndex}
-                parent={parent}
+                className={className}
+                style={style}
+                bg={backgroundColor}
+                display={"flex"}
+                alignItems={"start"}
+                borderBottom={"1px solid #ccc"}
+                fontSize={"sm"}
             >
-                {({measure}) => (
-                    <div
-                        style={{
-                            ...style,
-                            whiteSpace: "nowrap", // чтобы строка не переносилась
-                            overflow: "visible",  // или hidden, если хотите обрезать
-                            textOverflow: "ellipsis"
-                        }}
-                        onLoad={measure} // если вдруг есть картинки, measure нужно дергать по факту загрузки
-                    >
-                        {cellValue}
-                    </div>
-                )}
-            </CellMeasurer>
+                {renderedColumns}
+            </Box>
         );
     };
 
-    const rowGetter = ({index}) => rows[index];
-
     return (
-        <div>
+        <Box w={"100%"} h={"100%"}>
             <AutoSizer>
                 {({height, width}) => (
                     <Table
-                        ref={tableRef}
                         width={width}
-                        height={500}
+                        height={height}
                         headerHeight={30}
-                        rowHeight={cache.rowHeight}
+                        rowHeight={45}
                         rowCount={rows.length}
                         rowGetter={rowGetter}
-                        deferredMeasurementCache={cache}
+                        rowRenderer={rowRenderer}
+                        headerStyle={{
+                            "fontSize": "14px",
+                            "text-transform": "capitalize"
+                        }}
                     >
-                        {columns.map((col,columnIndex) => (
+                        {columns.map((col) => (
                             <Column
                                 key={col.dataKey}
                                 dataKey={col.dataKey}
                                 label={col.label}
-                                width={100}
+                                width={150}
                                 flexGrow={1}
-                                cellRenderer={(props) => 
-                                    cellRenderer({
-                                        ...props,
-                                        columnIndex
-                                    })
-                                }
                             />
                         ))}
                     </Table>
                 )}
             </AutoSizer>
-        </div>
+        </Box>
     );
 }
 

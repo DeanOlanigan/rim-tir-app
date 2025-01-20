@@ -16,6 +16,7 @@ function initialState() {
         ],
         journalRows: [],
         pausedJournalRows: [],
+        filters: defaultFilters
     };
 };
 
@@ -76,11 +77,12 @@ function JournalProvider({ children }) {
         setJournalRows: (journalRows) => dispatch({ type: "ADD_ROWS", payload: journalRows }),
         clearJournalRows: () => dispatch({ type: "CLEAR_ROWS" }),
         restoreFilters: () => dispatch({type: "RESTORE_FILTERS"}),
-        setHeaders: (headers) => dispatch({type: "SET_HEADERS", payload: headers})
+        setHeaders: (headers) => dispatch({type: "SET_HEADERS", payload: headers}),
+        setFilters: (filters) => dispatch({type: "SET_FILTERS", payload: filters}),
     }), [state]);
 
     useEffect(() => {
-        console.log(state);
+        console.log("JournalProvider state:", state);
     }, [state]);
 
     return (

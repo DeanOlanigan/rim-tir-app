@@ -7,7 +7,7 @@ export const JournalContext = createContext();
 export const useJournalContext = () => {
     const context = useContext(JournalContext);
     if (!context) {
-        throw new Error("useLogContext must be used within a LogProvider");
+        throw new Error("useJournalContext must be used within a JournalProvider");
     }
     return context;
 };
