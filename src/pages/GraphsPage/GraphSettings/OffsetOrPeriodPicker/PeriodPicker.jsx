@@ -4,11 +4,15 @@ import { ru } from "date-fns/locale";
 import { DatePicker } from "../../../../components/DatePicker/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-function PeriodPicker() {
+function PeriodPicker({settings, setSettings}) {
     return (
         <Stack>
             <Field label="Дата начала">
                 <DatePicker
+                    selected={new Date(settings.startDate)}
+                    onChange={(date) => {
+                        setSettings({...settings, startDate: date.getTime()});
+                    }}
                     portalId="datepicker-portal"
                     popperPlacement="right-end"
                     showPopperArrow={false}
@@ -25,12 +29,15 @@ function PeriodPicker() {
                     rootProps={{
                         p: "3px",
                     }}
-                    isClearable
                     placeholderText="Дата начала"
                 />
             </Field>
             <Field label="Дата окончания"   >
                 <DatePicker
+                    selected={new Date(settings.endDate)}
+                    onChange={(date) => {
+                        setSettings({...settings, endDate: date.getTime()});
+                    }}
                     portalId="datepicker-portal"
                     popperPlacement="right-end"
                     showPopperArrow={false}
@@ -47,7 +54,6 @@ function PeriodPicker() {
                     rootProps={{
                         p: "2px",
                     }}
-                    isClearable
                     placeholderText="Дата окончания"
                 />
             </Field>

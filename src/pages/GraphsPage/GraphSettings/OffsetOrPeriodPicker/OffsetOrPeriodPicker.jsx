@@ -3,12 +3,19 @@ import { Box, Tabs } from "@chakra-ui/react";
 import PeriodPicker from "./PeriodPicker";
 import OffsetPicker from "./OffsetPicker";
 
-function OffsetOrPeriodPicker() {
+function OffsetOrPeriodPicker({settings, setSettings}) {
     return (
         <Tabs.Root
             defaultValue={"1"}
             variant={"enclosed"}
             size={"sm"}
+            onValueChange={(value) => {
+                console.log(value);
+                setSettings({
+                    ...settings,
+                    isWsActive: value.value === "1"
+                });
+            }}
         >
             <Tabs.List w={"full"} justifyContent={"center"}>
                 <Tabs.Trigger value="1">Текущие</Tabs.Trigger>
@@ -28,7 +35,7 @@ function OffsetOrPeriodPicker() {
                         animationDuration: "120ms",
                     }}
                 >
-                    <OffsetPicker />
+                    <OffsetPicker settings={settings} setOffset={setSettings} />
                 </Tabs.Content>
                 <Tabs.Content 
                     value="2"
@@ -43,7 +50,7 @@ function OffsetOrPeriodPicker() {
                         animationDuration: "120ms",
                     }}
                 >
-                    <PeriodPicker />
+                    <PeriodPicker settings={settings} setSettings={setSettings}/>
                 </Tabs.Content>
             </Box>
         </Tabs.Root>

@@ -1,14 +1,34 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, Flex, Stack, Button } from "@chakra-ui/react";
 
 import OffsetOrPeriodPicker from "./OffsetOrPeriodPicker/OffsetOrPeriodPicker";
 import PointsCountChooser from "./PointsCountChooser";
 import GraphVariable from "./GraphVariable";
 
-const color = "#" + (Math.random().toString(16) + "000000").slice(2, 8).toUpperCase();
+const startDate = new Date();
+startDate.setDate(startDate.getDate() - 3);
+startDate.setMinutes(Math.round(startDate.getMinutes() / 15) * 15);
+
+const endDate = new Date();
+endDate.setDate(endDate.getDate());
+endDate.setMinutes(Math.round(endDate.getMinutes() / 15) * 15);
+
+const getRandomColor = () => {
+    return ("#" + (Math.random().toString(16) + "000000").slice(2, 8).toUpperCase());
+};
 
 function GraphSettings() {
     console.log("Render GraphSettings");
+    const navigate = useNavigate();
+    const [graphSettings, setGraphSettings] = useState({
+        maxPointsCount: 100,
+        isWsActive: true,
+        offset: 120,
+        startDate: startDate,
+        endDate: endDate,
+    });
+    const [isViewerAllowed, setIsViewerAllowed] = useState(false);
     const [vars, setVars] = useState([]);
 
     const updateVariable = (index, updatedVariable) => {
@@ -23,7 +43,20 @@ function GraphSettings() {
 
     useEffect(() => {
         console.log(vars);
+        setIsViewerAllowed(
+            vars.length > 0 &&
+                vars.every(
+                    (variable) =>
+                        variable.color &&
+                        variable.variableMeasurement &&
+                        variable.variableName
+                )
+        );
     }, [vars]);
+
+    useEffect(() => {
+        console.log(graphSettings);
+    }, [graphSettings]);
 
     return (
         <Flex
@@ -48,13 +81,18 @@ function GraphSettings() {
                             h={"full"}
                             p={"2"}
                         >
-                            <PointsCountChooser />
-                            <OffsetOrPeriodPicker />
+                            <PointsCountChooser
+                                maxPointsCount={graphSettings.maxPointsCount}
+                                onChange={(newValue) => setGraphSettings({
+                                    ...graphSettings,
+                                    maxPointsCount: newValue
+                                })}
+                            />
+                            <OffsetOrPeriodPicker settings={graphSettings} setSettings={setGraphSettings} />
                         </Stack>
                         <Stack
                             w={"70%"}
                             h={"full"}
-                            
                             p={"2"}
                         >
                             <Flex
@@ -85,7 +123,16 @@ function GraphSettings() {
                             <Button
                                 size={"xs"}
                                 variant={"subtle"}
-                                onClick={() => setVars(vars => [...vars, {color: color, variableName: "", variableMeasurement: ""}])}
+                                onClick={() => {
+                                    setVars(vars => [
+                                        ...vars,
+                                        {
+                                            color: getRandomColor(),
+                                            variableName: "",
+                                            variableMeasurement: ""
+                                        }
+                                    ]);
+                                }}
                             >
                                 Добавить переменную
                             </Button>
@@ -94,12 +141,20 @@ function GraphSettings() {
                 </Card.Body>
             </Card.Root>
             <Button
+                disabled={!isViewerAllowed}
                 shadow={"xl"}
                 mt={"4"}
                 size={"xs"}
                 data-state={"open"}
                 animationDuration={"slow"}
                 animationStyle={{"_open": "scale-fade-in"}}
+                onClick={() => {
+                    console.log({
+                        ...graphSettings,
+                        variables: vars
+                    });
+                    navigate("viewer");
+                }}
             >
                 Показать график
             </Button>

@@ -1,4 +1,4 @@
-import { Box, createListCollection } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { 
     SelectContent,
     SelectItem,
@@ -7,26 +7,18 @@ import {
     SelectTrigger,
     SelectValueText
 } from "../../../components/ui/select";
+import { points } from "./graphSettingsConstants";
 
-const points = createListCollection({
-    items: [
-        { label: "10", value: "10" },
-        { label: "20", value: "20" },
-        { label: "50", value: "50" },
-        { label: "100", value: "100" },
-        { label: "200", value: "200" },
-        { label: "500", value: "500" },
-        { label: "1000", value: "1000" },
-    ],
-});
-
-function PointsCountChooser() {
+function PointsCountChooser({ maxPointsCount, onChange }) {
     return (
         <Box>
             <SelectRoot
                 collection={points}
                 size={"xs"}
-                defaultValue={["100"]}
+                defaultValue={[String(maxPointsCount)]}
+                onValueChange={(value) => {
+                    onChange(parseInt(value.value[0]));
+                }}
             >
                 <SelectLabel>Количество точек:</SelectLabel>
                 <SelectTrigger>

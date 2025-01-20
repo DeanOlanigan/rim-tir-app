@@ -1,4 +1,3 @@
-import { createListCollection } from "@chakra-ui/react";
 import { 
     SelectContent,
     SelectItem,
@@ -7,36 +6,20 @@ import {
     SelectTrigger,
     SelectValueText
 } from "../../../../components/ui/select";
+import { offsets } from "../graphSettingsConstants";
 
-const offsets = createListCollection({
-    items: [
-        { label: "10 секунд", value: "10",  },
-        { label: "20 секунд", value: "20",  },
-        { label: "30 секунд", value: "30",  },
-        { label: "1 минута", value: "60",  },
-        { label: "2 минуты", value: "120",  },
-        { label: "3 минуты", value: "180",  },
-        { label: "4 минуты", value: "240",  },
-        { label: "5 минут", value: "300",  },
-        { label: "10 минут", value: "600",  },
-        { label: "15 минут", value: "900",  },
-        { label: "20 минут", value: "1200",  },
-        { label: "30 минут", value: "1800",  },
-        { label: "1 час", value: "3600",  },
-        { label: "2 часа", value: "7200",  },
-        { label: "4 часа", value: "14400",  },
-        { label: "6 часов", value: "21600",  },
-        { label: "12 часов", value: "43200",  },
-        { label: "24 часа", value: "86400",  },
-    ],
-});
-
-function OffsetPicker() {
+function OffsetPicker({settings, setOffset}) {
     return (
         <SelectRoot
             collection={offsets}
             size={"xs"}
             defaultValue={["120"]}
+            onValueChange={(value) => {
+                setOffset({
+                    ...settings,
+                    offset: parseInt(value.value[0])
+                });
+            }}
         >
             <SelectLabel>Оффсет:</SelectLabel>
             <SelectTrigger>
