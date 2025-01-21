@@ -1,4 +1,4 @@
-import { Card, Flex, IconButton, Link, Box, CheckboxGroup } from "@chakra-ui/react";
+import { Card, Flex, IconButton, Link, Box, CheckboxGroup, Text } from "@chakra-ui/react";
 import { Checkbox } from "../../../components/ui/checkbox";
 import {
     MenuContent,
@@ -145,12 +145,25 @@ function DynamicTable({ columns = columnsConfig, rows }) {
             style,
             key,
             className,
-            columns: renderedColumns,
+            columns,
+            rowData
         } = props;
 
-        const rowData = rows[index];
+        if (rowData.mark) {
+            return (
+                <Box
+                    key={key}
+                    className={className}
+                    style={style}
+                    bg={"green.200"}
+                    borderBottom={"1px solid #ccc"}
+                />
+            );
+        }
+
+        //const rowData = rows[index];
         if (!rowData) return null;
-        const backgroundColor = rowData.mark ? "green.200" : "";
+        const backgroundColor = index % 2 === 0 ? "gray.100" : "white";
 
         return (
             <Box
@@ -158,14 +171,28 @@ function DynamicTable({ columns = columnsConfig, rows }) {
                 className={className}
                 style={style}
                 bg={backgroundColor}
-                display={"flex"}
-                alignItems={"start"}
                 borderBottom={"1px solid #ccc"}
                 fontSize={"sm"}
             >
-                {renderedColumns}
+                {columns}
             </Box>
         );
+    };
+    const cellRenderer = (props) => {
+        const {
+            cellData,
+            columnData,
+            columnIndex,
+            dataKey,
+            rowData,
+            rowIndex,
+        } = props;
+
+        if (dataKey === "date") {
+            return <Text textWrap={"wrap"}>{cellData}</Text>;
+        }
+
+        return <Text textWrap={"wrap"} textAlign={"start"} textOverflow={"ellipsis"}>{cellData}</Text>;
     };
 
     return (
@@ -184,14 +211,25 @@ function DynamicTable({ columns = columnsConfig, rows }) {
                             "fontSize": "14px",
                             "text-transform": "capitalize"
                         }}
+                        rowStyle={{
+                            borderBottom: "1px solid #ccc"
+                        }}
                     >
                         {columns.map((col) => (
                             <Column
                                 key={col.dataKey}
                                 dataKey={col.dataKey}
                                 label={col.label}
-                                width={150}
+                                width={80}
                                 flexGrow={1}
+                                flexShrink={1}
+                                style={{
+                                    textAlign: "start",
+                                    textOverflow: "ellipsis",
+                                    textWrap: "wrap",
+                                    hyphens: "auto",
+                                    alignSelf: "start",
+                                }}
                             />
                         ))}
                     </Table>
