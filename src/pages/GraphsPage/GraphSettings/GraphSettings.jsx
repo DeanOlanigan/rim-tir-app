@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Flex, Stack, Button } from "@chakra-ui/react";
+import { Card, Flex, Stack, Button, HStack } from "@chakra-ui/react";
 
 import OffsetOrPeriodPicker from "./OffsetOrPeriodPicker/OffsetOrPeriodPicker";
 import PointsCountChooser from "./PointsCountChooser";
@@ -30,6 +30,10 @@ function GraphSettings() {
     });
     const [isViewerAllowed, setIsViewerAllowed] = useState(false);
     const [vars, setVars] = useState([]);
+
+    const addVariable = () => {
+        setVars((prevVars) => [...prevVars, { color: getRandomColor(), variableName: "", variableMeasurement: "" }]);
+    };
 
     const updateVariable = (index, updatedVariable) => {
         setVars((prevVars) =>
@@ -120,22 +124,23 @@ function GraphSettings() {
                                 }
                             </Flex>
                             {/* <AddGraphVariableMenu /> */}
-                            <Button
-                                size={"xs"}
-                                variant={"subtle"}
-                                onClick={() => {
-                                    setVars(vars => [
-                                        ...vars,
-                                        {
-                                            color: getRandomColor(),
-                                            variableName: "",
-                                            variableMeasurement: ""
-                                        }
-                                    ]);
-                                }}
-                            >
-                                Добавить переменную
-                            </Button>
+                            <HStack>
+                                <Button
+                                    size={"xs"}
+                                    variant={"subtle"}
+                                    onClick={() => addVariable()}
+                                >
+                                    Добавить переменную
+                                </Button>
+                                <Button
+                                    size={"xs"}
+                                    onClick={() => {
+                                        console.log(vars);
+                                    }}
+                                >
+                                    test
+                                </Button>
+                            </HStack>
                         </Stack>
                     </Stack>
                 </Card.Body>

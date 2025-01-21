@@ -1,5 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Container } from "@chakra-ui/react";
+
+import GraphProvider from "../../providers/GraphProvider/GraphProvider";
 import GraphSettings from "./GraphSettings/GraphSettings";
 import GraphViewer from "./Viewer/GraphViewer";
 
@@ -14,10 +16,12 @@ function GraphsPage() {
             flexDirection={"column"}
             minH={"0"}
         >
-            <Routes>
-                <Route index element={<GraphSettings />} />
-                <Route path="viewer" element={<GraphViewer />} />
-            </Routes>
+            <GraphProvider>
+                <Routes>
+                    <Route index element={<GraphSettings />} />
+                    <Route path="viewer" element={<GraphViewer />} />
+                </Routes>
+            </GraphProvider>
         </Container>
     );
 }
