@@ -1,23 +1,47 @@
-import { HStack, IconButton } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { HStack, IconButton, Card } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { LuArrowLeft } from "react-icons/lu";
 import {
     Chart as ChartJS,
     CategoryScale,
     LinearScale,
-    BarElement,
+    PointElement,
+    LineElement,
     Title,
     Tooltip,
     Legend,
+    
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import zoomPlugin from "chartjs-plugin-zoom";
+import { Line } from "react-chartjs-2";
 import faker from "faker";
-import { Card } from "@chakra-ui/react";
+import WebSocketService from "../../../services/websocketService";
+const wsService = new WebSocketService("ws://192.168.1.1:8800");
+
+const testData = [
+    {
+        variableName: "test1",
+        variableValue: 4564,
+        variableDesc: "РРРРРРРРРРРР",
+        measureUnit: "кПа",
+        timestamp: 1737430572676
+    },
+    {
+        variableName: "test1",
+        variableValue: 56,
+        variableDesc: "РРРРРРРРРРРР",
+        measureUnit: "кПа",
+        timestamp: 1737431702339
+    }
+];
 
 ChartJS.register(
     CategoryScale,
     LinearScale,
-    BarElement,
+    PointElement,
+    LineElement,
+    zoomPlugin,
     Title,
     Tooltip,
     Legend
@@ -31,32 +55,88 @@ const options = {
         },
         title: {
             display: true,
-            text: "Chart.js Bar Chart",
+            text: "Chart.js Line Chart",
         },
+        zoom: {
+            pan: {
+                enabled: true,
+                mode: "x",
+                modifierKey: "ctrl"
+            },
+            zoom: {
+                drag: {
+                    enabled: true
+                },
+                mode: "x"
+            }
+        }
     },
 };
-
+  
 const labels = ["January", "February", "March", "April", "May", "June", "July"];
 
-const data = {
+const data1 = {
     labels,
     datasets: [
         {
             label: "Dataset 1",
-            data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+            data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+            borderColor: "rgb(255, 99, 132)",
             backgroundColor: "rgba(255, 99, 132, 0.5)",
         },
         {
             label: "Dataset 2",
-            data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+            data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+            borderColor: "rgb(53, 162, 235)",
             backgroundColor: "rgba(53, 162, 235, 0.5)",
         },
     ],
 };
 
-function GraphViewer() {
+function GraphViewer({ wsRequest }) {
     console.log("Render GraphViewer");
+    const [data, setData] = useState({
+        labels,
+        datasets: [
+            {
+                label: "Dataset 1",
+                data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+                borderColor: "rgb(255, 99, 132)",
+                backgroundColor: "rgba(255, 99, 132, 0.5)",
+            },
+            {
+                label: "Dataset 2",
+                data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+                borderColor: "rgb(53, 162, 235)",
+                backgroundColor: "rgba(53, 162, 235, 0.5)",
+            },
+        ],
+    });
     
+    useEffect(() => {
+        testData.forEach(element => {
+            
+        });
+    }, []);
+
+    useEffect(() => {
+        wsService.connect();
+
+        const messageHandler = (message) => {
+            //console.log(message);
+            appendLogs(message);
+        };
+
+        wsService.addMessageHandler(messageHandler);
+        
+        wsService.sendMessage({ graph: wsRequest });
+
+        return () => {
+            wsService.removeMessageHandler(messageHandler);
+            wsService.close();
+        };
+    }, []);
+
     return (
         <>
             <Card.Root
@@ -82,7 +162,7 @@ function GraphViewer() {
                     </HStack>
                 </Card.Header>
                 <Card.Body>
-                    <Bar options={options} data={data} />
+                    <Line options={options} data={data} />
                 </Card.Body>
             </Card.Root>
         </>
