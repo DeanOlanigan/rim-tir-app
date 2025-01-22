@@ -8,17 +8,19 @@ import {
 } from "../../../../components/ui/select";
 import { offsets } from "../graphSettingsConstants";
 
-function OffsetPicker({settings, setOffset}) {
+import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
+
+function OffsetPicker() {
+    console.log("Render OffsetPicker");
+    const { setOffset } = useGraphContext();
+
     return (
         <SelectRoot
             collection={offsets}
             size={"xs"}
             defaultValue={["120"]}
-            onValueChange={(value) => {
-                setOffset({
-                    ...settings,
-                    offset: parseInt(value.value[0])
-                });
+            onValueChange={(e) => {
+                setOffset(parseInt(e.value[0]));
             }}
         >
             <SelectLabel>Оффсет:</SelectLabel>

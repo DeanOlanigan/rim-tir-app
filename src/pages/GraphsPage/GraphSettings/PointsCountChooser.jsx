@@ -8,16 +8,20 @@ import {
     SelectValueText
 } from "../../../components/ui/select";
 import { points } from "./graphSettingsConstants";
+import { useGraphContext } from "../../../providers/GraphProvider/GraphContext";
 
-function PointsCountChooser({ maxPointsCount, onChange }) {
+function PointsCountChooser() {
+    console.log("Render PointsCountChooser");
+    const { maxPointsCount, setMaxPointsCount } = useGraphContext();
+
     return (
         <Box>
             <SelectRoot
                 collection={points}
                 size={"xs"}
                 defaultValue={[String(maxPointsCount)]}
-                onValueChange={(value) => {
-                    onChange(parseInt(value.value[0]));
+                onValueChange={(e) => {
+                    setMaxPointsCount(parseInt(e.value[0]));
                 }}
             >
                 <SelectLabel>Количество точек:</SelectLabel>

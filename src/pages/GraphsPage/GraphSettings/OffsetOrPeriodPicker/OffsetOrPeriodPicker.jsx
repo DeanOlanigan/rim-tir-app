@@ -3,18 +3,19 @@ import { Box, Tabs } from "@chakra-ui/react";
 import PeriodPicker from "./PeriodPicker";
 import OffsetPicker from "./OffsetPicker";
 
-function OffsetOrPeriodPicker({settings, setSettings}) {
+import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
+
+function OffsetOrPeriodPicker() {
+    console.log("Render OffsetOrPeriodPicker");
+    const { isWsActive, setIsWsActive } = useGraphContext();
+
     return (
         <Tabs.Root
-            defaultValue={"1"}
+            value={isWsActive ? "1" : "2"}
             variant={"enclosed"}
             size={"sm"}
-            onValueChange={(value) => {
-                console.log(value);
-                setSettings({
-                    ...settings,
-                    isWsActive: value.value === "1"
-                });
+            onValueChange={(e) => {
+                setIsWsActive(e.value === "1");
             }}
         >
             <Tabs.List w={"full"} justifyContent={"center"}>
@@ -35,7 +36,7 @@ function OffsetOrPeriodPicker({settings, setSettings}) {
                         animationDuration: "120ms",
                     }}
                 >
-                    <OffsetPicker settings={settings} setOffset={setSettings} />
+                    <OffsetPicker />
                 </Tabs.Content>
                 <Tabs.Content 
                     value="2"
@@ -50,7 +51,7 @@ function OffsetOrPeriodPicker({settings, setSettings}) {
                         animationDuration: "120ms",
                     }}
                 >
-                    <PeriodPicker settings={settings} setSettings={setSettings}/>
+                    <PeriodPicker />
                 </Tabs.Content>
             </Box>
         </Tabs.Root>

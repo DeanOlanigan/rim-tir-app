@@ -1,141 +1,101 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { HStack, IconButton, Card } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { LuArrowLeft } from "react-icons/lu";
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    
-} from "chart.js";
-import zoomPlugin from "chartjs-plugin-zoom";
 import { Line } from "react-chartjs-2";
-import faker from "faker";
+
 import WebSocketService from "../../../services/websocketService";
 const wsService = new WebSocketService("ws://192.168.1.1:8800");
 
-const testData = [
-    {
-        variableName: "test1",
-        variableValue: 4564,
-        variableDesc: "РРРРРРРРРРРР",
-        measureUnit: "кПа",
-        timestamp: 1737430572676
-    },
-    {
-        variableName: "test1",
-        variableValue: 56,
-        variableDesc: "РРРРРРРРРРРР",
-        measureUnit: "кПа",
-        timestamp: 1737431702339
-    }
-];
+import { useGraphContext } from "../../../providers/GraphProvider/GraphContext";
+import { options } from "./chartOptions";
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    zoomPlugin,
-    Title,
-    Tooltip,
-    Legend
-);
-
-const options = {
-    responsive: true,
-    plugins: {
-        legend: {
-            position: "top",
-        },
-        title: {
-            display: true,
-            text: "Chart.js Line Chart",
-        },
-        zoom: {
-            pan: {
-                enabled: true,
-                mode: "x",
-                modifierKey: "ctrl"
-            },
-            zoom: {
-                drag: {
-                    enabled: true
-                },
-                mode: "x"
-            }
-        }
-    },
-};
-  
-const labels = ["January", "February", "March", "April", "May", "June", "July"];
-
-const data1 = {
-    labels,
-    datasets: [
-        {
-            label: "Dataset 1",
-            data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
-            borderColor: "rgb(255, 99, 132)",
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
-        },
-        {
-            label: "Dataset 2",
-            data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
-            borderColor: "rgb(53, 162, 235)",
-            backgroundColor: "rgba(53, 162, 235, 0.5)",
-        },
-    ],
-};
-
-function GraphViewer({ wsRequest }) {
+function GraphViewer() {
     console.log("Render GraphViewer");
+    const { createMessageForWS } = useGraphContext();
+    const chartRef = useRef(null);
+
     const [data, setData] = useState({
-        labels,
-        datasets: [
-            {
-                label: "Dataset 1",
-                data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
-                borderColor: "rgb(255, 99, 132)",
-                backgroundColor: "rgba(255, 99, 132, 0.5)",
-            },
-            {
-                label: "Dataset 2",
-                data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
-                borderColor: "rgb(53, 162, 235)",
-                backgroundColor: "rgba(53, 162, 235, 0.5)",
-            },
-        ],
+        datasets: [],
     });
-    
-    useEffect(() => {
-        testData.forEach(element => {
-            
+
+    const getColorForVariable = (variableName) => {
+        const variables = createMessageForWS().graph.variables;
+        const variable = variables.find((v) => v.variableName === variableName);
+        return variable ? variable.color : "#000000"; // Цвет по умолчанию, если не найден
+    };
+
+    const updateDatasets = (newPoints, prevDatasets) =>{
+        // Копируем предыдущие датасеты
+        const updatedDatasets = [...prevDatasets];
+                
+        // Для каждой новой точки ищем/создаём датасет
+        newPoints.forEach((point) => {
+            const dsIndex = updatedDatasets.findIndex(
+                (ds) => ds.label === point.variableName
+            );
+
+            if (dsIndex >= 0) {
+                // Добавляем новую точку в существующий датасет
+                updatedDatasets[dsIndex] = {
+                    ...updatedDatasets[dsIndex],
+                    data: [...updatedDatasets[dsIndex].data, point],
+                };
+            } else {
+                // Если датасета нет, создаём новый
+                const color = getColorForVariable(point.variableName);
+                updatedDatasets.push({
+                    label: point.variableName,
+                    data: [point],
+                    borderColor: color,
+                    backgroundColor: color + "80", // слегка прозрачный
+                });
+            }
         });
-    }, []);
+
+        return updatedDatasets;
+    };
 
     useEffect(() => {
         wsService.connect();
 
-        const messageHandler = (message) => {
-            //console.log(message);
-            appendLogs(message);
+        const handleWebSocketMessage = (message) => {
+            console.log(message);
+    
+            if (!Array.isArray(message) || message.length === 0) {
+                console.warn("Received empty message from WebSocket");
+                return;
+            }
+    
+            const newPoints = message.map((el) => ({
+                x: +el.timestamp, // parseInt если строка
+                y: parseFloat(el.variableValue),
+                variableDescription: el.variableDesc,
+                measurementUnit: el.measureUnit,
+                variableName: el.variableName, // сохраним тут же, чтобы удобно было ниже
+            }));
+    
+            setData((prevData) => ({
+                ...prevData,
+                datasets: updateDatasets(newPoints, prevData.datasets),
+            }));
         };
 
-        wsService.addMessageHandler(messageHandler);
-        
-        wsService.sendMessage({ graph: wsRequest });
+        wsService.addMessageHandler(handleWebSocketMessage); 
+        wsService.sendMessage(createMessageForWS());
 
         return () => {
-            wsService.removeMessageHandler(messageHandler);
+            wsService.removeMessageHandler(handleWebSocketMessage);
             wsService.close();
         };
-    }, []);
+    }, [createMessageForWS]);
+
+    const handleDoubleClick = () => {
+        const chart = chartRef.current;
+        if (chart) {
+            chart.resetZoom("active");
+        };
+    };
 
     return (
         <>
@@ -162,7 +122,7 @@ function GraphViewer({ wsRequest }) {
                     </HStack>
                 </Card.Header>
                 <Card.Body>
-                    <Line options={options} data={data} />
+                    <Line ref={chartRef} options={options} data={data} onDoubleClick={handleDoubleClick}/>
                 </Card.Body>
             </Card.Root>
         </>

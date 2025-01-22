@@ -4,14 +4,19 @@ import { ru } from "date-fns/locale";
 import { DatePicker } from "../../../../components/DatePicker/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-function PeriodPicker({settings, setSettings}) {
+import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
+
+function PeriodPicker() {
+    console.log("Render PeriodPicker");
+    const { startDate, endDate, setStartDate, setEndDate} = useGraphContext();
+
     return (
         <Stack>
             <Field label="Дата начала">
                 <DatePicker
-                    selected={new Date(settings.startDate)}
+                    selected={new Date(startDate)}
                     onChange={(date) => {
-                        setSettings({...settings, startDate: date.getTime()});
+                        setStartDate(date.getTime());
                     }}
                     portalId="datepicker-portal"
                     popperPlacement="right-end"
@@ -34,9 +39,9 @@ function PeriodPicker({settings, setSettings}) {
             </Field>
             <Field label="Дата окончания"   >
                 <DatePicker
-                    selected={new Date(settings.endDate)}
+                    selected={new Date(endDate)}
                     onChange={(date) => {
-                        setSettings({...settings, endDate: date.getTime()});
+                        setEndDate(date.getTime());
                     }}
                     portalId="datepicker-portal"
                     popperPlacement="right-end"

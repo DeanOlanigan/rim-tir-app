@@ -8,7 +8,7 @@ import {
     PopoverHeader,
     PopoverFooter,
     PopoverCloseTrigger
-} from "../../../components/ui/popover";
+} from "../../../../components/ui/popover";
 import {
     ColorPickerArea,
     ColorPickerContent,
@@ -19,7 +19,7 @@ import {
     ColorPickerSwatchGroup,
     ColorPickerSwatchTrigger,
     ColorPickerTrigger,
-} from "../../../components/ui/color-picker";
+} from "../../../../components/ui/color-picker";
 import { 
     SelectContent,
     SelectItem,
@@ -27,8 +27,8 @@ import {
     SelectRoot,
     SelectTrigger,
     SelectValueText
-} from "../../../components/ui/select";
-import { swatches, points } from "./graphSettingsConstants";
+} from "../../../../components/ui/select";
+import { swatches, points } from "../graphSettingsConstants";
 
 function AddGraphVariableMenu() {
     return (

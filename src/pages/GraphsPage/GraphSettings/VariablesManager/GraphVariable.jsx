@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Flex, IconButton, parseColor } from "@chakra-ui/react";
 import { LuTrash } from "react-icons/lu";
 import {
@@ -10,30 +10,29 @@ import {
     ColorPickerSwatchGroup,
     ColorPickerSwatchTrigger,
     ColorPickerTrigger,
-} from "../../../components/ui/color-picker";
+} from "../../../../components/ui/color-picker";
 import { 
     SelectContent,
     SelectItem,
     SelectRoot,
     SelectTrigger,
     SelectValueText
-} from "../../../components/ui/select";
-import { testVariables, swatches, measurements } from "./graphSettingsConstants";
-
-const getRandomColor = () => {
-    return ("#" + (Math.random().toString(16) + "000000").slice(2, 8).toUpperCase());
-};
+} from "../../../../components/ui/select";
+import { testVariables, swatches, measurements } from "../graphSettingsConstants";
 
 function GraphVariable({ variable, index, updateVariable, removeVariable }) {
     console.log("Render GraphVariable");
-    const [localState, setLocalState] = useState(variable);
+    const [color, setColor] = useState();
 
     return (
         <Flex minH={"40px"} w={"100%"} background={"bg.muted"} rounded={"md"} align={"center"} px={"2"} gap={"2"}>
             <ColorPickerRoot size={"xs"}
                 defaultValue={parseColor(variable.color)}
                 onValueChange={(e) => {
-                    setLocalState((prev) => ({ ...prev, color: e.value }));
+                    setColor(e.value);
+                }}
+                onExitComplete={() => {
+                    updateVariable(index, {...variable, color: color.toString("hex") });
                 }}
             >
                 <ColorPickerControl>
@@ -58,11 +57,12 @@ function GraphVariable({ variable, index, updateVariable, removeVariable }) {
             <SelectRoot
                 collection={testVariables}
                 size={"xs"}
+                value={[variable.variableName]}
                 onValueChange={(e) => {
-                    setLocalState((prev) => ({ ...prev, variable: e.value[0] }));
+                    updateVariable(index, {...variable, variableName: e.value[0] });
                 }}
             >
-                <SelectTrigger clearable>
+                <SelectTrigger>
                     <SelectValueText placeholder="Переменная" />
                 </SelectTrigger>
                 <SelectContent portalled={false}>
@@ -76,8 +76,9 @@ function GraphVariable({ variable, index, updateVariable, removeVariable }) {
             <SelectRoot
                 collection={measurements}
                 size={"xs"}
+                value={[variable.variableMeasurement]}
                 onValueChange={(e) => {
-                    setLocalState((prev) => ({ ...prev, measurement: e.value[0] }));
+                    updateVariable(index, {...variable, variableMeasurement: e.value[0] });
                 }}
             >
                 <SelectTrigger>
@@ -103,4 +104,4 @@ function GraphVariable({ variable, index, updateVariable, removeVariable }) {
     );
 }
 
-export default GraphVariable;
+export default memo(GraphVariable);
