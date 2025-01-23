@@ -8,11 +8,15 @@ import {
 } from "../../../../components/ui/select";
 import { offsets } from "../graphSettingsConstants";
 
-import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
+//import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
+
+import { useSetAtom } from "jotai";
+import { offsetAtom } from "../../atoms";
 
 function OffsetPicker() {
     console.log("Render OffsetPicker");
-    const { setOffset } = useGraphContext();
+    //const { setOffset } = useGraphContext();
+    const setOffset = useSetAtom(offsetAtom);
 
     return (
         <SelectRoot

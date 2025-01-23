@@ -20,10 +20,17 @@ import {
 } from "../../../../components/ui/select";
 import { testVariables, swatches, measurements } from "../graphSettingsConstants";
 
-function GraphVariable({ variable, index, updateVariable, removeVariable }) {
-    console.log("Render GraphVariable");
-    const [color, setColor] = useState();
+import { useAtom } from "jotai";
+import { removeVariableAtom, updateVariableAtom } from "../../atoms";
 
+function GraphVariable({ variable, index, /* updateVariable, removeVariable */ }) {
+    
+    const [color, setColor] = useState(parseColor(variable.color));
+
+    const [, removeVariable] = useAtom(removeVariableAtom);
+    const [, updateVariable] = useAtom(updateVariableAtom);
+
+    console.log(`Render GraphVariable, index: ${index}`);
     return (
         <Flex minH={"40px"} w={"100%"} background={"bg.muted"} rounded={"md"} align={"center"} px={"2"} gap={"2"}>
             <ColorPickerRoot size={"xs"}
@@ -32,8 +39,24 @@ function GraphVariable({ variable, index, updateVariable, removeVariable }) {
                     setColor(e.value);
                 }}
                 onExitComplete={() => {
-                    updateVariable(index, {...variable, color: color.toString("hex") });
+                    updateVariable({
+                        index, 
+                        updatedVariable: {
+                            ...variable,
+                            color: color.toString("hex")
+                        }
+                    });
                 }}
+                onValueChangeEnd={(e) => {
+                    updateVariable({
+                        index, 
+                        updatedVariable: {
+                            ...variable,
+                            color: e.value.toString("hex") 
+                        }
+                    });
+                }}
+                closeOnSelect
             >
                 <ColorPickerControl>
                     <ColorPickerTrigger border={"none"} />
@@ -59,7 +82,13 @@ function GraphVariable({ variable, index, updateVariable, removeVariable }) {
                 size={"xs"}
                 value={[variable.variableName]}
                 onValueChange={(e) => {
-                    updateVariable(index, {...variable, variableName: e.value[0] });
+                    updateVariable({
+                        index,
+                        updatedVariable: {
+                            ...variable,
+                            variableName: e.value[0] 
+                        }
+                    });
                 }}
             >
                 <SelectTrigger>
@@ -78,7 +107,13 @@ function GraphVariable({ variable, index, updateVariable, removeVariable }) {
                 size={"xs"}
                 value={[variable.variableMeasurement]}
                 onValueChange={(e) => {
-                    updateVariable(index, {...variable, variableMeasurement: e.value[0] });
+                    updateVariable({
+                        index,
+                        updatedVariable: {
+                            ...variable,
+                            variableMeasurement: e.value[0] 
+                        }
+                    });
                 }}
             >
                 <SelectTrigger>

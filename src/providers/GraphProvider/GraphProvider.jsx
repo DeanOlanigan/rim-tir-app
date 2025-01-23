@@ -16,6 +16,7 @@ function GraphProvider({ children }) {
         setVariables((prevVars) => [
             ...prevVars,
             {
+                id: Date.now(),
                 color: getRandomColor(),
                 variableName: "",
                 variableMeasurement: ""

@@ -1,16 +1,16 @@
-import { useEffect } from "react";
 import { Flex, Button } from "@chakra-ui/react";
+import { useAtom, useAtomValue } from "jotai";
+import { variablesAtom, addVariableAtom } from "../../atoms";
 
 import GraphVariable from "./GraphVariable";
-import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
+//import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
 
 function VariablesManager() {
     console.log("Render VariablesManager");
-    const { variables, addVariable, removeVariable, updateVariable } = useGraphContext();
+    //const { variables, addVariable, removeVariable, updateVariable } = useGraphContext();
 
-    useEffect(() => {
-        console.log(variables);
-    }, [variables]);
+    const variables = useAtomValue(variablesAtom);
+    const [, addVariable] = useAtom(addVariableAtom);
     
     return (
         <>
@@ -29,11 +29,11 @@ function VariablesManager() {
                 {
                     variables.map((variable, index) => (
                         <GraphVariable 
-                            key={index}
+                            key={variable.id}
                             index={index}
                             variable={variable}
-                            removeVariable={removeVariable}
-                            updateVariable={updateVariable}
+                            /* removeVariable={removeVariable}
+                            updateVariable={updateVariable} */
                         />
                     ))
                 }

@@ -8,18 +8,22 @@ import {
     SelectValueText
 } from "../../../components/ui/select";
 import { points } from "./graphSettingsConstants";
-import { useGraphContext } from "../../../providers/GraphProvider/GraphContext";
+//import { useGraphContext } from "../../../providers/GraphProvider/GraphContext";
+
+import { useSetAtom } from "jotai";
+import { maxPointsCountAtom } from "../atoms";
 
 function PointsCountChooser() {
     console.log("Render PointsCountChooser");
-    const { maxPointsCount, setMaxPointsCount } = useGraphContext();
+    //const { maxPointsCount, setMaxPointsCount } = useGraphContext();
+    const setMaxPointsCount = useSetAtom(maxPointsCountAtom);
 
     return (
         <Box>
             <SelectRoot
                 collection={points}
                 size={"xs"}
-                defaultValue={[String(maxPointsCount)]}
+                defaultValue={["100"]}
                 onValueChange={(e) => {
                     setMaxPointsCount(parseInt(e.value[0]));
                 }}

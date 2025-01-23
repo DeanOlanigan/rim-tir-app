@@ -4,11 +4,16 @@ import { ru } from "date-fns/locale";
 import { DatePicker } from "../../../../components/DatePicker/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
+//import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
+
+import { useAtom } from "jotai";
+import { startDateAtom, endDateAtom } from "../../atoms";
 
 function PeriodPicker() {
     console.log("Render PeriodPicker");
-    const { startDate, endDate, setStartDate, setEndDate} = useGraphContext();
+    //const { startDate, endDate, setStartDate, setEndDate} = useGraphContext();
+    const [startDate, setStartDate] = useAtom(startDateAtom);
+    const [endDate, setEndDate] = useAtom(endDateAtom);
 
     return (
         <Stack>

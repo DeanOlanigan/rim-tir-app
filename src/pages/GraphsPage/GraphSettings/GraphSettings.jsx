@@ -1,37 +1,23 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card, Flex, Stack, Button } from "@chakra-ui/react";
+import { Card, Flex, Stack, Group } from "@chakra-ui/react";
 
 import OffsetOrPeriodPicker from "./OffsetOrPeriodPicker/OffsetOrPeriodPicker";
 import PointsCountChooser from "./PointsCountChooser";
 import VariablesManager from "./VariablesManager/VariablesManager";
+import ViewGraphButton from "../ViewGraphButton";
 
-import { useGraphContext } from "../../../providers/GraphProvider/GraphContext";
+//import { useGraphContext } from "../../../providers/GraphProvider/GraphContext";
 
 function GraphSettings() {
     console.log("Render GraphSettings");
-    const navigate = useNavigate();
-    const { createMessageForWS, variables } = useGraphContext();
-    const [isViewerAllowed, setIsViewerAllowed] = useState(false);
-
-    useEffect(() => {
-        setIsViewerAllowed(
-            variables.length > 0 &&
-            variables.every(
-                (variable) =>
-                    variable.color &&
-                    variable.variableMeasurement &&
-                    variable.variableName
-            )
-        );
-    }, [variables]);
-
+    //const { createMessageForWS, variables } = useGraphContext();
+    
     return (
         <Flex
             w={"2xl"}
             maxW={"2xl"}
             alignSelf={"center"}
             direction={"column"}
+            gap={"2"}
         >
             <Card.Root
                 shadow={"xl"}
@@ -54,21 +40,9 @@ function GraphSettings() {
                     </Stack>
                 </Card.Body>
             </Card.Root>
-            <Button
-                disabled={!isViewerAllowed}
-                shadow={"xl"}
-                mt={"4"}
-                size={"xs"}
-                data-state={"open"}
-                animationDuration={"slow"}
-                animationStyle={{"_open": "scale-fade-in"}}
-                onClick={() => {
-                    console.log(createMessageForWS());
-                    navigate("viewer");
-                }}
-            >
-                Показать график
-            </Button>
+            <Group grow>
+                <ViewGraphButton />
+            </Group>
         </Flex>
     );
 }

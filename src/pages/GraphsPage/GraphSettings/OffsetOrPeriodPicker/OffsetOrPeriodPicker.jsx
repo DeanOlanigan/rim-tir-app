@@ -3,11 +3,14 @@ import { Box, Tabs } from "@chakra-ui/react";
 import PeriodPicker from "./PeriodPicker";
 import OffsetPicker from "./OffsetPicker";
 
-import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
+//import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
+import { useAtom } from "jotai";
+import { isWsActiveAtom } from "../../atoms";
 
 function OffsetOrPeriodPicker() {
     console.log("Render OffsetOrPeriodPicker");
-    const { isWsActive, setIsWsActive } = useGraphContext();
+    //const { isWsActive, setIsWsActive } = useGraphContext();
+    const [ isWsActive, setIsWsActive ] = useAtom(isWsActiveAtom);
 
     return (
         <Tabs.Root

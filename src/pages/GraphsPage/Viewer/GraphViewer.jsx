@@ -1,60 +1,31 @@
 import { useEffect, useState, useRef } from "react";
 import { HStack, IconButton, Card } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
 import { LuArrowLeft } from "react-icons/lu";
 import { Line } from "react-chartjs-2";
 
 import WebSocketService from "../../../services/websocketService";
 const wsService = new WebSocketService("ws://192.168.1.1:8800");
 
-import { useGraphContext } from "../../../providers/GraphProvider/GraphContext";
+//import { useGraphContext } from "../../../providers/GraphProvider/GraphContext";
 import { options } from "./chartOptions";
+
+import { useAtomValue, useAtom } from "jotai";
+import { wsMessageAtom, clearWsMessageAtom } from "../atoms";
+
+import { useNavigate } from "react-router-dom";
 
 function GraphViewer() {
     console.log("Render GraphViewer");
-    const { createMessageForWS } = useGraphContext();
+    //const { createMessageForWS } = useGraphContext();
     const chartRef = useRef(null);
+    const navigate = useNavigate();
+    const wsMessage = useAtomValue(wsMessageAtom);
+    const [, clearWsMessage] = useAtom(clearWsMessageAtom);
+    const isMounted = useRef(false);
 
     const [data, setData] = useState({
         datasets: [],
     });
-
-    const getColorForVariable = (variableName) => {
-        const variables = createMessageForWS().graph.variables;
-        const variable = variables.find((v) => v.variableName === variableName);
-        return variable ? variable.color : "#000000"; // Цвет по умолчанию, если не найден
-    };
-
-    const updateDatasets = (newPoints, prevDatasets) =>{
-        // Копируем предыдущие датасеты
-        const updatedDatasets = [...prevDatasets];
-                
-        // Для каждой новой точки ищем/создаём датасет
-        newPoints.forEach((point) => {
-            const dsIndex = updatedDatasets.findIndex(
-                (ds) => ds.label === point.variableName
-            );
-
-            if (dsIndex >= 0) {
-                // Добавляем новую точку в существующий датасет
-                updatedDatasets[dsIndex] = {
-                    ...updatedDatasets[dsIndex],
-                    data: [...updatedDatasets[dsIndex].data, point],
-                };
-            } else {
-                // Если датасета нет, создаём новый
-                const color = getColorForVariable(point.variableName);
-                updatedDatasets.push({
-                    label: point.variableName,
-                    data: [point],
-                    borderColor: color,
-                    backgroundColor: color + "80", // слегка прозрачный
-                });
-            }
-        });
-
-        return updatedDatasets;
-    };
 
     useEffect(() => {
         wsService.connect();
@@ -81,16 +52,52 @@ function GraphViewer() {
             }));
         };
 
-        wsService.addMessageHandler(handleWebSocketMessage); 
-        wsService.sendMessage(createMessageForWS());
+        const updateDatasets = (newPoints, prevDatasets) =>{
+            // Копируем предыдущие датасеты
+            const updatedDatasets = [...prevDatasets];
+                    
+            // Для каждой новой точки ищем/создаём датасет
+            newPoints.forEach((point) => {
+                const dsIndex = updatedDatasets.findIndex(
+                    (ds) => ds.label === point.variableName
+                );
+    
+                if (dsIndex >= 0) {
+                    // Добавляем новую точку в существующий датасет
+                    updatedDatasets[dsIndex] = {
+                        ...updatedDatasets[dsIndex],
+                        data: [...updatedDatasets[dsIndex].data, point],
+                    };
+                } else {
+                    // Если датасета нет, создаём новый
+                    const color = getColorForVariable(point.variableName);
+                    updatedDatasets.push({
+                        label: point.variableName,
+                        data: [point],
+                        borderColor: color,
+                        backgroundColor: color + "80", // слегка прозрачный
+                    });
+                }
+            });
+    
+            return updatedDatasets;
+        };
 
+        const getColorForVariable = (variableName) => {
+            const variables = wsMessage.graph.variables;
+            const variable = variables.find((v) => v.variableName === variableName);
+            return variable ? variable.color : "#000000"; // Цвет по умолчанию, если не найден
+        };
+
+        wsService.addMessageHandler(handleWebSocketMessage); 
+        wsService.sendMessage(wsMessage);
         return () => {
             wsService.removeMessageHandler(handleWebSocketMessage);
             wsService.close();
         };
-    }, [createMessageForWS]);
+    }, []);
 
-    const handleDoubleClick = () => {
+    const resetZoom = () => {
         const chart = chartRef.current;
         if (chart) {
             chart.resetZoom("active");
@@ -110,19 +117,21 @@ function GraphViewer() {
             >
                 <Card.Header>
                     <HStack>
-                        <Link to="/graphs" >
-                            <IconButton
-                                size={"xs"}
-                                shadow={"xs"}
-                                variant={"outline"}
-                            >
-                                <LuArrowLeft/>
-                            </IconButton>
-                        </Link>
+                        <IconButton
+                            size={"xs"}
+                            shadow={"xs"}
+                            variant={"outline"}
+                            onClick={() => {
+                                clearWsMessage();
+                                navigate(-1);
+                            }}
+                        >
+                            <LuArrowLeft/>
+                        </IconButton>
                     </HStack>
                 </Card.Header>
                 <Card.Body>
-                    <Line ref={chartRef} options={options} data={data} onDoubleClick={handleDoubleClick}/>
+                    <Line ref={chartRef} options={options} data={data} onDoubleClick={resetZoom}/>
                 </Card.Body>
             </Card.Root>
         </>
