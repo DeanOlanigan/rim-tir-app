@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { LogContext } from "./LogContext";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
 function LogProvider({ children }) {
     const savedSettings = JSON.parse(localStorage.getItem("user-settings")) || {};
-    const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(true);
+    //const navigate = useNavigate();
+    //const [isLoading, setIsLoading] = useState(true);
 
     const [logData, setLogData] = useState({
         name: "",
@@ -16,25 +16,31 @@ function LogProvider({ children }) {
         rows: savedSettings?.logRowsCount || "500",
     });
 
+    const [hasChosenLog, setHasChosenLog] = useState(
+        Boolean(localStorage.getItem("chosenLog"))
+    );
+
     const updateLogData = (data) => {
         setLogData((prev) => ({ ...prev, ...data }));
     };
 
     const saveChosenLogToLocalStorage = () => {
         localStorage.setItem("chosenLog", JSON.stringify(logData));
+        setHasChosenLog(true);
     };
 
     const removeChosenLogFromLocalStorage = () => {
         localStorage.removeItem("chosenLog");
+        setHasChosenLog(false);
     };
 
     const checkChosenLog = () => {
         const chosenLog = localStorage.getItem("chosenLog");
         if (chosenLog) {
             setLogData(JSON.parse(chosenLog));
-            navigate("/log/viewer");
+            //navigate("/log/viewer");
         }
-        setIsLoading(false);
+        //setIsLoading(false);
     };
 
     useEffect(() => {
@@ -58,7 +64,8 @@ function LogProvider({ children }) {
                 updateLogData,
                 saveChosenLogToLocalStorage,
                 removeChosenLogFromLocalStorage,
-                isLoading
+                /* isLoading */
+                hasChosenLog
             }}
         >
             {children}

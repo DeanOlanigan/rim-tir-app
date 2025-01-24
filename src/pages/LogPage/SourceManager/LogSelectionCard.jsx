@@ -81,14 +81,14 @@ function LogSelectionCard({ headingText, logList, loading }) {
                                 (e) => {
                                     if (e.code === "Enter" || e.code === "Space") {
                                         saveChosenLogToLocalStorage();
-                                        navigate("viewer");
+                                        navigate("/log/viewer");
                                     }
                                 }
                             }
                             onDoubleClick={
                                 () => {
                                     saveChosenLogToLocalStorage();
-                                    navigate("viewer");
+                                    navigate("/log/viewer");
                                 }
                             }
                             value={logData.type === logType ? logData.name : null}>

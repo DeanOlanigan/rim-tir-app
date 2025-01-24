@@ -1,5 +1,4 @@
 import { HStack, IconButton } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
 import { LuArrowLeft } from "react-icons/lu";
 import LogName from "./LogName";
 import LogTypesFilterButtons from "./LogTypesFilterButtons";
@@ -13,16 +12,16 @@ function LogViewerHeader() {
 
     return (
         <HStack align={"center"} justify={"space-between"} gap={"4"}>
-            <Link to="/log" >
-                <IconButton
-                    size={"xs"}
-                    shadow={"xs"}
-                    variant={"outline"}
-                    onClick={() => removeChosenLogFromLocalStorage()}
-                >
-                    <LuArrowLeft/>
-                </IconButton>
-            </Link>
+            <IconButton
+                size={"xs"}
+                shadow={"xs"}
+                variant={"outline"}
+                onClick={() => {
+                    removeChosenLogFromLocalStorage();
+                }}
+            >
+                <LuArrowLeft/>
+            </IconButton>
             <LogName/>
             <LogTypesFilterButtons/>
             <LogToolBox/>

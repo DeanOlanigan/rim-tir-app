@@ -1,4 +1,4 @@
-import { Box, Flex, createListCollection } from "@chakra-ui/react";
+import { Box, Flex, IconButton, createListCollection } from "@chakra-ui/react";
 import { Button } from "../../../components/ui/button";
 import { Tooltip } from "../../../components/ui/tooltip";
 import { LuDownload, LuEye, LuEyeClosed } from "react-icons/lu";
@@ -11,11 +11,12 @@ import {
     SelectValueText
 } from "../../../components/ui/select";
 import { useLogContext } from "../../../providers/LogProvider/LogContext";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
 function LogFileViewerControls({ isLoading }) {
     const { logData, updateLogData } = useLogContext();
+    const navigate = useNavigate();
     console.log("Render LogFileViewerControls");
 
     const rows = createListCollection({
@@ -78,18 +79,19 @@ function LogFileViewerControls({ isLoading }) {
             <Tooltip
                 content={"Просмотр выбранного файла"}
             >
-                <Link to="viewer">
-                    <Button
-                        shadow={"xl"}
-                        size={"xs"}
-                        disabled={!logData.name}
-                        variant="outline"
-                    >
-                        {
-                            logData.name ? <LuEye /> : <LuEyeClosed />
-                        }
-                    </Button>
-                </Link>
+                <IconButton
+                    shadow={"xl"}
+                    size={"xs"}
+                    disabled={!logData.name}
+                    variant="outline"
+                    onClick={() => {
+                        navigate("/log/viewer");
+                    }}
+                >
+                    {
+                        logData.name ? <LuEye /> : <LuEyeClosed />
+                    }
+                </IconButton>   
             </Tooltip>
         </Flex>
     );
