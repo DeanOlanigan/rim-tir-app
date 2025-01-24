@@ -47,10 +47,10 @@ function ViewGraphButton() {
             onClick={() => {
                 if (isWsActive) setOffset();
                 getWsMessage();
-                navigate("viewer");
+                navigate("/graph/viewer");
             }}
         >
-            Показать график
+            Применить настройки и открыть график
         </Button>
     );
 }

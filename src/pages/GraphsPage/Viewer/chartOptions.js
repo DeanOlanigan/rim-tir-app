@@ -32,7 +32,7 @@ const graphPointTooltip = (context) => {
 `;
 };
 
-export const options = {
+export const createOptions = (color) => ({
     responsive: true,
     scales: {
         x: {
@@ -48,15 +48,36 @@ export const options = {
                 date: {
                     locale: ru // или ru для русского
                 }
-            }
+            },
+            grid: {
+                color: color
+            },
+            ticks: {
+                color: color
+            },
+            border: {
+                color: color
+            },
         },
         y: {
-            beginatAtZero: false
+            beginatAtZero: false,
+            grid: {
+                color: color
+            },
+            ticks: {
+                color: color
+            },
+            border: {
+                color: color
+            },
         }
     },
     plugins: {
         legend: {
             position: "top",
+            labels: {
+                color: color
+            },
         },
         zoom: {
             pan: {
@@ -79,4 +100,4 @@ export const options = {
             }
         }
     },
-};
+});

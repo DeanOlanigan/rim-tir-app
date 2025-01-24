@@ -7,7 +7,11 @@ import MonitoringPage from "../pages/MonitoringPage/MonitoringPage";
 import LogPage from "../pages/LogPage/LogPage";
 import JournalPage from "../pages/JournalPage/JournalPage";
 import LoginForm from "../pages/LoginPage/LoginPage";
-import GraphsPage from "../pages/GraphsPage/GraphsPage";
+import GraphLayout from "../pages/GraphsPage/GraphLayout";
+import GraphRedirect from "../pages/GraphsPage/GraphRedirect";
+import GraphSettings from "../pages/GraphsPage/GraphSettings/GraphSettings";
+import RequireGraphData from "../pages/GraphsPage/RequireGraphData";
+import GraphViewer from "../pages/GraphsPage/Viewer/GraphViewer";
 
 /* function AppRoutes() {
     return (
@@ -44,7 +48,13 @@ function AppRouter() {
                         <Route path="/monitoring" element={<MonitoringPage />} />
                         <Route path="/log/*" element={<LogPage />} />
                         <Route path="/journal" element={<JournalPage />} />
-                        <Route path="/graphs/*" element={<GraphsPage />} />
+                        <Route path="/graph" element={<GraphLayout />} >
+                            <Route index element={<GraphRedirect />} />
+                            <Route path="settings" element={<GraphSettings />} />
+                            <Route path="viewer" element={<RequireGraphData />} >
+                                <Route index element={<GraphViewer />} />
+                            </Route>
+                        </Route>
                         <Route path="*" element={<Navigate to="/configuration" replace />} />
                         <Route path="/" element={<Navigate to="/configuration" replace />} />
                     </Route>

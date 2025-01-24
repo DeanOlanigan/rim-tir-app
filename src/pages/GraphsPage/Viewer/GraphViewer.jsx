@@ -2,26 +2,26 @@ import { useEffect, useState, useRef } from "react";
 import { HStack, IconButton, Card } from "@chakra-ui/react";
 import { LuArrowLeft } from "react-icons/lu";
 import { Line } from "react-chartjs-2";
+import { useColorModeValue } from "../../../components/ui/color-mode";
 
 import WebSocketService from "../../../services/websocketService";
 const wsService = new WebSocketService("ws://192.168.1.1:8800");
 
 //import { useGraphContext } from "../../../providers/GraphProvider/GraphContext";
-import { options } from "./chartOptions";
+import { createOptions } from "./chartOptions";
 
 import { useAtomValue, useAtom } from "jotai";
 import { wsMessageAtom, clearWsMessageAtom } from "../atoms";
-
-import { useNavigate } from "react-router-dom";
 
 function GraphViewer() {
     console.log("Render GraphViewer");
     //const { createMessageForWS } = useGraphContext();
     const chartRef = useRef(null);
-    const navigate = useNavigate();
     const wsMessage = useAtomValue(wsMessageAtom);
     const [, clearWsMessage] = useAtom(clearWsMessageAtom);
-    const isMounted = useRef(false);
+
+    const backgroundColor = useColorModeValue("#3f3f46", "#71717a");
+    const options = createOptions(backgroundColor);
 
     const [data, setData] = useState({
         datasets: [],
@@ -123,7 +123,6 @@ function GraphViewer() {
                             variant={"outline"}
                             onClick={() => {
                                 clearWsMessage();
-                                navigate(-1);
                             }}
                         >
                             <LuArrowLeft/>

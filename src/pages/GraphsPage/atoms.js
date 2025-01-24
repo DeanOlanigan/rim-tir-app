@@ -3,14 +3,14 @@ import { atomWithStorage } from "jotai/utils";
 import { getStartDate, getEndDate } from "../../utils/utils";
 import { getRandomColor } from "../../utils/utils";
 
-export const maxPointsCountAtom = atom(100);
-export const isWsActiveAtom = atom(false);
-export const offsetAtom = atom(120);
-export const startDateAtom = atom(getStartDate());
-export const endDateAtom = atom(getEndDate());
+export const maxPointsCountAtom = atomWithStorage("graphMaxPointsCount", 100);
+export const isWsActiveAtom = atomWithStorage("graphIsWsActive", false);
+export const offsetAtom = atomWithStorage("graphOffset", 120);
+export const startDateAtom = atomWithStorage("graphStartDate", getStartDate());
+export const endDateAtom = atomWithStorage("graphEndDate", getEndDate());
 
 //#region variables
-export const variablesAtom = atom([]);
+export const variablesAtom = atomWithStorage("graphVariables", []);
 
 export const addVariableAtom = atom(
     null,
