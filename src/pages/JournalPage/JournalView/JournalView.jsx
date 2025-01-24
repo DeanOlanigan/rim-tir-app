@@ -1,4 +1,5 @@
 import { Card, Flex, IconButton, Link, Box, CheckboxGroup, Text } from "@chakra-ui/react";
+import { useColorModeValue } from "../../../components/ui/color-mode";
 import { Checkbox } from "../../../components/ui/checkbox";
 import {
     MenuContent,
@@ -137,6 +138,9 @@ function rowRenderer(props) {
 }; */
 
 function DynamicTable({ columns = columnsConfig, rows }) {
+    const oddBackgroundColor = useColorModeValue("white", "#111111");
+    const evenBackgroundColor = useColorModeValue("#e4e4e7", "#27272a");
+
     const rowGetter = ({ index }) => rows[index];
 
     const rowRenderer = (props) => {
@@ -163,7 +167,7 @@ function DynamicTable({ columns = columnsConfig, rows }) {
 
         //const rowData = rows[index];
         if (!rowData) return null;
-        const backgroundColor = index % 2 === 0 ? "gray.100" : "white";
+        const backgroundColor = index % 2 === 0 ? oddBackgroundColor : evenBackgroundColor;
 
         return (
             <Box

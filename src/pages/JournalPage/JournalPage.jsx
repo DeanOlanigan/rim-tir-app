@@ -21,6 +21,7 @@ function JournalPage() {
                 flexDirection={"row"}
                 align={"flex-start"}
                 minH={"0"}
+                position={"relative"}
             >
                 <JournalProvider>
                     <JournalFilter />
