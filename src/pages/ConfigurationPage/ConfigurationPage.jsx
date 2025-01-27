@@ -1,7 +1,7 @@
 import { Box, Flex, Text, Card } from "@chakra-ui/react";
 import { Tree } from "react-arborist";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import "./ConfigurationPage.css";
+import "../../components/ResizebalePanel/ResizebalePanel.css";
 
 function ConfigurationPage() {
 

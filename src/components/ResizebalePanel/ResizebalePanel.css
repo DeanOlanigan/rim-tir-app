@@ -9,3 +9,7 @@
 .verticalLine[data-resize-handle-active] {
     background-color: var(--chakra-colors-color-palette-solid);
 }
+
+.panelWithShadow {
+    box-shadow: var(--chakra-shadows-xl);
+}
