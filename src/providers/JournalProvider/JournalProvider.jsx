@@ -27,8 +27,8 @@ function reducer(state, action) {
             ...state,
             isPaused: action.payload,
             journalRows: action.payload
-                ? [...state.journalRows, {mark: true}]
-                : [...state.journalRows, ...state.pausedJournalRows, {mark: true}],
+                ? [...state.journalRows, {mark: true, message: "Поставлено на паузу"}]
+                : [...state.journalRows, ...state.pausedJournalRows, {mark: true, message: "Возобновлено"}],
             pausedJournalRows: []
         };
     case "ADD_ROWS":
