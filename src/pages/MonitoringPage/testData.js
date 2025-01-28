@@ -7,7 +7,7 @@ export const testData = {
                 "-name": "test1",
                 "-type": "1 бит – bool",
                 "-isLua": true,
-                "-description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua",
+                "-description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua",
                 "-cmd": true,
                 "-archive": true,
                 "-group": "Без группы",
@@ -19,7 +19,7 @@ export const testData = {
             {
                 "-id": "2",
                 "-isSpecial": false,
-                "-name": "test2",
+                "-name": "test2test2test2test2test2",
                 "-type": "2 байта – целое",
                 "-isLua": true,
                 "-description": "",
@@ -244,169 +244,8 @@ export const testData = {
     }
 };
 
-
-const receive0 = {
-    connection: [
-        {
-            name: "test",
-            protocol: {
-                name: "GPIO",
-                setting: [
-                    {
-                        name: "contactBounce",
-                        value: "200"
-                    },
-                    {
-                        name: "isLog",
-                        value: true,
-                    },
-                ]
-            },
-            rootNode: {
-                type: "ROOT",
-                setting: [],
-                children: [
-                    {
-                        type: "dataObject",
-                        setting: [
-                            {
-                                name: "address",
-                                value: "1"
-                            },
-                            {
-                                name: "function",
-                                value: "OUT"
-                            },
-                            {
-                                name: "variable",
-                                value: "test1"
-                            },
-                            {
-                                name: "description",
-                                value: ""
-                            }
-                        ],
-                        children: []
-                    },
-                    {
-                        type: "folder",
-                        setting: [],
-                        children: [
-                            {
-                                type: "dataObject",
-                                setting: [
-                                    {
-                                        name: "address",
-                                        value: "2"
-                                    },
-                                    {
-                                        name: "function",
-                                        value: "1"
-                                    },
-                                    {
-                                        name: "variable",
-                                        value: "test2"
-                                    },
-                                    {
-                                        name: "type",
-                                        value: "1 бит – bool"
-                                    },
-                                    {
-                                        name: "description",
-                                        value: ""
-                                    }
-                                ],
-                                children: []
-                            }
-                        ]
-                    }
-                ]
-            }
-        },
-        {
-            name: "test2",
-            protocol: {
-                name: "IEC104",
-                setting: [
-                    {
-                        name: "isLog",
-                        value: false,
-                    },
-                    {
-                        name: "isClient",
-                        value: false,
-                    }
-                ]
-            },
-            rootNode: {
-                type: "ROOT",
-                setting: [],
-                children: [
-                    {
-                        type: "folder",
-                        setting: [],
-                        children: [
-                            {
-                                type: "dataObject",
-                                setting: [
-                                    {
-                                        name: "address",
-                                        value: "12"
-                                    },
-                                    {
-                                        name: "variable",
-                                        value: "test3"
-                                    },
-                                ],
-                                children: []
-                            },
-                        ]
-                    },
-                    {
-                        type: "ASDU",
-                        setting: [
-                            {
-                                name: "asdu",
-                                value: "1"
-                            },
-                            {
-                                name: "isSporadically",
-                                value: false
-                            },
-                            {
-                                name: "pollMode",
-                                value: "noPoll"
-                            },
-                            {
-                                name: "pollPeriod",
-                                value: ""
-                            }
-                        ],
-                        children: [
-                            {
-                                type: "dataObject",
-                                setting: [
-                                    {
-                                        name: "address",
-                                        value: "12"
-                                    },
-                                    {
-                                        name: "variable",
-                                        value: "test3"
-                                    },
-                                ],
-                                children: []
-                            },
-                        ]
-                    }
-                ]
-            }
-        }
-    ],
-};
-
 // Вариант №1
-const receive1 = [
+export const receive1 = [
     {
         type: "interface",
         name: "RS485",
@@ -529,93 +368,82 @@ const receive1 = [
     }
 ];
 
-// Вариант №2
-const receive2 = [
+export const variable = [
     {
-        type: "connection",
-        name: "testName2GPIO",
-        setting: [],
+        type: "variable",
+        name: "test1",
+        setting: {
+            id: "1",
+            isSpecial: true,
+            type: "1 бит – bool",
+            isLua: true,
+            description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua",
+            cmd: true,
+            archive: true,
+            group: "Без группы",
+            measurement: null,
+            coefficient: "",
+            luaExpression: "test2 = test2 + 1",
+            specialCycleDelay: 5
+        },
+        children: []
+    },
+    {
+        type: "folder",
+        name: "test2",
+        setting: {
+            id: "1",
+            isSpecial: true,
+            type: "1 бит – bool",
+            isLua: true,
+            description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua",
+            cmd: true,
+            archive: true,
+            group: "Без группы",
+            measurement: null,
+            coefficient: "",
+            luaExpression: "test2 = test2 + 1",
+            specialCycleDelay: 5
+        },
         children: [
             {
-                type: "interface",
-                name: "rs485",
-                setting: [],
-                children: [
-                    {
-                        type: "protocol",
-                        name: "gpio",
-                        setting: [],
-                        children: [
-                            {
-                                type: "dataObject",
-                                name: "test1",
-                                setting: [],
-                                children: []
-                            },
-                            {
-                                type: "folder",
-                                name: "test2",
-                                setting: [],
-                                children: [
-                                    {
-                                        type: "dataObject",
-                                        name: "test3",
-                                        setting: [],
-                                        children: []
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ],
-            },
-            {
-                type: "interface",
-                name: "rs232",
-                setting: [],
-                children: [
-                    {
-                        type: "protocol",
-                        name: "testName2IEC104",
-                        setting: [],
-                        children: [
-                            {
-                                type: "ASDU",
-                                name: "test1",
-                                setting: [],
-                                children: [
-                                    {
-                                        type: "dataObject",
-                                        name: "test3",
-                                        setting: [],
-                                        children: []
-                                    }
-                                ]
-                            },
-                            {
-                                type: "folder",
-                                name: "test2",
-                                setting: [],
-                                children: [
-                                    {
-                                        type: "ASDU",
-                                        name: "test3",
-                                        setting: [],
-                                        children: [
-                                            {
-                                                type: "dataObject",
-                                                name: "test4",
-                                                setting: [],
-                                                children: []
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ],
+                type: "variable",
+                name: "test3",
+                setting: {
+                    id: "1",
+                    isSpecial: true,
+                    type: "1 бит – bool",
+                    isLua: true,
+                    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua",
+                    cmd: true,
+                    archive: true,
+                    group: "Без группы",
+                    measurement: null,
+                    coefficient: "",
+                    luaExpression: "test2 = test2 + 1",
+                    specialCycleDelay: 5
+                },
+                children: []
             }
         ]
+    },
+    {
+        type: "variable",
+        name: "test4",
+        setting: {
+            id: "1",
+            isSpecial: true,
+            type: "1 бит – bool",
+            isLua: true,
+            description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua",
+            cmd: true,
+            archive: true,
+            group: "Без группы",
+            measurement: null,
+            coefficient: "",
+            luaExpression: "test2 = test2 + 1",
+            specialCycleDelay: 5
+        },
+        children: []
     }
 ];

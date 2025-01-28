@@ -1,4 +1,4 @@
-import { Text, Card, Collapsible, Box, Flex, Button, AbsoluteCenter, Stack, StackSeparator, Code } from "@chakra-ui/react";
+import { Text, Card, Box, Flex, IconButton, AbsoluteCenter, Stack, StackSeparator, Code, Mark, Table } from "@chakra-ui/react";
 import {
     AccordionRoot,
     AccordionItem,
@@ -6,65 +6,28 @@ import {
     AccordionItemTrigger
 } from "../../components/ui/accordion";
 import {
+    MenuContent,
+    MenuItem,
+    MenuRoot,
+    MenuTrigger,
+} from "../../components/ui/menu";
+import { Field } from "../../components/ui/field";
+import {
     PopoverBody,
     PopoverContent,
     PopoverRoot,
-    PopoverTitle,
     PopoverTrigger,
 } from "../../components/ui/popover";
-import { ToggleTip, InfoTip } from "../../components/ui/toggle-tip";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
-import { headerMapping } from "./mappings";
-import { LuChevronRight } from "react-icons/lu";
+import { headerMapping, valueMapping } from "./mappings";
 import { testData } from "./testData";
-
-function ConnectionBase({protocol}) {
-    const { "-indexName": _, "-name": __, ...rest } = protocol["protocol"];
-
-    return (
-        <Collapsible.Root unmountOnExit>
-            <Box position={"relative"}>
-                <Collapsible.Trigger w={"100%"} py={"2"} borderBottom={"1px solid"} borderColor={"border"}>
-                    <Flex gap={"2"}>
-                        <LuChevronRight />
-                        <Text>{protocol["protocol"]["-indexName"]}</Text>
-                        <Text>{protocol["protocol"]["-name"]}</Text>
-                    </Flex>
-                </Collapsible.Trigger>
-                <AbsoluteCenter axis={"vertical"} insetEnd={"0"}>
-                    <InfoTip>
-                        <Flex direction={"column"}>
-                            {
-                                Object.keys(rest).map((key, index) => {
-                                    return (
-                                        <Text key={index}>{headerMapping[key]}: {rest[key].toString()}</Text>
-                                    );
-                                })
-                            }
-                        </Flex>
-                    </InfoTip>
-                </AbsoluteCenter>
-            </Box>
-            <Collapsible.Content>
-                {
-                    protocol["dataObjects"].map((dataObject, index) => {
-                        return (
-                            <Box key={index} borderBottom={"1px solid"} borderColor={"border"} h={"100%"} w={"100%"} p={"2"}>
-                                Content: {JSON.stringify(dataObject)}
-                            </Box>           
-                        );
-                    })
-                }
-            </Collapsible.Content>
-        </Collapsible.Root>
-    );
-}
+import { LuCircle, LuInfo, LuLightbulb, LuPencil, LuUserCheck } from "react-icons/lu";
 
 function HomePage() {
     return (
         <>
-            <PanelGroup direction="horizontal">
+            <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
                     <Card.Root
                         h={"100%"}
@@ -78,18 +41,12 @@ function HomePage() {
                             <Card.Title>Прием</Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            {
-                                testData["receive"]["connection"].map((connection, index) => {
-                                    return (
-                                        <ConnectionBase key={index} protocol={connection}/>
-                                    );
-                                })
-                            }
+                            <ConnectionBase protocol={testData.receive} />
                         </Card.Body>
                     </Card.Root>
                 </Panel>
                 <PanelResizeHandle className="verticalLine"/>
-                <Panel collapsible={true} collapsedSize={0} minSize={25}>
+                <Panel collapsible={true} collapsedSize={0} minSize={35}>
                     <Card.Root 
                         h={"100%"}
                         data-state={"open"}
@@ -102,7 +59,7 @@ function HomePage() {
                             <Card.Title>Переменные</Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            <Text>Panel 2</Text>
+                            <VariablesTable variables={testData.variables.variable}/>
                         </Card.Body>
                     </Card.Root>
                 </Panel>
@@ -120,33 +77,7 @@ function HomePage() {
                             <Card.Title>Передача</Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            <AccordionRoot variant={"outline"} collapsible multiple>
-                                {
-                                    testData.send.connection.map((connection, index) => (
-                                        <AccordionItem key={index} value={connection["protocol"]["-indexName"]}>
-                                            <Box position={"relative"}>
-                                                <AccordionItemTrigger indicatorPlacement="start">
-                                                    <ConnectionHeadder protocol={connection}/>
-                                                </AccordionItemTrigger>
-                                                <AbsoluteCenter axis={"vertical"} insetEnd={"0"}>
-                                                    <ConnectionHeadderAdditionalInfo protocol={connection}/>
-                                                </AbsoluteCenter>
-                                            </Box>
-                                            <AccordionItemContent>
-                                                {
-                                                    connection["dataObjects"].map((dataObject, index) => {
-                                                        return (
-                                                            <Box key={index} h={"100%"} w={"100%"} p={"2"}>
-                                                                Content: {JSON.stringify(dataObject)}
-                                                            </Box>           
-                                                        );
-                                                    })
-                                                }
-                                            </AccordionItemContent>
-                                        </AccordionItem>
-                                    ))
-                                }
-                            </AccordionRoot>
+                            <ConnectionBase protocol={testData.send} />
                         </Card.Body>
                     </Card.Root>
                 </Panel>
@@ -155,38 +86,148 @@ function HomePage() {
     );
 }
 
+function VariablesTable({variables}) {
+    return (
+        <Table.Root size={"sm"}>
+            <Table.Header>
+                <Table.Row>
+                    <Table.ColumnHeader />
+                    <Table.ColumnHeader />
+                    <Table.ColumnHeader maxW={"40px"}>Переменная</Table.ColumnHeader>
+                    <Table.ColumnHeader>Значение</Table.ColumnHeader>
+                    <Table.ColumnHeader />
+                    <Table.ColumnHeader />
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {
+                    variables.map((variable, index) => (
+                        <Table.Row key={index}>
+                            <Table.Cell><LuLightbulb/></Table.Cell>
+                            <Table.Cell><LuCircle/></Table.Cell>
+                            <Table.Cell maxW={"120px"}>
+                                <Stack
+                                    direction={"row"}
+                                    gap={"1"}
+                                    align={"center"}
+                                    w={"100%"}
+                                >
+                                    <Text truncate fontSize={"sm"} fontWeight={"medium"}>{variable["-name"]}</Text>
+                                    <ConnectionHeadderAdditionalInfo protocol={variable}/>
+                                </Stack>
+                            </Table.Cell>
+                            <Table.Cell><Code variant={"surface"} w={"100%"}></Code></Table.Cell>
+                            <Table.Cell>
+                                <MenuRoot>
+                                    <MenuTrigger asChild>
+                                        <IconButton size={"xs"} variant={"ghost"}>
+                                            <LuPencil/>
+                                        </IconButton>
+                                    </MenuTrigger>
+                                    <MenuContent>
+                                        <MenuItem>Редактировать</MenuItem>
+                                    </MenuContent>
+                                </MenuRoot>
+                            </Table.Cell>
+                            <Table.Cell><LuUserCheck/></Table.Cell>
+                        </Table.Row>
+                    ))
+                }
+            </Table.Body>
+        </Table.Root>
+    );
+}
 
+function ConnectionBase({protocol}) {
+    return (
+        <AccordionRoot variant={"outline"} collapsible multiple>
+            {
+                protocol.connection.map((connection, index) => (
+                    <AccordionItem key={index} value={connection["protocol"]["-indexName"]}>
+                        <Box position={"relative"}>
+                            <AccordionItemTrigger indicatorPlacement="start">
+                                <ConnectionHeadder protocol={connection}/>
+                            </AccordionItemTrigger>
+                            <AbsoluteCenter axis={"vertical"} insetEnd={"0"}>
+                                <ConnectionHeadderAdditionalInfo protocol={connection["protocol"]}/>
+                            </AbsoluteCenter>
+                        </Box>
+                        <AccordionItemContent>
+                            {
+                                connection["dataObjects"].map((dataObject, index) => {
+                                    return (
+                                        <Box key={index} h={"100%"} w={"100%"} p={"2"}>
+                                            Content: {JSON.stringify(dataObject)}
+                                        </Box>           
+                                    );
+                                })
+                            }
+                        </AccordionItemContent>
+                    </AccordionItem>
+                ))
+            }
+        </AccordionRoot>
+    );
+}
 
 function ConnectionHeadder({protocol}) {
     return (
-        <Flex gap={"2"} h={"100%"} w={"100%"}>
-            <Stack direction={"row"} gap={"2"} w={"100%"} h={"100%"} separator={<StackSeparator />}>
-                <Code size={"sm"}>{protocol["protocol"]["-name"]}</Code>
-                <Text>{protocol["protocol"]["-indexName"]}</Text>
-            </Stack>
-        </Flex>
+        <Stack 
+            direction={"row"}
+            gap={"2"}
+            w={"calc(100% - 40px)"}
+            h={"100%"}
+            separator={<StackSeparator />}
+        >
+            <Code
+                size={"sm"}
+                textWrap={"nowrap"}
+            >
+                {protocol["protocol"]["-name"]}
+            </Code>
+            <Text
+                truncate
+                fontSize={"sm"}
+            >
+                {protocol["protocol"]["-indexName"]}
+            </Text>
+        </Stack>
     );
 }
 
 function ConnectionHeadderAdditionalInfo({protocol}) {
-    const { "-indexName": _, "-name": __, ...rest } = protocol["protocol"];
+    const { "-indexName": _, "-name": __, "-id": ___, ...rest } = protocol;
 
     return (
-        <PopoverRoot positioning={{placement: "left-center"}}>
-            <PopoverTrigger>
-                <Button size={"xs"} variant={"subtle"}>...</Button>
+        <PopoverRoot positioning={{placement: "left-center"}} lazyMount unmountOnExit>
+            <PopoverTrigger asChild>
+                <IconButton size={"xs"} variant={"ghost"}>
+                    <LuInfo />
+                </IconButton>
             </PopoverTrigger>
             <PopoverContent>
                 <PopoverBody>
-                    <Flex direction={"column"} wrap={"wrap"}>
+                    <Stack gap={"1"} separator={<StackSeparator />}>
                         {
                             Object.keys(rest).map((key, index) => {
                                 return (
-                                    <Text key={index} fontSize={"sm"} color={"fg.muted"}>{headerMapping[key]}: {rest[key].toString()}</Text>
+                                    {/* <Flex key={index} justifyContent={"space-between"} maxH={"50px"}>
+                                        <Text fontSize={"sm"} color={"fg.muted"}>
+                                            {headerMapping[key]}:
+                                        </Text>
+                                        <Text fontSize={"sm"} textAlign={"end"} truncate lineClamp={"3"}>
+                                            <Mark variant={"text"}> {rest[key]}</Mark>
+                                        </Text>
+                                    </Flex> */},
+                                    <Field key={index} label={headerMapping[key]}>
+                                        <Box maxH={"100px"} overflow={"auto"}>
+                                            <Text fontSize={"sm"}>{valueMapping[rest[key]] || rest[key].toString()}</Text>
+                                        </Box>
+                                    </Field>
                                 );
                             })
                         }
-                    </Flex>
+                    </Stack>
                 </PopoverBody>
             </PopoverContent>
         </PopoverRoot>
