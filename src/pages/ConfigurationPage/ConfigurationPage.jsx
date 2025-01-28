@@ -32,7 +32,15 @@ function ConfigurationPage() {
                 <Panel collapsible={true} collapsedSize={0} minSize={9}>
                     <PanelGroup autoSaveId="persistence1" direction="vertical">
                         <Panel minSize={15}>
-                            <Card.Root size={"sm"} h={"100%"}>
+                            <Card.Root
+                                size={"sm"}
+                                h={"100%"}
+                                data-state={"open"}
+                                animationDuration={"slow"}
+                                animationStyle={{
+                                    _open: "scale-fade-in",
+                                }}
+                            >
                                 <Card.Header>
                                     <Card.Title>
                                         <Flex align={"center"} justify={"space-between"}>
@@ -49,7 +57,15 @@ function ConfigurationPage() {
                         </Panel>
                         <PanelResizeHandle className="verticalLine"/>
                         <Panel minSize={15}>
-                            <Card.Root size={"sm"} h={"100%"}>
+                            <Card.Root
+                                size={"sm"}
+                                h={"100%"}
+                                data-state={"open"}
+                                animationDuration={"slow"}
+                                animationStyle={{
+                                    _open: "scale-fade-in",
+                                }}
+                            >
                                 <Card.Header>
                                     <Card.Title>
                                         <Flex align={"center"} justify={"space-between"}>
@@ -68,7 +84,15 @@ function ConfigurationPage() {
                 </Panel>
                 <PanelResizeHandle className="verticalLine"/>
                 <Panel minSize={15}>
-                    <Card.Root h={"100%"} size={"sm"}>
+                    <Card.Root
+                        h={"100%"}
+                        size={"sm"}
+                        data-state={"open"}
+                        animationDuration={"slow"}
+                        animationStyle={{
+                            _open: "scale-fade-in",
+                        }}
+                    >
                         <Card.Header>
                             <Card.Title>
                                 <Text textStyle={"sm"}>Конфигурация</Text>
@@ -81,7 +105,15 @@ function ConfigurationPage() {
                 </Panel>
                 <PanelResizeHandle className="verticalLine"/>
                 <Panel collapsible={true} collapsedSize={0} defaultSize={30} minSize={12}>
-                    <Card.Root h={"100%"} size={"sm"}>
+                    <Card.Root
+                        h={"100%"}
+                        size={"sm"}
+                        data-state={"open"}
+                        animationDuration={"slow"}
+                        animationStyle={{
+                            _open: "scale-fade-in",
+                        }}
+                    >
                         <Card.Header>
                             <Card.Title>
                                 <Text textStyle={"sm"}>Переменные</Text>

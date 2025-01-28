@@ -201,8 +201,15 @@ function HomePage() {
     return (
         <>
             <PanelGroup direction="horizontal">
-                <Panel>
-                    <Card.Root h={"100%"}>
+                <Panel collapsible={true} collapsedSize={0} minSize={25}>
+                    <Card.Root
+                        h={"100%"}
+                        data-state={"open"}
+                        animationDuration={"slow"}
+                        animationStyle={{
+                            _open: "scale-fade-in",
+                        }}
+                    >
                         <Card.Header>
                             <Card.Title>Прием</Card.Title>
                         </Card.Header>
@@ -218,8 +225,15 @@ function HomePage() {
                     </Card.Root>
                 </Panel>
                 <PanelResizeHandle className="verticalLine"/>
-                <Panel>
-                    <Card.Root h={"100%"}>
+                <Panel collapsible={true} collapsedSize={0} minSize={25}>
+                    <Card.Root 
+                        h={"100%"}
+                        data-state={"open"}
+                        animationDuration={"slow"}
+                        animationStyle={{
+                            _open: "scale-fade-in",
+                        }}
+                    >
                         <Card.Header>
                             <Card.Title>Переменные</Card.Title>
                         </Card.Header>
@@ -229,8 +243,15 @@ function HomePage() {
                     </Card.Root>
                 </Panel>
                 <PanelResizeHandle className="verticalLine"/>
-                <Panel>
-                    <Card.Root h={"100%"}>
+                <Panel collapsible={true} collapsedSize={0} minSize={25}>
+                    <Card.Root
+                        h={"100%"}
+                        data-state={"open"}
+                        animationDuration={"slow"}
+                        animationStyle={{
+                            _open: "scale-fade-in",
+                        }}
+                    >
                         <Card.Header>
                             <Card.Title>Передача</Card.Title>
                         </Card.Header>
