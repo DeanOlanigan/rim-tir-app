@@ -1,161 +1,23 @@
-import { Text, Card, Collapsible, Box, Flex, Button, AbsoluteCenter } from "@chakra-ui/react";
+import { Text, Card, Collapsible, Box, Flex, Button, AbsoluteCenter, Stack, StackSeparator, Code } from "@chakra-ui/react";
+import {
+    AccordionRoot,
+    AccordionItem,
+    AccordionItemContent,
+    AccordionItemTrigger
+} from "../../components/ui/accordion";
+import {
+    PopoverBody,
+    PopoverContent,
+    PopoverRoot,
+    PopoverTitle,
+    PopoverTrigger,
+} from "../../components/ui/popover";
 import { ToggleTip, InfoTip } from "../../components/ui/toggle-tip";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
 import { headerMapping } from "./mappings";
 import { LuChevronRight } from "react-icons/lu";
-
-const testData = {
-    "variables": {
-        "variable": [
-            {
-                "-id": "1",
-                "-isSpecial": true,
-                "-name": "test1",
-                "-type": "1 бит – bool",
-                "-isLua": true,
-                "-description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua",
-                "-cmd": true,
-                "-archive": true,
-                "-group": "Без группы",
-                "-measurement": null,
-                "-coefficient": "",
-                "-luaExpression": "test2 = test2 + 1",
-                "-specialCycleDelay": 5
-            },
-            {
-                "-id": "2",
-                "-isSpecial": false,
-                "-name": "test2",
-                "-type": "2 байта – целое",
-                "-isLua": true,
-                "-description": "",
-                "-cmd": false,
-                "-archive": false,
-                "-group": "Без группы",
-                "-measurement": null,
-                "-coefficient": "",
-                "-luaExpression": "test3 = cos(self())",
-                "-specialCycleDelay": ""
-            },
-            {
-                "-id": "3",
-                "-isSpecial": false,
-                "-name": "test3",
-                "-type": "4 байта – с плавающей точкой",
-                "-isLua": false,
-                "-description": "",
-                "-cmd": false,
-                "-archive": true,
-                "-group": "Без группы",
-                "-measurement": null,
-                "-coefficient": 1,
-                "-luaExpression": "",
-                "-specialCycleDelay": ""
-            }
-        ]
-    },
-    "send": {
-        "connection": []
-    },
-    "receive": {
-        "connection": [
-            {
-                "protocol": {
-                    "-indexName": "testName2GPIO",
-                    "-name": "GPIO",
-                    "-isLog": true,
-                    "-contactBounce": "200"
-                },
-                "dataObjects": [
-                    {   
-                        "dataObject": [
-                            {
-                                "-id": "1",
-                                "-address": "1",
-                                "-function": "OUT",
-                                "-variable": "test1",
-                                "-description": ""
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "protocol": {
-                    "-indexName": "modbus123",
-                    "-name": "Modbus",
-                    "-isLog": false,
-                    "-deviceAddress": "1",
-                    "-port": "ttyS0",
-                    "-baudRate": "57600",
-                    "-stopBit": "1",
-                    "-parity": "None",
-                    "-order2": "LittleEndian",
-                    "-order4": "1-0 3-2",
-                    "-pollPeriod": "21"
-                },
-                "dataObjects": [
-                    {
-                        "dataObject": [
-                            {
-                                "-id": "1",
-                                "-address": "2",
-                                "-function": "1",
-                                "-variable": "test2",
-                                "-type": "1 бит – bool",
-                                "-description": ""
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "protocol": {
-                    "-indexName": "iec12",
-                    "-name": "IEC 60870-5-104",
-                    "-isLog": false,
-                    "-isClient": false,
-                    "-ipaddress": "0.0.0.0",
-                    "-port": "12",
-                    "-lengthOfASDU": "1",
-                    "-lengthOfCause": "1",
-                    "-lengthOfAdr": "1",
-                    "-k": "1",
-                    "-w": "1",
-                    "-t0": "1",
-                    "-t1": "1",
-                    "-t2": "1",
-                    "-t3": "1"
-                },
-                "dataObjects": [
-                    {
-                        "ASDU": [
-                            {
-                                "-id": "1",
-                                "-asdu": "1",
-                                "-isSporadically": false,
-                                "-pollMode": "noPoll",
-                                "-pollPeriod": "",
-                                "dataObject": [
-                                    {
-                                        "-id": "1",
-                                        "-address": "12",
-                                        "-variable": "test3",
-                                        "-type": "Однопозиционный ТС",
-                                        "-aperture": null,
-                                        "-exec": "",
-                                        "-description": ""
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
-};
+import { testData } from "./testData";
 
 function ConnectionBase({protocol}) {
     const { "-indexName": _, "-name": __, ...rest } = protocol["protocol"];
@@ -172,13 +34,15 @@ function ConnectionBase({protocol}) {
                 </Collapsible.Trigger>
                 <AbsoluteCenter axis={"vertical"} insetEnd={"0"}>
                     <InfoTip>
-                        {
-                            Object.keys(rest).map((key, index) => {
-                                return (
-                                    <Text key={index}>{headerMapping[key]}: {rest[key].toString()}</Text>
-                                );
-                            })
-                        }
+                        <Flex direction={"column"}>
+                            {
+                                Object.keys(rest).map((key, index) => {
+                                    return (
+                                        <Text key={index}>{headerMapping[key]}: {rest[key].toString()}</Text>
+                                    );
+                                })
+                            }
+                        </Flex>
                     </InfoTip>
                 </AbsoluteCenter>
             </Box>
@@ -256,12 +120,76 @@ function HomePage() {
                             <Card.Title>Передача</Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            <Text>Panel 3</Text>
+                            <AccordionRoot variant={"outline"} collapsible multiple>
+                                {
+                                    testData.send.connection.map((connection, index) => (
+                                        <AccordionItem key={index} value={connection["protocol"]["-indexName"]}>
+                                            <Box position={"relative"}>
+                                                <AccordionItemTrigger indicatorPlacement="start">
+                                                    <ConnectionHeadder protocol={connection}/>
+                                                </AccordionItemTrigger>
+                                                <AbsoluteCenter axis={"vertical"} insetEnd={"0"}>
+                                                    <ConnectionHeadderAdditionalInfo protocol={connection}/>
+                                                </AbsoluteCenter>
+                                            </Box>
+                                            <AccordionItemContent>
+                                                {
+                                                    connection["dataObjects"].map((dataObject, index) => {
+                                                        return (
+                                                            <Box key={index} h={"100%"} w={"100%"} p={"2"}>
+                                                                Content: {JSON.stringify(dataObject)}
+                                                            </Box>           
+                                                        );
+                                                    })
+                                                }
+                                            </AccordionItemContent>
+                                        </AccordionItem>
+                                    ))
+                                }
+                            </AccordionRoot>
                         </Card.Body>
                     </Card.Root>
                 </Panel>
             </PanelGroup>
         </>
+    );
+}
+
+
+
+function ConnectionHeadder({protocol}) {
+    return (
+        <Flex gap={"2"} h={"100%"} w={"100%"}>
+            <Stack direction={"row"} gap={"2"} w={"100%"} h={"100%"} separator={<StackSeparator />}>
+                <Code size={"sm"}>{protocol["protocol"]["-name"]}</Code>
+                <Text>{protocol["protocol"]["-indexName"]}</Text>
+            </Stack>
+        </Flex>
+    );
+}
+
+function ConnectionHeadderAdditionalInfo({protocol}) {
+    const { "-indexName": _, "-name": __, ...rest } = protocol["protocol"];
+
+    return (
+        <PopoverRoot positioning={{placement: "left-center"}}>
+            <PopoverTrigger>
+                <Button size={"xs"} variant={"subtle"}>...</Button>
+            </PopoverTrigger>
+            <PopoverContent>
+                <PopoverBody>
+                    <Flex direction={"column"} wrap={"wrap"}>
+                        {
+                            Object.keys(rest).map((key, index) => {
+                                return (
+                                    <Text key={index} fontSize={"sm"} color={"fg.muted"}>{headerMapping[key]}: {rest[key].toString()}</Text>
+                                );
+                            })
+                        }
+                    </Flex>
+                </PopoverBody>
+            </PopoverContent>
+        </PopoverRoot>
     );
 }
 
