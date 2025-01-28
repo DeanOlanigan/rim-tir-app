@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Button } from "@chakra-ui/react";
+import { Button } from "../../../components/ui/button";
 import { useSetAtom, useAtomValue, useAtom } from "jotai";
 import { 
     startDateAtom,
@@ -8,7 +8,7 @@ import {
     isWsActiveAtom,
     getWsMessageAtom,
     variablesAtom 
-} from "./atoms";
+} from "../atoms";
 
 function ViewGraphButton() {
     console.log("Render ViewGraphButton");

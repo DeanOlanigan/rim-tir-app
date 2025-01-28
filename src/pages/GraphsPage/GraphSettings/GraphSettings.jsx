@@ -3,7 +3,7 @@ import { Card, Flex, Stack, Group } from "@chakra-ui/react";
 import OffsetOrPeriodPicker from "./OffsetOrPeriodPicker/OffsetOrPeriodPicker";
 import PointsCountChooser from "./PointsCountChooser";
 import VariablesManager from "./VariablesManager/VariablesManager";
-import ViewGraphButton from "../ViewGraphButton";
+import ViewGraphButton from "./ViewGraphButton";
 
 //import { useGraphContext } from "../../../providers/GraphProvider/GraphContext";
 
