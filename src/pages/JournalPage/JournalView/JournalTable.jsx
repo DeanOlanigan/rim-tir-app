@@ -82,8 +82,8 @@ function JournalTable({ scrollRef, columns, rows }) {
                         rowGetter={rowGetter}
                         rowRenderer={rowRenderer}
                         headerStyle={{
-                            "fontSize": "14px",
-                            "text-transform": "math-auto"
+                            fontSize: "14px",
+                            textTransform: "math-auto"
                         }}
                         rowStyle={{
                             borderBottom: "1px solid #ccc"

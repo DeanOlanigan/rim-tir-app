@@ -90,7 +90,7 @@ function JournalView() {
                 <Box w={"100%"} h={"100%"} position={"relative"}>
                     <JournalTable scrollRef={scrollContainer} rows={journalRows} columns={visibleColumns}/>
                     <AbsoluteCenter hidden={journalRows.length > 0} axis={"both"}>
-                        <Spinner />
+                        <Spinner size={"xl"} />
                     </AbsoluteCenter>
                 </Box>
             </Card.Body>
