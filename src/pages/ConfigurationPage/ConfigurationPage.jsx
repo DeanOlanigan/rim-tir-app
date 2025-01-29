@@ -1,30 +1,10 @@
 import { Box, Flex, Text, Card } from "@chakra-ui/react";
-import { Tree } from "react-arborist";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { AutoSizer } from "react-virtualized";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
+import TreeView from "./tree";
 
 function ConfigurationPage() {
-
-    const data = [
-        {
-            id: "1",
-            name: "Прием",
-            children: [
-                { id: "c1", name: "General" },
-                { id: "c2", name: "Random" },
-                { id: "c3", name: "Open Source Projects" },
-            ],
-        },
-        {
-            id: "2",
-            name: "Передача",
-            children: [
-                { id: "d1", name: "Alice" },
-                { id: "d2", name: "Bob" },
-                { id: "d3", name: "Charlie" },
-            ],
-        },
-    ];
 
     return (
         <Box height="100%">
@@ -49,9 +29,11 @@ function ConfigurationPage() {
                                     </Card.Title>
                                 </Card.Header>
                                 <Card.Body>
-                                    <Flex height="100%">
-                                        <Tree initialData={data}/>
-                                    </Flex>
+                                    <AutoSizer>
+                                        {({ height, width }) => (
+                                            <TreeView height={height} width={width} />
+                                        )}
+                                    </AutoSizer>
                                 </Card.Body>
                             </Card.Root>
                         </Panel>

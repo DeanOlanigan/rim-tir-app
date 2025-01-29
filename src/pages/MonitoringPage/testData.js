@@ -245,7 +245,7 @@ export const testData = {
 };
 
 // Вариант №1
-export const receive1 = [
+export const receive = [
     {
         type: "interface",
         name: "RS485",
@@ -447,3 +447,31 @@ export const variable = [
         children: []
     }
 ];
+
+export const send = receive;
+
+export const config = {
+    type: "root",
+    name: "root",
+    setting: {},
+    children: [
+        {
+            type: "recieve",
+            name: "recieve",
+            setting: {},
+            children: receive
+        },
+        {
+            type: "send",
+            name: "send",
+            setting: {},
+            children: send
+        },
+        {
+            type: "variable",
+            name: "variable",
+            setting: {},
+            children: variable
+        }
+    ]
+};
