@@ -56,9 +56,11 @@ function ConfigurationPage() {
                                     </Card.Title>
                                 </Card.Header>
                                 <Card.Body>
-                                    <Flex asChild height="100%" align="center" justify="center">
-                                        <Text>ИО</Text>
-                                    </Flex>
+                                    <AutoSizer>
+                                        {({ height, width }) => (
+                                            <TreeView height={height} width={width} />
+                                        )}
+                                    </AutoSizer>
                                 </Card.Body>
                             </Card.Root>
                         </Panel>

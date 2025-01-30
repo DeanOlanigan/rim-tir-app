@@ -1,4 +1,4 @@
-import { Text, Card, Box, Flex, IconButton, AbsoluteCenter, Stack, StackSeparator, Code, Mark, Table } from "@chakra-ui/react";
+import { Text, Card, Box, Flex, IconButton, AbsoluteCenter, Stack, StackSeparator, Code, Mark, Table, Collapsible } from "@chakra-ui/react";
 import {
     AccordionRoot,
     AccordionItem,
@@ -21,8 +21,8 @@ import {
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
 import { headerMapping, valueMapping } from "./mappings";
-import { testData } from "./testData";
-import { LuCircle, LuInfo, LuLightbulb, LuPencil, LuUserCheck } from "react-icons/lu";
+import { testData, config } from "./testData";
+import { LuCircle, LuInfo, LuLightbulb, LuPencil, LuUserCheck, LuFolder } from "react-icons/lu";
 
 function HomePage() {
     return (
@@ -59,7 +59,7 @@ function HomePage() {
                             <Card.Title>Переменные</Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            <VariablesTable variables={testData.variables.variable}/>
+                            <VariablesTable variables={config.children[2]}/>
                         </Card.Body>
                     </Card.Root>
                 </Panel>
@@ -91,50 +91,96 @@ function VariablesTable({variables}) {
         <Table.Root size={"sm"}>
             <Table.Header>
                 <Table.Row>
-                    <Table.ColumnHeader />
-                    <Table.ColumnHeader />
-                    <Table.ColumnHeader maxW={"40px"}>Переменная</Table.ColumnHeader>
-                    <Table.ColumnHeader>Значение</Table.ColumnHeader>
-                    <Table.ColumnHeader />
-                    <Table.ColumnHeader />
+                    <Table.ColumnHeader w={"40px"}/>
+                    <Table.ColumnHeader w={"40px"}/>
+                    <Table.ColumnHeader w={"100%"}>Переменная</Table.ColumnHeader>
+                    <Table.ColumnHeader w={"100%"}>Значение</Table.ColumnHeader>
+                    <Table.ColumnHeader w={"40px"}/>
+                    <Table.ColumnHeader w={"40px"}/>
                 </Table.Row>
             </Table.Header>
             <Table.Body>
                 {
-                    variables.map((variable, index) => (
-                        <Table.Row key={index}>
-                            <Table.Cell><LuLightbulb/></Table.Cell>
-                            <Table.Cell><LuCircle/></Table.Cell>
-                            <Table.Cell maxW={"120px"}>
-                                <Stack
-                                    direction={"row"}
-                                    gap={"1"}
-                                    align={"center"}
-                                    w={"100%"}
-                                >
-                                    <Text truncate fontSize={"sm"} fontWeight={"medium"}>{variable["-name"]}</Text>
-                                    <ConnectionHeadderAdditionalInfo protocol={variable}/>
-                                </Stack>
-                            </Table.Cell>
-                            <Table.Cell><Code variant={"surface"} w={"100%"}></Code></Table.Cell>
-                            <Table.Cell>
-                                <MenuRoot>
-                                    <MenuTrigger asChild>
-                                        <IconButton size={"xs"} variant={"ghost"}>
-                                            <LuPencil/>
-                                        </IconButton>
-                                    </MenuTrigger>
-                                    <MenuContent>
-                                        <MenuItem>Редактировать</MenuItem>
-                                    </MenuContent>
-                                </MenuRoot>
-                            </Table.Cell>
-                            <Table.Cell><LuUserCheck/></Table.Cell>
-                        </Table.Row>
+                    variables.children.map((variable, index) => (
+                        variable.type === "folder" 
+                            ? <VariableFolder key={index} folder={variable}/>
+                            : <VariableTableRow key={index} variable={variable}/>
                     ))
                 }
             </Table.Body>
         </Table.Root>
+    );
+}
+
+function VariableFolder({folder}) {
+    return (
+        <Table.Row w={"100%"}>
+            <Table.Cell colSpan={6} px={"0"} py={"1"}>
+                <Collapsible.Root w={"100%"}>
+                    <Collapsible.Trigger w={"100%"} asChild>
+                        <IconButton size={"xs"} variant={"ghost"}>
+                            <LuFolder />
+                        </IconButton>
+                    </Collapsible.Trigger>
+                    <Collapsible.Content w={"100%"}>
+                        <Table.Root size={"sm"}>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.ColumnHeader />
+                                    <Table.ColumnHeader />
+                                    <Table.ColumnHeader minW={"40px"}></Table.ColumnHeader>
+                                    <Table.ColumnHeader></Table.ColumnHeader>
+                                    <Table.ColumnHeader />
+                                    <Table.ColumnHeader />
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {
+                                    folder.children.map((variable, index) => (
+                                        variable.type === "folder" 
+                                            ? <VariableFolder key={index} folder={variable}/> 
+                                            : <VariableTableRow key={index} variable={variable}/>
+                                    ))
+                                }
+                            </Table.Body>
+                        </Table.Root>
+                    </Collapsible.Content>
+                </Collapsible.Root>
+            </Table.Cell>
+        </Table.Row>
+    );
+}
+
+function VariableTableRow({variable}) {
+    return (
+        <Table.Row>
+            <Table.Cell><LuLightbulb/></Table.Cell>
+            <Table.Cell><LuCircle/></Table.Cell>
+            <Table.Cell w={"100%"}>
+                <Stack
+                    direction={"row"}
+                    gap={"1"}
+                    align={"center"}
+                >
+                    <Text truncate fontSize={"sm"} fontWeight={"medium"}>{variable.setting.name}</Text>
+                    <ConnectionHeadderAdditionalInfo protocol={variable.setting}/>
+                </Stack>
+            </Table.Cell>
+            <Table.Cell w={"100%"}><Code variant={"surface"}></Code></Table.Cell>
+            <Table.Cell>
+                <MenuRoot>
+                    <MenuTrigger asChild>
+                        <IconButton size={"xs"} variant={"ghost"}>
+                            <LuPencil/>
+                        </IconButton>
+                    </MenuTrigger>
+                    <MenuContent>
+                        <MenuItem>Редактировать</MenuItem>
+                    </MenuContent>
+                </MenuRoot>
+            </Table.Cell>
+            <Table.Cell><LuUserCheck/></Table.Cell>
+        </Table.Row>
     );
 }
 
@@ -196,7 +242,7 @@ function ConnectionHeadder({protocol}) {
 }
 
 function ConnectionHeadderAdditionalInfo({protocol}) {
-    const { "-indexName": _, "-name": __, "-id": ___, ...rest } = protocol;
+    const { "-indexName": _, name: __, id: ___, ...rest } = protocol;
 
     return (
         <PopoverRoot positioning={{placement: "left-center"}} lazyMount unmountOnExit>
