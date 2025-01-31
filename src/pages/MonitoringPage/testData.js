@@ -379,6 +379,34 @@ export const receive = [
                     function: "OUT",
                     description: ""
                 },
+            },
+            {
+                id: "r1.3.2",
+                type: "folder",
+                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                parent: "r1.3",
+                ignoreChildren: false,
+                setting: {
+                    name: "folder0",
+                    description: "TEST",
+                    group: "bemp",
+                    alias: "",
+                    tags: []
+                },
+                children: [
+                    {
+                        id: "r1.3.2.1",
+                        type: "dataObject",
+                        subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                        parent: "r1.3.2",
+                        setting: {
+                            address: "2",
+                            variable: "test3",
+                            function: "IN",
+                            description: ""
+                        },
+                    }
+                ]
             }
         ]
     }
@@ -414,18 +442,18 @@ export const variable = [
         ignoreChildren: false,
         setting: {
             /* Примерное содержимое */
-            name: "test2",
-            description: "",
-            group: "",
+            name: "folder1",
+            description: "Эта папка нужна для тестирования",
+            group: "bemp",
             alias: "",
             tags: []
         },
         children: [
             {
-                id: "3.2.1",
+                id: "3.2.2",
                 type: "variable",
                 subType: null,
-                parent: "v1.2",
+                parent: "3.2",
                 setting: {
                     isSpecial: true,
                     name: "test3",
@@ -440,6 +468,43 @@ export const variable = [
                     luaExpression: "test2 = test2 + 1",
                     specialCycleDelay: 5
                 }
+            },
+            {
+                id: "3.2.1",
+                type: "folder",
+                subType: null,
+                parent: "3.2",
+                ignoreChildren: false,
+                setting: {
+                    /* Примерное содержимое */
+                    name: "folder2",
+                    description: "Эта папка нужна для тестирования",
+                    group: "bemp",
+                    alias: "",
+                    tags: []
+                },
+                children: [
+                    {
+                        id: "3.2.1.1",
+                        type: "variable",
+                        subType: null,
+                        parent: "3.2.1",
+                        setting: {
+                            isSpecial: true,
+                            name: "test5",
+                            type: "1 бит – bool",
+                            isLua: true,
+                            description: "Lorem ipsum dolor sit amet consectetur",
+                            cmd: true,
+                            archive: true,
+                            group: "Без группы",
+                            measurement: null,
+                            coefficient: "",
+                            luaExpression: "test2 = test2 + 1",
+                            specialCycleDelay: 5
+                        }
+                    }
+                ]
             }
         ]
     },
