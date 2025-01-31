@@ -1,4 +1,5 @@
-import { Text, Card, Box, Flex, IconButton, AbsoluteCenter, Stack, StackSeparator, Code, Mark, Table, Collapsible } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Text, Card, Box, Flex, IconButton, AbsoluteCenter, Stack, StackSeparator, Code, Mark, Table, Collapsible, Button, Badge, Presence } from "@chakra-ui/react";
 import {
     AccordionRoot,
     AccordionItem,
@@ -22,7 +23,18 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
 import { headerMapping, valueMapping } from "./mappings";
 import { testData, config } from "./testData";
-import { LuCircle, LuInfo, LuLightbulb, LuPencil, LuUserCheck, LuFolder } from "react-icons/lu";
+import { LuCircle,
+    LuInfo,
+    LuLightbulb,
+    LuPencil,
+    LuUserCheck,
+    LuFolder,
+    LuChevronLeft,
+    LuChevronDown,
+    LuChevronRight,
+    LuCable,
+    LuUnplug
+} from "react-icons/lu";
 
 function HomePage() {
     return (
@@ -41,7 +53,7 @@ function HomePage() {
                             <Card.Title>Прием</Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            <ConnectionBase protocol={testData.receive} />
+                            <ConnectionBase protocol={config.children[0].children} />
                         </Card.Body>
                     </Card.Root>
                 </Panel>
@@ -59,7 +71,7 @@ function HomePage() {
                             <Card.Title>Переменные</Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            <VariablesTable variables={config.children[2]}/>
+                            <CollapsibleFoldersTable data={config.children[2].children} isEditable/>
                         </Card.Body>
                     </Card.Root>
                 </Panel>
@@ -77,7 +89,7 @@ function HomePage() {
                             <Card.Title>Передача</Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            <ConnectionBase protocol={testData.send} />
+                            <ConnectionBase protocol={config.children[1].children} />
                         </Card.Body>
                     </Card.Root>
                 </Panel>
@@ -86,137 +98,137 @@ function HomePage() {
     );
 }
 
-function VariablesTable({variables}) {
-    return (
-        <Table.Root size={"sm"}>
-            <Table.Header>
-                <Table.Row>
-                    <Table.ColumnHeader w={"40px"}/>
-                    <Table.ColumnHeader w={"40px"}/>
-                    <Table.ColumnHeader w={"100%"}>Переменная</Table.ColumnHeader>
-                    <Table.ColumnHeader w={"100%"}>Значение</Table.ColumnHeader>
-                    <Table.ColumnHeader w={"40px"}/>
-                    <Table.ColumnHeader w={"40px"}/>
-                </Table.Row>
-            </Table.Header>
-            <Table.Body>
-                {
-                    variables.children.map((variable, index) => (
-                        variable.type === "folder" 
-                            ? <VariableFolder key={index} folder={variable}/>
-                            : <VariableTableRow key={index} variable={variable}/>
-                    ))
-                }
-            </Table.Body>
-        </Table.Root>
-    );
-}
+function TableFolder({item, level, isExpanded, toggleExpand, isEditable}) {
+    const iconMap = {
+        "folder": <LuFolder/>,
+        "asdu": <LuCable/>,
+        "functionGroup": <LuUnplug/>
+    };
 
-function VariableFolder({folder}) {
+    const badgePallete = {
+        "folder": "blue",
+        "asdu": "yellow",
+        "functionGroup": "green"
+    };
+
     return (
-        <Table.Row w={"100%"}>
-            <Table.Cell colSpan={6} px={"0"} py={"1"}>
-                <Collapsible.Root w={"100%"}>
-                    <Collapsible.Trigger w={"100%"} asChild>
-                        <IconButton size={"xs"} variant={"ghost"}>
-                            <LuFolder />
-                        </IconButton>
-                    </Collapsible.Trigger>
-                    <Collapsible.Content w={"100%"}>
-                        <Table.Root size={"sm"}>
-                            <Table.Header>
-                                <Table.Row>
-                                    <Table.ColumnHeader />
-                                    <Table.ColumnHeader />
-                                    <Table.ColumnHeader minW={"40px"}></Table.ColumnHeader>
-                                    <Table.ColumnHeader></Table.ColumnHeader>
-                                    <Table.ColumnHeader />
-                                    <Table.ColumnHeader />
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {
-                                    folder.children.map((variable, index) => (
-                                        variable.type === "folder" 
-                                            ? <VariableFolder key={index} folder={variable}/> 
-                                            : <VariableTableRow key={index} variable={variable}/>
-                                    ))
-                                }
-                            </Table.Body>
-                        </Table.Root>
-                    </Collapsible.Content>
-                </Collapsible.Root>
+        <Table.Row border={0} background={"bg.muted"}>
+            <Table.Cell pl={level * 6}border={"none"}>
+                <Box p={"2"}>
+                    <IconButton size={"xs"} variant={"plain"} onClick={() => toggleExpand(item.id)}>
+                        {/* {isExpanded ? <LuChevronDown /> : <LuChevronRight />} */}
+                        <Box
+                            w={"19.19px"}
+                            h={"19.19px"}
+                            color={"fg.subtle"}
+                            as={LuChevronRight}
+                            transform={isExpanded ? "rotate(90deg)" : "rotate(0deg)"}
+                            transition={"transform 0.2s ease-in-out"}
+                        />
+                    </IconButton>
+                </Box>
+            </Table.Cell>
+            <Table.Cell colSpan={isEditable ? 7 : 4} border={"none"}>
+                <Flex align={"center"}>
+                    <Stack w={"100%"} direction={"row"} align={"center"} justifyContent={"center"} separator={<StackSeparator />}>
+                        <Badge colorPalette={badgePallete[item.type]}>
+                            {iconMap[item.type]}
+                            <Text>{item.setting.name || item.subType || item.type}</Text>
+                        </Badge>
+                        <Text>{item.setting.description}</Text>
+                        <Code colorPalette={"red"}>{item.setting.group}</Code>
+                    </Stack>
+                </Flex>
             </Table.Cell>
         </Table.Row>
     );
 }
 
-function VariableTableRow({variable}) {
+function TableEndRow({item, level, isEditable}) {
     return (
         <Table.Row>
-            <Table.Cell><LuLightbulb/></Table.Cell>
-            <Table.Cell><LuCircle/></Table.Cell>
-            <Table.Cell w={"100%"}>
-                <Stack
-                    direction={"row"}
-                    gap={"1"}
-                    align={"center"}
-                >
-                    <Text truncate fontSize={"sm"} fontWeight={"medium"}>{variable.setting.name}</Text>
-                    <ConnectionHeadderAdditionalInfo protocol={variable.setting}/>
-                </Stack>
+            <Table.Cell pl={level * 6} pe={"0"} border={"none"}>
+                
             </Table.Cell>
-            <Table.Cell w={"100%"}><Code variant={"surface"}></Code></Table.Cell>
-            <Table.Cell>
-                <MenuRoot>
-                    <MenuTrigger asChild>
-                        <IconButton size={"xs"} variant={"ghost"}>
-                            <LuPencil/>
-                        </IconButton>
-                    </MenuTrigger>
-                    <MenuContent>
-                        <MenuItem>Редактировать</MenuItem>
-                    </MenuContent>
-                </MenuRoot>
+            <Table.Cell border={"none"}>
+                <LuLightbulb/>
             </Table.Cell>
-            <Table.Cell><LuUserCheck/></Table.Cell>
+            <Table.Cell border={"none"}>
+                <LuCircle/>
+            </Table.Cell>
+            <Table.Cell border={"none"}>
+                <Flex align={"center"} gap={"2"}>
+                    <Text truncate fontSize={"sm"} fontWeight={"medium"}>{item.setting.name || item.setting.variable}</Text>
+                    <ConnectionHeadderAdditionalInfo protocol={item.setting}/>
+                </Flex>
+            </Table.Cell>
+            <Table.Cell border={"none"}>
+                <Code w={"100%"}></Code>
+            </Table.Cell>
+            {isEditable && (
+                <>
+                    <Table.Cell border={"none"}>
+                        <MenuRoot>
+                            <MenuTrigger asChild>
+                                <IconButton size={"xs"} variant={"ghost"}>
+                                    <LuPencil/>
+                                </IconButton>
+                            </MenuTrigger>
+                            <MenuContent>
+                                <MenuItem>Редактировать</MenuItem>
+                            </MenuContent>
+                        </MenuRoot>
+                    </Table.Cell>
+                    <Table.Cell border={"none"}>
+                        <LuUserCheck/>
+                    </Table.Cell>
+                    <Table.Cell border={"none"}>
+                        
+                    </Table.Cell>
+                </>    
+            )}
         </Table.Row>
     );
 }
 
 function ConnectionBase({protocol}) {
     return (
-        <AccordionRoot variant={"outline"} collapsible multiple>
+        <AccordionRoot variant={"outline"} collapsible multiple lazyMount unmountOnExit>
             {
-                protocol.connection.map((connection, index) => (
-                    <AccordionItem key={index} value={connection["protocol"]["-indexName"]}>
-                        <Box position={"relative"}>
-                            <AccordionItemTrigger indicatorPlacement="start">
-                                <ConnectionHeadder protocol={connection}/>
-                            </AccordionItemTrigger>
-                            <AbsoluteCenter axis={"vertical"} insetEnd={"0"}>
-                                <ConnectionHeadderAdditionalInfo protocol={connection["protocol"]}/>
-                            </AbsoluteCenter>
-                        </Box>
-                        <AccordionItemContent>
-                            {
-                                connection["dataObjects"].map((dataObject, index) => {
-                                    return (
-                                        <Box key={index} h={"100%"} w={"100%"} p={"2"}>
-                                            Content: {JSON.stringify(dataObject)}
-                                        </Box>           
-                                    );
-                                })
-                            }
-                        </AccordionItemContent>
-                    </AccordionItem>
+                protocol.map((connection, index) => (
+
+                    connection.type === "interface" ? <ConnectionBase key={index} protocol={connection.children}/> :
+                        (
+                            <AccordionItem key={index} value={connection.id}>
+                                <Box position={"relative"}>
+                                    <AccordionItemTrigger indicatorPlacement="start">
+                                        <ConnectionHeadder protocol={connection.subType} name={connection.setting.name}/>
+                                    </AccordionItemTrigger>
+                                    <AbsoluteCenter axis={"vertical"} insetEnd={"0"}>
+                                        <ConnectionHeadderAdditionalInfo protocol={connection.setting}/>
+                                    </AbsoluteCenter>
+                                </Box>
+                                <AccordionItemContent>
+                                    {/* {
+                                        connection["dataObjects"].map((dataObject, index) => {
+                                            return (
+                                                <Box key={index} h={"100%"} w={"100%"} p={"2"}>
+                                                    Content: {JSON.stringify(dataObject)}
+                                                </Box>           
+                                            );
+                                        })
+                                    } */}
+                                    <CollapsibleFoldersTable data={connection.children}/>
+                                </AccordionItemContent>
+                            </AccordionItem>
+                        )
                 ))
             }
         </AccordionRoot>
     );
 }
 
-function ConnectionHeadder({protocol}) {
+function ConnectionHeadder({protocol, name}) {
     return (
         <Stack 
             direction={"row"}
@@ -229,13 +241,13 @@ function ConnectionHeadder({protocol}) {
                 size={"sm"}
                 textWrap={"nowrap"}
             >
-                {protocol["protocol"]["-name"]}
+                {protocol}
             </Code>
             <Text
                 truncate
                 fontSize={"sm"}
             >
-                {protocol["protocol"]["-indexName"]}
+                {name}
             </Text>
         </Stack>
     );
@@ -277,6 +289,69 @@ function ConnectionHeadderAdditionalInfo({protocol}) {
                 </PopoverBody>
             </PopoverContent>
         </PopoverRoot>
+    );
+}
+
+function CollapsibleFoldersTable({data, isEditable = false}) {
+    const [expanded, setExpanded] = useState({});
+
+    const toggleExpand = (id) => {
+        setExpanded((prev) => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+    };
+
+    const renderRows = (items, level = 0) => {
+        return items.map((item) => {
+            const isFolder = item.type === "folder" || item.type === "asdu" || item.type === "functionGroup";
+            const isExpanded = expanded[item.id];
+
+            return (
+                <React.Fragment key={item.id}>
+                    {isFolder ? 
+                        (<TableFolder
+                            item={item}
+                            level={level}
+                            isExpanded={isExpanded}
+                            toggleExpand={toggleExpand}
+                            isEditable={isEditable}
+                        />) : (<TableEndRow item={item} level={level} isEditable={isEditable}/>)
+                    }
+
+                    { isFolder && isExpanded && item.children && (
+                        // TODO Рендер с анимацией в таблице - это пиздец.
+                        renderRows(item.children, level + 1)
+                    )}
+                </React.Fragment>
+            );
+        });
+    };
+
+    return (
+        <Table.ScrollArea w={"100%"}>
+            <Table.Root w={"100%"} textAlign={"center"} size={"sm"} borderBottom={"1px solid"} borderColor={"border"}>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.ColumnHeader w={"1px"}/>
+                        <Table.ColumnHeader w={"40px"}/>
+                        <Table.ColumnHeader w={"40px"}/>
+                        <Table.ColumnHeader>Переменная</Table.ColumnHeader>
+                        <Table.ColumnHeader textAlign={"center"}>Значение</Table.ColumnHeader>
+                        {isEditable && (
+                            <>
+                                <Table.ColumnHeader w={"40px"}/>
+                                <Table.ColumnHeader w={"40px"}/>
+                                <Table.ColumnHeader w={"40px"}/>
+                            </>
+                        )}
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {renderRows(data)}
+                </Table.Body>
+            </Table.Root>
+        </Table.ScrollArea>
     );
 }
 
