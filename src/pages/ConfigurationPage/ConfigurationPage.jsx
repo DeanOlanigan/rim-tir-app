@@ -8,7 +8,7 @@ import { config } from "../MonitoringPage/testData";
 
 function ConfigurationPage() {
     console.log("Render ConfigurationPage");
-    const { ref, width, height } = useResizeObserver();
+    //const { ref, width, height } = useResizeObserver();
 
     return (
         <Box height="100%">
@@ -33,7 +33,11 @@ function ConfigurationPage() {
                                     </Card.Title>
                                 </Card.Header>
                                 <Card.Body>
-                                    <TreeView data={config.children[0].children} />
+                                    <AutoSizer>
+                                        {({ height, width }) => (
+                                            <TreeView height={height} width={width} data={config.children[0].children} />
+                                        )}
+                                    </AutoSizer>
                                 </Card.Body>
                             </Card.Root>
                         </Panel>
@@ -56,7 +60,11 @@ function ConfigurationPage() {
                                     </Card.Title>
                                 </Card.Header>
                                 <Card.Body>
-                                    {/* <TreeView height={height} width={width} /> */}
+                                    <AutoSizer>
+                                        {({ height, width }) => (
+                                            <TreeView height={height} width={width} data={config.children[0].children}/>
+                                        )}
+                                    </AutoSizer>
                                 </Card.Body>
                             </Card.Root>
                         </Panel>

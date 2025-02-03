@@ -1,0 +1,37 @@
+[role="treeitem"]:has(.node) {
+    cursor: pointer;
+    user-select: none;
+    border: 2px solid transparent;
+    border-radius: var(--chakra-radii-sm);
+}
+
+[role="treeitem"]:has(.node):focus-visible {
+    background-color: var(--chakra-colors-bg-emphasized);
+    outline: none;
+}
+
+[role="treeitem"][aria-selected="true"]:has(.node):focus-visible {
+    background-color: var(--chakra-colors-bg-emphasized);
+    outline: none;
+}
+
+[role="treeitem"]:has(.node):hover {
+    background-color: var(--chakra-colors-bg-muted);
+}
+
+[role="treeitem"][aria-selected="true"]:has(.node) {
+    background-color: var(--chakra-colors-bg-emphasized);
+    font-weight: var(--chakra-font-weights-medium);
+}
+
+[role="treeitem"]:has(.node:global(.willReceiveDrop)) {
+    border: 2px solid var(--chakra-colors-border-inverted);
+}
+
+.node {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    position: relative;
+    /* border-bottom: var(--chakra-borders-sm) var(--chakra-colors-border); */
+}

@@ -1,6 +1,6 @@
-import { Text, Code, Icon, Stack, StackSeparator, IconButton } from "@chakra-ui/react";
+import { Text, Code, Icon, Stack, StackSeparator, Separator, IconButton, MenuTrigger, Button, Box } from "@chakra-ui/react";
 import { Tree } from "react-arborist";
-import { LuChevronRight, LuChevronDown, LuFolder, LuCable, LuUnplug, LuPackage, LuFileDigit, LuFileStack, LuPlus, LuTrash2, LuPencil } from "react-icons/lu";
+import { LuChevronRight, LuChevronDown, LuFolder, LuCable, LuUnplug, LuPackage, LuFileDigit, LuFileStack, LuPlus, LuTrash2, LuPencil, LuEllipsis } from "react-icons/lu";
 import {
     MenuContent,
     MenuContextTrigger,
@@ -9,8 +9,9 @@ import {
     MenuRoot,
 } from "../../components/ui/menu";
 import { motion, AnimatePresence } from "motion/react";
-import { useSpring, animated } from "@react-spring/web";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
+import styles from "./tree.module.css";
+import clsx from "clsx";
 
 const interfaceTypes = {
     rs485: "rs485",
@@ -117,13 +118,21 @@ const markers = {
 };
 
 function TreeView({height, width, data}) {
+    const onFocus = (node) => {
+        console.log(node);
+    };
+
     return (
         <Tree
             initialData={data}
             openByDefault={false}
             overscanCount={2}
-            rowHeight={40}
+            rowHeight={32}
             indent={32} // Отступ вложенных узлов
+            height={height}
+            width={width}
+            onFocus={onFocus}
+            renderCursor={DropCursor}
         >
             {BaseNode}
         </Tree>
@@ -131,106 +140,147 @@ function TreeView({height, width, data}) {
 };
 export default TreeView;
 
-function BaseNode({ node, style, dragHandle, tree, preview }) {
-    const { type, setting, subType } = node.data;
-    const [expanded, setExpanded] = useState(false);
-
-    useEffect(() => {
-        setExpanded(true);
-        return () => setExpanded(false);
-    }, [node.id]);
-
-    const spring = useSpring({
-        from: { x: -20, opacity: 0 },
-        to: {
-            x: expanded ? 0 : -20,
-            opacity: expanded ? 1 : 0,
-        },
-        config: { tension: 200, friction: 20 }, 
-    });
-
+const NodeContext = memo(function NodeContext() {
+    console.log("Render NodeContext");
     return (
-        <animated.div 
-            style={{
-                ...style,
-                transform: spring.x.to((val) => `translateX(${val}px)`),
-                opacity: spring.opacity,
-                display: "flex",
-                alignItems: "center",
-            }}
-            {...dragHandle}
-        >
-            <Stack
-                borderBottom={"1px solid"}
-                borderColor={"border.emphasized"}
-                h={"100%"}
-                w={"calc(100% - 16px)"}
-                direction={"row"}
-                align={"center"}
-                gap={"4"}
-                py={"2"}
-                onContextMenu={(e) => e.preventDefault()}
-            >
-                {
-                    node.isLeaf 
-                        ? null
-                        : 
-                        (
-                            <IconButton size={"xs"} variant={"ghost"} onClick={() => {
-                                node.toggle();
-                                setExpanded(!expanded);
-                            }}>
-                                { node.isOpen ? <LuChevronDown/> : <LuChevronRight/> }
-                            </IconButton>
-                        )
-                }
-                <MenuRoot>
-                    <MenuContextTrigger>
-                        <Stack
-                            h={"100%"}
-                            w={"100%"}
-                            direction={"row"}
-                            align={"center"}
-                            gap={"2"}
-                            separator={<StackSeparator />}
-                        >
-                            { markers[type] }
-                            { type === nodeTypes.protocol || type === nodeTypes.interface ? markers[subType] : null }
-                            <Text>{setting?.name || subType || setting?.variable}</Text>
-                        </Stack>
-                    </MenuContextTrigger>
+        <MenuRoot lazyMount unmountOnExit>
+            <MenuTrigger asChild>
+                <IconButton
+                    size={"xs"}
+                    variant={"ghost"}
+                    position={"absolute"}
+                    right={0}
+                >
+                    <LuEllipsis />
+                </IconButton>
+            </MenuTrigger>
+            <MenuContent>
+                <MenuItem value="add">
+                    <LuPlus />
+                    Добавить узел
+                </MenuItem>
+                <MenuRoot positioning={{ placement: "right-start", gutter: 2 }}>
+                    <MenuTriggerItem>
+                        <LuPencil />
+                        Редактировать узел
+                    </MenuTriggerItem>
                     <MenuContent>
-                        <MenuItem value="add">
-                            <LuPlus />
-                            Добавить узел
-                        </MenuItem>
-                        <MenuRoot positioning={{ placement: "right-start", gutter: 2 }}>
-                            <MenuTriggerItem>
-                                <LuPencil />
-                                Редактировать узел
-                            </MenuTriggerItem>
-                            <MenuContent>
-                                <MenuItem value="rename">
-                                    <LuPencil />
-                                    Переименовать узел
-                                </MenuItem>
-                                <MenuItem value="delete">
-                                    <LuTrash2 />
-                                    Удалить узел
-                                </MenuItem>
-                            </MenuContent>
-                        </MenuRoot>
-                        <MenuItem value="delete">
-                            <LuTrash2 />
-                            Удалить узел
-                        </MenuItem>
                         <MenuItem value="rename">
                             <LuPencil />
                             Переименовать узел
                         </MenuItem>
+                        <MenuItem value="delete">
+                            <LuTrash2 />
+                            Удалить узел
+                        </MenuItem>
                     </MenuContent>
                 </MenuRoot>
+                <MenuItem value="delete">
+                    <LuTrash2 />
+                    Удалить узел
+                </MenuItem>
+                <MenuItem value="rename">
+                    <LuPencil />
+                    Переименовать узел
+                </MenuItem>
+            </MenuContent>
+        </MenuRoot>
+    );
+});
+
+const NodeContent = memo(function NodeContent(props) {
+    console.log("Render NodeContent");
+    const { node, dragHandle, style } = props;
+    const { type, subType, setting } = node.data;
+    return (
+        <Stack
+            direction={"row"}
+            gap={"4"}
+            align={"center"}
+            onContextMenu={(e) => e.preventDefault()}
+            ref={dragHandle}
+            style={style}
+            w={"calc(100% - 32px)"}
+            h={"100%"}
+            onClick={() => {
+                node.toggle();
+            }}
+        >
+            {
+                node.isLeaf 
+                    ? null
+                    : 
+                    (
+                        <Box
+                            w={"19.19px"}
+                            h={"19.19px"}
+                            color={"fg.subtle"}
+                            as={LuChevronRight}
+                            transform={node.isOpen ? "rotate(90deg)" : "rotate(0deg)"}
+                            transition={"transform 0.2s ease-in-out"}
+                        />
+                    )
+            }
+            <Stack
+                h={"100%"}
+                w={"100%"}
+                direction={"row"}
+                align={"center"}
+                gap={"2"}
+                separator={<StackSeparator height={"4"} alignSelf={"center"}/>}
+            >
+                { markers[type] }
+                { type === nodeTypes.protocol || type === nodeTypes.interface ? markers[subType] : null }
+                <Text>{setting?.name || subType || setting?.variable}</Text>
             </Stack>
-        </animated.div>
+        </Stack>
+    );
+});
+
+function DropCursor({top, left}) {
+    return (
+        <Box
+            w={"30%"}
+            h={"0px"}
+            borderTop={"2px solid"}
+            borderColor={"border.inverted"}
+            position={"absolute"}
+            top={top}
+            left={left}
+        />
     );
 };
+
+const BaseNode = memo(function BaseNode(props) {
+    console.log("Render BaseNode");
+    const { node, style, dragHandle, tree, preview } = props;
+    
+    return (
+        <AnimatePresence mode="popLayout">
+            <motion.div
+                
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ opacity: -20, scale: 0 }}
+                transition={{ duration: 0.2 }}
+                /* style={{
+                    display: "flex",
+                    alignContent: "center",
+                    height: "100%",
+                    borderBottom: "1px solid",
+                    bordercolor: "black",
+                }} */
+                className={clsx(styles.node, node.state)}
+            >
+                <NodeContent
+                    node={node}
+                    style={style}
+                    dragHandle={dragHandle}
+                    tree={tree}
+                    preview={preview}
+                />
+                <NodeContext/>
+            </motion.div>
+        </AnimatePresence>
+    );
+});
