@@ -1,7 +1,8 @@
 [role="treeitem"]:has(.node) {
     cursor: pointer;
     user-select: none;
-    border: 2px solid transparent;
+    min-width: 350px;
+    /* border: 2px solid transparent; */
     border-radius: var(--chakra-radii-sm);
 }
 
@@ -34,4 +35,27 @@
     height: 100%;
     position: relative;
     /* border-bottom: var(--chakra-borders-sm) var(--chakra-colors-border); */
+}
+
+.tree:hover .indentLines {
+    display: flex;
+}
+
+.indentLines {
+    --indent-size: 14px;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    display: none;
+    align-items: flex-start;
+    height: 100%;
+}
+
+.indentLines > div {
+    height: 100%;
+    padding-left: 10px;
+    border-right: 1px solid var(--chakra-colors-fg-subtle);
+    margin-right: calc(var(--indent-size) - 10px - 1px);
 }

@@ -14,6 +14,7 @@ export const headerMapping = {
     "-exec": "Исполнение",
     specialCycleDelay: "Цикличный вызов, сек",
     "-name": (context) => context === "protocol" ? "Протокол" : "Переменная",
+    name: "Название",
     coefficient: "Коэффициент расчета",
     cmd: "Команда пользователя",
     group: "Группа",

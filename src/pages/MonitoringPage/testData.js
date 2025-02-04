@@ -401,7 +401,7 @@ export const receive = [
                         parent: "r1.3.2",
                         setting: {
                             address: "2",
-                            variable: "test3",
+                            variable: "test3test3test3test3test3test3test3test3test3test3",
                             function: "IN",
                             description: ""
                         },

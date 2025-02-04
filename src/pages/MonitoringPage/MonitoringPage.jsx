@@ -22,7 +22,7 @@ import {
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
 import { headerMapping, valueMapping } from "./mappings";
-import { testData, config } from "./testData";
+import { config } from "./testData";
 import { LuCircle,
     LuInfo,
     LuLightbulb,
@@ -35,6 +35,10 @@ import { LuCircle,
     LuCable,
     LuUnplug
 } from "react-icons/lu";
+import { AutoSizer } from "react-virtualized";
+import { TreeView } from "../../components/TreeView/TreeView";
+import { TestNode } from "../ConfigurationPage/tree";
+import { VariableNode } from "./VariableNode";
 
 function HomePage() {
     return (
@@ -53,7 +57,18 @@ function HomePage() {
                             <Card.Title>Прием</Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            <ConnectionBase protocol={config.children[0].children} />
+                            <AutoSizer>
+                                {({ height, width }) => (
+                                    <TreeView
+                                        height={height}
+                                        width={width}
+                                        data={config.children[0].children}
+                                        disableDrag
+                                    >
+                                        <VariableNode />
+                                    </TreeView>
+                                )}
+                            </AutoSizer>
                         </Card.Body>
                     </Card.Root>
                 </Panel>
@@ -71,7 +86,18 @@ function HomePage() {
                             <Card.Title>Переменные</Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            <CollapsibleFoldersTable data={config.children[2].children} isEditable/>
+                            <AutoSizer>
+                                {({ height, width }) => (
+                                    <TreeView
+                                        height={height}
+                                        width={width}
+                                        data={config.children[2].children}
+                                        disableDrag
+                                    >
+                                        <VariableNode editable={true} />
+                                    </TreeView>
+                                )}
+                            </AutoSizer>
                         </Card.Body>
                     </Card.Root>
                 </Panel>
@@ -89,7 +115,18 @@ function HomePage() {
                             <Card.Title>Передача</Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            <ConnectionBase protocol={config.children[1].children} />
+                            <AutoSizer>
+                                {({ height, width }) => (
+                                    <TreeView
+                                        height={height}
+                                        width={width}
+                                        data={config.children[1].children}
+                                        disableDrag
+                                    >
+                                        <VariableNode />
+                                    </TreeView>
+                                )}
+                            </AutoSizer>
                         </Card.Body>
                     </Card.Root>
                 </Panel>

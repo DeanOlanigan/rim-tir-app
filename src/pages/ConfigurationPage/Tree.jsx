@@ -1,6 +1,18 @@
-import { Text, Code, Icon, Stack, StackSeparator, Separator, IconButton, MenuTrigger, Button, Box } from "@chakra-ui/react";
+import { Text, Code, Stack, StackSeparator, Box } from "@chakra-ui/react";
 import { Tree } from "react-arborist";
-import { LuChevronRight, LuChevronDown, LuFolder, LuCable, LuUnplug, LuPackage, LuFileDigit, LuFileStack, LuPlus, LuTrash2, LuPencil, LuEllipsis } from "react-icons/lu";
+import {
+    LuChevronRight,
+    LuFolder,
+    LuCable,
+    LuUnplug,
+    LuPackage,
+    LuFileDigit,
+    LuFileStack,
+    LuPlus,
+    LuTrash2,
+    LuPencil,
+    LuEllipsis
+} from "react-icons/lu";
 import {
     MenuContent,
     MenuContextTrigger,
@@ -9,8 +21,7 @@ import {
     MenuRoot,
 } from "../../components/ui/menu";
 import { motion, AnimatePresence } from "motion/react";
-import { memo, useEffect, useState } from "react";
-import styles from "./tree.module.css";
+import { memo } from "react";
 import clsx from "clsx";
 
 const interfaceTypes = {
@@ -34,74 +45,6 @@ const nodeTypes = {
     asdu: "asdu",
 };
 
-const data1 = [
-    {
-        id: "1", type: nodeTypes.interface, name: "USER:RS485", 
-        settings: { type: interfaceTypes.rs485, parent: "1", /* other settings */ },
-        children: 
-        [
-            {
-                id: "2", type: nodeTypes.protocol, name: "USER:Modbus",
-                settings: { type: protocolTypes.modbus, parent: "2", /* other settings */ },
-                children: 
-                [
-                    {
-                        id: "d1", type: nodeTypes.folder, name: "USER:Alice",
-                        settings: {},
-                        children:
-                        [
-                            { id: "d3", type: nodeTypes.funcGroup, name: "USER:funcGroup" , settings: {}, children: 
-                                [
-                                    { id: "e3", type: nodeTypes.dataObject, name: "VAR", settings: {} },
-                                    { id: "e4", type: nodeTypes.dataObject, name: "VAR", settings: {} },
-                                ]
-                            },
-                        ]
-                    },
-                    { id: "d2", type: nodeTypes.funcGroup, name: "USER:funcGroup" , settings: {}, children: 
-                        [
-                            { id: "e1", type: nodeTypes.dataObject, name: "VAR", settings: {} },
-                            { id: "e2", type: nodeTypes.dataObject, name: "VAR", settings: {} },
-                        ] 
-                    },
-                ],
-            },      
-        ],
-    },
-    {
-        id: "3", type: nodeTypes.interface, name: "USER:IEC104", 
-        settings: { type: interfaceTypes.iec104, parent: "3", /* other settings */ },
-        children: 
-        [
-            { 
-                id: "a1", type: nodeTypes.asdu, name: "USER:Alice", settings: {}, children:
-                [
-                    { id: "b1", type: nodeTypes.dataObject, name: "VAR", settings: {} },
-                ]
-            },
-        ],
-    },
-    { 
-        id: "c1", type: nodeTypes.interface, name: "USER:GPIO",
-        settings: { type: protocolTypes.gpio, /* other settings */ },
-        children: 
-        [
-            { 
-                id: "h1", type: nodeTypes.dataObject, name: "VAR",
-                settings: {} 
-            },
-            { 
-                id: "h2", type: nodeTypes.dataObject, name: "VAR",
-                settings: {} 
-            },
-            { 
-                id: "h3", type: nodeTypes.dataObject, name: "VAR",
-                settings: {}  
-            },
-        ]
-    },
-];
-
 const markers = {
     [nodeTypes.interface]: <LuCable />,
     [nodeTypes.protocol]: <LuUnplug />,
@@ -117,7 +60,7 @@ const markers = {
     [interfaceTypes.iec104]: <Code colorPalette={"red"}>{interfaceTypes.iec104}</Code>,
 };
 
-function TreeView({height, width, data}) {
+export const TreeView = ({height, width, data}) => {
     const onFocus = (node) => {
         console.log(node);
     };
@@ -138,22 +81,30 @@ function TreeView({height, width, data}) {
         </Tree>
     );
 };
-export default TreeView;
 
-const NodeContext = memo(function NodeContext() {
+const NodeContext = memo(function NodeContext(props) {
     console.log("Render NodeContext");
+    const { node, dragHandle, style, tree, preview } = props;
+
     return (
         <MenuRoot lazyMount unmountOnExit>
-            <MenuTrigger asChild>
-                <IconButton
+            <MenuContextTrigger w={"100%"}>
+                {/* <IconButton
                     size={"xs"}
                     variant={"ghost"}
                     position={"absolute"}
                     right={0}
                 >
                     <LuEllipsis />
-                </IconButton>
-            </MenuTrigger>
+                </IconButton> */}
+                <NodeContent
+                    node={node}
+                    dragHandle={dragHandle}
+                    style={style}
+                    tree={tree}
+                    preview={preview}
+                />
+            </MenuContextTrigger>
             <MenuContent>
                 <MenuItem value="add">
                     <LuPlus />
@@ -188,10 +139,11 @@ const NodeContext = memo(function NodeContext() {
     );
 });
 
-const NodeContent = memo(function NodeContent(props) {
+export const NodeContent = memo(function NodeContent(props) {
     console.log("Render NodeContent");
     const { node, dragHandle, style } = props;
     const { type, subType, setting } = node.data;
+
     return (
         <Stack
             direction={"row"}
@@ -272,15 +224,57 @@ const BaseNode = memo(function BaseNode(props) {
                 }} */
                 className={clsx(styles.node, node.state)}
             >
-                <NodeContent
+                {/* <NodeContent
+                    node={node}
+                    style={style}
+                    dragHandle={dragHandle}
+                    tree={tree}
+                    preview={preview}
+                /> */}
+                <NodeContext
                     node={node}
                     style={style}
                     dragHandle={dragHandle}
                     tree={tree}
                     preview={preview}
                 />
-                <NodeContext/>
             </motion.div>
         </AnimatePresence>
     );
 });
+
+export const TestMenuItems = () => {
+    return (
+        <>
+            <MenuItem value="add">
+                <LuPlus />
+                Добавить узел
+            </MenuItem>
+            <MenuItem value="rename">
+                <LuPencil />
+                Переименовать узел
+            </MenuItem>
+            <MenuItem value="delete">
+                <LuTrash2 />
+                Удалить узел
+            </MenuItem>
+        </>
+    );
+};
+
+export const TestNode = ({type, subType, setting}) => {
+    return (
+        <Stack
+            h={"100%"}
+            w={"100%"}
+            direction={"row"}
+            align={"center"}
+            gap={"2"}
+            separator={<StackSeparator height={"4"} alignSelf={"center"}/>}
+        >
+            { markers[type] }
+            { type === nodeTypes.protocol || type === nodeTypes.interface ? markers[subType] : null }
+            <Text>{setting?.name || subType || setting?.variable}</Text>
+        </Stack>
+    );
+};

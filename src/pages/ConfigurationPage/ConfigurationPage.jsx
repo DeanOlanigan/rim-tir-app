@@ -1,14 +1,16 @@
 import { Box, Flex, Text, Card } from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import useResizeObserver from "use-resize-observer";
 import { AutoSizer } from "react-virtualized";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
-import TreeView from "./tree";
+import { TestMenuItems, TestNode } from "./tree";
 import { config } from "../MonitoringPage/testData";
+import { TreeView } from "../../components/TreeView/TreeView";
+import { ConfigurationEditor } from "./ConfigurationEditor";
+import { useState } from "react";
 
 function ConfigurationPage() {
     console.log("Render ConfigurationPage");
-    //const { ref, width, height } = useResizeObserver();
+    const [selectedNode, setSelectedNode] = useState(null);
 
     return (
         <Box height="100%">
@@ -35,7 +37,15 @@ function ConfigurationPage() {
                                 <Card.Body>
                                     <AutoSizer>
                                         {({ height, width }) => (
-                                            <TreeView height={height} width={width} data={config.children[0].children} />
+                                            <TreeView
+                                                height={height}
+                                                width={width}
+                                                data={config.children[0].children}
+                                                MenuItems={<TestMenuItems />}
+                                                setNode={setSelectedNode}
+                                            >
+                                                <TestNode />
+                                            </TreeView>
                                         )}
                                     </AutoSizer>
                                 </Card.Body>
@@ -62,7 +72,15 @@ function ConfigurationPage() {
                                 <Card.Body>
                                     <AutoSizer>
                                         {({ height, width }) => (
-                                            <TreeView height={height} width={width} data={config.children[0].children}/>
+                                            <TreeView
+                                                height={height}
+                                                width={width}
+                                                data={config.children[1].children}
+                                                MenuItems={<TestMenuItems />}
+                                                setNode={setSelectedNode}
+                                            >
+                                                <TestNode />
+                                            </TreeView>
                                         )}
                                     </AutoSizer>
                                 </Card.Body>
@@ -87,7 +105,7 @@ function ConfigurationPage() {
                             </Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            
+                            <ConfigurationEditor data={selectedNode} />
                         </Card.Body>
                     </Card.Root>
                 </Panel>
@@ -108,9 +126,19 @@ function ConfigurationPage() {
                             </Card.Title>
                         </Card.Header>
                         <Card.Body>
-                            <Flex asChild height="100%" align="center" justify="center">
-                                <Text>Переменные</Text>
-                            </Flex>
+                            <AutoSizer>
+                                {({ height, width }) => (
+                                    <TreeView
+                                        height={height}
+                                        width={width}
+                                        data={config.children[2].children}
+                                        MenuItems={<TestMenuItems />}
+                                        setNode={setSelectedNode}
+                                    >
+                                        <TestNode />
+                                    </TreeView>
+                                )}
+                            </AutoSizer>
                         </Card.Body>
                     </Card.Root>
                 </Panel>
