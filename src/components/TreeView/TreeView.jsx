@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import clsx from "clsx";
 import styles from "./TreeView.module.css";
 import { useCallback } from "react";
-import { Box, Stack, StackSeparator } from "@chakra-ui/react";
+import { Box, IconButton, Stack } from "@chakra-ui/react";
 import { LuChevronRight } from "react-icons/lu";
 
 import {
@@ -18,7 +18,7 @@ import {
 const INDENT_SIZE = 16;
 
 const BaseNode = memo(function BaseNode(props) {
-    //console.log("Render BaseNode");
+    console.log("Render BaseNode");
     const { node, style, dragHandle, tree, preview, children, MenuItems } = props;
     
     const indentSize = Number.parseFloat(`${style.paddingLeft || 0}`);
@@ -67,7 +67,7 @@ const BaseNode = memo(function BaseNode(props) {
 });
 
 const NodeContext = memo(function NodeContext(props) {
-    //console.log("Render NodeContext");
+    console.log("Render NodeContext");
     const { node, dragHandle, style, tree, preview, MenuItems, children } = props;
 
     return (
@@ -99,7 +99,7 @@ const NodeContext = memo(function NodeContext(props) {
 });
 
 const NodeContent = memo(function NodeContent(props) {
-    //console.log("Render NodeContent");
+    console.log("Render NodeContent");
     const { node, dragHandle, style, children } = props;
     const { type, subType, setting } = node.data;
     
@@ -123,25 +123,30 @@ const NodeContent = memo(function NodeContent(props) {
             ref={dragHandle}
             style={style}
             w={"calc(100% - 32px)"}
-            minW={"350px"}
             h={"100%"}
-            onClick={() => {
-                node.toggle();
-            }}
         >
             {
                 node.isLeaf 
                     ? null
                     : 
                     (
-                        <Box
-                            w={"19.19px"}
-                            h={"19.19px"}
+                        <IconButton
+                            size={"2xs"}
+                            variant={"plain"}
+                            onClick={() => {
+                                node.toggle();
+                            }}
                             color={"fg.subtle"}
-                            as={LuChevronRight}
-                            transform={node.isOpen ? "rotate(90deg)" : "rotate(0deg)"}
-                            transition={"transform 0.2s ease-in-out"}
-                        />
+                            _hover={{color: "black"}}
+                        >
+                            <Box
+                                w={"19.19px"}
+                                h={"19.19px"}
+                                as={LuChevronRight}
+                                transform={node.isOpen ? "rotate(90deg)" : "rotate(0deg)"}
+                                transition={"transform 0.2s ease-in-out"}
+                            />
+                        </IconButton>
                     )
             }
             {childrenProp}
@@ -150,8 +155,17 @@ const NodeContent = memo(function NodeContent(props) {
 });
 
 export const TreeView = memo(function TreeView(props) {
-    console.log("Render TreeView");
-    const { height, width, data, children, MenuItems, disableDrag, setNode} = props;
+    console.log("%cRender TreeView", "color: white; background: purple;");
+    const {
+        height,
+        width,
+        data,
+        children,
+        MenuItems,
+        disableDrag,
+        setNode,
+        searchTerm
+    } = props;
 
     const onFocus = (node) => {
         console.log("onFocus:", node);
@@ -165,9 +179,13 @@ export const TreeView = memo(function TreeView(props) {
 
     return (
         <Tree
-            initialData={data}
+            data={data}
             className={styles.tree}
             openByDefault={true}
+            searchTerm={searchTerm}
+            searchMatch={
+                (node, term) => node.data.setting?.name.toLowerCase().includes(term.toLowerCase())
+            }
             overscanCount={2}
             rowHeight={32}
             indent={INDENT_SIZE} // Отступ вложенных узлов

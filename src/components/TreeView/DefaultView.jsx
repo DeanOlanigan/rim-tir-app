@@ -1,4 +1,4 @@
-import { Stack, StackSeparator, Text, Code } from "@chakra-ui/react";
+import { Stack, StackSeparator, Text, Badge } from "@chakra-ui/react";
 import { memo } from "react";
 import {
     LuCable,
@@ -6,19 +6,20 @@ import {
     LuFolder,
     LuPackage,
     LuFileDigit,
-    LuFileStack
+    LuFileStack,
+    LuVariable
 } from "react-icons/lu";
 
 const interfaceTypes = {
     rs485: "rs485",
-    rs232: "RS232",
-    iec104: "iec104",
+    rs232: "rs232",
 };
 
 const protocolTypes = {
-    modbus: "Modbus",
+    modbus: "modbus",
     modbusRtu: "modbus-rtu",
     gpio: "gpio",
+    iec104: "iec104",
 };
 
 const nodeTypes = {
@@ -30,19 +31,54 @@ const nodeTypes = {
     asdu: "asdu",
 };
 
-const markers = {
+const icons = {
     [nodeTypes.interface]: <LuCable />,
     [nodeTypes.protocol]: <LuUnplug />,
     [nodeTypes.folder]: <LuFolder />,
     [nodeTypes.funcGroup]: <LuPackage />,
     [nodeTypes.dataObject]: <LuFileDigit />,
     [nodeTypes.asdu]: <LuFileStack />,
-    [protocolTypes.modbus]: <Code colorPalette={"blue"}>{protocolTypes.modbus}</Code>,
-    [protocolTypes.modbusRtu]: <Code colorPalette={"blue"}>{protocolTypes.modbus}</Code>,
-    [protocolTypes.gpio]: <Code colorPalette={"green"}>{protocolTypes.gpio}</Code>,
-    [interfaceTypes.rs485]: <Code colorPalette={"yellow"}>{interfaceTypes.rs485}</Code>,
-    [interfaceTypes.rs232]: <Code colorPalette={"purple"}>{interfaceTypes.rs232}</Code>,
-    [interfaceTypes.iec104]: <Code colorPalette={"red"}>{interfaceTypes.iec104}</Code>,
+    variable: <LuVariable />,
+};
+
+const modbusFunctionGroupTypes = {
+    1: "read coils",
+    2: "read discrete inputs",
+    3: "read multiple holding registers",
+    4: "read input registers",
+    5: "write single coil",
+    6: "write single holding register",
+    7: "read exception status",
+    8: "diagnostic",
+    11: "get Com event counter",
+    12: "get Com event log",
+    15: "write multiple coils",
+    16: "write multiple holding registers",
+    17: "report slave ID",
+    20: "read file record",
+    21: "write file record",
+    22: "mask write register",
+    23: "read/write register",
+    24: "read fifo queue",
+    43: "read device identification",
+};
+
+const modbusFuncTypesBadges = Object.fromEntries(
+    Object.entries(modbusFunctionGroupTypes).map(([key, value]) => [
+        key, 
+        <Badge key={key} colorPalette={"purple"}>{key}</Badge>
+    ])
+);
+
+const badges = {
+    [protocolTypes.modbus]: <Badge colorPalette={"blue"}>{protocolTypes.modbus}</Badge>,
+    [protocolTypes.modbusRtu]: <Badge colorPalette={"blue"}>{protocolTypes.modbus}</Badge>,
+    [protocolTypes.gpio]: <Badge colorPalette={"green"}>{protocolTypes.gpio}</Badge>,
+    [protocolTypes.iec104]: <Badge colorPalette={"red"}>{protocolTypes.iec104}</Badge>,
+    [interfaceTypes.rs485]: <Badge colorPalette={"yellow"}>{interfaceTypes.rs485}</Badge>,
+    [interfaceTypes.rs232]: <Badge colorPalette={"purple"}>{interfaceTypes.rs232}</Badge>,
+    [nodeTypes.asdu]: <Badge colorPalette={"teal"}>{nodeTypes.asdu}</Badge>,
+    ...modbusFuncTypesBadges
 };
 
 export const DefaultView = memo(function DefaultView({type, subType, setting}) {
@@ -57,9 +93,15 @@ export const DefaultView = memo(function DefaultView({type, subType, setting}) {
             gap={"2"}
             separator={<StackSeparator height={"4"} alignSelf={"center"}/>}
         >
-            { markers[type] }
-            { type === nodeTypes.protocol || type === nodeTypes.interface ? markers[subType] : null }
-            <Text>{setting?.name || subType || setting?.variable}</Text>
+            { icons[type] }
+            {
+                type === nodeTypes.protocol ||
+                type === nodeTypes.interface ||
+                type === nodeTypes.funcGroup ||
+                type === nodeTypes.asdu ?
+                    badges[subType] || badges[type] : null 
+            }
+            <Text truncate>{setting?.name || setting?.variable}</Text>
         </Stack>
     );
 });

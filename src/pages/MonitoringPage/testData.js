@@ -309,7 +309,7 @@ export const receive = [
         parent: "r1",
         ignoreChildren: false,
         setting: {
-            name: "testName2IEC104",
+            name: "iec12",
             logging: false,
             side: "client",
             address: "0.0.0.0",
@@ -370,18 +370,6 @@ export const receive = [
         children: [
             {
                 id: "r1.3.1",
-                type: "dataObject",
-                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
-                parent: "r1.3",
-                setting: {
-                    address: "1",
-                    variable: "test1",
-                    function: "OUT",
-                    description: ""
-                },
-            },
-            {
-                id: "r1.3.2",
                 type: "folder",
                 subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
                 parent: "r1.3",
@@ -395,13 +383,13 @@ export const receive = [
                 },
                 children: [
                     {
-                        id: "r1.3.2.1",
+                        id: "r1.3.1.1",
                         type: "dataObject",
                         subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
-                        parent: "r1.3.2",
+                        parent: "r1.3.1",
                         setting: {
                             address: "2",
-                            variable: "test3test3test3test3test3test3test3test3test3test3",
+                            variable: "test1",
                             function: "IN",
                             description: ""
                         },
@@ -456,7 +444,7 @@ export const variable = [
                 parent: "3.2",
                 setting: {
                     isSpecial: true,
-                    name: "test3",
+                    name: "test2",
                     type: "1 бит – bool",
                     isLua: true,
                     description: "Lorem ipsum dolor sit amet consectetur",
@@ -491,7 +479,7 @@ export const variable = [
                         parent: "3.2.1",
                         setting: {
                             isSpecial: true,
-                            name: "test5",
+                            name: "test3",
                             type: "1 бит – bool",
                             isLua: true,
                             description: "Lorem ipsum dolor sit amet consectetur",
@@ -508,29 +496,9 @@ export const variable = [
             }
         ]
     },
-    {
-        id: "3.3",
-        type: "variable",
-        subType: null,
-        parent: "v1",
-        setting: {
-            name: "test4",
-            isSpecial: true,
-            type: "1 бит – bool",
-            isLua: true,
-            description: "Lorem ipsum dolor sit amet consectetur",
-            cmd: true,
-            archive: true,
-            group: "Без группы",
-            measurement: null,
-            coefficient: "",
-            luaExpression: "test2 = test2 + 1",
-            specialCycleDelay: 5
-        }
-    }
 ];
 
-export const send = receive;
+export const send = [];
 
 export const config = {
     id: "1",
@@ -548,7 +516,7 @@ export const config = {
     children: [
         {
             id: "1.1",
-            type: "recieve",
+            type: "receive",    
             subType: null,
             parent: "1",
             ignoreChildren: false,

@@ -1,5 +1,5 @@
 import { DefaultView } from "../../components/TreeView/DefaultView";
-import { Flex, IconButton, Text, Stack, HStack, StackSeparator, Box, Code } from "@chakra-ui/react";
+import { Flex, IconButton, Text, Stack, HStack, StackSeparator, Box, Code, Icon } from "@chakra-ui/react";
 import {
     LuVariable,
     LuLightbulb,
@@ -58,16 +58,12 @@ export const VariableNode = memo(function VariableNode({type, subType, setting, 
         <Flex
             direction={"row"}
             align={"center"}
+            justify={"space-between"}
             gap={"2"}
             w={"100%"}
         >
             <HStack>
-                <HStack>
-                    <LuVariable />
-                    <LuArrowBigRight fill={"red"} strokeWidth={0}/>
-                    <LuLightbulb />
-                    <LuCircle />
-                </HStack>
+                <LuVariable />
                 <HStack>
                     <Tooltip content={setting?.name || setting?.variable}>
                         <Text truncate maxW={"100px"}>
@@ -76,14 +72,21 @@ export const VariableNode = memo(function VariableNode({type, subType, setting, 
                     </Tooltip>
                     <ConnectionHeadderAdditionalInfo protocol={setting}/>
                 </HStack>
+                <Code w={"150px"} variant={"surface"} justifyContent={"center"}>{ setting?.value }</Code>
+                { editable && (
+                    <IconButton size={"2xs"} variant={"subtle"}>
+                        <LuPencil />
+                    </IconButton>
+                )}
             </HStack>
-            <Code w={"150px"} variant={"surface"}></Code>
-            { editable && (
-                <IconButton size={"2xs"} variant={"subtle"}>
-                    <LuPencil />
-                </IconButton>
-            )}
-            <LuUserCheck />
+            <HStack>
+                <LuUserCheck />
+                <Icon color={"red.500"} fill={"red.500"}>
+                    <LuArrowBigRight/>
+                </Icon>
+                <LuLightbulb />
+                <LuCircle />
+            </HStack>
         </Flex>
     );
 

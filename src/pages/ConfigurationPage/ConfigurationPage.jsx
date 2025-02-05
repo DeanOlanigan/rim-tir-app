@@ -2,9 +2,10 @@ import { Box, Flex, Text, Card } from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { AutoSizer } from "react-virtualized";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
-import { TestMenuItems, TestNode } from "./tree";
+import { TestMenuItems } from "./MenuItems";
 import { config } from "../MonitoringPage/testData";
 import { TreeView } from "../../components/TreeView/TreeView";
+import { DefaultView } from "../../components/TreeView/DefaultView";
 import { ConfigurationEditor } from "./ConfigurationEditor";
 import { useState } from "react";
 
@@ -15,7 +16,7 @@ function ConfigurationPage() {
     return (
         <Box height="100%">
             <PanelGroup autoSaveId="persistence" direction="horizontal">
-                <Panel collapsible={true} collapsedSize={0} minSize={9}>
+                <Panel collapsible={true} collapsedSize={0} minSize={15}>
                     <PanelGroup autoSaveId="persistence1" direction="vertical">
                         <Panel minSize={15}>
                             <Card.Root
@@ -34,17 +35,17 @@ function ConfigurationPage() {
                                         </Flex>
                                     </Card.Title>
                                 </Card.Header>
-                                <Card.Body>
+                                <Card.Body px={"1"} pb={"1"}>
                                     <AutoSizer>
                                         {({ height, width }) => (
                                             <TreeView
                                                 height={height}
                                                 width={width}
                                                 data={config.children[0].children}
-                                                MenuItems={<TestMenuItems />}
+                                                /* MenuItems={<TestMenuItems />} */
                                                 setNode={setSelectedNode}
                                             >
-                                                <TestNode />
+                                                <DefaultView />
                                             </TreeView>
                                         )}
                                     </AutoSizer>
@@ -69,17 +70,17 @@ function ConfigurationPage() {
                                         </Flex>
                                     </Card.Title>
                                 </Card.Header>
-                                <Card.Body>
+                                <Card.Body px={"1"} pb={"1"}>
                                     <AutoSizer>
                                         {({ height, width }) => (
                                             <TreeView
                                                 height={height}
                                                 width={width}
                                                 data={config.children[1].children}
-                                                MenuItems={<TestMenuItems />}
+                                                /* MenuItems={<TestMenuItems />} */
                                                 setNode={setSelectedNode}
                                             >
-                                                <TestNode />
+                                                <DefaultView />
                                             </TreeView>
                                         )}
                                     </AutoSizer>
@@ -104,13 +105,13 @@ function ConfigurationPage() {
                                 <Text textStyle={"sm"}>Конфигурация</Text>
                             </Card.Title>
                         </Card.Header>
-                        <Card.Body>
+                        <Card.Body overflow={"auto"}>
                             <ConfigurationEditor data={selectedNode} />
                         </Card.Body>
                     </Card.Root>
                 </Panel>
                 <PanelResizeHandle className="verticalLine"/>
-                <Panel collapsible={true} collapsedSize={0} defaultSize={30} minSize={12}>
+                <Panel collapsible={true} collapsedSize={0} defaultSize={30} minSize={15}>
                     <Card.Root
                         h={"100%"}
                         size={"sm"}
@@ -125,17 +126,17 @@ function ConfigurationPage() {
                                 <Text textStyle={"sm"}>Переменные</Text>
                             </Card.Title>
                         </Card.Header>
-                        <Card.Body>
+                        <Card.Body px={"1"} pb={"1"}>
                             <AutoSizer>
                                 {({ height, width }) => (
                                     <TreeView
                                         height={height}
                                         width={width}
                                         data={config.children[2].children}
-                                        MenuItems={<TestMenuItems />}
+                                        /* MenuItems={<TestMenuItems />} */
                                         setNode={setSelectedNode}
                                     >
-                                        <TestNode />
+                                        <DefaultView />
                                     </TreeView>
                                 )}
                             </AutoSizer>
