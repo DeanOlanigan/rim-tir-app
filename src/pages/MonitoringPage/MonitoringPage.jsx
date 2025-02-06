@@ -1,4 +1,4 @@
-import { Card, Flex, Text, Input, IconButton } from "@chakra-ui/react";
+import { Card, Flex, Text, Input, IconButton, Box } from "@chakra-ui/react";
 import { InputGroup } from "../../components/ui/input-group";
 import { LuSearch, LuX } from "react-icons/lu";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
@@ -8,7 +8,7 @@ import { AutoSizer } from "react-virtualized";
 import { TreeView } from "../../components/TreeView/TreeView";
 import { VariableNode } from "./VariableNode";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { produce, enableMapSet } from "immer";
 
 enableMapSet();
@@ -56,9 +56,25 @@ function updateNode(nodes, parts, newValue) {
     }
 }
 
+const findIdByName = (data, name) => {
+    for (const node of data) {
+        if (node?.setting.name === name || node?.setting.variable === name) return node.id;
+        if (node.children) {
+            const childId = findIdByName(node.children, name);
+            if (childId) return childId;
+        }
+    }
+    return null;
+};
+
 function HomePage() {
     const [data, setData] = useState(config);
     const [searchTerm, setSearchTerm] = useState("");
+    const [filter, setFilter] = useState("");
+    
+    const sendTreeRef = useRef();
+    const variablesTreeRef = useRef();
+    const receiveTreeRef = useRef();
 
     useEffect(() => {
         console.log(data);
@@ -95,6 +111,9 @@ function HomePage() {
         };
     }, []);
 
+    let focusSearchTerm = "";
+    let timeoutId = null;
+
     return (
         <>
             <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
@@ -110,7 +129,7 @@ function HomePage() {
                         <Card.Header>
                             <Card.Title>Прием</Card.Title>
                         </Card.Header>
-                        <Card.Body>
+                        <Card.Body px={"1"} pb={"1"}>
                             <AutoSizer>
                                 {({ height, width }) => (
                                     <TreeView
@@ -118,6 +137,8 @@ function HomePage() {
                                         width={width}
                                         data={data.children[0].children}
                                         disableDrag
+                                        searchTerm={searchTerm}
+                                        ref={receiveTreeRef}
                                     >
                                         <VariableNode />
                                     </TreeView>
@@ -147,7 +168,10 @@ function HomePage() {
                                                 size={"4xs"}
                                                 rounded={"full"}
                                                 variant={"ghost"}
-                                                onClick={() => setSearchTerm("")}
+                                                onClick={() => {
+                                                    setSearchTerm("");
+                                                    setFilter("");
+                                                }}
                                             >
                                                 <LuX />
                                             </IconButton>
@@ -160,13 +184,35 @@ function HomePage() {
                                             variant={"flushed"}
                                             ps={"2rem"}
                                             value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.currentTarget.value)}
+                                            onChange={(e) => {
+                                                setSearchTerm(e.currentTarget.value);
+                                                /* const sendSelected = findIdByName(data.children[0].children, e.currentTarget.value);
+                                                if (sendSelected) receiveTreeRef.current.focus(sendSelected); */
+
+                                                /* clearTimeout(timeoutId);
+
+                                                timeoutId = setTimeout(() => {
+                                                    //focusSearchTerm += e.key;
+                                                    setFilter((prev) => prev += e.key);
+                                                }, 600); */
+
+                                                /* const node = receiveTreeRef.current.visibleNodes.find((n) => {
+                                                    const name = n.data.setting.variable;
+                                                    if (typeof name === "string") {
+                                                        return name.toLowerCase().startsWith(e.currentTarget.value.toLowerCase());
+                                                    } else
+                                                        return false;
+                                                });
+
+                                                if (node)
+                                                    receiveTreeRef.current.select(node.id); */
+                                            }}
                                         />
                                     </InputGroup>
                                 </Flex>
                             </Card.Title>
                         </Card.Header>
-                        <Card.Body>
+                        <Card.Body px={"1"} pb={"1"}>
                             <AutoSizer>
                                 {({ height, width }) => (
                                     <TreeView
@@ -175,6 +221,7 @@ function HomePage() {
                                         data={data.children[2].children}
                                         disableDrag
                                         searchTerm={searchTerm}
+                                        ref={variablesTreeRef}
                                     >
                                         <VariableNode editable={true} />
                                     </TreeView>
@@ -196,7 +243,7 @@ function HomePage() {
                         <Card.Header>
                             <Card.Title>Передача</Card.Title>
                         </Card.Header>
-                        <Card.Body>
+                        <Card.Body px={"1"} pb={"1"}>
                             <AutoSizer>
                                 {({ height, width }) => (
                                     <TreeView
@@ -204,6 +251,8 @@ function HomePage() {
                                         width={width}
                                         data={config.children[1].children}
                                         disableDrag
+                                        searchTerm={searchTerm}
+                                        ref={sendTreeRef}
                                     >
                                         <VariableNode />
                                     </TreeView>

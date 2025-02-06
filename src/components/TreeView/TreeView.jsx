@@ -1,12 +1,12 @@
 import React from "react";
 import { Tree } from "react-arborist";
 import { DropCursor } from "./DropCursor";
-import { memo } from "react";
+import { memo, forwardRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import clsx from "clsx";
 import styles from "./TreeView.module.css";
 import { useCallback } from "react";
-import { Box, IconButton, Stack } from "@chakra-ui/react";
+import { Box, IconButton, Stack, Heading, Flex } from "@chakra-ui/react";
 import { LuChevronRight } from "react-icons/lu";
 
 import {
@@ -119,10 +119,9 @@ const NodeContent = memo(function NodeContent(props) {
             direction={"row"}
             gap={"4"}
             align={"center"}
-            onContextMenu={(e) => e.preventDefault()}
             ref={dragHandle}
             style={style}
-            w={"calc(100% - 32px)"}
+            w={"100%"}
             h={"100%"}
         >
             {
@@ -154,7 +153,7 @@ const NodeContent = memo(function NodeContent(props) {
     );
 });
 
-export const TreeView = memo(function TreeView(props) {
+export const TreeView = memo(forwardRef((props, ref) => {
     console.log("%cRender TreeView", "color: white; background: purple;");
     const {
         height,
@@ -166,6 +165,14 @@ export const TreeView = memo(function TreeView(props) {
         setNode,
         searchTerm
     } = props;
+
+    if (data.length === 0) {
+        return (
+            <Flex p={"4"}>
+                <Heading>Нет данных</Heading>
+            </Flex>
+        );
+    };
 
     const onFocus = (node) => {
         console.log("onFocus:", node);
@@ -184,7 +191,11 @@ export const TreeView = memo(function TreeView(props) {
             openByDefault={true}
             searchTerm={searchTerm}
             searchMatch={
-                (node, term) => node.data.setting?.name.toLowerCase().includes(term.toLowerCase())
+                (node, term) => {
+                    const name = node.data.setting?.name || node.data.setting?.variable;
+                    return name === undefined ? false :
+                        name.toLowerCase().includes(term.toLowerCase());
+                }
             }
             overscanCount={2}
             rowHeight={32}
@@ -195,6 +206,10 @@ export const TreeView = memo(function TreeView(props) {
             onSelect={onSelect}
             renderCursor={DropCursor}
             disableDrag={disableDrag}
+            disableDrop
+            disableEdit
+            
+            ref={ref}
         >
             {useCallback((node) => (
                 <BaseNode
@@ -210,4 +225,4 @@ export const TreeView = memo(function TreeView(props) {
             ), [])}
         </Tree>
     );
-});
+}));

@@ -6,12 +6,25 @@ import { TestMenuItems } from "./MenuItems";
 import { config } from "../MonitoringPage/testData";
 import { TreeView } from "../../components/TreeView/TreeView";
 import { DefaultView } from "../../components/TreeView/DefaultView";
-import { ConfigurationEditor } from "./ConfigurationEditor";
-import { useState } from "react";
+import { ConfigurationEditor, VariableEditor } from "./ConfigurationEditor";
+import { useEffect, useRef, useState } from "react";
 
 function ConfigurationPage() {
     console.log("Render ConfigurationPage");
     const [selectedNode, setSelectedNode] = useState(null);
+    const [selectedVariable, setSelectedVariable] = useState(null);
+
+    const panelRef = useRef(null);
+    useEffect(() => {
+        const panel = panelRef.current;
+        if (panel && selectedVariable) {
+            if (selectedVariable.length > 0) {
+                panel.expand();
+            } else {
+                panel.collapse();
+            }
+        }
+    }, [selectedVariable]);
 
     return (
         <Box height="100%">
@@ -90,7 +103,7 @@ function ConfigurationPage() {
                     </PanelGroup>
                 </Panel>
                 <PanelResizeHandle className="verticalLine"/>
-                <Panel minSize={15}>
+                <Panel minSize={45}>
                     <Card.Root
                         h={"100%"}
                         size={"sm"}
@@ -105,8 +118,20 @@ function ConfigurationPage() {
                                 <Text textStyle={"sm"}>Конфигурация</Text>
                             </Card.Title>
                         </Card.Header>
-                        <Card.Body overflow={"auto"}>
-                            <ConfigurationEditor data={selectedNode} />
+                        <Card.Body overflow={"auto"} w={"100%"} h={"100%"}>
+                            <PanelGroup direction="vertical">
+                                <Panel>
+                                    <Box w={"100%"} h={"100%"} pb={"2"}>
+                                        <ConfigurationEditor data={selectedNode} />
+                                    </Box>
+                                </Panel>
+                                <PanelResizeHandle className="verticalLineConf"/>
+                                <Panel ref={panelRef} collapsible collapsedSize={0} minSize={40}>
+                                    <Box w={"100%"} h={"100%"} pt={"2"}>
+                                        <VariableEditor data={selectedVariable} />
+                                    </Box>
+                                </Panel>
+                            </PanelGroup>
                         </Card.Body>
                     </Card.Root>
                 </Panel>
@@ -134,7 +159,7 @@ function ConfigurationPage() {
                                         width={width}
                                         data={config.children[2].children}
                                         /* MenuItems={<TestMenuItems />} */
-                                        setNode={setSelectedNode}
+                                        setNode={setSelectedVariable}
                                     >
                                         <DefaultView />
                                     </TreeView>

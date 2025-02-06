@@ -24,7 +24,11 @@ const ConnectionHeadderAdditionalInfo =({protocol}) => {
     const { id: _, ...rest } = protocol;
 
     return (
-        <PopoverRoot positioning={{placement: "left-center"}} lazyMount unmountOnExit>
+        <PopoverRoot 
+            positioning={{placement: "left-center"}}
+            lazyMount
+            unmountOnExit
+        >
             <PopoverTrigger asChild>
                 <IconButton size={"2xs"} variant={"subtle"}>
                     <LuInfo />

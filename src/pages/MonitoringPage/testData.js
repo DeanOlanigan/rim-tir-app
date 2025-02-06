@@ -295,7 +295,85 @@ export const receive = [
                                     type: "1 бит – bool",
                                     description: ""
                                 }
-                            }
+                            },
+                            {
+                                id: "r1.1.1.1.2",
+                                type: "dataObject",
+                                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                                parent: "r1.1.1.1",
+                                setting: {
+                                    address: "2",
+                                    function: "1",
+                                    variable: "new2",
+                                    type: "1 бит – bool",
+                                    description: ""
+                                }
+                            },
+                            {
+                                id: "r1.1.1.1.3",
+                                type: "dataObject",
+                                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                                parent: "r1.1.1.1",
+                                setting: {
+                                    address: "2",
+                                    function: "1",
+                                    variable: "new2",
+                                    type: "1 бит – bool",
+                                    description: ""
+                                }
+                            },
+                            {
+                                id: "r1.1.1.1.4",
+                                type: "dataObject",
+                                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                                parent: "r1.1.1.1",
+                                setting: {
+                                    address: "2",
+                                    function: "1",
+                                    variable: "new2",
+                                    type: "1 бит – bool",
+                                    description: ""
+                                }
+                            },
+                            {
+                                id: "r1.1.1.1.5",
+                                type: "dataObject",
+                                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                                parent: "r1.1.1.1",
+                                setting: {
+                                    address: "2",
+                                    function: "1",
+                                    variable: "new2",
+                                    type: "1 бит – bool",
+                                    description: ""
+                                }
+                            },
+                            {
+                                id: "r1.1.1.1.6",
+                                type: "dataObject",
+                                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                                parent: "r1.1.1.1",
+                                setting: {
+                                    address: "2",
+                                    function: "1",
+                                    variable: "new2",
+                                    type: "1 бит – bool",
+                                    description: ""
+                                }
+                            },
+                            {
+                                id: "r1.1.1.1.7",
+                                type: "dataObject",
+                                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                                parent: "r1.1.1.1",
+                                setting: {
+                                    address: "2",
+                                    function: "1",
+                                    variable: "new2",
+                                    type: "1 бит – bool",
+                                    description: ""
+                                }
+                            },
                         ]
                     },
                 ],
@@ -498,7 +576,7 @@ export const variable = [
     },
 ];
 
-export const send = [];
+export const send = receive;
 
 export const config = {
     id: "1",

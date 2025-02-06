@@ -1,3 +1,5 @@
+import { variable } from "./testData";
+
 export const headerMapping = {
     "-function": (protocol) => protocol === "GPIO" ? "Режим" : "Функция",
     "-variable": "Переменная",
@@ -41,7 +43,10 @@ export const headerMapping = {
     "-t1": "t1",
     "-t2": "t2",
     "-t3": "t3",
-    "-contactBounce": "Период дребезга, мс"
+    "-contactBounce": "Период дребезга, мс",
+    address: "Адрес объекта приема",
+    function: "Функция",
+    variable: "Переменная",
 };
 
 export const valueMapping = {

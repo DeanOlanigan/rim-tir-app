@@ -1,5 +1,4 @@
 [role="treeitem"]:has(.node) {
-    cursor: pointer;
     user-select: none;
     /* border: 2px solid transparent; */
     border-radius: var(--chakra-radii-sm);
@@ -34,6 +33,7 @@
     height: 100%;
     position: relative;
     padding-left: 0.5rem;
+    padding-right: 0.5rem;
     /* border-bottom: var(--chakra-borders-sm) var(--chakra-colors-border); */
 }
 
