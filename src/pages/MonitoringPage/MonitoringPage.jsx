@@ -120,6 +120,7 @@ function HomePage() {
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
                     <Card.Root
                         h={"100%"}
+                        size={"sm"}
                         data-state={"open"}
                         animationDuration={"slow"}
                         animationStyle={{
@@ -151,6 +152,7 @@ function HomePage() {
                 <Panel collapsible={true} collapsedSize={0} minSize={35}>
                     <Card.Root 
                         h={"100%"}
+                        size={"sm"}
                         data-state={"open"}
                         animationDuration={"slow"}
                         animationStyle={{
@@ -234,6 +236,7 @@ function HomePage() {
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
                     <Card.Root
                         h={"100%"}
+                        size={"sm"}
                         data-state={"open"}
                         animationDuration={"slow"}
                         animationStyle={{

@@ -55,7 +55,7 @@ const ConnectionHeadderAdditionalInfo =({protocol}) => {
     );
 };
 
-export const VariableNode = memo(function VariableNode({type, subType, setting, editable}) {
+export const VariableNode = memo(function VariableNode({type, subType, setting, editable, name}) {
     console.log("Render VariableNode");
 
     if (type === "dataObject" || type === "variable") return (
@@ -69,9 +69,9 @@ export const VariableNode = memo(function VariableNode({type, subType, setting, 
             <HStack>
                 <LuVariable />
                 <HStack>
-                    <Tooltip content={setting?.name || setting?.variable}>
+                    <Tooltip content={name || setting?.variable}>
                         <Text truncate maxW={"100px"}>
-                            { setting?.name || setting?.variable}
+                            { name || setting?.variable}
                         </Text>
                     </Tooltip>
                     <ConnectionHeadderAdditionalInfo protocol={setting}/>
@@ -95,6 +95,6 @@ export const VariableNode = memo(function VariableNode({type, subType, setting, 
     );
 
     return (
-        <DefaultView type={type} subType={subType} setting={setting}/>
+        <DefaultView type={type} subType={subType} setting={setting} name={name}/>
     );
 });

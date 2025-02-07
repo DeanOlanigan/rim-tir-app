@@ -101,14 +101,15 @@ const NodeContext = memo(function NodeContext(props) {
 const NodeContent = memo(function NodeContent(props) {
     console.log("Render NodeContent");
     const { node, dragHandle, style, children } = props;
-    const { type, subType, setting } = node.data;
+    const { type, subType, setting, name } = node.data;
     
     const childrenProp = React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
             return React.cloneElement(child, { 
                 type,
                 subType,
-                setting
+                setting,
+                name
             });
         }
         return child;

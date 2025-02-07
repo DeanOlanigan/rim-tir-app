@@ -81,7 +81,7 @@ const badges = {
     ...modbusFuncTypesBadges
 };
 
-export const DefaultView = memo(function DefaultView({type, subType, setting}) {
+export const DefaultView = memo(function DefaultView({type, subType, setting, name}) {
     console.log("Render DefaultView");
 
     return (
@@ -101,7 +101,7 @@ export const DefaultView = memo(function DefaultView({type, subType, setting}) {
                 type === nodeTypes.asdu ?
                     badges[subType] || badges[type] : null 
             }
-            <Text truncate>{setting?.name || setting?.variable}</Text>
+            <Text truncate>{name || setting?.variable}</Text>
         </Stack>
     );
 });

@@ -42,11 +42,7 @@ function ConfigurationPage() {
                                 }}
                             >
                                 <Card.Header>
-                                    <Card.Title>
-                                        <Flex align={"center"} justify={"space-between"}>
-                                            <Text textStyle={"sm"}>Прием</Text>
-                                        </Flex>
-                                    </Card.Title>
+                                    <Card.Title>Прием</Card.Title>
                                 </Card.Header>
                                 <Card.Body px={"1"} pb={"1"}>
                                     <AutoSizer>
@@ -77,11 +73,7 @@ function ConfigurationPage() {
                                 }}
                             >
                                 <Card.Header>
-                                    <Card.Title>
-                                        <Flex align={"center"} justify={"space-between"}>
-                                            <Text textStyle={"sm"}>Передача</Text>
-                                        </Flex>
-                                    </Card.Title>
+                                    <Card.Title>Передача</Card.Title>
                                 </Card.Header>
                                 <Card.Body px={"1"} pb={"1"}>
                                     <AutoSizer>
@@ -114,9 +106,7 @@ function ConfigurationPage() {
                         }}
                     >
                         <Card.Header>
-                            <Card.Title>
-                                <Text textStyle={"sm"}>Конфигурация</Text>
-                            </Card.Title>
+                            <Card.Title>Конфигурация</Card.Title>
                         </Card.Header>
                         <Card.Body overflow={"auto"} w={"100%"} h={"100%"}>
                             <PanelGroup direction="vertical">
@@ -127,9 +117,7 @@ function ConfigurationPage() {
                                 </Panel>
                                 <PanelResizeHandle className="verticalLineConf"/>
                                 <Panel ref={panelRef} collapsible collapsedSize={0} minSize={40}>
-                                    <Box w={"100%"} h={"100%"} pt={"2"}>
-                                        <VariableEditor data={selectedVariable} />
-                                    </Box>
+                                    <VariableEditor data={selectedVariable} />
                                 </Panel>
                             </PanelGroup>
                         </Card.Body>
@@ -147,9 +135,7 @@ function ConfigurationPage() {
                         }}
                     >
                         <Card.Header>
-                            <Card.Title>
-                                <Text textStyle={"sm"}>Переменные</Text>
-                            </Card.Title>
+                            <Card.Title>Переменные</Card.Title>
                         </Card.Header>
                         <Card.Body px={"1"} pb={"1"}>
                             <AutoSizer>

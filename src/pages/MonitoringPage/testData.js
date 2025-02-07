@@ -247,21 +247,22 @@ export const testData = {
 // Вариант №1
 export const receive = [
     {
-        id: "r1.1",
+        id: "1.1",
         type: "interface",
         subType: "rs485",
-        parent: "r1",
+        name: "RS485",
+        parent: "1",
         ignoreChildren: false,
         setting: {},
         children: [
             {
-                id: "r1.1.1",
+                id: "1.1.1",
                 type: "protocol",
                 subType: "modbus-rtu",
-                parent: "r1.1",
+                name: "modbus123",
+                parent: "1.1",
                 ignoreChildren: false,
                 setting: {
-                    name: "modbus123",
                     logging: false,
                     deviceAddress: "1",
                     port: "ttyS0",
@@ -274,20 +275,22 @@ export const receive = [
                 },
                 children: [
                     {
-                        id: "r1.1.1.1",
+                        id: "1.1.1.1",
                         type: "functionGroup",
                         subType: "16", // функции из протокола modbus, по которым можно сгруппировать сигналы для опроса
-                        parent: "r1.1.1",
+                        name: "modbus123",
+                        parent: "1.1.1",
                         ignoreChildren: false,
                         setting: {
                             // подумать, что тут может быть
                         },
                         children: [
                             {
-                                id: "r1.1.1.1.1",
+                                id: "1.1.1.1.1",
                                 type: "dataObject",
                                 subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
-                                parent: "r1.1.1.1",
+                                name: "test2",
+                                parent: "1.1.1.1",
                                 setting: {
                                     address: "2",
                                     function: "1",
@@ -297,10 +300,11 @@ export const receive = [
                                 }
                             },
                             {
-                                id: "r1.1.1.1.2",
+                                id: "1.1.1.1.2",
                                 type: "dataObject",
                                 subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
-                                parent: "r1.1.1.1",
+                                name: "new2",
+                                parent: "1.1.1.1",
                                 setting: {
                                     address: "2",
                                     function: "1",
@@ -310,10 +314,11 @@ export const receive = [
                                 }
                             },
                             {
-                                id: "r1.1.1.1.3",
+                                id: "1.1.1.1.3",
                                 type: "dataObject",
                                 subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
-                                parent: "r1.1.1.1",
+                                name: "new2",
+                                parent: "1.1.1.1",
                                 setting: {
                                     address: "2",
                                     function: "1",
@@ -323,10 +328,11 @@ export const receive = [
                                 }
                             },
                             {
-                                id: "r1.1.1.1.4",
+                                id: "1.1.1.1.4",
                                 type: "dataObject",
                                 subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
-                                parent: "r1.1.1.1",
+                                name: "new2",
+                                parent: "1.1.1.1",
                                 setting: {
                                     address: "2",
                                     function: "1",
@@ -334,46 +340,7 @@ export const receive = [
                                     type: "1 бит – bool",
                                     description: ""
                                 }
-                            },
-                            {
-                                id: "r1.1.1.1.5",
-                                type: "dataObject",
-                                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
-                                parent: "r1.1.1.1",
-                                setting: {
-                                    address: "2",
-                                    function: "1",
-                                    variable: "new2",
-                                    type: "1 бит – bool",
-                                    description: ""
-                                }
-                            },
-                            {
-                                id: "r1.1.1.1.6",
-                                type: "dataObject",
-                                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
-                                parent: "r1.1.1.1",
-                                setting: {
-                                    address: "2",
-                                    function: "1",
-                                    variable: "new2",
-                                    type: "1 бит – bool",
-                                    description: ""
-                                }
-                            },
-                            {
-                                id: "r1.1.1.1.7",
-                                type: "dataObject",
-                                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
-                                parent: "r1.1.1.1",
-                                setting: {
-                                    address: "2",
-                                    function: "1",
-                                    variable: "new2",
-                                    type: "1 бит – bool",
-                                    description: ""
-                                }
-                            },
+                            }
                         ]
                     },
                 ],
@@ -381,13 +348,13 @@ export const receive = [
         ]
     },
     {
-        id: "r1.2",
+        id: "1.2",
         type: "protocol",
         subType: "iec104",
-        parent: "r1",
+        name: "iec12",
+        parent: "1",
         ignoreChildren: false,
         setting: {
-            name: "iec12",
             logging: false,
             side: "client",
             address: "0.0.0.0",
@@ -404,10 +371,11 @@ export const receive = [
         },
         children: [
             {
-                id: "r1.2.1",
+                id: "1.2.1",
                 type: "asdu",
                 subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
-                parent: "r1.2",
+                name: "asdu1",
+                parent: "1.2",
                 ignoreChildren: false,
                 setting: {
                     address: "1",
@@ -417,10 +385,11 @@ export const receive = [
                 },
                 children: [
                     {
-                        id: "r1.2.1.1",
+                        id: "1.2.1.1",
                         type: "dataObject",
                         subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
-                        parent: "r1.2.1",
+                        name: "test3",
+                        parent: "1.2.1",
                         setting: {
                             address: "12",
                             variable: "test3",
@@ -435,25 +404,25 @@ export const receive = [
         ]
     },
     {
-        id: "r1.3",
+        id: "1.3",
         type: "protocol",
         subType: "gpio",
-        parent: "r1",
+        name: "testName2GPIO",
+        parent: "1",
         ignoreChildren: false,
         setting: {
-            name: "testName2GPIO",
             logging: false,
             contactBounce: "200"
         },
         children: [
             {
-                id: "r1.3.1",
+                id: "1.3.1",
                 type: "folder",
                 subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
-                parent: "r1.3",
+                name: "folder0",
+                parent: "1.3",
                 ignoreChildren: false,
                 setting: {
-                    name: "folder0",
                     description: "TEST",
                     group: "bemp",
                     alias: "",
@@ -461,10 +430,11 @@ export const receive = [
                 },
                 children: [
                     {
-                        id: "r1.3.1.1",
+                        id: "1.3.1.1",
                         type: "dataObject",
                         subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
-                        parent: "r1.3.1",
+                        name: "test1",
+                        parent: "1.3.1",
                         setting: {
                             address: "2",
                             variable: "test1",
@@ -483,11 +453,10 @@ export const variable = [
         id: "3.1",
         type: "variable",
         subType: null,
-        parent: "v1",
+        name: "test1",
+        parent: "3.1",
         setting: {
-            id: "1",
             isSpecial: true,
-            name: "test1",
             type: "1 бит – bool",
             isLua: true,
             description: "Lorem ipsum dolor sit amet consectetur",
@@ -504,11 +473,11 @@ export const variable = [
         id: "3.2",
         type: "folder",
         subType: null,
-        parent: "v1",
+        name: "folder1",
+        parent: "3.1",
         ignoreChildren: false,
         setting: {
             /* Примерное содержимое */
-            name: "folder1",
             description: "Эта папка нужна для тестирования",
             group: "bemp",
             alias: "",
@@ -519,10 +488,10 @@ export const variable = [
                 id: "3.2.2",
                 type: "variable",
                 subType: null,
+                name: "test2",
                 parent: "3.2",
                 setting: {
                     isSpecial: true,
-                    name: "test2",
                     type: "1 бит – bool",
                     isLua: true,
                     description: "Lorem ipsum dolor sit amet consectetur",
@@ -539,11 +508,11 @@ export const variable = [
                 id: "3.2.1",
                 type: "folder",
                 subType: null,
+                name: "folder2",
                 parent: "3.2",
                 ignoreChildren: false,
                 setting: {
                     /* Примерное содержимое */
-                    name: "folder2",
                     description: "Эта папка нужна для тестирования",
                     group: "bemp",
                     alias: "",
@@ -554,10 +523,10 @@ export const variable = [
                         id: "3.2.1.1",
                         type: "variable",
                         subType: null,
+                        name: "test3",
                         parent: "3.2.1",
                         setting: {
                             isSpecial: true,
-                            name: "test3",
                             type: "1 бит – bool",
                             isLua: true,
                             description: "Lorem ipsum dolor sit amet consectetur",
@@ -571,6 +540,46 @@ export const variable = [
                         }
                     }
                 ]
+            },
+            {
+                id: "3.2.4",
+                type: "variable",
+                subType: null,
+                name: "test9",
+                parent: "3.2",
+                setting: {
+                    isSpecial: true,
+                    type: "1 бит – bool",
+                    isLua: true,
+                    description: "Lorem ipsum dolor sit amet consectetur",
+                    cmd: true,
+                    archive: true,
+                    group: "Без группы",
+                    measurement: null,
+                    coefficient: "",
+                    luaExpression: "test2 = test2 + 1",
+                    specialCycleDelay: 5
+                }
+            },
+            {
+                id: "3.2.5",
+                type: "variable",
+                subType: null,
+                name: "test8",
+                parent: "3.2",
+                setting: {
+                    isSpecial: true,
+                    type: "1 бит – bool",
+                    isLua: true,
+                    description: "Lorem ipsum dolor sit amet consectetur",
+                    cmd: true,
+                    archive: true,
+                    group: "Без группы",
+                    measurement: null,
+                    coefficient: "",
+                    luaExpression: "test2 = test2 + 1",
+                    specialCycleDelay: 5
+                }
             }
         ]
     },
@@ -582,10 +591,10 @@ export const config = {
     id: "1",
     type: "configuration",
     subType: null,
+    name: "Конфигурация для РЦДУ",
     parent: null,
     ignoreChildren: false,
     setting: {
-        name: "Конфигурация для РЦДУ",
         description: "Конфигурация для РЦДУ в Подзалупинске",
         date: "2022-01-01 00:00",
         version: "1.0",
@@ -596,33 +605,27 @@ export const config = {
             id: "1.1",
             type: "receive",    
             subType: null,
+            name: "Получение данных",
             parent: "1",
             ignoreChildren: false,
-            setting: {
-                
-            },
             children: receive
         },
         {
             id: "2",
             type: "send",
             subType: null,
+            name: "Отправка данных",
             parent: "1",
             ignoreChildren: false,
-            setting: {
-                
-            },
             children: send
         },
         {
             id: "3",
             type: "variables",
             subType: null,
+            name: "Переменные",
             parent: "1",
             ignoreChildren: false,
-            setting: {
-                
-            },
             children: variable
         }
     ]
