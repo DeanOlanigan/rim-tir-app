@@ -1,24 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AuthContext } from "./AuthContext";
 import PropTypes from "prop-types";
-import { Box } from "@chakra-ui/react";
+
+const checkAuth = () => {
+    const sessionExpirationTime = localStorage.getItem("session_expiration_time");
+    const csrf = localStorage.getItem("csrf");
+    if (sessionExpirationTime && csrf) {
+        return true;
+    }
+};
 
 function AuthProvider({ children }) {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [sessionExpirationTime, setSessionExpirationTime] = useState(0);
-    const [loading, setLoading] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(checkAuth());
+    const [sessionExpirationTime, setSessionExpirationTime] = useState(
+        localStorage.getItem("session_expiration_time")
+    );
     const [sessionTimeLeft, setSessionTimeLeft] = useState(0);
-        
-    useEffect(() => {
-        console.log("AuthProvider useEffect triggered");
-        const sessionDurationTime = localStorage.getItem("session_expiration_time");
-        const csrf = localStorage.getItem("csrf");
-        if (sessionDurationTime && csrf) {
-            setIsAuthenticated(true);
-            setSessionExpirationTime(sessionDurationTime);
-        }
-        setLoading(false);
-    }, []);
 
     const login = (data) => {
         const serverCurrentTime = parseInt(data.serverTime, 10);
@@ -67,13 +64,6 @@ function AuthProvider({ children }) {
         } else {
             return false;
         }
-    };
-
-    if (loading) {
-        console.log("Loading...");
-        return (
-            <Box bg={"bg"} w={"100vw"} h={"100vh"}/>
-        );
     };
 
     return (

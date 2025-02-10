@@ -2,7 +2,7 @@ import { Flex, IconButton, Text, Skeleton, Box } from "@chakra-ui/react";
 import { Tooltip } from "../../components/ui/tooltip";
 import { useEffect, useState } from "react";
 import { ColorModeButton } from "../ui/color-mode";
-import { LuSettings, LuLogOut, LuSnowflake } from "react-icons/lu";
+import { LuSettings, LuLogOut } from "react-icons/lu";
 import { useContext } from "react";
 import { AuthContext } from "../../providers/AuthProvider/AuthContext";
 import PropTypes from "prop-types";
@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import Navigation from "../Navigation/Navigation";
 import ConnectionStatus from "../ConnectionStatus/ConnectionStatus";
 
-function Header({onSnowfall}) {
+function Header() {
     const [ version, setVersion ] = useState("");
     const { logout } = useContext(AuthContext);
 
@@ -73,21 +73,6 @@ function Header({onSnowfall}) {
                                 <LuLogOut />
                             </IconButton>
                         </Tooltip>
-                        {/* <Tooltip content="Снег" disabled>
-                            <IconButton 
-                                size={"xs"}
-                                variant={"ghost"}
-                                onClick={onSnowfall}
-                                css={{
-                                    _icon: {
-                                        width: "5",
-                                        height: "5",
-                                    },
-                                }}
-                            >
-                                <LuSnowflake />
-                            </IconButton>
-                        </Tooltip> */}
                         <ColorModeButton size={"xs"} />
                     </Flex>
                 </Flex>

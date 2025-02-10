@@ -155,7 +155,7 @@ const NodeContent = memo(function NodeContent(props) {
 });
 
 export const TreeView = memo(forwardRef((props, ref) => {
-    console.log("%cRender TreeView", "color: white; background: purple;");
+    console.log(`%cRender TreeView ${props.selectedId}`, "color: white; background: purple;");
     const {
         height,
         width,
@@ -164,7 +164,8 @@ export const TreeView = memo(forwardRef((props, ref) => {
         MenuItems,
         disableDrag,
         setNode,
-        searchTerm
+        searchTerm,
+        selectedId
     } = props;
 
     if (data.length === 0) {
@@ -181,8 +182,8 @@ export const TreeView = memo(forwardRef((props, ref) => {
 
     const onSelect = (nodes) => {
         console.log("onSelect:", nodes);
-        if (setNode === undefined) return;
-        setNode(nodes);
+        /* if (setNode === undefined) return;
+        setNode(nodes); */
     };
 
     return (
@@ -209,7 +210,7 @@ export const TreeView = memo(forwardRef((props, ref) => {
             disableDrag={disableDrag}
             disableDrop
             disableEdit
-            
+            selection={selectedId}
             ref={ref}
         >
             {useCallback((node) => (

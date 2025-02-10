@@ -1,6 +1,8 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthProvider from "../providers/AuthProvider/AuthProvider";
 import ProtectedRouter from "./ProtectedRoutes";
+
+import { Redirect } from "../pages/Redirect";
 
 import ConfigurationPage from "../pages/ConfigurationPage/ConfigurationPage";
 import MonitoringPage from "../pages/MonitoringPage/MonitoringPage";
@@ -20,24 +22,13 @@ import GraphSettings from "../pages/GraphsPage/GraphSettings/GraphSettings";
 import RequireGraphData from "../pages/GraphsPage/RequireGraphData";
 import GraphViewer from "../pages/GraphsPage/Viewer/GraphViewer";
 
-/* function AppRoutes() {
-    return (
-        <Suspense fallback={<div>Загрузка...</div>}>
-            <Routes>
-                <Route path="/" element={<ConfigurationPage />} />
-                <Route path="/monitoring" element={<MonitoringPage />} />
-                <Route path="/log" element={<LogPage />} />
-                <Route path="/journal" element={<JournalPage />} />
-            </Routes>
-        </Suspense>    
-    );
-}; */
-
 function AppRouter() {
     return (
         <AuthProvider>
             <BrowserRouter>
                 <Routes>
+                    <Route path="*" element={<Redirect />} />
+                    <Route path="/" element={<Redirect />} />
                     {/*
                         Страница авторизации, редирект на нее, если пользователь не авторизован. 
                         Редирект на ConfigurationPage после успешной авторизации.
@@ -68,8 +59,6 @@ function AppRouter() {
                                 <Route index element={<GraphViewer />} />
                             </Route>
                         </Route>
-                        <Route path="*" element={<Navigate to="/configuration" replace />} />
-                        <Route path="/" element={<Navigate to="/configuration" replace />} />
                     </Route>
                 </Routes>
             </BrowserRouter>

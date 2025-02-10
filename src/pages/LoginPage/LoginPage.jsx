@@ -4,11 +4,11 @@ import { Button } from "../../components/ui/button";
 import { Field } from "../../components/ui/field";
 import { PasswordInput } from "../../components/ui/password-input";
 import { useForm } from "react-hook-form";
-import { useState, useContext, useEffect } from "react";
+import { useState } from "react";
 import Gradient from "../../components/GradientBackground/GradientBackground";
 import { LuLogIn } from "react-icons/lu";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../providers/AuthProvider/AuthContext";
+import { Navigate } from "react-router-dom";
+import { useAuthContext } from "../../providers/AuthProvider/AuthContext";
 
 function LoginForm() {
     const [loading, setLoading] = useState(false);
@@ -18,8 +18,9 @@ function LoginForm() {
         handleSubmit,
         formState: { errors },
     } = useForm();
-    const { login, isAuthenticated } = useContext(AuthContext);
-    const navigate = useNavigate();
+    const { login, isAuthenticated } = useAuthContext();
+
+    console.log("Render LoginForm; isAuthenticated:", isAuthenticated);
 
     const onSubmit = async (data) => {
         setLoading(true);
@@ -66,11 +67,9 @@ function LoginForm() {
         }
     };
 
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigate("/configuration");
-        }
-    },);
+    if (isAuthenticated) {
+        return <Navigate to="/configuration" replace/>;
+    }
 
     return (
         <Box position={"relative"} h={"100vh"}>

@@ -1,13 +1,11 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { AuthContext } from "../providers/AuthProvider/AuthContext";
+import { useEffect, useRef } from "react";
+import { useAuthContext } from "../providers/AuthProvider/AuthContext";
 import { Toaster, toaster } from "./../components/ui/toaster";
 import Header from "../components/Header/Header";
 import { Outlet, Navigate } from "react-router-dom";
-import Snowfall from "react-snowfall";
 
 function ProtectedRoutes() {
-    const { isAuthenticated, sessionExpirationTime, extendSession, logout } = useContext(AuthContext);
-    const [snowfall, setSnowfall] = useState(false);
+    const { isAuthenticated, sessionExpirationTime, extendSession, logout } = useAuthContext();
     const toastId = useRef();
 
     
@@ -100,23 +98,16 @@ function ProtectedRoutes() {
     });
 
     if (!isAuthenticated) {
-        return (
-            <Navigate to="/login" replace />
-        );
+        return <Navigate to="/login" replace />;
     }
-
-    const snowfallHandler = () => {
-        setSnowfall(!snowfall);
-    };
 
     return (
         <>
             <Toaster />
-            <Header onSnowfall={snowfallHandler} />
+            <Header/>
             <main>
                 <Outlet />
             </main>
-            {snowfall && <Snowfall />}
         </> 
     );
 }

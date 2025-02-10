@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Card } from "@chakra-ui/react";
+import { Box, Flex, Text, Card, Input, Button } from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { AutoSizer } from "react-virtualized";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
@@ -6,13 +6,15 @@ import { TestMenuItems } from "./MenuItems";
 import { config } from "../MonitoringPage/testData";
 import { TreeView } from "../../components/TreeView/TreeView";
 import { DefaultView } from "../../components/TreeView/DefaultView";
-import { ConfigurationEditor, VariableEditor } from "./ConfigurationEditor";
+import { ConfigurationEditor } from "./ConfigurationEditor";
+import { VariableMenu } from "./VariableMenu";
+import { Connections } from "./Connections";
 import { useEffect, useRef, useState } from "react";
 
 function ConfigurationPage() {
     console.log("Render ConfigurationPage");
-    const [selectedNode, setSelectedNode] = useState(null);
-    const [selectedVariable, setSelectedVariable] = useState(null);
+    const [selectedVariable, setSelectedVariable] = useState([]);
+    const [test, setTest] = useState("");
 
     const panelRef = useRef(null);
     useEffect(() => {
@@ -30,69 +32,7 @@ function ConfigurationPage() {
         <Box height="100%">
             <PanelGroup autoSaveId="persistence" direction="horizontal">
                 <Panel collapsible={true} collapsedSize={0} minSize={15}>
-                    <PanelGroup autoSaveId="persistence1" direction="vertical">
-                        <Panel minSize={15}>
-                            <Card.Root
-                                size={"sm"}
-                                h={"100%"}
-                                data-state={"open"}
-                                animationDuration={"slow"}
-                                animationStyle={{
-                                    _open: "scale-fade-in",
-                                }}
-                            >
-                                <Card.Header>
-                                    <Card.Title>Прием</Card.Title>
-                                </Card.Header>
-                                <Card.Body px={"1"} pb={"1"}>
-                                    <AutoSizer>
-                                        {({ height, width }) => (
-                                            <TreeView
-                                                height={height}
-                                                width={width}
-                                                data={config.children[0].children}
-                                                /* MenuItems={<TestMenuItems />} */
-                                                setNode={setSelectedNode}
-                                            >
-                                                <DefaultView />
-                                            </TreeView>
-                                        )}
-                                    </AutoSizer>
-                                </Card.Body>
-                            </Card.Root>
-                        </Panel>
-                        <PanelResizeHandle className="verticalLine"/>
-                        <Panel minSize={15}>
-                            <Card.Root
-                                size={"sm"}
-                                h={"100%"}
-                                data-state={"open"}
-                                animationDuration={"slow"}
-                                animationStyle={{
-                                    _open: "scale-fade-in",
-                                }}
-                            >
-                                <Card.Header>
-                                    <Card.Title>Передача</Card.Title>
-                                </Card.Header>
-                                <Card.Body px={"1"} pb={"1"}>
-                                    <AutoSizer>
-                                        {({ height, width }) => (
-                                            <TreeView
-                                                height={height}
-                                                width={width}
-                                                data={config.children[1].children}
-                                                /* MenuItems={<TestMenuItems />} */
-                                                setNode={setSelectedNode}
-                                            >
-                                                <DefaultView />
-                                            </TreeView>
-                                        )}
-                                    </AutoSizer>
-                                </Card.Body>
-                            </Card.Root>
-                        </Panel>
-                    </PanelGroup>
+                    <Connections />
                 </Panel>
                 <PanelResizeHandle className="verticalLine"/>
                 <Panel minSize={45}>
@@ -112,12 +52,16 @@ function ConfigurationPage() {
                             <PanelGroup direction="vertical">
                                 <Panel>
                                     <Box w={"100%"} h={"100%"} pb={"2"}>
-                                        <ConfigurationEditor data={selectedNode} />
+                                        {/* <ConfigurationEditor data={selectedNode} /> */}
+                                        <Input value={test} onChange={(e) => setTest(e.target.value)}/>
+                                        <Button onClick={() => console.log(test)}>
+                                            Test
+                                        </Button>
                                     </Box>
                                 </Panel>
                                 <PanelResizeHandle className="verticalLineConf"/>
                                 <Panel ref={panelRef} collapsible collapsedSize={0} minSize={40}>
-                                    <VariableEditor data={selectedVariable} />
+                                    <VariableMenu selectedData={selectedVariable} setSelectedData={setSelectedVariable}/>
                                 </Panel>
                             </PanelGroup>
                         </Card.Body>
@@ -138,19 +82,19 @@ function ConfigurationPage() {
                             <Card.Title>Переменные</Card.Title>
                         </Card.Header>
                         <Card.Body px={"1"} pb={"1"}>
-                            <AutoSizer>
-                                {({ height, width }) => (
-                                    <TreeView
-                                        height={height}
-                                        width={width}
-                                        data={config.children[2].children}
-                                        /* MenuItems={<TestMenuItems />} */
-                                        setNode={setSelectedVariable}
-                                    >
-                                        <DefaultView />
-                                    </TreeView>
-                                )}
-                            </AutoSizer>
+                            {/* <AutoSizer>
+                                {({ height, width }) => ( */}
+                            <TreeView
+                                /* height={height}
+                                width={width} */
+                                data={config.children[2].children}
+                                /* MenuItems={<TestMenuItems />} */
+                                setNode={setSelectedVariable}
+                            >
+                                <DefaultView />
+                            </TreeView>
+                            {/* )}
+                            </AutoSizer> */}
                         </Card.Body>
                     </Card.Root>
                 </Panel>
