@@ -3,11 +3,13 @@ import { useAuthContext } from "../providers/AuthProvider/AuthContext";
 import { Toaster, toaster } from "./../components/ui/toaster";
 import Header from "../components/Header/Header";
 import { Outlet, Navigate } from "react-router-dom";
-import { SessionExpired } from "../pages/SessionExpired";
+import { useNavigate } from "react-router-dom";
 
 function ProtectedRoutes() {
+    console.log("Render ProtectedRoutes");
     const { isAuthenticated, sessionExpirationTime, extendSession, logout } = useAuthContext();
     const toastId = useRef();
+    const navigate = useNavigate();
 
     
     const handleExtend = async () => {
@@ -37,7 +39,7 @@ function ProtectedRoutes() {
                 const currentTime = Math.floor(Date.now() / 1000);
                 const remainingTime = sessionExpirationTime - currentTime;
                 if (sessionExpirationTime && remainingTime <= 5) {
-                    /* if (!toastId.current) {
+                    if (!toastId.current) {
                         toastId.current = toaster.create({
                             title: "Session expired",
                             description: "Your session has expired. Please log in again.",
@@ -70,9 +72,10 @@ function ProtectedRoutes() {
                             }
                         });
                         toaster.pause(toastId.current);
-                    } */
+                    }
                     clearInterval(interval);
-                    return <SessionExpired />;
+                    /* logout();
+                    navigate("/expired"); */
                 } else if (sessionExpirationTime && remainingTime <= 65) {
                     console.log("session will expire soon", remainingTime - 5);
                     if (!toastId.current) {

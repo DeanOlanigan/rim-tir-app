@@ -8,6 +8,7 @@ import ConfigurationPage from "../pages/ConfigurationPage/ConfigurationPage";
 import MonitoringPage from "../pages/MonitoringPage/MonitoringPage";
 import JournalPage from "../pages/JournalPage/JournalPage";
 import LoginForm from "../pages/LoginPage/LoginPage";
+import { SessionExpired } from "../pages/SessionExpired";
 
 //import LogPage from "../pages/LogPage/LogPage";
 import LogLayout from "../pages/LogPage/LogLayout";
@@ -35,6 +36,7 @@ function AppRouter() {
                         Если пользователь уже авторизован, то редирект на ConfigurationPage 
                     */}
                     <Route path="login" element={<LoginForm />} />
+                    <Route path="expired" element={<SessionExpired />} />
                     {/* 
                         Защищенные маршруты, которые доступны после авторизации.
                         Редирект на страницу авторизации, если пользователь не авторизован.
