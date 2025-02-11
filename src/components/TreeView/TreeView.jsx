@@ -1,7 +1,7 @@
 import React from "react";
 import { Tree } from "react-arborist";
 import { DropCursor } from "./DropCursor";
-import { memo, forwardRef } from "react";
+import { memo, forwardRef, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import clsx from "clsx";
 import styles from "./TreeView.module.css";
@@ -154,7 +154,7 @@ const NodeContent = memo(function NodeContent(props) {
     );
 });
 
-export const TreeView = memo(forwardRef((props, ref) => {
+export const TreeView = memo(function TreeView(props) {
     console.log(`%cRender TreeView ${props.selectedId}`, "color: white; background: purple;");
     const {
         height,
@@ -167,6 +167,12 @@ export const TreeView = memo(forwardRef((props, ref) => {
         searchTerm,
         selectedId
     } = props;
+
+    const prevDataRef = useRef(props.children);
+    useEffect(() => {
+        console.log("Are data same by reference?", prevDataRef.current === props.children);
+        prevDataRef.current = props.children;
+    });
 
     if (data.length === 0) {
         return (
@@ -211,7 +217,6 @@ export const TreeView = memo(forwardRef((props, ref) => {
             disableDrop
             disableEdit
             selection={selectedId}
-            ref={ref}
         >
             {useCallback((node) => (
                 <BaseNode
@@ -227,4 +232,4 @@ export const TreeView = memo(forwardRef((props, ref) => {
             ), [])}
         </Tree>
     );
-}));
+});

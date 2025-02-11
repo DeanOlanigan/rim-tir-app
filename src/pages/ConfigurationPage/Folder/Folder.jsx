@@ -30,7 +30,7 @@ const iconMap = {
     cmd: <LuSquareTerminal/>
 };
 
-export const Folder = ({data, onSelect}) => {
+export const Folder = ({data, onDoubleClick}) => {
     return (
         <VStack
             mt={"2"}
@@ -53,7 +53,7 @@ export const Folder = ({data, onSelect}) => {
             >
                 {
                     data.children.map((child, index) => {
-                        if (child.isLeaf) return <VariablePreview key={index} data={child} onSelect={onSelect}/>;
+                        if (child.isLeaf) return <VariablePreview key={index} data={child} onDoubleClick={onDoubleClick}/>;
                         return <FolderPreview key={index} data={child} />;
                     })
                 }
@@ -62,7 +62,7 @@ export const Folder = ({data, onSelect}) => {
     );
 };
 
-const FolderHeader = ({data}) => {
+export const FolderHeader = ({data}) => {
     return (
         <Box
             w={"100%"}
@@ -159,7 +159,7 @@ const FolderPreview = ({data}) => {
     );
 };
 
-const VariablePreview = ({data, onSelect}) => {
+const VariablePreview = ({data, onDoubleClick}) => {
     return (
         <HStack
             w={"220px"}
@@ -171,7 +171,7 @@ const VariablePreview = ({data, onSelect}) => {
             gap={"4"}
             onDoubleClick={() => {
                 console.log("onDoubleClick");
-                onSelect(data);
+                onDoubleClick(data);
             }}
         >
             <Flex

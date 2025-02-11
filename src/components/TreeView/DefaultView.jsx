@@ -31,7 +31,7 @@ const nodeTypes = {
     asdu: "asdu",
 };
 
-const icons = {
+export const icons = {
     [nodeTypes.interface]: <LuCable />,
     [nodeTypes.protocol]: <LuUnplug />,
     [nodeTypes.folder]: <LuFolder />,
@@ -70,7 +70,7 @@ const modbusFuncTypesBadges = Object.fromEntries(
     ])
 );
 
-const badges = {
+export const badges = {
     [protocolTypes.modbus]: <Badge colorPalette={"blue"}>{protocolTypes.modbus}</Badge>,
     [protocolTypes.modbusRtu]: <Badge colorPalette={"blue"}>{protocolTypes.modbus}</Badge>,
     [protocolTypes.gpio]: <Badge colorPalette={"green"}>{protocolTypes.gpio}</Badge>,

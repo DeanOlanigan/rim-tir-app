@@ -5,7 +5,7 @@ import {
 } from "react-icons/lu";
 import {
     MenuItem,
-} from "../../components/ui/menu";
+} from "../../../components/ui/menu";
 
 export const TestMenuItems = () => {
     return (

@@ -1,12 +1,15 @@
-import { Box, AbsoluteCenter, Alert } from "@chakra-ui/react";
-import { Folder } from "./Folder/Folder";
+import { Box, AbsoluteCenter, Alert, VStack } from "@chakra-ui/react";
+import { Folder, FolderHeader } from "./Folder/Folder";
+import { TableConfig } from "./Table/Table";
 import { MultipleVariableEditor } from "./VariableEditor/MultipleVariableEditor";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
+import { memo } from "react";
 
-export const VariableMenu = ({selectedData = [], setSelectedData}) => {
+export const VariableMenu = memo(function VariableMenu({selectedData = [], setSelectedData}) {
     console.log("Render VariableEditor");
 
-    const handleSelect = (data) => {
+    const doubleClickHandler = (data) => {
+        console.log("doubleClickHandler:", data);
         setSelectedData([data]);
     };
 
@@ -33,7 +36,15 @@ export const VariableMenu = ({selectedData = [], setSelectedData}) => {
         return singleNode.isLeaf ? (
             <VariableEditor data={singleNode}/>
         ) : (
-            <Folder data={singleNode} onSelect={handleSelect}/>
+            /* <Folder data={singleNode} onDoubleClick={doubleClickHandler}/> */
+            <VStack
+                mt={"2"}
+                gap={"4"}
+                px={"1"}
+            >
+                <FolderHeader data={singleNode} />
+                <TableConfig data={singleNode.children} />
+            </VStack>
         );
     }
     
@@ -43,7 +54,8 @@ export const VariableMenu = ({selectedData = [], setSelectedData}) => {
             element.level === first.level && element.data.type === first.data.type
         );
         if (sameLevelAndType) {
-            return <MultipleVariableEditor data={selectedData[0]}/>;
+            //return <MultipleVariableEditor data={selectedData[0]}/>;
+            return <TableConfig data={selectedData}/>;
         };
     };
 
@@ -62,4 +74,4 @@ export const VariableMenu = ({selectedData = [], setSelectedData}) => {
             </AbsoluteCenter>
         </Box>
     );
-};
+});
