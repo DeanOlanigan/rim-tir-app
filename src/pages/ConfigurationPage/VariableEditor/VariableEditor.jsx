@@ -23,7 +23,6 @@ export const VariableEditor = ({data}) => {
 
     return (
         <Flex
-            mt={"2"}
             direction={"column"}
             gap={"4"}
             w={"100%"}

@@ -1,5 +1,3 @@
-import { variable } from "./testData";
-
 export const headerMapping = {
     "-function": (protocol) => protocol === "GPIO" ? "Режим" : "Функция",
     "-variable": "Переменная",
@@ -24,16 +22,16 @@ export const headerMapping = {
     measurement: "Ед. измерения",
     luaExpression: "Lua выражение",
     "-indexName": "Название",
-    "-deviceAddress": "Адрес устройства",
-    "-baudRate": "БОД",
-    "-stopBit": "Стоп-бит",
-    "-parity": "Паритет",
-    "-order2": "Порядок 2 байт",
-    "-order4": "Порядок 4 байт",
+    deviceAddress: "Адрес устройства",
+    baudRate: "БОД",
+    stopBit: "Стоп-бит",
+    parity: "Паритет",
+    order2: "Порядок 2 байт",
+    order4: "Порядок 4 байт",
     "-isLog": "Логирование",
     "-isClient": "Клиент",
     "-ipaddress": "Адрес",
-    "-port": "Порт",
+    port: "Порт",
     "-lengthOfASDU": "Длина адреса ASDU",
     "-lengthOfCause": "Длина причины передачи",
     "-lengthOfAdr": "Длина адреса объекта",
@@ -47,6 +45,8 @@ export const headerMapping = {
     address: "Адрес объекта приема",
     function: "Функция",
     variable: "Переменная",
+    logging: "Логирование",
+    pollPeriod: "Период опроса"
 };
 
 export const valueMapping = {

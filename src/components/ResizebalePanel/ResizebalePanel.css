@@ -19,7 +19,7 @@
     flex: 0 0 .25rem;
     justify-content: stretch;
     transition: background-color .2s linear;
-    background-color: var(--chakra-colors-fg-subtle);
+    background-color: var(--chakra-colors-border);
     border-radius: 10px;
     display: flex;
 }

@@ -174,3 +174,64 @@ export const TableConfig = ({data}) => {
         </Table.ScrollArea>
     );
 };
+
+export const ModbusFunctionGroupTable = ({data}) => {
+    return (
+        <Table.Root size={"sm"} stickyHeader>
+            <Table.Header>
+                <Table.Row>
+                    <Table.ColumnHeader>Адрес</Table.ColumnHeader>
+                    <Table.ColumnHeader>Переменная</Table.ColumnHeader>
+                    <Table.ColumnHeader>Тип</Table.ColumnHeader>
+                    <Table.ColumnHeader>Описание</Table.ColumnHeader>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {data.map((element, index) => {
+                    if (element.data.type === "folder") return null;
+                    return (
+                        <Table.Row key={index}>
+                            <Table.Cell>
+                                <NumberInputRoot defaultValue={element.data.setting.address} size={"xs"}>
+                                    <NumberInputField/>
+                                </NumberInputRoot>
+                            </Table.Cell>
+                            <Table.Cell>
+                                <SelectRoot size={"xs"}>
+                                    <SelectTrigger
+                                        border={"1px dashed"}
+                                        borderColor={"border.info"}
+                                        borderRadius={"md"}
+                                        background={"bg.info"}
+                                    >
+                                        <SelectValueText placeholder="Выберите тип" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        
+                                    </SelectContent>
+                                </SelectRoot>   
+                            </Table.Cell>
+                            <Table.Cell>
+                                <SelectRoot size={"xs"} collection={dataTypes}>
+                                    <SelectTrigger>
+                                        <SelectValueText placeholder="Выберите тип" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {dataTypes.items.map((row) => (
+                                            <SelectItem item={row} key={row.value}>
+                                                {row.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </SelectRoot>
+                            </Table.Cell>
+                            <Table.Cell>
+                                <Textarea size={"xs"} minH={"32px"} />
+                            </Table.Cell>
+                        </Table.Row>
+                    );
+                })}
+            </Table.Body>
+        </Table.Root>
+    );
+};

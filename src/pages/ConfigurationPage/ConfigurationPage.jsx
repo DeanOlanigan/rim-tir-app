@@ -2,7 +2,7 @@ import { Box, Card } from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
 import { config } from "../MonitoringPage/testData";
-import { ConfigurationEditor } from "./ConfigurationEditor";
+import { ConfigurationEditor } from "./ConnectionEditor/ConfigurationEditor";
 import { VariableMenu } from "./VariableMenu";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ConfigurationCard } from "./ConfigurationCard";
@@ -65,14 +65,16 @@ function ConfigurationPage() {
                         </Card.Header>
                         <Card.Body overflow={"auto"} w={"100%"} h={"100%"}>
                             <PanelGroup direction="vertical">
-                                <Panel>
+                                <Panel collapsible collapsedSize={0} minSize={30}>
                                     <Box w={"100%"} h={"100%"} pb={"2"}>
                                         <ConfigurationEditor data={selectedNode} />
                                     </Box>
                                 </Panel>
                                 <PanelResizeHandle className="verticalLineConf"/>
-                                <Panel ref={panelRef} collapsible collapsedSize={0} minSize={40}>
-                                    <VariableMenu selectedData={selectedVariable} setSelectedData={setSelectedVariable}/>
+                                <Panel ref={panelRef} collapsible collapsedSize={0} minSize={30}>
+                                    <Box w={"100%"} h={"100%"} pt={"2"}>
+                                        <VariableMenu selectedData={selectedVariable} setSelectedData={setSelectedVariable}/>
+                                    </Box>
                                 </Panel>
                             </PanelGroup>
                         </Card.Body>

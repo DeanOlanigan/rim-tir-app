@@ -1,7 +1,6 @@
 import { Box, AbsoluteCenter, Alert, VStack } from "@chakra-ui/react";
-import { Folder, FolderHeader } from "./Folder/Folder";
+import { FolderHeader } from "./Folder/Folder";
 import { TableConfig } from "./Table/Table";
-import { MultipleVariableEditor } from "./VariableEditor/MultipleVariableEditor";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { memo } from "react";
 
@@ -38,12 +37,14 @@ export const VariableMenu = memo(function VariableMenu({selectedData = [], setSe
         ) : (
             /* <Folder data={singleNode} onDoubleClick={doubleClickHandler}/> */
             <VStack
-                mt={"2"}
                 gap={"4"}
                 px={"1"}
+                h={"100%"}
             >
                 <FolderHeader data={singleNode} />
-                <TableConfig data={singleNode.children} />
+                <Box w={"100%"} h={"100%"} overflow={"auto"}>
+                    <TableConfig data={singleNode.children} />
+                </Box>
             </VStack>
         );
     }
