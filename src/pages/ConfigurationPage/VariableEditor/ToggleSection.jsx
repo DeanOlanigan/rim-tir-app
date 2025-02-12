@@ -1,6 +1,6 @@
 import { Flex, Icon } from "@chakra-ui/react";
 import { CheckboxCard } from "../../../components/ui/checkbox-card";
-import { LuInfinity, LuArchive, LuSquareTerminal, LuCode } from "react-icons/lu";
+import { LuArchive, LuSquareTerminal, LuCode, LuRefreshCcwDot } from "react-icons/lu";
 import { headerMapping } from "../../MonitoringPage/mappings";
 
 export const ToggleSection = ({data, setIsLuaBlockVisible, setIsSpecialBlockVisible}) => {
@@ -16,7 +16,7 @@ export const ToggleSection = ({data, setIsLuaBlockVisible, setIsSpecialBlockVisi
                 }
                 icon={
                     <Icon size={"lg"}>
-                        <LuInfinity />
+                        <LuRefreshCcwDot />
                     </Icon>
                 }
                 indicator={false}
