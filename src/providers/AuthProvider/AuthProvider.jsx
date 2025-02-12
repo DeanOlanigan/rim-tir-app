@@ -44,10 +44,10 @@ function AuthProvider({ children }) {
         localStorage.removeItem("session_time");
         localStorage.removeItem("csrf");
         /* API запрос на сервер, чтобы тот удалил сессию */
-        const response = await fetch("/api/v1/logout",{ method: "POST", credentials: "include" });
+        /* const response = await fetch("/api/v1/logout",{ method: "POST", credentials: "include" });
         if (!response.ok) {
             alert("Logout failed");
-        }
+        } */
     };
 
     const extendSession = async () => {      
