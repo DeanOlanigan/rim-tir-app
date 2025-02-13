@@ -11,7 +11,7 @@ import {
     SelectTrigger,
     SelectValueText,
 } from "../../../components/ui/select";
-import { dataTypes, groups } from "../filterOptions";
+import { dataTypes, groups } from "../../../config/filterOptions";
 import {
     LuArchive,
     LuSquareTerminal,
@@ -25,7 +25,7 @@ export const TableConfig = ({data}) => {
         <Table.ScrollArea>
             <Table.Root size={"sm"}>
                 <Table.Header>
-                    <Table.Row>
+                    <Table.Row background={"bg.subtle"}>
                         <Table.ColumnHeader minW={"150px"}>Имя</Table.ColumnHeader>
                         <Table.ColumnHeader/>
                         <Table.ColumnHeader minW={"150px"}>Тип данных</Table.ColumnHeader>
@@ -58,7 +58,7 @@ export const TableConfig = ({data}) => {
                     {data.map((element, index) => {
                         if (element.data.type === "folder") return null;
                         return (
-                            <Table.Row key={index}>
+                            <Table.Row key={index} background={"bg.subtle"}>
                                 <Table.Cell>
                                     <Input defaultValue={element.data.name} size={"xs"}/>
                                 </Table.Cell>
@@ -179,7 +179,7 @@ export const ModbusFunctionGroupTable = ({data}) => {
     return (
         <Table.Root size={"sm"} stickyHeader>
             <Table.Header>
-                <Table.Row>
+                <Table.Row background={"bg.subtle"}>
                     <Table.ColumnHeader>Адрес</Table.ColumnHeader>
                     <Table.ColumnHeader>Переменная</Table.ColumnHeader>
                     <Table.ColumnHeader>Тип</Table.ColumnHeader>
@@ -190,7 +190,7 @@ export const ModbusFunctionGroupTable = ({data}) => {
                 {data.map((element, index) => {
                     if (element.data.type === "folder") return null;
                     return (
-                        <Table.Row key={index}>
+                        <Table.Row key={index} background={"bg.subtle"}>
                             <Table.Cell>
                                 <NumberInputRoot defaultValue={element.data.setting.address} size={"xs"}>
                                     <NumberInputField/>

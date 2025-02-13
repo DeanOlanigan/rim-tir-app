@@ -355,7 +355,7 @@ export const receive = [
         parent: "1",
         ignoreChildren: false,
         setting: {
-            logging: false,
+            logging: true,
             side: "client",
             address: "0.0.0.0",
             port: "0",

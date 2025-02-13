@@ -3,7 +3,7 @@ import { InputGroup } from "../../components/ui/input-group";
 import { LuSearch, LuX } from "react-icons/lu";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
-import { config } from "./testData";
+import { config } from "../../config/testData";
 import { AutoSizer } from "react-virtualized";
 import { TreeView } from "../../components/TreeView/TreeView";
 import { VariableNode } from "./VariableNode";

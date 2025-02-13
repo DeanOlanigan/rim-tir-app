@@ -15,7 +15,7 @@ import {
 import { VariableEditorHeader } from "./VariableEditorHeader";
 import { ToggleSection } from "./ToggleSection";
 import { headerMapping } from "../../MonitoringPage/mappings";
-import { dataTypes, groups } from "../filterOptions";
+import { dataTypes, groups } from "../../../config/filterOptions";
 
 export const VariableEditor = ({data}) => {
     const [isLuaBlockVisible, setIsLuaBlockVisible] = useState(data.data.setting.isLua);

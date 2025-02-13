@@ -1,7 +1,7 @@
 import { Box, Card } from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
-import { config } from "../MonitoringPage/testData";
+import { config } from "../../config/testData";
 import { ConfigurationEditor } from "./ConnectionEditor/ConfigurationEditor";
 import { VariableMenu } from "./VariableMenu";
 import { useCallback, useEffect, useRef, useState } from "react";

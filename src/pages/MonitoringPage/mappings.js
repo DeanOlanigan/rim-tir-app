@@ -32,21 +32,22 @@ export const headerMapping = {
     "-isClient": "Клиент",
     "-ipaddress": "Адрес",
     port: "Порт",
-    "-lengthOfASDU": "Длина адреса ASDU",
-    "-lengthOfCause": "Длина причины передачи",
-    "-lengthOfAdr": "Длина адреса объекта",
-    "-k": "k",
-    "-w": "w",
-    "-t0": "t0",
-    "-t1": "t1",
-    "-t2": "t2",
-    "-t3": "t3",
-    "-contactBounce": "Период дребезга, мс",
+    lengthOfASDU: "Длина адреса ASDU",
+    lengthOfCause: "Длина причины передачи",
+    lengthOfAdr: "Длина адреса объекта",
+    k: "k",
+    w: "w",
+    t0: "t0",
+    t1: "t1",
+    t2: "t2",
+    t3: "t3",
+    contactBounce: "Период дребезга, мс",
     address: "Адрес объекта приема",
     function: "Функция",
     variable: "Переменная",
     logging: "Логирование",
-    pollPeriod: "Период опроса"
+    pollPeriod: "Период опроса",
+    side: "Тип"
 };
 
 export const valueMapping = {

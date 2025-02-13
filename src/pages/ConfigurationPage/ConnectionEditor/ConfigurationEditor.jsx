@@ -10,10 +10,10 @@ import {
     IconButton,
     Editable,
     VStack,
-    DataList
 } from "@chakra-ui/react";
-import { modbusFunctionGroupTypes } from "../filterOptions";
+import { modbusFunctionGroupTypes } from "../../../config/filterOptions";
 import { headerMapping } from "../../MonitoringPage/mappings";
+import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 import { LuPencilLine, LuX, LuCheck } from "react-icons/lu";
 import {
     SelectContent,
@@ -24,6 +24,7 @@ import {
     SelectValueText,
 } from "../../../components/ui/select";
 import { ModbusFunctionGroupTable } from "../Table/Table";
+import { BaseInput } from "../InputComponents/BaseInput";
 
 const renderData = (row) => {
     if (!row) return null;
@@ -94,7 +95,16 @@ export const ConfigurationEditor = ({data = []}) => {
         const subType = singleNode.data?.subType;
         if (singleNode.isLeaf) {
             return (
-                <Box>TEST LEAF: {type}</Box>
+                <Flex
+                    gap={"2"}
+                    wrap={"wrap"}
+                >
+                    {Object.keys(singleNode.data.setting).map((item, index) => (
+                        <Box key={index} minW={"150px"} maxW={"300px"} w={"100%"}>
+                            <BaseInput definition={PARAM_DEFINITIONS[item]} value={singleNode.data.setting[item]}/>
+                        </Box>
+                    ))}
+                </Flex>
             );
         }
         if (type === "functionGroup") {
@@ -111,7 +121,7 @@ export const ConfigurationEditor = ({data = []}) => {
                 </VStack>
             );
         };
-        if (type === "protocol" && subType === "modbus-rtu") {
+        if (type === "protocol") {
             return (
                 <VStack
                     gap={"4"}
@@ -250,14 +260,16 @@ export const ModbusSettings = ({data}) => {
                     </Editable.Control>
                 </Editable.Root>
             </HStack>
-            <DataList.Root variant={"bold"} orientation={"horizontal"} divideY={"1px"} maxW={"md"}>
+            <Flex
+                gap={"2"}
+                wrap={"wrap"}
+            >
                 {Object.keys(data.data.setting).map((item, index) => (
-                    <DataList.Item key={index}>
-                        <DataList.ItemLabel>{headerMapping[item]}</DataList.ItemLabel>
-                        <DataList.ItemValue>{data.data.setting[item].toString()}</DataList.ItemValue>
-                    </DataList.Item>
+                    <Box key={index} minW={"150px"} maxW={"300px"} w={"100%"}>
+                        <BaseInput definition={PARAM_DEFINITIONS[item]} value={data.data.setting[item]}/>
+                    </Box>
                 ))}
-            </DataList.Root>
+            </Flex>
         </Box>
     );
 };

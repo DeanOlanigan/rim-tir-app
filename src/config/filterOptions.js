@@ -43,3 +43,51 @@ export const modbusFunctionGroupTypes = createListCollection({
         { label: "read device identification", value: 43 },
     ]
 });
+
+export const orderFourList = createListCollection({
+    items: [
+        { label: "1-0 3-2 стандарт", value: "1-0 3-2",  },
+        { label: "0-1 2-3", value: "0-1 2-3",  },
+        { label: "3-2 1-0", value: "3-2 1-0",  },
+        { label: "2-3 0-1", value: "2-3 0-1",  },
+    ],
+});
+
+export const orderTwoList = createListCollection({
+    items: [
+        { label: "1-0 старшим вперед", value: "BigEndian",  },
+        { label: "0-1 младшим вперед", value: "LittleEndian",  },
+    ],
+});
+
+export const baudRateList = createListCollection({
+    items: [
+        { label: "19200", value: 19200,  },
+        { label: "38400", value: 38400,  },
+        { label: "57600", value: 57600,  },
+        { label: "115200", value: 115200,  },
+        { label: "230400", value: 230400,  },
+    ],
+});
+
+export const parityList = createListCollection({
+    items: [
+        { label: "Нет", value: "None",  },
+        { label: "Бит нечетности", value: "odd_bit",  },
+        { label: "Бит четности", value: "parity_bit",  },
+    ],
+});
+
+export const stopBitList = createListCollection({
+    items: [
+        { label: "1", value: 1,  },
+        { label: "2", value: 2,  },
+    ],
+});
+
+export const sideList = createListCollection({
+    items: [
+        { label: "Клиент", value: "client",  },
+        { label: "Сервер", value: "server",  },
+    ],
+});
