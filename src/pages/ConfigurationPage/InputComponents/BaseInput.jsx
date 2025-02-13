@@ -14,7 +14,7 @@ import {
 } from "../../../components/ui/number-input";
 import { Input } from "@chakra-ui/react";
 
-export const BaseInput = ({definition, value}) => {
+export const BaseInput = ({definition, value, showLabel = false}) => {
     if (!definition) {
         return null;
     }
@@ -24,14 +24,14 @@ export const BaseInput = ({definition, value}) => {
     switch (type) {
     case "boolean":
         return (
-            <Field label={label}>
-                <Switch size={"md"} checked={Boolean(value)}/>
+            <Field label={showLabel ? label : ""} w={"fit"}>
+                <Switch size={"lg"} checked={Boolean(value)}>{!showLabel ? label : ""}</Switch>
             </Field>
         );
     case "select":
         return (
-            <SelectRoot size={"xs"} collection={rest.options}>
-                <SelectLabel>{label}</SelectLabel>
+            <SelectRoot size={"xs"} collection={rest.options} maxW={"250px"}>
+                {showLabel && <SelectLabel>{label}</SelectLabel>}
                 <SelectTrigger>
                     <SelectValueText
                         placeholder={`Выберите ${label.toLowerCase()}`}
@@ -48,19 +48,19 @@ export const BaseInput = ({definition, value}) => {
         );
     case "number":
         return (
-            <Field label={label}>
+            <Field label={showLabel ? label : ""} maxW={"250px"}>
                 <NumberInputRoot
                     defaultValue={rest.defaultValue}
                     size={"xs"}
                     w={"100%"}
                 >
-                    <NumberInputField />
+                    <NumberInputField  placeholder={`Введите ${label.toLowerCase()}`}/>
                 </NumberInputRoot>
             </Field>
         );
     default:
         return (
-            <Field label={label}>
+            <Field label={showLabel ? label : ""} maxW={"250px"}>
                 <Input size={"xs"}/>
             </Field>
         );

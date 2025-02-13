@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { modbusFunctionGroupTypes } from "../../../config/filterOptions";
 import { headerMapping } from "../../MonitoringPage/mappings";
-import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
+import { PARAM_DEFINITIONS, PARENT_NAMES } from "../../../config/paramDefinitions";
 import { LuPencilLine, LuX, LuCheck } from "react-icons/lu";
 import {
     SelectContent,
@@ -95,45 +95,36 @@ export const ConfigurationEditor = ({data = []}) => {
         const subType = singleNode.data?.subType;
         if (singleNode.isLeaf) {
             return (
-                <Flex
-                    gap={"2"}
-                    wrap={"wrap"}
-                >
-                    {Object.keys(singleNode.data.setting).map((item, index) => (
-                        <Box key={index} minW={"150px"} maxW={"300px"} w={"100%"}>
-                            <BaseInput definition={PARAM_DEFINITIONS[item]} value={singleNode.data.setting[item]}/>
-                        </Box>
-                    ))}
-                </Flex>
+                <Box px={"1"} w={"100%"} h={"100%"} overflow={"auto"}>
+                    <ModbusFunctionGroupTable data={data}/>
+                </Box>
             );
         }
-        if (type === "functionGroup") {
+        if (type === "functionGroup" || type === "asdu" || type === "folder") {
             return (
                 <VStack
                     gap={"4"}
                     px={"1"}
                     h={"100%"}
                 >
-                    <FunctionGroupHeader data={singleNode}/>
+                    <ParentNodeConfiguration data={singleNode}/>
                     <Box w={"100%"} h={"100%"} overflow={"auto"}>
                         <ModbusFunctionGroupTable data={singleNode.children}/>
                     </Box>
                 </VStack>
             );
         };
-        if (type === "protocol") {
+        if (type === "protocol" || type === "interface") {
             return (
                 <VStack
                     gap={"4"}
                     px={"1"}
                     h={"100%"}
                 >
-                    <ModbusSettings data={singleNode}/>
+                    <ParentNodeConfiguration data={singleNode}/>
                 </VStack>
             );
         };
-
-        return <Box>TEST FOLDER {type}</Box>;
     };
 
     if (data.length > 1) {
@@ -142,7 +133,11 @@ export const ConfigurationEditor = ({data = []}) => {
             element.level === first.level && element.data.type === first.data.type
         );
         if (sameLevelAndType) {
-            return <Box>MULTIPLE SELECTION</Box>;
+            return (
+                <Box px={"1"} w={"100%"} h={"100%"} overflow={"auto"}>
+                    <ModbusFunctionGroupTable data={data}/>
+                </Box>
+            );
         };
     };
 
@@ -163,18 +158,20 @@ export const ConfigurationEditor = ({data = []}) => {
     );
 };
 
-export const FunctionGroupHeader = ({data}) => {
+export const ParentNodeConfiguration = ({data}) => {
     return (
-        <Box
+        <VStack
             w={"100%"}
             border={"1px solid"}
             borderColor={"border"}
             borderRadius={"md"}
             shadow={"md"}
             p={"4"}
+            align={"self-start"}
+            gap={"4"}
         >
-            <HStack>
-                <Heading textWrap={"nowrap"}>Функциональная группа</Heading>
+            <HStack w={"100%"}>
+                <Heading textWrap={"nowrap"}>{PARENT_NAMES[data.data.type]}</Heading>
                 <Editable.Root
                     maxW={"300px"}
                     fontSize={"lg"}
@@ -202,74 +199,15 @@ export const FunctionGroupHeader = ({data}) => {
                     </Editable.Control>
                 </Editable.Root>
             </HStack>
-            <Box maxW={"250px"}>
-                <SelectRoot size={"xs"} collection={modbusFunctionGroupTypes}>
-                    <SelectLabel>Функция</SelectLabel>
-                    <SelectTrigger>
-                        <SelectValueText placeholder="Выберите тип" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {modbusFunctionGroupTypes.items.map((row) => (
-                            <SelectItem item={row} key={row.value}>
-                                {row.label}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </SelectRoot>
-            </Box>
-        </Box>
-    );
-};
-
-export const ModbusSettings = ({data}) => {
-    return (
-        <Box
-            w={"100%"}
-            border={"1px solid"}
-            borderColor={"border"}
-            borderRadius={"md"}
-            shadow={"md"}
-            p={"4"}
-        >
-            <HStack mb={"2"}>
-                <Heading textWrap={"nowrap"}>Протокол</Heading>
-                <Editable.Root
-                    maxW={"300px"}
-                    fontSize={"lg"}
-                    fontWeight={"medium"}
-                    value={data.data.name}
-                >
-                    <Editable.Preview />
-                    <Editable.Input />
-                    <Editable.Control>
-                        <Editable.EditTrigger asChild>
-                            <IconButton variant="ghost" size="xs">
-                                <LuPencilLine />
-                            </IconButton>
-                        </Editable.EditTrigger>
-                        <Editable.CancelTrigger asChild>
-                            <IconButton variant="outline" size="xs">
-                                <LuX />
-                            </IconButton>
-                        </Editable.CancelTrigger>
-                        <Editable.SubmitTrigger asChild>
-                            <IconButton variant="outline" size="xs">
-                                <LuCheck />
-                            </IconButton>
-                        </Editable.SubmitTrigger>
-                    </Editable.Control>
-                </Editable.Root>
-            </HStack>
             <Flex
-                gap={"2"}
+                w={"100%"}
+                gap={"4"}
                 wrap={"wrap"}
             >
                 {Object.keys(data.data.setting).map((item, index) => (
-                    <Box key={index} minW={"150px"} maxW={"300px"} w={"100%"}>
-                        <BaseInput definition={PARAM_DEFINITIONS[item]} value={data.data.setting[item]}/>
-                    </Box>
+                    <BaseInput key={index} definition={PARAM_DEFINITIONS[item]} value={data.data.setting[item]} showLabel/>
                 ))}
             </Flex>
-        </Box>
+        </VStack>
     );
 };

@@ -253,7 +253,11 @@ export const receive = [
         name: "RS485",
         parent: "1",
         ignoreChildren: false,
-        setting: {},
+        setting: {
+            baudRate: "57600",
+            port: "ttyS0", // Это же сам интерфейс, нужно удалить вообще
+            pollPeriod: "21"
+        },
         children: [
             {
                 id: "1.1.1",
@@ -265,13 +269,10 @@ export const receive = [
                 setting: {
                     logging: false,
                     deviceAddress: "1",
-                    port: "ttyS0",
-                    baudRate: "57600",
                     stopBit: "1",
                     parity: "None",
                     order2: "LittleEndian",
-                    order4: "1-0 3-2",
-                    pollPeriod: "21"
+                    order4: "1-0 3-2"
                 },
                 children: [
                     {
@@ -282,7 +283,8 @@ export const receive = [
                         parent: "1.1.1",
                         ignoreChildren: false,
                         setting: {
-                            // подумать, что тут может быть
+                            function: "4",
+                            type: "1 бит – bool"
                         },
                         children: [
                             {
@@ -293,9 +295,7 @@ export const receive = [
                                 parent: "1.1.1.1",
                                 setting: {
                                     address: "2",
-                                    function: "1",
                                     variable: "test2",
-                                    type: "1 бит – bool",
                                     description: ""
                                 }
                             },
@@ -307,9 +307,7 @@ export const receive = [
                                 parent: "1.1.1.1",
                                 setting: {
                                     address: "2",
-                                    function: "1",
                                     variable: "new2",
-                                    type: "1 бит – bool",
                                     description: ""
                                 }
                             },
@@ -321,9 +319,7 @@ export const receive = [
                                 parent: "1.1.1.1",
                                 setting: {
                                     address: "2",
-                                    function: "1",
                                     variable: "new2",
-                                    type: "1 бит – bool",
                                     description: ""
                                 }
                             },
@@ -335,9 +331,7 @@ export const receive = [
                                 parent: "1.1.1.1",
                                 setting: {
                                     address: "2",
-                                    function: "1",
                                     variable: "new2",
-                                    type: "1 бит – bool",
                                     description: ""
                                 }
                             }
@@ -378,8 +372,8 @@ export const receive = [
                 parent: "1.2",
                 ignoreChildren: false,
                 setting: {
-                    address: "1",
                     sporadical: false,
+                    address: "1",
                     pollMode: "noPoll",
                     pollPeriod: "",
                 },

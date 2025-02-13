@@ -1,4 +1,24 @@
-import { dataTypes, groups, baudRateList, orderTwoList, orderFourList, stopBitList, parityList, sideList } from "./filterOptions";
+import {
+    dataTypes,
+    groups,
+    baudRateList,
+    orderTwoList,
+    orderFourList,
+    stopBitList,
+    parityList,
+    sideList,
+    modbusFunctionGroupTypes,
+    pollModeList,
+    execList
+} from "./filterOptions";
+
+export const PARENT_NAMES = {
+    interface: "Интерфейс",
+    protocol: "Протокол",
+    folder: "Директория",
+    functionGroup: "Функциональная группа",
+    asdu: "ASDU"
+};
 
 export const PARAM_DEFINITIONS = {
     isSpecial: {
@@ -143,6 +163,11 @@ export const PARAM_DEFINITIONS = {
         label: "Порядок 4-х байт",
         options: orderFourList
     },
+    pollMode: {
+        label: "Режим опроса",
+        type: "select",
+        options: pollModeList
+    },
     pollPeriod: {
         type: "number",
         label: "Период опроса"
@@ -153,6 +178,21 @@ export const PARAM_DEFINITIONS = {
     },
     function: {
         type: "select",
-        label: "Функция"
-    }
+        label: "Функция",
+        options: modbusFunctionGroupTypes
+    },
+    sporadical: {
+        type: "boolean",
+        label: "Спорадический",
+        defaultValue: false
+    },
+    aperture: {
+        type: "number",
+        label: "Апертура"
+    },
+    exec: {
+        type: "select",
+        label: "Команда",
+        options: execList
+    },
 };

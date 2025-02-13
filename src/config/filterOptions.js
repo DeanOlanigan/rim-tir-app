@@ -3,11 +3,11 @@ import { createListCollection } from "@chakra-ui/react";
 export const dataTypes = createListCollection({
     items: [
         { label: "1 бит - bool", value: "bit",  },
-        { label: "2 байта - целое без знака", value: "2byte_unsigned",  },
-        { label: "2 байта - целое", value: "2byte_signed",  },
-        { label: "4 байта - целое", value: "4byte_signed",  },
-        { label: "4 байта - целое без знака", value: "4byte_unsigned",  },
-        { label: "4 байта - с плавающей точкой", value: "4byte_float",  },
+        { label: "2 байта - целое без знака", value: "twoByteUnsigned",  },
+        { label: "2 байта - целое", value: "twoByteSigned",  },
+        { label: "4 байта - целое", value: "fourByteSigned",  },
+        { label: "4 байта - целое без знака", value: "fourByteUnsigned",  },
+        { label: "4 байта - с плавающей точкой", value: "fourByteFloat",  },
     ],
 });
 
@@ -16,7 +16,7 @@ export const groups = createListCollection({
         { label: "Предупредительные", value: "warn",  },
         { label: "Аварийные", value: "danger",  },
         { label: "Оперативного состояния", value: "state",  },
-        { label: "Без группы", value: "no_group",  },
+        { label: "Без группы", value: "noGroup",  },
     ],
 });
 
@@ -73,8 +73,8 @@ export const baudRateList = createListCollection({
 export const parityList = createListCollection({
     items: [
         { label: "Нет", value: "None",  },
-        { label: "Бит нечетности", value: "odd_bit",  },
-        { label: "Бит четности", value: "parity_bit",  },
+        { label: "Бит нечетности", value: "oddBit",  },
+        { label: "Бит четности", value: "parityBit",  },
     ],
 });
 
@@ -89,5 +89,21 @@ export const sideList = createListCollection({
     items: [
         { label: "Клиент", value: "client",  },
         { label: "Сервер", value: "server",  },
+    ],
+});
+
+export const pollModeList = createListCollection({
+    items: [
+        { label: "Ручной", value: "manual",  },
+        { label: "На старте", value: "onStart",  },
+        { label: "Всегда", value: "always",  },
+        { label: "Без опроса", value: "noPoll",  },
+    ],
+});
+
+export const execList = createListCollection({
+    items: [
+        { label: "Прямое", value: "direct",  },
+        { label: "Выбор/исполнить", value: "select",  },
     ],
 });
