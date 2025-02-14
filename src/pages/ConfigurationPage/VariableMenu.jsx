@@ -55,7 +55,6 @@ export const VariableMenu = memo(function VariableMenu({selectedData = [], setSe
             element.level === first.level && element.data.type === first.data.type
         );
         if (sameLevelAndType) {
-            //return <MultipleVariableEditor data={selectedData[0]}/>;
             return <TableConfig data={selectedData}/>;
         };
     };
