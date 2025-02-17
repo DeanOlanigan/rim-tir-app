@@ -27,7 +27,7 @@ export const VariableMenu = memo(function VariableMenu({selectedData = []}) {
 
     if (selectedData.length === 1) {
         const [singleNode] = selectedData;
-        return singleNode.isLeaf ? (
+        return singleNode.children === undefined ? (
             <VariableEditor data={singleNode}/>
         ) : (
             <VStack
@@ -46,7 +46,7 @@ export const VariableMenu = memo(function VariableMenu({selectedData = []}) {
     if (selectedData.length > 1) {
         const [first] = selectedData;
         const sameLevelAndType = selectedData.every((element) => 
-            element.level === first.level && element.data.type === first.data.type
+            /* element.level === first.level &&  */element.type === first.type
         );
         if (sameLevelAndType) {
             return <TableConfig data={selectedData}/>;

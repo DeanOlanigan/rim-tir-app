@@ -10,17 +10,24 @@ const addNodeRecursive = (nodes, parentId, newNode) => {
 };
 
 const updatedNodeRecursive = (nodes, nodeId, updatedData) => {
-    nodes.map((node) => {
+    return nodes.map((node) => {
         if (node.id === nodeId) {
             const updated = { ...node, ...updatedData };
             return updated;
         }
-        return { ...node, children: updatedNodeRecursive(node.children, nodeId, updatedData) };
+        if (node.children?.length > 0)
+            return { ...node, children: updatedNodeRecursive(node.children, nodeId, updatedData) };
+        return node;
     });
 };
 
 export const useVariablesStore = create((set, get) => ({
     variables: [],
+    selectedNode: null,
+
+    setSelectedNode: (node) => {
+        set({ selectedNode: node });
+    },
 
     addNode: (parentId, newNode) => {
         if (parentId === null) {
@@ -34,8 +41,15 @@ export const useVariablesStore = create((set, get) => ({
 
     updateNode: (nodeId, updatedData) => {
         set((state) => ({
-            variables: updatedNodeRecursive(state.variables, nodeId, updatedData), 
+            variables: updatedNodeRecursive(state.variables, nodeId, updatedData),
+            selectedNode: state.selectedNode && updatedNodeRecursive(state.selectedNode, nodeId, updatedData),
         }));
-    }
+    },
+
+    removeNode: (nodeId) => {
+        set((state) => ({
+            variables: state.variables.filter((node) => node.id !== nodeId)
+        }));
+    },
 
 }));

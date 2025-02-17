@@ -57,11 +57,11 @@ export const TableConfig = ({data}) => {
             </Table.Header>
             <Table.Body>
                 {data.map((element, index) => {
-                    if (element.data.type === "folder") return null;
+                    if (element.type === "folder") return null;
                     return (
                         <Table.Row key={index} background={"bg.subtle"}>
                             <Table.Cell>
-                                <Input defaultValue={element.data.name} size={"xs"}/>
+                                <Input defaultValue={element.name} size={"xs"}/>
                             </Table.Cell>
                             <Table.Cell>
                                 <HStack>
@@ -71,7 +71,7 @@ export const TableConfig = ({data}) => {
                                         size={"xs"}
                                         align={"center"}
                                         justify={"center"}
-                                        checked={element.data.setting.isSpecial}
+                                        checked={element.setting.isSpecial}
                                         icon={
                                             <Icon size={"sm"}>
                                                 <LuRefreshCcwDot />
@@ -85,7 +85,7 @@ export const TableConfig = ({data}) => {
                                         size={"xs"}
                                         align={"center"}
                                         justify={"center"}
-                                        checked={element.data.setting.archive}
+                                        checked={element.setting.archive}
                                         icon={
                                             <Icon size={"sm"}>
                                                 <LuArchive />
@@ -99,7 +99,7 @@ export const TableConfig = ({data}) => {
                                         size={"xs"}
                                         align={"center"}
                                         justify={"center"}
-                                        checked={element.data.setting.cmd}
+                                        checked={element.setting.cmd}
                                         icon={
                                             <Icon size={"sm"}>
                                                 <LuSquareTerminal />
@@ -113,7 +113,7 @@ export const TableConfig = ({data}) => {
                                         size={"xs"}
                                         align={"center"}
                                         justify={"center"}
-                                        checked={element.data.setting.isLua}
+                                        checked={element.setting.isLua}
                                         icon={
                                             <Icon size={"sm"}>
                                                 <LuCode />
@@ -152,15 +152,15 @@ export const TableConfig = ({data}) => {
                                 </SelectRoot>
                             </Table.Cell>
                             <Table.Cell>
-                                <Input defaultValue={element.data.setting.measurement} size={"xs"}/>
+                                <Input defaultValue={element.setting.measurement} size={"xs"}/>
                             </Table.Cell>
                             <Table.Cell>
-                                <NumberInputRoot defaultValue={element.data.setting.coefficient} size={"xs"}>
+                                <NumberInputRoot defaultValue={element.setting.coefficient} size={"xs"}>
                                     <NumberInputField/>
                                 </NumberInputRoot>
                             </Table.Cell>
                             <Table.Cell>
-                                <NumberInputRoot defaultValue={element.data.setting.specialCycleDelay} size={"xs"}>
+                                <NumberInputRoot defaultValue={element.setting.specialCycleDelay} size={"xs"}>
                                     <NumberInputField/>
                                 </NumberInputRoot>
                             </Table.Cell>

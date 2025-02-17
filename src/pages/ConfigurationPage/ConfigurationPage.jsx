@@ -14,6 +14,8 @@ import {
     MenuTrigger
 } from "../../components/ui/menu";
 import { LuFolder, LuPlus, LuVariable } from "react-icons/lu";
+import { AutoSizer } from "react-virtualized";
+import { TreeView } from "./Tree/TreeView";
 
 function ConfigurationPage() {
     console.log("Render ConfigurationPage");
@@ -21,6 +23,8 @@ function ConfigurationPage() {
     const [selectedVariable, setSelectedVariable] = useState();
 
     const variables = useVariablesStore((state) => state.variables);
+    const selectedNodeId = useVariablesStore((state) => state.selectedNode);
+    const setSelectedNodeId = useVariablesStore((state) => state.setSelectedNode);
     const addNode = useVariablesStore((state) => state.addNode);
     const updateNode = useVariablesStore((state) => state.updateNode);
 
@@ -50,25 +54,63 @@ function ConfigurationPage() {
                 <Panel collapsible={true} collapsedSize={0} minSize={15}>
                     <PanelGroup autoSaveId="persistence1" direction="vertical">
                         <Panel minSize={15}>
-                            <ConfigurationCard
-                                title={"Прием"}
-                                data={config.children[0].children}
-                                setSelectedData={useCallback((node) => 
-                                    setSelectedNode(node), [])}
-                            />
+                            <Card.Root
+                                size={"sm"}
+                                h={"100%"}
+                                data-state={"open"}
+                                animationDuration={"slow"}
+                                animationStyle={{
+                                    _open: "scale-fade-in",
+                                }}
+                            >
+                                <Card.Header>
+                                    <Card.Title>Прием</Card.Title>
+                                </Card.Header>
+                                <Card.Body>
+                                    <AutoSizer>
+                                        {({ height, width }) => (
+                                            <TreeView
+                                                height={height}
+                                                width={width}
+                                                data={config.children[0].children}
+                                                onSelect={(node) => setSelectedNode(node)}
+                                            />
+                                        )}
+                                    </AutoSizer>
+                                </Card.Body>
+                            </Card.Root>
                         </Panel>
-                        <PanelResizeHandle className="verticalLine"/>
+                        <PanelResizeHandle className="verticalLine" />
                         <Panel minSize={15}>
-                            <ConfigurationCard
-                                title={"Передача"}
-                                data={config.children[1].children}
-                                setSelectedData={useCallback((node) => 
-                                    setSelectedNode(node), [])}
-                            />
+                            <Card.Root
+                                size={"sm"}
+                                h={"100%"}
+                                data-state={"open"}
+                                animationDuration={"slow"}
+                                animationStyle={{
+                                    _open: "scale-fade-in",
+                                }}
+                            >
+                                <Card.Header>
+                                    <Card.Title>Передача</Card.Title>
+                                </Card.Header>
+                                <Card.Body>
+                                    <AutoSizer>
+                                        {({ height, width }) => (
+                                            <TreeView
+                                                height={height}
+                                                width={width}
+                                                data={config.children[1].children}
+                                                onSelect={(node) => setSelectedNode(node)}
+                                            />
+                                        )}
+                                    </AutoSizer>
+                                </Card.Body>
+                            </Card.Root>
                         </Panel>
                     </PanelGroup>
                 </Panel>
-                <PanelResizeHandle className="verticalLine"/>
+                <PanelResizeHandle className="verticalLine" />
                 <Panel minSize={45}>
                     <Card.Root
                         h={"100%"}
@@ -84,107 +126,163 @@ function ConfigurationPage() {
                         </Card.Header>
                         <Card.Body overflow={"auto"} w={"100%"} h={"100%"}>
                             <PanelGroup direction="vertical">
-                                <Panel collapsible collapsedSize={0} minSize={30}>
+                                <Panel
+                                    collapsible
+                                    collapsedSize={0}
+                                    minSize={30}
+                                >
                                     <Box w={"100%"} h={"100%"} pb={"2"}>
-                                        <ConfigurationEditor data={selectedNode} />
+                                        <ConfigurationEditor
+                                            data={selectedNode}
+                                        />
                                     </Box>
                                 </Panel>
-                                <PanelResizeHandle className="verticalLineConf"/>
-                                <Panel ref={panelRef} collapsible collapsedSize={0} minSize={30}>
+                                <PanelResizeHandle className="verticalLineConf" />
+                                <Panel
+                                    ref={panelRef}
+                                    collapsible
+                                    collapsedSize={0}
+                                    minSize={30}
+                                >
                                     <Box w={"100%"} h={"100%"} pt={"2"}>
-                                        <VariableMenu selectedData={selectedVariable}/>
+                                        <VariableMenu
+                                            selectedData={selectedNodeId}
+                                        />
                                     </Box>
                                 </Panel>
                             </PanelGroup>
                         </Card.Body>
                     </Card.Root>
                 </Panel>
-                <PanelResizeHandle className="verticalLine"/>
-                <Panel collapsible={true} collapsedSize={0} defaultSize={30} minSize={15}>
-                    <MenuRoot
-                        positioning={{
-                            placement: "bottom-center",
-                            sameWidth: true,
+                <PanelResizeHandle className="verticalLine" />
+                <Panel
+                    collapsible={true}
+                    collapsedSize={0}
+                    defaultSize={30}
+                    minSize={15}
+                >
+                    <Card.Root
+                        size={"sm"}
+                        h={"100%"}
+                        data-state={"open"}
+                        animationDuration={"slow"}
+                        animationStyle={{
+                            _open: "scale-fade-in",
                         }}
                     >
-                        <MenuTrigger asChild>
-                            <Button size={"xs"} w={"100%"} mb={"4"}>
-                                <LuPlus />
-                                Создать
-                            </Button>
-                        </MenuTrigger>
-                        <MenuContent>
-                            <MenuItem value="variable" onClick={() => {
-                                const node = {
-                                    id: String(variables.length + 1),
-                                    type: "variable",
-                                    subType: null,
-                                    name: "",
-                                    setting: {
-                                        isSpecial: false,
-                                        type: "1 бит – bool",
-                                        isLua: false,
-                                        description: "",
-                                        cmd: false,
-                                        archive: false,
-                                        group: "Без группы",
-                                        measurement: null,
-                                        coefficient: null,
-                                        luaExpression: "",
-                                        specialCycleDelay: null
-                                    }
-                                };
-                                addNode(null, node);
-                            }}>
-                                <LuVariable />
-                                Переменная
-                            </MenuItem>
-                            <MenuItem value="folder" onClick={() => {
-                                const id = String(variables.length + 1);
-                                console.log(variables);
-                                const node = {
-                                    id: id,
-                                    type: "folder",
-                                    subType: null,
-                                    name: "",
-                                    ignoreChildren: false,
-                                    setting: {
-                                        /* Примерное содержимое */
-                                        description: "",
-                                        group: "",
-                                        alias: "",
-                                        tags: []
-                                    },
-                                    children: []
-                                };
-                                console.log(variables);
-                                //addNode(null, node);
-                                // Мультиселект работает для узлов, которые находятся не рядом
-                                //variableTreeRef.current.selectMulti("3.2.5");
-                                //variableTreeRef.current.selectMulti("3.2.2");
-                            }}>
-                                <LuFolder />
-                                Папка
-                            </MenuItem>
-                        </MenuContent>
-                    </MenuRoot>
-                    {
-                        config.children[2].children.length === 0 ? (
-                            <Box p={"4"}>
-                                <Text>Переменная еще не создана</Text>
-                            </Box>
-                        ) : (
-                            <ConfigurationCard 
-                                title={"Переменные"} 
-                                //data={config.children[2].children}
-                                data={variables}
-                                setSelectedData={(node) => 
-                                    setSelectedVariable(node)}
-                                ref={variableTreeRef}
-                                onRename={handleRename}
-                            />
-                        )
-                    }
+                        <Card.Header>
+                            <Card.Title>Переменные</Card.Title>
+                        </Card.Header>
+                        <Card.Body>
+                            <MenuRoot
+                                positioning={{
+                                    placement: "bottom-center",
+                                    sameWidth: true,
+                                }}
+                            >
+                                <MenuTrigger asChild>
+                                    <Button size={"xs"} w={"100%"} mb={"4"}>
+                                        <LuPlus />
+                                        Создать
+                                    </Button>
+                                </MenuTrigger>
+                                <MenuContent>
+                                    <MenuItem
+                                        value="variable"
+                                        onClick={() => {
+                                            const id = String(
+                                                variables.length + 1
+                                            );
+                                            const node = {
+                                                id: id,
+                                                type: "variable",
+                                                subType: null,
+                                                name: "",
+                                                setting: {
+                                                    isSpecial: false,
+                                                    type: "1 бит – bool",
+                                                    isLua: false,
+                                                    description: "",
+                                                    cmd: false,
+                                                    archive: false,
+                                                    group: "Без группы",
+                                                    measurement: null,
+                                                    coefficient: null,
+                                                    luaExpression: "",
+                                                    specialCycleDelay: null,
+                                                },
+                                            };
+                                            addNode(null, node);
+                                        }}
+                                    >
+                                        <LuVariable />
+                                        Переменная
+                                    </MenuItem>
+                                    <MenuItem
+                                        value="folder"
+                                        onClick={() => {
+                                            console.log(
+                                                "variables: ",
+                                                variables
+                                            );
+                                            console.log(
+                                                "selectedNodeId: ",
+                                                selectedNodeId
+                                            );
+                                            const id = String(
+                                                variables.length + 1
+                                            );
+                                            const node = {
+                                                id: id,
+                                                type: "folder",
+                                                subType: null,
+                                                name: "",
+                                                ignoreChildren: false,
+                                                setting: {
+                                                    /* Примерное содержимое */
+                                                    description: "",
+                                                    group: "",
+                                                    alias: "",
+                                                    tags: [],
+                                                },
+                                                children: [],
+                                            };
+                                            //addNode(null, node);
+                                            // Мультиселект работает для узлов, которые находятся не рядом
+                                            //variableTreeRef.current.selectMulti("3.2.5");
+                                            //variableTreeRef.current.selectMulti("3.2.2");
+                                        }}
+                                    >
+                                        <LuFolder />
+                                        Папка
+                                    </MenuItem>
+                                </MenuContent>
+                            </MenuRoot>
+                            {variables.length === 0 ? (
+                                <Box p={"4"}>
+                                    <Text>Переменная еще не создана</Text>
+                                </Box>
+                            ) : (
+                                <AutoSizer>
+                                    {({ height, width }) => (
+                                        <TreeView
+                                            height={height}
+                                            width={width}
+                                            data={variables}
+                                            onSelect={(node) => {
+                                                const data = node.map((node) => {
+                                                    return node.data;
+                                                });
+                                                setSelectedNodeId(data);
+                                            }}
+                                            ref={variableTreeRef}
+                                            onRename={handleRename}
+                                        />
+                                    )}
+                                </AutoSizer>
+                            )}
+                        </Card.Body>
+                    </Card.Root>
                 </Panel>
             </PanelGroup>
         </Box>

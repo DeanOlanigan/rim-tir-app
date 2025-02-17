@@ -10,7 +10,7 @@ export const ToggleSection = ({data, setIsLuaBlockVisible, setIsSpecialBlockVisi
                 size={"md"}
                 align={"center"}
                 label={headerMapping["isSpecial"]}
-                checked={data.data.setting.isSpecial}
+                checked={data.setting.isSpecial}
                 onChange={() =>
                     setIsSpecialBlockVisible((prev) => !prev)
                 }
@@ -25,7 +25,7 @@ export const ToggleSection = ({data, setIsLuaBlockVisible, setIsSpecialBlockVisi
                 size={"md"}
                 align={"center"}
                 label={headerMapping["archive"]}
-                checked={data.data.setting.archive}
+                checked={data.setting.archive}
                 icon={
                     <Icon size={"lg"}>
                         <LuArchive />
@@ -37,7 +37,7 @@ export const ToggleSection = ({data, setIsLuaBlockVisible, setIsSpecialBlockVisi
                 size={"md"}
                 align={"center"}
                 label={headerMapping["cmd"]}
-                checked={data.data.setting.cmd}
+                checked={data.setting.cmd}
                 icon={
                     <Icon size={"lg"}>
                         <LuSquareTerminal />
@@ -49,7 +49,7 @@ export const ToggleSection = ({data, setIsLuaBlockVisible, setIsSpecialBlockVisi
                 size={"md"}
                 align={"center"}
                 label={headerMapping["isLua"]}
-                checked={data.data.setting.isLua}
+                checked={data.setting.isLua}
                 onChange={() =>
                     setIsLuaBlockVisible((prev) => !prev)
                 }

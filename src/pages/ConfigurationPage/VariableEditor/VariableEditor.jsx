@@ -18,8 +18,8 @@ import { headerMapping } from "../../MonitoringPage/mappings";
 import { dataTypes, groups } from "../../../config/filterOptions";
 
 export const VariableEditor = ({data}) => {
-    const [isLuaBlockVisible, setIsLuaBlockVisible] = useState(data.data.setting.isLua);
-    const [isSpecialBlockVisible, setIsSpecialBlockVisible] = useState(data.data.setting.isSpecial);
+    const [isLuaBlockVisible, setIsLuaBlockVisible] = useState(data.setting.isLua);
+    const [isSpecialBlockVisible, setIsSpecialBlockVisible] = useState(data.setting.isSpecial);
 
     return (
         <Flex
@@ -87,7 +87,7 @@ export const VariableEditor = ({data}) => {
                                 </Field.Label>
                                 <NumberInputRoot
                                     size={"xs"}
-                                    defaultValue={data.data.setting.coefficient}
+                                    defaultValue={data.setting.coefficient}
                                 >
                                     <NumberInputField />
                                 </NumberInputRoot>
@@ -99,7 +99,7 @@ export const VariableEditor = ({data}) => {
                                 <NumberInputRoot
                                     size={"xs"}
                                     defaultValue={
-                                        data.data.setting.specialCycleDelay
+                                        data.setting.specialCycleDelay
                                     }
                                 >
                                     <NumberInputField />
@@ -126,7 +126,7 @@ export const VariableEditor = ({data}) => {
                         background={"bg.muted"}
                     >
                         <AbsoluteCenter>
-                            {data.data.setting.luaExpression}
+                            {data.setting.luaExpression}
                         </AbsoluteCenter>
                     </Box>
                 </Stack>

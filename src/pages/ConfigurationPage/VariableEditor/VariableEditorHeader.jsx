@@ -1,7 +1,14 @@
 import { HStack, Heading, IconButton, Editable } from "@chakra-ui/react";
 import { LuPencilLine, LuX, LuCheck } from "react-icons/lu";
+import { useVariablesStore } from "../../../store/variables-store";
 
 export const VariableEditorHeader = ({data}) => {
+    const updateNode = useVariablesStore((state) => state.updateNode);
+
+    const handleRename = () => {
+
+    };
+
     return (
         <HStack
             w={"100%"}
@@ -16,7 +23,8 @@ export const VariableEditorHeader = ({data}) => {
                 maxW={"300px"}
                 fontSize={"lg"}
                 fontWeight={"medium"}
-                defaultValue={data.data.name}
+                value={data.name}
+                onValueCommit={()=> console.log("test")}
             >
                 <Editable.Preview />
                 <Editable.Input />
