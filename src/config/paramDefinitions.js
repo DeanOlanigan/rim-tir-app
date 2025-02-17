@@ -170,7 +170,8 @@ export const PARAM_DEFINITIONS = {
     },
     pollPeriod: {
         type: "number",
-        label: "Период опроса"
+        label: "Период опроса",
+        dependsOn: { key: "pollMode", value: "manual" }
     },
     variable: {
         type: "select",

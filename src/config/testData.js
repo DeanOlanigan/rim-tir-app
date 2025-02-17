@@ -1,261 +1,12 @@
-export const testData = {
-    "variables": {
-        "variable": [
-            {
-                "-id": "1",
-                "-isSpecial": true,
-                "-name": "test1",
-                "-type": "1 бит – bool",
-                "-isLua": true,
-                "-description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero sit iure ea, odit nemo nobis non qua",
-                "-cmd": true,
-                "-archive": true,
-                "-group": "Без группы",
-                "-measurement": null,
-                "-coefficient": "",
-                "-luaExpression": "test2 = test2 + 1",
-                "-specialCycleDelay": 5
-            },
-            {
-                "-id": "2",
-                "-isSpecial": false,
-                "-name": "test2test2test2test2test2",
-                "-type": "2 байта – целое",
-                "-isLua": true,
-                "-description": "",
-                "-cmd": false,
-                "-archive": false,
-                "-group": "Без группы",
-                "-measurement": null,
-                "-coefficient": "",
-                "-luaExpression": "test3 = cos(self())",
-                "-specialCycleDelay": ""
-            },
-            {
-                "-id": "3",
-                "-isSpecial": false,
-                "-name": "test3",
-                "-type": "4 байта – с плавающей точкой",
-                "-isLua": false,
-                "-description": "",
-                "-cmd": false,
-                "-archive": true,
-                "-group": "Без группы",
-                "-measurement": null,
-                "-coefficient": 1,
-                "-luaExpression": "",
-                "-specialCycleDelay": ""
-            }
-        ]
-    },
-    "send": {
-        "connection": [
-            {
-                "protocol": {
-                    "-indexName": "SENDtestName2GPIO",
-                    "-name": "GPIO",
-                    "-isLog": true,
-                    "-contactBounce": "200"
-                },
-                "dataObjects": [
-                    {   
-                        "dataObject": [
-                            {
-                                "-id": "1",
-                                "-address": "1",
-                                "-function": "OUT",
-                                "-variable": "test1",
-                                "-description": ""
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "protocol": {
-                    "-indexName": "SENDmodbus123",
-                    "-name": "Modbus",
-                    "-isLog": false,
-                    "-deviceAddress": "1",
-                    "-port": "ttyS0",
-                    "-baudRate": "57600",
-                    "-stopBit": "1",
-                    "-parity": "None",
-                    "-order2": "LittleEndian",
-                    "-order4": "1-0 3-2",
-                    "-pollPeriod": "21"
-                },
-                "dataObjects": [
-                    {
-                        "dataObject": [
-                            {
-                                "-id": "1",
-                                "-address": "2",
-                                "-function": "1",
-                                "-variable": "test2",
-                                "-type": "1 бит – bool",
-                                "-description": ""
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "protocol": {
-                    "-indexName": "SENDiec12",
-                    "-name": "IEC 60870-5-104",
-                    "-isLog": false,
-                    "-isClient": false,
-                    "-ipaddress": "0.0.0.0",
-                    "-port": "12",
-                    "-lengthOfASDU": "1",
-                    "-lengthOfCause": "1",
-                    "-lengthOfAdr": "1",
-                    "-k": "1",
-                    "-w": "1",
-                    "-t0": "1",
-                    "-t1": "1",
-                    "-t2": "1",
-                    "-t3": "1"
-                },
-                "dataObjects": [
-                    {
-                        "ASDU": [
-                            {
-                                "-id": "1",
-                                "-asdu": "1",
-                                "-isSporadically": false,
-                                "-pollMode": "noPoll",
-                                "-pollPeriod": "",
-                                "dataObject": [
-                                    {
-                                        "-id": "1",
-                                        "-address": "12",
-                                        "-variable": "test3",
-                                        "-type": "Однопозиционный ТС",
-                                        "-aperture": null,
-                                        "-exec": "",
-                                        "-description": ""
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-    "receive": {
-        "connection": [
-            {
-                "protocol": {
-                    "-indexName": "testName2GPIO",
-                    "-name": "GPIO",
-                    "-isLog": true,
-                    "-contactBounce": "200"
-                },
-                "dataObjects": [
-                    {   
-                        "dataObject": [
-                            {
-                                "-id": "1",
-                                "-address": "1",
-                                "-function": "OUT",
-                                "-variable": "test1",
-                                "-description": ""
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "protocol": {
-                    "-indexName": "modbus123",
-                    "-name": "Modbus",
-                    "-isLog": false,
-                    "-deviceAddress": "1",
-                    "-port": "ttyS0",
-                    "-baudRate": "57600",
-                    "-stopBit": "1",
-                    "-parity": "None",
-                    "-order2": "LittleEndian",
-                    "-order4": "1-0 3-2",
-                    "-pollPeriod": "21"
-                },
-                "dataObjects": [
-                    {
-                        "dataObject": [
-                            {
-                                "-id": "1",
-                                "-address": "2",
-                                "-function": "1",
-                                "-variable": "test2",
-                                "-type": "1 бит – bool",
-                                "-description": ""
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "protocol": {
-                    "-indexName": "iec12",
-                    "-name": "IEC 60870-5-104",
-                    "-isLog": false,
-                    "-isClient": false,
-                    "-ipaddress": "0.0.0.0",
-                    "-port": "12",
-                    "-lengthOfASDU": "1",
-                    "-lengthOfCause": "1",
-                    "-lengthOfAdr": "1",
-                    "-k": "1",
-                    "-w": "1",
-                    "-t0": "1",
-                    "-t1": "1",
-                    "-t2": "1",
-                    "-t3": "1"
-                },
-                "dataObjects": [
-                    {
-                        "ASDU": [
-                            {
-                                "-id": "1",
-                                "-asdu": "1",
-                                "-isSporadically": false,
-                                "-pollMode": "noPoll",
-                                "-pollPeriod": "",
-                                "dataObject": [
-                                    {
-                                        "-id": "1",
-                                        "-address": "12",
-                                        "-variable": "test3",
-                                        "-type": "Однопозиционный ТС",
-                                        "-aperture": null,
-                                        "-exec": "",
-                                        "-description": ""
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
-};
-
-// Вариант №1
 export const receive = [
     {
         id: "1.1",
         type: "interface",
         subType: "rs485",
         name: "RS485",
-        parent: "1",
         ignoreChildren: false,
         setting: {
             baudRate: "57600",
-            port: "ttyS0", // Это же сам интерфейс, нужно удалить вообще
             pollPeriod: "21"
         },
         children: [
@@ -264,7 +15,6 @@ export const receive = [
                 type: "protocol",
                 subType: "modbus-rtu",
                 name: "modbus123",
-                parent: "1.1",
                 ignoreChildren: false,
                 setting: {
                     logging: false,
@@ -280,7 +30,6 @@ export const receive = [
                         type: "functionGroup",
                         subType: "16", // функции из протокола modbus, по которым можно сгруппировать сигналы для опроса
                         name: "modbus123",
-                        parent: "1.1.1",
                         ignoreChildren: false,
                         setting: {
                             function: "4",
@@ -290,9 +39,8 @@ export const receive = [
                             {
                                 id: "1.1.1.1.1",
                                 type: "dataObject",
-                                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                                subType: null,
                                 name: "test2",
-                                parent: "1.1.1.1",
                                 setting: {
                                     address: "2",
                                     variable: "test2",
@@ -302,9 +50,8 @@ export const receive = [
                             {
                                 id: "1.1.1.1.2",
                                 type: "dataObject",
-                                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                                subType: null,
                                 name: "new2",
-                                parent: "1.1.1.1",
                                 setting: {
                                     address: "2",
                                     variable: "new2",
@@ -314,9 +61,8 @@ export const receive = [
                             {
                                 id: "1.1.1.1.3",
                                 type: "dataObject",
-                                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                                subType: null,
                                 name: "new2",
-                                parent: "1.1.1.1",
                                 setting: {
                                     address: "2",
                                     variable: "new2",
@@ -326,9 +72,8 @@ export const receive = [
                             {
                                 id: "1.1.1.1.4",
                                 type: "dataObject",
-                                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                                subType: null,
                                 name: "new2",
-                                parent: "1.1.1.1",
                                 setting: {
                                     address: "2",
                                     variable: "new2",
@@ -346,7 +91,6 @@ export const receive = [
         type: "protocol",
         subType: "iec104",
         name: "iec12",
-        parent: "1",
         ignoreChildren: false,
         setting: {
             logging: true,
@@ -367,23 +111,21 @@ export const receive = [
             {
                 id: "1.2.1",
                 type: "asdu",
-                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                subType: null,
                 name: "asdu1",
-                parent: "1.2",
                 ignoreChildren: false,
                 setting: {
                     sporadical: false,
                     address: "1",
-                    pollMode: "noPoll",
+                    pollMode: "manual",
                     pollPeriod: "",
                 },
                 children: [
                     {
                         id: "1.2.1.1",
                         type: "dataObject",
-                        subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                        subType: null,
                         name: "test3",
-                        parent: "1.2.1",
                         setting: {
                             address: "12",
                             variable: "test3",
@@ -402,7 +144,6 @@ export const receive = [
         type: "protocol",
         subType: "gpio",
         name: "testName2GPIO",
-        parent: "1",
         ignoreChildren: false,
         setting: {
             logging: false,
@@ -412,9 +153,8 @@ export const receive = [
             {
                 id: "1.3.1",
                 type: "folder",
-                subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                subType: null,
                 name: "folder0",
-                parent: "1.3",
                 ignoreChildren: false,
                 setting: {
                     description: "TEST",
@@ -426,9 +166,8 @@ export const receive = [
                     {
                         id: "1.3.1.1",
                         type: "dataObject",
-                        subType: null, // что, если присваивать тип родителя или тип протокола/интерфейса?
+                        subType: null,
                         name: "test1",
-                        parent: "1.3.1",
                         setting: {
                             address: "2",
                             variable: "test1",
@@ -448,7 +187,6 @@ export const variable = [
         type: "variable",
         subType: null,
         name: "test1",
-        parent: "3.1",
         setting: {
             isSpecial: true,
             type: "1 бит – bool",
@@ -468,7 +206,6 @@ export const variable = [
         type: "folder",
         subType: null,
         name: "folder1",
-        parent: "3.1",
         ignoreChildren: false,
         setting: {
             /* Примерное содержимое */
@@ -483,7 +220,6 @@ export const variable = [
                 type: "variable",
                 subType: null,
                 name: "test2",
-                parent: "3.2",
                 setting: {
                     isSpecial: true,
                     type: "1 бит – bool",
@@ -503,7 +239,6 @@ export const variable = [
                 type: "folder",
                 subType: null,
                 name: "folder2",
-                parent: "3.2",
                 ignoreChildren: false,
                 setting: {
                     /* Примерное содержимое */
@@ -518,7 +253,6 @@ export const variable = [
                         type: "variable",
                         subType: null,
                         name: "test3",
-                        parent: "3.2.1",
                         setting: {
                             isSpecial: true,
                             type: "1 бит – bool",
@@ -540,7 +274,6 @@ export const variable = [
                 type: "variable",
                 subType: null,
                 name: "test9",
-                parent: "3.2",
                 setting: {
                     isSpecial: false,
                     type: "1 бит – bool",
@@ -560,7 +293,6 @@ export const variable = [
                 type: "variable",
                 subType: null,
                 name: "test8",
-                parent: "3.2",
                 setting: {
                     isSpecial: true,
                     type: "1 бит – bool",
@@ -586,7 +318,6 @@ export const config = {
     type: "configuration",
     subType: null,
     name: "Конфигурация для РЦДУ",
-    parent: null,
     ignoreChildren: false,
     setting: {
         description: "Конфигурация для РЦДУ в Подзалупинске",
@@ -600,7 +331,6 @@ export const config = {
             type: "receive",    
             subType: null,
             name: "Получение данных",
-            parent: "1",
             ignoreChildren: false,
             children: receive
         },
@@ -609,7 +339,6 @@ export const config = {
             type: "send",
             subType: null,
             name: "Отправка данных",
-            parent: "1",
             ignoreChildren: false,
             children: send
         },
@@ -618,7 +347,6 @@ export const config = {
             type: "variables",
             subType: null,
             name: "Переменные",
-            parent: "1",
             ignoreChildren: false,
             children: variable
         }

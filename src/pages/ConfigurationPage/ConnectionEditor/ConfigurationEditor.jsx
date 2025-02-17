@@ -2,60 +2,17 @@ import {
     AbsoluteCenter,
     Alert,
     Box,
-    Field,
     Flex,
-    Input,
     HStack,
     Heading,
     IconButton,
     Editable,
     VStack,
 } from "@chakra-ui/react";
-import { modbusFunctionGroupTypes } from "../../../config/filterOptions";
-import { headerMapping } from "../../MonitoringPage/mappings";
 import { PARAM_DEFINITIONS, PARENT_NAMES } from "../../../config/paramDefinitions";
 import { LuPencilLine, LuX, LuCheck } from "react-icons/lu";
-import {
-    SelectContent,
-    SelectItem,
-    SelectRoot,
-    SelectLabel,
-    SelectTrigger,
-    SelectValueText,
-} from "../../../components/ui/select";
 import { ModbusFunctionGroupTable } from "../Table/Table";
 import { BaseInput } from "../InputComponents/BaseInput";
-
-const renderData = (row) => {
-    if (!row) return null;
-    return row.map((element) => {
-        if (element.children !== null && row.length <= 1) {
-            return renderData(element.children);
-        }
-        return (
-            <>
-                {
-                    Object.keys(element.data.setting).map((key, index) => {
-                        return (
-                            <Field.Root key={index} flex={"1 1 200px"}>
-                                <Field.Label>
-                                    {headerMapping[key]}
-                                </Field.Label>
-                                {/* <Text
-                                    wordBreak={"break-all"}
-                                    fontSize={"sm"}
-                                >
-                                    {element.data.setting[key]}
-                                </Text> */}
-                                <Input defaultValue={element.data.setting[key]} size={"xs"}/>
-                            </Field.Root>
-                        );
-                    })
-                }
-            </>
-        );
-    });
-};
 
 const getTypes = (node, types = []) => {
     if (!node) return [];
@@ -204,9 +161,15 @@ export const ParentNodeConfiguration = ({data}) => {
                 gap={"4"}
                 wrap={"wrap"}
             >
-                {Object.keys(data.data.setting).map((item, index) => (
-                    <BaseInput key={index} definition={PARAM_DEFINITIONS[item]} value={data.data.setting[item]} showLabel/>
-                ))}
+                {Object.keys(data.data.setting).map((item, index) => {
+                    const definition = PARAM_DEFINITIONS[item];
+                    if (!definition) return null;
+                    if (definition.dependsOn) {
+                        const { key, value } = definition.dependsOn;
+                        if (data.data.setting[key] !== value) return null;
+                    }
+                    return <BaseInput key={index} definition={PARAM_DEFINITIONS[item]} value={data.data.setting[item]} showLabel/>;
+                })}
             </Flex>
         </VStack>
     );
