@@ -19,8 +19,12 @@ function ConfigurationPage() {
     console.log("Render ConfigurationPage");
     const [selectedNode, setSelectedNode] = useState();
     const [selectedVariable, setSelectedVariable] = useState();
+
     const variables = useVariablesStore((state) => state.variables);
     const addNode = useVariablesStore((state) => state.addNode);
+    const updateNode = useVariablesStore((state) => state.updateNode);
+
+    const variableTreeRef = useRef(null);
 
     const panelRef = useRef(null);
     useEffect(() => {
@@ -34,6 +38,11 @@ function ConfigurationPage() {
             }
         }
     }, [selectedVariable]);
+
+    const handleRename = ({ id, name }) => {
+        console.log("rename", id, name);
+        updateNode(id, { name });
+    };
 
     return (
         <Box height="100%">
@@ -83,7 +92,7 @@ function ConfigurationPage() {
                                 <PanelResizeHandle className="verticalLineConf"/>
                                 <Panel ref={panelRef} collapsible collapsedSize={0} minSize={30}>
                                     <Box w={"100%"} h={"100%"} pt={"2"}>
-                                        <VariableMenu selectedData={selectedVariable} setSelectedData={setSelectedVariable}/>
+                                        <VariableMenu selectedData={selectedVariable}/>
                                     </Box>
                                 </Panel>
                             </PanelGroup>
@@ -107,22 +116,22 @@ function ConfigurationPage() {
                         <MenuContent>
                             <MenuItem value="variable" onClick={() => {
                                 const node = {
-                                    id: Date.now().toString(),
+                                    id: String(variables.length + 1),
                                     type: "variable",
                                     subType: null,
-                                    name: "test1",
+                                    name: "",
                                     setting: {
-                                        isSpecial: true,
+                                        isSpecial: false,
                                         type: "1 бит – bool",
-                                        isLua: true,
-                                        description: "Lorem ipsum dolor sit amet consectetur",
-                                        cmd: true,
-                                        archive: true,
+                                        isLua: false,
+                                        description: "",
+                                        cmd: false,
+                                        archive: false,
                                         group: "Без группы",
                                         measurement: null,
-                                        coefficient: "",
-                                        luaExpression: "test2 = test2 + 1",
-                                        specialCycleDelay: 5
+                                        coefficient: null,
+                                        luaExpression: "",
+                                        specialCycleDelay: null
                                     }
                                 };
                                 addNode(null, node);
@@ -131,22 +140,28 @@ function ConfigurationPage() {
                                 Переменная
                             </MenuItem>
                             <MenuItem value="folder" onClick={() => {
+                                const id = String(variables.length + 1);
+                                console.log(variables);
                                 const node = {
-                                    id: Date.now().toString(),
+                                    id: id,
                                     type: "folder",
                                     subType: null,
-                                    name: "folder1",
+                                    name: "",
                                     ignoreChildren: false,
                                     setting: {
                                         /* Примерное содержимое */
-                                        description: "Эта папка нужна для тестирования",
-                                        group: "bemp",
+                                        description: "",
+                                        group: "",
                                         alias: "",
                                         tags: []
                                     },
                                     children: []
                                 };
-                                addNode(null, node);
+                                console.log(variables);
+                                //addNode(null, node);
+                                // Мультиселект работает для узлов, которые находятся не рядом
+                                //variableTreeRef.current.selectMulti("3.2.5");
+                                //variableTreeRef.current.selectMulti("3.2.2");
                             }}>
                                 <LuFolder />
                                 Папка
@@ -154,17 +169,19 @@ function ConfigurationPage() {
                         </MenuContent>
                     </MenuRoot>
                     {
-                        variables.length === 0 ? (
+                        config.children[2].children.length === 0 ? (
                             <Box p={"4"}>
                                 <Text>Переменная еще не создана</Text>
                             </Box>
                         ) : (
                             <ConfigurationCard 
                                 title={"Переменные"} 
-                                /* data={config.children[2].children} */
+                                //data={config.children[2].children}
                                 data={variables}
-                                /* setSelectedData={useCallback((node) => 
-                                    setSelectedVariable(node), [])} */
+                                setSelectedData={(node) => 
+                                    setSelectedVariable(node)}
+                                ref={variableTreeRef}
+                                onRename={handleRename}
                             />
                         )
                     }

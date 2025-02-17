@@ -4,13 +4,8 @@ import { TableConfig } from "./Table/Table";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { memo } from "react";
 
-export const VariableMenu = memo(function VariableMenu({selectedData = [], setSelectedData}) {
+export const VariableMenu = memo(function VariableMenu({selectedData = []}) {
     console.log("Render VariableEditor");
-
-    const doubleClickHandler = (data) => {
-        console.log("doubleClickHandler:", data);
-        setSelectedData([data]);
-    };
 
     if (!selectedData || selectedData.length === 0) {
         return (
@@ -35,7 +30,6 @@ export const VariableMenu = memo(function VariableMenu({selectedData = [], setSe
         return singleNode.isLeaf ? (
             <VariableEditor data={singleNode}/>
         ) : (
-            /* <Folder data={singleNode} onDoubleClick={doubleClickHandler}/> */
             <VStack
                 gap={"4"}
                 px={"1"}

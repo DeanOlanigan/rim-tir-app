@@ -1,9 +1,9 @@
 import { AutoSizer } from "react-virtualized";
 import { Card } from "@chakra-ui/react";
 import { TreeView } from "./Tree/TreeView";
+import { forwardRef } from "react";
 
-
-export const ConfigurationCard = ({ title, data, setSelectedData, selection }) => {
+export const ConfigurationCard = forwardRef( function ConfigurationCard({ title, data, setSelectedData, selection, onCreate, onRename }, ref) {
     console.log("Render ConfigurationCard");
 
     return (
@@ -23,15 +23,18 @@ export const ConfigurationCard = ({ title, data, setSelectedData, selection }) =
                 <AutoSizer>
                     {({ height, width }) => (
                         <TreeView
+                            ref={ref}
                             height={height}
                             width={width}
                             data={data}
                             onSelect={setSelectedData}
+                            onCreate={onCreate}
                             selection={selection}
+                            onRename={onRename}
                         />
                     )}
                 </AutoSizer>
             </Card.Body>
         </Card.Root>
     );
-};
+});

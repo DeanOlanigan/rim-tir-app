@@ -5,13 +5,14 @@ import clsx from "clsx";
 import { HStack, IconButton, Box } from "@chakra-ui/react";
 import { LuChevronRight } from "react-icons/lu";
 import { icons, badges } from "../../../components/TreeView/DefaultView";
-import { memo } from "react";
+import { memo, forwardRef } from "react";
 
-export const TreeView = memo(function TreeView(props) {
+export const TreeView = memo(forwardRef(function TreeView(props, ref) {
     console.log(`%cRender NEW TreeView, ${props.selection}`, "color: white; background: red;");
 
     return (
         <Tree
+            ref={ref}
             {...props}
             className={styles.tree}
             openByDefault={true}
@@ -20,12 +21,27 @@ export const TreeView = memo(function TreeView(props) {
             indent={16}
             renderCursor={DropCursor}
             disableDrag
-            disableEdit
         >
             {Node}
         </Tree>
     );
-});
+}));
+
+function Input({ node }) {
+    return (
+        <input
+            autoFocus
+            type="text"
+            defaultValue={node.data.name}
+            onFocus={(e) => e.currentTarget.select()}
+            onBlur={() => node.reset()}
+            onKeyDown={(e) => {
+                if (e.key === "Escape") node.reset();
+                if (e.key === "Enter") node.submit(e.currentTarget.value);
+            }}
+        />
+    );
+}
 
 const Node = ({ node, style, dragHandle }) => {
     console.log("%cRender NEW Node", "color: white; background: red;");
@@ -71,7 +87,7 @@ const Node = ({ node, style, dragHandle }) => {
                         node.data.type === "asdu" ?
                             badges[node.data.subType] || badges[node.data.type] : null
                     }
-                    {node.data.name || node.data.setting?.variable}
+                    {node.isEditing ? <Input node={node} /> : node.data.name || node.data.setting?.variable}
                 </HStack>
             </HStack>
 
