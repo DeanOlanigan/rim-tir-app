@@ -1,6 +1,5 @@
 import { Provider } from "./components/ui/provider";
 import AppRoutes from "./routes/AppRoutes";
-import "@radix-ui/themes/styles.css";
 import "./App.css";
 
 function App() {

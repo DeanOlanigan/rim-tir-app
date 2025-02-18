@@ -3,9 +3,11 @@ import { FolderHeader } from "./Folder/Folder";
 import { TableConfig } from "./Table/Table";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { memo } from "react";
+import { useVariablesStore } from "../../store/variables-store";
 
-export const VariableMenu = memo(function VariableMenu({selectedData = []}) {
+export const VariableMenu = memo(function VariableMenu() {
     console.log("Render VariableEditor");
+    const selectedData = useVariablesStore((state) => state.selectedNode);
 
     if (!selectedData || selectedData.length === 0) {
         return (

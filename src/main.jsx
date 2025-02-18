@@ -9,5 +9,4 @@ createRoot(document.getElementById("root")).render(
     //</StrictMode>,
 );
 
-//TODO Перенести интерфейс с radix ui на chakra
 //TODO Изучить react-hook-form

@@ -5,10 +5,6 @@ import { useVariablesStore } from "../../../store/variables-store";
 export const VariableEditorHeader = ({data}) => {
     const updateNode = useVariablesStore((state) => state.updateNode);
 
-    const handleRename = () => {
-
-    };
-
     return (
         <HStack
             w={"100%"}
@@ -24,7 +20,9 @@ export const VariableEditorHeader = ({data}) => {
                 fontSize={"lg"}
                 fontWeight={"medium"}
                 value={data.name}
-                onValueCommit={()=> console.log("test")}
+                onValueChange={(e) => {
+                    updateNode(data.id, { name: e.value });
+                }}
             >
                 <Editable.Preview />
                 <Editable.Input />

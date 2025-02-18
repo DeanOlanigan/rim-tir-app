@@ -68,7 +68,7 @@ const Node = ({ node, style, dragHandle }) => {
                             node.toggle();
                         }}
                         color={"fg.subtle"}
-                        _hover={{color: "black"}}
+                        _hover={{color: "bg.inverted"}}
                     >
                         <Box
                             w={"19.19px"}

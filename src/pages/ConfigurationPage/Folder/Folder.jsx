@@ -78,7 +78,7 @@ export const FolderHeader = ({data}) => {
                     maxW={"300px"}
                     fontSize={"lg"}
                     fontWeight={"medium"}
-                    defaultValue={data.data.name}
+                    value={data.name}
                 >
                     <Editable.Preview />
                     <Editable.Input />
@@ -104,7 +104,7 @@ export const FolderHeader = ({data}) => {
             <HStack>
                 <Text textWrap={"nowrap"} fontWeight={"medium"}>Описание:</Text>
                 <Editable.Root
-                    defaultValue={data.data.setting.description}
+                    value={data.setting.description}
                 >
                     <Editable.Preview />
                     <Editable.Textarea />

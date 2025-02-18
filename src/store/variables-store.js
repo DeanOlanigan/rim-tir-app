@@ -1,18 +1,27 @@
 import { create } from "zustand";
 
-const addNodeRecursive = (nodes, parentId, newNode) => {
-    nodes.map((node) => {
+const addNodeRecursive = (nodes, parentId, newNode, index) => {
+    return nodes.map((node) => {
         if (node.id === parentId) {
-            return { ...node, children: [...node.children, newNode] };
+            const newVariables = [...node.children];
+            newVariables.splice(index, 0, newNode);
+            return { ...node, children: newVariables };
         }
-        return { ...node, children: addNodeRecursive(node.children, parentId, newNode) };
+        if (node.children?.length > 0) {
+            return { ...node, children: addNodeRecursive(node.children, parentId, newNode, index) };
+        }
+        return node;
     });
 };
 
 const updatedNodeRecursive = (nodes, nodeId, updatedData) => {
     return nodes.map((node) => {
         if (node.id === nodeId) {
-            const updated = { ...node, ...updatedData };
+            const updated = {
+                ...node,
+                ...updatedData,
+                setting: updatedData.setting ? {...node.setting, ...updatedData.setting} : node.setting 
+            };
             return updated;
         }
         if (node.children?.length > 0)
@@ -23,18 +32,22 @@ const updatedNodeRecursive = (nodes, nodeId, updatedData) => {
 
 export const useVariablesStore = create((set, get) => ({
     variables: [],
-    selectedNode: null,
+    selectedNode: [],
 
     setSelectedNode: (node) => {
         set({ selectedNode: node });
     },
 
-    addNode: (parentId, newNode) => {
+    addNode: (parentId, newNode, index) => {
         if (parentId === null) {
-            set((state) => ({ variables: [...state.variables, newNode] }));
+            set((state) => {
+                const newVariables = [...state.variables];
+                newVariables.splice(index, 0, newNode);
+                return { variables: newVariables };
+            });
         } else {
             set((state) => ({
-                variables: addNodeRecursive(state.variables, parentId, newNode),
+                variables: addNodeRecursive(state.variables, parentId, newNode, index),
             }));
         };
     },

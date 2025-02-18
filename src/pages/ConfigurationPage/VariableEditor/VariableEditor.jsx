@@ -16,10 +16,10 @@ import { VariableEditorHeader } from "./VariableEditorHeader";
 import { ToggleSection } from "./ToggleSection";
 import { headerMapping } from "../../MonitoringPage/mappings";
 import { dataTypes, groups } from "../../../config/filterOptions";
+import { useVariablesStore } from "../../../store/variables-store";
 
 export const VariableEditor = ({data}) => {
-    const [isLuaBlockVisible, setIsLuaBlockVisible] = useState(data.setting.isLua);
-    const [isSpecialBlockVisible, setIsSpecialBlockVisible] = useState(data.setting.isSpecial);
+    const updateNode = useVariablesStore((state) => state.updateNode);
 
     return (
         <Flex
@@ -35,11 +35,11 @@ export const VariableEditor = ({data}) => {
                 maxW={"6xl"}
                 w={"100%"}
                 overflow={"auto"}
-                border={"1px solid"}
+                /* border={"1px solid"}
                 borderColor={"border"}
                 borderRadius={"md"}
                 shadow={"md"}
-                p={"2"}
+                p={"2"} */
             >
                 <Stack 
                     direction={{ base: "column", md: "row" }}
@@ -47,13 +47,17 @@ export const VariableEditor = ({data}) => {
                     <Box
                         w={"100%"}
                     >
-                        <ToggleSection
-                            data={data}
-                            setIsLuaBlockVisible={setIsLuaBlockVisible}
-                            setIsSpecialBlockVisible={setIsSpecialBlockVisible}
-                        />
+                        <ToggleSection data={data} />
                         <Flex gap={"2"} p={"2"}>
-                            <SelectRoot size={"xs"} collection={dataTypes}>
+                            <SelectRoot 
+                                size={"xs"}
+                                collection={dataTypes}
+                                value={[data.setting.type]}
+                                onValueChange={(details) => {
+                                    console.log("onValueChange", details, data);
+                                    updateNode(data.id, { setting: { type: details.value[0] }});
+                                }}
+                            >
                                 <SelectLabel>{headerMapping["type"]}</SelectLabel>
                                 <SelectTrigger>
                                     <SelectValueText placeholder="Выберите тип" />
@@ -66,7 +70,15 @@ export const VariableEditor = ({data}) => {
                                     ))}
                                 </SelectContent>
                             </SelectRoot>
-                            <SelectRoot size={"xs"} collection={groups}>
+                            <SelectRoot
+                                size={"xs"}
+                                collection={groups}
+                                value={[data.setting.group]}
+                                onValueChange={(details) => {
+                                    console.log("onValueChange", details, data);
+                                    updateNode(data.id, { setting : { group: details.value[0] }});
+                                }}
+                            >
                                 <SelectLabel>{headerMapping["group"]}</SelectLabel>
                                 <SelectTrigger>
                                     <SelectValueText placeholder="Выберите группу" />
@@ -81,26 +93,32 @@ export const VariableEditor = ({data}) => {
                             </SelectRoot>
                         </Flex>
                         <Flex p={"2"} gap={"2"}>
-                            <Field.Root hidden={!isLuaBlockVisible}>
+                            <Field.Root hidden={data.setting.isLua}>
                                 <Field.Label>
                                     {headerMapping["coefficient"]}
                                 </Field.Label>
                                 <NumberInputRoot
                                     size={"xs"}
-                                    defaultValue={data.setting.coefficient}
+                                    value={data.setting.coefficient}
+                                    onValueChange={(e) => {
+                                        updateNode(data.id, { setting: { coefficient: e.value } });
+                                    }}
                                 >
                                     <NumberInputField />
                                 </NumberInputRoot>
                             </Field.Root>
-                            <Field.Root hidden={isSpecialBlockVisible}>
+                            <Field.Root hidden={!data.setting.isSpecial}>
                                 <Field.Label>
                                     {headerMapping["specialCycleDelay"]}
                                 </Field.Label>
                                 <NumberInputRoot
                                     size={"xs"}
-                                    defaultValue={
+                                    value={
                                         data.setting.specialCycleDelay
                                     }
+                                    onValueChange={(e) => {
+                                        updateNode(data.id, { setting: { specialCycleDelay: e.value } });
+                                    }}
                                 >
                                     <NumberInputField />
                                 </NumberInputRoot>
@@ -111,12 +129,20 @@ export const VariableEditor = ({data}) => {
                                 <Field.Label>
                                     {headerMapping["description"]}
                                 </Field.Label>
-                                <Textarea size={"xs"} resize={"none"} rows={"5"} />
+                                <Textarea
+                                    size={"xs"}
+                                    resize={"none"}
+                                    rows={"5"}
+                                    value={data.setting.description}
+                                    onChange={(e) => {
+                                        updateNode(data.id, { setting: { description: e.target.value } });
+                                    }}
+                                />
                             </Field.Root>
                         </Flex>
                     </Box>
                     <Box
-                        hidden={isLuaBlockVisible}
+                        hidden={!data.setting.isLua}
                         w={"100%"}
                         p={"2"}
                         position={"relative"}
