@@ -37,9 +37,7 @@ export const ToggleSection = ({ data }) => {
                     updateNode(data.id, { setting: { isSpecial: !!e.checked }})
                 }
                 icon={
-                    <Icon size={"lg"}>
-                        <LuRefreshCcwDot />
-                    </Icon>
+                    <LuRefreshCcwDot size={24}/>
                 }
                 indicator={false}
                 value={"isSpecial"}
@@ -54,9 +52,7 @@ export const ToggleSection = ({ data }) => {
                     updateNode(data.id, { setting: { archive: !!e.checked }})
                 }
                 icon={
-                    <Icon size={"lg"}>
-                        <LuArchive />
-                    </Icon>
+                    <LuArchive size={24}/>
                 }
                 indicator={false}
                 value={"archive"}
@@ -71,9 +67,7 @@ export const ToggleSection = ({ data }) => {
                     updateNode(data.id, { setting: { cmd: !!e.checked }})
                 }
                 icon={
-                    <Icon size={"lg"}>
-                        <LuSquareTerminal />
-                    </Icon>
+                    <LuSquareTerminal size={24}/>
                 }
                 indicator={false}
                 value={"cmd"}
@@ -88,9 +82,7 @@ export const ToggleSection = ({ data }) => {
                     updateNode(data.id, { setting: { isLua: !!e.checked }})
                 }
                 icon={
-                    <Icon size={"lg"}>
-                        <LuCode />
-                    </Icon>
+                    <LuCode size={24}/>
                 }
                 indicator={false}
                 value={"isLua"}

@@ -10,7 +10,7 @@
 }
 
 [role="treeitem"][aria-selected="true"]:has(.node):focus-visible {
-    background-color: var(--chakra-colors-bg-emphasized);
+    background-color: var(--chakra-colors-bg-success);
     outline: none;
 }
 

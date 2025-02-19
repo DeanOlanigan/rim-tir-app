@@ -51,7 +51,11 @@ export const VariableMenu = memo(function VariableMenu() {
             /* element.level === first.level &&  */element.type === first.type
         );
         if (sameLevelAndType) {
-            return <TableConfig data={selectedData}/>;
+            return (
+                <Box w={"100%"} h={"100%"} overflow={"auto"}>
+                    <TableConfig data={selectedData}/>
+                </Box>
+            );
         };
     };
 

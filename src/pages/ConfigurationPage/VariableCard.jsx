@@ -1,13 +1,6 @@
-import { Card, Box, Button, Text } from "@chakra-ui/react";
+import { Card, Box, Button, Text, Flex, Group } from "@chakra-ui/react";
 import { AutoSizer } from "react-virtualized";
-import {
-    MenuRoot,
-    MenuItem,
-    MenuContent,
-    MenuItemGroup,
-    MenuContextTrigger
-} from "../../components/ui/menu";
-import { LuFolder, LuPlus, LuVariable } from "react-icons/lu";
+import { LuPlus, LuFolder, LuVariable } from "react-icons/lu";
 import { TreeView } from "./Tree/TreeView";
 import { useVariablesStore } from "../../store/variables-store";
 import { useRef, useCallback } from "react";
@@ -19,6 +12,8 @@ export const VariableCard = () => {
     const setSelectedNodeId = useVariablesStore((state) => state.setSelectedNode);
     const addNode = useVariablesStore((state) => state.addNode);
     const updateNode = useVariablesStore((state) => state.updateNode);
+    const removeNode = useVariablesStore((state) => state.removeNode);
+    const moveNode = useVariablesStore((state) => state.moveNode);
 
     const variableTreeRef = useRef(null);
 
@@ -74,6 +69,16 @@ export const VariableCard = () => {
         }
     }, [addNode]);
 
+    const handleDelete = ({ ids }) => {
+        console.log("delete", ids);
+        removeNode(ids);
+    };
+
+    const handleMove = ({ dragIds, parentId, index }) => {
+        console.log("move", dragIds, parentId, index);
+        moveNode(dragIds, parentId, index);
+    };
+
     return (
         <Card.Root
             size={"sm"}
@@ -88,89 +93,82 @@ export const VariableCard = () => {
                 <Card.Title>Переменные</Card.Title>
             </Card.Header>
             <Card.Body>
-                <Box>
-                    <Button
-                        size={"xs"}
-                        w={"100%"}
-                        mb={"4"}
-                        onClick={() => {
-                            console.log(
-                                variableTreeRef.current,
-                                variables,
-                                selectedNodeId
-                            );
-                        }}
-                    >
-                        <LuPlus />
-                        Создать
-                    </Button>
-                    {variables.length === 0 && (
-                        <Box p={"4"}>
+                
+                {variables.length === 0 && (
+                    <Box mb={"2"} w={"100%"}>
+                        <Box ps={"4"} mb={"2"}>
                             <Text>Переменная еще не создана</Text>
                         </Box>
-                    )}
-                </Box>
-                <MenuRoot>
-                    <MenuContextTrigger w={"100%"} h={"100%"}>
-                        <Box
-                            w={"100%"}
-                            h={"100%"}
-                            border={"2px dotted"}
-                            borderColor={"border.info"}
-                            borderRadius={"sm"}
-                            p={"1"}
-                        >
-                            <Box w={"100%"} h={"100%"}>
-                                <AutoSizer>
-                                    {({ height, width }) => (
-                                        <TreeView
-                                            height={height}
-                                            width={width}
-                                            data={variables}
-                                            onSelect={(node) => {
-                                                const data = node.map(
-                                                    (node) => {
-                                                        return node.data;
-                                                    }
-                                                );
-                                                setSelectedNodeId(data);
-                                            }}
-                                            ref={variableTreeRef}
-                                            onRename={handleRename}
-                                            onCreate={handleCreate}
-                                        />
-                                    )}
-                                </AutoSizer>
-                            </Box>
-                        </Box>
-                    </MenuContextTrigger>
-                    <MenuContent>
-                        <MenuItemGroup title="Создать">
-                            <MenuItem
-                                value="variable"
+                        <Group grow>
+                            <Button
+                                size={"xs"}
                                 onClick={() => {
+                                    console.log(
+                                        variableTreeRef.current,
+                                        variables,
+                                        selectedNodeId
+                                    );
                                     variableTreeRef.current.create({
                                         type: "variable",
                                     });
                                 }}
                             >
                                 <LuVariable />
-                                Переменная
-                            </MenuItem>
-                            <MenuItem
-                                value="folder"
+                                Создать переменную
+                            </Button>
+                            <Button
+                                size={"xs"}
                                 onClick={() => {
+                                    console.log(
+                                        variableTreeRef.current,
+                                        variables,
+                                        selectedNodeId
+                                    );
                                     variableTreeRef.current.create({
                                         type: "folder",
                                     });
                                 }}
                             >
                                 <LuFolder />
-                                Папка
-                            </MenuItem>
-                        </MenuItemGroup>
-                    </MenuContent>
-                </MenuRoot>
+                                Создать папку
+                            </Button>
+                        </Group>
+                    </Box>
+                )}
+                
+                <Box
+                    w={"100%"}
+                    h={"100%"}
+                    border={"2px dotted"}
+                    borderColor={"border.info"}
+                    borderRadius={"sm"}
+                    p={"1"}
+                >
+                    <Box w={"100%"} h={"100%"}>
+                        <AutoSizer>
+                            {({ height, width }) => (
+                                <TreeView
+                                    height={height}
+                                    width={width}
+                                    data={variables}
+                                    onSelect={(node) => {
+                                        const data = node.map(
+                                            (node) => {
+                                                return node.data;
+                                            }
+                                        );
+                                        setSelectedNodeId(data);
+                                    }}
+                                    ref={variableTreeRef}
+                                    onRename={handleRename}
+                                    onCreate={handleCreate}
+                                    onDelete={handleDelete}
+                                    onMove={handleMove}
+                                />
+                            )}
+                        </AutoSizer>
+                    </Box>
+                </Box>
             </Card.Body>
         </Card.Root>
     );
