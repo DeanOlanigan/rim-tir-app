@@ -32,10 +32,10 @@ export const ToggleSection = ({ data }) => {
                 size={"md"}
                 align={"center"}
                 label={headerMapping["isSpecial"]}
-                checked={data.setting.isSpecial}
-                onCheckedChange={(e) => 
+                checked={data.isSpecial}
+                /* onCheckedChange={(e) => 
                     updateNode(data.id, { setting: { isSpecial: !!e.checked }})
-                }
+                } */
                 icon={
                     <LuRefreshCcwDot size={24}/>
                 }
@@ -47,10 +47,10 @@ export const ToggleSection = ({ data }) => {
                 size={"md"}
                 align={"center"}
                 label={headerMapping["archive"]}
-                checked={data.setting.archive}
-                onCheckedChange={(e) => 
+                checked={data.archive}
+                /* onCheckedChange={(e) => 
                     updateNode(data.id, { setting: { archive: !!e.checked }})
-                }
+                } */
                 icon={
                     <LuArchive size={24}/>
                 }
@@ -62,10 +62,10 @@ export const ToggleSection = ({ data }) => {
                 size={"md"}
                 align={"center"}
                 label={headerMapping["cmd"]}
-                checked={data.setting.cmd}
-                onCheckedChange={(e) => 
+                checked={data.cmd}
+                /* onCheckedChange={(e) => 
                     updateNode(data.id, { setting: { cmd: !!e.checked }})
-                }
+                } */
                 icon={
                     <LuSquareTerminal size={24}/>
                 }
@@ -77,10 +77,10 @@ export const ToggleSection = ({ data }) => {
                 size={"md"}
                 align={"center"}
                 label={headerMapping["isLua"]}
-                checked={data.setting.isLua}
-                onCheckedChange={(e) => 
+                checked={data.isLua}
+                /* onCheckedChange={(e) => 
                     updateNode(data.id, { setting: { isLua: !!e.checked }})
-                }
+                } */
                 icon={
                     <LuCode size={24}/>
                 }

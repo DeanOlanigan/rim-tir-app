@@ -20,6 +20,7 @@ import { useVariablesStore } from "../../../store/variables-store";
 
 export const VariableEditor = ({data}) => {
     const updateNode = useVariablesStore((state) => state.updateNode);
+    const setSettings = useVariablesStore((state) => state.setSettings);
 
     return (
         <Flex
@@ -52,10 +53,10 @@ export const VariableEditor = ({data}) => {
                             <SelectRoot 
                                 size={"xs"}
                                 collection={dataTypes}
-                                value={[data.setting.type]}
+                                value={[data.type]}
                                 onValueChange={(details) => {
                                     console.log("onValueChange", details, data);
-                                    updateNode(data.id, { setting: { type: details.value[0] }});
+                                    setSettings(data.id, { type: details.value[0] });
                                 }}
                             >
                                 <SelectLabel>{headerMapping["type"]}</SelectLabel>
@@ -73,11 +74,11 @@ export const VariableEditor = ({data}) => {
                             <SelectRoot
                                 size={"xs"}
                                 collection={groups}
-                                value={[data.setting.group]}
-                                onValueChange={(details) => {
+                                value={[data.group]}
+                                /* onValueChange={(details) => {
                                     console.log("onValueChange", details, data);
                                     updateNode(data.id, { setting : { group: details.value[0] }});
-                                }}
+                                }} */
                             >
                                 <SelectLabel>{headerMapping["group"]}</SelectLabel>
                                 <SelectTrigger>
@@ -93,32 +94,32 @@ export const VariableEditor = ({data}) => {
                             </SelectRoot>
                         </Flex>
                         <Flex p={"2"} gap={"2"}>
-                            <Field.Root hidden={data.setting.isLua}>
+                            <Field.Root hidden={data.isLua}>
                                 <Field.Label>
                                     {headerMapping["coefficient"]}
                                 </Field.Label>
                                 <NumberInputRoot
                                     size={"xs"}
-                                    value={data.setting.coefficient}
-                                    onValueChange={(e) => {
+                                    value={data.coefficient}
+                                    /* onValueChange={(e) => {
                                         updateNode(data.id, { setting: { coefficient: e.value } });
-                                    }}
+                                    }} */
                                 >
                                     <NumberInputField />
                                 </NumberInputRoot>
                             </Field.Root>
-                            <Field.Root hidden={!data.setting.isSpecial}>
+                            <Field.Root hidden={!data.isSpecial}>
                                 <Field.Label>
                                     {headerMapping["specialCycleDelay"]}
                                 </Field.Label>
                                 <NumberInputRoot
                                     size={"xs"}
                                     value={
-                                        data.setting.specialCycleDelay
+                                        data.specialCycleDelay
                                     }
-                                    onValueChange={(e) => {
+                                    /* onValueChange={(e) => {
                                         updateNode(data.id, { setting: { specialCycleDelay: e.value } });
-                                    }}
+                                    }} */
                                 >
                                     <NumberInputField />
                                 </NumberInputRoot>
@@ -133,16 +134,16 @@ export const VariableEditor = ({data}) => {
                                     size={"xs"}
                                     resize={"none"}
                                     rows={"5"}
-                                    value={data.setting.description}
-                                    onChange={(e) => {
+                                    value={data.description}
+                                    /* onChange={(e) => {
                                         updateNode(data.id, { setting: { description: e.target.value } });
-                                    }}
+                                    }} */
                                 />
                             </Field.Root>
                         </Flex>
                     </Box>
                     <Box
-                        hidden={!data.setting.isLua}
+                        hidden={!data.isLua}
                         w={"100%"}
                         p={"2"}
                         position={"relative"}
@@ -152,7 +153,7 @@ export const VariableEditor = ({data}) => {
                         background={"bg.muted"}
                     >
                         <AbsoluteCenter>
-                            {data.setting.luaExpression}
+                            {data.luaExpression}
                         </AbsoluteCenter>
                     </Box>
                 </Stack>

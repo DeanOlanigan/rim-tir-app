@@ -2,12 +2,23 @@ import { Box, AbsoluteCenter, Alert, VStack } from "@chakra-ui/react";
 import { FolderHeader } from "./Folder/Folder";
 import { TableConfig } from "./Table/Table";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { useVariablesStore } from "../../store/variables-store";
 
 export const VariableMenu = memo(function VariableMenu() {
     console.log("Render VariableEditor");
-    const selectedData = useVariablesStore((state) => state.selectedNode);
+    //const selectedData = useVariablesStore((state) => state.selectedNode);
+    //const selectedData = [];
+    
+    const settings = useVariablesStore((state) => state.settings);
+    const selectedIds = useVariablesStore((state) => state.selectedIds);
+
+    const selectedData = useMemo(() => {
+        return Array.from(selectedIds).map(key => settings[key]).filter(Boolean);
+        /* return Object.fromEntries(
+            Object.entries(settings).filter(([key]) => selectedIds.has(key))
+        ); */
+    }, [settings, selectedIds]);
 
     if (!selectedData || selectedData.length === 0) {
         return (
@@ -44,7 +55,7 @@ export const VariableMenu = memo(function VariableMenu() {
             </VStack>
         );
     }
-    
+
     if (selectedData.length > 1) {
         const [first] = selectedData;
         const sameLevelAndType = selectedData.every((element) => 
@@ -67,7 +78,7 @@ export const VariableMenu = memo(function VariableMenu() {
                     <Alert.Content>
                         <Alert.Title>Ошибка</Alert.Title>
                         <Alert.Description>
-                        Выберите узлы одинакового уровня и типа.
+                        Выберите узлы одинакового типа.
                         </Alert.Description>
                     </Alert.Content>
                 </Alert.Root>

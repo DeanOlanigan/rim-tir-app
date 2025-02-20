@@ -8,8 +8,12 @@ import { useRef, useCallback } from "react";
 export const VariableCard = () => {
     
     const variables = useVariablesStore((state) => state.variables);
-    const selectedNodeId = useVariablesStore((state) => state.selectedNode);
+    const settings = useVariablesStore((state) => state.settings);
     const setSelectedNodeId = useVariablesStore((state) => state.setSelectedNode);
+    
+    const setSelectedIds = useVariablesStore((state) => state.setSelectedIds);
+    //const selectedNodes = useVariablesStore((state) => state.selectedNodes);
+
     const addNode = useVariablesStore((state) => state.addNode);
     const updateNode = useVariablesStore((state) => state.updateNode);
     const removeNode = useVariablesStore((state) => state.removeNode);
@@ -105,8 +109,7 @@ export const VariableCard = () => {
                                 onClick={() => {
                                     console.log(
                                         variableTreeRef.current,
-                                        variables,
-                                        selectedNodeId
+                                        variables
                                     );
                                     variableTreeRef.current.create({
                                         type: "variable",
@@ -121,8 +124,7 @@ export const VariableCard = () => {
                                 onClick={() => {
                                     console.log(
                                         variableTreeRef.current,
-                                        variables,
-                                        selectedNodeId
+                                        variables
                                     );
                                     variableTreeRef.current.create({
                                         type: "folder",
@@ -144,6 +146,7 @@ export const VariableCard = () => {
                     borderRadius={"sm"}
                     p={"1"}
                 >
+                    {/*selectedNodes*/}
                     <Box w={"100%"} h={"100%"}>
                         <AutoSizer>
                             {({ height, width }) => (
@@ -151,18 +154,20 @@ export const VariableCard = () => {
                                     height={height}
                                     width={width}
                                     data={variables}
-                                    onSelect={(node) => {
-                                        const data = node.map(
+                                    onSelect={() => {
+                                        console.log(variables, settings);
+                                        setSelectedIds(variableTreeRef.current.selectedIds);
+                                        /* const data = node.map(
                                             (node) => {
                                                 return node.data;
                                             }
                                         );
-                                        setSelectedNodeId(data);
+                                        setSelectedNodeId(data); */
                                     }}
                                     ref={variableTreeRef}
-                                    onRename={handleRename}
                                     onCreate={handleCreate}
                                     onDelete={handleDelete}
+                                    onRename={handleRename}
                                     onMove={handleMove}
                                 />
                             )}
