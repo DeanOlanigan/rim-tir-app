@@ -20,64 +20,62 @@ export const TreeView = memo(forwardRef(function TreeView(props, ref) {
     console.log(`%cRender NEW TreeView, ${props.selection}`, "color: white; background: red;");
 
     return (
-        <>
-            <MenuRoot lazyMount unmountOnExit>
-                <MenuContextTrigger>
-                    <Tree
-                        ref={ref}
-                        {...props}
-                        className={styles.tree}
-                        openByDefault={true}
-                        overscanCount={2}
-                        rowHeight={32}
-                        indent={16}
-                        renderCursor={DropCursor}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            console.log("TREE: click", ref.current.selectedIds.size );
-                            if (ref.current.selectedIds.size === 0) {
-                                ref.current.root.focus();
-                            };
-                        }}
-                        onContextMenu={(e) => {
-                            e.preventDefault();
+        <MenuRoot lazyMount unmountOnExit>
+            <MenuContextTrigger asChild>
+                <Tree
+                    ref={ref}
+                    {...props}
+                    className={styles.tree}
+                    openByDefault={true}
+                    overscanCount={2}
+                    rowHeight={32}
+                    indent={16}
+                    renderCursor={DropCursor}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        console.log("TREE: click", ref.current.selectedIds.size );
+                        if (ref.current.selectedIds.size === 0) {
                             ref.current.root.focus();
-                            ref.current.root.select();
+                        };
+                    }}
+                    onContextMenu={(e) => {
+                        e.preventDefault();
+                        ref.current.root.focus();
+                        ref.current.root.select();
+                    }}
+                >
+                    {Node}
+                </Tree>
+            </MenuContextTrigger>
+            <MenuContent>
+                <MenuItemGroup title="Создать">
+                    <MenuItem
+                        value="variable"
+                        onClick={() => {
+                            console.log("TREE: create variable");
+                            ref.current.create({
+                                type: "variable",
+                            });
                         }}
                     >
-                        {Node}
-                    </Tree>
-                </MenuContextTrigger>
-                <MenuContent>
-                    <MenuItemGroup title="Создать">
-                        <MenuItem
-                            value="variable"
-                            onClick={() => {
-                                console.log("TREE: create variable");
-                                ref.current.create({
-                                    type: "variable",
-                                });
-                            }}
-                        >
-                            <LuVariable />
-                            Переменная
-                        </MenuItem>
-                        <MenuItem
-                            value="folder"
-                            onClick={() => {
-                                console.log("TREE: create folder");
-                                ref.current.create({
-                                    type: "folder",
-                                });
-                            }}
-                        >
-                            <LuFolder />
-                            Папка
-                        </MenuItem>
-                    </MenuItemGroup>
-                </MenuContent>
-            </MenuRoot>
-        </>
+                        <LuVariable />
+                        Переменная
+                    </MenuItem>
+                    <MenuItem
+                        value="folder"
+                        onClick={() => {
+                            console.log("TREE: create folder");
+                            ref.current.create({
+                                type: "folder",
+                            });
+                        }}
+                    >
+                        <LuFolder />
+                        Папка
+                    </MenuItem>
+                </MenuItemGroup>
+            </MenuContent>
+        </MenuRoot>
     );
 }));
 
@@ -98,7 +96,7 @@ const Input = ({ node }) => {
 };
 
 const Node = ({ node, style, dragHandle }) => {
-    console.log("%cRender NEW Node", "color: white; background: red;");
+    console.log("%cRender NEW Node", "color: white; background: purple;");
     const indentSize = Number.parseFloat(`${style.paddingLeft || 0}`);
 
     return (
