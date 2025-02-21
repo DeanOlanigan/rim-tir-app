@@ -4,6 +4,7 @@ import { TableConfig } from "./Table/Table";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { memo, useMemo } from "react";
 import { useVariablesStore } from "../../store/variables-store";
+import { useShallow } from "zustand/shallow";
 
 export const VariableMenu = memo(function VariableMenu() {
     console.log("Render VariableEditor");
@@ -11,14 +12,16 @@ export const VariableMenu = memo(function VariableMenu() {
     //const selectedData = [];
     
     const settings = useVariablesStore((state) => state.settings);
-    const selectedIds = useVariablesStore((state) => state.selectedIds);
+    const selectedIds = useVariablesStore(useShallow((state) => state.selectedIds));
 
     const selectedData = useMemo(() => {
         return Array.from(selectedIds).map(key => settings[key]).filter(Boolean);
         /* return Object.fromEntries(
             Object.entries(settings).filter(([key]) => selectedIds.has(key))
         ); */
-    }, [settings, selectedIds]);
+    }, [settings, selectedIds]);  
+
+    //const selectedData = [];
 
     if (!selectedData || selectedData.length === 0) {
         return (

@@ -1,77 +1,78 @@
-import { Card, Box, Button, Text, Flex, Group } from "@chakra-ui/react";
+import { Card, Box, Button, Text, Group } from "@chakra-ui/react";
 import { AutoSizer } from "react-virtualized";
-import { LuPlus, LuFolder, LuVariable } from "react-icons/lu";
+import { LuFolder, LuVariable } from "react-icons/lu";
 import { TreeView } from "./Tree/TreeView";
 import { useVariablesStore } from "../../store/variables-store";
 import { useRef, useCallback } from "react";
+import { v4 as uuid4 } from "uuid";
 
 export const VariableCard = () => {
-    
+    const variableTreeRef = useRef(null);
     const variables = useVariablesStore((state) => state.variables);
-    const settings = useVariablesStore((state) => state.settings);
-    const setSelectedNodeId = useVariablesStore((state) => state.setSelectedNode);
-    
     const setSelectedIds = useVariablesStore((state) => state.setSelectedIds);
-    //const selectedNodes = useVariablesStore((state) => state.selectedNodes);
+    const setSettings = useVariablesStore((state) => state.setSettings);
 
     const addNode = useVariablesStore((state) => state.addNode);
     const updateNode = useVariablesStore((state) => state.updateNode);
     const removeNode = useVariablesStore((state) => state.removeNode);
     const moveNode = useVariablesStore((state) => state.moveNode);
 
-    const variableTreeRef = useRef(null);
-
     const handleRename = ({ id, name }) => {
+        console.log("store bef", variables);
         console.log("rename", id, name);
         updateNode(id, { name });
     };
 
-    const handleCreate = useCallback(({ parentId, index, type }) => {
+    // Формируй данные перед отправкой в стор, иначе дерево ебланит
+    const handleCreate = ({ parentId, index, type }) => {
         if (type === "leaf" || type === "internal") return;
         console.log("create", parentId, index, type);
         if (type === "folder") {
+            const id = uuid4();
             const node = {
-                id: Date.now().toString(),
+                id: id,
                 type: "folder",
-                subType: null,
                 name: "Новая папка",
                 ignoreChildren: false,
-                setting: {
-                    /* Примерное содержимое */
-                    description: "",
-                    group: "",
-                    alias: "",
-                    tags: [],
-                },
                 children: [],
             };
-            addNode(parentId, node, index);
+            const setting = {
+                id: id,
+                description: "Описание",
+                group: "",
+                alias: "",
+                tags: [],
+            };
+            addNode(parentId, node);
+            setSettings(node.id, setting);
             return node;
         }
         if (type === "variable") {
+            const id = uuid4();
             const node = {
-                id: Date.now().toString(),
+                id: id,
                 type: "variable",
-                subType: null,
                 name: "Новая переменная",
-                setting: {
-                    isSpecial: false,
-                    type: "bit",
-                    isLua: false,
-                    description: "Измените описание переменной",
-                    cmd: true,
-                    archive: true,
-                    group: "noGroup",
-                    measurement: null,
-                    coefficient: 1,
-                    luaExpression: "",
-                    specialCycleDelay: null,
-                },
             };
-            addNode(parentId, node, index);
+            const setting = {
+                id: id,
+                isSpecial: false,
+                type: "bit",
+                isLua: false,
+                description: "Lorem ipsum dolor sit amet consectetur",
+                cmd: true,
+                archive: true,
+                group: "noGroup",
+                measurement: null,
+                coefficient: "",
+                luaExpression: "",
+                specialCycleDelay: null
+            };
+            addNode(parentId, node);
+            setSettings(node.id, setting);
             return node;
         }
-    }, [addNode]);
+    };
 
     const handleDelete = ({ ids }) => {
         console.log("delete", ids);
@@ -97,7 +98,6 @@ export const VariableCard = () => {
                 <Card.Title>Переменные</Card.Title>
             </Card.Header>
             <Card.Body>
-                
                 {variables.length === 0 && (
                     <Box mb={"2"} w={"100%"}>
                         <Box ps={"4"} mb={"2"}>
@@ -137,7 +137,6 @@ export const VariableCard = () => {
                         </Group>
                     </Box>
                 )}
-                
                 <Box
                     w={"100%"}
                     h={"100%"}
@@ -146,7 +145,6 @@ export const VariableCard = () => {
                     borderRadius={"sm"}
                     p={"1"}
                 >
-                    {/*selectedNodes*/}
                     <Box w={"100%"} h={"100%"}>
                         <AutoSizer>
                             {({ height, width }) => (
@@ -155,14 +153,10 @@ export const VariableCard = () => {
                                     width={width}
                                     data={variables}
                                     onSelect={() => {
-                                        console.log(variables, settings);
+                                        if (variableTreeRef.current.selectedIds.size === 0) {
+                                            variableTreeRef.current.focus();
+                                        };
                                         setSelectedIds(variableTreeRef.current.selectedIds);
-                                        /* const data = node.map(
-                                            (node) => {
-                                                return node.data;
-                                            }
-                                        );
-                                        setSelectedNodeId(data); */
                                     }}
                                     ref={variableTreeRef}
                                     onCreate={handleCreate}

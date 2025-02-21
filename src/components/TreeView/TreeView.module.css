@@ -4,20 +4,29 @@
     border-radius: var(--chakra-radii-sm);
 }
 
+/* фокус */
 [role="treeitem"]:has(.node):focus-visible {
     background-color: var(--chakra-colors-bg-emphasized);
     outline: none;
 }
 
+/* Выбранныей узел + фокус */
 [role="treeitem"][aria-selected="true"]:has(.node):focus-visible {
     background-color: var(--chakra-colors-bg-success);
     outline: none;
 }
 
+/* ховер на узле */
 [role="treeitem"]:has(.node):hover {
     background-color: var(--chakra-colors-bg-muted);
 }
 
+/* Выбранныей узел + ховер] */
+[role="treeitem"][aria-selected="true"]:has(.node):hover {
+    background-color: var(--chakra-colors-bg-success);
+}
+
+/* Выбранные узлы*/
 [role="treeitem"][aria-selected="true"]:has(.node) {
     background-color: var(--chakra-colors-bg-emphasized);
     font-weight: var(--chakra-font-weights-medium);
@@ -42,7 +51,7 @@
 }
 
 .indentLines {
-    --indent-size: 18px;
+    --indent-size: 16px;
 
     position: absolute;
     top: 0;
@@ -55,7 +64,7 @@
 
 .indentLines > div {
     height: 100%;
-    padding-left: 12px;
+    padding-left: 10px;
     border-right: 1px solid var(--chakra-colors-fg-subtle);
-    margin-right: calc(var(--indent-size) - 10px - 2px);
+    margin-right: calc(var(--indent-size) - 9px - 2px);
 }

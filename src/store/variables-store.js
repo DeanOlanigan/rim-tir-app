@@ -47,16 +47,16 @@ function insertNodes(nodes, parentId, nodesToInsert, index) {
     });
 }
 
-const addNodeRecursive = (nodes, parentId, newNode, index) => {
+const addNodeRecursive = (nodes, parentId, newNode) => {
     return nodes.map((node) => {
         if (node.id === parentId) {
-            /* const newVariables = [...node.children];
-            newVariables.splice(index, 0, newNode);
-            return { ...node, children: newVariables }; */
-            return { ...node, children: [...node.children, newNode] };
+            const newVariables = [...node.children];
+            newVariables.splice(0, 0, newNode);
+            return { ...node, children: newVariables };
+            //return { ...node, children: [...node.children, newNode] };
         }
         if (node.children?.length > 0) {
-            return { ...node, children: addNodeRecursive(node.children, parentId, newNode, index) };
+            return { ...node, children: addNodeRecursive(node.children, parentId, newNode) };
         }
         return node;
     });
@@ -67,8 +67,7 @@ const updatedNodeRecursive = (nodes, nodeId, updatedData) => {
         if (node.id === nodeId) {
             const updated = {
                 ...node,
-                ...updatedData,
-                setting: updatedData.setting ? {...node.setting, ...updatedData.setting} : node.setting 
+                ...updatedData
             };
             return updated;
         }
@@ -93,8 +92,8 @@ console.log("testData:",config.children[0].children);
 console.log("Separated:", treeData);
 
 export const useVariablesStore = create((set, get) => ({
-    variables: treeData, // дерево для react-arborist
-    settings: nodeData, // параметры узла дерева
+    variables: [], // дерево для react-arborist
+    settings: [], // параметры узла дерева
     selectedIds: new Set(), // выбранные id
     setSelectedIds: (ids) => set({ selectedIds: ids }),
     setSettings: (nodeId, updateData) =>
@@ -110,23 +109,24 @@ export const useVariablesStore = create((set, get) => ({
         set({ selectedNode: node });
     }, */
 
-    addNode: (parentId, newNode, index) => {
-        const {setting, ...rest} = newNode;
-        const id = uuidv4();
+    addNode: (parentId, newNode) => {
+        //const {setting, ...rest} = newNode;
+        //const id = uuidv4();
+        //console.log(typeof id);
         if (parentId === null) {
             set((state) => {
-                /* const newVariables = [...state.variables];
-                newVariables.splice(index, 0, newNode);
-                return { variables: newVariables }; */
-                return { 
+                const newVariables = [...state.variables];
+                newVariables.splice(0, 0, newNode);
+                return { variables: newVariables };
+                /* return { 
                     variables: [...state.variables, {...rest, id}],
                     settings: {...state.settings, [id]: {...setting, id}}
-                };
+                }; */
             });
         } else {
             set((state) => ({
-                variables: addNodeRecursive(state.variables, parentId, {...newNode, id}, index),
-                settings: {...state.settings, [id]: {...newNode.setting, id}}
+                variables: addNodeRecursive(state.variables, parentId, newNode),
+                //settings: {...state.settings, [id]: {...newNode.setting, id}}
             }));
         }
     },

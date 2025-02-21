@@ -17,10 +17,14 @@ import { ToggleSection } from "./ToggleSection";
 import { headerMapping } from "../../MonitoringPage/mappings";
 import { dataTypes, groups } from "../../../config/filterOptions";
 import { useVariablesStore } from "../../../store/variables-store";
+import { CodeInput } from "@srsholmes/react-code-input";
+import Prism from "prismjs";
+import "prismjs/components/prism-lua";
+import "prismjs/themes/prism-tomorrow.css";
 
 export const VariableEditor = ({data}) => {
-    const updateNode = useVariablesStore((state) => state.updateNode);
     const setSettings = useVariablesStore((state) => state.setSettings);
+    const [code, setCode] = useState();
 
     return (
         <Flex
@@ -36,11 +40,6 @@ export const VariableEditor = ({data}) => {
                 maxW={"6xl"}
                 w={"100%"}
                 overflow={"auto"}
-                /* border={"1px solid"}
-                borderColor={"border"}
-                borderRadius={"md"}
-                shadow={"md"}
-                p={"2"} */
             >
                 <Stack 
                     direction={{ base: "column", md: "row" }}
@@ -55,7 +54,6 @@ export const VariableEditor = ({data}) => {
                                 collection={dataTypes}
                                 value={[data.type]}
                                 onValueChange={(details) => {
-                                    console.log("onValueChange", details, data);
                                     setSettings(data.id, { type: details.value[0] });
                                 }}
                             >
@@ -75,10 +73,9 @@ export const VariableEditor = ({data}) => {
                                 size={"xs"}
                                 collection={groups}
                                 value={[data.group]}
-                                /* onValueChange={(details) => {
-                                    console.log("onValueChange", details, data);
-                                    updateNode(data.id, { setting : { group: details.value[0] }});
-                                }} */
+                                onValueChange={(details) => {
+                                    setSettings(data.id, { group: details.value[0] });
+                                }}
                             >
                                 <SelectLabel>{headerMapping["group"]}</SelectLabel>
                                 <SelectTrigger>
@@ -101,9 +98,9 @@ export const VariableEditor = ({data}) => {
                                 <NumberInputRoot
                                     size={"xs"}
                                     value={data.coefficient}
-                                    /* onValueChange={(e) => {
-                                        updateNode(data.id, { setting: { coefficient: e.value } });
-                                    }} */
+                                    onValueChange={(e) => {
+                                        setSettings(data.id, { coefficient: e.value } );
+                                    }}
                                 >
                                     <NumberInputField />
                                 </NumberInputRoot>
@@ -117,9 +114,9 @@ export const VariableEditor = ({data}) => {
                                     value={
                                         data.specialCycleDelay
                                     }
-                                    /* onValueChange={(e) => {
-                                        updateNode(data.id, { setting: { specialCycleDelay: e.value } });
-                                    }} */
+                                    onValueChange={(e) => {
+                                        setSettings(data.id, { specialCycleDelay: e.value } );
+                                    }}
                                 >
                                     <NumberInputField />
                                 </NumberInputRoot>
@@ -135,9 +132,9 @@ export const VariableEditor = ({data}) => {
                                     resize={"none"}
                                     rows={"5"}
                                     value={data.description}
-                                    /* onChange={(e) => {
-                                        updateNode(data.id, { setting: { description: e.target.value } });
-                                    }} */
+                                    onChange={(e) => {
+                                        setSettings(data.id, { description: e.target.value } );
+                                    }}
                                 />
                             </Field.Root>
                         </Flex>
@@ -145,6 +142,7 @@ export const VariableEditor = ({data}) => {
                     <Box
                         hidden={!data.isLua}
                         w={"100%"}
+                        h={"100%"}
                         p={"2"}
                         position={"relative"}
                         borderRadius={"sm"}
@@ -152,9 +150,14 @@ export const VariableEditor = ({data}) => {
                         borderColor={"border"}
                         background={"bg.muted"}
                     >
-                        <AbsoluteCenter>
-                            {data.luaExpression}
-                        </AbsoluteCenter>
+                        <CodeInput
+                            prismJS={Prism}
+                            placeholder="Input your code here..."
+                            value={code}
+                            language={"lua"}
+                            onChange={setCode}
+                            resize={"none"}
+                        />
                     </Box>
                 </Stack>
             </Box>

@@ -13,7 +13,7 @@ import { useVariablesStore } from "../../../store/variables-store";
 }; */
 
 export const ToggleSection = ({ data }) => {
-    const updateNode = useVariablesStore((state) => state.updateNode);
+    const setSettings = useVariablesStore((state) => state.setSettings);
     
     /* const checkboxes = {
         isSpecial: data.setting.isSpecial,
@@ -33,9 +33,9 @@ export const ToggleSection = ({ data }) => {
                 align={"center"}
                 label={headerMapping["isSpecial"]}
                 checked={data.isSpecial}
-                /* onCheckedChange={(e) => 
-                    updateNode(data.id, { setting: { isSpecial: !!e.checked }})
-                } */
+                onCheckedChange={(e) => 
+                    setSettings(data.id, { isSpecial: !!e.checked })
+                }
                 icon={
                     <LuRefreshCcwDot size={24}/>
                 }
@@ -48,9 +48,9 @@ export const ToggleSection = ({ data }) => {
                 align={"center"}
                 label={headerMapping["archive"]}
                 checked={data.archive}
-                /* onCheckedChange={(e) => 
-                    updateNode(data.id, { setting: { archive: !!e.checked }})
-                } */
+                onCheckedChange={(e) => 
+                    setSettings(data.id, { archive: !!e.checked })
+                }
                 icon={
                     <LuArchive size={24}/>
                 }
@@ -63,9 +63,9 @@ export const ToggleSection = ({ data }) => {
                 align={"center"}
                 label={headerMapping["cmd"]}
                 checked={data.cmd}
-                /* onCheckedChange={(e) => 
-                    updateNode(data.id, { setting: { cmd: !!e.checked }})
-                } */
+                onCheckedChange={(e) => 
+                    setSettings(data.id, { cmd: !!e.checked })
+                }
                 icon={
                     <LuSquareTerminal size={24}/>
                 }
@@ -78,9 +78,9 @@ export const ToggleSection = ({ data }) => {
                 align={"center"}
                 label={headerMapping["isLua"]}
                 checked={data.isLua}
-                /* onCheckedChange={(e) => 
-                    updateNode(data.id, { setting: { isLua: !!e.checked }})
-                } */
+                onCheckedChange={(e) => 
+                    setSettings(data.id, { isLua: !!e.checked })
+                }
                 icon={
                     <LuCode size={24}/>
                 }

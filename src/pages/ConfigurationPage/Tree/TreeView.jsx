@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { HStack, IconButton, Box } from "@chakra-ui/react";
 import { LuChevronRight, LuPencil } from "react-icons/lu";
 import { icons, badges } from "../../../components/TreeView/DefaultView";
-import { memo, forwardRef } from "react";
+import { memo, forwardRef, useRef } from "react";
 import {
     MenuRoot,
     MenuItem,
@@ -17,35 +17,32 @@ import {
 import { LuFolder, LuVariable, LuTrash2 } from "react-icons/lu";
 
 export const TreeView = memo(forwardRef(function TreeView(props, ref) {
-    console.log(`%cRender NEW TreeView, ${props.selection}`, "color: white; background: red;");
+    console.log("%cRender NEW TreeView", "color: white; background: red;", props.data);
 
     return (
-        <MenuRoot lazyMount unmountOnExit>
+        <ContextWrapper treeRef={ref}>
+            <Tree
+                ref={ref}
+                {...props}
+                className={styles.tree}
+                openByDefault={true}
+                overscanCount={2}
+                rowHeight={32}
+                indent={16}
+                renderCursor={DropCursor}
+                onContextMenu={(e) => {
+                    e.preventDefault();
+                    ref.current.root.focus();
+                    ref.current.root.select();
+                }}
+            >
+                {Node}
+            </Tree>
+        </ContextWrapper>
+
+    /*  <MenuRoot lazyMount unmountOnExit>
             <MenuContextTrigger asChild>
-                <Tree
-                    ref={ref}
-                    {...props}
-                    className={styles.tree}
-                    openByDefault={true}
-                    overscanCount={2}
-                    rowHeight={32}
-                    indent={16}
-                    renderCursor={DropCursor}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        console.log("TREE: click", ref.current.selectedIds.size );
-                        if (ref.current.selectedIds.size === 0) {
-                            ref.current.root.focus();
-                        };
-                    }}
-                    onContextMenu={(e) => {
-                        e.preventDefault();
-                        ref.current.root.focus();
-                        ref.current.root.select();
-                    }}
-                >
-                    {Node}
-                </Tree>
+                
             </MenuContextTrigger>
             <MenuContent>
                 <MenuItemGroup title="Создать">
@@ -75,7 +72,7 @@ export const TreeView = memo(forwardRef(function TreeView(props, ref) {
                     </MenuItem>
                 </MenuItemGroup>
             </MenuContent>
-        </MenuRoot>
+        </MenuRoot> */
     );
 }));
 
@@ -86,12 +83,28 @@ const Input = ({ node }) => {
             type="text"
             defaultValue={node.data.name}
             onFocus={(e) => e.currentTarget.select()}
-            onBlur={() => node.reset()}
+            onBlur={(e) => node.submit(e.currentTarget.value)}
             onKeyDown={(e) => {
                 if (e.key === "Escape") node.reset();
                 if (e.key === "Enter") node.submit(e.currentTarget.value);
             }}
-        />
+        />  
+    );
+};
+
+const NodeContent = ({ node }) => {
+    return (
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", paddingLeft: "5px", textWrap: "nowrap" }}>
+            {icons[node.data.type]}
+            {
+                node.data.type === "protocol" ||
+                node.data.type === "interface" ||
+                node.data.type === "funcGroup" ||
+                node.data.type === "asdu" ?
+                    badges[node.data.subType] || badges[node.data.type] : null
+            }
+            {node.isEditing ? <Input node={node} /> : node.data.name || node.data.setting?.variable}
+        </div>
     );
 };
 
@@ -110,7 +123,7 @@ const Node = ({ node, style, dragHandle }) => {
                         e.preventDefault();
                         e.stopPropagation();
                         node.focus();
-                        //node.select();
+                        node.select();
                     }}
                 >
                     <div className={styles.indentLines}>
@@ -119,7 +132,7 @@ const Node = ({ node, style, dragHandle }) => {
                         })}
                     </div>
 
-                    <HStack gap={"4"}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                         {node.isLeaf ? null :
                             (<IconButton
                                 size={"2xs"}
@@ -138,18 +151,8 @@ const Node = ({ node, style, dragHandle }) => {
                                     transition={"transform 0.2s ease-in-out"}
                                 />
                             </IconButton>)}
-                        <HStack>
-                            {icons[node.data.type]}
-                            {
-                                node.data.type === "protocol" ||
-                                node.data.type === "interface" ||
-                                node.data.type === "funcGroup" ||
-                                node.data.type === "asdu" ?
-                                    badges[node.data.subType] || badges[node.data.type] : null
-                            }
-                            {node.isEditing ? <Input node={node} /> : node.data.name || node.data.setting?.variable}
-                        </HStack>
-                    </HStack>
+                        <NodeContent node={node} />
+                    </div>
                 </div>
             </MenuContextTrigger>
             <MenuContent>
@@ -168,7 +171,7 @@ const Node = ({ node, style, dragHandle }) => {
                                 <LuVariable />
                                 Переменная
                             </MenuItem>
-                            {/* <MenuItem
+                            <MenuItem
                                 value="folder"
                                 onClick={() => {
                                     console.log("NODE: create folder");
@@ -179,7 +182,7 @@ const Node = ({ node, style, dragHandle }) => {
                             >
                                 <LuFolder />
                                 Папка
-                            </MenuItem> */}
+                            </MenuItem>
                         </MenuItemGroup>
                         <MenuSeparator />
                     </>
@@ -205,6 +208,46 @@ const Node = ({ node, style, dragHandle }) => {
                     <LuTrash2 />
                     Удалить
                 </MenuItem>
+            </MenuContent>
+        </MenuRoot>
+    );
+};
+
+const ContextWrapper = ({ treeRef, children }) => {
+    return (
+        <MenuRoot lazyMount unmountOnExit>
+            <MenuContextTrigger asChild>
+                {children}
+            </MenuContextTrigger>
+            <MenuContent>
+                <MenuItemGroup title="Создать">
+                    <MenuItem
+                        value="variable"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            console.log("TREE: create variable");
+                            treeRef.current.create({
+                                type: "variable",
+                            });
+                        }}
+                    >
+                        <LuVariable />
+                        Переменная
+                    </MenuItem>
+                    <MenuItem
+                        value="folder"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            console.log("TREE: create folder");
+                            treeRef.current.create({
+                                type: "folder",
+                            });
+                        }}
+                    >
+                        <LuFolder />
+                        Папка
+                    </MenuItem>
+                </MenuItemGroup>
             </MenuContent>
         </MenuRoot>
     );
