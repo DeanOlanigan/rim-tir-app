@@ -7,43 +7,12 @@ import {
 } from "../../../components/ui/menu";
 import { LuFolder, LuVariable, LuPencil, LuTrash2 } from "react-icons/lu";
 
-export const ContextMenuWrapper = ({
-    apiPath,
-    children,
-    type = "root",
-    node,
-}) => {
+export const ContextMenuWrapper = ({ apiPath, children, type, node }) => {
     return (
         <MenuRoot lazyMount unmountOnExit>
             <MenuContextTrigger asChild>{children}</MenuContextTrigger>
             <MenuContent>
-                {(type === "variable" || type === "folder") && (
-                    <>
-                        <MenuItem
-                            value="rename"
-                            onClick={() => {
-                                apiPath.edit(node);
-                            }}
-                        >
-                            <LuPencil />
-                            Переименовать
-                        </MenuItem>
-                        <MenuItem
-                            value="delete"
-                            color="fg.error"
-                            _hover={{ bg: "bg.error", color: "fg.error" }}
-                            onClick={() => {
-                                console.log(apiPath.selectedIds);
-                                apiPath.delete([...apiPath.selectedIds]);
-                            }}
-                        >
-                            <LuTrash2 />
-                            Удалить
-                        </MenuItem>
-                        {type === "folder" && <MenuSeparator />}
-                    </>
-                )}
-                {(type === "root" || type === "folder") && (
+                {(type === "variables" || type === "folder") && (
                     <>
                         <MenuItem
                             value="variable"
@@ -66,6 +35,34 @@ export const ContextMenuWrapper = ({
                         >
                             <LuFolder />
                             Создать папку...
+                        </MenuItem>
+                    </>
+                )}
+                {(type !== "variables" ||
+                    type !== "send" ||
+                    type !== "receive") && (
+                    <>
+                        {type === "folder" && <MenuSeparator />}
+                        <MenuItem
+                            value="rename"
+                            onClick={() => {
+                                apiPath.edit(node);
+                            }}
+                        >
+                            <LuPencil />
+                            Переименовать
+                        </MenuItem>
+                        <MenuItem
+                            value="delete"
+                            color="fg.error"
+                            _hover={{ bg: "bg.error", color: "fg.error" }}
+                            onClick={() => {
+                                console.log(apiPath.selectedIds);
+                                apiPath.delete([...apiPath.selectedIds]);
+                            }}
+                        >
+                            <LuTrash2 />
+                            Удалить
                         </MenuItem>
                     </>
                 )}

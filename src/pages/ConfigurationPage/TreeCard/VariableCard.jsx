@@ -60,7 +60,7 @@ export const VariableCard = ({ data = [], type }) => {
                         )}
                     </Box>
                 )}
-                <TreeView ref={variableTreeRef} data={data} />
+                <TreeView ref={variableTreeRef} data={data} type={type} />
             </Card.Body>
         </Card.Root>
     );

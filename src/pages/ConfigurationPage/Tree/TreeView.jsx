@@ -104,7 +104,10 @@ export const TreeView = memo(
             <Box w={"100%"} h={"100%"}>
                 <AutoSizer>
                     {({ height, width }) => (
-                        <ContextMenuWrapper apiPath={ref?.current}>
+                        <ContextMenuWrapper
+                            apiPath={ref?.current}
+                            type={props.type}
+                        >
                             <Tree
                                 ref={ref}
                                 {...props}

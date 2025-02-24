@@ -13,7 +13,9 @@ endDate.setMinutes(Math.round(endDate.getMinutes() / 15) * 15);
 export const getEndDate = () => endDate.getTime();
 
 export const getRandomColor = () => {
-    return ("#" + (Math.random().toString(16) + "000000").slice(2, 8).toUpperCase());
+    return (
+        "#" + (Math.random().toString(16) + "000000").slice(2, 8).toUpperCase()
+    );
 };
 
 export const normalizeData = (data, result = {}, parentId = null) => {
@@ -37,7 +39,7 @@ export const normalizeData = (data, result = {}, parentId = null) => {
 export const separateData = (data, treeData = [], nodeData = {}) => {
     data.forEach((element) => {
         const { setting, children, ...rest } = element;
-        nodeData[element.id] = { id:element.id, ...setting};
+        nodeData[element.id] = { id: element.id, ...setting };
         if (children) {
             const newNode = { ...rest, children: [] };
             separateData(children, newNode.children, nodeData);
