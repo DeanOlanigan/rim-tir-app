@@ -1,7 +1,7 @@
 [role="treeitem"]:has(.node) {
     user-select: none;
     /* border: 2px solid transparent; */
-    border-radius: var(--chakra-radii-sm);
+    /* border-radius: var(--chakra-radii-sm); */
 }
 
 /* фокус */
@@ -43,6 +43,8 @@
     position: relative;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
+    margin-left: 1rem;
+        justify-content: space-between;
     /* border-bottom: var(--chakra-borders-sm) var(--chakra-colors-border); */
 }
 

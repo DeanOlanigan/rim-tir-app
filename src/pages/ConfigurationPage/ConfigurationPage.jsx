@@ -3,30 +3,16 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
 import { config } from "../../config/testData";
 import { ConfigurationEditor } from "./ConnectionEditor/ConfigurationEditor";
-import { VariableMenu } from "./VariableMenu";
-import { useEffect, useRef, useState } from "react";
+import { VariableMenu } from "./VariableEditor/VariableMenu";
+import { useState } from "react";
 import { AutoSizer } from "react-virtualized";
 import { TreeView } from "./Tree/TreeView";
-import { VariableCard } from "./VariableCard";
-import { InfoTip } from "../../components/ui/toggle-tip";
+import { VariableCard } from "./TreeCard/VariableCard";
+import { useVariablesStore } from "../../store/variables-store";
 
 function ConfigurationPage() {
     console.log("Render ConfigurationPage");
     const [selectedNode, setSelectedNode] = useState();
-    /* const [selectedVariable, setSelectedVariable] = useState();
-
-    const panelRef = useRef(null);
-    useEffect(() => {
-        console.log("SELECTED VARIABLE", selectedVariable);
-        const panel = panelRef.current;
-        if (panel && selectedVariable) {
-            if (selectedVariable.length > 0) {
-                panel.expand();
-            } else {
-                panel.collapse();
-            }
-        }
-    }, [selectedVariable]); */
 
     return (
         <Box height="100%">
@@ -111,7 +97,10 @@ function ConfigurationPage() {
                     >
                         <Card.Header>
                             <Card.Title>
-                                <Stack direction={"row"} separator={<StackSeparator />}>
+                                <Stack
+                                    direction={"row"}
+                                    separator={<StackSeparator />}
+                                >
                                     <Text>{config.name}</Text>
                                     <Text>{config.setting.description}</Text>
                                     <Text>{config.setting.date}</Text>
@@ -154,7 +143,7 @@ function ConfigurationPage() {
                     defaultSize={30}
                     minSize={15}
                 >
-                    <VariableCard />
+                    <VariablesWrapper />
                 </Panel>
             </PanelGroup>
         </Box>
@@ -162,3 +151,8 @@ function ConfigurationPage() {
 }
 
 export default ConfigurationPage;
+
+const VariablesWrapper = () => {
+    const variables = useVariablesStore((state) => state.variables);
+    return <VariableCard data={variables} type={"variables"} />;
+};

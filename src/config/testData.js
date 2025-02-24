@@ -7,7 +7,7 @@ export const receive = [
         ignoreChildren: false,
         setting: {
             baudRate: "57600",
-            pollPeriod: "21"
+            pollPeriod: "21",
         },
         children: [
             {
@@ -22,7 +22,7 @@ export const receive = [
                     stopBit: "1",
                     parity: "None",
                     order2: "LittleEndian",
-                    order4: "1-0 3-2"
+                    order4: "1-0 3-2",
                 },
                 children: [
                     {
@@ -33,7 +33,7 @@ export const receive = [
                         ignoreChildren: false,
                         setting: {
                             function: "4",
-                            type: "1 бит – bool"
+                            type: "1 бит – bool",
                         },
                         children: [
                             {
@@ -44,8 +44,8 @@ export const receive = [
                                 setting: {
                                     address: "2",
                                     variable: "test2",
-                                    description: ""
-                                }
+                                    description: "",
+                                },
                             },
                             {
                                 id: "1.1.1.1.2",
@@ -55,8 +55,8 @@ export const receive = [
                                 setting: {
                                     address: "2",
                                     variable: "new2",
-                                    description: ""
-                                }
+                                    description: "",
+                                },
                             },
                             {
                                 id: "1.1.1.1.3",
@@ -66,8 +66,8 @@ export const receive = [
                                 setting: {
                                     address: "2",
                                     variable: "new2",
-                                    description: ""
-                                }
+                                    description: "",
+                                },
                             },
                             {
                                 id: "1.1.1.1.4",
@@ -77,14 +77,14 @@ export const receive = [
                                 setting: {
                                     address: "2",
                                     variable: "new2",
-                                    description: ""
-                                }
-                            }
-                        ]
+                                    description: "",
+                                },
+                            },
+                        ],
                     },
                 ],
-            }
-        ]
+            },
+        ],
     },
     {
         id: "1.2",
@@ -105,7 +105,7 @@ export const receive = [
             t0: "1",
             t1: "1",
             t2: "1",
-            t3: "1"
+            t3: "1",
         },
         children: [
             {
@@ -132,12 +132,12 @@ export const receive = [
                             type: "Однопозиционный ТС",
                             aperture: null,
                             exec: "",
-                            description: ""
+                            description: "",
                         },
-                    }
-                ]
-            }
-        ]
+                    },
+                ],
+            },
+        ],
     },
     {
         id: "1.3",
@@ -147,7 +147,7 @@ export const receive = [
         ignoreChildren: false,
         setting: {
             logging: false,
-            contactBounce: "200"
+            contactBounce: "200",
         },
         children: [
             {
@@ -160,7 +160,7 @@ export const receive = [
                     description: "TEST",
                     group: "bemp",
                     alias: "",
-                    tags: []
+                    tags: [],
                 },
                 children: [
                     {
@@ -172,13 +172,13 @@ export const receive = [
                             address: "2",
                             variable: "test1",
                             function: "IN",
-                            description: ""
+                            description: "",
                         },
-                    }
-                ]
-            }
-        ]
-    }
+                    },
+                ],
+            },
+        ],
+    },
 ];
 
 export const variable = [
@@ -198,8 +198,8 @@ export const variable = [
             measurement: null,
             coefficient: "",
             luaExpression: "test2 = test2 + 1",
-            specialCycleDelay: 5
-        }
+            specialCycleDelay: 5,
+        },
     },
     {
         id: "3.2",
@@ -212,7 +212,7 @@ export const variable = [
             description: "Эта папка нужна для тестирования",
             group: "bemp",
             alias: "",
-            tags: []
+            tags: [],
         },
         children: [
             {
@@ -231,8 +231,8 @@ export const variable = [
                     measurement: null,
                     coefficient: "",
                     luaExpression: "test2 = test2 + 1",
-                    specialCycleDelay: 5
-                }
+                    specialCycleDelay: 5,
+                },
             },
             {
                 id: "3.2.1",
@@ -245,7 +245,7 @@ export const variable = [
                     description: "Эта папка нужна для тестирования",
                     group: "bemp",
                     alias: "",
-                    tags: []
+                    tags: [],
                 },
                 children: [
                     {
@@ -257,17 +257,18 @@ export const variable = [
                             isSpecial: true,
                             type: "1 бит – bool",
                             isLua: true,
-                            description: "Lorem ipsum dolor sit amet consectetur",
+                            description:
+                                "Lorem ipsum dolor sit amet consectetur",
                             cmd: true,
                             archive: true,
                             group: "Без группы",
                             measurement: null,
                             coefficient: "",
                             luaExpression: "test2 = test2 + 1",
-                            specialCycleDelay: 5
-                        }
-                    }
-                ]
+                            specialCycleDelay: 5,
+                        },
+                    },
+                ],
             },
             {
                 id: "3.2.4",
@@ -285,8 +286,8 @@ export const variable = [
                     measurement: null,
                     coefficient: "",
                     luaExpression: "test2 = test2 + 1",
-                    specialCycleDelay: 5
-                }
+                    specialCycleDelay: 5,
+                },
             },
             {
                 id: "3.2.5",
@@ -304,10 +305,10 @@ export const variable = [
                     measurement: null,
                     coefficient: "",
                     luaExpression: "test2 = test2 + 1",
-                    specialCycleDelay: 5
-                }
-            }
-        ]
+                    specialCycleDelay: 5,
+                },
+            },
+        ],
     },
 ];
 
@@ -323,16 +324,16 @@ export const config = {
         description: "Конфигурация для РЦДУ в Подзалупинске",
         date: "2022-01-01 00:00",
         version: "1.0",
-        hash: "SGVsbG8gd29ybGQh"
+        hash: "SGVsbG8gd29ybGQh",
     },
     children: [
         {
             id: "1.1",
-            type: "receive",    
+            type: "receive",
             subType: null,
             name: "Получение данных",
             ignoreChildren: false,
-            children: receive
+            children: receive,
         },
         {
             id: "2",
@@ -340,7 +341,7 @@ export const config = {
             subType: null,
             name: "Отправка данных",
             ignoreChildren: false,
-            children: send
+            children: send,
         },
         {
             id: "3",
@@ -348,7 +349,7 @@ export const config = {
             subType: null,
             name: "Переменные",
             ignoreChildren: false,
-            children: variable
-        }
-    ]
+            children: variable,
+        },
+    ],
 };
