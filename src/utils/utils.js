@@ -65,7 +65,6 @@ export const separateDataNEW = (data, nodeData = {}, parentId = null) => {
         parentId,
         name: data.name,
         setting,
-        children: [],
         ...rest,
     };
 
@@ -74,10 +73,11 @@ export const separateDataNEW = (data, nodeData = {}, parentId = null) => {
         name: data.name,
         type: data.type,
         subType: data.subType,
-        children: [],
     };
 
     if (Array.isArray(children)) {
+        treeData.children = [];
+        nodeData[data.id].children = [];
         for (const child of children) {
             const { treeData: childNested } = separateDataNEW(
                 child,

@@ -1,7 +1,10 @@
 import { create } from "zustand";
-import { separateData, separateDataNEW } from "../utils/utils";
+import { separateDataNEW } from "../utils/utils";
 import { config } from "../config/testData";
-import { v4 as uuidv4 } from "uuid";
+
+const { treeData, nodeData } = separateDataNEW(config);
+console.log("treeData", treeData);
+console.log("nodeData", nodeData);
 
 // Вспомогательная функция для рекурсивного поиска и удаления узла по id.
 // Функция возвращает объект с обновлённым деревом (nodes) и извлечённым узлом (node).
@@ -61,7 +64,6 @@ const addNodeRecursive = (nodes, parentId, newNode) => {
             const newVariables = [...node.children];
             newVariables.splice(0, 0, newNode);
             return { ...node, children: newVariables };
-            //return { ...node, children: [...node.children, newNode] };
         }
         if (node.children?.length > 0) {
             return {
@@ -107,13 +109,9 @@ const removeNodeRecursive = (nodes, nodeId) => {
     return result;
 };
 
-const { treeData, nodeData } = separateDataNEW(config);
-console.log("testData:", config.children[0].children);
-console.log("Separated:", treeData);
-
 export const useVariablesStore = create((set, get) => ({
     variables: treeData.children[2].children, // дерево для react-arborist
-    settings: [], // параметры узла дерева
+    settings: nodeData, // параметры узла дерева
     selectedIds: new Set(), // выбранные id
     setSelectedIds: (ids) => set({ selectedIds: ids }),
     setSettings: (nodeId, updateData) =>
@@ -124,15 +122,7 @@ export const useVariablesStore = create((set, get) => ({
             },
         })),
 
-    /* selectedNode: [], // govno
-    setSelectedNode: (node) => {
-        set({ selectedNode: node });
-    }, */
-
     addNode: (parentId, newNode) => {
-        //const {setting, ...rest} = newNode;
-        //const id = uuidv4();
-        //console.log(typeof id);
         if (parentId === null) {
             set((state) => {
                 const newVariables = [...state.variables];
@@ -146,7 +136,6 @@ export const useVariablesStore = create((set, get) => ({
         } else {
             set((state) => ({
                 variables: addNodeRecursive(state.variables, parentId, newNode),
-                //settings: {...state.settings, [id]: {...newNode.setting, id}}
             }));
         }
     },
@@ -158,14 +147,12 @@ export const useVariablesStore = create((set, get) => ({
                 nodeId,
                 updatedData
             ),
-            //selectedNode: state.selectedNode && updatedNodeRecursive(state.selectedNode, nodeId, updatedData),
         }));
     },
 
     removeNode: (nodeId) => {
         set((state) => ({
             variables: removeNodeRecursive(state.variables, nodeId),
-            //selectedNode: [],
         }));
     },
 
