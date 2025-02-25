@@ -52,3 +52,46 @@ export const separateData = (data, treeData = [], nodeData = {}) => {
 };
 
 //console.log("Separated:", separateData(config.children[2].children));
+
+export const separateDataNEW = (data, nodeData = {}, parentId = null) => {
+    if (!data) {
+        return { treeData: null, nodeData };
+    }
+
+    const { setting, children, ...rest } = data;
+
+    nodeData[data.id] = {
+        id: data.id,
+        parentId,
+        name: data.name,
+        setting,
+        children: [],
+        ...rest,
+    };
+
+    const treeData = {
+        id: data.id,
+        name: data.name,
+        type: data.type,
+        subType: data.subType,
+        children: [],
+    };
+
+    if (Array.isArray(children)) {
+        for (const child of children) {
+            const { treeData: childNested } = separateDataNEW(
+                child,
+                nodeData,
+                data.id
+            );
+            if (childNested) {
+                treeData.children.push(childNested);
+                nodeData[data.id].children.push(child.id);
+            }
+        }
+    }
+
+    return { treeData, nodeData };
+};
+
+//console.log("SEPARATED NEW", separateDataNEW(config));

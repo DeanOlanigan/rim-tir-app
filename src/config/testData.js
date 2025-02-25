@@ -315,20 +315,20 @@ export const variable = [
 export const send = receive;
 
 export const config = {
-    id: "1",
+    id: "0",
     type: "configuration",
     subType: null,
     name: "Конфигурация для РЦДУ",
     ignoreChildren: false,
     setting: {
-        description: "Конфигурация для РЦДУ в Подзалупинске",
+        description: "Конфигурация для РЦДУ",
         date: "2022-01-01 00:00",
         version: "1.0",
         hash: "SGVsbG8gd29ybGQh",
     },
     children: [
         {
-            id: "1.1",
+            id: "1",
             type: "receive",
             subType: null,
             name: "Получение данных",
@@ -341,7 +341,7 @@ export const config = {
             subType: null,
             name: "Отправка данных",
             ignoreChildren: false,
-            children: send,
+            children: [],
         },
         {
             id: "3",

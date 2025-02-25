@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { separateData } from "../utils/utils";
+import { separateData, separateDataNEW } from "../utils/utils";
 import { config } from "../config/testData";
 import { v4 as uuidv4 } from "uuid";
 
@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 // Функция возвращает объект с обновлённым деревом (nodes) и извлечённым узлом (node).
 function extractNode(nodes, nodeId) {
     let extracted = null;
-    
+
     // Рекурсивная функция, которая обходит узлы и удаляет найденный узел
     const recursive = (items) => {
         return items.reduce((acc, node) => {
@@ -23,15 +23,15 @@ function extractNode(nodes, nodeId) {
             return [...acc, node];
         }, []);
     };
-    
+
     const newNodes = recursive(nodes);
     return { nodes: newNodes, node: extracted };
 }
-  
+
 // Вспомогательная функция для рекурсивного поиска родительского узла по parentId
 // и вставки новых узлов (nodesToInsert) в его массив children по указанному индексу.
 function insertNodes(nodes, parentId, nodesToInsert, index) {
-    return nodes.map(node => {
+    return nodes.map((node) => {
         if (node.id === parentId) {
             // Находим массив дочерних узлов (если его нет – создаём)
             const children = node.children ? [...node.children] : [];
@@ -41,7 +41,15 @@ function insertNodes(nodes, parentId, nodesToInsert, index) {
         }
         // Если узел имеет дочерние элементы – продолжаем поиск
         if (node.children) {
-            return { ...node, children: insertNodes(node.children, parentId, nodesToInsert, index) };
+            return {
+                ...node,
+                children: insertNodes(
+                    node.children,
+                    parentId,
+                    nodesToInsert,
+                    index
+                ),
+            };
         }
         return node;
     });
@@ -56,7 +64,10 @@ const addNodeRecursive = (nodes, parentId, newNode) => {
             //return { ...node, children: [...node.children, newNode] };
         }
         if (node.children?.length > 0) {
-            return { ...node, children: addNodeRecursive(node.children, parentId, newNode) };
+            return {
+                ...node,
+                children: addNodeRecursive(node.children, parentId, newNode),
+            };
         }
         return node;
     });
@@ -67,12 +78,19 @@ const updatedNodeRecursive = (nodes, nodeId, updatedData) => {
         if (node.id === nodeId) {
             const updated = {
                 ...node,
-                ...updatedData
+                ...updatedData,
             };
             return updated;
         }
         if (node.children?.length > 0)
-            return { ...node, children: updatedNodeRecursive(node.children, nodeId, updatedData) };
+            return {
+                ...node,
+                children: updatedNodeRecursive(
+                    node.children,
+                    nodeId,
+                    updatedData
+                ),
+            };
         return node;
     });
 };
@@ -82,17 +100,19 @@ const removeNodeRecursive = (nodes, nodeId) => {
         .filter((node) => !nodeId.includes(node.id))
         .map((node) => ({
             ...node,
-            children: node.children ? removeNodeRecursive(node.children, nodeId) : undefined,
+            children: node.children
+                ? removeNodeRecursive(node.children, nodeId)
+                : undefined,
         }));
     return result;
 };
 
-const { treeData, nodeData } = separateData(config.children[2].children);
-console.log("testData:",config.children[0].children);
+const { treeData, nodeData } = separateDataNEW(config);
+console.log("testData:", config.children[0].children);
 console.log("Separated:", treeData);
 
 export const useVariablesStore = create((set, get) => ({
-    variables: [], // дерево для react-arborist
+    variables: treeData.children[2].children, // дерево для react-arborist
     settings: [], // параметры узла дерева
     selectedIds: new Set(), // выбранные id
     setSelectedIds: (ids) => set({ selectedIds: ids }),
@@ -133,7 +153,11 @@ export const useVariablesStore = create((set, get) => ({
 
     updateNode: (nodeId, updatedData) => {
         set((state) => ({
-            variables: updatedNodeRecursive(state.variables, nodeId, updatedData),
+            variables: updatedNodeRecursive(
+                state.variables,
+                nodeId,
+                updatedData
+            ),
             //selectedNode: state.selectedNode && updatedNodeRecursive(state.selectedNode, nodeId, updatedData),
         }));
     },
