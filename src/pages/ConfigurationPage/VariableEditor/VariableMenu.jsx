@@ -11,7 +11,9 @@ export const VariableMenu = memo(function VariableMenu() {
     //const selectedData = [];
 
     const settings = useVariablesStore((state) => state.settings);
-    const selectedIds = useVariablesStore((state) => state.selectedIds);
+    const selectedIds = useVariablesStore(
+        (state) => state.selectedIds.variables
+    );
 
     const selectedData = useMemo(() => {
         return Array.from(selectedIds)
@@ -45,12 +47,15 @@ export const VariableMenu = memo(function VariableMenu() {
     if (selectedData.length === 1) {
         const [singleNode] = selectedData;
         return singleNode.children === undefined ? (
-            <VariableEditor data={singleNode} />
+            <>
+                TEST
+                {/* <VariableEditor data={singleNode} /> */}
+            </>
         ) : (
             <VStack gap={"4"} px={"1"} h={"100%"}>
                 <FolderHeader data={singleNode} />
                 <Box w={"100%"} h={"100%"} overflow={"auto"}>
-                    <TableConfig data={singleNode.children} />
+                    {/* <TableConfig data={singleNode.children} /> */}
                 </Box>
             </VStack>
         );
@@ -66,7 +71,7 @@ export const VariableMenu = memo(function VariableMenu() {
         if (sameLevelAndType) {
             return (
                 <Box w={"100%"} h={"100%"} overflow={"auto"}>
-                    <TableConfig data={selectedData} />
+                    {/* <TableConfig data={selectedData} /> */}
                 </Box>
             );
         }

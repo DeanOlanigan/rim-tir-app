@@ -1,186 +1,102 @@
 import { create } from "zustand";
-import { separateDataNEW } from "../utils/utils";
+import { separateDataNEW, separateTree } from "../utils/utils";
 import { config } from "../config/testData";
+import {
+    addNodeUtil,
+    removeNodeUtil,
+    moveNodeUtil,
+    renameNodeUtil,
+    renameNodeSettingUtil,
+    createSettingUtil,
+    removeSettingUtil,
+} from "../utils/treeUtils";
 
 const { treeData, nodeData } = separateDataNEW(config);
-console.log("treeData", treeData);
-console.log("nodeData", nodeData);
-
-// Вспомогательная функция для рекурсивного поиска и удаления узла по id.
-// Функция возвращает объект с обновлённым деревом (nodes) и извлечённым узлом (node).
-function extractNode(nodes, nodeId) {
-    let extracted = null;
-
-    // Рекурсивная функция, которая обходит узлы и удаляет найденный узел
-    const recursive = (items) => {
-        return items.reduce((acc, node) => {
-            if (node.id === nodeId) {
-                // Если найден нужный узел, запоминаем его и не включаем в результирующий массив
-                extracted = node;
-                return acc;
-            }
-            // Если есть дочерние узлы – рекурсивно ищем в них
-            if (node.children) {
-                node = { ...node, children: recursive(node.children) };
-            }
-            return [...acc, node];
-        }, []);
-    };
-
-    const newNodes = recursive(nodes);
-    return { nodes: newNodes, node: extracted };
-}
-
-// Вспомогательная функция для рекурсивного поиска родительского узла по parentId
-// и вставки новых узлов (nodesToInsert) в его массив children по указанному индексу.
-function insertNodes(nodes, parentId, nodesToInsert, index) {
-    return nodes.map((node) => {
-        if (node.id === parentId) {
-            // Находим массив дочерних узлов (если его нет – создаём)
-            const children = node.children ? [...node.children] : [];
-            // Вставляем новые узлы по заданному индексу
-            children.splice(index, 0, ...nodesToInsert);
-            return { ...node, children };
-        }
-        // Если узел имеет дочерние элементы – продолжаем поиск
-        if (node.children) {
-            return {
-                ...node,
-                children: insertNodes(
-                    node.children,
-                    parentId,
-                    nodesToInsert,
-                    index
-                ),
-            };
-        }
-        return node;
-    });
-}
-
-const addNodeRecursive = (nodes, parentId, newNode) => {
-    return nodes.map((node) => {
-        if (node.id === parentId) {
-            const newVariables = [...node.children];
-            newVariables.splice(0, 0, newNode);
-            return { ...node, children: newVariables };
-        }
-        if (node.children?.length > 0) {
-            return {
-                ...node,
-                children: addNodeRecursive(node.children, parentId, newNode),
-            };
-        }
-        return node;
-    });
-};
-
-const updatedNodeRecursive = (nodes, nodeId, updatedData) => {
-    return nodes.map((node) => {
-        if (node.id === nodeId) {
-            const updated = {
-                ...node,
-                ...updatedData,
-            };
-            return updated;
-        }
-        if (node.children?.length > 0)
-            return {
-                ...node,
-                children: updatedNodeRecursive(
-                    node.children,
-                    nodeId,
-                    updatedData
-                ),
-            };
-        return node;
-    });
-};
-
-const removeNodeRecursive = (nodes, nodeId) => {
-    const result = nodes
-        .filter((node) => !nodeId.includes(node.id))
-        .map((node) => ({
-            ...node,
-            children: node.children
-                ? removeNodeRecursive(node.children, nodeId)
-                : undefined,
-        }));
-    return result;
-};
+const { trees, configurationInfo } = separateTree(treeData);
+console.log(nodeData);
 
 export const useVariablesStore = create((set, get) => ({
-    variables: treeData.children[2].children, // дерево для react-arborist
-    settings: nodeData, // параметры узла дерева
-    selectedIds: new Set(), // выбранные id
-    setSelectedIds: (ids) => set({ selectedIds: ids }),
-    setSettings: (nodeId, updateData) =>
+    // Базовая информация о конфигурации
+    configInfo: configurationInfo,
+    // Деревья для react-arborist
+    send: [],
+    receive: [],
+    variables: [],
+    // Параметры всех узлов деревьев
+    settings: [],
+    // Id выбранных узлов
+    selectedIds: {
+        send: new Set(),
+        receive: new Set(),
+        variables: new Set(),
+    },
+    setSelectedIds: (targetKey, ids) =>
         set((state) => ({
-            settings: {
-                ...state.settings,
-                [nodeId]: { ...state.settings[nodeId], ...updateData },
+            selectedIds: {
+                ...state.selectedIds,
+                [targetKey]: ids,
             },
         })),
 
-    addNode: (parentId, newNode) => {
+    createSetting: (nodeId, setting) =>
+        set((state) => ({
+            settings: createSettingUtil(state.settings, nodeId, setting),
+        })),
+
+    setSettings: (nodeId, updateData) =>
+        set((state) => {
+            console.log("setSettings", state.settings[nodeId]);
+            return {
+                settings: {
+                    ...state.settings,
+                    [nodeId]: {
+                        ...state.settings[nodeId],
+                        setting: {
+                            ...state.settings[nodeId].setting,
+                            ...updateData,
+                        },
+                    },
+                },
+            };
+        }),
+
+    removeSetting: (nodeIds) =>
+        set((state) => ({
+            settings: removeSettingUtil(state.settings, nodeIds),
+        })),
+
+    addNode: (targetKey, parentId, newNode) => {
         if (parentId === null) {
             set((state) => {
-                const newVariables = [...state.variables];
-                newVariables.splice(0, 0, newNode);
-                return { variables: newVariables };
-                /* return { 
-                    variables: [...state.variables, {...rest, id}],
-                    settings: {...state.settings, [id]: {...setting, id}}
-                }; */
+                const newTargetNode = [...state[targetKey]];
+                newTargetNode.splice(0, 0, newNode);
+                return { [targetKey]: newTargetNode };
             });
         } else {
             set((state) => ({
-                variables: addNodeRecursive(state.variables, parentId, newNode),
+                [targetKey]: addNodeUtil(state[targetKey], parentId, newNode),
             }));
         }
     },
 
-    updateNode: (nodeId, updatedData) => {
+    renameNode: (targetKey, nodeId, name) =>
         set((state) => ({
-            variables: updatedNodeRecursive(
-                state.variables,
-                nodeId,
-                updatedData
+            [targetKey]: renameNodeUtil(state[targetKey], nodeId, name),
+            settings: renameNodeSettingUtil(state.settings, nodeId, name),
+        })),
+
+    removeNode: (targetKey, nodeIds) =>
+        set((state) => ({
+            [targetKey]: removeNodeUtil(state[targetKey], nodeIds),
+        })),
+
+    moveNode: (targetKey, dragIds, parentId, index) =>
+        set((state) => ({
+            [targetKey]: moveNodeUtil(
+                state[targetKey],
+                dragIds,
+                parentId,
+                index
             ),
-        }));
-    },
-
-    removeNode: (nodeId) => {
-        set((state) => ({
-            variables: removeNodeRecursive(state.variables, nodeId),
-        }));
-    },
-
-    moveNode: (dragIds, parentId, index) => {
-        set((state) => {
-            let updatedVariables = [...state.variables];
-            const draggedNodes = [];
-
-            dragIds.forEach((dragId) => {
-                const { nodes, node } = extractNode(updatedVariables, dragId);
-                updatedVariables = nodes;
-                if (node) {
-                    draggedNodes.push(node);
-                }
-            });
-
-            if (parentId === null) {
-                updatedVariables.splice(index, 0, ...draggedNodes);
-            } else {
-                updatedVariables = insertNodes(
-                    updatedVariables,
-                    parentId,
-                    draggedNodes,
-                    index
-                );
-            }
-
-            return { variables: updatedVariables };
-        });
-    },
+        })),
 }));

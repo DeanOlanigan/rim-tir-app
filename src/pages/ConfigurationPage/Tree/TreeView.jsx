@@ -10,26 +10,35 @@ import { useCallback } from "react";
 import { useVariablesStore } from "../../../store/variables-store";
 import { v4 as uuid4 } from "uuid";
 import { Box } from "@chakra-ui/react";
+import {
+    DEFAULT_FOLDER,
+    DEFAULT_FOLDER_SETTING,
+    DEFAULT_VARIABLE,
+    DEFAULT_VARIABLE_SETTING,
+} from "../../../config/constants";
 
 export const TreeView = memo(
     forwardRef(function TreeView(props, ref) {
         console.log("%cRender NEW TreeView", "color: white; background: red;");
         const addNode = useVariablesStore((state) => state.addNode);
-        const updateNode = useVariablesStore((state) => state.updateNode);
+        const renameNode = useVariablesStore((state) => state.renameNode);
         const removeNode = useVariablesStore((state) => state.removeNode);
         const moveNode = useVariablesStore((state) => state.moveNode);
 
-        const setSettings = useVariablesStore((state) => state.setSettings);
+        const createSetting = useVariablesStore((state) => state.createSetting);
+        const removeSetting = useVariablesStore((state) => state.removeSetting);
 
         const setSelectedIds = useVariablesStore(
             (state) => state.setSelectedIds
         );
 
+        const nodesSettings = useVariablesStore((state) => state.settings);
+
         const handleRenameNode = useCallback(
             ({ id, name }) => {
-                updateNode(id, { name });
+                renameNode("variables", id, name);
             },
-            [updateNode]
+            [renameNode]
         );
 
         // Формируй данные перед отправкой в стор, иначе дерево ебланит
@@ -41,61 +50,49 @@ export const TreeView = memo(
                     const id = uuid4();
                     const node = {
                         id: id,
-                        type: "folder",
-                        name: "Новая папка",
-                        ignoreChildren: false,
-                        children: [],
+                        ...DEFAULT_FOLDER,
                     };
                     const setting = {
                         id: id,
-                        description: "Описание",
-                        group: "",
-                        alias: "",
-                        tags: [],
+                        parentId,
+                        ...DEFAULT_FOLDER,
+                        setting: { ...DEFAULT_FOLDER_SETTING },
                     };
-                    addNode(parentId, node);
-                    setSettings(node.id, setting);
+                    addNode("variables", parentId, node);
+                    createSetting(id, setting);
                     return node;
                 }
                 if (type === "variable") {
                     const id = uuid4();
                     const node = {
                         id: id,
-                        type: "variable",
-                        name: "Новая переменная",
+                        ...DEFAULT_VARIABLE,
                     };
                     const setting = {
                         id: id,
-                        isSpecial: false,
-                        type: "bit",
-                        isLua: false,
-                        description: "Lorem ipsum dolor sit amet consectetur",
-                        cmd: true,
-                        archive: true,
-                        group: "noGroup",
-                        measurement: null,
-                        coefficient: "",
-                        luaExpression: "",
-                        specialCycleDelay: null,
+                        parentId,
+                        ...DEFAULT_VARIABLE,
+                        setting: { ...DEFAULT_VARIABLE_SETTING },
                     };
-                    addNode(parentId, node);
-                    setSettings(node.id, setting);
+                    addNode("variables", parentId, node);
+                    createSetting(id, setting);
                     return node;
                 }
             },
-            [addNode, setSettings]
+            [addNode, createSetting]
         );
 
         const handleDeleteNode = useCallback(
             ({ ids }) => {
-                removeNode(ids);
+                removeNode("variables", ids);
+                removeSetting(ids);
             },
-            [removeNode]
+            [removeNode, removeSetting]
         );
 
         const handleMoveNode = useCallback(
             ({ dragIds, parentId, index }) => {
-                moveNode(dragIds, parentId, index);
+                moveNode("variables", dragIds, parentId, index);
             },
             [moveNode]
         );
@@ -124,7 +121,12 @@ export const TreeView = memo(
                                         ref?.current.root.focus();
                                         ref?.current.root.select();
                                     }
-                                    setSelectedIds(ref?.current.selectedIds);
+                                    console.log(ref?.current.selectedIds);
+                                    console.log(nodesSettings);
+                                    setSelectedIds(
+                                        "variables",
+                                        ref?.current.selectedIds
+                                    );
                                 }}
                                 onContextMenu={(e) => {
                                     e.preventDefault();

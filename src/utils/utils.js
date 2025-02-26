@@ -94,4 +94,14 @@ export const separateDataNEW = (data, nodeData = {}, parentId = null) => {
     return { treeData, nodeData };
 };
 
+export const separateTree = (data) => {
+    const { children, ...rest } = data;
+    const configurationInfo = rest;
+    const trees = {};
+    for (const child of children) {
+        trees[child.type] = child.children;
+    }
+    return { trees, configurationInfo };
+};
+
 //console.log("SEPARATED NEW", separateDataNEW(config));

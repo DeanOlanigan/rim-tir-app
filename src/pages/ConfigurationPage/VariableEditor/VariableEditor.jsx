@@ -1,8 +1,15 @@
 import { useState } from "react";
-import { Flex, Box, Field, AbsoluteCenter, Textarea, Stack } from "@chakra-ui/react";
+import {
+    Flex,
+    Box,
+    Field,
+    AbsoluteCenter,
+    Textarea,
+    Stack,
+} from "@chakra-ui/react";
 import {
     NumberInputField,
-    NumberInputRoot
+    NumberInputRoot,
 } from "../../../components/ui/number-input";
 import {
     SelectContent,
@@ -22,7 +29,7 @@ import Prism from "prismjs";
 import "prismjs/components/prism-lua";
 import "prismjs/themes/prism-tomorrow.css";
 
-export const VariableEditor = ({data}) => {
+export const VariableEditor = ({ data }) => {
     const setSettings = useVariablesStore((state) => state.setSettings);
     const [code, setCode] = useState();
 
@@ -36,28 +43,24 @@ export const VariableEditor = ({data}) => {
             align={"center"}
         >
             <VariableEditorHeader data={data} />
-            <Box
-                maxW={"6xl"}
-                w={"100%"}
-                overflow={"auto"}
-            >
-                <Stack 
-                    direction={{ base: "column", md: "row" }}
-                >
-                    <Box
-                        w={"100%"}
-                    >
+            <Box maxW={"6xl"} w={"100%"} overflow={"auto"}>
+                <Stack direction={{ base: "column", md: "row" }}>
+                    <Box w={"100%"}>
                         <ToggleSection data={data} />
                         <Flex gap={"2"} p={"2"}>
-                            <SelectRoot 
+                            <SelectRoot
                                 size={"xs"}
                                 collection={dataTypes}
                                 value={[data.type]}
                                 onValueChange={(details) => {
-                                    setSettings(data.id, { type: details.value[0] });
+                                    setSettings(data.id, {
+                                        setting: { type: details.value[0] },
+                                    });
                                 }}
                             >
-                                <SelectLabel>{headerMapping["type"]}</SelectLabel>
+                                <SelectLabel>
+                                    {headerMapping["type"]}
+                                </SelectLabel>
                                 <SelectTrigger>
                                     <SelectValueText placeholder="Выберите тип" />
                                 </SelectTrigger>
@@ -74,10 +77,14 @@ export const VariableEditor = ({data}) => {
                                 collection={groups}
                                 value={[data.group]}
                                 onValueChange={(details) => {
-                                    setSettings(data.id, { group: details.value[0] });
+                                    setSettings(data.id, {
+                                        setting: { group: details.value[0] },
+                                    });
                                 }}
                             >
-                                <SelectLabel>{headerMapping["group"]}</SelectLabel>
+                                <SelectLabel>
+                                    {headerMapping["group"]}
+                                </SelectLabel>
                                 <SelectTrigger>
                                     <SelectValueText placeholder="Выберите группу" />
                                 </SelectTrigger>
@@ -99,7 +106,9 @@ export const VariableEditor = ({data}) => {
                                     size={"xs"}
                                     value={data.coefficient}
                                     onValueChange={(e) => {
-                                        setSettings(data.id, { coefficient: e.value } );
+                                        setSettings(data.id, {
+                                            setting: { coefficient: e.value },
+                                        });
                                     }}
                                 >
                                     <NumberInputField />
@@ -111,11 +120,13 @@ export const VariableEditor = ({data}) => {
                                 </Field.Label>
                                 <NumberInputRoot
                                     size={"xs"}
-                                    value={
-                                        data.specialCycleDelay
-                                    }
+                                    value={data.specialCycleDelay}
                                     onValueChange={(e) => {
-                                        setSettings(data.id, { specialCycleDelay: e.value } );
+                                        setSettings(data.id, {
+                                            setting: {
+                                                specialCycleDelay: e.value,
+                                            },
+                                        });
                                     }}
                                 >
                                     <NumberInputField />
@@ -133,7 +144,11 @@ export const VariableEditor = ({data}) => {
                                     rows={"5"}
                                     value={data.description}
                                     onChange={(e) => {
-                                        setSettings(data.id, { description: e.target.value } );
+                                        setSettings(data.id, {
+                                            setting: {
+                                                description: e.target.value,
+                                            },
+                                        });
                                     }}
                                 />
                             </Field.Root>

@@ -50,9 +50,11 @@ const VariablesWrapper = () => {
 };
 
 const SendWrapper = () => {
-    return <VariableCard data={config.children[1].children} type={"send"} />;
+    const send = useVariablesStore((state) => state.send);
+    return <VariableCard data={send} type={"send"} />;
 };
 
 const ReceiveWrapper = () => {
-    return <VariableCard data={[]} type={"receive"} />;
+    const receive = useVariablesStore((state) => state.receive);
+    return <VariableCard data={receive} type={"receive"} />;
 };
