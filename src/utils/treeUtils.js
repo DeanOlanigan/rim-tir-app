@@ -132,6 +132,19 @@ export function renameNodeSettingUtil(setting, nodeId, name) {
     };
 }
 
+export function editSettingUtil(settings, nodeId, setting) {
+    return {
+        ...settings,
+        [nodeId]: {
+            ...settings[nodeId],
+            setting: {
+                ...settings[nodeId].setting,
+                ...setting,
+            },
+        },
+    };
+}
+
 export function createSettingUtil(settings, nodeId, setting) {
     let result = { ...settings };
     if (setting.parentId !== null) {

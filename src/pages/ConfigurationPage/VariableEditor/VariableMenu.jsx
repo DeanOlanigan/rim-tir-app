@@ -1,4 +1,4 @@
-import { Box, AbsoluteCenter, Alert, VStack } from "@chakra-ui/react";
+import { Box, AbsoluteCenter, Alert, VStack, Heading } from "@chakra-ui/react";
 import { FolderHeader } from "../Folder/Folder";
 import { TableConfig } from "../Table/Table";
 import { VariableEditor } from "./VariableEditor";
@@ -46,16 +46,19 @@ export const VariableMenu = memo(function VariableMenu() {
 
     if (selectedData.length === 1) {
         const [singleNode] = selectedData;
-        return singleNode.children === undefined ? (
-            <>
-                TEST
-                {/* <VariableEditor data={singleNode} /> */}
-            </>
-        ) : (
+        if (singleNode.children === undefined) {
+            return <VariableEditor data={singleNode} />;
+        }
+
+        const childrens = Array.from(singleNode.children)
+            .map((key) => settings[key])
+            .filter(Boolean);
+
+        return (
             <VStack gap={"4"} px={"1"} h={"100%"}>
                 <FolderHeader data={singleNode} />
                 <Box w={"100%"} h={"100%"} overflow={"auto"}>
-                    {/* <TableConfig data={singleNode.children} /> */}
+                    <TableConfig data={childrens} />
                 </Box>
             </VStack>
         );
@@ -70,9 +73,23 @@ export const VariableMenu = memo(function VariableMenu() {
         );
         if (sameLevelAndType) {
             return (
-                <Box w={"100%"} h={"100%"} overflow={"auto"}>
-                    {/* <TableConfig data={selectedData} /> */}
-                </Box>
+                <VStack gap={"4"} px={"1"} h={"100%"}>
+                    <Box
+                        w={"100%"}
+                        border={"1px solid"}
+                        borderColor={"border"}
+                        borderRadius={"md"}
+                        shadow={"md"}
+                        p={"4"}
+                    >
+                        <Heading textWrap={"nowrap"}>
+                            Множественный выбор
+                        </Heading>
+                    </Box>
+                    <Box w={"100%"} h={"100%"} overflow={"auto"}>
+                        <TableConfig data={selectedData} />
+                    </Box>
+                </VStack>
             );
         }
     }

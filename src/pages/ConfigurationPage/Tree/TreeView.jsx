@@ -26,13 +26,10 @@ export const TreeView = memo(
         const moveNode = useVariablesStore((state) => state.moveNode);
 
         const createSetting = useVariablesStore((state) => state.createSetting);
-        const removeSetting = useVariablesStore((state) => state.removeSetting);
 
         const setSelectedIds = useVariablesStore(
             (state) => state.setSelectedIds
         );
-
-        const nodesSettings = useVariablesStore((state) => state.settings);
 
         const handleRenameNode = useCallback(
             ({ id, name }) => {
@@ -85,9 +82,8 @@ export const TreeView = memo(
         const handleDeleteNode = useCallback(
             ({ ids }) => {
                 removeNode("variables", ids);
-                removeSetting(ids);
             },
-            [removeNode, removeSetting]
+            [removeNode]
         );
 
         const handleMoveNode = useCallback(
@@ -121,8 +117,6 @@ export const TreeView = memo(
                                         ref?.current.root.focus();
                                         ref?.current.root.select();
                                     }
-                                    console.log(ref?.current.selectedIds);
-                                    console.log(nodesSettings);
                                     setSelectedIds(
                                         "variables",
                                         ref?.current.selectedIds

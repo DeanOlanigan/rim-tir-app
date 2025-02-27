@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import {
     Flex,
     Box,
@@ -7,6 +7,7 @@ import {
     Textarea,
     Stack,
 } from "@chakra-ui/react";
+import { useColorMode } from "../../../components/ui/color-mode";
 import {
     NumberInputField,
     NumberInputRoot,
@@ -25,13 +26,18 @@ import { headerMapping } from "../../MonitoringPage/mappings";
 import { dataTypes, groups } from "../../../config/filterOptions";
 import { useVariablesStore } from "../../../store/variables-store";
 import { CodeInput } from "@srsholmes/react-code-input";
+import hljs from "highlight.js/lib/core";
+import lua from "highlight.js/lib/languages/lua";
 import Prism from "prismjs";
 import "prismjs/components/prism-lua";
-import "prismjs/themes/prism-tomorrow.css";
+import { Editor } from "@monaco-editor/react";
 
-export const VariableEditor = ({ data }) => {
+hljs.registerLanguage("lua", lua);
+
+const VariableEditorMemo = ({ data }) => {
     const setSettings = useVariablesStore((state) => state.setSettings);
-    const [code, setCode] = useState();
+    const { colorMode } = useColorMode();
+    const [code, setCode] = useState("TEST");
 
     return (
         <Flex
@@ -51,10 +57,10 @@ export const VariableEditor = ({ data }) => {
                             <SelectRoot
                                 size={"xs"}
                                 collection={dataTypes}
-                                value={[data.type]}
+                                value={[data.setting.type]}
                                 onValueChange={(details) => {
                                     setSettings(data.id, {
-                                        setting: { type: details.value[0] },
+                                        type: details.value[0],
                                     });
                                 }}
                             >
@@ -75,10 +81,10 @@ export const VariableEditor = ({ data }) => {
                             <SelectRoot
                                 size={"xs"}
                                 collection={groups}
-                                value={[data.group]}
+                                value={[data.setting.group]}
                                 onValueChange={(details) => {
                                     setSettings(data.id, {
-                                        setting: { group: details.value[0] },
+                                        group: details.value[0],
                                     });
                                 }}
                             >
@@ -98,34 +104,32 @@ export const VariableEditor = ({ data }) => {
                             </SelectRoot>
                         </Flex>
                         <Flex p={"2"} gap={"2"}>
-                            <Field.Root hidden={data.isLua}>
+                            <Field.Root hidden={data.setting.isLua}>
                                 <Field.Label>
                                     {headerMapping["coefficient"]}
                                 </Field.Label>
                                 <NumberInputRoot
                                     size={"xs"}
-                                    value={data.coefficient}
+                                    value={data.setting.coefficient}
                                     onValueChange={(e) => {
                                         setSettings(data.id, {
-                                            setting: { coefficient: e.value },
+                                            coefficient: e.value,
                                         });
                                     }}
                                 >
                                     <NumberInputField />
                                 </NumberInputRoot>
                             </Field.Root>
-                            <Field.Root hidden={!data.isSpecial}>
+                            <Field.Root hidden={!data.setting.isSpecial}>
                                 <Field.Label>
                                     {headerMapping["specialCycleDelay"]}
                                 </Field.Label>
                                 <NumberInputRoot
                                     size={"xs"}
-                                    value={data.specialCycleDelay}
+                                    value={data.setting.specialCycleDelay}
                                     onValueChange={(e) => {
                                         setSettings(data.id, {
-                                            setting: {
-                                                specialCycleDelay: e.value,
-                                            },
+                                            specialCycleDelay: e.value,
                                         });
                                     }}
                                 >
@@ -142,36 +146,27 @@ export const VariableEditor = ({ data }) => {
                                     size={"xs"}
                                     resize={"none"}
                                     rows={"5"}
-                                    value={data.description}
+                                    value={data.setting.description}
                                     onChange={(e) => {
                                         setSettings(data.id, {
-                                            setting: {
-                                                description: e.target.value,
-                                            },
+                                            description: e.target.value,
                                         });
                                     }}
                                 />
                             </Field.Root>
                         </Flex>
                     </Box>
-                    <Box
-                        hidden={!data.isLua}
-                        w={"100%"}
-                        h={"100%"}
-                        p={"2"}
-                        position={"relative"}
-                        borderRadius={"sm"}
-                        border={"1px solid"}
-                        borderColor={"border"}
-                        background={"bg.muted"}
-                    >
-                        <CodeInput
-                            prismJS={Prism}
-                            placeholder="Input your code here..."
-                            value={code}
-                            language={"lua"}
-                            onChange={setCode}
-                            resize={"none"}
+                    <Box hidden={!data.setting.isLua} w={"100%"}>
+                        <Editor
+                            defaultLanguage="lua"
+                            defaultValue={data.setting.luaExpression}
+                            theme={colorMode === "light" ? "vs" : "vs-dark"}
+                            onChange={(value, event) => {
+                                //console.log("value", value);
+                                setSettings(data.id, {
+                                    luaExpression: value,
+                                });
+                            }}
                         />
                     </Box>
                 </Stack>
@@ -179,3 +174,5 @@ export const VariableEditor = ({ data }) => {
         </Flex>
     );
 };
+
+export const VariableEditor = memo(VariableEditorMemo);

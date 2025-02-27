@@ -20,24 +20,20 @@ import {
     LuCode,
     LuPencilLine,
     LuX,
-    LuCheck
+    LuCheck,
 } from "react-icons/lu";
 
 const iconMap = {
-    isLua: <LuCode/>,
-    isSpecial: <LuInfinity/>,
-    archive: <LuArchive/>,
-    cmd: <LuSquareTerminal/>
+    isLua: <LuCode />,
+    isSpecial: <LuInfinity />,
+    archive: <LuArchive />,
+    cmd: <LuSquareTerminal />,
 };
 
-export const Folder = ({data, onDoubleClick}) => {
+export const Folder = ({ data, onDoubleClick }) => {
     return (
-        <VStack
-            mt={"2"}
-            gap={"4"}
-            px={"1"}
-        >
-            <FolderHeader data={data}/>
+        <VStack mt={"2"} gap={"4"} px={"1"}>
+            <FolderHeader data={data} />
             <Flex
                 maxW={"6xl"}
                 w={"100%"}
@@ -51,18 +47,23 @@ export const Folder = ({data, onDoubleClick}) => {
                 wrap={"wrap"}
                 alignContent={"start"}
             >
-                {
-                    data.children.map((child, index) => {
-                        if (child.isLeaf) return <VariablePreview key={index} data={child} onDoubleClick={onDoubleClick}/>;
-                        return <FolderPreview key={index} data={child} />;
-                    })
-                }
+                {data.children.map((child, index) => {
+                    if (child.isLeaf)
+                        return (
+                            <VariablePreview
+                                key={index}
+                                data={child}
+                                onDoubleClick={onDoubleClick}
+                            />
+                        );
+                    return <FolderPreview key={index} data={child} />;
+                })}
             </Flex>
         </VStack>
     );
 };
 
-export const FolderHeader = ({data}) => {
+export const FolderHeader = ({ data }) => {
     return (
         <Box
             w={"100%"}
@@ -73,8 +74,8 @@ export const FolderHeader = ({data}) => {
             p={"4"}
         >
             <HStack>
-                <Heading textWrap={"nowrap"}>Директория</Heading>
-                <Editable.Root
+                <Heading textWrap={"nowrap"}>Директория {data.name}</Heading>
+                {/* <Editable.Root
                     maxW={"300px"}
                     fontSize={"lg"}
                     fontWeight={"medium"}
@@ -99,9 +100,9 @@ export const FolderHeader = ({data}) => {
                             </IconButton>
                         </Editable.SubmitTrigger>
                     </Editable.Control>
-                </Editable.Root>
+                </Editable.Root> */}
             </HStack>
-            <HStack>
+            {/* <HStack>
                 <Text textWrap={"nowrap"} fontWeight={"medium"}>Описание:</Text>
                 <Editable.Root
                     value={data.setting.description}
@@ -126,12 +127,12 @@ export const FolderHeader = ({data}) => {
                         </Editable.SubmitTrigger>
                     </Editable.Control>
                 </Editable.Root>
-            </HStack>
+            </HStack> */}
         </Box>
     );
 };
 
-const FolderPreview = ({data}) => {
+const FolderPreview = ({ data }) => {
     return (
         <HStack
             w={"220px"}
@@ -142,24 +143,22 @@ const FolderPreview = ({data}) => {
             p={"2"}
             gap={"4"}
         >
-            <Flex
-                direction={"column"}
-                p={"2"}
-                align={"center"}
-            >
+            <Flex direction={"column"} p={"2"} align={"center"}>
                 <Icon size={"lg"}>
                     <LuFolder />
                 </Icon>
                 <Heading>{data.data.name}</Heading>
             </Flex>
             <Box>
-                <Badge variant={"solid"} colorPalette={"purple"}>{data.data.setting.group}</Badge>
+                <Badge variant={"solid"} colorPalette={"purple"}>
+                    {data.data.setting.group}
+                </Badge>
             </Box>
         </HStack>
     );
 };
 
-const VariablePreview = ({data, onDoubleClick}) => {
+const VariablePreview = ({ data, onDoubleClick }) => {
     return (
         <HStack
             w={"220px"}
@@ -174,11 +173,7 @@ const VariablePreview = ({data, onDoubleClick}) => {
                 onDoubleClick(data);
             }}
         >
-            <Flex
-                direction={"column"}
-                p={"2"}
-                align={"center"}
-            >
+            <Flex direction={"column"} p={"2"} align={"center"}>
                 <Icon size={"lg"}>
                     <LuVariable />
                 </Icon>
@@ -187,7 +182,11 @@ const VariablePreview = ({data, onDoubleClick}) => {
             <HStack>
                 {Object.keys(data.data.setting).map((key, index) => {
                     if (data.data.setting[key] && iconMap[key]) {
-                        return <Icon key={index} size={"lg"}>{iconMap[key]}</Icon>;
+                        return (
+                            <Icon key={index} size={"lg"}>
+                                {iconMap[key]}
+                            </Icon>
+                        );
                     }
                 })}
             </HStack>

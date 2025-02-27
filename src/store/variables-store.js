@@ -9,6 +9,7 @@ import {
     renameNodeSettingUtil,
     createSettingUtil,
     removeSettingUtil,
+    editSettingUtil,
 } from "../utils/treeUtils";
 
 const { treeData, nodeData } = separateDataNEW(config);
@@ -44,25 +45,8 @@ export const useVariablesStore = create((set, get) => ({
         })),
 
     setSettings: (nodeId, updateData) =>
-        set((state) => {
-            console.log("setSettings", state.settings[nodeId]);
-            return {
-                settings: {
-                    ...state.settings,
-                    [nodeId]: {
-                        ...state.settings[nodeId],
-                        setting: {
-                            ...state.settings[nodeId].setting,
-                            ...updateData,
-                        },
-                    },
-                },
-            };
-        }),
-
-    removeSetting: (nodeIds) =>
         set((state) => ({
-            settings: removeSettingUtil(state.settings, nodeIds),
+            settings: editSettingUtil(state.settings, nodeId, updateData),
         })),
 
     addNode: (targetKey, parentId, newNode) => {
@@ -88,6 +72,7 @@ export const useVariablesStore = create((set, get) => ({
     removeNode: (targetKey, nodeIds) =>
         set((state) => ({
             [targetKey]: removeNodeUtil(state[targetKey], nodeIds),
+            settings: removeSettingUtil(state.settings, nodeIds),
         })),
 
     moveNode: (targetKey, dragIds, parentId, index) =>
