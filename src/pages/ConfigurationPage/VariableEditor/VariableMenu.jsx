@@ -1,12 +1,13 @@
 import { Box, AbsoluteCenter, Alert, VStack, Heading } from "@chakra-ui/react";
 import { FolderHeader } from "../Folder/Folder";
-import { TableConfig } from "../Table/Table";
-import { VariableEditor } from "./VariableEditor";
+import { VariablesTable } from "../Table/Variables/VariablesTable";
+import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { memo, useMemo } from "react";
 import { useVariablesStore } from "../../../store/variables-store";
+import { selectSelectedData } from "../../../store/selectors";
 
 export const VariableMenu = memo(function VariableMenu() {
-    console.log("Render VariableEditor");
+    console.log("Render VariableMenu");
     //const selectedData = useVariablesStore((state) => state.selectedNode);
     //const selectedData = [];
 
@@ -16,12 +17,7 @@ export const VariableMenu = memo(function VariableMenu() {
     );
 
     const selectedData = useMemo(() => {
-        return Array.from(selectedIds)
-            .map((key) => settings[key])
-            .filter(Boolean);
-        /* return Object.fromEntries(
-            Object.entries(settings).filter(([key]) => selectedIds.has(key))
-        ); */
+        return selectSelectedData(settings, selectedIds);
     }, [settings, selectedIds]);
 
     //const selectedData = [];
@@ -58,7 +54,7 @@ export const VariableMenu = memo(function VariableMenu() {
             <VStack gap={"4"} px={"1"} h={"100%"}>
                 <FolderHeader data={singleNode} />
                 <Box w={"100%"} h={"100%"} overflow={"auto"}>
-                    <TableConfig data={childrens} />
+                    <VariablesTable data={childrens} />
                 </Box>
             </VStack>
         );
@@ -87,7 +83,7 @@ export const VariableMenu = memo(function VariableMenu() {
                         </Heading>
                     </Box>
                     <Box w={"100%"} h={"100%"} overflow={"auto"}>
-                        <TableConfig data={selectedData} />
+                        <VariablesTable data={selectedData} />
                     </Box>
                 </VStack>
             );

@@ -64,6 +64,8 @@ export const Folder = ({ data, onDoubleClick }) => {
 };
 
 export const FolderHeader = ({ data }) => {
+    console.log("RENDER FolderHeader");
+
     return (
         <Box
             w={"100%"}

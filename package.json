@@ -25,6 +25,7 @@
     "chartjs-plugin-zoom": "^2.2.0",
     "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
+    "debounce": "^2.2.0",
     "esbuild-plugin-react-virtualized": "^1.0.4",
     "faker": "^5.5.3",
     "highlight.js": "^11.11.1",

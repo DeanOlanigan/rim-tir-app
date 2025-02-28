@@ -4,6 +4,7 @@ import { VariableCardTitle } from "./Title";
 import { useRef, useState } from "react";
 
 export const VariableCard = ({ data = [], type }) => {
+    console.log("RENDER VariableCard", type);
     const [isHovered, setIsHovered] = useState(false);
 
     const variableTreeRef = useRef(null);

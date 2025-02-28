@@ -1,13 +1,14 @@
 import { Flex, Icon, CheckboxGroup } from "@chakra-ui/react";
-import { CheckboxCard } from "../../../components/ui/checkbox-card";
+import { CheckboxCard } from "../../../../components/ui/checkbox-card";
 import {
     LuArchive,
     LuSquareTerminal,
     LuCode,
     LuRefreshCcwDot,
 } from "react-icons/lu";
-import { headerMapping } from "../../MonitoringPage/mappings";
-import { useVariablesStore } from "../../../store/variables-store";
+import { headerMapping } from "../../../MonitoringPage/mappings";
+import { useVariablesStore } from "../../../../store/variables-store";
+import { memo } from "react";
 
 /* const getActiveCheckboxes = (checboxes) => {
     const arr = [];
@@ -17,7 +18,9 @@ import { useVariablesStore } from "../../../store/variables-store";
     return arr;
 }; */
 
-export const ToggleSection = ({ data }) => {
+export const ToggleSection = memo(function ToggleSection(props) {
+    console.log("Render ToggleSection");
+    const { isSpecial, isLua, archive, cmd, id } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
 
     /* const checkboxes = {
@@ -37,9 +40,9 @@ export const ToggleSection = ({ data }) => {
                 size={"md"}
                 align={"center"}
                 label={headerMapping["isSpecial"]}
-                checked={data.setting.isSpecial}
+                checked={isSpecial}
                 onCheckedChange={(e) =>
-                    setSettings(data.id, { isSpecial: !!e.checked })
+                    setSettings(id, { isSpecial: !!e.checked })
                 }
                 icon={<LuRefreshCcwDot size={24} />}
                 indicator={false}
@@ -50,9 +53,9 @@ export const ToggleSection = ({ data }) => {
                 size={"md"}
                 align={"center"}
                 label={headerMapping["archive"]}
-                checked={data.setting.archive}
+                checked={archive}
                 onCheckedChange={(e) =>
-                    setSettings(data.id, { archive: !!e.checked })
+                    setSettings(id, { archive: !!e.checked })
                 }
                 icon={<LuArchive size={24} />}
                 indicator={false}
@@ -63,10 +66,8 @@ export const ToggleSection = ({ data }) => {
                 size={"md"}
                 align={"center"}
                 label={headerMapping["cmd"]}
-                checked={data.setting.cmd}
-                onCheckedChange={(e) =>
-                    setSettings(data.id, { cmd: !!e.checked })
-                }
+                checked={cmd}
+                onCheckedChange={(e) => setSettings(id, { cmd: !!e.checked })}
                 icon={<LuSquareTerminal size={24} />}
                 indicator={false}
                 value={"cmd"}
@@ -76,10 +77,8 @@ export const ToggleSection = ({ data }) => {
                 size={"md"}
                 align={"center"}
                 label={headerMapping["isLua"]}
-                checked={data.setting.isLua}
-                onCheckedChange={(e) =>
-                    setSettings(data.id, { isLua: !!e.checked })
-                }
+                checked={isLua}
+                onCheckedChange={(e) => setSettings(id, { isLua: !!e.checked })}
                 icon={<LuCode size={24} />}
                 indicator={false}
                 value={"isLua"}
@@ -87,4 +86,4 @@ export const ToggleSection = ({ data }) => {
         </Flex>
         //</CheckboxGroup>
     );
-};
+});

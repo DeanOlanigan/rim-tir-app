@@ -1,8 +1,8 @@
-import { HStack, Heading, IconButton, Editable } from "@chakra-ui/react";
-import { LuPencilLine, LuX, LuCheck } from "react-icons/lu";
-import { useVariablesStore } from "../../../store/variables-store";
+import { HStack, Heading /* IconButton, Editable */ } from "@chakra-ui/react";
+//import { LuPencilLine, LuX, LuCheck } from "react-icons/lu";
+//import { useVariablesStore } from "../../../store/variables-store";
 
-export const VariableEditorHeader = ({ data }) => {
+export const VariableEditorHeader = ({ name }) => {
     //const updateNode = useVariablesStore((state) => state.updateNode);
 
     return (
@@ -15,7 +15,7 @@ export const VariableEditorHeader = ({ data }) => {
             p={"4"}
         >
             <Heading textWrap={"nowrap"}>
-                Конфигурация переменной {data.name}
+                Конфигурация переменной {name}
             </Heading>
             {/* <Editable.Root
                 maxW={"300px"}

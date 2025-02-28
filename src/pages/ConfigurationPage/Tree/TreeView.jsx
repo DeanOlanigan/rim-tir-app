@@ -8,6 +8,7 @@ import { ContextMenuWrapper } from "./ContextMenuWrapper";
 import Node from "./Node";
 import { useCallback } from "react";
 import { useVariablesStore } from "../../../store/variables-store";
+import { shallow } from "zustand/shallow";
 import { v4 as uuid4 } from "uuid";
 import { Box } from "@chakra-ui/react";
 import {
@@ -26,6 +27,9 @@ export const TreeView = memo(
         const moveNode = useVariablesStore((state) => state.moveNode);
 
         const createSetting = useVariablesStore((state) => state.createSetting);
+        const selectedIds = useVariablesStore(
+            (state) => state.selectedIds[props.type]
+        );
 
         const setSelectedIds = useVariablesStore(
             (state) => state.setSelectedIds
@@ -117,6 +121,16 @@ export const TreeView = memo(
                                         ref?.current.root.focus();
                                         ref?.current.root.select();
                                     }
+
+                                    if (
+                                        shallow(
+                                            selectedIds,
+                                            ref?.current.selectedIds
+                                        )
+                                    ) {
+                                        return;
+                                    }
+
                                     setSelectedIds(
                                         "variables",
                                         ref?.current.selectedIds

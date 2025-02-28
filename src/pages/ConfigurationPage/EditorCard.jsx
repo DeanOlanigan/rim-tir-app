@@ -34,6 +34,7 @@ export const EditorCard = () => {
                     <PanelResizeHandle className="verticalLineConf" />
                     <Panel collapsible collapsedSize={0} minSize={30}>
                         <Box w={"100%"} h={"100%"} pt={"2"}>
+                            {/* TODO Унифицировать компонент */}
                             <VariableMenu />
                         </Box>
                     </Panel>
