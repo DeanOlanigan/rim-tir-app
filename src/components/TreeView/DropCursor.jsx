@@ -1,15 +1,28 @@
-import { Box } from "@chakra-ui/react";
+const placeholderStyle = {
+    display: "flex",
+    alignItems: "center",
+    zIndex: 1,
+};
 
-export const DropCursor = ({top, left}) => {
+const lineStyle = {
+    flex: 1,
+    height: "2px",
+    background: "white",
+    borderRadius: "1px",
+};
+
+export const DropCursor = ({ top, left, indent }) => {
+    const style = {
+        left: left + "px",
+        top: top - 2 + "px",
+        right: indent + "px",
+        pointerEvents: "none",
+        position: "absolute",
+    };
+
     return (
-        <Box
-            w={"30%"}
-            h={"0px"}
-            borderTop={"2px solid"}
-            borderColor={"border.inverted"}
-            position={"absolute"}
-            top={top}
-            left={left}
-        />
+        <div style={{ ...placeholderStyle, ...style }}>
+            <div style={{ ...lineStyle }}></div>
+        </div>
     );
 };

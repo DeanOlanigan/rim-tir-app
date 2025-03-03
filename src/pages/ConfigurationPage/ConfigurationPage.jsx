@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
-import { VariableCard } from "./TreeCard/VariableCard";
+import { TreeCard } from "./TreeCard/TreeCard";
 import { useVariablesStore } from "../../store/variables-store";
 import { EditorCard } from "./EditorCard";
 
@@ -47,17 +47,17 @@ export default ConfigurationPage;
 const VariablesWrapper = () => {
     console.log("RENDER VariablesWrapper");
     const variables = useVariablesStore((state) => state.variables);
-    return <VariableCard data={variables} type={"variables"} />;
+    return <TreeCard data={variables} treeType={"variables"} />;
 };
 
 const SendWrapper = () => {
     console.log("RENDER SendWrapper");
     const send = useVariablesStore((state) => state.send);
-    return <VariableCard data={send} type={"send"} />;
+    return <TreeCard data={send} treeType={"send"} />;
 };
 
 const ReceiveWrapper = () => {
     console.log("RENDER ReceiveWrapper");
     const receive = useVariablesStore((state) => state.receive);
-    return <VariableCard data={receive} type={"receive"} />;
+    return <TreeCard data={receive} treeType={"receive"} />;
 };

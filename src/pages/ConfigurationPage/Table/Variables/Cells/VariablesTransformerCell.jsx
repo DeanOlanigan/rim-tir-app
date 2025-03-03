@@ -4,7 +4,7 @@ import {
     PopoverRoot,
     PopoverTrigger,
 } from "../../../../../components/ui/popover";
-import { Button, Text } from "@chakra-ui/react";
+import { Button, Text, Box } from "@chakra-ui/react";
 import { Editor } from "@monaco-editor/react";
 import {
     NumberInputField,
@@ -23,7 +23,7 @@ export const VariablesTransformerCell = memo(function VariablesTransformerCell(
     const { colorMode } = useColorMode();
 
     return isLua ? (
-        <PopoverRoot>
+        <PopoverRoot portalled>
             <PopoverTrigger asChild>
                 <Button
                     size={"xs"}
@@ -35,20 +35,27 @@ export const VariablesTransformerCell = memo(function VariablesTransformerCell(
                 </Button>
             </PopoverTrigger>
             <PopoverContent>
-                <PopoverBody>
-                    <Editor
-                        height={"400px"}
-                        width={"400px"}
-                        defaultLanguage="lua"
-                        defaultValue={luaExpression}
-                        theme={colorMode === "light" ? "vs" : "vs-dark"}
-                        onChange={(value) => {
-                            console.log("value", value);
-                            setSettings(id, {
-                                luaExpression: value,
-                            });
-                        }}
-                    />
+                <PopoverBody asChild>
+                    <Box
+                        background={"bg"}
+                        w={"440px"}
+                        borderRadius={"md"}
+                        shadow={"xl"}
+                    >
+                        <Editor
+                            height={"300px"}
+                            width={"400px"}
+                            defaultLanguage="lua"
+                            defaultValue={luaExpression}
+                            theme={colorMode === "light" ? "vs" : "vs-dark"}
+                            onChange={(value) => {
+                                console.log("value", value);
+                                setSettings(id, {
+                                    luaExpression: value,
+                                });
+                            }}
+                        />
+                    </Box>
                 </PopoverBody>
             </PopoverContent>
         </PopoverRoot>

@@ -16,6 +16,7 @@ import {
     DEFAULT_FOLDER_SETTING,
     DEFAULT_VARIABLE,
     DEFAULT_VARIABLE_SETTING,
+    DEFAULT_CONFIGURATION_DATA,
 } from "../../../config/constants";
 
 export const TreeView = memo(
@@ -27,19 +28,19 @@ export const TreeView = memo(
         const moveNode = useVariablesStore((state) => state.moveNode);
 
         const createSetting = useVariablesStore((state) => state.createSetting);
+
         const selectedIds = useVariablesStore(
             (state) => state.selectedIds[props.type]
         );
-
         const setSelectedIds = useVariablesStore(
             (state) => state.setSelectedIds
         );
 
         const handleRenameNode = useCallback(
             ({ id, name }) => {
-                renameNode("variables", id, name);
+                renameNode(props.treeType, id, name);
             },
-            [renameNode]
+            [renameNode, props.treeType]
         );
 
         // Формируй данные перед отправкой в стор, иначе дерево ебланит
@@ -47,23 +48,22 @@ export const TreeView = memo(
             ({ parentId, index, type }) => {
                 if (type === "leaf" || type === "internal") return;
                 console.log("create", parentId, index, type);
-                if (type === "folder") {
-                    const id = uuid4();
-                    const node = {
-                        id: id,
-                        ...DEFAULT_FOLDER,
-                    };
-                    const setting = {
-                        id: id,
-                        parentId,
-                        ...DEFAULT_FOLDER,
-                        setting: { ...DEFAULT_FOLDER_SETTING },
-                    };
-                    addNode("variables", parentId, node);
-                    createSetting(id, setting);
-                    return node;
-                }
-                if (type === "variable") {
+
+                const id = uuid4();
+                const node = {
+                    id: id,
+                    ...DEFAULT_CONFIGURATION_DATA[type].node,
+                };
+                const setting = {
+                    id: id,
+                    parentId,
+                    ...DEFAULT_CONFIGURATION_DATA[type].setting,
+                };
+                addNode(props.treeType, parentId, node);
+                createSetting(id, setting);
+                return node;
+
+                /* if (type === "variable") {
                     const id = uuid4();
                     const node = {
                         id: id,
@@ -78,33 +78,31 @@ export const TreeView = memo(
                     addNode("variables", parentId, node);
                     createSetting(id, setting);
                     return node;
-                }
+                } */
             },
-            [addNode, createSetting]
+            [addNode, createSetting, props.treeType]
         );
 
         const handleDeleteNode = useCallback(
             ({ ids }) => {
-                removeNode("variables", ids);
+                removeNode(props.treeType, ids);
             },
-            [removeNode]
+            [removeNode, props.treeType]
         );
 
         const handleMoveNode = useCallback(
             ({ dragIds, parentId, index }) => {
-                moveNode("variables", dragIds, parentId, index);
+                console.log(dragIds, parentId, index);
+                moveNode(props.treeType, dragIds, parentId, index);
             },
-            [moveNode]
+            [moveNode, props.treeType]
         );
 
         return (
             <Box w={"100%"} h={"100%"}>
                 <AutoSizer>
                     {({ height, width }) => (
-                        <ContextMenuWrapper
-                            apiPath={ref?.current}
-                            type={props.type}
-                        >
+                        <ContextMenuWrapper apiPath={ref?.current}>
                             <Tree
                                 ref={ref}
                                 {...props}
@@ -138,6 +136,7 @@ export const TreeView = memo(
                                 }}
                                 onContextMenu={(e) => {
                                     e.preventDefault();
+                                    e.stopPropagation();
                                     ref?.current.root.focus();
                                     ref?.current.root.select();
                                 }}

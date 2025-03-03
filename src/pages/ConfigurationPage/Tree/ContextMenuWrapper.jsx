@@ -5,67 +5,45 @@ import {
     MenuContextTrigger,
     MenuSeparator,
 } from "../../../components/ui/menu";
-import { LuFolder, LuVariable, LuPencil, LuTrash2 } from "react-icons/lu";
+import { menuConfig } from "../../../config/contextMenu";
 
-export const ContextMenuWrapper = ({ apiPath, children, type, node }) => {
+export const ContextMenuWrapper = ({ apiPath, type = null, children }) => {
+    const treeType = apiPath?.props.treeType;
+    const focusedNodeType = type || "default";
+
+    /* console.log("%cContextMenuWrapper", "color: white; background: blue;", [
+        treeType,
+        focusedNodeType,
+    ]); */
+
+    if (!apiPath) {
+        return children;
+    }
+
+    const items = menuConfig[treeType][focusedNodeType];
+
+    if (!items) return children;
+
     return (
         <MenuRoot lazyMount unmountOnExit>
             <MenuContextTrigger asChild>{children}</MenuContextTrigger>
             <MenuContent>
-                {(type === "variables" || type === "folder") && (
-                    <>
+                {items.map((item, index) => {
+                    if (item.type === "separator") {
+                        return <MenuSeparator key={`sep_${index}`} />;
+                    }
+                    return (
                         <MenuItem
-                            value="variable"
-                            onClick={() => {
-                                apiPath.create({
-                                    type: "variable",
-                                });
-                            }}
+                            key={item.key}
+                            value={item.key}
+                            {...item.style}
+                            onClick={() => item.action?.(apiPath)}
                         >
-                            <LuVariable />
-                            Создать переменную...
+                            {item.icon?.()}
+                            {item.label}
                         </MenuItem>
-                        <MenuItem
-                            value="folder"
-                            onClick={() => {
-                                apiPath.create({
-                                    type: "folder",
-                                });
-                            }}
-                        >
-                            <LuFolder />
-                            Создать папку...
-                        </MenuItem>
-                    </>
-                )}
-                {(type !== "variables" ||
-                    type !== "send" ||
-                    type !== "receive") && (
-                    <>
-                        {type === "folder" && <MenuSeparator />}
-                        <MenuItem
-                            value="rename"
-                            onClick={() => {
-                                apiPath.edit(node);
-                            }}
-                        >
-                            <LuPencil />
-                            Переименовать
-                        </MenuItem>
-                        <MenuItem
-                            value="delete"
-                            color="fg.error"
-                            _hover={{ bg: "bg.error", color: "fg.error" }}
-                            onClick={() => {
-                                console.log(apiPath.selectedIds);
-                                apiPath.delete([...apiPath.selectedIds]);
-                            }}
-                        >
-                            <LuTrash2 />
-                            Удалить
-                        </MenuItem>
-                    </>
-                )}
+                    );
+                })}
             </MenuContent>
         </MenuRoot>
     );

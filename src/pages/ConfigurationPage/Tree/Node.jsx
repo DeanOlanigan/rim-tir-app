@@ -7,15 +7,11 @@ import { memo } from "react";
 import { ContextMenuWrapper } from "./ContextMenuWrapper";
 
 const Node = ({ node, style, dragHandle }) => {
-    console.log("%cRender NEW Node", "color: white; background: purple;");
+    //console.log("%cRender NEW Node", "color: white; background: purple;");
     const indentSize = Number.parseFloat(`${style.paddingLeft || 0}`);
 
     return (
-        <ContextMenuWrapper
-            apiPath={node.tree}
-            type={node.data.type}
-            node={node}
-        >
+        <ContextMenuWrapper apiPath={node.tree} type={node.data.type}>
             <div
                 ref={dragHandle}
                 style={style}

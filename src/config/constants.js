@@ -79,3 +79,71 @@ export const DEFAULT_VARIABLE_SETTING = {
     luaExpression: "",
     specialCycleDelay: null,
 };
+
+export const DEFAULT_CONFIGURATION_DATA = {
+    rs232: {
+        node: { ...DEFAULT_INTERFACE, name: "RS-232", subType: "rs232" },
+        setting: {
+            node: { ...DEFAULT_INTERFACE, name: "RS-232", subType: "rs232" },
+            setting: {
+                baudRate: "57600",
+                pollPeriod: "21",
+            },
+        },
+    },
+    rs485: {
+        node: { ...DEFAULT_INTERFACE, name: "RS-485", subType: "rs485" },
+        setting: {
+            node: { ...DEFAULT_INTERFACE, name: "RS-485", subType: "rs485" },
+            setting: {
+                baudRate: "57600",
+                pollPeriod: "21",
+            },
+        },
+    },
+    gpio: {
+        node: { ...DEFAULT_INTERFACE, name: "GPIO", subType: "gpio" },
+        setting: {
+            node: { ...DEFAULT_INTERFACE, name: "GPIO", subType: "gpio" },
+            setting: {
+                logging: false,
+                contactBounce: "200",
+            },
+        },
+    },
+    iec104: {
+        node: { ...DEFAULT_PROTOCOL, name: "IEC-104", subType: "iec104" },
+        setting: {
+            node: { ...DEFAULT_PROTOCOL, name: "IEC-104", subType: "iec104" },
+            setting: {
+                logging: true,
+                side: "client",
+                address: "0.0.0.0",
+                port: "0",
+                lengthOfASDU: "1",
+                lengthOfCause: "1",
+                lengthOfAdr: "1",
+                k: "1",
+                w: "1",
+                t0: "1",
+                t1: "1",
+                t2: "1",
+                t3: "1",
+            },
+        },
+    },
+    folder: {
+        node: { ...DEFAULT_FOLDER },
+        setting: {
+            ...DEFAULT_FOLDER,
+            setting: { ...DEFAULT_FOLDER_SETTING },
+        },
+    },
+    variable: {
+        node: { ...DEFAULT_VARIABLE },
+        setting: {
+            ...DEFAULT_VARIABLE,
+            setting: { ...DEFAULT_VARIABLE_SETTING },
+        },
+    },
+};

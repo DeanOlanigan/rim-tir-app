@@ -1,4 +1,4 @@
-import { Flex, Icon, CheckboxGroup } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { CheckboxCard } from "../../../../components/ui/checkbox-card";
 import {
     LuArchive,
@@ -10,30 +10,12 @@ import { headerMapping } from "../../../MonitoringPage/mappings";
 import { useVariablesStore } from "../../../../store/variables-store";
 import { memo } from "react";
 
-/* const getActiveCheckboxes = (checboxes) => {
-    const arr = [];
-    Object.keys(checboxes).map((key) => {
-        return checboxes[key] ? arr.push(key) : null;
-    });
-    return arr;
-}; */
-
 export const ToggleSection = memo(function ToggleSection(props) {
     console.log("Render ToggleSection");
     const { isSpecial, isLua, archive, cmd, id } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
 
-    /* const checkboxes = {
-        isSpecial: data.setting.isSpecial,
-        archive: data.setting.archive,
-        cmd: data.setting.cmd,
-        isLua: data.setting.isLua,
-    };
-
-    const activeCheckboxes = getActiveCheckboxes(checkboxes); */
-
     return (
-        //<CheckboxGroup defaultValue={activeCheckboxes}>
         <Flex gap={"2"} wrap={"wrap"}>
             <CheckboxCard
                 shadow={"md"}
@@ -84,6 +66,5 @@ export const ToggleSection = memo(function ToggleSection(props) {
                 value={"isLua"}
             />
         </Flex>
-        //</CheckboxGroup>
     );
 });

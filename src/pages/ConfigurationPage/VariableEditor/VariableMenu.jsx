@@ -6,6 +6,7 @@ import { memo, useMemo } from "react";
 import { useVariablesStore } from "../../../store/variables-store";
 import { selectSelectedData } from "../../../store/selectors";
 
+// TODO Этот компонент тоже можно унифицировать
 export const VariableMenu = memo(function VariableMenu() {
     console.log("Render VariableMenu");
     //const selectedData = useVariablesStore((state) => state.selectedNode);

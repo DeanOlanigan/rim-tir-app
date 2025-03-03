@@ -1,10 +1,10 @@
 import { Card, Box, Alert } from "@chakra-ui/react";
 import { TreeView } from "../Tree/TreeView";
-import { VariableCardTitle } from "./Title";
+import { TreeCardTitle } from "./Title";
 import { useRef, useState } from "react";
 
-export const VariableCard = ({ data = [], type }) => {
-    console.log("RENDER VariableCard", type);
+export const TreeCard = ({ data = [], treeType }) => {
+    console.log("RENDER VariableCard", treeType);
     const [isHovered, setIsHovered] = useState(false);
 
     const variableTreeRef = useRef(null);
@@ -23,8 +23,8 @@ export const VariableCard = ({ data = [], type }) => {
         >
             <Card.Header>
                 <Card.Title>
-                    <VariableCardTitle
-                        type={type}
+                    <TreeCardTitle
+                        type={treeType}
                         isHovered={isHovered}
                         variableTreeRef={variableTreeRef}
                     />
@@ -33,7 +33,7 @@ export const VariableCard = ({ data = [], type }) => {
             <Card.Body px={"0"}>
                 {data.length === 0 && (
                     <Box px={"4"} mb={"2"} w={"100%"}>
-                        {type === "variables" && (
+                        {treeType === "variables" && (
                             <Alert.Root status="info">
                                 <Alert.Indicator />
                                 <Alert.Content>
@@ -46,7 +46,7 @@ export const VariableCard = ({ data = [], type }) => {
                                 </Alert.Content>
                             </Alert.Root>
                         )}
-                        {(type === "send" || type === "receive") && (
+                        {(treeType === "send" || treeType === "receive") && (
                             <Alert.Root status="info">
                                 <Alert.Indicator />
                                 <Alert.Content>
@@ -61,7 +61,11 @@ export const VariableCard = ({ data = [], type }) => {
                         )}
                     </Box>
                 )}
-                <TreeView ref={variableTreeRef} data={data} type={type} />
+                <TreeView
+                    ref={variableTreeRef}
+                    data={data}
+                    treeType={treeType}
+                />
             </Card.Body>
         </Card.Root>
     );
