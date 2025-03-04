@@ -10,7 +10,11 @@ const Node = ({ node, style, dragHandle }) => {
     const indentSize = Number.parseFloat(`${style.paddingLeft || 0}`);
 
     return (
-        <ContextMenuWrapper apiPath={node.tree} type={node.data.type}>
+        <ContextMenuWrapper
+            apiPath={node.tree}
+            type={node.data.type}
+            subType={node.data.subType}
+        >
             <div
                 ref={dragHandle}
                 style={style}

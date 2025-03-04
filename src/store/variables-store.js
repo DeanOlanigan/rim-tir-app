@@ -14,14 +14,14 @@ import {
 } from "../utils/treeUtils";
 
 const { treeData, nodeData } = separateDataNEW(config);
-const { /* trees, */ configurationInfo } = separateTree(treeData);
+const { trees, configurationInfo } = separateTree(treeData);
 console.log(nodeData);
 
 export const useVariablesStore = create((set) => ({
     // Базовая информация о конфигурации
     configInfo: configurationInfo,
     // Деревья для react-arborist
-    send: [],
+    send: trees.receive,
     receive: [],
     variables: [],
     // Параметры всех узлов деревьев

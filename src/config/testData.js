@@ -28,7 +28,7 @@ export const receive = [
                     {
                         id: "1.1.1.1",
                         type: "functionGroup",
-                        subType: "16", // функции из протокола modbus, по которым можно сгруппировать сигналы для опроса
+                        subType: null, // функции из протокола modbus, по которым можно сгруппировать сигналы для опроса
                         name: "modbus123",
                         ignoreChildren: false,
                         setting: {

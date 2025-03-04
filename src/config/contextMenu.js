@@ -6,6 +6,9 @@ import {
     LuTrash2,
     LuUnplug,
     LuCable,
+    LuFileDigit,
+    LuFileStack,
+    LuPackage,
 } from "react-icons/lu";
 
 export const menuConfigNodeDefault = [
@@ -28,14 +31,83 @@ export const menuConfigNodeDefault = [
 ];
 
 export const menuConfigConnections = {
-    protocol: [
+    rs232: [
         {
             key: "createModbusRtu",
             label: "Создать Modbus-RTU...",
             icon: () => createElement(LuUnplug),
-            action: (treeApi) => treeApi.create({ type: "mobdusrtu" }),
         },
+        ...menuConfigNodeDefault,
     ],
+    rs485: [
+        {
+            key: "createModbusRtu",
+            label: "Создать Modbus-RTU...",
+            icon: () => createElement(LuUnplug),
+        },
+        ...menuConfigNodeDefault,
+    ],
+    iec104: [
+        {
+            key: "createASDU",
+            label: "Создать ASDU...",
+            icon: () => createElement(LuFileStack),
+        },
+        ...menuConfigNodeDefault,
+    ],
+    asdu: [
+        {
+            key: "createDataObject",
+            label: "Создать объект данных...",
+            icon: () => createElement(LuFileDigit),
+        },
+        {
+            key: "createFolder",
+            icon: () => createElement(LuFolder),
+            label: "Создать папку...",
+            action: (treeApi) => treeApi.create({ type: "folder" }),
+        },
+        ...menuConfigNodeDefault,
+    ],
+    "modbus-rtu": [
+        {
+            key: "createFunctionGroup",
+            label: "Создать группу функций...",
+            icon: () => createElement(LuPackage),
+        },
+        ...menuConfigNodeDefault,
+    ],
+    functionGroup: [
+        {
+            key: "createDataObject",
+            label: "Создать объект данных...",
+            icon: () => createElement(LuFileDigit),
+        },
+        ...menuConfigNodeDefault,
+    ],
+    gpio: [
+        {
+            key: "createDataObject",
+            label: "Создать объект данных...",
+            icon: () => createElement(LuFileDigit),
+        },
+        {
+            key: "createFolder",
+            icon: () => createElement(LuFolder),
+            label: "Создать папку...",
+            action: (treeApi) => treeApi.create({ type: "folder" }),
+        },
+        ...menuConfigNodeDefault,
+    ],
+    folder: [
+        {
+            key: "createDataObject",
+            label: "Создать объект данных...",
+            icon: () => createElement(LuFileDigit),
+        },
+        ...menuConfigNodeDefault,
+    ],
+    dataObject: [...menuConfigNodeDefault],
     default: [
         {
             key: "createRs485",
