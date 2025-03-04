@@ -1,10 +1,9 @@
-import { Box, IconButton } from "@chakra-ui/react";
-import { LuChevronRight } from "react-icons/lu";
 import styles from "../../../components/TreeView/TreeView.module.css";
 import clsx from "clsx";
 import NodeContent from "./NodeContent";
 import { memo } from "react";
 import { ContextMenuWrapper } from "./ContextMenuWrapper";
+import { NodeToggleBtn } from "./NodeToggleBtn";
 
 const Node = ({ node, style, dragHandle }) => {
     //console.log("%cRender NEW Node", "color: white; background: purple;");
@@ -37,27 +36,10 @@ const Node = ({ node, style, dragHandle }) => {
                     }}
                 >
                     {node.isLeaf ? null : (
-                        <IconButton
-                            size={"2xs"}
-                            variant={"plain"}
-                            onClick={() => {
-                                node.toggle();
-                            }}
-                            color={"fg.subtle"}
-                            _hover={{ color: "bg.inverted" }}
-                        >
-                            <Box
-                                w={"19.19px"}
-                                h={"19.19px"}
-                                as={LuChevronRight}
-                                transform={
-                                    node.isOpen
-                                        ? "rotate(90deg)"
-                                        : "rotate(0deg)"
-                                }
-                                transition={"transform 0.2s ease-in-out"}
-                            />
-                        </IconButton>
+                        <NodeToggleBtn
+                            toggle={() => node.toggle()}
+                            isOpen={node.isOpen}
+                        />
                     )}
                     <NodeContent node={node} />
                 </div>
