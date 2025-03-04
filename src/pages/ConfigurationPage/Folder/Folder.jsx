@@ -6,10 +6,6 @@ import {
     HStack,
     Badge,
     VStack,
-    Editable,
-    IconButton,
-    Input,
-    Text,
 } from "@chakra-ui/react";
 import {
     LuVariable,
@@ -18,9 +14,6 @@ import {
     LuArchive,
     LuSquareTerminal,
     LuCode,
-    LuPencilLine,
-    LuX,
-    LuCheck,
 } from "react-icons/lu";
 
 const iconMap = {
@@ -63,7 +56,7 @@ export const Folder = ({ data, onDoubleClick }) => {
     );
 };
 
-export const FolderHeader = ({ data }) => {
+export const FolderHeader = ({ name, count }) => {
     console.log("RENDER FolderHeader");
 
     return (
@@ -75,8 +68,9 @@ export const FolderHeader = ({ data }) => {
             shadow={"md"}
             p={"4"}
         >
-            <HStack>
-                <Heading textWrap={"nowrap"}>Директория {data.name}</Heading>
+            <HStack justify={"space-between"}>
+                <Heading textWrap={"nowrap"}>Директория {name}</Heading>
+                <Heading textWrap={"nowrap"}>Элементов: {count}</Heading>
                 {/* <Editable.Root
                     maxW={"300px"}
                     fontSize={"lg"}

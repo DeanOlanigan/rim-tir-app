@@ -11,13 +11,7 @@ import { useVariablesStore } from "../../../store/variables-store";
 import { shallow } from "zustand/shallow";
 import { v4 as uuid4 } from "uuid";
 import { Box } from "@chakra-ui/react";
-import {
-    DEFAULT_FOLDER,
-    DEFAULT_FOLDER_SETTING,
-    DEFAULT_VARIABLE,
-    DEFAULT_VARIABLE_SETTING,
-    DEFAULT_CONFIGURATION_DATA,
-} from "../../../config/constants";
+import { DEFAULT_CONFIGURATION_DATA } from "../../../config/constants";
 
 export const TreeView = memo(
     forwardRef(function TreeView(props, ref) {
@@ -42,7 +36,6 @@ export const TreeView = memo(
             },
             [renameNode, props.treeType]
         );
-
         // Формируй данные перед отправкой в стор, иначе дерево ебланит
         const handleCreateNode = useCallback(
             ({ parentId, index, type }) => {
@@ -82,14 +75,12 @@ export const TreeView = memo(
             },
             [addNode, createSetting, props.treeType]
         );
-
         const handleDeleteNode = useCallback(
             ({ ids }) => {
                 removeNode(props.treeType, ids);
             },
             [removeNode, props.treeType]
         );
-
         const handleMoveNode = useCallback(
             ({ dragIds, parentId, index }) => {
                 console.log(dragIds, parentId, index);
@@ -97,6 +88,27 @@ export const TreeView = memo(
             },
             [moveNode, props.treeType]
         );
+        const handleContextMenu = useCallback(
+            (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                ref?.current.root.focus();
+                ref?.current.root.select();
+            },
+            [ref]
+        );
+        const handleSelect = useCallback(() => {
+            if (ref?.current.selectedIds.size === 0) {
+                ref?.current.root.focus();
+                ref?.current.root.select();
+            }
+
+            if (shallow(selectedIds, ref?.current.selectedIds)) {
+                return;
+            }
+
+            setSelectedIds("variables", ref?.current.selectedIds);
+        }, [ref, selectedIds, setSelectedIds]);
 
         return (
             <Box w={"100%"} h={"100%"}>
@@ -114,32 +126,8 @@ export const TreeView = memo(
                                 rowHeight={32}
                                 indent={16}
                                 renderCursor={DropCursor}
-                                onSelect={() => {
-                                    if (ref?.current.selectedIds.size === 0) {
-                                        ref?.current.root.focus();
-                                        ref?.current.root.select();
-                                    }
-
-                                    if (
-                                        shallow(
-                                            selectedIds,
-                                            ref?.current.selectedIds
-                                        )
-                                    ) {
-                                        return;
-                                    }
-
-                                    setSelectedIds(
-                                        "variables",
-                                        ref?.current.selectedIds
-                                    );
-                                }}
-                                onContextMenu={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    ref?.current.root.focus();
-                                    ref?.current.root.select();
-                                }}
+                                onSelect={handleSelect}
+                                onContextMenu={handleContextMenu}
                                 onCreate={handleCreateNode}
                                 onDelete={handleDeleteNode}
                                 onRename={handleRenameNode}

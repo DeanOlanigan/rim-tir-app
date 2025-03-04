@@ -9,6 +9,7 @@ import { menuConfig } from "../../../config/contextMenu";
 
 export const ContextMenuWrapper = ({ apiPath, type = null, children }) => {
     const treeType = apiPath?.props.treeType;
+    // Нужно передавать отдельным пропсом, а не через api дерева, иначе неверно отображается контекстное меню
     const focusedNodeType = type || "default";
 
     /* console.log("%cContextMenuWrapper", "color: white; background: blue;", [

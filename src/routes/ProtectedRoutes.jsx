@@ -3,15 +3,13 @@ import { useAuthContext } from "../providers/AuthProvider/AuthContext";
 import { Toaster, toaster } from "./../components/ui/toaster";
 import Header from "../components/Header/Header";
 import { Outlet, Navigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 
 function ProtectedRoutes() {
     console.log("Render ProtectedRoutes");
-    const { isAuthenticated, sessionExpirationTime, extendSession, logout } = useAuthContext();
+    const { isAuthenticated, sessionExpirationTime, extendSession, logout } =
+        useAuthContext();
     const toastId = useRef();
-    const navigate = useNavigate();
 
-    
     const handleExtend = async () => {
         let result = await extendSession();
         if (result) {
@@ -32,8 +30,14 @@ function ProtectedRoutes() {
 
     useEffect(() => {
         console.log("ProtectedRoutes useEffect triggered");
-        console.log("ProtectedRoutes useEffect isAuthenticated:", isAuthenticated);
-        console.log("ProtectedRoutes useEffect sessionExpirationTime:", sessionExpirationTime);
+        console.log(
+            "ProtectedRoutes useEffect isAuthenticated:",
+            isAuthenticated
+        );
+        console.log(
+            "ProtectedRoutes useEffect sessionExpirationTime:",
+            sessionExpirationTime
+        );
         if (isAuthenticated && sessionExpirationTime) {
             const interval = setInterval(() => {
                 const currentTime = Math.floor(Date.now() / 1000);
@@ -42,7 +46,8 @@ function ProtectedRoutes() {
                     if (!toastId.current) {
                         toastId.current = toaster.create({
                             title: "Session expired",
-                            description: "Your session has expired. Please log in again.",
+                            description:
+                                "Your session has expired. Please log in again.",
                             type: "error",
                             duration: 4000,
                             action: {
@@ -53,12 +58,13 @@ function ProtectedRoutes() {
                                 if (details.status === "unmounted") {
                                     logout();
                                 }
-                            }
+                            },
                         });
                     } else {
                         toaster.update(toastId.current, {
                             title: "Session expired",
-                            description: "Your session has expired. Please log in again.",
+                            description:
+                                "Your session has expired. Please log in again.",
                             type: "error",
                             duration: 4000,
                             action: {
@@ -69,7 +75,7 @@ function ProtectedRoutes() {
                                 if (details.status === "unmounted") {
                                     logout();
                                 }
-                            }
+                            },
                         });
                         toaster.pause(toastId.current);
                     }
@@ -81,21 +87,25 @@ function ProtectedRoutes() {
                     if (!toastId.current) {
                         toastId.current = toaster.create({
                             title: "Session expired soon",
-                            description: `Your session will expire in ${remainingTime - 5} seconds.`,
+                            description: `Your session will expire in ${
+                                remainingTime - 5
+                            } seconds.`,
                             type: "warning",
                             duration: remainingTime,
                             action: {
                                 label: "Extend session",
                                 onClick: handleExtend,
-                            }
+                            },
                         });
                         toaster.pause(toastId.current);
                     } else {
                         toaster.update(toastId.current, {
-                            description: `Your session will expire in ${remainingTime - 5} seconds.`,
+                            description: `Your session will expire in ${
+                                remainingTime - 5
+                            } seconds.`,
                         });
                     }
-                };
+                }
             }, 1000);
 
             return () => clearInterval(interval);
@@ -109,11 +119,11 @@ function ProtectedRoutes() {
     return (
         <>
             <Toaster />
-            <Header/>
+            <Header />
             <main>
                 <Outlet />
             </main>
-        </> 
+        </>
     );
 }
 
