@@ -1,4 +1,11 @@
-import { Box, AbsoluteCenter, Alert, VStack, Heading } from "@chakra-ui/react";
+import {
+    Box,
+    AbsoluteCenter,
+    Alert,
+    VStack,
+    Heading,
+    Flex,
+} from "@chakra-ui/react";
 import { FolderHeader } from "../Folder/Folder";
 import { VariablesTable } from "../Table/Variables/VariablesTable";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
@@ -53,7 +60,7 @@ export const VariableMenu = memo(function VariableMenu() {
 
         return (
             <VStack gap={"4"} px={"1"} h={"100%"}>
-                <FolderHeader data={singleNode} />
+                <FolderHeader name={singleNode.name} count={childrens.length} />
                 <Box w={"100%"} h={"100%"} overflow={"auto"}>
                     <VariablesTable data={childrens} />
                 </Box>
@@ -71,18 +78,22 @@ export const VariableMenu = memo(function VariableMenu() {
         if (sameLevelAndType) {
             return (
                 <VStack gap={"4"} px={"1"} h={"100%"}>
-                    <Box
+                    <Flex
                         w={"100%"}
                         border={"1px solid"}
                         borderColor={"border"}
                         borderRadius={"md"}
                         shadow={"md"}
                         p={"4"}
+                        justify={"space-between"}
                     >
                         <Heading textWrap={"nowrap"}>
                             Множественный выбор
                         </Heading>
-                    </Box>
+                        <Heading textWrap={"nowrap"}>
+                            Выбрано: {selectedData.length}
+                        </Heading>
+                    </Flex>
                     <Box w={"100%"} h={"100%"} overflow={"auto"}>
                         <VariablesTable data={selectedData} />
                     </Box>
