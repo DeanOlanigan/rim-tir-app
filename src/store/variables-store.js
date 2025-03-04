@@ -4,19 +4,20 @@ import { config } from "../config/testData";
 import {
     addNodeUtil,
     removeNodeUtil,
-    moveNodeUtil,
+    moveNodesUtil,
     renameNodeUtil,
     renameNodeSettingUtil,
     createSettingUtil,
     removeSettingUtil,
     editSettingUtil,
+    moveSettingUtil,
 } from "../utils/treeUtils";
 
 const { treeData, nodeData } = separateDataNEW(config);
-const { trees, configurationInfo } = separateTree(treeData);
+const { /* trees, */ configurationInfo } = separateTree(treeData);
 console.log(nodeData);
 
-export const useVariablesStore = create((set, get) => ({
+export const useVariablesStore = create((set) => ({
     // Базовая информация о конфигурации
     configInfo: configurationInfo,
     // Деревья для react-arborist
@@ -77,11 +78,12 @@ export const useVariablesStore = create((set, get) => ({
 
     moveNode: (targetKey, dragIds, parentId, index) =>
         set((state) => ({
-            [targetKey]: moveNodeUtil(
+            [targetKey]: moveNodesUtil(
                 state[targetKey],
                 dragIds,
                 parentId,
                 index
             ),
+            settings: moveSettingUtil(state.settings, dragIds, parentId),
         })),
 }));
