@@ -24,7 +24,7 @@ export const TreeView = memo(
         const createSetting = useVariablesStore((state) => state.createSetting);
 
         const selectedIds = useVariablesStore(
-            (state) => state.selectedIds[props.type]
+            (state) => state.selectedIds[props.treeType]
         );
         const setSelectedIds = useVariablesStore(
             (state) => state.setSelectedIds
@@ -55,23 +55,6 @@ export const TreeView = memo(
                 addNode(props.treeType, parentId, node);
                 createSetting(id, setting);
                 return node;
-
-                /* if (type === "variable") {
-                    const id = uuid4();
-                    const node = {
-                        id: id,
-                        ...DEFAULT_VARIABLE,
-                    };
-                    const setting = {
-                        id: id,
-                        parentId,
-                        ...DEFAULT_VARIABLE,
-                        setting: { ...DEFAULT_VARIABLE_SETTING },
-                    };
-                    addNode("variables", parentId, node);
-                    createSetting(id, setting);
-                    return node;
-                } */
             },
             [addNode, createSetting, props.treeType]
         );
