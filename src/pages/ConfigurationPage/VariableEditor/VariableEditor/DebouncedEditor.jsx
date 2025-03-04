@@ -7,6 +7,8 @@ import debounce from "debounce";
 export const DebouncedEditor = memo(function DebouncedEditor({
     luaExpression,
     id,
+    height,
+    width,
 }) {
     const { colorMode } = useColorMode();
     const setSettings = useVariablesStore((state) => state.setSettings);
@@ -29,6 +31,8 @@ export const DebouncedEditor = memo(function DebouncedEditor({
         <Editor
             defaultLanguage="lua"
             value={value}
+            height={height}
+            width={width}
             theme={colorMode === "light" ? "vs" : "vs-dark"}
             onChange={(value) => {
                 setValue(value);

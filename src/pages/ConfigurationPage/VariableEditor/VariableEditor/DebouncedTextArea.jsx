@@ -1,10 +1,11 @@
 import { useCallback, useState, useEffect } from "react";
 import { useVariablesStore } from "../../../../store/variables-store";
 import debounce from "debounce";
-import { Field, Textarea } from "@chakra-ui/react";
+import { Textarea } from "@chakra-ui/react";
+import { Field } from "../../../../components/ui/field";
 import { headerMapping } from "../../../MonitoringPage/mappings";
 
-export const DebouncedTextarea = ({ description, id }) => {
+export const DebouncedTextarea = ({ description, id, showLabel = false }) => {
     const setSettings = useVariablesStore((state) => state.setSettings);
     const [value, setValue] = useState(description);
 
@@ -22,18 +23,18 @@ export const DebouncedTextarea = ({ description, id }) => {
     );
 
     return (
-        <Field.Root>
-            <Field.Label>{headerMapping["description"]}</Field.Label>
+        <Field label={showLabel ? headerMapping["description"] : ""}>
             <Textarea
                 size={"xs"}
-                resize={"none"}
-                rows={"5"}
+                minH={"32px"}
+                maxH={"128px"}
+                rows={"1"}
                 value={value}
                 onChange={(e) => {
                     setValue(e.target.value);
                     debounced({ id, description: e.target.value });
                 }}
             />
-        </Field.Root>
+        </Field>
     );
 };

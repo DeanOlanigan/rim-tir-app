@@ -1,5 +1,4 @@
 import { createElement } from "react";
-import { actions } from "react-arborist/dist/module/state/open-slice";
 import {
     LuFolder,
     LuVariable,

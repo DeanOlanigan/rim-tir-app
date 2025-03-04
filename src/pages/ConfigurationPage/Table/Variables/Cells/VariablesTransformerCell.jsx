@@ -5,14 +5,13 @@ import {
     PopoverTrigger,
 } from "../../../../../components/ui/popover";
 import { Button, Text, Box } from "@chakra-ui/react";
-import { Editor } from "@monaco-editor/react";
 import {
     NumberInputField,
     NumberInputRoot,
 } from "../../../../../components/ui/number-input";
 import { useVariablesStore } from "../../../../../store/variables-store";
-import { useColorMode } from "../../../../../components/ui/color-mode";
 import { memo } from "react";
+import { DebouncedEditor } from "../../../VariableEditor/VariableEditor/DebouncedEditor";
 
 export const VariablesTransformerCell = memo(function VariablesTransformerCell(
     props
@@ -20,7 +19,6 @@ export const VariablesTransformerCell = memo(function VariablesTransformerCell(
     console.log("Render VariablesTransformerCell");
     const { isLua, luaExpression, coefficient, id } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
-    const { colorMode } = useColorMode();
 
     return isLua ? (
         <PopoverRoot portalled>
@@ -42,18 +40,11 @@ export const VariablesTransformerCell = memo(function VariablesTransformerCell(
                         borderRadius={"md"}
                         shadow={"xl"}
                     >
-                        <Editor
+                        <DebouncedEditor
+                            id={id}
+                            luaExpression={luaExpression}
                             height={"300px"}
                             width={"400px"}
-                            defaultLanguage="lua"
-                            defaultValue={luaExpression}
-                            theme={colorMode === "light" ? "vs" : "vs-dark"}
-                            onChange={(value) => {
-                                console.log("value", value);
-                                setSettings(id, {
-                                    luaExpression: value,
-                                });
-                            }}
                         />
                     </Box>
                 </PopoverBody>

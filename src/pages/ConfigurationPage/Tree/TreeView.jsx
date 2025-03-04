@@ -107,8 +107,8 @@ export const TreeView = memo(
                 return;
             }
 
-            setSelectedIds("variables", ref?.current.selectedIds);
-        }, [ref, selectedIds, setSelectedIds]);
+            setSelectedIds(props.treeType, ref?.current.selectedIds);
+        }, [ref, selectedIds, setSelectedIds, props.treeType]);
 
         return (
             <Box w={"100%"} h={"100%"}>

@@ -1,13 +1,13 @@
 import { memo } from "react";
 import { Table, Text, Input } from "@chakra-ui/react";
 import {
-    DescriptionCell,
     CycleDelayCell,
     SelectGroupCell,
     VariablesTransformerCell,
     TableCheckboxCardGroupCell,
     SelectTypeCell,
 } from "./Cells";
+import { DebouncedTextarea } from "../../VariableEditor/VariableEditor/DebouncedTextArea";
 
 export const VariablesTableRow = memo(function VariablesTableRow(props) {
     console.log("RENDER VariablesTableRow");
@@ -66,7 +66,7 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                 />
             </Table.Cell>
             <Table.Cell>
-                <DescriptionCell description={description} id={id} />
+                <DebouncedTextarea description={description} id={id} />
             </Table.Cell>
         </Table.Row>
     );

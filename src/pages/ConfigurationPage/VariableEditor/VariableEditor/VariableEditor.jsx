@@ -84,6 +84,7 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
                             <DebouncedTextarea
                                 description={data.setting.description}
                                 id={data.id}
+                                showLabel
                             />
                         </Flex>
                     </Box>
@@ -91,6 +92,7 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
                         <DebouncedEditor
                             luaExpression={data.setting.luaExpression}
                             id={data.id}
+                            height={"300px"}
                         />
                     </Box>
                 </Stack>
