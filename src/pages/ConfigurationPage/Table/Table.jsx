@@ -16,11 +16,19 @@ export const TableConfig = memo(function TableConfig({ data }) {
 });
 
 export const ModbusFunctionGroupTable = ({ data }) => {
+    let keys;
+    for (const rows of data) {
+        if (rows.type === "folder") continue;
+        keys = Object.keys(rows.setting);
+    }
+
+    if (!keys) return null;
+
     return (
         <Table.Root size={"sm"} stickyHeader>
             <Table.Header>
                 <Table.Row background={"bg.subtle"}>
-                    {Object.keys(data[0].data.setting).map((key, index) => {
+                    {keys.map((key, index) => {
                         return (
                             <Table.ColumnHeader key={index}>
                                 {PARAM_DEFINITIONS[key].label}
@@ -31,25 +39,19 @@ export const ModbusFunctionGroupTable = ({ data }) => {
             </Table.Header>
             <Table.Body>
                 {data.map((element, index) => {
-                    if (element.data.type === "folder") return null;
+                    if (element.type === "folder") return null;
                     return (
                         <Table.Row key={index} background={"bg.subtle"}>
-                            {Object.keys(element.data.setting).map(
-                                (key, index) => {
-                                    return (
-                                        <Table.Cell key={index} minW={"150px"}>
-                                            <BaseInput
-                                                definition={
-                                                    PARAM_DEFINITIONS[key]
-                                                }
-                                                value={
-                                                    element.data.setting[key]
-                                                }
-                                            />
-                                        </Table.Cell>
-                                    );
-                                }
-                            )}
+                            {Object.keys(element.setting).map((key, index) => {
+                                return (
+                                    <Table.Cell key={index} minW={"150px"}>
+                                        <BaseInput
+                                            definition={PARAM_DEFINITIONS[key]}
+                                            value={element.setting[key]}
+                                        />
+                                    </Table.Cell>
+                                );
+                            })}
                         </Table.Row>
                     );
                 })}

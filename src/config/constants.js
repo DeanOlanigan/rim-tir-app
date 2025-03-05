@@ -1,4 +1,4 @@
-export const CONSTANT_VALUES = {
+const CONSTANT_VALUES = {
     PROTOCOLS: {
         modbusRTU: "modbus-rtu",
         modbusTCP: "modbus-tcp",
@@ -12,21 +12,21 @@ export const CONSTANT_VALUES = {
     },
 };
 
-export const DEFAULT_FOLDER = {
+const DEFAULT_FOLDER = {
     type: "folder",
     name: "Новая папка",
     ignoreChildren: false,
     children: [],
 };
 
-export const DEFAULT_FOLDER_SETTING = {
+const DEFAULT_FOLDER_SETTING = {
     description: "",
     group: "bemp",
     alias: "",
     tags: [],
 };
 
-export const DEFAULT_INTERFACE = {
+const DEFAULT_INTERFACE = {
     type: "interface",
     subType: "",
     name: "Новый интерфейс",
@@ -34,7 +34,7 @@ export const DEFAULT_INTERFACE = {
     children: [],
 };
 
-export const DEFAULT_PROTOCOL = {
+const DEFAULT_PROTOCOL = {
     type: "protocol",
     subType: "",
     name: "Новый протокол",
@@ -42,31 +42,61 @@ export const DEFAULT_PROTOCOL = {
     children: [],
 };
 
-export const DEFAULT_ASDU = {
+const DEFAULT_FUNCTION_GROUP = {
+    type: "functionGroup",
+    name: "Новая функциональная группа",
+    ignoreChildren: false,
+    children: [],
+};
+
+const DEFAULT_ASDU = {
     type: "asdu",
     name: "Новый ASDU",
     ignoreChildren: false,
     children: [],
 };
 
-export const DEFAULT_ASDU_SETTING = {
+const DEFAULT_ASDU_SETTING = {
     sporadical: false,
     address: "",
     pollMode: "manual",
     pollPeriod: "",
 };
 
-export const DEFAULT_DATA_OBJECT = {
+const DEFAULT_DATA_OBJECT = {
     type: "dataObject",
-    name: "Новая переменная",
+    name: "Введите описание",
 };
 
-export const DEFAULT_VARIABLE = {
+export const DEFAULT_DATA_OBJECT_SETTING = {
+    asdu: {
+        address: "12",
+        type: "Однопозиционный ТС",
+        aperture: null,
+        exec: "",
+        description: "",
+        variable: "",
+    },
+    // gpio Bruh
+    interface: {
+        address: "2",
+        function: "IN",
+        description: "",
+        variable: "",
+    },
+    functionGroup: {
+        address: "2",
+        description: "",
+        variable: "",
+    },
+};
+
+const DEFAULT_VARIABLE = {
     type: "variable",
     name: "Новая переменная",
 };
 
-export const DEFAULT_VARIABLE_SETTING = {
+const DEFAULT_VARIABLE_SETTING = {
     isSpecial: false,
     type: "bit",
     isLua: false,
@@ -81,10 +111,56 @@ export const DEFAULT_VARIABLE_SETTING = {
 };
 
 export const DEFAULT_CONFIGURATION_DATA = {
+    "modbus-rtu": {
+        node: {
+            ...DEFAULT_PROTOCOL,
+            name: "Modbus-RTU",
+            subType: "modbus-rtu",
+        },
+        setting: {
+            ...DEFAULT_PROTOCOL,
+            name: "Modbus-RTU",
+            subType: "modbus-rtu",
+            setting: {
+                logging: false,
+                deviceAddress: "1",
+                stopBit: "1",
+                parity: "None",
+                order2: "LittleEndian",
+                order4: "1-0 3-2",
+            },
+        },
+    },
+    asdu: {
+        node: { ...DEFAULT_ASDU },
+        setting: {
+            ...DEFAULT_ASDU,
+            setting: { ...DEFAULT_ASDU_SETTING },
+        },
+    },
+    functionGroup: {
+        node: { ...DEFAULT_FUNCTION_GROUP },
+        setting: {
+            ...DEFAULT_FUNCTION_GROUP,
+            setting: {
+                function: "4",
+                type: "1 бит – bool",
+            },
+        },
+    },
+    dataObject: {
+        node: { ...DEFAULT_DATA_OBJECT },
+        setting: {
+            ...DEFAULT_DATA_OBJECT,
+            setting: {},
+        },
+    },
     rs232: {
         node: { ...DEFAULT_INTERFACE, name: "RS-232", subType: "rs232" },
         setting: {
-            node: { ...DEFAULT_INTERFACE, name: "RS-232", subType: "rs232" },
+            ...DEFAULT_INTERFACE,
+            name: "RS-232",
+            subType: "rs232",
             setting: {
                 baudRate: "57600",
                 pollPeriod: "21",
@@ -94,7 +170,9 @@ export const DEFAULT_CONFIGURATION_DATA = {
     rs485: {
         node: { ...DEFAULT_INTERFACE, name: "RS-485", subType: "rs485" },
         setting: {
-            node: { ...DEFAULT_INTERFACE, name: "RS-485", subType: "rs485" },
+            ...DEFAULT_INTERFACE,
+            name: "RS-485",
+            subType: "rs485",
             setting: {
                 baudRate: "57600",
                 pollPeriod: "21",
@@ -104,7 +182,9 @@ export const DEFAULT_CONFIGURATION_DATA = {
     gpio: {
         node: { ...DEFAULT_INTERFACE, name: "GPIO", subType: "gpio" },
         setting: {
-            node: { ...DEFAULT_INTERFACE, name: "GPIO", subType: "gpio" },
+            ...DEFAULT_INTERFACE,
+            name: "GPIO",
+            subType: "gpio",
             setting: {
                 logging: false,
                 contactBounce: "200",
@@ -114,7 +194,9 @@ export const DEFAULT_CONFIGURATION_DATA = {
     iec104: {
         node: { ...DEFAULT_PROTOCOL, name: "IEC-104", subType: "iec104" },
         setting: {
-            node: { ...DEFAULT_PROTOCOL, name: "IEC-104", subType: "iec104" },
+            ...DEFAULT_PROTOCOL,
+            name: "IEC-104",
+            subType: "iec104",
             setting: {
                 logging: true,
                 side: "client",
@@ -136,7 +218,7 @@ export const DEFAULT_CONFIGURATION_DATA = {
         node: { ...DEFAULT_FOLDER },
         setting: {
             ...DEFAULT_FOLDER,
-            setting: { ...DEFAULT_FOLDER_SETTING },
+            /* setting: { ...DEFAULT_FOLDER_SETTING }, */
         },
     },
     variable: {

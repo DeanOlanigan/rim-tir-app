@@ -11,128 +11,72 @@ import {
     LuPackage,
 } from "react-icons/lu";
 
-export const menuConfigNodeDefault = [
-    {
-        key: "renameVariable",
-        icon: () => createElement(LuPencil),
-        label: "Переименовать",
-        action: (treeApi) => treeApi.edit(treeApi.focusedNode),
+const renameNode = {
+    key: "rename-node",
+    icon: () => createElement(LuPencil),
+    label: "Переименовать",
+    action: (treeApi) => treeApi.edit(treeApi.focusedNode),
+};
+const deleteNode = {
+    key: "delete-node",
+    icon: () => createElement(LuTrash2),
+    label: "Удалить",
+    style: {
+        color: "fg.error",
+        _hover: { bg: "bg.error", color: "fg.error" },
     },
-    {
-        key: "deleteVariable",
-        icon: () => createElement(LuTrash2),
-        label: "Удалить",
-        style: {
-            color: "fg.error",
-            _hover: { bg: "bg.error", color: "fg.error" },
-        },
-        action: (treeApi) => treeApi.delete([...treeApi.selectedIds]),
-    },
-];
+    action: (treeApi) => treeApi.delete([...treeApi.selectedIds]),
+};
+const createNode = (label, action, icon) => ({
+    key: `create-${action}`,
+    label,
+    icon: () => createElement(icon),
+    action: (treeApi) => treeApi.create({ type: action }),
+});
+
+export const menuConfigNodeDefault = [renameNode, deleteNode];
 
 export const menuConfigConnections = {
     rs232: [
-        {
-            key: "createModbusRtu",
-            label: "Создать Modbus-RTU...",
-            icon: () => createElement(LuUnplug),
-        },
+        createNode("Создать Modbus-RTU...", "modbus-rtu", LuUnplug),
         ...menuConfigNodeDefault,
     ],
     rs485: [
-        {
-            key: "createModbusRtu",
-            label: "Создать Modbus-RTU...",
-            icon: () => createElement(LuUnplug),
-        },
+        createNode("Создать Modbus-RTU...", "modbus-rtu", LuUnplug),
         ...menuConfigNodeDefault,
     ],
     iec104: [
-        {
-            key: "createASDU",
-            label: "Создать ASDU...",
-            icon: () => createElement(LuFileStack),
-        },
+        createNode("Создать ASDU...", "asdu", LuFileStack),
         ...menuConfigNodeDefault,
     ],
     asdu: [
-        {
-            key: "createDataObject",
-            label: "Создать объект данных...",
-            icon: () => createElement(LuFileDigit),
-        },
-        {
-            key: "createFolder",
-            icon: () => createElement(LuFolder),
-            label: "Создать папку...",
-            action: (treeApi) => treeApi.create({ type: "folder" }),
-        },
+        createNode("Создать объект данных...", "dataObject", LuFileDigit),
+        createNode("Создать папку...", "folder", LuFolder),
         ...menuConfigNodeDefault,
     ],
     "modbus-rtu": [
-        {
-            key: "createFunctionGroup",
-            label: "Создать группу функций...",
-            icon: () => createElement(LuPackage),
-        },
+        createNode("Создать группу функций...", "functionGroup", LuPackage),
         ...menuConfigNodeDefault,
     ],
     functionGroup: [
-        {
-            key: "createDataObject",
-            label: "Создать объект данных...",
-            icon: () => createElement(LuFileDigit),
-        },
+        createNode("Создать объект данных...", "dataObject", LuFileDigit),
         ...menuConfigNodeDefault,
     ],
     gpio: [
-        {
-            key: "createDataObject",
-            label: "Создать объект данных...",
-            icon: () => createElement(LuFileDigit),
-        },
-        {
-            key: "createFolder",
-            icon: () => createElement(LuFolder),
-            label: "Создать папку...",
-            action: (treeApi) => treeApi.create({ type: "folder" }),
-        },
+        //createNode("Создать объект данных...", "dataObject", LuFileDigit),
+        createNode("Создать папку...", "folder", LuFolder),
         ...menuConfigNodeDefault,
     ],
     folder: [
-        {
-            key: "createDataObject",
-            label: "Создать объект данных...",
-            icon: () => createElement(LuFileDigit),
-        },
+        createNode("Создать объект данных...", "dataObject", LuFileDigit),
         ...menuConfigNodeDefault,
     ],
-    dataObject: [...menuConfigNodeDefault],
+    dataObject: [deleteNode],
     default: [
-        {
-            key: "createRs485",
-            label: "Создать RS-485...",
-            icon: () => createElement(LuCable),
-            action: (treeApi) => treeApi.create({ type: "rs485" }),
-        },
-        {
-            key: "createRs232",
-            label: "Создать RS-232...",
-            icon: () => createElement(LuCable),
-            action: (treeApi) => treeApi.create({ type: "rs232" }),
-        },
-        {
-            key: "createIec104",
-            label: "Создать IEC-104...",
-            icon: () => createElement(LuUnplug),
-            action: (treeApi) => treeApi.create({ type: "iec104" }),
-        },
-        {
-            key: "createGPIO",
-            label: "Создать GPIO...",
-            icon: () => createElement(LuCable),
-            action: (treeApi) => treeApi.create({ type: "gpio" }),
-        },
+        createNode("Создать RS-485...", "rs485", LuCable),
+        createNode("Создать RS-232...", "rs232", LuCable),
+        createNode("Создать IEC-104...", "iec104", LuUnplug),
+        createNode("Создать GPIO...", "gpio", LuCable),
     ],
 };
 
@@ -140,28 +84,13 @@ export const menuConfig = {
     variables: {
         variable: [...menuConfigNodeDefault],
         folder: [
-            {
-                key: "createVariable",
-                icon: () => createElement(LuVariable),
-                label: "Создать переменную...",
-                action: (treeApi) => treeApi.create({ type: "variable" }),
-            },
+            createNode("Создать переменную...", "variable", LuVariable),
             { type: "separator" },
             ...menuConfigNodeDefault,
         ],
         default: [
-            {
-                key: "createVariable",
-                icon: () => createElement(LuVariable),
-                label: "Создать переменную...",
-                action: (treeApi) => treeApi.create({ type: "variable" }),
-            },
-            {
-                key: "createFolder",
-                icon: () => createElement(LuFolder),
-                label: "Создать папку...",
-                action: (treeApi) => treeApi.create({ type: "folder" }),
-            },
+            createNode("Создать переменную...", "variable", LuVariable),
+            createNode("Создать папку...", "folder", LuFolder),
         ],
     },
     send: menuConfigConnections,

@@ -11,7 +11,10 @@ import { useVariablesStore } from "../../../store/variables-store";
 import { shallow } from "zustand/shallow";
 import { v4 as uuid4 } from "uuid";
 import { Box } from "@chakra-ui/react";
-import { DEFAULT_CONFIGURATION_DATA } from "../../../config/constants";
+import {
+    DEFAULT_CONFIGURATION_DATA,
+    DEFAULT_DATA_OBJECT_SETTING,
+} from "../../../config/constants";
 
 export const TreeView = memo(
     forwardRef(function TreeView(props, ref) {
@@ -30,18 +33,30 @@ export const TreeView = memo(
             (state) => state.setSelectedIds
         );
 
+        const getParentType = useCallback(
+            (id) => {
+                const node = ref?.current.get(id);
+                const recursive = (node) => {
+                    if (node.data.type === "folder")
+                        return recursive(node.parent);
+                    return node.data.type;
+                };
+                return recursive(node);
+            },
+            [ref]
+        );
+
         const handleRenameNode = useCallback(
             ({ id, name }) => {
+                console.log(ref?.current.get(id));
                 renameNode(props.treeType, id, name);
             },
-            [renameNode, props.treeType]
+            [renameNode, props.treeType, ref]
         );
-        // Формируй данные перед отправкой в стор, иначе дерево ебланит
         const handleCreateNode = useCallback(
             ({ parentId, index, type }) => {
                 if (type === "leaf" || type === "internal") return;
                 console.log("create", parentId, index, type);
-
                 const id = uuid4();
                 const node = {
                     id: id,
@@ -52,11 +67,15 @@ export const TreeView = memo(
                     parentId,
                     ...DEFAULT_CONFIGURATION_DATA[type].setting,
                 };
+                if (type === "dataObject") {
+                    const parentType = getParentType(parentId);
+                    setting.setting = DEFAULT_DATA_OBJECT_SETTING[parentType];
+                }
                 addNode(props.treeType, parentId, node);
                 createSetting(id, setting);
                 return node;
             },
-            [addNode, createSetting, props.treeType]
+            [addNode, createSetting, props.treeType, getParentType]
         );
         const handleDeleteNode = useCallback(
             ({ ids }) => {
@@ -90,7 +109,12 @@ export const TreeView = memo(
                 return;
             }
 
-            setSelectedIds(props.treeType, ref?.current.selectedIds);
+            setSelectedIds(
+                props.treeType === "send" || props.treeType === "receive"
+                    ? "connections"
+                    : props.treeType,
+                ref?.current.selectedIds
+            );
         }, [ref, selectedIds, setSelectedIds, props.treeType]);
 
         return (

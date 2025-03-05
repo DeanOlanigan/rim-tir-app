@@ -15,7 +15,7 @@ import {
 
 const { treeData, nodeData } = separateDataNEW(config);
 const { trees, configurationInfo } = separateTree(treeData);
-console.log(nodeData);
+console.log(nodeData, trees);
 
 export const useVariablesStore = create((set) => ({
     // Базовая информация о конфигурации
@@ -25,11 +25,12 @@ export const useVariablesStore = create((set) => ({
     receive: [],
     variables: [],
     // Параметры всех узлов деревьев
-    settings: [],
+    settings: nodeData,
     // Id выбранных узлов
     selectedIds: {
         send: new Set(),
         receive: new Set(),
+        connections: new Set(),
         variables: new Set(),
     },
     setSelectedIds: (targetKey, ids) =>

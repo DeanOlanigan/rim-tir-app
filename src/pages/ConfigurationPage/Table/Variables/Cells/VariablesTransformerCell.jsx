@@ -11,7 +11,7 @@ import {
 } from "../../../../../components/ui/number-input";
 import { useVariablesStore } from "../../../../../store/variables-store";
 import { memo } from "react";
-import { DebouncedEditor } from "../../../VariableEditor/VariableEditor/DebouncedEditor";
+import { DebouncedEditor } from "../../../Editor/VariableEditor/DebouncedEditor";
 
 export const VariablesTransformerCell = memo(function VariablesTransformerCell(
     props

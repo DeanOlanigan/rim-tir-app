@@ -7,7 +7,7 @@ import {
     TableCheckboxCardGroupCell,
     SelectTypeCell,
 } from "./Cells";
-import { DebouncedTextarea } from "../../VariableEditor/VariableEditor/DebouncedTextArea";
+import { DebouncedTextarea } from "../../Editor/VariableEditor/DebouncedTextArea";
 
 export const VariablesTableRow = memo(function VariablesTableRow(props) {
     console.log("RENDER VariablesTableRow");

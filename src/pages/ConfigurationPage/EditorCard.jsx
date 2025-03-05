@@ -1,9 +1,21 @@
-import { Card, Stack, StackSeparator, Text, Box } from "@chakra-ui/react";
+import {
+    Card,
+    Stack,
+    StackSeparator,
+    Text,
+    Box,
+    Breadcrumb,
+} from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { VariableMenu } from "./VariableEditor/VariableMenu";
-import { config } from "../../config/testData";
+import { EditorWrapper } from "./Editor/EditorWrapper";
+import { useVariablesStore } from "../../store/variables-store";
 
 export const EditorCard = () => {
+    const configInfo = useVariablesStore((state) => state.configInfo);
+    const settings = useVariablesStore(
+        (state) => state.settings[configInfo.id]
+    );
+
     return (
         <Card.Root
             h={"100%"}
@@ -17,10 +29,10 @@ export const EditorCard = () => {
             <Card.Header>
                 <Card.Title>
                     <Stack direction={"row"} separator={<StackSeparator />}>
-                        <Text>{config.name}</Text>
-                        <Text>{config.setting.description}</Text>
-                        <Text>{config.setting.date}</Text>
-                        <Text>{config.setting.version}</Text>
+                        <Text>{settings.name}</Text>
+                        <Text>{settings.setting.description}</Text>
+                        <Text>{settings.setting.date}</Text>
+                        <Text>{settings.setting.version}</Text>
                     </Stack>
                 </Card.Title>
             </Card.Header>
@@ -29,13 +41,14 @@ export const EditorCard = () => {
                     <Panel collapsible collapsedSize={0} minSize={30}>
                         <Box w={"100%"} h={"100%"} pb={"2"}>
                             {/* <ConfigurationEditor data={selectedNode} /> */}
+                            <EditorWrapper type={"connections"} />
                         </Box>
                     </Panel>
                     <PanelResizeHandle className="verticalLineConf" />
                     <Panel collapsible collapsedSize={0} minSize={30}>
                         <Box w={"100%"} h={"100%"} pt={"2"}>
                             {/* TODO Унифицировать компонент */}
-                            <VariableMenu />
+                            <EditorWrapper type={"variables"} />
                         </Box>
                     </Panel>
                 </PanelGroup>

@@ -18,13 +18,13 @@ export const ContextMenuWrapper = ({
     // Нужно передавать отдельным пропсом, а не через api дерева, иначе неверно отображается контекстное меню
     const focusedNodeType = subType || type || "default";
 
-    console.log(
+    /* console.log(
         "%cContextMenuWrapper",
         `color: white; background: ${
             focusedNodeType === "default" ? "green" : "blue"
         };`,
         [treeType, focusedNodeType]
-    );
+    ); */
 
     if (!apiPath) {
         return children;

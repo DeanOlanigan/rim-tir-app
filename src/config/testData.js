@@ -27,8 +27,7 @@ export const receive = [
                 children: [
                     {
                         id: "1.1.1.1",
-                        type: "functionGroup",
-                        subType: null, // функции из протокола modbus, по которым можно сгруппировать сигналы для опроса
+                        type: "functionGroup", // функции из протокола modbus, по которым можно сгруппировать сигналы для опроса
                         name: "modbus123",
                         ignoreChildren: false,
                         setting: {
@@ -39,7 +38,6 @@ export const receive = [
                             {
                                 id: "1.1.1.1.1",
                                 type: "dataObject",
-                                subType: null,
                                 name: "test2",
                                 setting: {
                                     address: "2",
@@ -50,7 +48,6 @@ export const receive = [
                             {
                                 id: "1.1.1.1.2",
                                 type: "dataObject",
-                                subType: null,
                                 name: "new2",
                                 setting: {
                                     address: "2",
@@ -61,7 +58,6 @@ export const receive = [
                             {
                                 id: "1.1.1.1.3",
                                 type: "dataObject",
-                                subType: null,
                                 name: "new2",
                                 setting: {
                                     address: "2",
@@ -72,7 +68,6 @@ export const receive = [
                             {
                                 id: "1.1.1.1.4",
                                 type: "dataObject",
-                                subType: null,
                                 name: "new2",
                                 setting: {
                                     address: "2",
@@ -111,7 +106,6 @@ export const receive = [
             {
                 id: "1.2.1",
                 type: "asdu",
-                subType: null,
                 name: "asdu1",
                 ignoreChildren: false,
                 setting: {
@@ -124,8 +118,7 @@ export const receive = [
                     {
                         id: "1.2.1.1",
                         type: "dataObject",
-                        subType: null,
-                        name: "test3",
+                        variable: "test3",
                         setting: {
                             address: "12",
                             variable: "test3",
@@ -153,20 +146,18 @@ export const receive = [
             {
                 id: "1.3.1",
                 type: "folder",
-                subType: null,
                 name: "folder0",
                 ignoreChildren: false,
-                setting: {
+                /* setting: {
                     description: "TEST",
                     group: "bemp",
                     alias: "",
                     tags: [],
-                },
+                }, */
                 children: [
                     {
                         id: "1.3.1.1",
                         type: "dataObject",
-                        subType: null,
                         name: "test1",
                         setting: {
                             address: "2",
@@ -185,7 +176,6 @@ export const variable = [
     {
         id: "3.1",
         type: "variable",
-        subType: null,
         name: "test1",
         setting: {
             isSpecial: true,
@@ -204,21 +194,19 @@ export const variable = [
     {
         id: "3.2",
         type: "folder",
-        subType: null,
         name: "folder1",
         ignoreChildren: false,
-        setting: {
-            /* Примерное содержимое */
+        /* setting: {
+            // Примерное содержимое
             description: "Эта папка нужна для тестирования",
             group: "bemp",
             alias: "",
             tags: [],
-        },
+        }, */
         children: [
             {
                 id: "3.2.2",
                 type: "variable",
-                subType: null,
                 name: "test2",
                 setting: {
                     isSpecial: true,
@@ -237,21 +225,19 @@ export const variable = [
             {
                 id: "3.2.1",
                 type: "folder",
-                subType: null,
                 name: "folder2",
                 ignoreChildren: false,
-                setting: {
-                    /* Примерное содержимое */
+                /* setting: {
+                    // Примерное содержимое
                     description: "Эта папка нужна для тестирования",
                     group: "bemp",
                     alias: "",
                     tags: [],
-                },
+                }, */
                 children: [
                     {
                         id: "3.2.1.1",
                         type: "variable",
-                        subType: null,
                         name: "test3",
                         setting: {
                             isSpecial: true,
@@ -273,7 +259,6 @@ export const variable = [
             {
                 id: "3.2.4",
                 type: "variable",
-                subType: null,
                 name: "test9",
                 setting: {
                     isSpecial: false,
@@ -292,7 +277,6 @@ export const variable = [
             {
                 id: "3.2.5",
                 type: "variable",
-                subType: null,
                 name: "test8",
                 setting: {
                     isSpecial: true,
@@ -317,7 +301,6 @@ export const send = receive;
 export const config = {
     id: "0",
     type: "configuration",
-    subType: null,
     name: "Конфигурация для РЦДУ",
     ignoreChildren: false,
     setting: {
@@ -330,7 +313,6 @@ export const config = {
         {
             id: "1",
             type: "receive",
-            subType: null,
             name: "Получение данных",
             ignoreChildren: false,
             children: receive,
@@ -338,7 +320,6 @@ export const config = {
         {
             id: "2",
             type: "send",
-            subType: null,
             name: "Отправка данных",
             ignoreChildren: false,
             children: [],
@@ -346,7 +327,6 @@ export const config = {
         {
             id: "3",
             type: "variables",
-            subType: null,
             name: "Переменные",
             ignoreChildren: false,
             children: variable,

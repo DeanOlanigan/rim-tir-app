@@ -12,17 +12,19 @@ import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { memo, useMemo } from "react";
 import { useVariablesStore } from "../../../store/variables-store";
 import { selectSelectedData } from "../../../store/selectors";
+import { ModbusFunctionGroupTable } from "../Table/Table";
+import { ContainerNodeEditor } from "./ConnectionEditor/ContainerNodeEditor";
+import { DataObjectEditor } from "./ConnectionEditor/DataObjectEditor";
+import { EditorBreadcrumb } from "./Breadcrumb";
 
 // TODO Этот компонент тоже можно унифицировать
-export const VariableMenu = memo(function VariableMenu() {
-    console.log("Render VariableMenu");
+export const EditorWrapper = memo(function EditorWrapper({ type }) {
+    console.log("Render EditorWrapper");
     //const selectedData = useVariablesStore((state) => state.selectedNode);
     //const selectedData = [];
 
     const settings = useVariablesStore((state) => state.settings);
-    const selectedIds = useVariablesStore(
-        (state) => state.selectedIds.variables
-    );
+    const selectedIds = useVariablesStore((state) => state.selectedIds[type]);
 
     const selectedData = useMemo(() => {
         return selectSelectedData(settings, selectedIds);
@@ -31,40 +33,63 @@ export const VariableMenu = memo(function VariableMenu() {
     //const selectedData = [];
 
     if (!selectedData || selectedData.length === 0) {
-        return (
-            <Box w={"100%"} h={"100%"} position={"relative"}>
-                <AbsoluteCenter>
-                    <Alert.Root status="info">
-                        <Alert.Indicator />
-                        <Alert.Content>
-                            <Alert.Title>Ничего не выбрано</Alert.Title>
-                            <Alert.Description>
-                                Выберите узел в дереве переменных.
-                            </Alert.Description>
-                        </Alert.Content>
-                    </Alert.Root>
-                </AbsoluteCenter>
-            </Box>
-        );
+        return <EditorAlert status={"info"} type={type} />;
     }
 
     if (selectedData.length === 1) {
         const [singleNode] = selectedData;
+        const nodeType = singleNode.type;
+
         if (singleNode.children === undefined) {
-            return <VariableEditor data={singleNode} />;
+            return type === "connections" ? (
+                <DataObjectEditor data={singleNode} />
+            ) : (
+                <VariableEditor data={singleNode} />
+            );
         }
 
         const childrens = Array.from(singleNode.children)
             .map((key) => settings[key])
             .filter(Boolean);
 
+        if (nodeType === "protocol" || nodeType === "interface") {
+            return (
+                <VStack gap={"4"} px={"1"} h={"100%"} align={"start"}>
+                    <EditorBreadcrumb data={singleNode} />
+                    <ContainerNodeEditor data={singleNode} />
+                </VStack>
+            );
+        }
+
+        if (
+            nodeType === "functionGroup" ||
+            nodeType === "asdu" ||
+            nodeType === "folder"
+        ) {
+            return (
+                <VStack gap={"4"} px={"1"} h={"100%"} align={"start"}>
+                    <EditorBreadcrumb data={singleNode} />
+                    <ContainerNodeEditor data={singleNode} />
+                    <Box w={"100%"} h={"100%"} overflow={"auto"}>
+                        {type === "connections" && childrens.length > 0 && (
+                            <ModbusFunctionGroupTable data={childrens} />
+                        )}
+                        {type === "variables" && (
+                            <VariablesTable data={childrens} />
+                        )}
+                    </Box>
+                </VStack>
+            );
+        }
+
         return (
-            <VStack gap={"4"} px={"1"} h={"100%"}>
+            <div>Неизвестный узел</div>
+            /* <VStack gap={"4"} px={"1"} h={"100%"}>
                 <FolderHeader name={singleNode.name} count={childrens.length} />
                 <Box w={"100%"} h={"100%"} overflow={"auto"}>
                     <VariablesTable data={childrens} />
                 </Box>
-            </VStack>
+            </VStack> */
         );
     }
 
@@ -102,19 +127,30 @@ export const VariableMenu = memo(function VariableMenu() {
         }
     }
 
+    return <EditorAlert status={"error"} type={type} />;
+});
+
+const EditorAlert = ({ status, type }) => {
     return (
         <Box w={"100%"} h={"100%"} position={"relative"}>
             <AbsoluteCenter>
-                <Alert.Root status="error">
+                <Alert.Root status={status}>
                     <Alert.Indicator />
                     <Alert.Content>
-                        <Alert.Title>Ошибка</Alert.Title>
+                        <Alert.Title>
+                            {status === "error" && "Ошибка"}
+                            {status === "info" && "Ничего не выбрано"}
+                        </Alert.Title>
                         <Alert.Description>
-                            Выберите узлы одинакового типа.
+                            {status !== "error"
+                                ? type === "connections"
+                                    ? "Выберите узел в дереве приема или передачи"
+                                    : "Выберите узел в дереве переменных"
+                                : "Выберите узлы одинакового типа."}
                         </Alert.Description>
                     </Alert.Content>
                 </Alert.Root>
             </AbsoluteCenter>
         </Box>
     );
-});
+};

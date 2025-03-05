@@ -72,8 +72,9 @@ export const separateDataNEW = (data, nodeData = {}, parentId = null) => {
         id: data.id,
         name: data.name,
         type: data.type,
-        subType: data.subType,
     };
+
+    if (data.subType) treeData.subType = data.subType;
 
     if (Array.isArray(children)) {
         treeData.children = [];

@@ -11,20 +11,15 @@ import { useVariablesStore } from "../../../../store/variables-store";
 import { SelectTypeCell, SelectGroupCell } from "../../Table/Variables/Cells";
 import { DebouncedEditor } from "./DebouncedEditor";
 import { DebouncedTextarea } from "./DebouncedTextArea";
+import { EditorBreadcrumb } from "../Breadcrumb";
 
 export const VariableEditor = memo(function VariableEditor({ data }) {
     console.log("RENDER VariableEditor");
     const setSettings = useVariablesStore((state) => state.setSettings);
 
     return (
-        <Flex
-            direction={"column"}
-            gap={"4"}
-            w={"100%"}
-            h={"100%"}
-            px={"1"}
-            align={"center"}
-        >
+        <Flex direction={"column"} gap={"4"} w={"100%"} h={"100%"} px={"1"}>
+            <EditorBreadcrumb data={data} />
             <VariableEditorHeader name={data.name} />
             <Box maxW={"6xl"} w={"100%"} overflow={"auto"}>
                 <Stack direction={{ base: "column", md: "row" }}>
