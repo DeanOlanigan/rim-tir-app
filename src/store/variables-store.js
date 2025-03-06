@@ -12,12 +12,13 @@ import {
     editSettingUtil,
     moveSettingUtil,
 } from "../utils/treeUtils";
+import { shallow } from "zustand/shallow";
 
 const { treeData, nodeData } = separateDataNEW(config);
 const { trees, configurationInfo } = separateTree(treeData);
 console.log(nodeData, trees);
 
-export const useVariablesStore = create((set) => ({
+export const useVariablesStore = create((set, get) => ({
     // Базовая информация о конфигурации
     configInfo: configurationInfo,
     // Деревья для react-arborist
@@ -33,13 +34,19 @@ export const useVariablesStore = create((set) => ({
         connections: new Set(),
         variables: new Set(),
     },
-    setSelectedIds: (targetKey, ids) =>
-        set((state) => ({
-            selectedIds: {
-                ...state.selectedIds,
-                [targetKey]: ids,
-            },
-        })),
+    updateSelectedIds: (targetKey, ids) => {
+        const { selectedIds } = get();
+        const currentIds = selectedIds[targetKey];
+
+        if (!shallow(currentIds, ids)) {
+            set((state) => ({
+                selectedIds: {
+                    ...state.selectedIds,
+                    [targetKey]: ids,
+                },
+            }));
+        }
+    },
 
     createSetting: (nodeId, setting) =>
         set((state) => ({
