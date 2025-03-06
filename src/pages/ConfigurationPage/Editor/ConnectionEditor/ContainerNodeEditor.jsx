@@ -27,8 +27,8 @@ export const ContainerNodeEditor = ({ data }) => {
             </HStack>
             {data.setting && (
                 <SimpleGrid columns={4} columnGap={"2"} rowGap={"2"}>
-                    {Object.keys(data.setting).map((item, index) => {
-                        const definition = PARAM_DEFINITIONS[item];
+                    {Object.keys(data.setting).map((key, index) => {
+                        const definition = PARAM_DEFINITIONS[key];
                         if (!definition) return null;
                         if (definition.dependsOn) {
                             const { key, value } = definition.dependsOn;
@@ -37,8 +37,9 @@ export const ContainerNodeEditor = ({ data }) => {
                         return (
                             <BaseInput
                                 key={index}
-                                definition={PARAM_DEFINITIONS[item]}
-                                value={data.setting[item]}
+                                value={data.setting[key]}
+                                id={data.id}
+                                inputParam={key}
                                 showLabel
                             />
                         );

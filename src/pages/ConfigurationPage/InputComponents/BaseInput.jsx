@@ -1,68 +1,69 @@
-import { Switch } from "../../../components/ui/switch";
 import { Field } from "../../../components/ui/field";
-import {
-    SelectRoot,
-    SelectTrigger,
-    SelectValueText,
-    SelectContent,
-    SelectItem,
-    SelectLabel
-} from "../../../components/ui/select";
-import {
-    NumberInputField,
-    NumberInputRoot
-} from "../../../components/ui/number-input";
 import { Input } from "@chakra-ui/react";
+import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
+import {
+    SelectInput,
+    NumberInput,
+    SwitchInput,
+    DebouncedTextarea,
+} from "./index";
+import { memo } from "react";
 
-export const BaseInput = ({definition, value, showLabel = false}) => {
+export const BaseInput = memo(function BaseInput(props) {
+    const { value, id, inputParam, showLabel = false } = props;
+    const definition = PARAM_DEFINITIONS[inputParam];
     if (!definition) {
         return null;
     }
-
     const { label, type, ...rest } = definition;
 
     switch (type) {
-    case "boolean":
-        return (
-            <Field label={showLabel ? label : ""} w={"fit"}>
-                <Switch size={"lg"} checked={Boolean(value)}>{!showLabel ? label : ""}</Switch>
-            </Field>
-        );
-    case "select":
-        return (
-            <SelectRoot size={"xs"} collection={rest.options} maxW={"250px"}>
-                {showLabel && <SelectLabel>{label}</SelectLabel>}
-                <SelectTrigger>
-                    <SelectValueText
-                        placeholder={`Выберите ${label.toLowerCase()}`}
-                    />
-                </SelectTrigger>
-                <SelectContent>
-                    {rest?.options?.items.map((row) => (
-                        <SelectItem item={row} key={row.value}>
-                            {row.label}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </SelectRoot>
-        );
-    case "number":
-        return (
-            <Field label={showLabel ? label : ""} maxW={"250px"}>
-                <NumberInputRoot
-                    defaultValue={rest.defaultValue}
-                    size={"xs"}
-                    w={"100%"}
-                >
-                    <NumberInputField  placeholder={`Введите ${label.toLowerCase()}`}/>
-                </NumberInputRoot>
-            </Field>
-        );
-    default:
-        return (
-            <Field label={showLabel ? label : ""} maxW={"250px"}>
-                <Input size={"xs"}/>
-            </Field>
-        );
-    };
-};
+        case "boolean":
+            return (
+                <SwitchInput
+                    targetKey={inputParam}
+                    id={id}
+                    value={value}
+                    label={label}
+                    showLabel={showLabel}
+                />
+            );
+        case "select":
+            return (
+                <SelectInput
+                    id={id}
+                    value={value}
+                    targetKey={inputParam}
+                    collection={rest.options}
+                    label={label}
+                    showLabel={showLabel}
+                />
+            );
+        case "number":
+            return (
+                <NumberInput
+                    targetKey={inputParam}
+                    id={id}
+                    value={value}
+                    label={label}
+                    showLabel={showLabel}
+                />
+            );
+        case "textarea":
+            return (
+                <DebouncedTextarea
+                    targetKey={inputParam}
+                    id={id}
+                    value={value}
+                    label={label}
+                    showLabel={showLabel}
+                />
+            );
+        default:
+            return (
+                <Field label={showLabel ? label : ""} maxW={"250px"}>
+                    <Input size={"xs"} />
+                </Field>
+            );
+    }
+});

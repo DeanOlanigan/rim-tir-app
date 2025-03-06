@@ -1,21 +1,17 @@
 import { memo } from "react";
-import { Flex, Box, Field, Stack } from "@chakra-ui/react";
-import {
-    NumberInputField,
-    NumberInputRoot,
-} from "../../../../components/ui/number-input";
+import { Flex, Box, Stack } from "@chakra-ui/react";
 import { VariableEditorHeader } from "./VariableEditorHeader";
 import { ToggleSection } from "./ToggleSection";
-import { headerMapping } from "../../../MonitoringPage/mappings";
-import { useVariablesStore } from "../../../../store/variables-store";
-import { SelectTypeCell, SelectGroupCell } from "../../Table/Variables/Cells";
-import { DebouncedEditor } from "./DebouncedEditor";
-import { DebouncedTextarea } from "./DebouncedTextArea";
 import { EditorBreadcrumb } from "../Breadcrumb";
+import {
+    NumberInput,
+    SelectInput,
+    DebouncedTextarea,
+    DebouncedEditor,
+} from "../../InputComponents";
 
 export const VariableEditor = memo(function VariableEditor({ data }) {
     console.log("RENDER VariableEditor");
-    const setSettings = useVariablesStore((state) => state.setSettings);
 
     return (
         <Flex direction={"column"} gap={"4"} w={"100%"} h={"100%"} px={"1"}>
@@ -27,58 +23,47 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
                         <ToggleSection
                             id={data.id}
                             isSpecial={data.setting.isSpecial}
-                            isLua={data.setting.isLua}
                             archive={data.setting.archive}
                             cmd={data.setting.cmd}
+                            isLua={data.setting.isLua}
                         />
                         <Flex gap={"2"} p={"2"}>
-                            <SelectTypeCell
-                                type={data.setting.type}
+                            <SelectInput
+                                targetKey={"type"}
                                 id={data.id}
+                                value={data.setting.type}
+                                showLabel
                             />
-                            <SelectGroupCell
-                                group={data.setting.group}
+                            <SelectInput
+                                targetKey={"group"}
                                 id={data.id}
+                                value={data.setting.group}
+                                showLabel
                             />
                         </Flex>
                         <Flex p={"2"} gap={"2"}>
-                            <Field.Root hidden={data.setting.isLua}>
-                                <Field.Label>
-                                    {headerMapping["coefficient"]}
-                                </Field.Label>
-                                <NumberInputRoot
-                                    size={"xs"}
+                            <Box hidden={data.setting.isLua}>
+                                <NumberInput
+                                    targetKey={"coefficient"}
+                                    id={data.id}
                                     value={data.setting.coefficient}
-                                    onValueChange={(e) => {
-                                        setSettings(data.id, {
-                                            coefficient: e.value,
-                                        });
-                                    }}
-                                >
-                                    <NumberInputField />
-                                </NumberInputRoot>
-                            </Field.Root>
-                            <Field.Root hidden={!data.setting.isSpecial}>
-                                <Field.Label>
-                                    {headerMapping["specialCycleDelay"]}
-                                </Field.Label>
-                                <NumberInputRoot
-                                    size={"xs"}
+                                    showLabel
+                                />
+                            </Box>
+                            <Box hidden={!data.setting.isSpecial}>
+                                <NumberInput
+                                    targetKey={"specialCycleDelay"}
+                                    id={data.id}
                                     value={data.setting.specialCycleDelay}
-                                    onValueChange={(e) => {
-                                        setSettings(data.id, {
-                                            specialCycleDelay: e.value,
-                                        });
-                                    }}
-                                >
-                                    <NumberInputField />
-                                </NumberInputRoot>
-                            </Field.Root>
+                                    showLabel
+                                />
+                            </Box>
                         </Flex>
                         <Flex p={"2"}>
                             <DebouncedTextarea
-                                description={data.setting.description}
+                                targetKey={"description"}
                                 id={data.id}
+                                value={data.setting.description}
                                 showLabel
                             />
                         </Flex>

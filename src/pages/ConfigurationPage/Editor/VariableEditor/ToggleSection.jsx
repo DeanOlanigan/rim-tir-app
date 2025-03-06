@@ -6,65 +6,73 @@ import {
     LuCode,
     LuRefreshCcwDot,
 } from "react-icons/lu";
-import { headerMapping } from "../../../MonitoringPage/mappings";
 import { useVariablesStore } from "../../../../store/variables-store";
 import { memo } from "react";
+import { PARAM_DEFINITIONS } from "../../../../config/paramDefinitions";
+
+const iconMap = {
+    isSpecial: LuRefreshCcwDot,
+    isLua: LuCode,
+    cmd: LuSquareTerminal,
+    archive: LuArchive,
+};
+
+const sizeParams = {
+    sm: {
+        shadow: "md",
+        size: "xs",
+        iconSize: 16,
+        showLabel: false,
+        w: "32px",
+        h: "32px",
+    },
+    md: {
+        shadow: "md",
+        size: "md",
+        iconSize: 24,
+        showLabel: true,
+    },
+};
 
 export const ToggleSection = memo(function ToggleSection(props) {
     console.log("Render ToggleSection");
-    const { isSpecial, isLua, archive, cmd, id } = props;
+    const { isLua, isSpecial, cmd, archive, id, size = "md" } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
+    const sizeProps = sizeParams[size];
+    const checkboxes = {
+        isSpecial,
+        archive,
+        cmd,
+        isLua,
+    };
 
     return (
         <Flex gap={"2"} wrap={"wrap"}>
-            <CheckboxCard
-                shadow={"md"}
-                size={"md"}
-                align={"center"}
-                label={headerMapping["isSpecial"]}
-                checked={isSpecial}
-                onCheckedChange={(e) =>
-                    setSettings(id, { isSpecial: !!e.checked })
-                }
-                icon={<LuRefreshCcwDot size={24} />}
-                indicator={false}
-                value={"isSpecial"}
-            />
-            <CheckboxCard
-                shadow={"md"}
-                size={"md"}
-                align={"center"}
-                label={headerMapping["archive"]}
-                checked={archive}
-                onCheckedChange={(e) =>
-                    setSettings(id, { archive: !!e.checked })
-                }
-                icon={<LuArchive size={24} />}
-                indicator={false}
-                value={"archive"}
-            />
-            <CheckboxCard
-                shadow={"md"}
-                size={"md"}
-                align={"center"}
-                label={headerMapping["cmd"]}
-                checked={cmd}
-                onCheckedChange={(e) => setSettings(id, { cmd: !!e.checked })}
-                icon={<LuSquareTerminal size={24} />}
-                indicator={false}
-                value={"cmd"}
-            />
-            <CheckboxCard
-                shadow={"md"}
-                size={"md"}
-                align={"center"}
-                label={headerMapping["isLua"]}
-                checked={isLua}
-                onCheckedChange={(e) => setSettings(id, { isLua: !!e.checked })}
-                icon={<LuCode size={24} />}
-                indicator={false}
-                value={"isLua"}
-            />
+            {Object.keys(checkboxes).map((key) => {
+                const IconComponent = iconMap[key];
+                return (
+                    <CheckboxCard
+                        key={key}
+                        minW={sizeProps.w}
+                        minH={sizeProps.h}
+                        maxW={sizeProps.w}
+                        maxH={sizeProps.h}
+                        shadow={sizeProps.shadow}
+                        size={sizeProps.size}
+                        label={
+                            sizeProps.showLabel && PARAM_DEFINITIONS[key].label
+                        }
+                        icon={<IconComponent size={sizeProps.iconSize} />}
+                        checked={checkboxes[key]}
+                        align={"center"}
+                        justify={"center"}
+                        onCheckedChange={(e) =>
+                            setSettings(id, { [key]: !!e.checked })
+                        }
+                        indicator={false}
+                    />
+                );
+            })}
         </Flex>
     );
 });

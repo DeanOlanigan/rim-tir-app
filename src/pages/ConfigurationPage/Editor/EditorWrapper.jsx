@@ -6,18 +6,17 @@ import {
     Heading,
     Flex,
 } from "@chakra-ui/react";
-import { FolderHeader } from "../Folder/Folder";
-import { VariablesTable } from "../Table/Variables/VariablesTable";
+import { VariablesTable } from "./VariableEditor/Table/VariablesTable";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { memo, useMemo } from "react";
 import { useVariablesStore } from "../../../store/variables-store";
 import { selectSelectedData } from "../../../store/selectors";
-import { ModbusFunctionGroupTable } from "../Table/Table";
+import { DataObjectsTable } from "./ConnectionEditor/Table/Table";
 import { ContainerNodeEditor } from "./ConnectionEditor/ContainerNodeEditor";
 import { DataObjectEditor } from "./ConnectionEditor/DataObjectEditor";
 import { EditorBreadcrumb } from "./Breadcrumb";
 
-// TODO Этот компонент тоже можно унифицировать
+// TODO Лишний ререндер, мб вынести логику с выбором данных в другое место?
 export const EditorWrapper = memo(function EditorWrapper({ type }) {
     console.log("Render EditorWrapper");
     //const selectedData = useVariablesStore((state) => state.selectedNode);
@@ -72,7 +71,7 @@ export const EditorWrapper = memo(function EditorWrapper({ type }) {
                     <ContainerNodeEditor data={singleNode} />
                     <Box w={"100%"} h={"100%"} overflow={"auto"}>
                         {type === "connections" && childrens.length > 0 && (
-                            <ModbusFunctionGroupTable data={childrens} />
+                            <DataObjectsTable data={childrens} />
                         )}
                         {type === "variables" && (
                             <VariablesTable data={childrens} />
@@ -82,15 +81,7 @@ export const EditorWrapper = memo(function EditorWrapper({ type }) {
             );
         }
 
-        return (
-            <div>Неизвестный узел</div>
-            /* <VStack gap={"4"} px={"1"} h={"100%"}>
-                <FolderHeader name={singleNode.name} count={childrens.length} />
-                <Box w={"100%"} h={"100%"} overflow={"auto"}>
-                    <VariablesTable data={childrens} />
-                </Box>
-            </VStack> */
-        );
+        return <div>Неизвестный узел</div>;
     }
 
     if (selectedData.length > 1) {

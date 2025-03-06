@@ -1,15 +1,11 @@
 import { useCallback, useEffect, useState, memo } from "react";
-import { useColorMode } from "../../../../components/ui/color-mode";
+import { useColorMode } from "../../../components/ui/color-mode";
 import { Editor } from "@monaco-editor/react";
-import { useVariablesStore } from "../../../../store/variables-store";
+import { useVariablesStore } from "../../../store/variables-store";
 import debounce from "debounce";
 
-export const DebouncedEditor = memo(function DebouncedEditor({
-    luaExpression,
-    id,
-    height,
-    width,
-}) {
+export const DebouncedEditor = memo(function DebouncedEditor(props) {
+    const { luaExpression, id, height, width } = props;
     const { colorMode } = useColorMode();
     const setSettings = useVariablesStore((state) => state.setSettings);
     const [value, setValue] = useState(luaExpression);

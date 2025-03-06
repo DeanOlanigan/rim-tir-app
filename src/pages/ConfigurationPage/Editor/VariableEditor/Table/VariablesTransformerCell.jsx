@@ -5,20 +5,15 @@ import {
     PopoverTrigger,
 } from "../../../../../components/ui/popover";
 import { Button, Text, Box } from "@chakra-ui/react";
-import {
-    NumberInputField,
-    NumberInputRoot,
-} from "../../../../../components/ui/number-input";
-import { useVariablesStore } from "../../../../../store/variables-store";
 import { memo } from "react";
-import { DebouncedEditor } from "../../../Editor/VariableEditor/DebouncedEditor";
+import { DebouncedEditor, NumberInput } from "../../../InputComponents";
+import { PARAM_DEFINITIONS } from "../../../../../config/paramDefinitions";
 
 export const VariablesTransformerCell = memo(function VariablesTransformerCell(
     props
 ) {
     console.log("Render VariablesTransformerCell");
     const { isLua, luaExpression, coefficient, id } = props;
-    const setSettings = useVariablesStore((state) => state.setSettings);
 
     return isLua ? (
         <PopoverRoot portalled>
@@ -51,16 +46,11 @@ export const VariablesTransformerCell = memo(function VariablesTransformerCell(
             </PopoverContent>
         </PopoverRoot>
     ) : (
-        <NumberInputRoot
+        <NumberInput
+            targetKey={"coefficient"}
+            id={id}
             value={coefficient}
-            size={"xs"}
-            onValueChange={(data) => {
-                setSettings(id, {
-                    coefficient: data.value,
-                });
-            }}
-        >
-            <NumberInputField />
-        </NumberInputRoot>
+            label={PARAM_DEFINITIONS.coefficient.label}
+        />
     );
 });

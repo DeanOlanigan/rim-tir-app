@@ -15,7 +15,7 @@ import {
     DEFAULT_CONFIGURATION_DATA,
     DEFAULT_DATA_OBJECT_SETTING,
 } from "../../../config/constants";
-
+// TODO Вынести логику в хук
 export const TreeView = memo(
     forwardRef(function TreeView(props, ref) {
         console.log("%cRender NEW TreeView", "color: white; background: red;");

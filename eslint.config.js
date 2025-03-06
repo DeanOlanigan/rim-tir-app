@@ -37,7 +37,7 @@ export default [
             semi: ["error", "always"],
             quotes: ["error", "double"],
             "keyword-spacing": ["error", { before: true, after: true }],
-            indent: ["error", 4],
+            indent: ["error", 4, { SwitchCase: 1 }],
             "no-var": "error",
             camelcase: ["error", { properties: "always" }],
         },

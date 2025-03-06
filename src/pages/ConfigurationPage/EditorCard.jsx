@@ -1,11 +1,4 @@
-import {
-    Card,
-    Stack,
-    StackSeparator,
-    Text,
-    Box,
-    Breadcrumb,
-} from "@chakra-ui/react";
+import { Card, Stack, StackSeparator, Text, Box } from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { EditorWrapper } from "./Editor/EditorWrapper";
 import { useVariablesStore } from "../../store/variables-store";
@@ -40,14 +33,12 @@ export const EditorCard = () => {
                 <PanelGroup direction="vertical">
                     <Panel collapsible collapsedSize={0} minSize={30}>
                         <Box w={"100%"} h={"100%"} pb={"2"}>
-                            {/* <ConfigurationEditor data={selectedNode} /> */}
                             <EditorWrapper type={"connections"} />
                         </Box>
                     </Panel>
                     <PanelResizeHandle className="verticalLineConf" />
                     <Panel collapsible collapsedSize={0} minSize={30}>
                         <Box w={"100%"} h={"100%"} pt={"2"}>
-                            {/* TODO Унифицировать компонент */}
                             <EditorWrapper type={"variables"} />
                         </Box>
                     </Panel>

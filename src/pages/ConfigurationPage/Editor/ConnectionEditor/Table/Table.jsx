@@ -1,21 +1,8 @@
 import { Table } from "@chakra-ui/react";
-import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
-import { BaseInput } from "../InputComponents/BaseInput";
-import { VariablesTableHeader } from "./Variables/VariablesTableHeader";
-import { VariablesTableBody } from "./Variables/VariablesTableBody";
-import { memo } from "react";
+import { PARAM_DEFINITIONS } from "../../../../../config/paramDefinitions";
+import { BaseInput } from "../../../InputComponents/BaseInput";
 
-export const TableConfig = memo(function TableConfig({ data }) {
-    console.log("RENDER TableConfig");
-    return (
-        <Table.Root size={"sm"} stickyHeader>
-            <VariablesTableHeader />
-            <VariablesTableBody data={data} />
-        </Table.Root>
-    );
-});
-
-export const ModbusFunctionGroupTable = ({ data }) => {
+export const DataObjectsTable = ({ data }) => {
     let keys;
     for (const rows of data) {
         if (rows.type === "folder") continue;
@@ -46,8 +33,9 @@ export const ModbusFunctionGroupTable = ({ data }) => {
                                 return (
                                     <Table.Cell key={index} minW={"150px"}>
                                         <BaseInput
-                                            definition={PARAM_DEFINITIONS[key]}
                                             value={element.setting[key]}
+                                            id={element.id}
+                                            inputParam={key}
                                         />
                                     </Table.Cell>
                                 );

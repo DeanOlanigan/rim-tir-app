@@ -9,7 +9,7 @@ import {
     sideList,
     modbusFunctionGroupTypes,
     pollModeList,
-    execList
+    execList,
 } from "./filterOptions";
 
 export const PARENT_NAMES = {
@@ -17,7 +17,7 @@ export const PARENT_NAMES = {
     protocol: "Протокол",
     folder: "Директория",
     functionGroup: "Функциональная группа",
-    asdu: "ASDU"
+    asdu: "ASDU",
 };
 
 export const PARAM_DEFINITIONS = {
@@ -34,7 +34,7 @@ export const PARAM_DEFINITIONS = {
     isLua: {
         type: "boolean",
         label: "Lua",
-        defaultValue: false
+        defaultValue: false,
     },
     description: {
         type: "textarea",
@@ -43,157 +43,160 @@ export const PARAM_DEFINITIONS = {
     cmd: {
         type: "boolean",
         label: "Команда пользователя",
-        defaultValue: false
+        defaultValue: false,
     },
     archive: {
         type: "boolean",
         label: "В архив",
-        defaultValue: false
+        defaultValue: false,
     },
     group: {
         type: "select",
         label: "Группа",
-        options: groups
+        options: groups,
     },
     measurement: {
         type: "select",
         label: "Единицы измерения",
-        options: null
+        options: null,
     },
     coefficient: {
         type: "number",
-        label: "Коэффициент"
+        label: "Коэффициент",
     },
     luaExpression: "textarea",
-    specialCycleDelay: "number",
+    specialCycleDelay: {
+        type: "number",
+        label: "Цикличный вызов, сек",
+    },
     isLog: {
         type: "boolean",
         label: "Логирование",
-        defaultValue: false
+        defaultValue: false,
     },
     isClient: {
         type: "boolean",
         label: "Клиент",
-        defaultValue: false
+        defaultValue: false,
     },
     logging: {
         type: "boolean",
         label: "Логирование",
-        defaultValue: false
+        defaultValue: false,
     },
     contactBounce: {
         type: "number",
-        label: "Период дребезга"
+        label: "Период дребезга",
     },
     side: {
         type: "select",
         label: "Тип",
-        options: sideList
+        options: sideList,
     },
     address: {
         type: "input",
-        label: "Адрес"
+        label: "Адрес",
     },
     port: {
         type: "number",
-        label: "Порт"
+        label: "Порт",
     },
     lengthOfASDU: {
         type: "number",
-        label: "Длина адреса ASDU"
+        label: "Длина адреса ASDU",
     },
     lengthOfCause: {
         type: "number",
-        label: "Длина причины передачи"
+        label: "Длина причины передачи",
     },
     lengthOfAdr: {
         type: "number",
-        label: "Длина адреса объекта"
+        label: "Длина адреса объекта",
     },
     k: {
         type: "number",
-        label: "k"
+        label: "k",
     },
     w: {
         type: "number",
-        label: "w"
+        label: "w",
     },
     t0: {
         type: "number",
-        label: "t0"
+        label: "t0",
     },
     t1: {
         type: "number",
-        label: "t1"
+        label: "t1",
     },
     t2: {
         type: "number",
-        label: "t2"
+        label: "t2",
     },
     t3: {
         type: "number",
-        label: "t3"
+        label: "t3",
     },
     deviceAddress: {
         type: "number",
-        label: "Адрес устройства"
+        label: "Адрес устройства",
     },
     baudRate: {
         type: "select",
         label: "Скорость",
-        options: baudRateList
+        options: baudRateList,
     },
     stopBit: {
         type: "select",
         label: "Стоп-бит",
-        options: stopBitList
+        options: stopBitList,
     },
     parity: {
         type: "select",
         label: "Паритет",
-        options: parityList
+        options: parityList,
     },
     order2: {
         type: "select",
         label: "Порядок 2-х байт",
-        options: orderTwoList
+        options: orderTwoList,
     },
     order4: {
         type: "select",
         label: "Порядок 4-х байт",
-        options: orderFourList
+        options: orderFourList,
     },
     pollMode: {
         label: "Режим опроса",
         type: "select",
-        options: pollModeList
+        options: pollModeList,
     },
     pollPeriod: {
         type: "number",
         label: "Период опроса",
-        dependsOn: { key: "pollMode", value: "manual" }
+        dependsOn: { key: "pollMode", value: "manual" },
     },
     variable: {
         type: "select",
-        label: "Переменная"
+        label: "Переменная",
     },
     function: {
         type: "select",
         label: "Функция",
-        options: modbusFunctionGroupTypes
+        options: modbusFunctionGroupTypes,
     },
     sporadical: {
         type: "boolean",
         label: "Спорадический",
-        defaultValue: false
+        defaultValue: false,
     },
     aperture: {
         type: "number",
-        label: "Апертура"
+        label: "Апертура",
     },
     exec: {
         type: "select",
         label: "Команда",
-        options: execList
+        options: execList,
     },
 };

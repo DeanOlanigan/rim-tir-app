@@ -1,6 +1,5 @@
 import { Flex, Box, AbsoluteCenter, Text, SimpleGrid } from "@chakra-ui/react";
 import { BaseInput } from "../../InputComponents/BaseInput";
-import { PARAM_DEFINITIONS } from "../../../../config/paramDefinitions";
 import { EditorBreadcrumb } from "../Breadcrumb";
 
 export const DataObjectEditor = ({ data }) => {
@@ -13,8 +12,9 @@ export const DataObjectEditor = ({ data }) => {
                     return (
                         <BaseInput
                             key={index}
-                            definition={PARAM_DEFINITIONS[key]}
                             value={data.setting[key]}
+                            id={data.id}
+                            inputParam={key}
                             showLabel
                         />
                     );

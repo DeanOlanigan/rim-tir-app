@@ -1,13 +1,13 @@
 import { memo } from "react";
-import { Table, Text, Input } from "@chakra-ui/react";
+import { Table, Text } from "@chakra-ui/react";
+import { VariablesTransformerCell } from "./VariablesTransformerCell";
 import {
-    CycleDelayCell,
-    SelectGroupCell,
-    VariablesTransformerCell,
-    TableCheckboxCardGroupCell,
-    SelectTypeCell,
-} from "./Cells";
-import { DebouncedTextarea } from "../../Editor/VariableEditor/DebouncedTextArea";
+    NumberInput,
+    SelectInput,
+    DebouncedTextarea,
+} from "../../../InputComponents";
+import { PARAM_DEFINITIONS } from "../../../../../config/paramDefinitions";
+import { ToggleSection } from "../ToggleSection";
 
 export const VariablesTableRow = memo(function VariablesTableRow(props) {
     console.log("RENDER VariablesTableRow");
@@ -20,7 +20,7 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
         cmd,
         type,
         group,
-        measurement,
+        /* measurement, */
         luaExpression,
         coefficient,
         specialCycleDelay,
@@ -32,23 +32,25 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
             <Table.Cell>
                 <Text>{name}</Text>
             </Table.Cell>
-            <Table.Cell>
-                <TableCheckboxCardGroupCell
+            <Table.Cell minW={"170px"}>
+                <ToggleSection
+                    id={id}
                     isSpecial={isSpecial}
-                    isLua={isLua}
                     archive={archive}
                     cmd={cmd}
-                    id={id}
+                    isLua={isLua}
+                    size={"sm"}
                 />
             </Table.Cell>
             <Table.Cell>
-                <SelectTypeCell type={type} id={id} />
+                <SelectInput targetKey={"type"} id={id} value={type} />
             </Table.Cell>
             <Table.Cell>
-                <SelectGroupCell group={group} id={id} />
+                <SelectInput targetKey={"group"} id={id} value={group} />
             </Table.Cell>
             <Table.Cell>
-                <Input value={measurement} size={"xs"} />
+                {/* TODO Доделать */}
+                <Text>under dev.</Text>
             </Table.Cell>
             <Table.Cell>
                 <VariablesTransformerCell
@@ -59,14 +61,20 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                 />
             </Table.Cell>
             <Table.Cell>
-                <CycleDelayCell
-                    isSpecial={isSpecial}
-                    specialCycleDelay={specialCycleDelay}
+                <NumberInput
+                    targetKey={"specialCycleDelay"}
                     id={id}
+                    value={specialCycleDelay}
+                    label={PARAM_DEFINITIONS.specialCycleDelay.label}
                 />
             </Table.Cell>
             <Table.Cell>
-                <DebouncedTextarea description={description} id={id} />
+                <DebouncedTextarea
+                    targetKey={"description"}
+                    id={id}
+                    value={description}
+                    label={PARAM_DEFINITIONS.description.label}
+                />
             </Table.Cell>
         </Table.Row>
     );
