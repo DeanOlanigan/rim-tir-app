@@ -1,11 +1,11 @@
-import { Field } from "../../../components/ui/field";
-import { Input } from "@chakra-ui/react";
 import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 import {
     SelectInput,
     NumberInput,
+    TextInput,
     SwitchInput,
     DebouncedTextarea,
+    DroppableInput,
 } from "./index";
 import { memo } from "react";
 
@@ -59,11 +59,25 @@ export const BaseInput = memo(function BaseInput(props) {
                     showLabel={showLabel}
                 />
             );
+        case "drop":
+            return (
+                <DroppableInput
+                    targetKey={inputParam}
+                    id={id}
+                    value={value}
+                    label={label}
+                    showLabel={showLabel}
+                />
+            );
         default:
             return (
-                <Field label={showLabel ? label : ""} maxW={"250px"}>
-                    <Input size={"xs"} />
-                </Field>
+                <TextInput
+                    targetKey={inputParam}
+                    id={id}
+                    value={value}
+                    label={label}
+                    showLabel={showLabel}
+                />
             );
     }
 });

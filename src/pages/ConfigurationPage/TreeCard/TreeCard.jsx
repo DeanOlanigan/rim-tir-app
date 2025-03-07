@@ -1,9 +1,9 @@
 import { Card, Box, Alert } from "@chakra-ui/react";
 import { TreeView } from "../Tree/TreeView";
 import { TreeCardTitle } from "./Title";
-import { useRef, useState } from "react";
+import { useRef, useState, memo } from "react";
 
-export const TreeCard = ({ data = [], treeType }) => {
+export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
     console.log("RENDER VariableCard", treeType);
     const [isHovered, setIsHovered] = useState(false);
 
@@ -69,4 +69,4 @@ export const TreeCard = ({ data = [], treeType }) => {
             </Card.Body>
         </Card.Root>
     );
-};
+});

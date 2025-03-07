@@ -4,40 +4,48 @@ import "../../components/ResizebalePanel/ResizebalePanel.css";
 import { TreeCard } from "./TreeCard/TreeCard";
 import { useVariablesStore } from "../../store/variables-store";
 import { EditorCard } from "./EditorCard";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 function ConfigurationPage() {
     console.log("Render ConfigurationPage");
+
     //const [selectedNode, setSelectedNode] = useState();
 
     return (
-        <Box height="100%">
-            <PanelGroup autoSaveId="persistence" direction="horizontal">
-                <Panel collapsible={true} collapsedSize={0} minSize={15}>
-                    <PanelGroup autoSaveId="persistence1" direction="vertical">
-                        <Panel minSize={15}>
-                            <ReceiveWrapper />
-                        </Panel>
-                        <PanelResizeHandle className="verticalLine" />
-                        <Panel minSize={15}>
-                            <SendWrapper />
-                        </Panel>
-                    </PanelGroup>
-                </Panel>
-                <PanelResizeHandle className="verticalLine" />
-                <Panel minSize={45}>
-                    <EditorCard />
-                </Panel>
-                <PanelResizeHandle className="verticalLine" />
-                <Panel
-                    collapsible={true}
-                    collapsedSize={0}
-                    defaultSize={30}
-                    minSize={15}
-                >
-                    <VariablesWrapper />
-                </Panel>
-            </PanelGroup>
-        </Box>
+        <DndProvider backend={HTML5Backend}>
+            <Box height="100%">
+                <PanelGroup autoSaveId="persistence" direction="horizontal">
+                    <Panel collapsible={true} collapsedSize={0} minSize={15}>
+                        <PanelGroup
+                            autoSaveId="persistence1"
+                            direction="vertical"
+                        >
+                            <Panel minSize={15}>
+                                <ReceiveWrapper />
+                            </Panel>
+                            <PanelResizeHandle className="verticalLine" />
+                            <Panel minSize={15}>
+                                <SendWrapper />
+                            </Panel>
+                        </PanelGroup>
+                    </Panel>
+                    <PanelResizeHandle className="verticalLine" />
+                    <Panel minSize={45}>
+                        <EditorCard />
+                    </Panel>
+                    <PanelResizeHandle className="verticalLine" />
+                    <Panel
+                        collapsible={true}
+                        collapsedSize={0}
+                        defaultSize={30}
+                        minSize={15}
+                    >
+                        <VariablesWrapper />
+                    </Panel>
+                </PanelGroup>
+            </Box>
+        </DndProvider>
     );
 }
 

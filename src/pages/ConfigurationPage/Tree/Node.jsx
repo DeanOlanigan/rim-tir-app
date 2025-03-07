@@ -1,12 +1,22 @@
 import styles from "../../../components/TreeView/TreeView.module.css";
 import clsx from "clsx";
 import NodeContent from "./NodeContent";
-import { memo } from "react";
+import { memo /* useEffect, useRef */ } from "react";
 import { ContextMenuWrapper } from "./ContextMenuWrapper";
 import { NodeToggleBtn } from "./NodeToggleBtn";
 
-const Node = ({ node, style, dragHandle }) => {
-    //console.log("%cRender NEW Node", "color: white; background: purple;");
+// TODO Ререндер при перетаскивании всех узлов
+export const Node = memo(function Node({ node, style, dragHandle, tree }) {
+    console.log("%cRender NEW Node", "color: white; background: purple;");
+
+    /* const prevProps = useRef(style);
+    useEffect(() => {
+        if (prevProps.current !== style) {
+            console.log("style changed:", prevProps.current, "->", style);
+            prevProps.current = style;
+        }
+    }, [style]); */
+
     const indentSize = Number.parseFloat(`${style.paddingLeft || 0}`);
 
     return (
@@ -18,7 +28,12 @@ const Node = ({ node, style, dragHandle }) => {
             <div
                 ref={dragHandle}
                 style={style}
-                className={clsx(styles.node, node.state)}
+                className={clsx(styles.node, node.state, {
+                    [styles.highlight]:
+                        tree.dragDestinationParent?.isAncestorOf(node) &&
+                        tree.dragDestinationParent?.id !==
+                            tree.dragNode?.parent?.id,
+                })}
                 onContextMenu={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -50,5 +65,4 @@ const Node = ({ node, style, dragHandle }) => {
             </div>
         </ContextMenuWrapper>
     );
-};
-export default memo(Node);
+});

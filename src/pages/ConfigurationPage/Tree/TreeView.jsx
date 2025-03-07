@@ -5,15 +5,16 @@ import { AutoSizer } from "react-virtualized";
 
 import { DropCursor } from "../../../components/TreeView/DropCursor";
 import { ContextMenuWrapper } from "./ContextMenuWrapper";
-import Node from "./Node";
+import { Node } from "./Node";
 import { Box } from "@chakra-ui/react";
 import { useTreeViewHandlers } from "../../../hooks/useTreeViewHandlers";
+import { useDragDropManager } from "react-dnd";
 
 // TODO Вынести логику в хук
 export const TreeView = memo(
     forwardRef(function TreeView(props, ref) {
         console.log("%cRender NEW TreeView", "color: white; background: red;");
-
+        const dragDropManager = useDragDropManager();
         const {
             handleRenameNode,
             handleCreateNode,
@@ -21,6 +22,7 @@ export const TreeView = memo(
             handleMoveNode,
             handleContextMenu,
             handleSelect,
+            handleDisableDrop,
         } = useTreeViewHandlers(props.treeType, ref);
 
         return (
@@ -45,6 +47,8 @@ export const TreeView = memo(
                                 onMove={handleMoveNode}
                                 onContextMenu={handleContextMenu}
                                 onSelect={handleSelect}
+                                disableDrop={handleDisableDrop}
+                                dndManager={dragDropManager}
                             >
                                 {Node}
                             </Tree>

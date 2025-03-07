@@ -1,6 +1,7 @@
-import { Flex, Box, AbsoluteCenter, Text, SimpleGrid } from "@chakra-ui/react";
+import { Flex, SimpleGrid } from "@chakra-ui/react";
 import { BaseInput } from "../../InputComponents/BaseInput";
 import { EditorBreadcrumb } from "../Breadcrumb";
+import { DropComponent } from "./DropComponent";
 
 export const DataObjectEditor = ({ data }) => {
     return (
@@ -8,7 +9,7 @@ export const DataObjectEditor = ({ data }) => {
             <EditorBreadcrumb data={data} />
             <SimpleGrid columns={2} columnGap={"2"} rowGap={"2"} w={"100%"}>
                 {Object.keys(data.setting).map((key, index) => {
-                    if (key === "variable") return null;
+                    //if (key === "variable") return null;
                     return (
                         <BaseInput
                             key={index}
@@ -20,21 +21,7 @@ export const DataObjectEditor = ({ data }) => {
                     );
                 })}
             </SimpleGrid>
-            <Box
-                w={"100%"}
-                h={"100%"}
-                position={"relative"}
-                border={"2px dashed"}
-                borderColor={"fg.info"}
-                borderRadius={"md"}
-                backgroundColor={"bg.info"}
-            >
-                <AbsoluteCenter>
-                    <Text fontWeight={"medium"} color={"fg.info"}>
-                        {data.setting.variable || "Переместите переменную"}
-                    </Text>
-                </AbsoluteCenter>
-            </Box>
+            <DropComponent id={data.id} />
         </Flex>
     );
 };

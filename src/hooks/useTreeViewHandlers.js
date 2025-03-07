@@ -39,7 +39,10 @@ export function useTreeViewHandlers(treeType, ref) {
                 ...DEFAULT_CONFIGURATION_DATA[type].setting,
             };
             if (type === "dataObject") {
-                const parentType = getParentType(parentId, ref?.current);
+                const parentType = getParentType({
+                    id: parentId,
+                    treeApi: ref?.current,
+                });
                 setting.setting = DEFAULT_DATA_OBJECT_SETTING[parentType];
             }
             addNode(treeType, parentId, node);
@@ -83,6 +86,22 @@ export function useTreeViewHandlers(treeType, ref) {
         );
     }, [updateSelectedIds, treeType, ref]);
 
+    const handleDisableDrop = useCallback(({ parentNode, dragNodes }) => {
+        console.log("dragNodesType", dragNodes[0]?.data.type);
+        if (!parentNode || dragNodes.length === 0) return true;
+        const isDragNodesTypeSame = dragNodes.every(
+            (node) => node.data.type === dragNodes[0].data.type
+        );
+        console.log("isDragNodesTypeSame", isDragNodesTypeSame);
+        if (!isDragNodesTypeSame) return true;
+        const parentType = getParentType({
+            checkNode: dragNodes[0].parent,
+        });
+        console.log("parentType", parentType);
+        if (parentType === parentNode.data.type) return false;
+        return true;
+    }, []);
+
     return {
         handleRenameNode,
         handleCreateNode,
@@ -90,5 +109,6 @@ export function useTreeViewHandlers(treeType, ref) {
         handleMoveNode,
         handleContextMenu,
         handleSelect,
+        handleDisableDrop,
     };
 }

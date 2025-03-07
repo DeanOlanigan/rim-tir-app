@@ -107,11 +107,12 @@ export const separateTree = (data) => {
 
 //console.log("SEPARATED NEW", separateDataNEW(config));
 
-export const getParentType = (id, treeApi) => {
-    const node = treeApi.get(id);
+export const getParentType = ({ id, treeApi, checkNode }) => {
+    if (!checkNode) checkNode = treeApi.get(id);
     const recursive = (node) => {
-        if (node.data.type === "folder") return recursive(node.parent);
+        if (node.data.type === "folder" || node.data.type === "dataObject")
+            return recursive(node.parent);
         return node.data.type;
     };
-    return recursive(node);
+    return recursive(checkNode);
 };

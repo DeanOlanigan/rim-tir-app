@@ -177,7 +177,7 @@ export const PARAM_DEFINITIONS = {
         dependsOn: { key: "pollMode", value: "manual" },
     },
     variable: {
-        type: "select",
+        type: "drop",
         label: "Переменная",
     },
     function: {
