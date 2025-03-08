@@ -12,7 +12,7 @@ import {
     editSettingUtil,
     moveSettingUtil,
 } from "../utils/treeUtils";
-//import { shallow } from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import { persist } from "zustand/middleware";
 
 const { treeData, nodeData } = separateDataNEW(config);
@@ -21,7 +21,7 @@ console.log(nodeData, trees);
 
 export const useVariablesStore = create()(
     persist(
-        (set /* get */) => ({
+        (set, get) => ({
             // Базовая информация о конфигурации
             configInfo: configurationInfo,
             // Деревья для react-arborist
@@ -33,24 +33,22 @@ export const useVariablesStore = create()(
             // Id выбранных узлов
             // TODO При использовании persist new Set() не запоминается в сторе
             selectedIds: {
-                send: new Set(),
-                receive: new Set(),
                 connections: new Set(),
                 variables: new Set(),
             },
             updateSelectedIds: (targetKey, ids) => {
                 // TODO Починить при использовании с persist
-                //const { selectedIds } = get();
-                //const currentIds = selectedIds[targetKey];
+                const { selectedIds } = get();
+                const currentIds = selectedIds[targetKey];
 
-                //if (!shallow(currentIds, ids)) {
-                set((state) => ({
-                    selectedIds: {
-                        ...state.selectedIds,
-                        [targetKey]: ids,
-                    },
-                }));
-                //}
+                if (!shallow(currentIds, ids)) {
+                    set((state) => ({
+                        selectedIds: {
+                            ...state.selectedIds,
+                            [targetKey]: ids,
+                        },
+                    }));
+                }
             },
 
             createSetting: (nodeId, setting) =>
@@ -122,6 +120,12 @@ export const useVariablesStore = create()(
         }),
         {
             name: "configuration-storage",
+            partialize: (state) =>
+                Object.fromEntries(
+                    Object.entries(state).filter(
+                        ([key]) => !["selectedIds"].includes(key)
+                    )
+                ),
         }
     )
 );
