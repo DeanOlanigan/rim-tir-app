@@ -1,11 +1,14 @@
 import {
     Box,
     AbsoluteCenter,
-    Alert,
     VStack,
     Heading,
     Flex,
+    Icon,
+    Text,
+    HStack,
 } from "@chakra-ui/react";
+import { LuCog, LuVariable } from "react-icons/lu";
 import { VariablesTable } from "./VariableEditor/Table/VariablesTable";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { memo, useMemo } from "react";
@@ -125,22 +128,26 @@ const EditorAlert = ({ status, type }) => {
     return (
         <Box w={"100%"} h={"100%"} position={"relative"}>
             <AbsoluteCenter>
-                <Alert.Root status={status}>
-                    <Alert.Indicator />
-                    <Alert.Content>
-                        <Alert.Title>
-                            {status === "error" && "Ошибка"}
-                            {status === "info" && "Ничего не выбрано"}
-                        </Alert.Title>
-                        <Alert.Description>
+                <VStack w={"100%"}>
+                    <Icon
+                        fontSize={"164px"}
+                        color={status === "error" ? "red.800" : "bg.muted"}
+                    >
+                        {type === "connections" ? <LuCog /> : <LuVariable />}
+                    </Icon>
+                    <HStack>
+                        <Text
+                            color={status === "error" ? "red.700" : "fg.muted"}
+                            fontWeight={"medium"}
+                        >
                             {status !== "error"
                                 ? type === "connections"
                                     ? "Выберите узел в дереве приема или передачи"
                                     : "Выберите узел в дереве переменных"
                                 : "Выберите узлы одинакового типа."}
-                        </Alert.Description>
-                    </Alert.Content>
-                </Alert.Root>
+                        </Text>
+                    </HStack>
+                </VStack>
             </AbsoluteCenter>
         </Box>
     );
