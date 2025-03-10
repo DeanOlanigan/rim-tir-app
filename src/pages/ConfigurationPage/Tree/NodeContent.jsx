@@ -25,7 +25,7 @@ const NodeContent = ({ node }) => {
             {node.isEditing ? (
                 <NodeEditInput node={node} />
             ) : (
-                <Text maxW={"200px"} truncate>
+                <Text truncate>
                     {node.data.name || node.data.setting?.variable}
                 </Text>
             )}

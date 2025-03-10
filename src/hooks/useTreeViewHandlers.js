@@ -59,7 +59,7 @@ export function useTreeViewHandlers(treeType, ref) {
     );
     const handleMoveNode = useCallback(
         ({ dragIds, parentId, index }) => {
-            console.log(dragIds, parentId, index);
+            console.log("handleMoveNode", dragIds, parentId, index);
             moveNode(treeType, dragIds, parentId, index);
         },
         [moveNode, treeType]

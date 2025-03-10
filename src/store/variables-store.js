@@ -23,13 +23,13 @@ export const useVariablesStore = create()(
     persist(
         (set, get) => ({
             // Базовая информация о конфигурации
-            configInfo: configurationInfo,
+            configInfo: {},
             // Деревья для react-arborist
-            send: trees.receive,
+            send: [],
             receive: [],
             variables: [],
             // Параметры всех узлов деревьев
-            settings: nodeData,
+            settings: {},
             // Id выбранных узлов
             // TODO При использовании persist new Set() не запоминается в сторе
             selectedIds: {

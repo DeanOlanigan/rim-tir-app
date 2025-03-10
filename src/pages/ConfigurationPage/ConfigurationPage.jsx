@@ -16,16 +16,16 @@ function ConfigurationPage() {
         <DndProvider backend={HTML5Backend}>
             <Box height="100%">
                 <PanelGroup autoSaveId="persistence" direction="horizontal">
-                    <Panel collapsible={true} collapsedSize={0} minSize={15}>
+                    <Panel collapsible collapsedSize={0} minSize={15}>
                         <PanelGroup
                             autoSaveId="persistence1"
                             direction="vertical"
                         >
-                            <Panel minSize={15}>
+                            <Panel сollapsible collapsedSize={0} minSize={30}>
                                 <ReceiveWrapper />
                             </Panel>
                             <PanelResizeHandle className="verticalLine" />
-                            <Panel minSize={15}>
+                            <Panel сollapsible collapsedSize={0} minSize={30}>
                                 <SendWrapper />
                             </Panel>
                         </PanelGroup>
@@ -36,7 +36,7 @@ function ConfigurationPage() {
                     </Panel>
                     <PanelResizeHandle className="verticalLine" />
                     <Panel
-                        collapsible={true}
+                        collapsible
                         collapsedSize={0}
                         defaultSize={30}
                         minSize={15}
