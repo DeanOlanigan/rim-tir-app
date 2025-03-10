@@ -1,14 +1,4 @@
-import {
-    Box,
-    AbsoluteCenter,
-    VStack,
-    Heading,
-    Flex,
-    Icon,
-    Text,
-    HStack,
-} from "@chakra-ui/react";
-import { LuCog, LuVariable } from "react-icons/lu";
+import { Box, VStack, Heading, Flex } from "@chakra-ui/react";
 import { VariablesTable } from "./VariableEditor/Table/VariablesTable";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { memo, useMemo } from "react";
@@ -18,29 +8,37 @@ import { DataObjectsTable } from "./ConnectionEditor/Table/Table";
 import { ContainerNodeEditor } from "./ConnectionEditor/ContainerNodeEditor";
 import { DataObjectEditor } from "./ConnectionEditor/DataObjectEditor";
 import { EditorBreadcrumb } from "./Breadcrumb";
+import { getParentTypeNormalized } from "../../../utils/utils";
+import { EditorInformer } from "./EditorInformer";
 
 // TODO Лишний ререндер, мб вынести логику с выбором данных в другое место?
 export const EditorWrapper = memo(function EditorWrapper({ type }) {
     console.log("Render EditorWrapper");
-    //const selectedData = useVariablesStore((state) => state.selectedNode);
-    //const selectedData = [];
 
     const settings = useVariablesStore((state) => state.settings);
     const selectedIds = useVariablesStore((state) => state.selectedIds[type]);
-
     const selectedData = useMemo(() => {
         return selectSelectedData(settings, selectedIds);
     }, [settings, selectedIds]);
+    const [singleNode] = selectedData;
+    const meaningfulParentType = getParentTypeNormalized({
+        data: settings,
+        id: singleNode?.id,
+    });
 
-    //const selectedData = [];
+    console.log(
+        `%c${meaningfulParentType}`,
+        "color: white; background: green;"
+    );
 
     if (!selectedData || selectedData.length === 0) {
-        return <EditorAlert status={"info"} type={type} />;
+        return <EditorInformer status={"info"} type={type} />;
     }
 
     if (selectedData.length === 1) {
-        const [singleNode] = selectedData;
         const nodeType = singleNode.type;
+
+        console.log(`%c${nodeType}`, "color: white; background: darkgreen;");
 
         if (singleNode.children === undefined) {
             return type === "connections" ? (
@@ -68,6 +66,13 @@ export const EditorWrapper = memo(function EditorWrapper({ type }) {
             nodeType === "asdu" ||
             nodeType === "folder"
         ) {
+            let cType = childrens.find((row) => row.type !== "folder")?.type;
+            console.log(
+                `%c${singleNode.type}
+${cType}`,
+                "color: white; background: green;"
+            );
+
             return (
                 <VStack gap={"4"} px={"1"} h={"100%"} align={"start"}>
                     <EditorBreadcrumb data={singleNode} />
@@ -88,11 +93,10 @@ export const EditorWrapper = memo(function EditorWrapper({ type }) {
     }
 
     if (selectedData.length > 1) {
-        const [first] = selectedData;
         const sameLevelAndType = selectedData.every(
             (element) =>
                 /* element.level === first.level &&  */ element.type ===
-                first.type
+                singleNode.type
         );
         if (sameLevelAndType) {
             return (
@@ -121,34 +125,5 @@ export const EditorWrapper = memo(function EditorWrapper({ type }) {
         }
     }
 
-    return <EditorAlert status={"error"} type={type} />;
+    return <EditorInformer status={"error"} type={type} />;
 });
-
-const EditorAlert = ({ status, type }) => {
-    return (
-        <Box w={"100%"} h={"100%"} position={"relative"}>
-            <AbsoluteCenter>
-                <VStack w={"100%"}>
-                    <Icon
-                        fontSize={"164px"}
-                        color={status === "error" ? "red.800" : "bg.muted"}
-                    >
-                        {type === "connections" ? <LuCog /> : <LuVariable />}
-                    </Icon>
-                    <HStack>
-                        <Text
-                            color={status === "error" ? "red.700" : "fg.muted"}
-                            fontWeight={"medium"}
-                        >
-                            {status !== "error"
-                                ? type === "connections"
-                                    ? "Выберите узел в дереве приема или передачи"
-                                    : "Выберите узел в дереве переменных"
-                                : "Выберите узлы одинакового типа."}
-                        </Text>
-                    </HStack>
-                </VStack>
-            </AbsoluteCenter>
-        </Box>
-    );
-};

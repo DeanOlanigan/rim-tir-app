@@ -15,7 +15,7 @@ export const BaseInput = memo(function BaseInput(props) {
     if (!definition) {
         return null;
     }
-    const { label, type, ...rest } = definition;
+    const { type } = definition;
 
     switch (type) {
         case "boolean":
@@ -24,7 +24,6 @@ export const BaseInput = memo(function BaseInput(props) {
                     targetKey={inputParam}
                     id={id}
                     value={value}
-                    label={label}
                     showLabel={showLabel}
                 />
             );
@@ -34,8 +33,6 @@ export const BaseInput = memo(function BaseInput(props) {
                     id={id}
                     value={value}
                     targetKey={inputParam}
-                    collection={rest.options}
-                    label={label}
                     showLabel={showLabel}
                 />
             );
@@ -45,7 +42,6 @@ export const BaseInput = memo(function BaseInput(props) {
                     targetKey={inputParam}
                     id={id}
                     value={value}
-                    label={label}
                     showLabel={showLabel}
                 />
             );
@@ -55,7 +51,6 @@ export const BaseInput = memo(function BaseInput(props) {
                     targetKey={inputParam}
                     id={id}
                     value={value}
-                    label={label}
                     showLabel={showLabel}
                 />
             );
@@ -65,7 +60,6 @@ export const BaseInput = memo(function BaseInput(props) {
                     targetKey={inputParam}
                     id={id}
                     value={value}
-                    label={label}
                     showLabel={showLabel}
                 />
             );
@@ -75,7 +69,6 @@ export const BaseInput = memo(function BaseInput(props) {
                     targetKey={inputParam}
                     id={id}
                     value={value}
-                    label={label}
                     showLabel={showLabel}
                 />
             );

@@ -116,3 +116,16 @@ export const getParentType = ({ id, treeApi, checkNode }) => {
     };
     return recursive(checkNode);
 };
+
+export const getParentTypeNormalized = ({ data, id }) => {
+    if (!id) return null;
+    const recursive = (id) => {
+        if (!id) return "root";
+        if (data[id].type === "folder" || data[id].type === "dataObject")
+            return recursive(data[id].parentId);
+        return data[id].type === "interface" || data[id].type === "protocol"
+            ? data[id].subType
+            : data[id].type;
+    };
+    return recursive(data[id]?.parentId);
+};

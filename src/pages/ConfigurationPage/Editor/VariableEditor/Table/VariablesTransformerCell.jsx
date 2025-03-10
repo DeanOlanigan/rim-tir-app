@@ -7,7 +7,6 @@ import {
 import { Button, Text, Box } from "@chakra-ui/react";
 import { memo } from "react";
 import { DebouncedEditor, NumberInput } from "../../../InputComponents";
-import { PARAM_DEFINITIONS } from "../../../../../config/paramDefinitions";
 
 export const VariablesTransformerCell = memo(function VariablesTransformerCell(
     props
@@ -46,11 +45,6 @@ export const VariablesTransformerCell = memo(function VariablesTransformerCell(
             </PopoverContent>
         </PopoverRoot>
     ) : (
-        <NumberInput
-            targetKey={"coefficient"}
-            id={id}
-            value={coefficient}
-            label={PARAM_DEFINITIONS.coefficient.label}
-        />
+        <NumberInput targetKey={"coefficient"} id={id} value={coefficient} />
     );
 });

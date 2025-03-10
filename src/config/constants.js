@@ -125,7 +125,7 @@ export const DEFAULT_CONFIGURATION_DATA = {
                 logging: false,
                 deviceAddress: "1",
                 stopBit: "1",
-                parity: "None",
+                parity: "none",
                 order2: "LittleEndian",
                 order4: "1-0 3-2",
             },
@@ -144,7 +144,7 @@ export const DEFAULT_CONFIGURATION_DATA = {
             ...DEFAULT_FUNCTION_GROUP,
             setting: {
                 function: "4",
-                type: "1 бит – bool",
+                type: "bit",
             },
         },
     },

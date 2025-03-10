@@ -1,5 +1,6 @@
 import {
-    dataTypes,
+    dataTypesBytes,
+    dataTypesSig,
     groups,
     baudRateList,
     orderTwoList,
@@ -10,6 +11,7 @@ import {
     modbusFunctionGroupTypes,
     pollModeList,
     execList,
+    gpioFuncType,
 } from "./filterOptions";
 
 export const PARENT_NAMES = {
@@ -29,7 +31,17 @@ export const PARAM_DEFINITIONS = {
     type: {
         type: "select",
         label: "Тип данных",
-        options: dataTypes,
+        options: dataTypesBytes,
+    },
+    byteType: {
+        type: "select",
+        label: "Тип данных",
+        options: dataTypesBytes,
+    },
+    sigType: {
+        type: "select",
+        label: "Тип сигнала",
+        options: dataTypesSig,
     },
     isLua: {
         type: "boolean",
@@ -97,6 +109,10 @@ export const PARAM_DEFINITIONS = {
         type: "input",
         label: "Адрес",
     },
+    deviceAddress: {
+        type: "number",
+        label: "Адрес устройства",
+    },
     port: {
         type: "number",
         label: "Порт",
@@ -136,10 +152,6 @@ export const PARAM_DEFINITIONS = {
     t3: {
         type: "number",
         label: "t3",
-    },
-    deviceAddress: {
-        type: "number",
-        label: "Адрес устройства",
     },
     baudRate: {
         type: "select",
@@ -198,5 +210,219 @@ export const PARAM_DEFINITIONS = {
         type: "select",
         label: "Команда",
         options: execList,
+    },
+};
+
+export const PARAM_DEFINITIONS_SHARED = {
+    logging: {
+        type: "boolean",
+        label: "Логирование",
+        defaultValue: false,
+    },
+};
+
+export const PARAM_DEFINITIONS_ = {
+    gpio: {
+        logging: PARAM_DEFINITIONS_SHARED.logging,
+        contactBounce: {
+            type: "number",
+            label: "Период дребезга",
+        },
+    },
+    rs232: {
+        baudRate: {
+            type: "select",
+            label: "Скорость",
+            options: baudRateList,
+        },
+    },
+    rs485: {
+        baudRate: {
+            type: "select",
+            label: "Скорость",
+            options: baudRateList,
+        },
+    },
+    iec104: {
+        logging: {
+            type: "boolean",
+            label: "Логирование",
+            defaultValue: false,
+        },
+        side: {
+            type: "select",
+            label: "Тип",
+            options: sideList,
+        },
+        address: {
+            type: "input",
+            label: "Адрес",
+        },
+        port: {
+            type: "number",
+            label: "Порт",
+        },
+        lengthOfASDU: {
+            type: "number",
+            label: "Длина адреса ASDU",
+        },
+        lengthOfCause: {
+            type: "number",
+            label: "Длина причины передачи",
+        },
+        lengthOfAdr: {
+            type: "number",
+            label: "Длина адреса объекта",
+        },
+        k: {
+            type: "number",
+            label: "k",
+        },
+        w: {
+            type: "number",
+            label: "w",
+        },
+        t0: {
+            type: "number",
+            label: "t0",
+        },
+        t1: {
+            type: "number",
+            label: "t1",
+        },
+        t2: {
+            type: "number",
+            label: "t2",
+        },
+        t3: {
+            type: "number",
+            label: "t3",
+        },
+    },
+    "modbus-rtu": {
+        logging: {
+            type: "boolean",
+            label: "Логирование",
+            defaultValue: false,
+        },
+        deviceAddress: {
+            type: "number",
+            label: "Адрес устройства",
+        },
+        stopBit: {
+            type: "select",
+            label: "Стоп-бит",
+            options: stopBitList,
+        },
+        parity: {
+            type: "select",
+            label: "Паритет",
+            options: parityList,
+        },
+        order2: {
+            type: "select",
+            label: "Порядок 2-х байт",
+            options: orderTwoList,
+        },
+        order4: {
+            type: "select",
+            label: "Порядок 4-х байт",
+            options: orderFourList,
+        },
+    },
+    asdu: {
+        sporadical: {
+            type: "boolean",
+            label: "Спорадический",
+            defaultValue: false,
+        },
+        address: {
+            type: "input",
+            label: "Адрес",
+        },
+        pollMode: {
+            label: "Режим опроса",
+            type: "select",
+            options: pollModeList,
+        },
+        pollPeriod: {
+            type: "number",
+            label: "Период опроса",
+        },
+    },
+    functionGroup: {
+        function: {
+            type: "select",
+            label: "Функция",
+            options: modbusFunctionGroupTypes,
+        },
+        type: {
+            type: "select",
+            label: "Тип",
+            options: dataTypesBytes,
+        },
+    },
+    dataObject: {
+        gpio: {
+            address: {
+                type: "input",
+                label: "Адрес",
+            },
+            function: {
+                type: "select",
+                label: "Функция",
+                options: gpioFuncType,
+            },
+            description: {
+                type: "textarea",
+                label: "Описание",
+            },
+            variable: {
+                type: "drop",
+                label: "Переменная",
+            },
+        },
+        functionGroup: {
+            address: {
+                type: "input",
+                label: "Адрес",
+            },
+            description: {
+                type: "textarea",
+                label: "Описание",
+            },
+            variable: {
+                type: "drop",
+                label: "Переменная",
+            },
+        },
+        asdu: {
+            address: {
+                type: "input",
+                label: "Адрес",
+            },
+            type: {
+                type: "select",
+                label: "Тип",
+                options: dataTypesSig,
+            },
+            aperture: {
+                type: "number",
+                label: "Апертура",
+            },
+            exec: {
+                type: "select",
+                label: "Команда",
+                options: execList,
+            },
+            description: {
+                type: "textarea",
+                label: "Описание",
+            },
+            variable: {
+                type: "drop",
+                label: "Переменная",
+            },
+        },
     },
 };

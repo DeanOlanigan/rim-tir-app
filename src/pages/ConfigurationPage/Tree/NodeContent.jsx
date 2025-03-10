@@ -2,6 +2,7 @@ import { NodeEditInput } from "./NodeEditInput";
 //import { NodeChooseVar } from "./NodeChooseVar";
 import { icons, badges } from "../../../components/TreeView/DefaultView";
 import { memo } from "react";
+import { Text } from "@chakra-ui/react";
 
 const NodeContent = ({ node }) => {
     return (
@@ -24,7 +25,9 @@ const NodeContent = ({ node }) => {
             {node.isEditing ? (
                 <NodeEditInput node={node} />
             ) : (
-                node.data.name || node.data.setting?.variable
+                <Text maxW={"200px"} truncate>
+                    {node.data.name || node.data.setting?.variable}
+                </Text>
             )}
         </div>
     );

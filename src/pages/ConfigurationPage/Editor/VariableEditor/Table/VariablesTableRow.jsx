@@ -6,7 +6,6 @@ import {
     SelectInput,
     DebouncedTextarea,
 } from "../../../InputComponents";
-import { PARAM_DEFINITIONS } from "../../../../../config/paramDefinitions";
 import { ToggleSection } from "../ToggleSection";
 
 export const VariablesTableRow = memo(function VariablesTableRow(props) {
@@ -65,7 +64,6 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                     targetKey={"specialCycleDelay"}
                     id={id}
                     value={specialCycleDelay}
-                    label={PARAM_DEFINITIONS.specialCycleDelay.label}
                 />
             </Table.Cell>
             <Table.Cell>
@@ -73,7 +71,6 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                     targetKey={"description"}
                     id={id}
                     value={description}
-                    label={PARAM_DEFINITIONS.description.label}
                 />
             </Table.Cell>
         </Table.Row>

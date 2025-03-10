@@ -5,16 +5,20 @@ import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 import { useVariablesStore } from "../../../store/variables-store";
 
 export const TextInput = memo(function TextInput(props) {
-    const { targetKey, id, value, showLabel = false } = props;
-    const label = PARAM_DEFINITIONS[targetKey].label;
+    const { targetKey, id, value, showLabel = false, label } = props;
 
     console.log("Render TextInput");
     const setSettings = useVariablesStore((state) => state.setSettings);
 
     return (
-        <Field label={showLabel ? label : ""}>
+        <Field
+            label={
+                showLabel ? label || PARAM_DEFINITIONS[targetKey]?.label : ""
+            }
+        >
             <Input
                 size={"xs"}
+                maxW={"250px"}
                 value={value}
                 onChange={(e) => {
                     setSettings(id, {

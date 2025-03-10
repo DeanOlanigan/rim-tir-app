@@ -7,10 +7,9 @@ import { memo } from "react";
 import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 
 export const DebouncedTextarea = memo(function DebouncedTextarea(props) {
-    const { targetKey, value, id, showLabel = false } = props;
+    const { targetKey, value, id, showLabel = false, label } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
     const [innerValue, setInnerValue] = useState(value);
-    const label = PARAM_DEFINITIONS[targetKey].label;
 
     useEffect(() => {
         setInnerValue(value);
@@ -26,7 +25,11 @@ export const DebouncedTextarea = memo(function DebouncedTextarea(props) {
     );
 
     return (
-        <Field label={showLabel ? label : ""}>
+        <Field
+            label={
+                showLabel ? label || PARAM_DEFINITIONS[targetKey]?.label : ""
+            }
+        >
             <Textarea
                 size={"xs"}
                 minH={"32px"}

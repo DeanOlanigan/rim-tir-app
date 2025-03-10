@@ -7,6 +7,7 @@ export const DataObjectsTable = ({ data }) => {
     for (const rows of data) {
         if (rows.type === "folder") continue;
         keys = Object.keys(rows.setting);
+        break;
     }
 
     if (!keys) return null;
