@@ -170,6 +170,14 @@ export function renameNodeSettingUtil(setting, nodeId, name) {
             ...setting[nodeId],
             name,
         },
+        /* Вынести в отдельный метод
+        [setting[nodeId].setting.usedIn]: {
+            ...setting[setting[nodeId].setting.usedIn],
+            setting: {
+                ...setting[setting[nodeId].setting.usedIn].setting,
+                variable: name,
+            },
+        }, */
     };
 }
 

@@ -9,7 +9,7 @@ export const DataObjectEditor = ({ data }) => {
             <EditorBreadcrumb data={data} />
             <SimpleGrid columns={2} columnGap={"2"} rowGap={"2"} w={"100%"}>
                 {Object.keys(data.setting).map((key, index) => {
-                    //if (key === "variable") return null;
+                    if (key === "variable") return null;
                     return (
                         <BaseInput
                             key={index}
@@ -21,7 +21,7 @@ export const DataObjectEditor = ({ data }) => {
                     );
                 })}
             </SimpleGrid>
-            <DropComponent id={data.id} />
+            <DropComponent id={data.id} value={data.setting.variable} />
         </Flex>
     );
 };
