@@ -94,11 +94,12 @@ export function useTreeViewHandlers(treeType, ref) {
         );
         console.log("isDragNodesTypeSame", isDragNodesTypeSame);
         if (!isDragNodesTypeSame) return true;
-        const parentType = getParentType({
+        const dragParentType = getParentType({
             checkNode: dragNodes[0].parent,
         });
-        console.log("parentType", parentType);
-        if (parentType === parentNode.data.type) return false;
+        const parentType = getParentType({ checkNode: parentNode });
+        console.log("parentType", dragParentType, parentType);
+        if (parentType === dragParentType) return false;
         return true;
     }, []);
 
