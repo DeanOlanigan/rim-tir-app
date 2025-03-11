@@ -4,7 +4,11 @@ import React from "react";
 
 // TODO В текущей реализации отображения привязанной переменной в деревьях подключений хлебные крошки работают криво
 const getBreadcrumb = (selectedData, settings) => {
-    const arr = [selectedData.name];
+    const arr = [
+        selectedData.type === "dataObject"
+            ? settings[selectedData.variableId]?.name
+            : selectedData.name,
+    ];
     const recurse = (node) => {
         if (node.parentId) {
             arr.unshift(settings[node.parentId].name);

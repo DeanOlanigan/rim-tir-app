@@ -6,7 +6,9 @@ import { Text } from "@chakra-ui/react";
 import { useVariablesStore } from "../../../store/variables-store";
 
 const NodeContent = ({ node }) => {
-    const variableName = useVariablesStore((state) => state.settings[node.data.name]?.name);
+    const variableName = useVariablesStore(
+        (state) => state.settings[node.data.name]?.name
+    );
 
     return (
         <div
@@ -29,7 +31,9 @@ const NodeContent = ({ node }) => {
                 <NodeEditInput node={node} />
             ) : (
                 <Text truncate>
-                    {node.data.type === "dataObject" ? variableName: node.data.name}
+                    {node.data.type === "dataObject"
+                        ? variableName
+                        : node.data.name}
                 </Text>
             )}
         </div>

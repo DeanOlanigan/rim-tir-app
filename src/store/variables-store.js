@@ -14,7 +14,7 @@ import {
     bindVariableUtil,
     unbindVariableUtil,
     moveSettingUtil,
-    bindVariableToNodeUtil
+    bindVariableToNodeUtil,
 } from "../utils/treeUtils";
 import { shallow } from "zustand/shallow";
 import { persist } from "zustand/middleware";
@@ -82,7 +82,12 @@ export const useVariablesStore = create()(
 
             bindVariable: (nodeId, variableId) => {
                 set((state) => {
-                    const { receive, send } = bindVariableToNodeUtil(state.receive, state.send, nodeId, variableId);
+                    const { receive, send } = bindVariableToNodeUtil(
+                        state.receive,
+                        state.send,
+                        nodeId,
+                        variableId
+                    );
                     return {
                         settings: bindVariableUtil(
                             state.settings,
@@ -90,15 +95,25 @@ export const useVariablesStore = create()(
                             variableId
                         ),
                         receive,
-                        send
+                        send,
                     };
                 });
             },
 
             unbindVariable: (nodeId) =>
-                set((state) => ({
-                    settings: unbindVariableUtil(state.settings, nodeId),
-                })),
+                set((state) => {
+                    const { receive, send } = bindVariableToNodeUtil(
+                        state.receive,
+                        state.send,
+                        nodeId,
+                        null
+                    );
+                    return {
+                        settings: unbindVariableUtil(state.settings, nodeId),
+                        receive,
+                        send,
+                    };
+                }),
 
             addNode: (targetKey, parentId, newNode) => {
                 if (parentId === null) {

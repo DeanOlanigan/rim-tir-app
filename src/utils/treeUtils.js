@@ -237,17 +237,17 @@ export function bindVariableToNodeUtil(receive, send, nodeId, variableId) {
     const recursive = (nodes, nodeId) => {
         return nodes.map((node) => {
             if (node.id === nodeId) {
-                return {...node, name: variableId};
+                return { ...node, name: variableId };
             }
             if (node.children?.length > 0) {
-                return {...node, children: recursive(node.children, nodeId)};
+                return { ...node, children: recursive(node.children, nodeId) };
             }
             return node;
         });
     };
     const receiveNew = recursive(receive, nodeId);
     const sendNew = recursive(send, nodeId);
-    return {receive: receiveNew, send: sendNew};
+    return { receive: receiveNew, send: sendNew };
 }
 
 export function unbindVariableUtil(settings, nodeId) {
