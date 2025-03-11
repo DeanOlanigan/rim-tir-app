@@ -8,14 +8,15 @@ import {
 import { getParentType } from "../utils/utils";
 
 export function useTreeViewHandlers(treeType, ref) {
-    const addNode = useVariablesStore((state) => state.addNode);
-    const renameNode = useVariablesStore((state) => state.renameNode);
-    const removeNode = useVariablesStore((state) => state.removeNode);
-    const moveNode = useVariablesStore((state) => state.moveNode);
-    const createSetting = useVariablesStore((state) => state.createSetting);
-    const updateSelectedIds = useVariablesStore(
-        (state) => state.updateSelectedIds
-    );
+    const {
+        addNode,
+        renameNode,
+        removeNode,
+        moveNode,
+        createSetting,
+        updateSelectedIds,
+        unbindVariable,
+    } = useVariablesStore((state) => state);
 
     const handleRenameNode = useCallback(
         ({ id, name }) => {
@@ -54,9 +55,12 @@ export function useTreeViewHandlers(treeType, ref) {
     // TODO При удалении отвязывать переменные
     const handleDeleteNode = useCallback(
         ({ ids }) => {
+            ids.forEach((value) => {
+                unbindVariable(value);
+            });
             removeNode(treeType, ids);
         },
-        [removeNode, treeType]
+        [removeNode, treeType, unbindVariable]
     );
     const handleMoveNode = useCallback(
         ({ dragIds, parentId, index }) => {
