@@ -51,6 +51,7 @@ export function useTreeViewHandlers(treeType, ref) {
         },
         [addNode, createSetting, treeType, ref]
     );
+    // TODO При удалении отвязывать переменные
     const handleDeleteNode = useCallback(
         ({ ids }) => {
             removeNode(treeType, ids);

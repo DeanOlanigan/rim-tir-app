@@ -2,6 +2,7 @@ import { Breadcrumb } from "@chakra-ui/react";
 import { useVariablesStore } from "../../../store/variables-store";
 import React from "react";
 
+// TODO В текущей реализации отображения привязанной переменной в деревьях подключений хлебные крошки работают криво
 const getBreadcrumb = (selectedData, settings) => {
     const arr = [selectedData.name];
     const recurse = (node) => {
