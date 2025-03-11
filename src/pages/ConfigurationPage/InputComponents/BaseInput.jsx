@@ -59,7 +59,6 @@ export const BaseInput = memo(function BaseInput(props) {
                 <DroppableInput
                     targetKey={inputParam}
                     id={id}
-                    value={value}
                     showLabel={showLabel}
                 />
             );

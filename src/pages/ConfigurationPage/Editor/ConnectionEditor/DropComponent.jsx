@@ -1,41 +1,19 @@
 import { Box, AbsoluteCenter, Text, IconButton } from "@chakra-ui/react";
-import { useDrop } from "react-dnd";
 import { useVariablesStore } from "../../../../store/variables-store";
 import { memo } from "react";
 import { LuTrash2 } from "react-icons/lu";
+import { useVariableDrop } from "../../../../hooks/useVariableDrop";
 
 export const DropComponent = memo(function DropComponent(props) {
     console.log("RENDER DropComponent");
-    const { id, value, showText = true } = props;
-    const settings = useVariablesStore((state) => state.settings);
-    const setSettings = useVariablesStore((state) => state.setSettings);
+    const { id, variableId, showText = true } = props;
+    const unbindVariable = useVariablesStore((state) => state.unbindVariable);
 
-    const [{ isOver, canDrop }, dropRef] = useDrop(
-        () => ({
-            accept: "NODE",
-            canDrop: (item) => {
-                return settings[item.id]?.type === "variable";
-            },
-            drop: (item) => {
-                console.log("DROP", item);
-                setSettings(id, {
-                    variable: settings[item.id].name,
-                    variableId: item.id, // TODO Перенести вверх по иерархии
-                });
-                setSettings(item.id, {
-                    usedIn: id,
-                });
-            },
-            collect: (monitor) => ({
-                isOver: monitor.isOver(),
-                canDrop: monitor.canDrop(),
-            }),
-        }),
-        [id, settings, setSettings]
-    );
+    const { isOver, canDrop, dropRef } = useVariableDrop({ id });
+    const variable = useVariablesStore((state) => state.settings[variableId]);
 
-    let borderColor = value ? "fg.subtle" : "fg.info";
-    let backgroundColor = value ? "bg.emphasized" : "bg.info";
+    let borderColor = variableId ? "fg.subtle" : "fg.info";
+    let backgroundColor = variableId ? "bg.emphasized" : "bg.info";
     if (isOver && canDrop) {
         borderColor = "fg.success";
         backgroundColor = "bg.success";
@@ -43,7 +21,7 @@ export const DropComponent = memo(function DropComponent(props) {
         borderColor = "fg.error";
         backgroundColor = "bg.error";
     }
-
+    // TODO Добавить подсказку "переменная уже используется" при попытке перетаскивать переменную, которая уже используется
     return (
         <Box
             ref={dropRef}
@@ -63,13 +41,7 @@ export const DropComponent = memo(function DropComponent(props) {
                 top={1}
                 variant={"ghost"}
                 onClick={() => {
-                    setSettings(settings[id].setting.variableId, {
-                        usedIn: "",
-                    });
-                    setSettings(id, {
-                        variable: "",
-                        variableId: "", // TODO Перенести вверх по иерархии
-                    });
+                    unbindVariable(id);
                 }}
             >
                 <LuTrash2 />
@@ -77,11 +49,11 @@ export const DropComponent = memo(function DropComponent(props) {
             <AbsoluteCenter>
                 {showText && (
                     <Text fontWeight={"medium"} color={borderColor}>
-                        {!value
+                        {!variableId
                             ? canDrop
                                 ? "Отпустите переменную"
                                 : "Переместите переменную"
-                            : "Текущая переменная: " + value}
+                            : "Текущая переменная: " + variable.name}
                     </Text>
                 )}
             </AbsoluteCenter>

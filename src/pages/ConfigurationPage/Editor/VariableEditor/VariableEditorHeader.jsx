@@ -15,7 +15,7 @@ export const VariableEditorHeader = ({ name }) => {
             p={"4"}
         >
             <Heading textWrap={"nowrap"}>
-                Конфигурация переменной {name}
+                Конфигурация переменной &quot;{name}&quot;
             </Heading>
             {/* <Editable.Root
                 maxW={"300px"}

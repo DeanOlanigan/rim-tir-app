@@ -65,7 +65,7 @@ const DEFAULT_ASDU_SETTING = {
 
 const DEFAULT_DATA_OBJECT = {
     type: "dataObject",
-    name: "Введите описание",
+    name: "",
 };
 
 export const DEFAULT_DATA_OBJECT_SETTING = {

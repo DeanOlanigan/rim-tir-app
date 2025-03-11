@@ -10,7 +10,11 @@ import {
     createSettingUtil,
     removeSettingUtil,
     editSettingUtil,
+    editSettingNodeUtil,
+    bindVariableUtil,
+    unbindVariableUtil,
     moveSettingUtil,
+    bindVariableToNodeUtil
 } from "../utils/treeUtils";
 import { shallow } from "zustand/shallow";
 import { persist } from "zustand/middleware";
@@ -31,13 +35,11 @@ export const useVariablesStore = create()(
             // Параметры всех узлов деревьев
             settings: {},
             // Id выбранных узлов
-            // TODO При использовании persist new Set() не запоминается в сторе
             selectedIds: {
                 connections: new Set(),
                 variables: new Set(),
             },
             updateSelectedIds: (targetKey, ids) => {
-                // TODO Починить при использовании с persist
                 const { selectedIds } = get();
                 const currentIds = selectedIds[targetKey];
 
@@ -67,6 +69,35 @@ export const useVariablesStore = create()(
                         nodeId,
                         updateData
                     ),
+                })),
+
+            setSettingsNode: (nodeId, updateData) =>
+                set((state) => ({
+                    settings: editSettingNodeUtil(
+                        state.settings,
+                        nodeId,
+                        updateData
+                    ),
+                })),
+
+            bindVariable: (nodeId, variableId) => {
+                set((state) => {
+                    const { receive, send } = bindVariableToNodeUtil(state.receive, state.send, nodeId, variableId);
+                    return {
+                        settings: bindVariableUtil(
+                            state.settings,
+                            nodeId,
+                            variableId
+                        ),
+                        receive,
+                        send
+                    };
+                });
+            },
+
+            unbindVariable: (nodeId) =>
+                set((state) => ({
+                    settings: unbindVariableUtil(state.settings, nodeId),
                 })),
 
             addNode: (targetKey, parentId, newNode) => {

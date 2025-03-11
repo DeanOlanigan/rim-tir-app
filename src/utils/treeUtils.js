@@ -170,14 +170,6 @@ export function renameNodeSettingUtil(setting, nodeId, name) {
             ...setting[nodeId],
             name,
         },
-        /* Вынести в отдельный метод
-        [setting[nodeId].setting.usedIn]: {
-            ...setting[setting[nodeId].setting.usedIn],
-            setting: {
-                ...setting[setting[nodeId].setting.usedIn].setting,
-                variable: name,
-            },
-        }, */
     };
 }
 
@@ -213,6 +205,67 @@ export function editSettingUtil(settings, nodeId, setting) {
                 ...settings[nodeId].setting,
                 ...setting,
             },
+        },
+    };
+}
+
+export function editSettingNodeUtil(settings, nodeId, setting) {
+    return {
+        ...settings,
+        [nodeId]: {
+            ...settings[nodeId],
+            ...setting,
+        },
+    };
+}
+
+export function bindVariableUtil(settings, nodeId, variableId) {
+    return {
+        ...settings,
+        [nodeId]: {
+            ...settings[nodeId],
+            variableId: variableId,
+        },
+        [variableId]: {
+            ...settings[variableId],
+            usedIn: nodeId,
+        },
+    };
+}
+
+export function bindVariableToNodeUtil(receive, send, nodeId, variableId) {
+    const recursive = (nodes, nodeId) => {
+        return nodes.map((node) => {
+            if (node.id === nodeId) {
+                return {...node, name: variableId};
+            }
+            if (node.children?.length > 0) {
+                return {...node, children: recursive(node.children, nodeId)};
+            }
+            return node;
+        });
+    };
+    const receiveNew = recursive(receive, nodeId);
+    const sendNew = recursive(send, nodeId);
+    return {receive: receiveNew, send: sendNew};
+}
+
+export function unbindVariableUtil(settings, nodeId) {
+    let result = { ...settings };
+    if (result[nodeId].variableId) {
+        result = {
+            ...result,
+            [result[nodeId].variableId]: {
+                ...result[result[nodeId].variableId],
+                usedIn: null,
+            },
+        };
+    }
+    return {
+        ...result,
+        [nodeId]: {
+            ...result[nodeId],
+            variableId: null,
         },
     };
 }

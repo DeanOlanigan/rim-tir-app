@@ -3,8 +3,11 @@ import { NodeEditInput } from "./NodeEditInput";
 import { icons, badges } from "../../../components/TreeView/DefaultView";
 import { memo } from "react";
 import { Text } from "@chakra-ui/react";
+import { useVariablesStore } from "../../../store/variables-store";
 
 const NodeContent = ({ node }) => {
+    const variableName = useVariablesStore((state) => state.settings[node.data.name]?.name);
+
     return (
         <div
             style={{
@@ -26,7 +29,7 @@ const NodeContent = ({ node }) => {
                 <NodeEditInput node={node} />
             ) : (
                 <Text truncate>
-                    {node.data.name || node.data.setting?.variable}
+                    {node.data.type === "dataObject" ? variableName: node.data.name}
                 </Text>
             )}
         </div>

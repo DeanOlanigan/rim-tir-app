@@ -19,7 +19,7 @@ export const ContainerNodeEditor = ({ data }) => {
         >
             <HStack justify={"space-between"}>
                 <Heading textWrap={"nowrap"}>
-                    {PARENT_NAMES[data.type]} {data.name}
+                    {PARENT_NAMES[data.type]} &quot;{data.name}&quot;
                 </Heading>
                 <Heading textWrap={"nowrap"}>
                     Элементов: {data.children.length}

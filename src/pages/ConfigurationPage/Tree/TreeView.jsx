@@ -10,7 +10,6 @@ import { Box } from "@chakra-ui/react";
 import { useTreeViewHandlers } from "../../../hooks/useTreeViewHandlers";
 import { useDragDropManager } from "react-dnd";
 
-// TODO Вынести логику в хук
 export const TreeView = memo(
     forwardRef(function TreeView(props, ref) {
         console.log("%cRender NEW TreeView", "color: white; background: red;");
