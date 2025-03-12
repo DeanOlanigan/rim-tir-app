@@ -1,12 +1,12 @@
 import styles from "../../../components/TreeView/TreeView.module.css";
 import clsx from "clsx";
-import NodeContent from "./NodeContent";
-import { memo /* useEffect, useRef */ } from "react";
+import { NodeContent } from "./NodeContent";
+//import { memo, useEffect, useRef } from "react";
 import { ContextMenuWrapper } from "./ContextMenuWrapper";
 import { NodeToggleBtn } from "./NodeToggleBtn";
 
 // TODO Ререндер при перетаскивании всех узлов
-export const Node = memo(function Node({ node, style, dragHandle, tree }) {
+export const Node = ({ node, style, dragHandle, tree }) => {
     console.log("%cRender NEW Node", "color: white; background: purple;");
 
     /* const prevProps = useRef(style);
@@ -38,7 +38,7 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
                     e.preventDefault();
                     e.stopPropagation();
                     node.focus();
-                    node.select();
+                    //node.select();
                 }}
             >
                 <div className={styles.indentLines}>
@@ -65,4 +65,4 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
             </div>
         </ContextMenuWrapper>
     );
-});
+};

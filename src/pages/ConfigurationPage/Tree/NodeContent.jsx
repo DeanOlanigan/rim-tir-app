@@ -1,11 +1,11 @@
 import { NodeEditInput } from "./NodeEditInput";
 //import { NodeChooseVar } from "./NodeChooseVar";
 import { icons, badges } from "../../../components/TreeView/DefaultView";
-import { memo } from "react";
+//import { memo } from "react";
 import { Text } from "@chakra-ui/react";
 import { useVariablesStore } from "../../../store/variables-store";
 
-const NodeContent = ({ node }) => {
+export const NodeContent = ({ node }) => {
     const variableName = useVariablesStore(
         (state) => state.settings[node.data.name]?.name
     );
@@ -39,4 +39,3 @@ const NodeContent = ({ node }) => {
         </div>
     );
 };
-export default memo(NodeContent);
