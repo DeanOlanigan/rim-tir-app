@@ -64,7 +64,7 @@ export const DroppableInput = memo(function DroppableInput(props) {
                     placeholder={`Выберите ${label.toLowerCase()}`}
                 />
             </SelectTrigger>
-            <SelectContent>
+            {/* <SelectContent>
                 {variables?.items.map((row) => (
                     <SelectItem item={row} key={row.value}>
                         <Flex gap={"4"} align={"center"}>
@@ -75,7 +75,7 @@ export const DroppableInput = memo(function DroppableInput(props) {
                         </Flex>
                     </SelectItem>
                 ))}
-            </SelectContent>
+            </SelectContent> */}
         </SelectRoot>
     );
 });

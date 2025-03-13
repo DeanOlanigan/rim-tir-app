@@ -25,7 +25,7 @@ export const EditorCard = () => {
                                 pb={"2"}
                                 position={"relative"}
                             >
-                                <EditorWrapper type={"connections"} />
+                                {/* <EditorWrapper type={"connections"} /> */}
                             </Box>
                         </Panel>
                         <PanelResizeHandle className="verticalLineConf" />
