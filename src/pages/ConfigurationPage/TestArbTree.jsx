@@ -10,11 +10,13 @@ import { useVariablesStore } from "../../store/variables-store";
 import { LuArrowDown, LuArrowRight } from "react-icons/lu";
 import { LuFolder, LuFile } from "react-icons/lu";
 import clsx from "clsx";
+import { useDragDropManager } from "react-dnd";
 
 export const TestCard = () => {
     console.log("Render TestCard");
     const [tree, setTree] = useState(null);
     const test = useVariablesStore((state) => state.test);
+    const dragManager = useDragDropManager();
 
     const prevProps = useRef(tree);
     useEffect(() => {
@@ -102,14 +104,15 @@ export const TestCard = () => {
                             indent={16}
                             renderCursor={DropCursor}
                             renderDragPreview={DragPreview}
-                            initialData={test}
-                            /* data={test}
+                            //initialData={test}
+                            data={test}
                             onRename={handleRenameNode}
                             onCreate={handleCreateNode}
                             onDelete={handleDeleteNode}
                             onMove={handleMoveNode}
                             onContextMenu={handleContextMenu}
-                            onSelect={handleSelect} */
+                            onSelect={handleSelect}
+                            //dndManager={dragManager}
                         >
                             {Node}
                         </TreeArborist>

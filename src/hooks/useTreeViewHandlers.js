@@ -78,15 +78,15 @@ export function useTreeViewHandlers(treeType, ref) {
         [ref]
     );
     const handleSelect = useCallback(() => {
-        if (ref?.current.selectedIds.size === 0) {
-            ref?.current.root.focus();
-            ref?.current.root.select();
+        if (ref?.current?.selectedIds?.size === 0) {
+            ref?.current?.root?.focus();
+            ref?.current?.root?.select();
         }
         updateSelectedIds(
             treeType === "send" || treeType === "receive"
                 ? "connections"
                 : treeType,
-            ref?.current.selectedIds
+            ref?.current?.selectedIds
         );
     }, [updateSelectedIds, treeType, ref]);
 
