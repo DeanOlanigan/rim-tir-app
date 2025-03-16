@@ -7,7 +7,7 @@ import { useVariablesStore } from "../../../store/variables-store";
 export const TextInput = memo(function TextInput(props) {
     const { targetKey, id, value, showLabel = false, label } = props;
 
-    console.log("Render TextInput");
+    //console.log("Render TextInput");
     const setSettings = useVariablesStore((state) => state.setSettings);
 
     return (

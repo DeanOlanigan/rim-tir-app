@@ -9,18 +9,15 @@ import { useCallback } from "react";
 import { Box, IconButton, Stack, Heading, Flex } from "@chakra-ui/react";
 import { LuChevronRight } from "react-icons/lu";
 
-import {
-    MenuContent,
-    MenuContextTrigger,
-    MenuRoot,
-} from "../ui/menu";
+import { MenuContent, MenuContextTrigger, MenuRoot } from "../ui/menu";
 
 const INDENT_SIZE = 16;
 
 const BaseNode = memo(function BaseNode(props) {
-    console.log("Render BaseNode");
-    const { node, style, dragHandle, tree, preview, children, MenuItems } = props;
-    
+    //console.log("Render BaseNode");
+    const { node, style, dragHandle, tree, preview, children, MenuItems } =
+        props;
+
     const indentSize = Number.parseFloat(`${style.paddingLeft || 0}`);
 
     return (
@@ -32,43 +29,45 @@ const BaseNode = memo(function BaseNode(props) {
                 transition={{ duration: 0.2 }}
                 className={clsx(styles.node, node.state)}
             >
-
                 <div className={styles.indentLines}>
-                    {new Array(indentSize / INDENT_SIZE).fill(0).map((_, index) => {
-                        return <div key={index}></div>;
-                    })}
+                    {new Array(indentSize / INDENT_SIZE)
+                        .fill(0)
+                        .map((_, index) => {
+                            return <div key={index}></div>;
+                        })}
                 </div>
 
-                {
-                    MenuItems === undefined ? 
-                        (<NodeContent
-                            node={node}
-                            style={style}
-                            dragHandle={dragHandle}
-                            tree={tree}
-                            preview={preview}
-                        >
-                            {children}
-                        </NodeContent>) : 
-                        (<NodeContext
-                            node={node}
-                            style={style}
-                            dragHandle={dragHandle}
-                            tree={tree}
-                            preview={preview}
-                            MenuItems={MenuItems}
-                        >
-                            {children}
-                        </NodeContext>)
-                }
+                {MenuItems === undefined ? (
+                    <NodeContent
+                        node={node}
+                        style={style}
+                        dragHandle={dragHandle}
+                        tree={tree}
+                        preview={preview}
+                    >
+                        {children}
+                    </NodeContent>
+                ) : (
+                    <NodeContext
+                        node={node}
+                        style={style}
+                        dragHandle={dragHandle}
+                        tree={tree}
+                        preview={preview}
+                        MenuItems={MenuItems}
+                    >
+                        {children}
+                    </NodeContext>
+                )}
             </motion.div>
         </AnimatePresence>
     );
 });
 
 const NodeContext = memo(function NodeContext(props) {
-    console.log("Render NodeContext");
-    const { node, dragHandle, style, tree, preview, MenuItems, children } = props;
+    //console.log("Render NodeContext");
+    const { node, dragHandle, style, tree, preview, MenuItems, children } =
+        props;
 
     return (
         <MenuRoot lazyMount unmountOnExit>
@@ -91,25 +90,23 @@ const NodeContext = memo(function NodeContext(props) {
                     {children}
                 </NodeContent>
             </MenuContextTrigger>
-            <MenuContent>
-                {MenuItems}
-            </MenuContent>
+            <MenuContent>{MenuItems}</MenuContent>
         </MenuRoot>
     );
 });
 
 const NodeContent = memo(function NodeContent(props) {
-    console.log("Render NodeContent");
+    //console.log("Render NodeContent");
     const { node, dragHandle, style, children } = props;
     const { type, subType, setting, name } = node.data;
-    
+
     const childrenProp = React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
-            return React.cloneElement(child, { 
+            return React.cloneElement(child, {
                 type,
                 subType,
                 setting,
-                name
+                name,
             });
         }
         return child;
@@ -125,37 +122,34 @@ const NodeContent = memo(function NodeContent(props) {
             w={"100%"}
             h={"100%"}
         >
-            {
-                node.isLeaf 
-                    ? null
-                    : 
-                    (
-                        <IconButton
-                            size={"2xs"}
-                            variant={"plain"}
-                            onClick={() => {
-                                node.toggle();
-                            }}
-                            color={"fg.subtle"}
-                            _hover={{color: "black"}}
-                        >
-                            <Box
-                                w={"19.19px"}
-                                h={"19.19px"}
-                                as={LuChevronRight}
-                                transform={node.isOpen ? "rotate(90deg)" : "rotate(0deg)"}
-                                transition={"transform 0.2s ease-in-out"}
-                            />
-                        </IconButton>
-                    )
-            }
+            {node.isLeaf ? null : (
+                <IconButton
+                    size={"2xs"}
+                    variant={"plain"}
+                    onClick={() => {
+                        node.toggle();
+                    }}
+                    color={"fg.subtle"}
+                    _hover={{ color: "black" }}
+                >
+                    <Box
+                        w={"19.19px"}
+                        h={"19.19px"}
+                        as={LuChevronRight}
+                        transform={
+                            node.isOpen ? "rotate(90deg)" : "rotate(0deg)"
+                        }
+                        transition={"transform 0.2s ease-in-out"}
+                    />
+                </IconButton>
+            )}
             {childrenProp}
         </Stack>
     );
 });
 
 export const TreeView = memo(function TreeView(props) {
-    console.log(`%cRender TreeView ${props.selectedId}`, "color: white; background: purple;");
+    //console.log(`%cRender TreeView ${props.selectedId}`, "color: white; background: purple;");
     const {
         height,
         width,
@@ -165,12 +159,15 @@ export const TreeView = memo(function TreeView(props) {
         disableDrag,
         setNode,
         searchTerm,
-        selectedId
+        selectedId,
     } = props;
 
     const prevDataRef = useRef(props.children);
     useEffect(() => {
-        console.log("Are data same by reference?", prevDataRef.current === props.children);
+        console.log(
+            "Are data same by reference?",
+            prevDataRef.current === props.children
+        );
         prevDataRef.current = props.children;
     });
 
@@ -180,7 +177,7 @@ export const TreeView = memo(function TreeView(props) {
                 <Heading>Нет данных</Heading>
             </Flex>
         );
-    };
+    }
 
     const onFocus = (node) => {
         console.log("onFocus:", node);
@@ -198,13 +195,13 @@ export const TreeView = memo(function TreeView(props) {
             className={styles.tree}
             openByDefault={true}
             searchTerm={searchTerm}
-            searchMatch={
-                (node, term) => {
-                    const name = node.data.setting?.name || node.data.setting?.variable;
-                    return name === undefined ? false :
-                        name.toLowerCase().includes(term.toLowerCase());
-                }
-            }
+            searchMatch={(node, term) => {
+                const name =
+                    node.data.setting?.name || node.data.setting?.variable;
+                return name === undefined
+                    ? false
+                    : name.toLowerCase().includes(term.toLowerCase());
+            }}
             overscanCount={2}
             rowHeight={32}
             indent={INDENT_SIZE} // Отступ вложенных узлов
@@ -218,18 +215,21 @@ export const TreeView = memo(function TreeView(props) {
             disableEdit
             selection={selectedId}
         >
-            {useCallback((node) => (
-                <BaseNode
-                    node={node.node}
-                    style={node.style}
-                    dragHandle={node.dragHandle}
-                    tree={node.tree}
-                    preview={node.preview}
-                    MenuItems={MenuItems}
-                >
-                    {children}
-                </BaseNode>
-            ), [])}
+            {useCallback(
+                (node) => (
+                    <BaseNode
+                        node={node.node}
+                        style={node.style}
+                        dragHandle={node.dragHandle}
+                        tree={node.tree}
+                        preview={node.preview}
+                        MenuItems={MenuItems}
+                    >
+                        {children}
+                    </BaseNode>
+                ),
+                []
+            )}
         </Tree>
     );
 });

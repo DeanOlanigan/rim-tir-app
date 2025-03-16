@@ -11,14 +11,16 @@ import { wsMessageAtom } from "./atoms";
 import { useEffect } from "react";
 
 function GraphsPage() {
-    console.log("Render GraphsPage");
+    //console.log("Render GraphsPage");
     const wsMessage = useAtomValue(wsMessageAtom);
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
         // Проверяем, есть ли у нас "настроенное" сообщение
-        const hasGraphMessage = Boolean(wsMessage.graph && Object.keys(wsMessage.graph).length > 0);
+        const hasGraphMessage = Boolean(
+            wsMessage.graph && Object.keys(wsMessage.graph).length > 0
+        );
         // Если пользователь уже настроил график, а сейчас находится на /graphs,
         // то автоматически переводим его на /graphs/viewer
         if (hasGraphMessage && location.pathname.endsWith("/graphs")) {

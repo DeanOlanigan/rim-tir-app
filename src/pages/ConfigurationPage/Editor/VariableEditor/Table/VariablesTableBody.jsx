@@ -3,7 +3,7 @@ import { VariablesTableRow } from "./VariablesTableRow";
 import { memo } from "react";
 
 export const VariablesTableBody = memo(function VariablesTableBody({ data }) {
-    console.log("RENDER VariablesTableBody");
+    //console.log("RENDER VariablesTableBody");
 
     return (
         <Table.Body>

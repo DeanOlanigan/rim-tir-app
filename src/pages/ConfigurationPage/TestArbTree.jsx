@@ -13,7 +13,7 @@ import clsx from "clsx";
 import { useDragDropManager } from "react-dnd";
 
 export const TestCard = () => {
-    console.log("Render TestCard");
+    //console.log("Render TestCard");
     const [tree, setTree] = useState(null);
     const test = useVariablesStore((state) => state.test);
     const dragManager = useDragDropManager();

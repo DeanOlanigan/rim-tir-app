@@ -13,7 +13,7 @@ import { useRef, useState, memo } from "react";
 import { LuBadgePlus } from "react-icons/lu";
 
 export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
-    console.log("RENDER VariableCard", treeType);
+    //console.log("RENDER VariableCard", treeType);
     const [isHovered, setIsHovered] = useState(false);
 
     const variableTreeRef = useRef(null);

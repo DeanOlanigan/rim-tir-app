@@ -11,7 +11,7 @@ import { MinoruTree } from "./MinoruTree/MinoruTree";
 import { TestCard } from "./TestArbTree";
 
 function ConfigurationPage() {
-    console.log("Render ConfigurationPage");
+    //console.log("Render ConfigurationPage");
 
     //const [selectedNode, setSelectedNode] = useState();
 
@@ -58,19 +58,19 @@ export default ConfigurationPage;
 
 // TODO Подумать над решением с обертками, может быть есть решение лучше
 const VariablesWrapper = () => {
-    console.log("RENDER VariablesWrapper");
+    //console.log("RENDER VariablesWrapper");
     const variables = useVariablesStore((state) => state.variables);
     return <TreeCard data={variables} treeType={"variables"} />;
 };
 
 const SendWrapper = () => {
-    console.log("RENDER SendWrapper");
+    //console.log("RENDER SendWrapper");
     const send = useVariablesStore((state) => state.send);
     return <TreeCard data={send} treeType={"send"} />;
 };
 
 const ReceiveWrapper = () => {
-    console.log("RENDER ReceiveWrapper");
+    //console.log("RENDER ReceiveWrapper");
     const receive = useVariablesStore((state) => state.receive);
     return <TreeCard data={receive} treeType={"receive"} />;
 };

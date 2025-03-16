@@ -7,7 +7,7 @@ import {
     LuPackage,
     LuFileDigit,
     LuFileStack,
-    LuVariable
+    LuVariable,
 } from "react-icons/lu";
 
 const interfaceTypes = {
@@ -65,24 +65,43 @@ const modbusFunctionGroupTypes = {
 
 const modbusFuncTypesBadges = Object.fromEntries(
     Object.entries(modbusFunctionGroupTypes).map(([key, value]) => [
-        key, 
-        <Badge key={key} colorPalette={"purple"}>{key}</Badge>
+        key,
+        <Badge key={key} colorPalette={"purple"}>
+            {key}
+        </Badge>,
     ])
 );
 
 export const badges = {
-    [protocolTypes.modbus]: <Badge colorPalette={"blue"}>{protocolTypes.modbus}</Badge>,
-    [protocolTypes.modbusRtu]: <Badge colorPalette={"blue"}>{protocolTypes.modbus}</Badge>,
-    [protocolTypes.gpio]: <Badge colorPalette={"green"}>{protocolTypes.gpio}</Badge>,
-    [protocolTypes.iec104]: <Badge colorPalette={"red"}>{protocolTypes.iec104}</Badge>,
-    [interfaceTypes.rs485]: <Badge colorPalette={"yellow"}>{interfaceTypes.rs485}</Badge>,
-    [interfaceTypes.rs232]: <Badge colorPalette={"purple"}>{interfaceTypes.rs232}</Badge>,
+    [protocolTypes.modbus]: (
+        <Badge colorPalette={"blue"}>{protocolTypes.modbus}</Badge>
+    ),
+    [protocolTypes.modbusRtu]: (
+        <Badge colorPalette={"blue"}>{protocolTypes.modbus}</Badge>
+    ),
+    [protocolTypes.gpio]: (
+        <Badge colorPalette={"green"}>{protocolTypes.gpio}</Badge>
+    ),
+    [protocolTypes.iec104]: (
+        <Badge colorPalette={"red"}>{protocolTypes.iec104}</Badge>
+    ),
+    [interfaceTypes.rs485]: (
+        <Badge colorPalette={"yellow"}>{interfaceTypes.rs485}</Badge>
+    ),
+    [interfaceTypes.rs232]: (
+        <Badge colorPalette={"purple"}>{interfaceTypes.rs232}</Badge>
+    ),
     [nodeTypes.asdu]: <Badge colorPalette={"teal"}>{nodeTypes.asdu}</Badge>,
-    ...modbusFuncTypesBadges
+    ...modbusFuncTypesBadges,
 };
 
-export const DefaultView = memo(function DefaultView({type, subType, setting, name}) {
-    console.log("Render DefaultView");
+export const DefaultView = memo(function DefaultView({
+    type,
+    subType,
+    setting,
+    name,
+}) {
+    //console.log("Render DefaultView");
 
     return (
         <Stack
@@ -91,16 +110,15 @@ export const DefaultView = memo(function DefaultView({type, subType, setting, na
             direction={"row"}
             align={"center"}
             gap={"2"}
-            separator={<StackSeparator height={"4"} alignSelf={"center"}/>}
+            separator={<StackSeparator height={"4"} alignSelf={"center"} />}
         >
-            { icons[type] }
-            {
-                type === nodeTypes.protocol ||
-                type === nodeTypes.interface ||
-                type === nodeTypes.funcGroup ||
-                type === nodeTypes.asdu ?
-                    badges[subType] || badges[type] : null 
-            }
+            {icons[type]}
+            {type === nodeTypes.protocol ||
+            type === nodeTypes.interface ||
+            type === nodeTypes.funcGroup ||
+            type === nodeTypes.asdu
+                ? badges[subType] || badges[type]
+                : null}
             <Text truncate>{name || setting?.variable}</Text>
         </Stack>
     );

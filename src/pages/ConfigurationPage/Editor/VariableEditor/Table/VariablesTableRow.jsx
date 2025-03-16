@@ -9,7 +9,7 @@ import {
 import { ToggleSection } from "../ToggleSection";
 
 export const VariablesTableRow = memo(function VariablesTableRow(props) {
-    console.log("RENDER VariablesTableRow");
+    //console.log("RENDER VariablesTableRow");
     const {
         id,
         name,

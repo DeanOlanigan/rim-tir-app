@@ -6,8 +6,9 @@ import { ContextMenuWrapper } from "./ContextMenuWrapper";
 import { NodeToggleBtn } from "./NodeToggleBtn";
 
 // TODO Ререндер при перетаскивании всех узлов
-export const Node = ({ node, style, dragHandle, tree }) => {
-    console.log("%cRender NEW Node", "color: white; background: purple;");
+export const Node = memo(
+    function Node({ node, style, dragHandle, tree }) {
+        //console.log("%cRender NEW Node", "color: white; background: purple;");
 
     /* const prevProps = useRef(style);
     useEffect(() => {

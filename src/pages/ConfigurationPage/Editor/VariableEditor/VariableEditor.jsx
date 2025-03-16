@@ -11,7 +11,7 @@ import {
 } from "../../InputComponents";
 
 export const VariableEditor = memo(function VariableEditor({ data }) {
-    console.log("RENDER VariableEditor");
+    //console.log("RENDER VariableEditor");
 
     return (
         <Flex direction={"column"} gap={"4"} w={"100%"} h={"100%"} px={"1"}>

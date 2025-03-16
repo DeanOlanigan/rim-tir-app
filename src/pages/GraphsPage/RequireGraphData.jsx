@@ -4,12 +4,14 @@ import { wsMessageAtom } from "./atoms";
 import { useEffect, useState } from "react";
 
 export default function RequireGraphData() {
-    console.log("Render RequireGraphData");
+    //console.log("Render RequireGraphData");
     const [isHydrated, setIsHydrated] = useState(false);
 
     const wsMessage = useAtomValue(wsMessageAtom);
-    const hasGraphMessage = Boolean(wsMessage.graph && Object.keys(wsMessage.graph).length > 0);
-    
+    const hasGraphMessage = Boolean(
+        wsMessage.graph && Object.keys(wsMessage.graph).length > 0
+    );
+
     useEffect(() => {
         setIsHydrated(true);
     }, []);

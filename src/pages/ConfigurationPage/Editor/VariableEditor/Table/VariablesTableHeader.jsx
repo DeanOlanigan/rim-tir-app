@@ -1,7 +1,7 @@
 import { Table } from "@chakra-ui/react";
 
 export const VariablesTableHeader = () => {
-    console.log("RENDER VariablesTableHeader");
+    //console.log("RENDER VariablesTableHeader");
 
     return (
         <Table.Header>

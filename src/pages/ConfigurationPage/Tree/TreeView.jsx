@@ -12,7 +12,7 @@ import { useDragDropManager } from "react-dnd";
 
 export const TreeView = memo(
     forwardRef(function TreeView(props, ref) {
-        console.log("%cRender NEW TreeView", "color: white; background: red;");
+        //console.log("%cRender NEW TreeView", "color: white; background: red;");
         const dragDropManager = useDragDropManager();
         const {
             handleRenameNode,

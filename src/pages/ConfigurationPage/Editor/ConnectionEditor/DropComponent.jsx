@@ -5,7 +5,7 @@ import { LuTrash2 } from "react-icons/lu";
 import { useVariableDrop } from "../../../../hooks/useVariableDrop";
 
 export const DropComponent = memo(function DropComponent(props) {
-    console.log("RENDER DropComponent");
+    //console.log("RENDER DropComponent");
     const { id, variableId, showText = true } = props;
     const unbindVariable = useVariablesStore((state) => state.unbindVariable);
 

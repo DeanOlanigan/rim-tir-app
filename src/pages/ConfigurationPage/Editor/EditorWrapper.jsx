@@ -13,7 +13,7 @@ import { EditorInformer } from "./EditorInformer";
 
 // TODO Лишний ререндер, мб вынести логику с выбором данных в другое место?
 export const EditorWrapper = memo(function EditorWrapper({ type }) {
-    console.log("Render EditorWrapper");
+    //console.log("Render EditorWrapper");
 
     const settings = useVariablesStore((state) => state.settings);
     const selectedIds = useVariablesStore((state) => state.selectedIds[type]);

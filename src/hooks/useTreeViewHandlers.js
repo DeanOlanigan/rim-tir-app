@@ -91,18 +91,18 @@ export function useTreeViewHandlers(treeType, ref) {
     }, [updateSelectedIds, treeType, ref]);
 
     const handleDisableDrop = useCallback(({ parentNode, dragNodes }) => {
-        console.log("dragNodesType", dragNodes[0]?.data.type);
+        //console.log("dragNodesType", dragNodes[0]?.data.type);
         if (!parentNode || dragNodes.length === 0) return true;
         const isDragNodesTypeSame = dragNodes.every(
             (node) => node.data.type === dragNodes[0].data.type
         );
-        console.log("isDragNodesTypeSame", isDragNodesTypeSame);
+        //console.log("isDragNodesTypeSame", isDragNodesTypeSame);
         if (!isDragNodesTypeSame) return true;
         const dragParentType = getParentType({
             checkNode: dragNodes[0].parent,
         });
         const parentType = getParentType({ checkNode: parentNode });
-        console.log("parentType", dragParentType, parentType);
+        //console.log("parentType", dragParentType, parentType);
         if (parentType === dragParentType) return false;
         return true;
     }, []);

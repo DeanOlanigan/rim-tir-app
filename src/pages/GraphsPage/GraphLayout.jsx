@@ -2,8 +2,8 @@ import { Outlet } from "react-router-dom";
 import { Container } from "@chakra-ui/react";
 
 function GraphLayout() {
-    console.log("Render GraphLayout");
-    
+    //console.log("Render GraphLayout");
+
     return (
         <Container
             maxW={"6xl"}

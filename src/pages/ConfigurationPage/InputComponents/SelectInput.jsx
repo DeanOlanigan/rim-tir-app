@@ -11,7 +11,7 @@ import {
 import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 
 export const SelectInput = memo(function SelectInput(props) {
-    console.log("Render SelectInput");
+    //console.log("Render SelectInput");
     const { targetKey, id, value, showLabel = false } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
     const label = PARAM_DEFINITIONS[targetKey].label;

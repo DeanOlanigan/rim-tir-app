@@ -11,7 +11,7 @@ import { DebouncedEditor, NumberInput } from "../../../InputComponents";
 export const VariablesTransformerCell = memo(function VariablesTransformerCell(
     props
 ) {
-    console.log("Render VariablesTransformerCell");
+    //console.log("Render VariablesTransformerCell");
     const { isLua, luaExpression, coefficient, id } = props;
 
     return isLua ? (

@@ -35,7 +35,7 @@ const sizeParams = {
 };
 
 export const ToggleSection = memo(function ToggleSection(props) {
-    console.log("Render ToggleSection");
+    //console.log("Render ToggleSection");
     const { isLua, isSpecial, cmd, archive, id, size = "md" } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
     const sizeProps = sizeParams[size];
