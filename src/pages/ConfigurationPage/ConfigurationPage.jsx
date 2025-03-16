@@ -16,7 +16,7 @@ function ConfigurationPage() {
     //const [selectedNode, setSelectedNode] = useState();
 
     return (
-        <DndProvider backend={HTML5Backend} options={getBackendOptions()}>
+        <DndProvider backend={HTML5Backend}>
             <Box height="100%">
                 <PanelGroup autoSaveId="persistence" direction="horizontal">
                     <Panel collapsible collapsedSize={0} minSize={15}>
@@ -25,8 +25,8 @@ function ConfigurationPage() {
                             direction="vertical"
                         >
                             <Panel сollapsible collapsedSize={0} minSize={10}>
-                                <TestCard />
-                                {/* <ReceiveWrapper /> */}
+                                {/* <TestCard /> */}
+                                <ReceiveWrapper />
                             </Panel>
                             <PanelResizeHandle className="verticalLine" />
                             <Panel сollapsible collapsedSize={0} minSize={10}>
@@ -45,7 +45,12 @@ function ConfigurationPage() {
                         defaultSize={30}
                         minSize={15}
                     >
+                        {/* <DndProvider
+                        backend={HTML5Backend}
+                        options={getBackendOptions()}
+                    >
                         <MinoruTree />
+                    </DndProvider> */}
                         {/* <VariablesWrapper /> */}
                     </Panel>
                 </PanelGroup>

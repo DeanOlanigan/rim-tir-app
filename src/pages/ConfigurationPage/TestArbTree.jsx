@@ -16,7 +16,7 @@ export const TestCard = () => {
     //console.log("Render TestCard");
     const [tree, setTree] = useState(null);
     const test = useVariablesStore((state) => state.test);
-    const dragManager = useDragDropManager();
+    //const dragManager = useDragDropManager();
 
     const prevProps = useRef(tree);
     useEffect(() => {
@@ -98,21 +98,25 @@ export const TestCard = () => {
                             width={width}
                             className={styles.tree}
                             openByDefault={true}
-                            overscanCount={8}
+                            overscanCount={2}
                             padding={16}
                             rowHeight={30}
                             indent={16}
                             renderCursor={DropCursor}
                             renderDragPreview={DragPreview}
-                            //initialData={test}
-                            data={test}
+                            initialData={test}
+                            /* data={test}
                             onRename={handleRenameNode}
                             onCreate={handleCreateNode}
                             onDelete={handleDeleteNode}
                             onMove={handleMoveNode}
                             onContextMenu={handleContextMenu}
                             onSelect={handleSelect}
-                            //dndManager={dragManager}
+                            disableDrop={handleDisableDrop}
+                            disableEdit={(data) =>
+                                data.type === "dataObject"
+                            } */
+                            //dndManager={dragDropManager}
                         >
                             {Node}
                         </TreeArborist>

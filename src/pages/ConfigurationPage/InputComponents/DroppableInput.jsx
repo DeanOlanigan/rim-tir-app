@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 import { useVariablesStore } from "../../../store/variables-store";
 import { useVariableDrop } from "../../../hooks/useVariableDrop";
@@ -10,10 +10,12 @@ import {
     SelectItem,
     SelectLabel,
 } from "../../../components/ui/select";
-import { Badge, Flex } from "@chakra-ui/react";
+import { Badge, Flex, Box } from "@chakra-ui/react";
 import { useVariablesCollection } from "../../../hooks/useVariablesCollection";
+import { set } from "date-fns";
 
 export const DroppableInput = memo(function DroppableInput(props) {
+    const [isOpen, setIsOpen] = useState(false);
     const { targetKey, id, showLabel = false } = props;
     const label = PARAM_DEFINITIONS[targetKey].label;
 
@@ -40,7 +42,18 @@ export const DroppableInput = memo(function DroppableInput(props) {
     }
 
     return (
-        <SelectRoot
+        <Box
+            maxW={"250px"}
+            h={"32px"}
+            ref={dropRef}
+            border={"2px dashed"}
+            borderColor={borderColor}
+            borderRadius={"md"}
+            backgroundColor={backgroundColor}
+        >
+            test
+        </Box>
+        /* <SelectRoot
             maxW={"250px"}
             ref={dropRef}
             size={"xs"}
@@ -50,6 +63,9 @@ export const DroppableInput = memo(function DroppableInput(props) {
                 unbindVariable(id);
                 if (details.items.length === 0) return;
                 bindVariable(id, details.items[0].id);
+            }}
+            onOpenChange={(details) => {
+                setIsOpen(details.open);
             }}
         >
             {showLabel && <SelectLabel>{label}</SelectLabel>}
@@ -64,18 +80,22 @@ export const DroppableInput = memo(function DroppableInput(props) {
                     placeholder={`Выберите ${label.toLowerCase()}`}
                 />
             </SelectTrigger>
-            {/* <SelectContent>
-                {variables?.items.map((row) => (
-                    <SelectItem item={row} key={row.value}>
-                        <Flex gap={"4"} align={"center"}>
-                            {row.label}
-                            {row.disabled && (
-                                <Badge colorPalette={"red"}>Используется</Badge>
-                            )}
-                        </Flex>
-                    </SelectItem>
-                ))}
-            </SelectContent> */}
-        </SelectRoot>
+            {isOpen && (
+                <SelectContent>
+                    {variables?.items.map((row) => (
+                        <SelectItem item={row} key={row.value}>
+                            <Flex gap={"4"} align={"center"}>
+                                {row.label}
+                                {row.disabled && (
+                                    <Badge colorPalette={"red"}>
+                                        Используется
+                                    </Badge>
+                                )}
+                            </Flex>
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            )}
+        </SelectRoot> */
     );
 });

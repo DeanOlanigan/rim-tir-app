@@ -1,7 +1,7 @@
 import styles from "../../../components/TreeView/TreeView.module.css";
 import clsx from "clsx";
 import { NodeContent } from "./NodeContent";
-//import { memo, useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { ContextMenuWrapper } from "./ContextMenuWrapper";
 import { NodeToggleBtn } from "./NodeToggleBtn";
 
@@ -10,22 +10,22 @@ export const Node = memo(
     function Node({ node, style, dragHandle, tree }) {
         //console.log("%cRender NEW Node", "color: white; background: purple;");
 
-    /* const prevProps = useRef(style);
-    useEffect(() => {
-        if (prevProps.current !== style) {
-            console.log("style changed:", prevProps.current, "->", style);
-            prevProps.current = style;
-        }
-    }, [style]); */
+        const prevProps = useRef(style);
+        useEffect(() => {
+            if (prevProps.current !== style) {
+                console.log("style changed:", prevProps.current, "->", style);
+                prevProps.current = style;
+            }
+        }, [style]);
 
-    const indentSize = Number.parseFloat(`${style.paddingLeft || 0}`);
+        const indentSize = Number.parseFloat(`${style.paddingLeft || 0}`);
 
-    return (
-        <ContextMenuWrapper
+        return (
+            /* <ContextMenuWrapper
             apiPath={node.tree}
             type={node.data.type}
             subType={node.data.subType}
-        >
+        > */
             <div
                 ref={dragHandle}
                 style={style}
@@ -64,6 +64,15 @@ export const Node = memo(
                     <NodeContent node={node} />
                 </div>
             </div>
-        </ContextMenuWrapper>
-    );
-};
+            /* </ContextMenuWrapper> */
+        );
+    },
+    (prevProps, nextProps) => {
+        return (
+            prevProps.style.paddingLeft === nextProps.style.paddingLeft &&
+            prevProps.node.isLeaf === nextProps.node.isLeaf &&
+            prevProps.node.isOpen === nextProps.node.isOpen &&
+            true
+        );
+    }
+);

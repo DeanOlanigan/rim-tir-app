@@ -1,7 +1,8 @@
 import { Box, IconButton } from "@chakra-ui/react";
 import { LuChevronRight } from "react-icons/lu";
+import { memo } from "react";
 
-export const NodeToggleBtn = ({ toggle, isOpen }) => {
+export const NodeToggleBtn = memo(function NodeToggleBtn({ toggle, isOpen }) {
     return (
         <IconButton
             size={"2xs"}
@@ -21,4 +22,4 @@ export const NodeToggleBtn = ({ toggle, isOpen }) => {
             />
         </IconButton>
     );
-};
+});
