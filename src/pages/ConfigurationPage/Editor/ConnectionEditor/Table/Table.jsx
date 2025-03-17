@@ -31,7 +31,7 @@ export const DataObjectsTable = ({ data }) => {
                     return (
                         <Table.Row key={index} background={"bg.subtle"}>
                             {Object.keys(element.setting).map((key, index) => {
-                                //if (key === "variable") return null;
+                                if (key === "variable") return null;
                                 return (
                                     <Table.Cell key={index} minW={"150px"}>
                                         <BaseInput

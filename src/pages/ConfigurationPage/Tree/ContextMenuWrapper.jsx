@@ -12,6 +12,8 @@ export const ContextMenuWrapper = ({
     apiPath,
     type = null,
     subType = null,
+    contextMenuState,
+    closeMenu,
     children,
 }) => {
     const treeType = apiPath?.props.treeType;
@@ -35,9 +37,8 @@ export const ContextMenuWrapper = ({
     if (!items) return children;
 
     return (
-        <MenuRoot lazyMount unmountOnExit>
-            <MenuContextTrigger asChild>{children}</MenuContextTrigger>
-            <MenuContent>
+        <MenuRoot lazyMount unmountOnExit open>
+            <MenuContent style={{ position: "absolute", zIndex: 999 }}>
                 {items.map((item, index) => {
                     if (item.type === "separator") {
                         return <MenuSeparator key={`sep_${index}`} />;

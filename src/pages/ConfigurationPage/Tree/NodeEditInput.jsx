@@ -1,14 +1,14 @@
-export const NodeEditInput = ({ node }) => {
+export const NodeEditInput = ({ name, submit, reset }) => {
     return (
         <input
             autoFocus
             type="text"
-            defaultValue={node.data.name}
+            defaultValue={name}
             onFocus={(e) => e.currentTarget.select()}
-            onBlur={(e) => node.submit(e.currentTarget.value)}
+            onBlur={(e) => submit(e.currentTarget.value)}
             onKeyDown={(e) => {
-                if (e.key === "Escape") node.reset();
-                if (e.key === "Enter") node.submit(e.currentTarget.value);
+                if (e.key === "Escape") reset();
+                if (e.key === "Enter") submit(e.currentTarget.value);
             }}
         />
     );

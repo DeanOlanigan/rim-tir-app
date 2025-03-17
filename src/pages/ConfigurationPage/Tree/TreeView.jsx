@@ -1,6 +1,6 @@
 import { Tree } from "react-arborist";
 import styles from "../../../components/TreeView/TreeView.module.css";
-import { memo, forwardRef } from "react";
+import { memo, forwardRef, useState } from "react";
 import { AutoSizer } from "react-virtualized";
 
 import { DropCursor } from "../../../components/TreeView/DropCursor";
@@ -24,11 +24,42 @@ export const TreeView = memo(
             handleDisableDrop,
         } = useTreeViewHandlers(props.treeType, ref);
 
+        const [contextMenuState, setContextMenuState] = useState({
+            isOpen: false,
+            items: [],
+            position: { x: 0, y: 0 },
+            target: null,
+        });
+        const onContextMenuHandler = (e, target) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setContextMenuState({
+                ...contextMenuState,
+                isOpen: true,
+                position: { x: e.clientX, y: e.clientY },
+                target: target,
+            });
+        };
+
         return (
-            <Box w={"100%"} h={"100%"}>
+            <Box
+                w={"100%"}
+                h={"100%"}
+                bg={"red.800"}
+                onContextMenu={(e) => onContextMenuHandler(e, null)}
+            >
+                <ContextMenuWrapper
+                    apiPath={ref?.current}
+                    contextMenuState={contextMenuState}
+                    closeMenu={() =>
+                        setContextMenuState((prev) => ({
+                            ...prev,
+                            isOpen: false,
+                        }))
+                    }
+                />
                 <AutoSizer>
                     {({ height, width }) => (
-                        /* <ContextMenuWrapper apiPath={ref?.current}> */
                         <Tree
                             ref={ref}
                             {...props}
@@ -44,7 +75,7 @@ export const TreeView = memo(
                             onCreate={handleCreateNode}
                             onDelete={handleDeleteNode}
                             onMove={handleMoveNode}
-                            onContextMenu={handleContextMenu}
+                            onContextMenu={onContextMenuHandler}
                             onSelect={handleSelect}
                             disableDrop={handleDisableDrop}
                             //dndManager={dragDropManager}
@@ -52,7 +83,6 @@ export const TreeView = memo(
                         >
                             {Node}
                         </Tree>
-                        /* </ContextMenuWrapper> */
                     )}
                 </AutoSizer>
             </Box>
