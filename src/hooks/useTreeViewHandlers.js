@@ -6,6 +6,7 @@ import {
     DEFAULT_DATA_OBJECT_SETTING,
 } from "../config/constants";
 import { getParentType } from "../utils/utils";
+import { useContextMenuStore } from "../store/contextMenu-store";
 
 export function useTreeViewHandlers(treeType, ref) {
     const {
@@ -17,6 +18,7 @@ export function useTreeViewHandlers(treeType, ref) {
         updateSelectedIds,
         unbindVariable,
     } = useVariablesStore((state) => state);
+    const updateContext = useContextMenuStore((state) => state.updateContext);
 
     const handleRenameNode = useCallback(
         ({ id, name }) => {
@@ -71,11 +73,20 @@ export function useTreeViewHandlers(treeType, ref) {
     const handleContextMenu = useCallback(
         (e) => {
             e.preventDefault();
-            //e.stopPropagation();
+            e.stopPropagation();
             ref?.current.root.focus();
             ref?.current.root.select();
+            updateContext({
+                apiPath: ref?.current,
+                treeType: treeType,
+                type: null,
+                subType: null,
+                x: e.clientX,
+                y: e.clientY,
+                visible: true,
+            });
         },
-        [ref]
+        [ref, treeType, updateContext]
     );
     const handleSelect = useCallback(() => {
         if (ref?.current?.selectedIds?.size === 0) {

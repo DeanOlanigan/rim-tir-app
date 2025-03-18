@@ -23,7 +23,13 @@ export const TreeView = memo(
         } = useTreeViewHandlers(props.treeType, ref);
 
         return (
-            <Box w={"100%"} h={"100%"} bg={"red.800"} position={"relative"}>
+            <Box
+                w={"100%"}
+                h={"100%"}
+                bg={"red.800"}
+                position={"relative"}
+                onContextMenu={handleContextMenu}
+            >
                 <AutoSizer>
                     {({ height, width }) => (
                         <Tree
@@ -41,7 +47,6 @@ export const TreeView = memo(
                             onCreate={handleCreateNode}
                             onDelete={handleDeleteNode}
                             onMove={handleMoveNode}
-                            onContextMenu={handleContextMenu}
                             onSelect={handleSelect}
                             disableDrop={handleDisableDrop}
                             //dndManager={dragDropManager}

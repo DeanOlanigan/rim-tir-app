@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { NodeContent } from "./NodeContent";
 import { memo } from "react";
 import { NodeToggleBtn } from "./NodeToggleBtn";
+import { useContextMenuStore } from "../../../store/contextMenu-store";
 
 // TODO Ререндер при перетаскивании всех узлов
 export const Node = memo(function Node({ node, style, dragHandle, tree }) {
@@ -15,7 +16,7 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
             prevProps.current = node;
         }
     }, [node]); */
-
+    const updateContext = useContextMenuStore((state) => state.updateContext);
     const indentSize = Number.parseFloat(`${style.paddingLeft || 0}`);
 
     return (
@@ -38,6 +39,15 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
                 e.stopPropagation();
                 node.focus();
                 //node.select();
+                updateContext({
+                    x: e.clientX,
+                    y: e.clientY,
+                    type: node.data.type,
+                    subType: node.data.subType,
+                    treeType: tree.props.treeType,
+                    apiPath: tree,
+                    visible: true,
+                });
             }}
         >
             <div className={styles.indentLines}>

@@ -6,6 +6,9 @@ export const useContextMenuStore = create()((set) => ({
         subType: null,
         treeType: null,
         apiPath: null,
+        x: 0,
+        y: 0,
+        visible: false,
     },
     updateContext: (data) =>
         set((state) => ({ context: { ...state.context, ...data } })),
