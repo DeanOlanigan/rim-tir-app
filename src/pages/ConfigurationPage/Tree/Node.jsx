@@ -1,8 +1,7 @@
 import styles from "../../../components/TreeView/TreeView.module.css";
 import clsx from "clsx";
 import { NodeContent } from "./NodeContent";
-import { memo, useEffect, useRef } from "react";
-import { ContextMenuWrapper } from "./ContextMenuWrapper";
+import { memo } from "react";
 import { NodeToggleBtn } from "./NodeToggleBtn";
 
 // TODO Ререндер при перетаскивании всех узлов

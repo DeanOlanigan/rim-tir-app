@@ -5,18 +5,14 @@ import {
     MenuContextTrigger,
     MenuSeparator,
 } from "../../../components/ui/menu";
+import { Menu, Portal } from "@chakra-ui/react";
 import { menuConfig } from "../../../config/contextMenu";
+import { useContextMenuStore } from "../../../store/contextMenu-store";
 
 // TODO Подумать как избежать ре-рендера
-export const ContextMenuWrapper = ({
-    apiPath,
-    type = null,
-    subType = null,
-    contextMenuState,
-    closeMenu,
-    children,
-}) => {
-    const treeType = apiPath?.props.treeType;
+export const ContextMenuWrapper = () => {
+    const context = useContextMenuStore((state) => state.context);
+    const { apiPath, type, subType, treeType, isOpen, position } = context;
     // Нужно передавать отдельным пропсом, а не через api дерева, иначе неверно отображается контекстное меню
     const focusedNodeType = subType || type || "default";
 
@@ -29,33 +25,47 @@ export const ContextMenuWrapper = ({
     ); */
 
     if (!apiPath) {
-        return children;
+        return null;
     }
 
     const items = menuConfig[treeType][focusedNodeType];
 
-    if (!items) return children;
+    if (!items) return null;
 
     return (
-        <MenuRoot lazyMount unmountOnExit open>
-            <MenuContent style={{ position: "absolute", zIndex: 999 }}>
-                {items.map((item, index) => {
-                    if (item.type === "separator") {
-                        return <MenuSeparator key={`sep_${index}`} />;
-                    }
-                    return (
-                        <MenuItem
-                            key={item.key}
-                            value={item.key}
-                            {...item.style}
-                            onClick={() => item.action?.(apiPath)}
-                        >
-                            {item.icon?.()}
-                            {item.label}
-                        </MenuItem>
-                    );
-                })}
-            </MenuContent>
-        </MenuRoot>
+        <Menu.Root
+            lazyMount
+            unmountOnExit
+            open={isOpen}
+            positioning={{
+                x: position.x,
+                y: position.y,
+                width: apiPath.width,
+                height: apiPath.height,
+            }}
+        >
+            <Portal>
+                <Menu.Positioner>
+                    <Menu.Content>
+                        {items.map((item, index) => {
+                            if (item.type === "separator") {
+                                return <MenuSeparator key={`sep_${index}`} />;
+                            }
+                            return (
+                                <MenuItem
+                                    key={item.key}
+                                    value={item.key}
+                                    {...item.style}
+                                    onClick={() => item.action?.(apiPath)}
+                                >
+                                    {item.icon?.()}
+                                    {item.label}
+                                </MenuItem>
+                            );
+                        })}
+                    </Menu.Content>
+                </Menu.Positioner>
+            </Portal>
+        </Menu.Root>
     );
 };

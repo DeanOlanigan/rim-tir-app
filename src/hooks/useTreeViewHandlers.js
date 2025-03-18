@@ -69,10 +69,9 @@ export function useTreeViewHandlers(treeType, ref) {
         [moveNode, treeType]
     );
     const handleContextMenu = useCallback(
-        (e, test) => {
-            console.log(e, test);
+        (e) => {
             e.preventDefault();
-            e.stopPropagation();
+            //e.stopPropagation();
             ref?.current.root.focus();
             ref?.current.root.select();
         },

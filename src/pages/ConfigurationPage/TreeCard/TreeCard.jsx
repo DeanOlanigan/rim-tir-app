@@ -6,14 +6,18 @@ import {
     Kbd,
     HStack,
     VStack,
+    Menu,
+    Portal,
 } from "@chakra-ui/react";
 import { TreeView } from "../Tree/TreeView";
 import { TreeCardTitle } from "./Title";
 import { useRef, useState, memo } from "react";
 import { LuBadgePlus } from "react-icons/lu";
+import { useContextMenuStore } from "../../../store/contextMenu-store";
+import { menuConfig } from "../../../config/contextMenu";
 
 export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
-    //console.log("RENDER VariableCard", treeType);
+    console.log("RENDER VariableCard", treeType);
     const [isHovered, setIsHovered] = useState(false);
 
     const variableTreeRef = useRef(null);
@@ -39,14 +43,23 @@ export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
                     />
                 </Card.Title>
             </Card.Header>
-            <Card.Body px={"0"} position={"relative"} overflow={"hidden"}>
-                {data.length === 0 && <EmptyCard />}
-                <TreeView
-                    ref={variableTreeRef}
-                    data={data}
-                    treeType={treeType}
-                />
-            </Card.Body>
+            <Menu.Root lazyMount unmountOnExit>
+                <Menu.ContextTrigger asChild>
+                    <Card.Body
+                        px={"0"}
+                        position={"relative"}
+                        overflow={"hidden"}
+                    >
+                        {data.length === 0 && <EmptyCard />}
+                        <TreeView
+                            ref={variableTreeRef}
+                            data={data}
+                            treeType={treeType}
+                        />
+                    </Card.Body>
+                </Menu.ContextTrigger>
+                <ContextMenuList />
+            </Menu.Root>
         </Card.Root>
     );
 });
@@ -66,5 +79,40 @@ const EmptyCard = () => {
                 </HStack>
             </VStack>
         </AbsoluteCenter>
+    );
+};
+
+const ContextMenuList = () => {
+    const context = useContextMenuStore((state) => state.context);
+    const { apiPath, type, subType, treeType } = context;
+    const focusedNodeType = subType || type || "default";
+
+    if (!apiPath) return null;
+    const items = menuConfig[treeType][focusedNodeType];
+    if (!items) return null;
+
+    return (
+        <Portal>
+            <Menu.Positioner>
+                <Menu.Content>
+                    {items.map((item, index) => {
+                        if (item.type === "separator") {
+                            return <Menu.Separator key={`sep_${index}`} />;
+                        }
+                        return (
+                            <Menu.Item
+                                key={item.key}
+                                value={item.key}
+                                {...item.style}
+                                onClick={() => item.action?.(apiPath)}
+                            >
+                                {item.icon?.()}
+                                {item.label}
+                            </Menu.Item>
+                        );
+                    })}
+                </Menu.Content>
+            </Menu.Positioner>
+        </Portal>
     );
 };
