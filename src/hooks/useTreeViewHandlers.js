@@ -9,15 +9,15 @@ import { getParentType } from "../utils/utils";
 import { useContextMenuStore } from "../store/contextMenu-store";
 
 export function useTreeViewHandlers(treeType, ref) {
-    const {
-        addNode,
-        renameNode,
-        removeNode,
-        moveNode,
-        createSetting,
-        updateSelectedIds,
-        unbindVariable,
-    } = useVariablesStore((state) => state);
+    const addNode = useVariablesStore((state) => state.addNode);
+    const renameNode = useVariablesStore((state) => state.renameNode);
+    const removeNode = useVariablesStore((state) => state.removeNode);
+    const moveNode = useVariablesStore((state) => state.moveNode);
+    const createSetting = useVariablesStore((state) => state.createSetting);
+    const updateSelectedIds = useVariablesStore(
+        (state) => state.updateSelectedIds
+    );
+    const unbindVariable = useVariablesStore((state) => state.unbindVariable);
     const updateContext = useContextMenuStore((state) => state.updateContext);
 
     const handleRenameNode = useCallback(

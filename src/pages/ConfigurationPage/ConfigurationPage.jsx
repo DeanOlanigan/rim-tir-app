@@ -26,11 +26,11 @@ function ConfigurationPage() {
                         >
                             <Panel collapsible collapsedSize={0} minSize={10}>
                                 {/* <TestCard /> */}
-                                {/* <ReceiveWrapper /> */}
+                                <ReceiveWrapper />
                             </Panel>
                             <PanelResizeHandle className="verticalLine" />
                             <Panel collapsible collapsedSize={0} minSize={10}>
-                                {/* <SendWrapper /> */}
+                                <SendWrapper />
                             </Panel>
                         </PanelGroup>
                     </Panel>

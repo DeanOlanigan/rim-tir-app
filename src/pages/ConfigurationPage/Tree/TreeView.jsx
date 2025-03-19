@@ -26,7 +26,6 @@ export const TreeView = memo(
             <Box
                 w={"100%"}
                 h={"100%"}
-                bg={"red.800"}
                 position={"relative"}
                 onContextMenu={handleContextMenu}
             >
