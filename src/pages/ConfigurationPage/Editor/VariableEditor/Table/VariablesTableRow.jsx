@@ -1,5 +1,5 @@
-import { memo } from "react";
-import { Table, Text } from "@chakra-ui/react";
+import { memo, useState } from "react";
+import { Table, Text, Input, Box, Flex } from "@chakra-ui/react";
 import { VariablesTransformerCell } from "./VariablesTransformerCell";
 import {
     NumberInput,
@@ -32,47 +32,76 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                 <Text>{name}</Text>
             </Table.Cell>
             <Table.Cell minW={"170px"}>
-                <ToggleSection
+                <Input size={"xs"} value={isSpecial} />
+                {/* <ToggleSection
                     id={id}
                     isSpecial={isSpecial}
                     archive={archive}
                     cmd={cmd}
                     isLua={isLua}
                     size={"sm"}
-                />
+                /> */}
             </Table.Cell>
             <Table.Cell>
-                <SelectInput targetKey={"type"} id={id} value={type} />
+                <CellWrapper value={type}>
+                    <SelectInput targetKey={"type"} id={id} value={type} />
+                </CellWrapper>
             </Table.Cell>
             <Table.Cell>
-                <SelectInput targetKey={"group"} id={id} value={group} />
+                <CellWrapper value={group}>
+                    <SelectInput targetKey={"group"} id={id} value={group} />
+                </CellWrapper>
             </Table.Cell>
             <Table.Cell>
+                <CellWrapper value={"under dev"}></CellWrapper>
                 {/* TODO Доделать */}
-                <Text>under dev.</Text>
             </Table.Cell>
             <Table.Cell>
-                <VariablesTransformerCell
-                    id={id}
-                    isLua={isLua}
-                    luaExpression={luaExpression}
-                    coefficient={coefficient}
-                />
+                <CellWrapper>
+                    <VariablesTransformerCell
+                        id={id}
+                        isLua={isLua}
+                        luaExpression={luaExpression}
+                        coefficient={coefficient}
+                    />
+                </CellWrapper>
             </Table.Cell>
             <Table.Cell>
-                <NumberInput
-                    targetKey={"specialCycleDelay"}
-                    id={id}
-                    value={specialCycleDelay}
-                />
+                <CellWrapper value={specialCycleDelay}>
+                    <NumberInput
+                        targetKey={"specialCycleDelay"}
+                        id={id}
+                        value={specialCycleDelay}
+                    />
+                </CellWrapper>
             </Table.Cell>
             <Table.Cell>
-                <DebouncedTextarea
-                    targetKey={"description"}
-                    id={id}
-                    value={description}
-                />
+                <CellWrapper value={description}>
+                    <DebouncedTextarea
+                        targetKey={"description"}
+                        id={id}
+                        value={description}
+                    />
+                </CellWrapper>
             </Table.Cell>
         </Table.Row>
     );
 });
+
+const CellWrapper = ({ value, children }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const handleDoubleClick = () => setIsEditing(true);
+    const handleBlur = () => setIsEditing(false);
+    return (
+        <Flex
+            h={"32px"}
+            w={"100%"}
+            alignItems={"center"}
+            overflow={"hidden"}
+            onDoubleClick={handleDoubleClick}
+            onBlur={handleBlur}
+        >
+            {isEditing ? children : <Text>{value}</Text>}
+        </Flex>
+    );
+};
