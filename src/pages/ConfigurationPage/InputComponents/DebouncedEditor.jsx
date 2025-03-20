@@ -34,6 +34,17 @@ export const DebouncedEditor = memo(function DebouncedEditor(props) {
                 setValue(value);
                 debounced({ id, luaExpression: value });
             }}
+            options={{
+                minimap: { enabled: false }, // скрыть мини-карту
+                lineNumbers: "on", // отключить нумерацию строк
+                renderLineHighlight: "none", // убрать подсветку текущей строки
+                contextmenu: false, // отключить контекстное меню
+                scrollBeyondLastLine: false, // чтобы не было лишнего прокручивания
+                scrollbar: {
+                    vertical: "hidden", // скрыть вертикальный скролл
+                    horizontal: "hidden", // скрыть горизонтальный скролл
+                },
+            }}
         />
     );
 });

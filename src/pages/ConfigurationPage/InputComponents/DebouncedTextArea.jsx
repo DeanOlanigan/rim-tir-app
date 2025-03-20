@@ -7,7 +7,17 @@ import { memo } from "react";
 import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 
 export const DebouncedTextarea = memo(function DebouncedTextarea(props) {
-    const { targetKey, value, id, showLabel = false, label } = props;
+    const {
+        targetKey,
+        value,
+        id,
+        showLabel = false,
+        label,
+        maxW = "510px",
+        maxH = "128px",
+        h = "100%",
+        w = "100%",
+    } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
     const [innerValue, setInnerValue] = useState(value);
 
@@ -33,8 +43,10 @@ export const DebouncedTextarea = memo(function DebouncedTextarea(props) {
             <Textarea
                 size={"xs"}
                 minH={"32px"}
-                maxH={"128px"}
-                maxW={"510px"}
+                h={h}
+                w={w}
+                maxH={maxH}
+                maxW={maxW}
                 rows={"1"}
                 value={innerValue}
                 onChange={(e) => {
