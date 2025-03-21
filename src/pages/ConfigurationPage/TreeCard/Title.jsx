@@ -3,7 +3,7 @@ import { Tooltip } from "../../../components/ui/tooltip";
 import { LuFolderPlus, LuCopyMinus, LuFilePlus } from "react-icons/lu";
 //import { CreateDataObjectMenu } from "./CreateDataObjectMenu";
 
-export const TreeCardTitle = ({ type, isHovered, variableTreeRef }) => {
+export const TreeCardTitle = ({ type, variableTreeRef }) => {
     return (
         <HStack justify={"space-between"}>
             <Text>
@@ -11,7 +11,12 @@ export const TreeCardTitle = ({ type, isHovered, variableTreeRef }) => {
                 {type === "send" && "Передача"}
                 {type === "receive" && "Прием"}
             </Text>
-            <HStack gap={"1"} display={isHovered ? "flex" : "none"}>
+            <HStack
+                gap={"1"}
+                opacity={"0"}
+                transition={"opacity 0.2s ease-in-out"}
+                _groupHover={{ opacity: 1 }}
+            >
                 {/* {(type === "send" || type === "receive") && (
                     <CreateDataObjectMenu variableTreeRef={variableTreeRef}/>
                 )} */}

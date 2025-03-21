@@ -5,6 +5,7 @@ import {
     LuSquareTerminal,
     LuCode,
     LuRefreshCcwDot,
+    LuChartSpline,
 } from "react-icons/lu";
 import { useVariablesStore } from "../../../../store/variables-store";
 import { memo } from "react";
@@ -15,6 +16,7 @@ const iconMap = {
     isLua: LuCode,
     cmd: LuSquareTerminal,
     archive: LuArchive,
+    graph: LuChartSpline,
 };
 
 const sizeParams = {
@@ -36,14 +38,14 @@ const sizeParams = {
 
 export const ToggleSection = memo(function ToggleSection(props) {
     //console.log("Render ToggleSection");
-    const { isLua, isSpecial, cmd, archive, id, size = "md" } = props;
+    const { graph, isSpecial, cmd, archive, id, size = "md" } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
     const sizeProps = sizeParams[size];
     const checkboxes = {
         isSpecial,
-        archive,
         cmd,
-        isLua,
+        archive,
+        graph,
     };
 
     return (

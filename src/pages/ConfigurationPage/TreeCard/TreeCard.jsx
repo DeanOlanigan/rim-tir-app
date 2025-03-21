@@ -15,8 +15,6 @@ import { ContextMenu } from "../Tree/ContextMenu/ContextMenu";
 
 export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
     console.log("RENDER VariableCard", treeType);
-    const [isHovered, setIsHovered] = useState(false);
-
     const variableTreeRef = useRef(null);
 
     return (
@@ -28,14 +26,12 @@ export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
             animationStyle={{
                 _open: "scale-fade-in",
             }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            className="group"
         >
             <Card.Header>
                 <Card.Title>
                     <TreeCardTitle
                         type={treeType}
-                        isHovered={isHovered}
                         variableTreeRef={variableTreeRef}
                     />
                 </Card.Title>

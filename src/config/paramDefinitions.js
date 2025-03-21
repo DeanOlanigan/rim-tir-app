@@ -25,7 +25,7 @@ export const PARENT_NAMES = {
 export const PARAM_DEFINITIONS = {
     isSpecial: {
         type: "boolean",
-        label: "Специальная",
+        label: "Цикличная",
         defaultValue: false,
     },
     type: {
@@ -48,18 +48,23 @@ export const PARAM_DEFINITIONS = {
         label: "Lua",
         defaultValue: false,
     },
+    graph: {
+        type: "boolean",
+        label: "В архив ТИ",
+        defaultValue: false,
+    },
     description: {
         type: "textarea",
         label: "Описание",
     },
     cmd: {
         type: "boolean",
-        label: "Команда пользователя",
+        label: "ТУ",
         defaultValue: false,
     },
     archive: {
         type: "boolean",
-        label: "В архив",
+        label: "В архив ТС",
         defaultValue: false,
     },
     group: {

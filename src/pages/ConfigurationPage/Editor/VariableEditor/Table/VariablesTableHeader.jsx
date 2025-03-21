@@ -6,7 +6,7 @@ export const VariablesTableHeader = () => {
     return (
         <Table.Header>
             <Table.Row background={"bg.subtle"}>
-                <Table.ColumnHeader />
+                <Table.ColumnHeader w={"55px"} />
                 <Table.ColumnHeader minW={"150px"}>Имя</Table.ColumnHeader>
                 <Table.ColumnHeader />
                 <Table.ColumnHeader minW={"150px"}>
@@ -20,11 +20,7 @@ export const VariablesTableHeader = () => {
                 >
                     Единица измерения
                 </Table.ColumnHeader> */}
-                <Table.ColumnHeader
-                    minW={"50px"}
-                    textWrap={"wrap"}
-                    textAlign={"center"}
-                >
+                <Table.ColumnHeader minW={"50px"} textWrap={"wrap"}>
                     Lua выражение
                 </Table.ColumnHeader>
                 {/* <Table.ColumnHeader
@@ -34,7 +30,7 @@ export const VariablesTableHeader = () => {
                 >
                     Цикличный вызов, сек
                 </Table.ColumnHeader> */}
-                <Table.ColumnHeader minW={"200px"}>Описание</Table.ColumnHeader>
+                <Table.ColumnHeader minW={"150px"}>Описание</Table.ColumnHeader>
             </Table.Row>
         </Table.Header>
     );

@@ -13,6 +13,7 @@ import {
     Status,
     Button,
     NumberInput,
+    Code,
 } from "@chakra-ui/react";
 import {
     SelectInput,
@@ -75,34 +76,42 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
     );
 
     return (
-        <Table.Row background={"transparent"}>
-            <Table.Cell w={"80px"}>
+        <Table.Row
+            background={"transparent"}
+            className="group"
+            _hover={{ bg: "bg.muted" }}
+        >
+            <Table.Cell w={"55px"} p={"0.5"}>
                 <Flex gap={"1"} justify={"center"}>
                     {isEditing ? (
                         <>
                             <IconButton
-                                size={"lg"}
-                                variant={"ghost"}
+                                size={"xs"}
+                                variant={"plain"}
                                 onClick={() => setIsEditing(false)}
+                                opacity={"0"}
+                                _groupHover={{ opacity: 1 }}
                             >
                                 <LuPencilOff />
                             </IconButton>
                         </>
                     ) : (
                         <IconButton
-                            size={"lg"}
-                            variant={"ghost"}
+                            size={"xs"}
+                            variant={"plain"}
                             onClick={() => setIsEditing(true)}
+                            opacity={"0"}
+                            _groupHover={{ opacity: 1 }}
                         >
                             <LuPencil />
                         </IconButton>
                     )}
                 </Flex>
             </Table.Cell>
-            <Table.Cell>
+            <Table.Cell p={"0.5"}>
                 <Text>{name}</Text>
             </Table.Cell>
-            <Table.Cell minW={"155px"}>
+            <Table.Cell minW={"155px"} p={"0.5"}>
                 {isEditing ? (
                     <Flex gap={"1"} direction={"column"} h={"100%"} w={"100%"}>
                         {/* <Flex
@@ -257,7 +266,7 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                                 <Badge
                                     variant={"solid"}
                                     colorPalette={archiveColorMap[archiveValue]}
-                                    size={"md"}
+                                    size={"sm"}
                                 >
                                     <LuArchive />
                                 </Badge>
@@ -268,7 +277,7 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                                 <Badge
                                     variant={"outline"}
                                     colorPalette={"blue"}
-                                    size={"md"}
+                                    size={"sm"}
                                 >
                                     <LuSquareTerminal />
                                 </Badge>
@@ -279,7 +288,7 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                                 <Badge
                                     variant={"outline"}
                                     colorPalette={"green"}
-                                    size={"md"}
+                                    size={"sm"}
                                 >
                                     <LuCode />
                                 </Badge>
@@ -290,7 +299,7 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                                 <Badge
                                     variant={"outline"}
                                     colorPalette={"purple"}
-                                    size={"md"}
+                                    size={"sm"}
                                 >
                                     <LuRefreshCcwDot />
                                     {new Intl.NumberFormat("ru-RU", {
@@ -305,7 +314,7 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                             <Badge
                                 variant={"outline"}
                                 colorPalette={"red"}
-                                size={"md"}
+                                size={"sm"}
                             >
                                 <HStack
                                     gap={"1"}
@@ -320,14 +329,14 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                     </Flex>
                 )}
             </Table.Cell>
-            <Table.Cell>
+            <Table.Cell p={"0.5"}>
                 {isEditing ? (
                     <SelectInput targetKey={"type"} id={id} value={type} />
                 ) : (
                     <Text>{typeLabel}</Text>
                 )}
             </Table.Cell>
-            <Table.Cell>
+            <Table.Cell p={"0.5"}>
                 {isEditing ? (
                     <DebouncedEditor
                         id={id}
@@ -336,10 +345,10 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                         width={"450px"}
                     />
                 ) : (
-                    <CodePreview code={luaExpression} />
+                    luaExpression && <CodePreview code={luaExpression} />
                 )}
             </Table.Cell>
-            <Table.Cell>
+            <Table.Cell p={"0.5"}>
                 {isEditing ? (
                     <DebouncedTextarea
                         id={id}
@@ -350,9 +359,11 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                         maxH={"253px"}
                     />
                 ) : (
-                    <Text maxW={"150px"} truncate lineClamp={2}>
-                        {description}
-                    </Text>
+                    <Tooltip content={description}>
+                        <Text maxW={"150px"} truncate lineClamp={2}>
+                            {description}
+                        </Text>
+                    </Tooltip>
                 )}
             </Table.Cell>
         </Table.Row>
@@ -364,9 +375,9 @@ const CodePreview = ({ code }) => {
     return (
         <HoverCard.Root lazyMount unmountOnExit>
             <HoverCard.Trigger>
-                <Text maxW={"150px"} truncate lineClamp={2}>
+                <Code size={"sm"} maxW={"150px"} truncate lineClamp={2}>
                     {code}
-                </Text>
+                </Code>
             </HoverCard.Trigger>
             <Portal>
                 <HoverCard.Positioner>

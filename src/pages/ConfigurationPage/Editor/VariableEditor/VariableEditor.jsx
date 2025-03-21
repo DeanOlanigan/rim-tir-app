@@ -1,5 +1,5 @@
-import { memo } from "react";
-import { Flex, Box, Stack } from "@chakra-ui/react";
+import { memo, useState } from "react";
+import { Flex, Box, Stack, CheckboxCard, Icon, Float } from "@chakra-ui/react";
 import { VariableEditorHeader } from "./VariableEditorHeader";
 import { ToggleSection } from "./ToggleSection";
 import { EditorBreadcrumb } from "../Breadcrumb";
@@ -9,6 +9,12 @@ import {
     DebouncedTextarea,
     DebouncedEditor,
 } from "../../InputComponents";
+import {
+    LuArchive,
+    LuChartSpline,
+    LuRefreshCcwDot,
+    LuSquareTerminal,
+} from "react-icons/lu";
 
 export const VariableEditor = memo(function VariableEditor({ data }) {
     //console.log("RENDER VariableEditor");
@@ -20,13 +26,13 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
             <Box maxW={"6xl"} w={"100%"} overflow={"auto"}>
                 <Stack direction={{ base: "column", md: "row" }}>
                     <Box w={"100%"}>
-                        <ToggleSection
+                        {/* <ToggleSection
                             id={data.id}
                             isSpecial={data.setting.isSpecial}
+                            graph={data.setting?.graph || true}
                             archive={data.setting.archive}
                             cmd={data.setting.cmd}
-                            isLua={data.setting.isLua}
-                        />
+                        /> */}
                         <Flex gap={"2"} p={"2"}>
                             <SelectInput
                                 targetKey={"type"}
@@ -34,14 +40,40 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
                                 value={data.setting.type}
                                 showLabel
                             />
-                            <SelectInput
+                            {/* <SelectInput
                                 targetKey={"group"}
                                 id={data.id}
                                 value={data.setting.group}
                                 showLabel
+                            /> */}
+                            <DebouncedTextarea
+                                targetKey={"description"}
+                                id={data.id}
+                                value={data.setting.description}
+                                showLabel
                             />
                         </Flex>
-                        <Flex p={"2"} gap={"2"}>
+                        <Flex
+                            gap={"2"}
+                            p={"2"}
+                            h={"240px"}
+                            /* borderColor={"border"}
+                            borderBottom={"1px subtle"}
+                            borderTop={"1px subtle"} */
+                        >
+                            {data.setting.type === "bit" && <CycleCard />}
+                            {(data.setting.type === "bit" ||
+                                data.setting.type === "twoByteUnsigned") && (
+                                <TsCard />
+                            )}
+                            {(data.setting.type === "bit" ||
+                                data.setting.type === "twoByteUnsigned") && (
+                                <TuCard />
+                            )}
+                            {data.setting.type !== "bit" && <GraphCard />}
+                        </Flex>
+
+                        {/* <Flex p={"2"} gap={"2"}>
                             <Box hidden={data.setting.isLua}>
                                 <NumberInput
                                     targetKey={"coefficient"}
@@ -58,17 +90,9 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
                                     showLabel
                                 />
                             </Box>
-                        </Flex>
-                        <Flex p={"2"}>
-                            <DebouncedTextarea
-                                targetKey={"description"}
-                                id={data.id}
-                                value={data.setting.description}
-                                showLabel
-                            />
-                        </Flex>
+                        </Flex> */}
                     </Box>
-                    <Box hidden={!data.setting.isLua} w={"100%"}>
+                    <Box w={"100%"} mt={"4"}>
                         <DebouncedEditor
                             luaExpression={data.setting.luaExpression}
                             id={data.id}
@@ -80,3 +104,189 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
         </Flex>
     );
 });
+
+import {
+    NumberInput as ChakraNumberInput,
+    Field,
+    Select,
+    Text,
+    Card,
+    Checkbox,
+} from "@chakra-ui/react";
+const GraphCard = () => {
+    const [isChecked, setIsChecked] = useState();
+    const checkedHandle = () => setIsChecked(!isChecked);
+    return (
+        <Card.Root w={"180px"} size={"sm"}>
+            <Card.Body gap={"2"}>
+                <Float placement={"top-end"} offset={"6"}>
+                    <Checkbox.Root
+                        size={"lg"}
+                        value={isChecked}
+                        onCheckedChange={checkedHandle}
+                        variant={"subtle"}
+                    >
+                        <Checkbox.HiddenInput />
+                        <Checkbox.Control />
+                    </Checkbox.Root>
+                </Float>
+                <Flex
+                    direction={"column"}
+                    w={"100%"}
+                    align={"center"}
+                    justify={"center"}
+                >
+                    <Icon fontSize={"3xl"}>
+                        <LuChartSpline />
+                    </Icon>
+                    <Text fontWeight={"medium"}>В архив ТИ</Text>
+                </Flex>
+            </Card.Body>
+            <Card.Footer flexDirection={"column"}>
+                <Field.Root disabled={!isChecked}>
+                    <Field.Label>Аппертура</Field.Label>
+                    <ChakraNumberInput.Root size={"xs"}>
+                        <ChakraNumberInput.Label />
+                        <ChakraNumberInput.Control />
+                        <ChakraNumberInput.Input />
+                    </ChakraNumberInput.Root>
+                </Field.Root>
+                <Select.Root size="sm" disabled={!isChecked}>
+                    <Select.HiddenSelect />
+                    <Select.Label>Единица измерения</Select.Label>
+                    <Select.Control>
+                        <Select.Trigger>
+                            <Select.ValueText />
+                        </Select.Trigger>
+                        <Select.IndicatorGroup>
+                            <Select.Indicator />
+                        </Select.IndicatorGroup>
+                    </Select.Control>
+                </Select.Root>
+            </Card.Footer>
+        </Card.Root>
+    );
+};
+
+const CycleCard = () => {
+    const [isChecked, setIsChecked] = useState();
+    const checkedHandle = () => setIsChecked(!isChecked);
+    return (
+        <Card.Root w={"180px"} size={"sm"}>
+            <Card.Body gap={"2"}>
+                <Float placement={"top-end"} offset={"6"}>
+                    <Checkbox.Root
+                        size={"lg"}
+                        value={isChecked}
+                        onCheckedChange={checkedHandle}
+                        variant={"subtle"}
+                    >
+                        <Checkbox.HiddenInput />
+                        <Checkbox.Control />
+                    </Checkbox.Root>
+                </Float>
+                <Flex
+                    direction={"column"}
+                    w={"100%"}
+                    align={"center"}
+                    justify={"center"}
+                >
+                    <Icon fontSize={"3xl"}>
+                        <LuRefreshCcwDot />
+                    </Icon>
+                    <Text fontWeight={"medium"}>Цикличная</Text>
+                </Flex>
+            </Card.Body>
+            <Card.Footer>
+                <Field.Root disabled={!isChecked}>
+                    <Field.Label>Цикличный вызов</Field.Label>
+                    <ChakraNumberInput.Root size={"xs"}>
+                        <ChakraNumberInput.Label />
+                        <ChakraNumberInput.Control />
+                        <ChakraNumberInput.Input />
+                    </ChakraNumberInput.Root>
+                </Field.Root>
+            </Card.Footer>
+        </Card.Root>
+    );
+};
+
+const TuCard = () => {
+    const [isChecked, setIsChecked] = useState();
+    const checkedHandle = () => setIsChecked(!isChecked);
+    return (
+        <Card.Root w={"180px"} size={"sm"}>
+            <Card.Body gap={"2"}>
+                <Float placement={"top-end"} offset={"6"}>
+                    <Checkbox.Root
+                        size={"lg"}
+                        value={isChecked}
+                        onCheckedChange={checkedHandle}
+                        variant={"subtle"}
+                    >
+                        <Checkbox.HiddenInput />
+                        <Checkbox.Control />
+                    </Checkbox.Root>
+                </Float>
+                <Flex
+                    direction={"column"}
+                    w={"100%"}
+                    align={"center"}
+                    justify={"center"}
+                >
+                    <Icon fontSize={"3xl"}>
+                        <LuArchive />
+                    </Icon>
+                    <Text fontWeight={"medium"}>В архив ТС</Text>
+                </Flex>
+            </Card.Body>
+            <Card.Footer>
+                <Select.Root size="sm" disabled={!isChecked}>
+                    <Select.HiddenSelect />
+                    <Select.Label>Группа</Select.Label>
+                    <Select.Control>
+                        <Select.Trigger>
+                            <Select.ValueText />
+                        </Select.Trigger>
+                        <Select.IndicatorGroup>
+                            <Select.Indicator />
+                        </Select.IndicatorGroup>
+                    </Select.Control>
+                </Select.Root>
+            </Card.Footer>
+        </Card.Root>
+    );
+};
+
+const TsCard = () => {
+    const [isChecked, setIsChecked] = useState();
+    const checkedHandle = () => setIsChecked(!isChecked);
+    return (
+        <Card.Root w={"180px"} size={"sm"}>
+            <Card.Body gap={"2"}>
+                <Float placement={"top-end"} offset={"6"}>
+                    <Checkbox.Root
+                        size={"lg"}
+                        value={isChecked}
+                        onCheckedChange={checkedHandle}
+                        variant={"subtle"}
+                    >
+                        <Checkbox.HiddenInput />
+                        <Checkbox.Control />
+                    </Checkbox.Root>
+                </Float>
+                <Flex
+                    direction={"column"}
+                    w={"100%"}
+                    align={"center"}
+                    justify={"center"}
+                >
+                    <Icon fontSize={"3xl"}>
+                        <LuSquareTerminal />
+                    </Icon>
+                    <Text fontWeight={"medium"}>ТУ</Text>
+                </Flex>
+            </Card.Body>
+        </Card.Root>
+    );
+};
