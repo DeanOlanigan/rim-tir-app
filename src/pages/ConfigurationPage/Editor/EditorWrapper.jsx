@@ -77,7 +77,7 @@ ${cType}`,
                 <VStack gap={"4"} px={"1"} h={"100%"} align={"start"}>
                     <EditorBreadcrumb data={singleNode} />
                     <ContainerNodeEditor data={singleNode} />
-                    <Box w={"100%"} h={"100%"} overflow={"auto"}>
+                    <Box w={"100%"} h={"100%"} overflow={"auto"} px={"2"}>
                         {type === "connections" && childrens.length > 0 && (
                             <DataObjectsTable data={childrens} />
                         )}

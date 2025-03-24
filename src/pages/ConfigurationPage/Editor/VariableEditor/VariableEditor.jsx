@@ -1,5 +1,13 @@
 import { memo, useState } from "react";
-import { Flex, Box, Stack, CheckboxCard, Icon, Float } from "@chakra-ui/react";
+import {
+    Flex,
+    Box,
+    Stack,
+    CheckboxCard,
+    Icon,
+    Float,
+    Mark,
+} from "@chakra-ui/react";
 import { VariableEditorHeader } from "./VariableEditorHeader";
 import { ToggleSection } from "./ToggleSection";
 import { EditorBreadcrumb } from "../Breadcrumb";
@@ -23,57 +31,63 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
         <Flex direction={"column"} gap={"4"} w={"100%"} h={"100%"} px={"1"}>
             <EditorBreadcrumb data={data} />
             <VariableEditorHeader name={data.name} />
-            <Box maxW={"6xl"} w={"100%"} overflow={"auto"}>
-                <Stack direction={{ base: "column", md: "row" }}>
-                    <Box w={"100%"}>
-                        {/* <ToggleSection
+            <Stack
+                direction={{ base: "column", md: "row" }}
+                w={"100%"}
+                h={"100%"}
+                overflow={"auto"}
+            >
+                <Box w={"50%"}>
+                    <DebouncedEditor
+                        luaExpression={data.setting.luaExpression}
+                        id={data.id}
+                        height={"360px"}
+                    />
+                    <Flex gap={"2"} p={"2"}>
+                        <SelectInput
+                            targetKey={"type"}
+                            id={data.id}
+                            value={data.setting.type}
+                            showLabel
+                        />
+                        <DebouncedTextarea
+                            targetKey={"description"}
+                            id={data.id}
+                            value={data.setting.description}
+                            showLabel
+                        />
+                    </Flex>
+                </Box>
+                <Box w={"50%"}>
+                    {/* <ToggleSection
                             id={data.id}
                             isSpecial={data.setting.isSpecial}
                             graph={data.setting?.graph || true}
                             archive={data.setting.archive}
                             cmd={data.setting.cmd}
                         /> */}
-                        <Flex gap={"2"} p={"2"}>
-                            <SelectInput
-                                targetKey={"type"}
-                                id={data.id}
-                                value={data.setting.type}
-                                showLabel
-                            />
-                            {/* <SelectInput
-                                targetKey={"group"}
-                                id={data.id}
-                                value={data.setting.group}
-                                showLabel
-                            /> */}
-                            <DebouncedTextarea
-                                targetKey={"description"}
-                                id={data.id}
-                                value={data.setting.description}
-                                showLabel
-                            />
-                        </Flex>
-                        <Flex
-                            gap={"2"}
-                            p={"2"}
-                            h={"240px"}
-                            /* borderColor={"border"}
+
+                    <Flex
+                        gap={"2"}
+                        h={"240px"}
+                        wrap={"wrap"}
+                        /* borderColor={"border"}
                             borderBottom={"1px subtle"}
                             borderTop={"1px subtle"} */
-                        >
-                            {data.setting.type === "bit" && <CycleCard />}
-                            {(data.setting.type === "bit" ||
-                                data.setting.type === "twoByteUnsigned") && (
-                                <TsCard />
-                            )}
-                            {(data.setting.type === "bit" ||
-                                data.setting.type === "twoByteUnsigned") && (
-                                <TuCard />
-                            )}
-                            {data.setting.type !== "bit" && <GraphCard />}
-                        </Flex>
+                    >
+                        {data.setting.type === "bit" && <CycleCard />}
+                        {(data.setting.type === "bit" ||
+                            data.setting.type === "twoByteUnsigned") && (
+                            <TsCard />
+                        )}
+                        {(data.setting.type === "bit" ||
+                            data.setting.type === "twoByteUnsigned") && (
+                            <TuCard />
+                        )}
+                        {data.setting.type !== "bit" && <GraphCard />}
+                    </Flex>
 
-                        {/* <Flex p={"2"} gap={"2"}>
+                    {/* <Flex p={"2"} gap={"2"}>
                             <Box hidden={data.setting.isLua}>
                                 <NumberInput
                                     targetKey={"coefficient"}
@@ -91,16 +105,8 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
                                 />
                             </Box>
                         </Flex> */}
-                    </Box>
-                    <Box w={"100%"} mt={"4"}>
-                        <DebouncedEditor
-                            luaExpression={data.setting.luaExpression}
-                            id={data.id}
-                            height={"300px"}
-                        />
-                    </Box>
-                </Stack>
-            </Box>
+                </Box>
+            </Stack>
         </Flex>
     );
 });
@@ -143,26 +149,35 @@ const GraphCard = () => {
                 </Flex>
             </Card.Body>
             <Card.Footer flexDirection={"column"}>
-                <Field.Root disabled={!isChecked}>
-                    <Field.Label>Аппертура</Field.Label>
-                    <ChakraNumberInput.Root size={"xs"}>
-                        <ChakraNumberInput.Label />
-                        <ChakraNumberInput.Control />
-                        <ChakraNumberInput.Input />
-                    </ChakraNumberInput.Root>
-                </Field.Root>
-                <Select.Root size="sm" disabled={!isChecked}>
-                    <Select.HiddenSelect />
-                    <Select.Label>Единица измерения</Select.Label>
-                    <Select.Control>
-                        <Select.Trigger>
-                            <Select.ValueText />
-                        </Select.Trigger>
-                        <Select.IndicatorGroup>
-                            <Select.Indicator />
-                        </Select.IndicatorGroup>
-                    </Select.Control>
-                </Select.Root>
+                {isChecked ? (
+                    <>
+                        <Field.Root disabled={!isChecked}>
+                            <Field.Label>Аппертура</Field.Label>
+                            <ChakraNumberInput.Root size={"xs"}>
+                                <ChakraNumberInput.Label />
+                                <ChakraNumberInput.Control />
+                                <ChakraNumberInput.Input />
+                            </ChakraNumberInput.Root>
+                        </Field.Root>
+                        <Select.Root size="sm" disabled={!isChecked}>
+                            <Select.HiddenSelect />
+                            <Select.Label>Единица измерения</Select.Label>
+                            <Select.Control>
+                                <Select.Trigger>
+                                    <Select.ValueText />
+                                </Select.Trigger>
+                                <Select.IndicatorGroup>
+                                    <Select.Indicator />
+                                </Select.IndicatorGroup>
+                            </Select.Control>
+                        </Select.Root>
+                    </>
+                ) : (
+                    <Text color={"fg.subtle"} textAlign={"center"}>
+                        При изменении значения переменная будет сохранена в
+                        архив телеизмерений
+                    </Text>
+                )}
             </Card.Footer>
         </Card.Root>
     );
@@ -198,14 +213,22 @@ const CycleCard = () => {
                 </Flex>
             </Card.Body>
             <Card.Footer>
-                <Field.Root disabled={!isChecked}>
-                    <Field.Label>Цикличный вызов</Field.Label>
-                    <ChakraNumberInput.Root size={"xs"}>
-                        <ChakraNumberInput.Label />
-                        <ChakraNumberInput.Control />
-                        <ChakraNumberInput.Input />
-                    </ChakraNumberInput.Root>
-                </Field.Root>
+                {isChecked ? (
+                    <Field.Root disabled={!isChecked}>
+                        <Field.Label>Цикличный вызов</Field.Label>
+                        <ChakraNumberInput.Root size={"xs"}>
+                            <ChakraNumberInput.Label />
+                            <ChakraNumberInput.Control />
+                            <ChakraNumberInput.Input />
+                        </ChakraNumberInput.Root>
+                    </Field.Root>
+                ) : (
+                    <Text color={"fg.subtle"} textAlign={"center"}>
+                        Переменная будет изменять состояние{" "}
+                        <Mark variant={"solid"}>вкл./выкл.</Mark> с заданным
+                        интервалом
+                    </Text>
+                )}
             </Card.Footer>
         </Card.Root>
     );
@@ -241,18 +264,25 @@ const TuCard = () => {
                 </Flex>
             </Card.Body>
             <Card.Footer>
-                <Select.Root size="sm" disabled={!isChecked}>
-                    <Select.HiddenSelect />
-                    <Select.Label>Группа</Select.Label>
-                    <Select.Control>
-                        <Select.Trigger>
-                            <Select.ValueText />
-                        </Select.Trigger>
-                        <Select.IndicatorGroup>
-                            <Select.Indicator />
-                        </Select.IndicatorGroup>
-                    </Select.Control>
-                </Select.Root>
+                {isChecked ? (
+                    <Select.Root size="sm">
+                        <Select.HiddenSelect />
+                        <Select.Label>Группа</Select.Label>
+                        <Select.Control>
+                            <Select.Trigger>
+                                <Select.ValueText />
+                            </Select.Trigger>
+                            <Select.IndicatorGroup>
+                                <Select.Indicator />
+                            </Select.IndicatorGroup>
+                        </Select.Control>
+                    </Select.Root>
+                ) : (
+                    <Text color={"fg.subtle"} textAlign={"center"}>
+                        При изменении значения переменная будет сохранена в
+                        архив телесигналов
+                    </Text>
+                )}
             </Card.Footer>
         </Card.Root>
     );
@@ -262,7 +292,11 @@ const TsCard = () => {
     const [isChecked, setIsChecked] = useState();
     const checkedHandle = () => setIsChecked(!isChecked);
     return (
-        <Card.Root w={"180px"} size={"sm"}>
+        <Card.Root
+            w={"180px"}
+            size={"sm"}
+            borderColor={isChecked ? "white" : "border"}
+        >
             <Card.Body gap={"2"}>
                 <Float placement={"top-end"} offset={"6"}>
                     <Checkbox.Root
@@ -287,6 +321,11 @@ const TsCard = () => {
                     <Text fontWeight={"medium"}>ТУ</Text>
                 </Flex>
             </Card.Body>
+            <Card.Footer>
+                <Text color={"fg.subtle"} textAlign={"center"}>
+                    Отметить переменную как изменяемую оператором вручную
+                </Text>
+            </Card.Footer>
         </Card.Root>
     );
 };
