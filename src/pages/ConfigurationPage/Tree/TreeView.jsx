@@ -6,10 +6,11 @@ import { DropCursor } from "../../../components/TreeView/DropCursor";
 import { Node } from "./Node";
 import { Box } from "@chakra-ui/react";
 import { useTreeViewHandlers } from "../../../hooks/useTreeViewHandlers";
+import { CONSTANT_VALUES } from "../../../config/constants";
 import { useDragDropManager } from "react-dnd";
 
 export const TreeView = memo(
-    forwardRef(function TreeView(props, ref) {
+    forwardRef(function TreeView({ data, treeType }, ref) {
         console.log("%cRender NEW TreeView", "color: white; background: red;");
         //const dragDropManager = useDragDropManager();
         const {
@@ -20,7 +21,7 @@ export const TreeView = memo(
             handleContextMenu,
             handleSelect,
             handleDisableDrop,
-        } = useTreeViewHandlers(props.treeType, ref);
+        } = useTreeViewHandlers(treeType, ref);
 
         return (
             <Box
@@ -33,7 +34,8 @@ export const TreeView = memo(
                     {({ height, width }) => (
                         <Tree
                             ref={ref}
-                            {...props}
+                            data={data}
+                            treeType={treeType}
                             height={height}
                             width={width}
                             className={styles.tree}
@@ -49,7 +51,10 @@ export const TreeView = memo(
                             onSelect={handleSelect}
                             disableDrop={handleDisableDrop}
                             //dndManager={dragDropManager}
-                            disableEdit={(data) => data.type === "dataObject"}
+                            disableEdit={(data) =>
+                                data.type ===
+                                CONSTANT_VALUES.NODE_TYPES.dataObject
+                            }
                         >
                             {Node}
                         </Tree>

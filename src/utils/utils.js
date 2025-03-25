@@ -1,4 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
+import {
+    DEFAULT_CONFIGURATION_DATA,
+    DEFAULT_DATA_OBJECT_SETTING,
+    CONSTANT_VALUES,
+} from "../config/constants";
 
 const startDate = new Date();
 startDate.setDate(startDate.getDate() - 3);
@@ -128,4 +133,25 @@ export const getParentTypeNormalized = ({ data, id }) => {
             : data[id].type;
     };
     return recursive(data[id]?.parentId);
+};
+
+export const initDefaultData = (type, parentId, treeApi) => {
+    const id = uuidv4();
+    const node = {
+        id: id,
+        ...DEFAULT_CONFIGURATION_DATA[type].node,
+    };
+    const setting = {
+        id: id,
+        parentId,
+        ...DEFAULT_CONFIGURATION_DATA[type].setting,
+    };
+    if (type === CONSTANT_VALUES.NODE_TYPES.dataObject) {
+        const parentType = getParentType({
+            id: parentId,
+            treeApi: treeApi,
+        });
+        setting.setting = DEFAULT_DATA_OBJECT_SETTING[parentType];
+    }
+    return { id, node, setting };
 };

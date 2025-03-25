@@ -126,3 +126,26 @@ export const gpioFuncType = createListCollection({
         { label: "Выход", value: "output" },
     ],
 });
+
+export const measurements = createListCollection({
+    items: [
+        { label: "В", value: "V" },
+        { label: "кВ", value: "kV" },
+        { label: "мА", value: "mA" },
+        { label: "мВ", value: "mV" },
+        { label: "мм", value: "mm" },
+        { label: "мм2", value: "mm2" },
+        { label: "мм3", value: "mm3" },
+        { label: "мм4", value: "mm4" },
+        { label: "мм5", value: "mm5" },
+        { label: "мм6", value: "mm6" },
+        { label: "мм7", value: "mm7" },
+        { label: "мм8", value: "mm8" },
+        { label: "мм9", value: "mm9" },
+        { label: "мм10", value: "mm10" },
+        { label: "мм11", value: "mm11" },
+        { label: "мм12", value: "mm12" },
+        { label: "мм13", value: "mm13" },
+        { label: "мм14", value: "mm14" },
+    ],
+});

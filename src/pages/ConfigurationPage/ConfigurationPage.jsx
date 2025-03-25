@@ -6,15 +6,10 @@ import { useVariablesStore } from "../../store/variables-store";
 import { EditorCard } from "./EditorCard";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { getBackendOptions } from "@minoru/react-dnd-treeview";
-import { MinoruTree } from "./MinoruTree/MinoruTree";
-import { TestCard } from "./TestArbTree";
+import { CONSTANT_VALUES } from "../../config/constants";
 
 function ConfigurationPage() {
     //console.log("Render ConfigurationPage");
-
-    //const [selectedNode, setSelectedNode] = useState();
-
     return (
         <DndProvider backend={HTML5Backend}>
             <Box height="100%">
@@ -25,7 +20,6 @@ function ConfigurationPage() {
                             direction="vertical"
                         >
                             <Panel collapsible collapsedSize={0} minSize={10}>
-                                {/* <TestCard /> */}
                                 <ReceiveWrapper />
                             </Panel>
                             <PanelResizeHandle className="verticalLine" />
@@ -45,12 +39,6 @@ function ConfigurationPage() {
                         defaultSize={30}
                         minSize={15}
                     >
-                        {/* <DndProvider
-                        backend={HTML5Backend}
-                        options={getBackendOptions()}
-                    >
-                        <MinoruTree />
-                    </DndProvider> */}
                         <VariablesWrapper />
                     </Panel>
                 </PanelGroup>
@@ -65,17 +53,27 @@ export default ConfigurationPage;
 const VariablesWrapper = () => {
     //console.log("RENDER VariablesWrapper");
     const variables = useVariablesStore((state) => state.variables);
-    return <TreeCard data={variables} treeType={"variables"} />;
+    return (
+        <TreeCard
+            data={variables}
+            treeType={CONSTANT_VALUES.TREE_TYPES.variables}
+        />
+    );
 };
 
 const SendWrapper = () => {
     //console.log("RENDER SendWrapper");
     const send = useVariablesStore((state) => state.send);
-    return <TreeCard data={send} treeType={"send"} />;
+    return <TreeCard data={send} treeType={CONSTANT_VALUES.TREE_TYPES.send} />;
 };
 
 const ReceiveWrapper = () => {
     //console.log("RENDER ReceiveWrapper");
     const receive = useVariablesStore((state) => state.receive);
-    return <TreeCard data={receive} treeType={"receive"} />;
+    return (
+        <TreeCard
+            data={receive}
+            treeType={CONSTANT_VALUES.TREE_TYPES.receive}
+        />
+    );
 };

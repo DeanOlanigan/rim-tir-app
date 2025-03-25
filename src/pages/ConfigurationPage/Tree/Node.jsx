@@ -5,7 +5,6 @@ import { memo } from "react";
 import { NodeToggleBtn } from "./NodeToggleBtn";
 import { useContextMenuStore } from "../../../store/contextMenu-store";
 
-// TODO Ререндер при перетаскивании всех узлов
 export const Node = memo(function Node({ node, style, dragHandle, tree }) {
     //console.log("%cRender NEW Node", "color: white; background: purple;");
 
@@ -20,11 +19,6 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
     const indentSize = Number.parseFloat(`${style.paddingLeft || 0}`);
 
     return (
-        /* <ContextMenuWrapper
-            apiPath={tree}
-            type={node.data.type}
-            subType={node.data.subType}
-        > */
         <div
             ref={dragHandle}
             style={style}
@@ -79,6 +73,5 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
                 />
             </div>
         </div>
-        /* </ContextMenuWrapper> */
     );
 });

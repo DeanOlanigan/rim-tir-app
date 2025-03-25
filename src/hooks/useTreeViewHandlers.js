@@ -1,12 +1,8 @@
 import { useVariablesStore } from "../store/variables-store";
 import { useCallback } from "react";
-import { v4 as uuid4 } from "uuid";
-import {
-    DEFAULT_CONFIGURATION_DATA,
-    DEFAULT_DATA_OBJECT_SETTING,
-} from "../config/constants";
-import { getParentType } from "../utils/utils";
+import { getParentType, initDefaultData } from "../utils/utils";
 import { useContextMenuStore } from "../store/contextMenu-store";
+import { CONSTANT_VALUES } from "../config/constants";
 
 export function useTreeViewHandlers(treeType, ref) {
     const addNode = useVariablesStore((state) => state.addNode);
@@ -20,6 +16,12 @@ export function useTreeViewHandlers(treeType, ref) {
     const unbindVariable = useVariablesStore((state) => state.unbindVariable);
     const updateContext = useContextMenuStore((state) => state.updateContext);
 
+    const settingType =
+        treeType === CONSTANT_VALUES.TREE_TYPES.send ||
+        treeType === CONSTANT_VALUES.TREE_TYPES.receive
+            ? "connections"
+            : treeType;
+
     const handleRenameNode = useCallback(
         ({ id, name }) => {
             console.log(ref?.current.get(id));
@@ -31,23 +33,11 @@ export function useTreeViewHandlers(treeType, ref) {
         ({ parentId, index, type }) => {
             if (type === "leaf" || type === "internal") return;
             console.log("create", parentId, index, type);
-            const id = uuid4();
-            const node = {
-                id: id,
-                ...DEFAULT_CONFIGURATION_DATA[type].node,
-            };
-            const setting = {
-                id: id,
+            const { id, node, setting } = initDefaultData(
+                type,
                 parentId,
-                ...DEFAULT_CONFIGURATION_DATA[type].setting,
-            };
-            if (type === "dataObject") {
-                const parentType = getParentType({
-                    id: parentId,
-                    treeApi: ref?.current,
-                });
-                setting.setting = DEFAULT_DATA_OBJECT_SETTING[parentType];
-            }
+                ref?.current
+            );
             addNode(treeType, parentId, node);
             createSetting(id, setting);
             return node;
@@ -93,27 +83,19 @@ export function useTreeViewHandlers(treeType, ref) {
             ref?.current?.root?.focus();
             ref?.current?.root?.select();
         }
-        updateSelectedIds(
-            treeType === "send" || treeType === "receive"
-                ? "connections"
-                : treeType,
-            ref?.current?.selectedIds
-        );
-    }, [updateSelectedIds, treeType, ref]);
+        updateSelectedIds(settingType, ref?.current?.selectedIds);
+    }, [updateSelectedIds, ref, settingType]);
 
     const handleDisableDrop = useCallback(({ parentNode, dragNodes }) => {
-        //console.log("dragNodesType", dragNodes[0]?.data.type);
         if (!parentNode || dragNodes.length === 0) return true;
         const isDragNodesTypeSame = dragNodes.every(
             (node) => node.data.type === dragNodes[0].data.type
         );
-        //console.log("isDragNodesTypeSame", isDragNodesTypeSame);
         if (!isDragNodesTypeSame) return true;
         const dragParentType = getParentType({
             checkNode: dragNodes[0].parent,
         });
         const parentType = getParentType({ checkNode: parentNode });
-        //console.log("parentType", dragParentType, parentType);
         if (parentType === dragParentType) return false;
         return true;
     }, []);

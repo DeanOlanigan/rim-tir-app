@@ -1,4 +1,4 @@
-const CONSTANT_VALUES = {
+export const CONSTANT_VALUES = {
     PROTOCOLS: {
         modbusRTU: "modbus-rtu",
         modbusTCP: "modbus-tcp",
@@ -9,6 +9,20 @@ const CONSTANT_VALUES = {
         rs485: "rs485",
         rs232: "rs232",
         gpio: "gpio",
+    },
+    TREE_TYPES: {
+        variables: "variables",
+        send: "send",
+        receive: "receive",
+    },
+    NODE_TYPES: {
+        variable: "variable",
+        folder: "folder",
+        dataObject: "dataObject",
+        protocol: "protocol",
+        interface: "interface",
+        asdu: "asdu",
+        funcGroup: "funcGroup",
     },
 };
 
@@ -104,6 +118,8 @@ const DEFAULT_VARIABLE_SETTING = {
     cmd: false,
     archive: true,
     group: "noGroup",
+    graph: false,
+    aperture: null,
     measurement: null,
     coefficient: 1,
     luaExpression: "",

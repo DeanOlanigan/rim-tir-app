@@ -32,7 +32,6 @@ export const useVariablesStore = create()(
             send: [],
             receive: [],
             variables: [],
-            test: [],
             // Параметры всех узлов деревьев
             settings: {},
             // Id выбранных узлов

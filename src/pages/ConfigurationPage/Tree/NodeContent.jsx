@@ -1,10 +1,10 @@
 import { NodeEditInput } from "./NodeEditInput";
-//import { NodeChooseVar } from "./NodeChooseVar";
 import { icons, badges } from "../../../components/TreeView/DefaultView";
 //import { memo } from "react";
 import { Text } from "@chakra-ui/react";
 import { useVariablesStore } from "../../../store/variables-store";
 import { memo } from "react";
+import { CONSTANT_VALUES } from "../../../config/constants";
 
 export const NodeContent = memo(function NodeContent({
     type,
@@ -29,17 +29,19 @@ export const NodeContent = memo(function NodeContent({
             }}
         >
             {icons[type]}
-            {type === "protocol" ||
-            type === "interface" ||
-            type === "funcGroup" ||
-            type === "asdu"
+            {type === CONSTANT_VALUES.NODE_TYPES.protocol ||
+            type === CONSTANT_VALUES.NODE_TYPES.interface ||
+            type === CONSTANT_VALUES.NODE_TYPES.interface ||
+            type === CONSTANT_VALUES.NODE_TYPES.asdu
                 ? badges[subType] || badges[type]
                 : null}
             {isEditing ? (
                 <NodeEditInput name={name} submit={submit} reset={reset} />
             ) : (
                 <Text truncate>
-                    {type === "dataObject" ? variableName : name}
+                    {type === CONSTANT_VALUES.NODE_TYPES.dataObject
+                        ? variableName
+                        : name}
                 </Text>
             )}
         </div>

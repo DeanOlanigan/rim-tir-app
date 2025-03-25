@@ -12,7 +12,16 @@ import {
     pollModeList,
     execList,
     gpioFuncType,
+    measurements,
 } from "./filterOptions";
+
+import {
+    LuRefreshCcwDot,
+    LuCode,
+    LuSquareTerminal,
+    LuArchive,
+    LuChartSpline,
+} from "react-icons/lu";
 
 export const PARENT_NAMES = {
     interface: "Интерфейс",
@@ -26,6 +35,7 @@ export const PARAM_DEFINITIONS = {
     isSpecial: {
         type: "boolean",
         label: "Цикличная",
+        icon: LuRefreshCcwDot,
         defaultValue: false,
     },
     type: {
@@ -46,11 +56,13 @@ export const PARAM_DEFINITIONS = {
     isLua: {
         type: "boolean",
         label: "Lua",
+        icon: LuCode,
         defaultValue: false,
     },
     graph: {
         type: "boolean",
         label: "В архив ТИ",
+        icon: LuChartSpline,
         defaultValue: false,
     },
     description: {
@@ -60,11 +72,13 @@ export const PARAM_DEFINITIONS = {
     cmd: {
         type: "boolean",
         label: "ТУ",
+        icon: LuSquareTerminal,
         defaultValue: false,
     },
     archive: {
         type: "boolean",
         label: "В архив ТС",
+        icon: LuArchive,
         defaultValue: false,
     },
     group: {
@@ -74,8 +88,8 @@ export const PARAM_DEFINITIONS = {
     },
     measurement: {
         type: "select",
-        label: "Единицы измерения",
-        options: null,
+        label: "Единица измерения",
+        options: measurements,
     },
     coefficient: {
         type: "number",
