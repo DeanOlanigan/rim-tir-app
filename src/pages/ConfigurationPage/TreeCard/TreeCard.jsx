@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { TreeView } from "../Tree/TreeView";
 import { TreeCardTitle } from "./Title";
-import { useRef, useState, memo } from "react";
+import { useRef, memo } from "react";
 import { LuBadgePlus } from "react-icons/lu";
 import { ContextMenu } from "../Tree/ContextMenu/ContextMenu";
 
@@ -32,7 +32,7 @@ export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
                 <Card.Title>
                     <TreeCardTitle
                         type={treeType}
-                        variableTreeRef={variableTreeRef}
+                        treeApi={variableTreeRef?.current}
                     />
                 </Card.Title>
             </Card.Header>

@@ -31,7 +31,11 @@ import {
     LuChartSpline,
     LuPencilOff,
 } from "react-icons/lu";
-import { dataTypesBytes, groups } from "../../../../../config/filterOptions";
+import {
+    dataTypesBytes,
+    groups,
+    measurements,
+} from "../../../../../config/filterOptions";
 import { Editor } from "@monaco-editor/react";
 import { useColorMode } from "../../../../../components/ui/color-mode";
 import { Tooltip } from "../../../../../components/ui/tooltip";
@@ -57,7 +61,9 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
         cmd,
         type,
         group,
-        /* measurement, */
+        graph,
+        aperture,
+        measurement,
         luaExpression,
         coefficient,
         specialCycleDelay,
@@ -74,6 +80,9 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
     const { label: typeLabel, value: typeValue } = dataTypesBytes.items.find(
         (item) => item.value === type
     );
+
+    /*  const { label: measureLabel, value: measureValue } =
+        measurements.items.find((item) => item.value === measurement); */
 
     return (
         <Table.Row
@@ -310,22 +319,24 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                                 </Badge>
                             </Tooltip>
                         )}
-                        <Tooltip content={"Показатель"}>
-                            <Badge
-                                variant={"outline"}
-                                colorPalette={"red"}
-                                size={"sm"}
-                            >
-                                <HStack
-                                    gap={"1"}
-                                    separator={<StackSeparator />}
+                        {graph && (
+                            <Tooltip content={"Показатель"}>
+                                <Badge
+                                    variant={"outline"}
+                                    colorPalette={"red"}
+                                    size={"sm"}
                                 >
-                                    <LuChartSpline />
-                                    <Text>999.999</Text>
-                                    <Text>Вт</Text>
-                                </HStack>
-                            </Badge>
-                        </Tooltip>
+                                    <HStack
+                                        gap={"1"}
+                                        separator={<StackSeparator />}
+                                    >
+                                        <LuChartSpline />
+                                        <Text>{aperture}</Text>
+                                        <Text>Вт</Text>
+                                    </HStack>
+                                </Badge>
+                            </Tooltip>
+                        )}
                     </Flex>
                 )}
             </Table.Cell>

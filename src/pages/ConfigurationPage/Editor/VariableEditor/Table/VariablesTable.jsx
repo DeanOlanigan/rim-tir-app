@@ -18,7 +18,11 @@ export const VariablesTable = memo(function TableConfig({ data }) {
     const [editingRowIndex, setEditingRowIndex] = useState(null);
 
     return (
-        <AutoSizer>
+        <ChakraTable.Root>
+            <VariablesTableHeader />
+            <VariablesTableBody data={data} />
+        </ChakraTable.Root>
+        /* <AutoSizer>
             {({ height, width }) => (
                 <Table
                     headerHeight={40}
@@ -86,7 +90,7 @@ export const VariablesTable = memo(function TableConfig({ data }) {
                     />
                 </Table>
             )}
-        </AutoSizer>
+        </AutoSizer> */
     );
 });
 
