@@ -116,13 +116,13 @@ const DEFAULT_VARIABLE_SETTING = {
     isLua: false,
     description: "Введите описание",
     cmd: false,
-    archive: true,
-    group: "noGroup",
+    archive: false,
+    group: null,
     graph: false,
     aperture: null,
     measurement: null,
     coefficient: 1,
-    luaExpression: "",
+    luaExpression: null,
     specialCycleDelay: null,
 };
 

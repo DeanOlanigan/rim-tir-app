@@ -32,7 +32,7 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
                 e.preventDefault();
                 e.stopPropagation();
                 node.focus();
-                //node.select();
+                node.select();
                 updateContext({
                     x: e.clientX,
                     y: e.clientY,

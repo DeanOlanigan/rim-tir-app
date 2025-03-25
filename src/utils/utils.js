@@ -155,3 +155,50 @@ export const initDefaultData = (type, parentId, treeApi) => {
     }
     return { id, node, setting };
 };
+
+export const initCardsData = (data) => {
+    const cardsData = {};
+
+    // Показывать isSpecial, если type === "bit"
+    if (data.type === "bit") {
+        cardsData.isSpecial = {
+            checked: data.isSpecial,
+            parameters: [
+                {
+                    key: "specialCycleDelay",
+                    value: data.specialCycleDelay,
+                },
+            ],
+        };
+    }
+
+    // Показывать cmd и archive, если type === "bit" или "twoByteUnsigned"
+    if (data.type === "bit" || data.type === "twoByteUnsigned") {
+        cardsData.cmd = {
+            checked: data.cmd,
+            parameters: [],
+        };
+        cardsData.archive = {
+            checked: data.archive,
+            parameters: [
+                {
+                    key: "group",
+                    value: data.group,
+                },
+            ],
+        };
+    }
+
+    // Показывать graph, если type !== "bit"
+    if (data.type !== "bit") {
+        cardsData.graph = {
+            checked: data.graph,
+            parameters: [
+                { key: "aperture", value: data.aperture },
+                { key: "measurement", value: data.measurement },
+            ],
+        };
+    }
+
+    return cardsData;
+};

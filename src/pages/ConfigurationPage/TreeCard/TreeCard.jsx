@@ -32,7 +32,7 @@ export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
                 <Card.Title>
                     <TreeCardTitle
                         type={treeType}
-                        treeApi={variableTreeRef?.current}
+                        variableTreeRef={variableTreeRef}
                     />
                 </Card.Title>
             </Card.Header>

@@ -10,79 +10,44 @@ import {
     StackSeparator,
     Popover,
     Portal,
-    Status,
-    Button,
-    NumberInput,
     Code,
+    Button,
+    Checkbox,
+    Switch,
+    Box,
 } from "@chakra-ui/react";
 import {
     SelectInput,
     DebouncedTextarea,
     DebouncedEditor,
+    BaseInput,
 } from "../../../InputComponents";
-import {
-    LuCheck,
-    LuPencil,
-    LuX,
-    LuArchive,
-    LuSquareTerminal,
-    LuCode,
-    LuRefreshCcwDot,
-    LuChartSpline,
-    LuPencilOff,
-} from "react-icons/lu";
-import {
-    dataTypesBytes,
-    groups,
-    measurements,
-} from "../../../../../config/filterOptions";
+import { LuPencil, LuPencilOff } from "react-icons/lu";
+import { dataTypesBytes } from "../../../../../config/filterOptions";
 import { Editor } from "@monaco-editor/react";
 import { useColorMode } from "../../../../../components/ui/color-mode";
 import { Tooltip } from "../../../../../components/ui/tooltip";
+import { initCardsData } from "../../../../../utils/utils";
+import { PARAM_DEFINITIONS } from "../../../../../config/paramDefinitions";
 import { useVariablesStore } from "../../../../../store/variables-store";
-import { CheckboxCard } from "../../../../../components/ui/checkbox-card";
-import { Switch } from "../../../../../components/ui/switch";
 
-const archiveColorMap = {
-    noGroup: "gray",
-    warn: "orange",
-    danger: "red",
-    state: "teal",
+const badgesColorMap = {
+    cmd: "blue",
+    graph: "red",
+    isSpecial: "purple",
 };
 
 export const VariablesTableRow = memo(function VariablesTableRow(props) {
     //console.log("RENDER VariablesTableRow");
-    const {
-        id,
-        name,
-        isSpecial,
-        isLua,
-        archive,
-        cmd,
-        type,
-        group,
-        graph,
-        aperture,
-        measurement,
-        luaExpression,
-        coefficient,
-        specialCycleDelay,
-        description,
-    } = props;
+    const { id, name, setting } = props;
+    const { type, luaExpression, description } = setting;
+    const badgesData = initCardsData(setting);
 
-    const setSettings = useVariablesStore((state) => state.setSettings);
     const [isEditing, setIsEditing] = useState(false);
 
-    const badges = { isLua, isSpecial, archive, cmd };
-    const { label: archiveLabel, value: archiveValue } = groups.items.find(
-        (item) => item.value === group
-    );
-    const { label: typeLabel, value: typeValue } = dataTypesBytes.items.find(
+    const { label: typeLabel } = dataTypesBytes.items.find(
         (item) => item.value === type
     );
-
-    /*  const { label: measureLabel, value: measureValue } =
-        measurements.items.find((item) => item.value === measurement); */
 
     return (
         <Table.Row
@@ -121,224 +86,7 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
                 <Text>{name}</Text>
             </Table.Cell>
             <Table.Cell minW={"155px"} p={"0.5"}>
-                {isEditing ? (
-                    <Flex gap={"1"} direction={"column"} h={"100%"} w={"100%"}>
-                        {/* <Flex
-                            p={"2"}
-                            gap={"2"}
-                            border={"1px solid"}
-                            borderColor={"border"}
-                            borderRadius={"sm"}
-                            direction={"column"}
-                        >
-                            <Switch>В архив</Switch>
-                            <SelectInput
-                                targetKey={"group"}
-                                id={id}
-                                value={group}
-                            />
-                        </Flex>
-                        <Flex
-                            p={"2"}
-                            gap={"2"}
-                            border={"1px solid"}
-                            borderColor={"border"}
-                            borderRadius={"sm"}
-                            direction={"column"}
-                        >
-                            <Switch>В архив</Switch>
-                            <SelectInput
-                                targetKey={"group"}
-                                id={id}
-                                value={group}
-                            />
-                        </Flex>
-                        <Flex
-                            p={"2"}
-                            gap={"2"}
-                            border={"1px solid"}
-                            borderColor={"border"}
-                            borderRadius={"sm"}
-                            direction={"column"}
-                        >
-                            <Switch>В архив</Switch>
-                            <SelectInput
-                                targetKey={"group"}
-                                id={id}
-                                value={group}
-                            />
-                        </Flex>
-                        <Flex
-                            p={"2"}
-                            gap={"2"}
-                            border={"1px solid"}
-                            borderColor={"border"}
-                            borderRadius={"sm"}
-                            direction={"column"}
-                        >
-                            <Switch>В архив</Switch>
-                            <SelectInput
-                                targetKey={"group"}
-                                id={id}
-                                value={group}
-                            />
-                        </Flex> */}
-                        {/* <HoverCard.Root
-                            positioning={{ placement: "right" }}
-                            lazyMount
-                            unmountOnExit
-                        >
-                            <HoverCard.Trigger>
-                                <Badge
-                                    variant={"solid"}
-                                    colorPalette={archiveColorMap[archiveValue]}
-                                    size={"md"}
-                                >
-                                    <LuArchive />
-                                </Badge>
-                            </HoverCard.Trigger>
-                            <Portal>
-                                <HoverCard.Positioner>
-                                    <HoverCard.Content p={"1"}>
-                                        {groups.items.map((item) => (
-                                            <Button
-                                                key={item.value}
-                                                size={"xs"}
-                                                variant={"ghost"}
-                                                justifyContent={"start"}
-                                                onClick={() => {
-                                                    setSettings(id, {
-                                                        group: item.value,
-                                                    });
-                                                }}
-                                            >
-                                                <Status.Root
-                                                    colorPalette={
-                                                        archiveColorMap[
-                                                            item.value
-                                                        ]
-                                                    }
-                                                >
-                                                    <Status.Indicator />
-                                                    {item.label}
-                                                </Status.Root>
-                                            </Button>
-                                        ))}
-                                    </HoverCard.Content>
-                                </HoverCard.Positioner>
-                            </Portal>
-                        </HoverCard.Root> */}
-                        <CheckboxCard
-                            icon={<LuSquareTerminal size={24} />}
-                            checked={cmd}
-                            align={"center"}
-                            justify={"center"}
-                            size={"sm"}
-                            label={"Команда пользователя"}
-                            onCheckedChange={(e) =>
-                                setSettings(id, { cmd: e.checked })
-                            }
-                            colorPalette={"blue"}
-                            indicator={false}
-                        />
-                        <CheckboxCard
-                            icon={<LuCode size={24} />}
-                            checked={isLua}
-                            align={"center"}
-                            justify={"center"}
-                            size={"sm"}
-                            onCheckedChange={(e) =>
-                                setSettings(id, { isLua: e.checked })
-                            }
-                            colorPalette={"green"}
-                            indicator={false}
-                        />
-                        <Flex
-                            p={"2"}
-                            gap={"2"}
-                            border={"1px solid"}
-                            borderColor={"border"}
-                            borderRadius={"sm"}
-                            direction={"column"}
-                        >
-                            <Switch>Специальная</Switch>
-                            <NumberInput.Root size={"xs"}>
-                                <NumberInput.Control />
-                                <NumberInput.Input />
-                            </NumberInput.Root>
-                        </Flex>
-                    </Flex>
-                ) : (
-                    <Flex gap={"1"} wrap={"wrap"}>
-                        {archive && (
-                            <Tooltip content={archiveLabel}>
-                                <Badge
-                                    variant={"solid"}
-                                    colorPalette={archiveColorMap[archiveValue]}
-                                    size={"sm"}
-                                >
-                                    <LuArchive />
-                                </Badge>
-                            </Tooltip>
-                        )}
-                        {cmd && (
-                            <Tooltip content={"Команда"}>
-                                <Badge
-                                    variant={"outline"}
-                                    colorPalette={"blue"}
-                                    size={"sm"}
-                                >
-                                    <LuSquareTerminal />
-                                </Badge>
-                            </Tooltip>
-                        )}
-                        {isLua && (
-                            <Tooltip content={"Lua"}>
-                                <Badge
-                                    variant={"outline"}
-                                    colorPalette={"green"}
-                                    size={"sm"}
-                                >
-                                    <LuCode />
-                                </Badge>
-                            </Tooltip>
-                        )}
-                        {isSpecial && (
-                            <Tooltip content={"Специальный"}>
-                                <Badge
-                                    variant={"outline"}
-                                    colorPalette={"purple"}
-                                    size={"sm"}
-                                >
-                                    <LuRefreshCcwDot />
-                                    {new Intl.NumberFormat("ru-RU", {
-                                        style: "unit",
-                                        unit: "second",
-                                        unitDisplay: "short",
-                                    }).format(specialCycleDelay)}
-                                </Badge>
-                            </Tooltip>
-                        )}
-                        {graph && (
-                            <Tooltip content={"Показатель"}>
-                                <Badge
-                                    variant={"outline"}
-                                    colorPalette={"red"}
-                                    size={"sm"}
-                                >
-                                    <HStack
-                                        gap={"1"}
-                                        separator={<StackSeparator />}
-                                    >
-                                        <LuChartSpline />
-                                        <Text>{aperture}</Text>
-                                        <Text>Вт</Text>
-                                    </HStack>
-                                </Badge>
-                            </Tooltip>
-                        )}
-                    </Flex>
-                )}
+                <BadgesCell id={id} badges={badgesData} isEditing={isEditing} />
             </Table.Cell>
             <Table.Cell p={"0.5"}>
                 {isEditing ? (
@@ -414,5 +162,148 @@ const CodePreview = ({ code }) => {
                 </HoverCard.Positioner>
             </Portal>
         </HoverCard.Root>
+    );
+};
+
+const BadgesCell = ({ id, badges, isEditing }) => {
+    return (
+        <Flex gap={"1"} wrap={"wrap"} direction={isEditing ? "column" : "row"}>
+            {Object.keys(badges).map((key, index) => {
+                if (!badges[key].checked && !isEditing) return null;
+                if (isEditing)
+                    return (
+                        <ParamEditBadge
+                            key={index}
+                            id={id}
+                            target={key}
+                            checked={badges[key].checked}
+                            parameters={badges[key].parameters}
+                        />
+                    );
+                return (
+                    <ParamBadge
+                        key={index}
+                        target={key}
+                        parameters={badges[key].parameters}
+                    />
+                );
+            })}
+        </Flex>
+    );
+};
+
+const archiveColorMap = {
+    noGroup: "gray",
+    warn: "orange",
+    danger: "red",
+    state: "teal",
+};
+
+function getBadgeColor(target, parameters) {
+    return target === "archive"
+        ? archiveColorMap[parameters[0].value] || "gray"
+        : badgesColorMap[target] || "gray";
+}
+
+function getBadgeLabel(target, parameters) {
+    return target !== "archive"
+        ? PARAM_DEFINITIONS[target]?.label || "N/A"
+        : PARAM_DEFINITIONS[parameters[0].key].options.items.find(
+              (item) => item.value === parameters[0].value
+          )?.label || "N/A";
+}
+
+const ParamBadge = ({ target, parameters }) => {
+    const ParamIcon = PARAM_DEFINITIONS[target]?.icon || null;
+    const label = getBadgeLabel(target, parameters);
+    const color = getBadgeColor(target, parameters);
+    const variant = target === "archive" ? "solid" : "outline";
+
+    return (
+        <Tooltip content={label}>
+            <Badge variant={variant} colorPalette={color} size={"md"}>
+                <HStack gap={"2"}>
+                    {ParamIcon && <ParamIcon />}
+                    {target !== "archive" &&
+                        parameters.map((param, index) => {
+                            const selectOptions =
+                                PARAM_DEFINITIONS[param.key]?.options || null;
+                            let value;
+                            if (selectOptions) {
+                                value = selectOptions.items.find(
+                                    (item) => item.value === param.value
+                                )?.label;
+                            } else {
+                                value = param.value;
+                            }
+                            return (
+                                <Text key={index} size={"xs"}>
+                                    {value}
+                                </Text>
+                            );
+                        })}
+                </HStack>
+            </Badge>
+        </Tooltip>
+    );
+};
+
+const ParamEditBadge = ({ id, target, checked, parameters }) => {
+    const setSettings = useVariablesStore((state) => state.setSettings);
+    const ParamIcon = PARAM_DEFINITIONS[target]?.icon || null;
+    const label = getBadgeLabel(target, parameters);
+    const color = checked ? getBadgeColor(target, parameters) : "gray";
+
+    return (
+        <Popover.Root>
+            <Popover.Trigger asChild>
+                <Button
+                    size={"2xs"}
+                    variant={checked ? "solid" : "outline"}
+                    colorPalette={color}
+                >
+                    <ParamIcon /> {label}
+                </Button>
+            </Popover.Trigger>
+            <Portal>
+                <Popover.Positioner>
+                    <Popover.Content>
+                        <Popover.Body>
+                            <Flex gap={"2"} direction={"column"}>
+                                <Box pb={"2"}>
+                                    <Switch.Root
+                                        size={"sm"}
+                                        checked={checked}
+                                        onCheckedChange={(e) =>
+                                            setSettings(id, {
+                                                [target]: !!e.checked,
+                                            })
+                                        }
+                                        colorPalette={color}
+                                    >
+                                        <Switch.HiddenInput />
+                                        <Switch.Control>
+                                            <Switch.Thumb />
+                                        </Switch.Control>
+                                    </Switch.Root>
+                                </Box>
+                                {checked &&
+                                    parameters.map((param, index) => {
+                                        return (
+                                            <BaseInput
+                                                key={index}
+                                                id={id}
+                                                value={param.value}
+                                                inputParam={param.key}
+                                                showLabel
+                                            />
+                                        );
+                                    })}
+                            </Flex>
+                        </Popover.Body>
+                    </Popover.Content>
+                </Popover.Positioner>
+            </Portal>
+        </Popover.Root>
     );
 };

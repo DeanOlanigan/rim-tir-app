@@ -5,17 +5,17 @@ import { CONSTANT_VALUES } from "../../../config/constants";
 import { locale } from "../../../config/locale";
 import { useLocaleStore } from "../../../store/locale-store";
 
-export const TreeCardTitle = ({ type, treeApi }) => {
+export const TreeCardTitle = ({ type, variableTreeRef }) => {
     const lang = useLocaleStore((state) => state.locale);
     return (
         <HStack justify={"space-between"}>
             <Text>{locale[lang][type] || type}</Text>
-            <TitleButtons type={type} treeApi={treeApi} />
+            <TitleButtons type={type} variableTreeRef={variableTreeRef} />
         </HStack>
     );
 };
 
-const TitleButtons = ({ type, treeApi }) => {
+const TitleButtons = ({ type, variableTreeRef }) => {
     return (
         <HStack
             gap={"1"}
@@ -24,14 +24,14 @@ const TitleButtons = ({ type, treeApi }) => {
             _groupHover={{ opacity: 1 }}
         >
             {type === CONSTANT_VALUES.TREE_TYPES.variables && (
-                <VariablesTitleButtons treeApi={treeApi} />
+                <VariablesTitleButtons variableTreeRef={variableTreeRef} />
             )}
             <Tooltip content={"Свернуть папки"}>
                 <IconButton
                     size={"2xs"}
                     variant={"subtle"}
                     onClick={() => {
-                        treeApi.closeAll();
+                        variableTreeRef?.current.closeAll();
                     }}
                 >
                     <Icon size={"sm"} transform={"scaleX(-1)"}>
@@ -43,7 +43,7 @@ const TitleButtons = ({ type, treeApi }) => {
     );
 };
 
-const VariablesTitleButtons = ({ treeApi }) => {
+const VariablesTitleButtons = ({ variableTreeRef }) => {
     const lang = useLocaleStore((state) => state.locale);
     return (
         <>
@@ -52,7 +52,7 @@ const VariablesTitleButtons = ({ treeApi }) => {
                     size={"2xs"}
                     variant={"subtle"}
                     onClick={() => {
-                        treeApi.create({
+                        variableTreeRef?.current.create({
                             type: CONSTANT_VALUES.NODE_TYPES.variable,
                         });
                     }}
@@ -67,7 +67,7 @@ const VariablesTitleButtons = ({ treeApi }) => {
                     size={"2xs"}
                     variant={"subtle"}
                     onClick={() => {
-                        treeApi.create({
+                        variableTreeRef?.current.create({
                             type: CONSTANT_VALUES.NODE_TYPES.folder,
                         });
                     }}
