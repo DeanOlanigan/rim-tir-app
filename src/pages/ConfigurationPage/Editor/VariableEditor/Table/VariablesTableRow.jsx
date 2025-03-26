@@ -110,6 +110,7 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
             <Table.Cell p={"0.5"}>
                 {isEditing ? (
                     <DebouncedTextarea
+                        targetKey={"description"}
                         id={id}
                         value={description}
                         h={"253px"}

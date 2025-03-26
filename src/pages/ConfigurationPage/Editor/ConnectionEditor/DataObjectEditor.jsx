@@ -21,7 +21,7 @@ export const DataObjectEditor = ({ data }) => {
                     );
                 })}
             </SimpleGrid>
-            {/* <DropComponent id={data.id} variableId={data.variableId} /> */}
+            <DropComponent id={data.id} variableId={data.variableId} />
         </Flex>
     );
 };

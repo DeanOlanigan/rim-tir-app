@@ -12,7 +12,7 @@ import { useDragDropManager } from "react-dnd";
 export const TreeView = memo(
     forwardRef(function TreeView({ data, treeType }, ref) {
         console.log("%cRender NEW TreeView", "color: white; background: red;");
-        //const dragDropManager = useDragDropManager();
+        const dragDropManager = useDragDropManager();
         const {
             handleRenameNode,
             handleCreateNode,
@@ -50,7 +50,7 @@ export const TreeView = memo(
                             onMove={handleMoveNode}
                             onSelect={handleSelect}
                             disableDrop={handleDisableDrop}
-                            //dndManager={dragDropManager}
+                            dndManager={dragDropManager}
                             disableEdit={(data) =>
                                 data.type ===
                                 CONSTANT_VALUES.NODE_TYPES.dataObject

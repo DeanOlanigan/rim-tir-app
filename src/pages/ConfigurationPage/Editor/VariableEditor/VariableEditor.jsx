@@ -88,7 +88,6 @@ const ParameterCards = ({ id, data }) => {
 const ParameterCard = ({ id, param, checked, parameters }) => {
     const setSettings = useVariablesStore((state) => state.setSettings);
     const ParamIcon = PARAM_DEFINITIONS[param]?.icon || null;
-    console.log(param, checked);
     return (
         <Card.Root size={"sm"} minW={"220px"} _hover={{ bg: "bg.muted" }}>
             <Card.Body>
