@@ -11,6 +11,13 @@ import {
     AutoCompleteList,
 } from "@choc-ui/chakra-autocomplete";
 
+const autocomleteFilter = (query, optionValue, optionLabel) => {
+    const lowerCaseQuery = query.toLowerCase();
+    const lowerCaseOptionValue = optionValue.toLowerCase();
+    const lowerCaseOptionLabel = optionLabel.toLowerCase();
+    return lowerCaseOptionLabel.indexOf(lowerCaseQuery) !== -1;
+};
+
 export const DroppableInput = memo(function DroppableInput(props) {
     const { targetKey, id, showLabel = false } = props;
     const label = PARAM_DEFINITIONS[targetKey].label;
@@ -42,11 +49,11 @@ export const DroppableInput = memo(function DroppableInput(props) {
             prefocusFirstItem={false}
             value={variable}
             onSelectOption={(selected) => {
-                console.log(selected);
                 unbindVariable(id);
                 if (!selected.item.value) return;
                 bindVariable(id, selected.item.value);
             }}
+            filter={autocomleteFilter}
         >
             {({ isOpen, onOpen, onClose }) => (
                 <>
@@ -66,9 +73,7 @@ export const DroppableInput = memo(function DroppableInput(props) {
                         size={"xs"}
                         onClick={onOpen}
                         onBlur={(e) => {
-                            console.log("onBlur");
                             if (!e.target.value) {
-                                console.log("empty");
                                 unbindVariable(id);
                             }
                             onClose();
@@ -80,9 +85,8 @@ export const DroppableInput = memo(function DroppableInput(props) {
                                 <AutoCompleteItem
                                     m={"1"}
                                     key={row.id}
-                                    value={row}
-                                    getValue={(item) => item.id}
-                                    label="value"
+                                    value={row.id}
+                                    label={row.value}
                                     gap={"4"}
                                     align={"center"}
                                     h={"24px"}
