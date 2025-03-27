@@ -15,6 +15,7 @@ import {
     Checkbox,
     Switch,
     Box,
+    Icon,
 } from "@chakra-ui/react";
 import {
     SelectInput,
@@ -22,7 +23,7 @@ import {
     DebouncedEditor,
     BaseInput,
 } from "../../../InputComponents";
-import { LuPencil, LuPencilOff } from "react-icons/lu";
+import { LuChevronDown, LuPencil, LuPencilOff } from "react-icons/lu";
 import { dataTypesBytes } from "../../../../../config/filterOptions";
 import { Editor } from "@monaco-editor/react";
 import { useColorMode } from "../../../../../components/ui/color-mode";
@@ -44,6 +45,7 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
     const badgesData = initCardsData(setting);
 
     const [isEditing, setIsEditing] = useState(false);
+    const [isEditType, setIsEditType] = useState(false);
 
     const { label: typeLabel } = dataTypesBytes.items.find(
         (item) => item.value === type
@@ -88,24 +90,15 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
             <Table.Cell minW={"155px"} p={"0.5"}>
                 <BadgesCell id={id} badges={badgesData} isEditing={isEditing} />
             </Table.Cell>
-            <Table.Cell p={"0.5"}>
-                {isEditing ? (
-                    <SelectInput targetKey={"type"} id={id} value={type} />
+            <Table.Cell p={0.5}>
+                {isEditType ? (
+                    <SelectInput targetKey={"type"} id={id} value={type} open />
                 ) : (
                     <Text>{typeLabel}</Text>
                 )}
             </Table.Cell>
             <Table.Cell p={"0.5"}>
-                {isEditing ? (
-                    <DebouncedEditor
-                        id={id}
-                        luaExpression={luaExpression}
-                        height={"253px"}
-                        width={"450px"}
-                    />
-                ) : (
-                    luaExpression && <CodePreview code={luaExpression} />
-                )}
+                {luaExpression && <CodePreview id={id} code={luaExpression} />}
             </Table.Cell>
             <Table.Cell p={"0.5"}>
                 {isEditing ? (
@@ -130,39 +123,31 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
     );
 });
 
-const CodePreview = ({ code }) => {
-    const { colorMode } = useColorMode();
+const CodePreview = ({ id, code }) => {
     return (
-        <HoverCard.Root lazyMount unmountOnExit>
-            <HoverCard.Trigger>
-                <Code size={"sm"} maxW={"150px"} truncate lineClamp={2}>
+        <Popover.Root lazyMount unmountOnExit>
+            <Popover.Trigger>
+                <Code
+                    size={"sm"}
+                    maxW={"150px"}
+                    truncate
+                    lineClamp={2}
+                    _hover={{
+                        bg: "bg.emphasized",
+                        cursor: "pointer",
+                    }}
+                >
                     {code}
                 </Code>
-            </HoverCard.Trigger>
+            </Popover.Trigger>
             <Portal>
-                <HoverCard.Positioner>
-                    <HoverCard.Content w={"400px"} h={"300px"} p={"2"}>
-                        <Editor
-                            defaultLanguage="lua"
-                            theme={colorMode === "light" ? "vs" : "vs-dark"}
-                            defaultValue={code}
-                            options={{
-                                readOnly: true, // редактор только для чтения
-                                minimap: { enabled: false }, // скрыть мини-карту
-                                lineNumbers: "off", // отключить нумерацию строк
-                                renderLineHighlight: "none", // убрать подсветку текущей строки
-                                contextmenu: false, // отключить контекстное меню
-                                scrollBeyondLastLine: false, // чтобы не было лишнего прокручивания
-                                scrollbar: {
-                                    vertical: "hidden", // скрыть вертикальный скролл
-                                    horizontal: "hidden", // скрыть горизонтальный скролл
-                                },
-                            }}
-                        />
-                    </HoverCard.Content>
-                </HoverCard.Positioner>
+                <Popover.Positioner>
+                    <Popover.Content w={"400px"} h={"300px"} p={"2"}>
+                        <DebouncedEditor id={id} luaExpression={code} />
+                    </Popover.Content>
+                </Popover.Positioner>
             </Portal>
-        </HoverCard.Root>
+        </Popover.Root>
     );
 };
 
@@ -222,7 +207,12 @@ const ParamBadge = ({ target, parameters }) => {
 
     return (
         <Tooltip content={label}>
-            <Badge variant={variant} colorPalette={color} size={"md"}>
+            <Badge
+                variant={variant}
+                colorPalette={color}
+                size={"md"}
+                borderRadius={"full"}
+            >
                 <HStack gap={"2"}>
                     {ParamIcon && <ParamIcon />}
                     {target !== "archive" &&
@@ -256,55 +246,88 @@ const ParamEditBadge = ({ id, target, checked, parameters }) => {
     const color = checked ? getBadgeColor(target, parameters) : "gray";
 
     return (
-        <Popover.Root>
-            <Popover.Trigger asChild>
-                <Button
-                    size={"2xs"}
-                    variant={checked ? "solid" : "outline"}
-                    colorPalette={color}
-                >
-                    <ParamIcon /> {label}
-                </Button>
-            </Popover.Trigger>
-            <Portal>
-                <Popover.Positioner>
-                    <Popover.Content>
-                        <Popover.Body>
-                            <Flex gap={"2"} direction={"column"}>
-                                <Box pb={"2"}>
-                                    <Switch.Root
-                                        size={"sm"}
-                                        checked={checked}
-                                        onCheckedChange={(e) =>
-                                            setSettings(id, {
-                                                [target]: !!e.checked,
-                                            })
-                                        }
-                                        colorPalette={color}
-                                    >
-                                        <Switch.HiddenInput />
-                                        <Switch.Control>
-                                            <Switch.Thumb />
-                                        </Switch.Control>
-                                    </Switch.Root>
-                                </Box>
-                                {checked &&
-                                    parameters.map((param, index) => {
-                                        return (
-                                            <BaseInput
-                                                key={index}
-                                                id={id}
-                                                value={param.value}
-                                                inputParam={param.key}
-                                                showLabel
-                                            />
-                                        );
-                                    })}
-                            </Flex>
-                        </Popover.Body>
-                    </Popover.Content>
-                </Popover.Positioner>
-            </Portal>
-        </Popover.Root>
+        <Badge
+            w={"150px"}
+            h={"24px"}
+            colorPalette={color}
+            variant={checked ? "surface" : "outline"}
+            justifyContent={"space-between"}
+            borderRadius={"full"}
+        >
+            <Switch.Root
+                size={"sm"}
+                checked={checked}
+                onCheckedChange={(e) =>
+                    setSettings(id, {
+                        [target]: !!e.checked,
+                    })
+                }
+                colorPalette={color}
+            >
+                <Switch.HiddenInput />
+                <Switch.Control>
+                    <Switch.Thumb />
+                </Switch.Control>
+            </Switch.Root>
+            <Flex align={"center"} gap={"1"} overflow={"hidden"}>
+                <Icon size={"sm"}>
+                    <ParamIcon />
+                </Icon>
+                {parameters.map((param, index) => {
+                    const selectOptions =
+                        PARAM_DEFINITIONS[param.key]?.options || null;
+                    let value;
+                    if (selectOptions) {
+                        value = selectOptions.items.find(
+                            (item) => item.value === param.value
+                        )?.label;
+                    } else {
+                        value = param.value;
+                    }
+                    return (
+                        <Text key={index} size={"xs"} truncate>
+                            {value}
+                        </Text>
+                    );
+                })}
+            </Flex>
+            {parameters.length > 0 ? (
+                <Popover.Root size={"xs"}>
+                    <Popover.Trigger asChild>
+                        <IconButton
+                            size={"3xs"}
+                            variant={"subtle"}
+                            colorPalette={color}
+                            rounded={"full"}
+                            disabled={!checked}
+                        >
+                            <LuChevronDown />
+                        </IconButton>
+                    </Popover.Trigger>
+                    <Portal>
+                        <Popover.Positioner>
+                            <Popover.Content maxW={"250px"}>
+                                <Popover.Body>
+                                    {checked &&
+                                        parameters.map((param, index) => {
+                                            return (
+                                                <BaseInput
+                                                    key={index}
+                                                    id={id}
+                                                    value={param.value}
+                                                    inputParam={param.key}
+                                                    showLabel
+                                                />
+                                            );
+                                        })}
+                                </Popover.Body>
+                            </Popover.Content>
+                        </Popover.Positioner>
+                    </Portal>
+                </Popover.Root>
+            ) : (
+                <div style={{ width: "17px" }}></div>
+            )}
+        </Badge>
     );
 };
