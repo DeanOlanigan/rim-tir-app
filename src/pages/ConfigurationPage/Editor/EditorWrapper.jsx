@@ -50,7 +50,8 @@ export const EditorWrapper = memo(function EditorWrapper({ type }) {
 
         const childrens = Array.from(singleNode.children)
             .map((key) => settings[key])
-            .filter(Boolean);
+            .filter(Boolean)
+            .reverse();
 
         if (nodeType === "protocol" || nodeType === "interface") {
             return (
