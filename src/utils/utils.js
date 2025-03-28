@@ -17,13 +17,13 @@ endDate.setMinutes(Math.round(endDate.getMinutes() / 15) * 15);
 
 export const getEndDate = () => endDate.getTime();
 
-export const getRandomColor = () => {
+export function getRandomColor() {
     return (
         "#" + (Math.random().toString(16) + "000000").slice(2, 8).toUpperCase()
     );
-};
+}
 
-export const normalizeData = (data, result = {}, parentId = null) => {
+export function normalizeData(data, result = {}, parentId = null) {
     data.forEach((element) => {
         const id = uuidv4();
         result[id] = { ...element, id, parentId };
@@ -37,11 +37,11 @@ export const normalizeData = (data, result = {}, parentId = null) => {
         }
     });
     return result;
-};
+}
 
 //console.log("Normalized:", normalizeData(config.children[2].children));
 
-export const separateData = (data, treeData = [], nodeData = {}) => {
+export function separateData(data, treeData = [], nodeData = {}) {
     data.forEach((element) => {
         const { setting, children, ...rest } = element;
         nodeData[element.id] = { id: element.id, ...setting };
@@ -54,11 +54,11 @@ export const separateData = (data, treeData = [], nodeData = {}) => {
         }
     });
     return { treeData, nodeData };
-};
+}
 
 //console.log("Separated:", separateData(config.children[2].children));
 
-export const separateDataNEW = (data, nodeData = {}, parentId = null) => {
+export function separateDataNEW(data, nodeData = {}, parentId = null) {
     if (!data) {
         return { treeData: null, nodeData };
     }
@@ -98,9 +98,9 @@ export const separateDataNEW = (data, nodeData = {}, parentId = null) => {
     }
 
     return { treeData, nodeData };
-};
+}
 
-export const separateTree = (data) => {
+export function separateTree(data) {
     const { children, ...rest } = data;
     const configurationInfo = rest;
     const trees = {};
@@ -108,11 +108,11 @@ export const separateTree = (data) => {
         trees[child.type] = child.children;
     }
     return { trees, configurationInfo };
-};
+}
 
 //console.log("SEPARATED NEW", separateDataNEW(config));
 
-export const getParentType = ({ id, treeApi, checkNode }) => {
+export function getParentType({ id, treeApi, checkNode }) {
     if (!checkNode) checkNode = treeApi.get(id);
     const recursive = (node) => {
         if (node.data.type === "folder" || node.data.type === "dataObject")
@@ -120,9 +120,9 @@ export const getParentType = ({ id, treeApi, checkNode }) => {
         return node.data.type;
     };
     return recursive(checkNode);
-};
+}
 
-export const getParentTypeNormalized = ({ data, id }) => {
+export function getParentTypeNormalized({ data, id }) {
     if (!id) return null;
     const recursive = (id) => {
         if (!id) return "root";
@@ -133,9 +133,9 @@ export const getParentTypeNormalized = ({ data, id }) => {
             : data[id].type;
     };
     return recursive(data[id]?.parentId);
-};
+}
 
-export const initDefaultData = (type, parentId, treeApi) => {
+export function initDefaultData(type, parentId, treeApi) {
     const id = uuidv4();
     const node = {
         id: id,
@@ -153,10 +153,10 @@ export const initDefaultData = (type, parentId, treeApi) => {
         });
         setting.setting = DEFAULT_DATA_OBJECT_SETTING[parentType];
     }
-    return { id, node, setting };
-};
+    return { id, node, setting, name: node.name };
+}
 
-export const initCardsData = (data) => {
+export function initCardsData(data) {
     const cardsData = {};
 
     // Показывать isSpecial, если type === "bit"
@@ -201,4 +201,28 @@ export const initCardsData = (data) => {
     }
 
     return cardsData;
-};
+}
+
+export function getUniqueName(nodes, name, ignoreId = null) {
+    const usedNames = new Set();
+    function recursive(nodes) {
+        if (!Array.isArray(nodes)) return;
+        for (const node of nodes) {
+            if (node.data.id !== ignoreId) usedNames.add(node.data.name);
+            if (node.children?.length > 0) recursive(node.children);
+        }
+    }
+    recursive(nodes);
+
+    if (!usedNames.has(name)) {
+        return name;
+    }
+    let copyCount = 1;
+    while (true) {
+        const copyName = `${name} (${copyCount})`;
+        if (!usedNames.has(copyName)) {
+            return copyName;
+        }
+        copyCount++;
+    }
+}

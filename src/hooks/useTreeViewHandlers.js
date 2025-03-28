@@ -1,8 +1,9 @@
 import { useVariablesStore } from "../store/variables-store";
 import { useCallback } from "react";
-import { getParentType, initDefaultData } from "../utils/utils";
+import { getParentType, initDefaultData, getUniqueName } from "../utils/utils";
 import { useContextMenuStore } from "../store/contextMenu-store";
 import { CONSTANT_VALUES } from "../config/constants";
+import { toaster } from "../components/ui/toaster";
 
 export function useTreeViewHandlers(treeType, ref) {
     const addNode = useVariablesStore((state) => state.addNode);
@@ -24,8 +25,19 @@ export function useTreeViewHandlers(treeType, ref) {
 
     const handleRenameNode = useCallback(
         ({ id, name }) => {
-            console.log(ref?.current.get(id));
-            renameNode(treeType, id, name);
+            const uniqueName = getUniqueName(
+                ref?.current.root.children,
+                name,
+                id
+            );
+            if (uniqueName !== name) {
+                toaster.create({
+                    title: "Внимание",
+                    description: `Такое имя уже существует, взято "${uniqueName}"`,
+                    type: "warning",
+                });
+            }
+            renameNode(treeType, id, uniqueName);
         },
         [renameNode, treeType, ref]
     );
@@ -38,6 +50,9 @@ export function useTreeViewHandlers(treeType, ref) {
                 parentId,
                 ref?.current
             );
+            const name = getUniqueName(ref?.current.root.children, node.name);
+            node.name = name;
+            setting.name = name;
             addNode(treeType, parentId, node);
             createSetting(id, setting);
             return node;
