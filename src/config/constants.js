@@ -85,7 +85,7 @@ const DEFAULT_DATA_OBJECT = {
 export const DEFAULT_DATA_OBJECT_SETTING = {
     asdu: {
         address: "12",
-        type: "Однопозиционный ТС",
+        type: "bit",
         aperture: null,
         exec: "",
         description: "",

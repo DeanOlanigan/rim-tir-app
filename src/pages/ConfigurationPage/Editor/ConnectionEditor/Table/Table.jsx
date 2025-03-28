@@ -3,6 +3,7 @@ import { PARAM_DEFINITIONS } from "../../../../../config/paramDefinitions";
 import { BaseInput } from "../../../InputComponents/BaseInput";
 import { useState } from "react";
 import { LuPencil, LuPencilOff } from "react-icons/lu";
+import { TypeCell } from "../../VariableEditor/Table/Cells";
 
 export const DataObjectsTable = ({ data }) => {
     let keys;
@@ -83,11 +84,19 @@ const TableRow = ({ element }) => {
                         maxW={"150px"}
                         p={"0.5"}
                     >
-                        <BaseInput
-                            value={element.setting[key]}
-                            id={element.id}
-                            inputParam={key}
-                        />
+                        {key === "type" ? (
+                            <TypeCell
+                                id={element.id}
+                                type={element.setting[key]}
+                            />
+                        ) : (
+                            <BaseInput
+                                value={element.setting[key]}
+                                id={element.id}
+                                inputParam={key}
+                            />
+                        )}
+
                         {/* {isEditing ? (
                             <BaseInput
                                 value={element.setting[key]}

@@ -8,7 +8,7 @@ export const TypeCell = ({ id, type }) => {
 
     const { label: typeLabel } = dataTypesBytes.items.find(
         (item) => item.value === type
-    );
+    ) || { label: "N/A" };
 
     const render = isEditType ? (
         <SelectInput

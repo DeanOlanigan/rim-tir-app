@@ -4,7 +4,8 @@ import {
     NumberInput,
     TextInput,
     SwitchInput,
-    DebouncedTextarea,
+    /* DebouncedTextarea, */
+    EditableInput,
     DroppableInput,
 } from "./index";
 import { memo } from "react";
@@ -47,12 +48,13 @@ export const BaseInput = memo(function BaseInput(props) {
             );
         case "textarea":
             return (
-                <DebouncedTextarea
+                /* <DebouncedTextarea
                     targetKey={inputParam}
                     id={id}
                     value={value}
                     showLabel={showLabel}
-                />
+                /> */
+                <EditableInput targetKey={inputParam} id={id} value={value} />
             );
         case "drop":
             return (
