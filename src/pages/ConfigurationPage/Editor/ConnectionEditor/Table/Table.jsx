@@ -1,4 +1,4 @@
-import { Table, Flex, IconButton, Text } from "@chakra-ui/react";
+import { Table, Flex, IconButton } from "@chakra-ui/react";
 import { PARAM_DEFINITIONS } from "../../../../../config/paramDefinitions";
 import { BaseInput } from "../../../InputComponents/BaseInput";
 import { useState } from "react";

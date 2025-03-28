@@ -1,13 +1,5 @@
 import { memo } from "react";
 import { useVariablesStore } from "../../../store/variables-store";
-import {
-    SelectRoot,
-    SelectTrigger,
-    SelectValueText,
-    SelectContent,
-    SelectItem,
-    SelectLabel,
-} from "../../../components/ui/select";
 import { Select } from "@chakra-ui/react";
 import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 
