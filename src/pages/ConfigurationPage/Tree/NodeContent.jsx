@@ -1,12 +1,13 @@
 import { NodeEditInput } from "./NodeEditInput";
 import { icons, badges } from "../../../components/TreeView/DefaultView";
 //import { memo } from "react";
-import { Text } from "@chakra-ui/react";
+import { Badge, Text } from "@chakra-ui/react";
 import { useVariablesStore } from "../../../store/variables-store";
 import { memo } from "react";
 import { CONSTANT_VALUES } from "../../../config/constants";
 
 export const NodeContent = memo(function NodeContent({
+    id,
     type,
     subType,
     name,
@@ -35,6 +36,9 @@ export const NodeContent = memo(function NodeContent({
             type === CONSTANT_VALUES.NODE_TYPES.asdu
                 ? badges[subType] || badges[type]
                 : null}
+            {type === CONSTANT_VALUES.NODE_TYPES.dataObject && (
+                <Badge colorPalette={"teal"}>{id.slice(0, 8)}</Badge>
+            )}
             {isEditing ? (
                 <NodeEditInput name={name} submit={submit} reset={reset} />
             ) : (
