@@ -7,9 +7,6 @@ import { RouterMenu } from "./RouterMenu";
 
 export const BaseConfCard = () => {
     const configInfo = useVariablesStore((state) => state.configInfo);
-    const settings = useVariablesStore(
-        (state) => state.settings[configInfo.id]
-    );
 
     return (
         <Card.Root>
@@ -25,10 +22,10 @@ export const BaseConfCard = () => {
                             <ConfMenu />
                             <RouterMenu />
                         </Stack>
-                        <ConfInfoEdit settings={settings} />
+                        <ConfInfoEdit settings={configInfo} />
                         <ConfMiscInfo
-                            date={settings?.setting.date}
-                            version={settings?.setting.version}
+                            date={configInfo?.date}
+                            version={configInfo?.version}
                         />
                     </Stack>
                 </Card.Title>

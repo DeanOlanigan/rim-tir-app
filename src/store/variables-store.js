@@ -39,6 +39,9 @@ export const useVariablesStore = create()(
                 connections: new Set(),
                 variables: new Set(),
             },
+
+            setConfigInfo: (data) => set({ configInfo: data }),
+
             updateSelectedIds: (targetKey, ids) => {
                 const { selectedIds } = get();
                 const currentIds = selectedIds[targetKey];

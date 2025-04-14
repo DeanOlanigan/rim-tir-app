@@ -7,11 +7,13 @@ import { EditorCard } from "./EditorCard";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { CONSTANT_VALUES } from "../../config/constants";
+import { EmptyConfigDialog } from "./EmptyConfigDialog";
 
 function ConfigurationPage() {
     //console.log("Render ConfigurationPage");
     return (
         <DndProvider backend={HTML5Backend}>
+            <EmptyConfigDialog />
             <Box height="100%">
                 <PanelGroup autoSaveId="persistence" direction="horizontal">
                     <Panel collapsible collapsedSize={0} minSize={15}>
