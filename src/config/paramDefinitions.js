@@ -13,6 +13,10 @@ import {
     execList,
     gpioFuncType,
     measurements,
+    lengthOfASDUList,
+    lengthOfAdrList,
+    lengthOfCauseList,
+    gpioPortList,
 } from "./filterOptions";
 
 import {
@@ -99,6 +103,7 @@ export const PARAM_DEFINITIONS = {
     specialCycleDelay: {
         type: "number",
         label: "Цикличный вызов, сек",
+        rules: [{ props: { min: 0, max: 255 } }],
     },
     isLog: {
         type: "boolean",
@@ -118,6 +123,7 @@ export const PARAM_DEFINITIONS = {
     contactBounce: {
         type: "number",
         label: "Период дребезга",
+        rules: [{ props: { min: 0, max: 10000 } }],
     },
     side: {
         type: "select",
@@ -125,52 +131,92 @@ export const PARAM_DEFINITIONS = {
         options: sideList,
     },
     address: {
-        type: "input",
+        type: "number",
         label: "Адрес",
+        rules: [
+            {
+                condition: { key: "lengthOfAdr", value: 1, scope: "parent" },
+                props: { min: 1, max: 255 },
+            },
+            {
+                condition: { key: "lengthOfAdr", value: 2, scope: "parent" },
+                props: { min: 1, max: 65535 },
+            },
+            {
+                condition: { key: "lengthOfAdr", value: 3, scope: "parent" },
+                props: { min: 1, max: 16777215 },
+            },
+            { props: { min: 1, max: 65535 } },
+        ],
+    },
+    asduAddress: {
+        type: "number",
+        label: "Адрес ASDU",
+        rules: [
+            {
+                condition: { key: "lengthOfASDU", value: 1, scope: "parent" },
+                props: { min: 1, max: 255 },
+            },
+            {
+                condition: { key: "lengthOfASDU", value: 2, scope: "parent" },
+                props: { min: 1, max: 65535 },
+            },
+        ],
     },
     deviceAddress: {
         type: "number",
         label: "Адрес устройства",
+        rules: [{ props: { min: 1, max: 255 } }],
     },
     port: {
         type: "number",
         label: "Порт",
+        rules: [{ props: { min: 1, max: 65535 } }],
     },
     lengthOfASDU: {
-        type: "number",
+        type: "select",
         label: "Длина адреса ASDU",
+        options: lengthOfASDUList,
     },
     lengthOfCause: {
-        type: "number",
+        type: "select",
         label: "Длина причины передачи",
+        options: lengthOfCauseList,
     },
     lengthOfAdr: {
-        type: "number",
+        type: "select",
         label: "Длина адреса объекта",
+        options: lengthOfAdrList,
     },
     k: {
         type: "number",
         label: "k",
+        rules: [{ props: { min: 1, max: 255 } }],
     },
     w: {
         type: "number",
         label: "w",
+        rules: [{ props: { min: 1, max: 255 } }],
     },
     t0: {
         type: "number",
         label: "t0",
+        rules: [{ props: { min: 1, max: 255 } }],
     },
     t1: {
         type: "number",
         label: "t1",
+        rules: [{ props: { min: 1, max: 255 } }],
     },
     t2: {
         type: "number",
         label: "t2",
+        rules: [{ props: { min: 1, max: 255 } }],
     },
     t3: {
         type: "number",
         label: "t3",
+        rules: [{ props: { min: 1, max: 255 } }],
     },
     baudRate: {
         type: "select",
@@ -201,11 +247,16 @@ export const PARAM_DEFINITIONS = {
         label: "Режим опроса",
         type: "select",
         options: pollModeList,
+        dependsOn: { key: "side", value: "server", scope: "parent" },
     },
     pollPeriod: {
         type: "number",
         label: "Период опроса",
-        dependsOn: { key: "pollMode", value: "manual" },
+        dependsOn: [
+            { key: "side", value: "server", scope: "parent" },
+            { key: "pollMode", value: "manual", scope: "self" },
+        ],
+        rules: [{ props: { min: 1, max: 255 } }],
     },
     variable: {
         type: "drop",
@@ -214,234 +265,57 @@ export const PARAM_DEFINITIONS = {
     function: {
         type: "select",
         label: "Функция",
+        options: gpioFuncType,
+    },
+    gpioPort: {
+        type: "select",
+        label: "Порт",
+        options: gpioPortList,
+    },
+    functionModbus: {
+        type: "select",
+        label: "Функция",
         options: modbusFunctionGroupTypes,
     },
     sporadical: {
         type: "boolean",
         label: "Спорадический",
         defaultValue: false,
+        dependsOn: { key: "side", value: "client", scope: "parent" },
     },
     aperture: {
         type: "number",
         label: "Апертура",
+        dependsOn: {
+            type: "and",
+            conditions: [
+                { key: "sporadical", value: true, scope: "parent" },
+                {
+                    type: "or",
+                    conditions: [
+                        { key: "sigType", value: "ti_scaled", scope: "self" },
+                        {
+                            key: "sigType",
+                            value: "ti_normalized",
+                            scope: "self",
+                        },
+                        { key: "sigType", value: "ti_float", scope: "self" },
+                    ],
+                },
+            ],
+        },
+        rules: [{ props: { min: 0, max: 10000 } }],
     },
     exec: {
         type: "select",
         label: "Команда",
         options: execList,
-    },
-};
-
-export const PARAM_DEFINITIONS_SHARED = {
-    logging: {
-        type: "boolean",
-        label: "Логирование",
-        defaultValue: false,
-    },
-};
-
-export const PARAM_DEFINITIONS_ = {
-    gpio: {
-        logging: PARAM_DEFINITIONS_SHARED.logging,
-        contactBounce: {
-            type: "number",
-            label: "Период дребезга",
-        },
-    },
-    rs232: {
-        baudRate: {
-            type: "select",
-            label: "Скорость",
-            options: baudRateList,
-        },
-    },
-    rs485: {
-        baudRate: {
-            type: "select",
-            label: "Скорость",
-            options: baudRateList,
-        },
-    },
-    iec104: {
-        logging: {
-            type: "boolean",
-            label: "Логирование",
-            defaultValue: false,
-        },
-        side: {
-            type: "select",
-            label: "Тип",
-            options: sideList,
-        },
-        address: {
-            type: "input",
-            label: "Адрес",
-        },
-        port: {
-            type: "number",
-            label: "Порт",
-        },
-        lengthOfASDU: {
-            type: "number",
-            label: "Длина адреса ASDU",
-        },
-        lengthOfCause: {
-            type: "number",
-            label: "Длина причины передачи",
-        },
-        lengthOfAdr: {
-            type: "number",
-            label: "Длина адреса объекта",
-        },
-        k: {
-            type: "number",
-            label: "k",
-        },
-        w: {
-            type: "number",
-            label: "w",
-        },
-        t0: {
-            type: "number",
-            label: "t0",
-        },
-        t1: {
-            type: "number",
-            label: "t1",
-        },
-        t2: {
-            type: "number",
-            label: "t2",
-        },
-        t3: {
-            type: "number",
-            label: "t3",
-        },
-    },
-    "modbus-rtu": {
-        logging: {
-            type: "boolean",
-            label: "Логирование",
-            defaultValue: false,
-        },
-        deviceAddress: {
-            type: "number",
-            label: "Адрес устройства",
-        },
-        stopBit: {
-            type: "select",
-            label: "Стоп-бит",
-            options: stopBitList,
-        },
-        parity: {
-            type: "select",
-            label: "Паритет",
-            options: parityList,
-        },
-        order2: {
-            type: "select",
-            label: "Порядок 2-х байт",
-            options: orderTwoList,
-        },
-        order4: {
-            type: "select",
-            label: "Порядок 4-х байт",
-            options: orderFourList,
-        },
-    },
-    asdu: {
-        sporadical: {
-            type: "boolean",
-            label: "Спорадический",
-            defaultValue: false,
-        },
-        address: {
-            type: "input",
-            label: "Адрес",
-        },
-        pollMode: {
-            label: "Режим опроса",
-            type: "select",
-            options: pollModeList,
-        },
-        pollPeriod: {
-            type: "number",
-            label: "Период опроса",
-        },
-    },
-    functionGroup: {
-        function: {
-            type: "select",
-            label: "Функция",
-            options: modbusFunctionGroupTypes,
-        },
-        type: {
-            type: "select",
-            label: "Тип",
-            options: dataTypesBytes,
-        },
-    },
-    dataObject: {
-        gpio: {
-            address: {
-                type: "input",
-                label: "Адрес",
-            },
-            function: {
-                type: "select",
-                label: "Функция",
-                options: gpioFuncType,
-            },
-            description: {
-                type: "textarea",
-                label: "Описание",
-            },
-            variable: {
-                type: "drop",
-                label: "Переменная",
-            },
-        },
-        functionGroup: {
-            address: {
-                type: "input",
-                label: "Адрес",
-            },
-            description: {
-                type: "textarea",
-                label: "Описание",
-            },
-            variable: {
-                type: "drop",
-                label: "Переменная",
-            },
-        },
-        asdu: {
-            address: {
-                type: "input",
-                label: "Адрес",
-            },
-            type: {
-                type: "select",
-                label: "Тип",
-                options: dataTypesSig,
-            },
-            aperture: {
-                type: "number",
-                label: "Апертура",
-            },
-            exec: {
-                type: "select",
-                label: "Команда",
-                options: execList,
-            },
-            description: {
-                type: "textarea",
-                label: "Описание",
-            },
-            variable: {
-                type: "drop",
-                label: "Переменная",
-            },
+        dependsOn: {
+            type: "or",
+            conditions: [
+                { key: "sigType", value: "tu_one_position", scope: "self" },
+                { key: "sigType", value: "tu_two_position", scope: "self" },
+            ],
         },
     },
 };

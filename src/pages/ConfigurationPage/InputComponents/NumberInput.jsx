@@ -8,7 +8,7 @@ import { useVariablesStore } from "../../../store/variables-store";
 import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 
 export const NumberInput = memo(function NumberInput(props) {
-    const { targetKey, id, value, showLabel = false } = props;
+    const { targetKey, id, value, showLabel = false, ...rest } = props;
     const label = PARAM_DEFINITIONS[targetKey].label;
 
     //console.log("Render NumberInput");
@@ -24,6 +24,7 @@ export const NumberInput = memo(function NumberInput(props) {
                         [targetKey]: details.value,
                     });
                 }}
+                {...rest}
             >
                 <NumberInputField />
             </NumberInputRoot>

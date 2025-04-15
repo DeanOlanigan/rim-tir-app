@@ -226,3 +226,58 @@ export function getUniqueName(nodes, name, ignoreId = null) {
         copyCount++;
     }
 }
+
+export function checkDependsOn(data, dependsOn, settings) {
+    const conditions = Array.isArray(dependsOn) ? dependsOn : [dependsOn];
+
+    const checkCondition = (cond, node) => {
+        if (cond.scope === "self") {
+            return node.setting?.[cond.key] === cond.value;
+        } else {
+            const checkParent = (current) => {
+                if (!current) return false;
+                if (current.setting?.[cond.key] === cond.value) return true;
+                return checkParent(settings[current.parentId]);
+            };
+            return checkParent(node);
+        }
+    };
+    return conditions.every((cond) => checkCondition(cond, data));
+}
+
+export function checkDependsOn2(data, dependsOn, settings) {
+    const evaluate = (cond, node) => {
+        if ("type" in cond && Array.isArray(cond.conditions)) {
+            const results = cond.conditions.map((c) => evaluate(c, node));
+            return cond.type === "and"
+                ? results.every(Boolean)
+                : results.some(Boolean);
+        }
+
+        const { key, value, scope } = cond;
+        if (scope === "self") {
+            return node.setting?.[key] === value;
+        }
+
+        const checkParent = (current) => {
+            if (!current) return false;
+            if (current.setting?.[key] === value) return true;
+            return checkParent(settings[current.parentId]);
+        };
+        return checkParent(settings[node.parentId]);
+    };
+
+    return evaluate(dependsOn, data);
+}
+
+export function resolveDynProps(data, rules = [], settings) {
+    for (const rule of rules) {
+        if (!rule.condition) return rule.props;
+
+        if (checkDependsOn2(data, rule.condition, settings)) {
+            return rule.props;
+        }
+    }
+
+    return {};
+}

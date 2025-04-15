@@ -72,7 +72,7 @@ const DEFAULT_ASDU = {
 
 const DEFAULT_ASDU_SETTING = {
     sporadical: false,
-    address: "",
+    asduAddress: 1,
     pollMode: "manual",
     pollPeriod: "",
 };
@@ -85,7 +85,7 @@ const DEFAULT_DATA_OBJECT = {
 export const DEFAULT_DATA_OBJECT_SETTING = {
     asdu: {
         address: "12",
-        type: "bit",
+        sigType: "ts_one_position",
         aperture: null,
         exec: "",
         description: "",
@@ -93,7 +93,7 @@ export const DEFAULT_DATA_OBJECT_SETTING = {
     },
     // gpio Bruh
     interface: {
-        address: "2",
+        gpioPort: 1,
         function: "IN",
         description: "",
         variable: "",
@@ -159,7 +159,7 @@ export const DEFAULT_CONFIGURATION_DATA = {
         setting: {
             ...DEFAULT_FUNCTION_GROUP,
             setting: {
-                function: "4",
+                functionModbus: "4",
                 type: "bit",
             },
         },

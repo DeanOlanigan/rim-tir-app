@@ -1,9 +1,9 @@
-import { Table, Flex, IconButton } from "@chakra-ui/react";
+import { Table } from "@chakra-ui/react";
 import { PARAM_DEFINITIONS } from "../../../../../config/paramDefinitions";
 import { BaseInput } from "../../../InputComponents/BaseInput";
-import { useState } from "react";
-import { LuPencil, LuPencilOff } from "react-icons/lu";
 import { TypeCell } from "../../VariableEditor/Table/Cells";
+import { checkDependsOn2, resolveDynProps } from "../../../../../utils/utils";
+import { useVariablesStore } from "../../../../../store/variables-store";
 
 export const DataObjectsTable = ({ data }) => {
     let keys;
@@ -19,7 +19,6 @@ export const DataObjectsTable = ({ data }) => {
         <Table.Root size={"sm"} stickyHeader>
             <Table.Header>
                 <Table.Row background={"bg.subtle"}>
-                    <Table.ColumnHeader w={"55px"} />
                     {keys.map((key, index) => {
                         return (
                             <Table.ColumnHeader key={index}>
@@ -40,7 +39,7 @@ export const DataObjectsTable = ({ data }) => {
 };
 
 const TableRow = ({ element }) => {
-    const [isEditing, setIsEditing] = useState(false);
+    const settings = useVariablesStore((state) => state.settings);
 
     return (
         <Table.Row
@@ -48,35 +47,32 @@ const TableRow = ({ element }) => {
             className="group"
             _hover={{ bg: "bg.muted" }}
         >
-            <Table.Cell w={"55px"} p={"0.5"}>
-                <Flex gap={"1"} justify={"center"}>
-                    {isEditing ? (
-                        <>
-                            <IconButton
-                                size={"xs"}
-                                variant={"plain"}
-                                onClick={() => setIsEditing(false)}
-                                opacity={"0"}
-                                _groupHover={{ opacity: 1 }}
-                            >
-                                <LuPencilOff />
-                            </IconButton>
-                        </>
-                    ) : (
-                        <IconButton
-                            size={"xs"}
-                            variant={"plain"}
-                            onClick={() => setIsEditing(true)}
-                            opacity={"0"}
-                            _groupHover={{ opacity: 1 }}
-                        >
-                            <LuPencil />
-                        </IconButton>
-                    )}
-                </Flex>
-            </Table.Cell>
             {Object.keys(element.setting).map((key, index) => {
                 //if (key === "variable") return null;
+
+                const definition = PARAM_DEFINITIONS[key];
+                if (!definition) return null;
+
+                if (
+                    definition.dependsOn &&
+                    !checkDependsOn2(element, definition.dependsOn, settings)
+                ) {
+                    return (
+                        <Table.Cell
+                            key={index}
+                            minW={"150px"}
+                            maxW={"150px"}
+                            p={"0.5"}
+                        />
+                    );
+                }
+
+                const dynProps = resolveDynProps(
+                    element,
+                    definition.rules,
+                    settings
+                );
+
                 return (
                     <Table.Cell
                         key={index}
@@ -94,20 +90,9 @@ const TableRow = ({ element }) => {
                                 value={element.setting[key]}
                                 id={element.id}
                                 inputParam={key}
+                                {...dynProps}
                             />
                         )}
-
-                        {/* {isEditing ? (
-                            <BaseInput
-                                value={element.setting[key]}
-                                id={element.id}
-                                inputParam={key}
-                            />
-                        ) : (
-                            <Text truncate lineClamp={2}>
-                                {element.setting[key]}
-                            </Text>
-                        )} */}
                     </Table.Cell>
                 );
             })}

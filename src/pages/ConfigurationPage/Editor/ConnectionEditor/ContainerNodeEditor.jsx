@@ -4,8 +4,12 @@ import {
     PARAM_DEFINITIONS,
 } from "../../../../config/paramDefinitions";
 import { BaseInput } from "../../InputComponents/BaseInput";
+import { useVariablesStore } from "../../../../store/variables-store";
+import { checkDependsOn2, resolveDynProps } from "../../../../utils/utils";
 
 export const ContainerNodeEditor = ({ data }) => {
+    const settings = useVariablesStore((state) => state.settings);
+
     return (
         <Flex
             w={"100%"}
@@ -30,10 +34,23 @@ export const ContainerNodeEditor = ({ data }) => {
                     {Object.keys(data.setting).map((key, index) => {
                         const definition = PARAM_DEFINITIONS[key];
                         if (!definition) return null;
-                        if (definition.dependsOn) {
-                            const { key, value } = definition.dependsOn;
-                            if (data.setting[key] !== value) return null;
+                        if (
+                            definition.dependsOn &&
+                            !checkDependsOn2(
+                                data,
+                                definition.dependsOn,
+                                settings
+                            )
+                        ) {
+                            return null;
                         }
+
+                        const dynProps = resolveDynProps(
+                            data,
+                            definition.rules,
+                            settings
+                        );
+
                         return (
                             <BaseInput
                                 key={index}
@@ -41,6 +58,7 @@ export const ContainerNodeEditor = ({ data }) => {
                                 id={data.id}
                                 inputParam={key}
                                 showLabel
+                                {...dynProps}
                             />
                         );
                     })}

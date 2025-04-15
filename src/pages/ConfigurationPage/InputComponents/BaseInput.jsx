@@ -11,7 +11,7 @@ import {
 import { memo } from "react";
 
 export const BaseInput = memo(function BaseInput(props) {
-    const { value, id, inputParam, showLabel = false } = props;
+    const { value, id, inputParam, showLabel = false, ...rest } = props;
     const definition = PARAM_DEFINITIONS[inputParam];
     if (!definition) {
         return null;
@@ -44,6 +44,7 @@ export const BaseInput = memo(function BaseInput(props) {
                     id={id}
                     value={value}
                     showLabel={showLabel}
+                    {...rest}
                 />
             );
         case "textarea":

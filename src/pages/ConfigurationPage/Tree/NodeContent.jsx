@@ -37,7 +37,7 @@ export const NodeContent = memo(function NodeContent({
                 ? badges[subType] || badges[type]
                 : null}
             {type === CONSTANT_VALUES.NODE_TYPES.dataObject && (
-                <Badge colorPalette={"teal"}>{id.slice(0, 8)}</Badge>
+                <Badge variant={"outline"}>{id.slice(0, 8)}</Badge>
             )}
             {isEditing ? (
                 <NodeEditInput name={name} submit={submit} reset={reset} />
