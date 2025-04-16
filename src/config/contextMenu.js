@@ -1,4 +1,5 @@
 import { createElement } from "react";
+import { deleteNode as deleteNodeUtil } from "../utils/utils";
 import {
     LuFolder,
     LuVariable,
@@ -9,6 +10,7 @@ import {
     LuFileDigit,
     LuFileStack,
     LuPackage,
+    LuAnchor,
 } from "react-icons/lu";
 
 const renameNode = {
@@ -25,7 +27,7 @@ const deleteNode = {
         color: "fg.error",
         _hover: { bg: "bg.error", color: "fg.error" },
     },
-    action: (treeApi) => treeApi.delete([...treeApi.selectedIds]),
+    action: (treeApi) => deleteNodeUtil(treeApi),
 };
 const createNode = (label, action, icon) => ({
     key: `create-${action}`,
@@ -42,6 +44,10 @@ export const menuConfigConnections = {
         ...menuConfigNodeDefault,
     ],
     rs485: [
+        createNode("Создать Modbus-RTU...", "modbus-rtu", LuUnplug),
+        ...menuConfigNodeDefault,
+    ],
+    comport: [
         createNode("Создать Modbus-RTU...", "modbus-rtu", LuUnplug),
         ...menuConfigNodeDefault,
     ],
@@ -71,10 +77,19 @@ export const menuConfigConnections = {
         createNode("Создать объект данных...", "dataObject", LuFileDigit),
         ...menuConfigNodeDefault,
     ],
-    dataObject: [deleteNode],
+    dataObject: [
+        {
+            key: "rename-node",
+            icon: () => createElement(LuPencil),
+            label: "Перепривязать переменную",
+            action: (treeApi) => treeApi.edit(treeApi.focusedNode),
+        },
+        deleteNode,
+    ],
     default: [
-        createNode("Создать RS-485...", "rs485", LuCable),
-        createNode("Создать RS-232...", "rs232", LuCable),
+        /* createNode("Создать RS-485...", "rs485", LuCable),
+        createNode("Создать RS-232...", "rs232", LuCable), */
+        createNode("Последовательный порт...", "comport", LuAnchor),
         createNode("Создать IEC-104...", "iec104", LuUnplug),
         createNode("Создать GPIO...", "gpio", LuCable),
     ],

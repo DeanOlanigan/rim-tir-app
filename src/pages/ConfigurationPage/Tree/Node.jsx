@@ -31,8 +31,10 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
             onContextMenu={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                node.focus();
-                node.select();
+                while (tree.isFocused(node.id) === false) {
+                    console.log(tree.isFocused(node.id));
+                    node.focus();
+                }
                 updateContext({
                     x: e.clientX,
                     y: e.clientY,
@@ -55,6 +57,7 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
                     display: "flex",
                     alignItems: "center",
                     gap: "0.5rem",
+                    width: "100%",
                 }}
             >
                 {node.isLeaf ? null : (

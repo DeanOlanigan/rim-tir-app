@@ -244,4 +244,20 @@ export const DEFAULT_CONFIGURATION_DATA = {
             setting: { ...DEFAULT_VARIABLE_SETTING },
         },
     },
+    comport: {
+        node: {
+            ...DEFAULT_INTERFACE,
+            name: "COM порт",
+            subType: "comport",
+        },
+        setting: {
+            ...DEFAULT_INTERFACE,
+            name: "COM порт",
+            subType: "comport",
+            setting: {
+                baudRate: "57600",
+                pollPeriod: "21",
+            },
+        },
+    },
 };

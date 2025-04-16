@@ -13,6 +13,7 @@ import {
 const interfaceTypes = {
     rs485: "rs485",
     rs232: "rs232",
+    comport: "comport",
 };
 
 const protocolTypes = {
@@ -90,6 +91,11 @@ export const badges = {
     ),
     [interfaceTypes.rs232]: (
         <Badge colorPalette={"purple"}>{interfaceTypes.rs232}</Badge>
+    ),
+    [interfaceTypes.comport]: (
+        <Badge colorPalette={"purple"}>
+            {interfaceTypes.comport.toUpperCase()}
+        </Badge>
     ),
     [nodeTypes.asdu]: <Badge colorPalette={"teal"}>{nodeTypes.asdu}</Badge>,
     ...modbusFuncTypesBadges,

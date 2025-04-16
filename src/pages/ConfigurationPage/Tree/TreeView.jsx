@@ -51,10 +51,10 @@ export const TreeView = memo(
                             onSelect={handleSelect}
                             disableDrop={handleDisableDrop}
                             dndManager={dragDropManager}
-                            disableEdit={(data) =>
+                            /* disableEdit={(data) =>
                                 data.type ===
                                 CONSTANT_VALUES.NODE_TYPES.dataObject
-                            }
+                            } */
                         >
                             {Node}
                         </Tree>

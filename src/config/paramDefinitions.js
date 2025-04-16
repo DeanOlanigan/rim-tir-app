@@ -247,15 +247,18 @@ export const PARAM_DEFINITIONS = {
         label: "Режим опроса",
         type: "select",
         options: pollModeList,
-        dependsOn: { key: "side", value: "server", scope: "parent" },
+        dependsOn: { key: "side", value: "client", scope: "parent" },
     },
     pollPeriod: {
         type: "number",
         label: "Период опроса",
-        dependsOn: [
-            { key: "side", value: "server", scope: "parent" },
-            { key: "pollMode", value: "manual", scope: "self" },
-        ],
+        dependsOn: {
+            type: "and",
+            conditions: [
+                { key: "side", value: "client", scope: "parent" },
+                { key: "pollMode", value: "manual", scope: "self" },
+            ],
+        },
         rules: [{ props: { min: 1, max: 255 } }],
     },
     variable: {
@@ -281,7 +284,7 @@ export const PARAM_DEFINITIONS = {
         type: "boolean",
         label: "Спорадический",
         defaultValue: false,
-        dependsOn: { key: "side", value: "client", scope: "parent" },
+        dependsOn: { key: "side", value: "server", scope: "parent" },
     },
     aperture: {
         type: "number",

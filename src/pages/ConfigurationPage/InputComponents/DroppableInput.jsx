@@ -19,7 +19,14 @@ const autocomleteFilter = (query, optionValue, optionLabel) => {
 };
 
 export const DroppableInput = memo(function DroppableInput(props) {
-    const { targetKey, id, showLabel = false } = props;
+    const {
+        targetKey,
+        id,
+        showLabel = false,
+        submit = () => {},
+        reset = () => {},
+        forNode = false,
+    } = props;
     const label = PARAM_DEFINITIONS[targetKey].label;
 
     console.log("Render DroppableInput");
@@ -58,6 +65,7 @@ export const DroppableInput = memo(function DroppableInput(props) {
             {({ isOpen, onOpen, onClose }) => (
                 <>
                     <AutoCompleteInput
+                        autoFocus={forNode}
                         ref={dropRef}
                         placeholder={
                             isOpen
@@ -73,10 +81,20 @@ export const DroppableInput = memo(function DroppableInput(props) {
                         size={"xs"}
                         onClick={onOpen}
                         onBlur={(e) => {
+                            //submit(e.target.value);
+                            reset();
                             if (!e.target.value) {
                                 unbindVariable(id);
                             }
                             onClose();
+                        }}
+                        onFocus={(e) => e.currentTarget.select()}
+                        onKeyDown={(e) => {
+                            if (e.key === "Escape") {
+                                reset();
+                            }
+                            /* if (e.key === "Enter")
+                                submit(e.currentTarget.value); */
                         }}
                     />
                     {isOpen && (
