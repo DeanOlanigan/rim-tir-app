@@ -7,6 +7,8 @@ import {
     /* DebouncedTextarea, */
     EditableInput,
     DroppableInput,
+    IpInput,
+    HexInput,
 } from "./index";
 import { memo } from "react";
 
@@ -62,6 +64,24 @@ export const BaseInput = memo(function BaseInput(props) {
                 <DroppableInput
                     targetKey={inputParam}
                     id={id}
+                    showLabel={showLabel}
+                />
+            );
+        case "ip":
+            return (
+                <IpInput
+                    targetKey={inputParam}
+                    id={id}
+                    value={value}
+                    showLabel={showLabel}
+                />
+            );
+        case "hex":
+            return (
+                <HexInput
+                    targetKey={inputParam}
+                    id={id}
+                    value={value}
                     showLabel={showLabel}
                 />
             );

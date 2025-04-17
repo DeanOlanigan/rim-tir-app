@@ -130,6 +130,15 @@ export const PARAM_DEFINITIONS = {
         label: "Тип",
         options: sideList,
     },
+    ipAddress: {
+        type: "ip",
+        label: "IP-адрес",
+        rules: [{ props: { placeholder: "192.168.0.1" } }],
+    },
+    modbusDoAddress: {
+        type: "hex",
+        label: "Адрес информационного объекта",
+    },
     address: {
         type: "number",
         label: "Адрес",

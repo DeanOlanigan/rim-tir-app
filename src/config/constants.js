@@ -99,7 +99,7 @@ export const DEFAULT_DATA_OBJECT_SETTING = {
         variable: "",
     },
     functionGroup: {
-        address: "2",
+        modbusDoAddress: "",
         description: "",
         variable: "",
     },
@@ -216,7 +216,7 @@ export const DEFAULT_CONFIGURATION_DATA = {
             setting: {
                 logging: true,
                 side: "client",
-                address: "0.0.0.0",
+                ipAddress: "0.0.0.0",
                 port: "0",
                 lengthOfASDU: "1",
                 lengthOfCause: "1",
