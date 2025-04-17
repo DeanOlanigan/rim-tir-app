@@ -1,3 +1,5 @@
+import { Box } from "@chakra-ui/react";
+
 const placeholderStyle = {
     display: "flex",
     alignItems: "center",
@@ -7,7 +9,7 @@ const placeholderStyle = {
 const lineStyle = {
     flex: 1,
     height: "2px",
-    background: "white",
+    bg: "bg.inverted",
     borderRadius: "1px",
 };
 
@@ -22,7 +24,7 @@ export const DropCursor = ({ top, left, indent }) => {
 
     return (
         <div style={{ ...placeholderStyle, ...style }}>
-            <div style={{ ...lineStyle }}></div>
+            <Box {...lineStyle} />
         </div>
     );
 };

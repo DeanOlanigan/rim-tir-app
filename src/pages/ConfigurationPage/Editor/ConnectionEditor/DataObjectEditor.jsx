@@ -14,7 +14,7 @@ export const DataObjectEditor = ({ data }) => {
             <EditorBreadcrumb data={data} />
             <SimpleGrid columns={2} columnGap={"2"} rowGap={"2"} w={"100%"}>
                 {Object.keys(data.setting).map((key, index) => {
-                    if (key === "variable") return null;
+                    //if (key === "variable") return null;
 
                     const definition = PARAM_DEFINITIONS[key];
                     if (!definition) return null;
@@ -44,7 +44,7 @@ export const DataObjectEditor = ({ data }) => {
                     );
                 })}
             </SimpleGrid>
-            <DropComponent id={data.id} variableId={data.variableId} />
+            {/* <DropComponent id={data.id} variableId={data.variableId} /> */}
         </Flex>
     );
 };
