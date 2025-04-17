@@ -2,7 +2,13 @@ import { memo } from "react";
 import { Table, Text } from "@chakra-ui/react";
 import { initCardsData } from "../../../../../utils/utils";
 
-import { BadgesCell, CodeCell, DescriptionCell, TypeCell } from "./Cells";
+import {
+    BadgesCell,
+    CodeCell,
+    DescriptionCell,
+    TypeCell,
+    NameCell,
+} from "./Cells";
 
 export const VariablesTableRow = memo(function VariablesTableRow(props) {
     //console.log("RENDER VariablesTableRow");
@@ -17,7 +23,7 @@ export const VariablesTableRow = memo(function VariablesTableRow(props) {
             _hover={{ bg: "bg.muted" }}
         >
             <Table.Cell p={"0.5"}>
-                <Text>{name}</Text>
+                <NameCell id={id} name={name} />
             </Table.Cell>
             <Table.Cell minW={"155px"} p={"0.5"}>
                 <BadgesCell id={id} badges={badgesData} />
