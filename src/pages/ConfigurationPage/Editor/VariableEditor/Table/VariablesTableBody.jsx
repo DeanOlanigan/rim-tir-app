@@ -6,11 +6,11 @@ export const VariablesTableBody = memo(function VariablesTableBody({ data }) {
     //console.log("RENDER VariablesTableBody");
     return (
         <Table.Body>
-            {data.map((element, index) => {
+            {data.map((element) => {
                 if (element.type === "folder") return null;
                 return (
                     <VariablesTableRow
-                        key={index}
+                        key={element.id}
                         id={element.id}
                         name={element.name}
                         setting={element.setting}
