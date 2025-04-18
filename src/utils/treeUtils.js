@@ -252,7 +252,40 @@ export function bindVariableToNodeUtil(receive, send, nodeId, variableId) {
 
 export function unbindVariableUtil(settings, nodeId) {
     let result = { ...settings };
-    if (result[nodeId].variableId) {
+
+    const recursive = (nodeId) => {
+        const node = result[nodeId];
+
+        if (Array.isArray(node.children) && node.children?.length > 0) {
+            for (const childId of node.children) {
+                recursive(childId);
+            }
+        }
+
+        if (node.variableId) {
+            const varId = node.variableId;
+            result = {
+                ...result,
+                [varId]: {
+                    ...result[varId],
+                    usedIn: null,
+                },
+            };
+        }
+
+        result = {
+            ...result,
+            [nodeId]: {
+                ...node,
+                variableId: null,
+            },
+        };
+    };
+
+    recursive(nodeId);
+    return result;
+
+    /* if (result[nodeId].variableId) {
         result = {
             ...result,
             [result[nodeId].variableId]: {
@@ -267,7 +300,7 @@ export function unbindVariableUtil(settings, nodeId) {
             ...result[nodeId],
             variableId: null,
         },
-    };
+    }; */
 }
 
 export function moveSettingUtil(settings, dragIds, parentId, index) {
