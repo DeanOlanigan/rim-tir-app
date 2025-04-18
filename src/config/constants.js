@@ -89,19 +89,16 @@ export const DEFAULT_DATA_OBJECT_SETTING = {
         aperture: "10",
         exec: "direct",
         description: "",
-        variable: "",
     },
     // gpio Bruh
     interface: {
         gpioPort: 1,
         function: "IN",
         description: "",
-        variable: "",
     },
     functionGroup: {
         modbusDoAddress: "",
         description: "",
-        variable: "",
     },
 };
 

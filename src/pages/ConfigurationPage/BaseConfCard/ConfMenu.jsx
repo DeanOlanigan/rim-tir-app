@@ -4,7 +4,9 @@ import {
     MenuRoot,
     MenuTrigger,
 } from "../../../components/ui/menu";
-import { Button } from "@chakra-ui/react";
+import { Button, FileUpload } from "@chakra-ui/react";
+import { downloadStateAsXml } from "../../../utils/storeToXml";
+import { uploadXmlFile } from "../../../utils/xmlToStore";
 
 export const ConfMenu = () => {
     return (
@@ -16,11 +18,24 @@ export const ConfMenu = () => {
             </MenuTrigger>
             <MenuContent>
                 <MenuItem value="new-file">Создать...</MenuItem>
-                <MenuItem value="new-txt">Открыть...</MenuItem>
-                <MenuItem value="new-win">Сохранить</MenuItem>
+                <FileUpload.Root accept={[".xml"]}>
+                    <FileUpload.HiddenInput />
+                    <FileUpload.Trigger asChild>
+                        <UploadInput />
+                        {/* <MenuItem value="new-txt">Открыть...</MenuItem> */}
+                    </FileUpload.Trigger>
+                </FileUpload.Root>
+                <MenuItem value="new-win" onClick={downloadStateAsXml}>
+                    Сохранить
+                </MenuItem>
                 <MenuItem value="open-file">Сохранить как...</MenuItem>
                 <MenuItem value="export">Закрыть</MenuItem>
             </MenuContent>
         </MenuRoot>
     );
 };
+
+function UploadInput() {
+    const onChange = (e) => uploadXmlFile(e.target.files[0]);
+    return <input type="file" accept=".xml" onChange={onChange} />;
+}
