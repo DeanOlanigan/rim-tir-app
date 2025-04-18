@@ -260,7 +260,7 @@ export const PARAM_DEFINITIONS = {
     },
     pollPeriod: {
         type: "number",
-        label: "Период опроса",
+        label: "Период опроса, мин.",
         dependsOn: {
             type: "and",
             conditions: [

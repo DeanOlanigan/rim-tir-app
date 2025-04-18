@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { useVariablesStore } from "../../../store/variables-store";
-import { Select } from "@chakra-ui/react";
+import { Portal, Select } from "@chakra-ui/react";
 import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 
 export const SelectInput = memo(function SelectInput(props) {
@@ -36,16 +36,18 @@ export const SelectInput = memo(function SelectInput(props) {
                     <Select.Indicator />
                 </Select.IndicatorGroup>
             </Select.Control>
-            <Select.Positioner>
-                <Select.Content>
-                    {collection?.items.map((row) => (
-                        <Select.Item item={row} key={row.value}>
-                            {row.label}
-                            <Select.ItemIndicator />
-                        </Select.Item>
-                    ))}
-                </Select.Content>
-            </Select.Positioner>
+            <Portal>
+                <Select.Positioner>
+                    <Select.Content>
+                        {collection?.items.map((row) => (
+                            <Select.Item item={row} key={row.value}>
+                                {row.label}
+                                <Select.ItemIndicator />
+                            </Select.Item>
+                        ))}
+                    </Select.Content>
+                </Select.Positioner>
+            </Portal>
         </Select.Root>
     );
 });

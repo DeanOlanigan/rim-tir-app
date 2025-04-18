@@ -74,7 +74,7 @@ const DEFAULT_ASDU_SETTING = {
     sporadical: false,
     asduAddress: 1,
     pollMode: "manual",
-    pollPeriod: "",
+    pollPeriod: "1",
 };
 
 const DEFAULT_DATA_OBJECT = {
@@ -86,8 +86,8 @@ export const DEFAULT_DATA_OBJECT_SETTING = {
     asdu: {
         address: "12",
         sigType: "ts_one_position",
-        aperture: null,
-        exec: "",
+        aperture: "10",
+        exec: "direct",
         description: "",
         variable: "",
     },
@@ -117,13 +117,13 @@ const DEFAULT_VARIABLE_SETTING = {
     description: "Введите описание",
     cmd: false,
     archive: false,
-    group: null,
+    group: "noGroup",
     graph: false,
-    aperture: null,
-    measurement: null,
-    coefficient: 1,
+    aperture: "10",
+    measurement: "V",
+    coefficient: "1",
     luaExpression: null,
-    specialCycleDelay: null,
+    specialCycleDelay: "1",
 };
 
 export const DEFAULT_CONFIGURATION_DATA = {
@@ -140,7 +140,7 @@ export const DEFAULT_CONFIGURATION_DATA = {
             setting: {
                 logging: false,
                 deviceAddress: "1",
-                stopBit: "1",
+                stopBit: 1,
                 parity: "none",
                 order2: "LittleEndian",
                 order4: "1-0 3-2",
@@ -159,7 +159,7 @@ export const DEFAULT_CONFIGURATION_DATA = {
         setting: {
             ...DEFAULT_FUNCTION_GROUP,
             setting: {
-                functionModbus: "4",
+                functionModbus: 4,
                 type: "bit",
             },
         },
@@ -179,7 +179,6 @@ export const DEFAULT_CONFIGURATION_DATA = {
             subType: "rs232",
             setting: {
                 baudRate: "57600",
-                pollPeriod: "21",
             },
         },
     },
@@ -191,7 +190,6 @@ export const DEFAULT_CONFIGURATION_DATA = {
             subType: "rs485",
             setting: {
                 baudRate: "57600",
-                pollPeriod: "21",
             },
         },
     },
@@ -214,13 +212,13 @@ export const DEFAULT_CONFIGURATION_DATA = {
             name: "IEC-104",
             subType: "iec104",
             setting: {
-                logging: true,
+                logging: false,
                 side: "client",
                 ipAddress: "0.0.0.0",
-                port: "0",
-                lengthOfASDU: "1",
-                lengthOfCause: "1",
-                lengthOfAdr: "1",
+                port: "1",
+                lengthOfASDU: 1,
+                lengthOfCause: 1,
+                lengthOfAdr: 1,
                 k: "1",
                 w: "1",
                 t0: "1",
@@ -255,8 +253,7 @@ export const DEFAULT_CONFIGURATION_DATA = {
             name: "COM порт",
             subType: "comport",
             setting: {
-                baudRate: "57600",
-                pollPeriod: "21",
+                baudRate: 57600,
             },
         },
     },

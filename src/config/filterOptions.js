@@ -22,25 +22,46 @@ export const groups = createListCollection({
 
 export const modbusFunctionGroupTypes = createListCollection({
     items: [
-        { label: "read coils", value: 1 },
-        { label: "read discrete inputs", value: 2 },
-        { label: "read multiple holding registers", value: 3 },
-        { label: "read input registers", value: 4 },
-        { label: "write single coil", value: 5 },
-        { label: "write single holding register", value: 6 },
-        /* { label: "read exception status", value: 7 },
-        { label: "diagnostic", value: 8 },
-        { label: "get Com event counter", value: 11 },
-        { label: "get Com event log", value: 12 },
-        { label: "write multiple coils", value: 15 }, */
-        { label: "write multiple holding registers", value: 16 },
-        /* { label: "report slave ID", value: 17 },
-        { label: "read file record", value: 20 },
-        { label: "write file record", value: 21 },
-        { label: "mask write register", value: 22 },
-        { label: "read/write register", value: 23 },
-        { label: "read fifo queue", value: 24 },
-        { label: "read device identification", value: 43 }, */
+        {
+            label: "Чтение значений из нескольких регистров флагов (0x01)",
+            value: 1,
+        },
+        {
+            label: "Чтение значений из нескольких дискретных входов (0x02)",
+            value: 2,
+        },
+        {
+            label: "Чтение значений из нескольких регистров хранения (0x03)",
+            value: 3,
+        },
+        {
+            label: "Чтение значений из нескольких регистров ввода (0x04)",
+            value: 4,
+        },
+        { label: "Запись значения одного флага (0x05)", value: 5 },
+        { label: "Запись значения в один регистр хранения (0x06)", value: 6 },
+        { label: "Чтение сигналов состояния (0x07)", value: 7 },
+        { label: "Диагностика (0x08)", value: 8 },
+        { label: "Чтение счетчика событий (0x0B)", value: 11 },
+        { label: "Чтение журнала событий (0x0C)", value: 12 },
+        {
+            label: "Запись значений в несколько регистров флагов (0x15)",
+            value: 15,
+        },
+        {
+            label: "Запись значений в несколько регистров хранения (0x16)",
+            value: 16,
+        },
+        { label: "Чтение информации об устройстве (0x11)", value: 17 },
+        { label: "Чтение из файла (0x14)", value: 20 },
+        { label: "Запись в файл (0x15)", value: 21 },
+        {
+            label: "Запись в один регистр хранения с использованием маски «И» и маски «ИЛИ» (0x16)",
+            value: 22,
+        },
+        { label: "Чтение/запись нескольких регистров (0x17)", value: 23 },
+        { label: "Чтение данных из очереди (0x18)", value: 24 },
+        //{ label: "read device identification", value: 43 },
     ],
 });
 
