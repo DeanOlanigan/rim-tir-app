@@ -1,10 +1,14 @@
 import { Editable } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useVariablesStore } from "../../../../../../store/variables-store";
 
 export const NameCell = ({ id, name }) => {
     const [value, setValue] = useState(name);
     const renameNode = useVariablesStore((state) => state.renameNode);
+
+    useEffect(() => {
+        setValue(name);
+    }, [name]);
 
     return (
         <Editable.Root

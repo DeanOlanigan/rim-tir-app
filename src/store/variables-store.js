@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { separateDataNEW, separateTree } from "../utils/utils";
+import { getUniqueName, separateDataNEW, separateTree } from "../utils/utils";
 import { config } from "../config/testData";
 import {
     addNodeUtil,
@@ -136,15 +136,27 @@ export const useVariablesStore = create()(
                 }
             },
 
-            renameNode: (targetKey, nodeId, name) =>
-                set((state) => ({
-                    [targetKey]: renameNodeUtil(state[targetKey], nodeId, name),
-                    settings: renameNodeSettingUtil(
-                        state.settings,
-                        nodeId,
-                        name
-                    ),
-                })),
+            renameNode: (targetKey, nodeId, name) => {
+                set((state) => {
+                    const uniqueName = getUniqueName(
+                        state[targetKey],
+                        name,
+                        nodeId
+                    );
+                    return {
+                        [targetKey]: renameNodeUtil(
+                            state[targetKey],
+                            nodeId,
+                            uniqueName
+                        ),
+                        settings: renameNodeSettingUtil(
+                            state.settings,
+                            nodeId,
+                            uniqueName
+                        ),
+                    };
+                });
+            },
 
             removeNode: (targetKey, nodeIds) =>
                 set((state) => ({
@@ -163,7 +175,8 @@ export const useVariablesStore = create()(
                     settings: moveSettingUtil(
                         state.settings,
                         dragIds,
-                        parentId
+                        parentId,
+                        index
                     ),
                 })),
         }),

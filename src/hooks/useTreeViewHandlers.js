@@ -25,7 +25,7 @@ export function useTreeViewHandlers(treeType, ref) {
 
     const handleRenameNode = useCallback(
         ({ id, name }) => {
-            const uniqueName = getUniqueName(
+            /* const uniqueName = getUniqueName(
                 ref?.current.root.children,
                 name,
                 id
@@ -36,10 +36,10 @@ export function useTreeViewHandlers(treeType, ref) {
                     description: `Такое имя уже существует, взято "${uniqueName}"`,
                     type: "warning",
                 });
-            }
-            renameNode(treeType, id, uniqueName);
+            } */
+            renameNode(treeType, id, name);
         },
-        [renameNode, treeType, ref]
+        [renameNode, treeType /* ref */]
     );
     const handleCreateNode = useCallback(
         ({ parentId, index, type }) => {

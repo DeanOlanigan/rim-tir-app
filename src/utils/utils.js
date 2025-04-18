@@ -208,7 +208,7 @@ export function getUniqueName(nodes, name, ignoreId = null) {
     function recursive(nodes) {
         if (!Array.isArray(nodes)) return;
         for (const node of nodes) {
-            if (node.data.id !== ignoreId) usedNames.add(node.data.name);
+            if (node.id !== ignoreId) usedNames.add(node.name);
             if (node.children?.length > 0) recursive(node.children);
         }
     }
