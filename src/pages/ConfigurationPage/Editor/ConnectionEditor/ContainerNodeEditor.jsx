@@ -32,6 +32,7 @@ export const ContainerNodeEditor = ({ data }) => {
             {data.setting && (
                 <SimpleGrid columns={4} columnGap={"2"} rowGap={"2"}>
                     {Object.keys(data.setting).map((key, index) => {
+                        if (key === "variable") return null;
                         const definition = PARAM_DEFINITIONS[key];
                         if (!definition) return null;
                         if (

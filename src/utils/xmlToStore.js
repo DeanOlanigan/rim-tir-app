@@ -1,4 +1,4 @@
-//import { useVariablesStore } from "../store/variables-store";
+import { useVariablesStore } from "../store/variables-store";
 
 export function parseXmlToState(xmlString) {
     const parser = new DOMParser();
@@ -22,28 +22,43 @@ export function parseXmlToState(xmlString) {
     state.variables = [];
     state.settings = {};
 
-    function readNode(nodeElem, parentId = null) {
-        const type = nodeElem.tagName.toLowerCase();
+    function parseValue(raw) {
+        const text = raw.trim();
+        // булевы
+        if (/^(?:true|false)$/i.test(text)) {
+            return text.toLowerCase() === "true";
+        }
+        // число (int или float)
+        if (!isNaN(text) && text !== "") {
+            return text.includes(".") ? parseFloat(text) : parseInt(text, 10);
+        }
+        // всё остальное — оставляем строкой
+        return raw;
+    }
+
+    function readNode(nodeElem, parentId = null, stateArr = []) {
+        const type =
+            nodeElem.tagName.charAt(0).toLowerCase() +
+            nodeElem.tagName.slice(1);
         const id = nodeElem.getAttribute("id");
         const name = nodeElem.getAttribute("name") || "";
         const subType = nodeElem.getAttribute("subType") || undefined;
         const variableId = nodeElem.getAttribute("variableId") || undefined;
+        const ignoreChildren =
+            nodeElem.getAttribute("ignoreChildren") === "true";
 
         const settingElem = nodeElem.querySelector(":scope > Settings");
         const setting = {};
         if (settingElem) {
-            settingElem.childNodes.forEach((ch) => {
-                if (ch.nodeType === 1) {
-                    const key =
-                        ch.tagName.charAt(0).toLowerCase() +
-                        ch.tagName.slice(1);
-                    setting[key] = ch.textContent || "";
-                }
+            Array.from(settingElem.children).forEach((ch) => {
+                const key =
+                    ch.tagName.charAt(0).toLowerCase() + ch.tagName.slice(1);
+                setting[key] = parseValue(ch.textContent || "");
             });
         }
 
         const childrenElems = Array.from(nodeElem.children).filter(
-            (el) => el.tagName !== "Setting"
+            (el) => el.tagName !== "Settings"
         );
         const children = childrenElems.map((el) => el.getAttribute("id"));
 
@@ -53,34 +68,50 @@ export function parseXmlToState(xmlString) {
             type,
             name,
             subType,
-            variableId,
-            setting: Object.keys(setting).length ? setting : undefined,
-            children,
+            ignoreChildren,
+            setting:
+                Object.keys(setting).length > 0
+                    ? { variable: variableId, ...setting }
+                    : undefined,
+            children: Object.keys(children).length > 0 ? children : undefined,
         };
+        if (type === "dataObject") {
+            state.settings[id].variableId = variableId;
+        }
 
-        childrenElems.forEach((el) => readNode(el, id));
-
-        return id;
+        const treeNode = {
+            id,
+            type,
+            subType,
+            name: type === "dataObject" ? variableId : name,
+            ignoreChildren,
+            children: Object.keys(children).length > 0 ? [] : undefined,
+        };
+        childrenElems.forEach((el) => readNode(el, id, treeNode.children));
+        stateArr.push(treeNode);
     }
 
-    const recvElems = xml.querySelectorAll(
-        ":scope > Communication > Receive > *"
+    xml.querySelectorAll(":scope > Communication > Receive > *").forEach(
+        (el) => {
+            readNode(el, null, state.receive);
+        }
     );
-    recvElems.forEach((el) => {
-        const id = readNode(el, null);
-        state.receive.push({ id });
+
+    xml.querySelectorAll(":scope > Communication > Send > *").forEach((el) => {
+        readNode(el, null, state.send);
     });
 
-    const sndElems = xml.querySelectorAll(":scope > Communication > Send > *");
-    sndElems.forEach((el) => {
-        const id = readNode(el, null);
-        state.send.push({ id });
+    xml.querySelectorAll(":scope > Variables > *").forEach((el) => {
+        readNode(el, null, state.variables);
     });
 
-    const variableElems = xml.querySelectorAll(":scope > Variables > *");
-    variableElems.forEach((el) => {
-        const id = readNode(el, null);
-        state.variables.push({ id });
+    Object.values(state.settings).forEach((node) => {
+        if (node.variableId) {
+            const vid = node.variableId;
+            if (state.settings[vid]) {
+                state.settings[vid].usedIn = node.id;
+            }
+        }
     });
 
     return state;
@@ -92,6 +123,7 @@ export function uploadXmlFile(file) {
         const xml = reader.result;
         const newState = parseXmlToState(xml);
         console.log(newState);
+        useVariablesStore.setState(newState);
     };
     reader.readAsText(file, "UTF-8");
 }
