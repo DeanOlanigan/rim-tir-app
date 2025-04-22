@@ -192,3 +192,10 @@ export const gpioPortList = createListCollection({
         { label: "7", value: 7 },
     ],
 });
+
+export const ifaceList = createListCollection({
+    items: [
+        { label: "ttyS0", value: "ttyS0" },
+        { label: "ttyS1", value: "ttyS1" },
+    ],
+});

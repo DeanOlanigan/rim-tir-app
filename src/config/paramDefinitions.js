@@ -17,6 +17,7 @@ import {
     lengthOfAdrList,
     lengthOfCauseList,
     gpioPortList,
+    ifaceList,
 } from "./filterOptions";
 
 import {
@@ -176,6 +177,11 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "Адрес устройства",
         rules: [{ props: { min: 1, max: 255 } }],
+    },
+    iface: {
+        type: "select",
+        label: "Интерфейс",
+        options: ifaceList,
     },
     port: {
         type: "number",

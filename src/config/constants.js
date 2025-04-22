@@ -253,6 +253,7 @@ export const DEFAULT_CONFIGURATION_DATA = {
             name: "COM порт",
             subType: "comport",
             setting: {
+                iface: "ttyS0",
                 baudRate: 57600,
             },
         },
