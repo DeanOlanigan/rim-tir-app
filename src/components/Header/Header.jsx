@@ -95,7 +95,7 @@ function Header() {
                             </IconButton>
                         </Tooltip>
                         <ColorModeButton size={"xs"} />
-                        <LocaleButton />
+                        {/* <LocaleButton /> */}
                     </Flex>
                 </Flex>
             </Box>

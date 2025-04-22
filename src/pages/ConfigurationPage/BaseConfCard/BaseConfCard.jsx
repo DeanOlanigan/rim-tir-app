@@ -18,7 +18,7 @@ export const BaseConfCard = () => {
                         justify={"space-between"}
                         align={"center"}
                     >
-                        <Stack direction={"row"} gap={"0"}>
+                        <Stack direction={"row"} gap={"2"}>
                             <ConfMenu />
                             <RouterMenu />
                         </Stack>

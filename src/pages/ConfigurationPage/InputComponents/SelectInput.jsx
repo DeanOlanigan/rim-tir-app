@@ -12,6 +12,8 @@ export const SelectInput = memo(function SelectInput(props) {
 
     return (
         <Select.Root
+            lazyMount
+            unmountOnExit
             maxW={"250px"}
             size={"xs"}
             {...rest}

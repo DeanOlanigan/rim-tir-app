@@ -8,7 +8,7 @@ import { DataObjectsTable } from "./ConnectionEditor/Table/Table";
 import { ContainerNodeEditor } from "./ConnectionEditor/ContainerNodeEditor";
 import { DataObjectEditor } from "./ConnectionEditor/DataObjectEditor";
 import { EditorBreadcrumb } from "./Breadcrumb";
-import { getParentTypeNormalized } from "../../../utils/utils";
+//import { getParentTypeNormalized } from "../../../utils/utils";
 import { EditorInformer } from "./EditorInformer";
 
 // TODO Лишний ререндер, мб вынести логику с выбором данных в другое место?
@@ -21,15 +21,15 @@ export const EditorWrapper = memo(function EditorWrapper({ type }) {
         return selectSelectedData(settings, selectedIds);
     }, [settings, selectedIds]);
     const [singleNode] = selectedData;
-    const meaningfulParentType = getParentTypeNormalized({
+    /* const meaningfulParentType = getParentTypeNormalized({
         data: settings,
         id: singleNode?.id,
-    });
+    }); */
 
-    console.log(
+    /* console.log(
         `%c${meaningfulParentType}`,
         "color: white; background: green;"
-    );
+    ); */
 
     if (!selectedData || selectedData.length === 0) {
         return <EditorInformer status={"info"} type={type} />;
@@ -38,7 +38,7 @@ export const EditorWrapper = memo(function EditorWrapper({ type }) {
     if (selectedData.length === 1) {
         const nodeType = singleNode.type;
 
-        console.log(`%c${nodeType}`, "color: white; background: darkgreen;");
+        //console.log(`%c${nodeType}`, "color: white; background: darkgreen;");
 
         if (singleNode.children === undefined) {
             return type === "connections" ? (
@@ -67,12 +67,12 @@ export const EditorWrapper = memo(function EditorWrapper({ type }) {
             nodeType === "asdu" ||
             nodeType === "folder"
         ) {
-            let cType = childrens.find((row) => row.type !== "folder")?.type;
+            /* let cType = childrens.find((row) => row.type !== "folder")?.type;
             console.log(
                 `%c${singleNode.type}
 ${cType}`,
                 "color: white; background: green;"
-            );
+            ); */
 
             return (
                 <VStack gap={"4"} px={"1"} h={"100%"} align={"start"}>

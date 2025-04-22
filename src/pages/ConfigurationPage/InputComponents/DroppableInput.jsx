@@ -11,6 +11,7 @@ import {
     AutoCompleteList,
 } from "@choc-ui/chakra-autocomplete";
 import { Field } from "../../../components/ui/field";
+import { LuBan } from "react-icons/lu";
 
 const autocomleteFilter = (query, optionValue, optionLabel) => {
     const lowerCaseQuery = query.toLowerCase();
@@ -57,7 +58,6 @@ export const DroppableInput = memo(function DroppableInput(props) {
                 showLabel ? label || PARAM_DEFINITIONS[targetKey]?.label : ""
             }
             maxW={"250px"}
-            minW={"200px"}
         >
             <AutoComplete
                 prefocusFirstItem={false}
@@ -79,12 +79,12 @@ export const DroppableInput = memo(function DroppableInput(props) {
                                     ? "Или перетащите переменную"
                                     : "Введите название переменной"
                             }
-                            h={"32px"}
+                            h={forNode ? "24px" : "32px"}
                             border={"1px solid"}
                             borderColor={"border"}
                             background={"transparent"}
                             //borderColor={borderColor}
-                            borderRadius={"md"}
+                            borderRadius={"sm"}
                             //backgroundColor={backgroundColor}
                             variant={"subtle"}
                             size={"xs"}
@@ -119,11 +119,17 @@ export const DroppableInput = memo(function DroppableInput(props) {
                                         h={"24px"}
                                         borderRadius={"sm"}
                                         disabled={row.disabled}
+                                        title={
+                                            row.disabled
+                                                ? "Используется"
+                                                : row.value
+                                        }
+                                        justifyContent={"space-between"}
                                     >
                                         <Text truncate>{row.label}</Text>
                                         {row.disabled && (
                                             <Badge colorPalette={"red"}>
-                                                Используется
+                                                <LuBan />
                                             </Badge>
                                         )}
                                     </AutoCompleteItem>

@@ -80,7 +80,7 @@ export const ConfInfoEdit = ({ settings }) => {
                         <Flex justify={"space-between"}>
                             <Box>
                                 <Text fontSize={"sm"} color={"fg.muted"}>
-                                    Дата:
+                                    Дата изменения:
                                 </Text>
                                 <Text fontSize={"md"}>{settings?.date}</Text>
                             </Box>

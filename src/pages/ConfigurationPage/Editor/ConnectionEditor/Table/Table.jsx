@@ -21,7 +21,7 @@ export const DataObjectsTable = ({ data }) => {
                 <Table.Row background={"bg.subtle"}>
                     {keys.map((key, index) => {
                         return (
-                            <Table.ColumnHeader key={index}>
+                            <Table.ColumnHeader key={key + "_" + index}>
                                 {PARAM_DEFINITIONS[key].label}
                             </Table.ColumnHeader>
                         );
@@ -31,7 +31,7 @@ export const DataObjectsTable = ({ data }) => {
             <Table.Body>
                 {data.map((element, index) => {
                     if (element.type === "folder") return null;
-                    return <TableRow key={index} element={element} />;
+                    return <TableRow key={element.id} element={element} />;
                 })}
             </Table.Body>
         </Table.Root>
@@ -59,7 +59,7 @@ const TableRow = ({ element }) => {
                 ) {
                     return (
                         <Table.Cell
-                            key={index}
+                            key={element.id + "_" + key}
                             minW={"150px"}
                             maxW={"150px"}
                             p={"0.5"}
@@ -75,7 +75,7 @@ const TableRow = ({ element }) => {
 
                 return (
                     <Table.Cell
-                        key={index}
+                        key={element.id + "_" + key}
                         minW={"150px"}
                         maxW={"150px"}
                         p={"0.5"}
