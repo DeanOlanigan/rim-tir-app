@@ -40,7 +40,6 @@ export function convertStateToXml(state) {
     );
 
     doc.ele("ConfigInfo")
-        .att("name", configInfo.name)
         .att("description", configInfo.description)
         .att("date", configInfo.date)
         .att("version", configInfo.version)

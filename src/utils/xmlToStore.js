@@ -1,4 +1,3 @@
-import { parse } from "uuid";
 import { useVariablesStore } from "../store/variables-store";
 
 export function parseXmlToState(xmlString) {
@@ -12,7 +11,6 @@ export function parseXmlToState(xmlString) {
 
     const cfg = xml.querySelector("ConfigInfo");
     state.configInfo = {
-        name: cfg.getAttribute("name") || "",
         description: cfg.getAttribute("description") || "",
         date: cfg.getAttribute("date") || "",
         version: cfg.getAttribute("version") || "",
@@ -122,6 +120,7 @@ export function uploadXmlFile(file) {
     reader.onload = () => {
         const xml = reader.result;
         const newState = parseXmlToState(xml);
+        newState.configInfo.name = file.name.slice(0, -4);
         console.log(newState);
         useVariablesStore.setState(newState);
     };
