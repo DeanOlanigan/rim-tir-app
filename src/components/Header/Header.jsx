@@ -6,6 +6,8 @@ import {
     Box,
     Menu,
     Portal,
+    Dialog,
+    CloseButton,
 } from "@chakra-ui/react";
 import { Tooltip } from "../../components/ui/tooltip";
 import { useEffect, useState } from "react";
@@ -63,18 +65,7 @@ function Header() {
                                 {version || "7.7.77-7"}
                             </Text>
                         </Skeleton>
-                        <IconButton
-                            size={"xs"}
-                            variant="ghost"
-                            css={{
-                                _icon: {
-                                    width: "5",
-                                    height: "5",
-                                },
-                            }}
-                        >
-                            <LuSettings />
-                        </IconButton>
+                        <SettingsMenu />
                     </Flex>
                     <Navigation />
                     <Flex gap="2" align="center" width="270px" justify="end">
@@ -153,6 +144,52 @@ const LocaleButton = () => {
                     </Menu.Content>
                 </Menu.Positioner>
             </Portal>
+        </Menu.Root>
+    );
+};
+
+const SettingsMenu = () => {
+    return (
+        <Menu.Root>
+            <Menu.Trigger asChild>
+                <IconButton
+                    size={"xs"}
+                    variant="ghost"
+                    css={{
+                        _icon: {
+                            width: "5",
+                            height: "5",
+                        },
+                    }}
+                >
+                    <LuSettings />
+                </IconButton>
+            </Menu.Trigger>
+
+            <Menu.Positioner>
+                <Menu.Content>
+                    <Dialog.Root lazyMount unmountOnExit>
+                        <Dialog.Trigger asChild>
+                            <Menu.Item value="update" closeOnSelect={false}>
+                                Обновление
+                            </Menu.Item>
+                        </Dialog.Trigger>
+                        <Portal>
+                            <Dialog.Positioner>
+                                <Dialog.Content>
+                                    <Dialog.Header>
+                                        <Dialog.Title>Обновление</Dialog.Title>
+                                    </Dialog.Header>
+                                    <Dialog.Body></Dialog.Body>
+                                    <Dialog.CloseTrigger asChild>
+                                        <CloseButton size={"sm"} />
+                                    </Dialog.CloseTrigger>
+                                </Dialog.Content>
+                            </Dialog.Positioner>
+                        </Portal>
+                    </Dialog.Root>
+                </Menu.Content>
+            </Menu.Positioner>
         </Menu.Root>
     );
 };
