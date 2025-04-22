@@ -6,18 +6,22 @@ import {
     Input,
     Textarea,
     CloseButton,
+    Alert,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useVariablesStore } from "../../store/variables-store";
 
 export const CreateConfigDialog = ({ children }) => {
+    const configInfo = useVariablesStore((state) => state.configInfo);
     const setConfigInfo = useVariablesStore((state) => state.setConfigInfo);
+    const resetState = useVariablesStore((state) => state.resetState);
     const [isOpen, setIsOpen] = useState(false);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
     const submitCreateConfig = () => {
         console.log("submitCreateConfig");
+        resetState();
         setConfigInfo({
             name,
             description,
@@ -55,6 +59,14 @@ export const CreateConfigDialog = ({ children }) => {
                         </Dialog.Header>
                         <Dialog.Body>
                             <VStack spacing={4} align="stretch">
+                                {configInfo.name && (
+                                    <Alert.Root status={"warning"}>
+                                        <Alert.Indicator />
+                                        <Alert.Title>
+                                            Сохраните предыдущую конфигурацию
+                                        </Alert.Title>
+                                    </Alert.Root>
+                                )}
                                 <Input
                                     placeholder="Имя конфигурации"
                                     value={name}

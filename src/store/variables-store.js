@@ -40,6 +40,19 @@ export const useVariablesStore = create()(
                 variables: new Set(),
             },
 
+            resetState: () =>
+                set({
+                    configInfo: {},
+                    send: [],
+                    receive: [],
+                    variables: [],
+                    settings: {},
+                    selectedIds: {
+                        connections: new Set(),
+                        variables: new Set(),
+                    },
+                }),
+
             setConfigInfo: (data) => set({ configInfo: data }),
 
             updateSelectedIds: (targetKey, ids) => {

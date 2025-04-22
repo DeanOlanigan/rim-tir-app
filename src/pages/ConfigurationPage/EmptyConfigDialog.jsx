@@ -1,7 +1,15 @@
-import { Dialog, Portal, Button, CloseButton, Text } from "@chakra-ui/react";
+import {
+    Dialog,
+    Portal,
+    Button,
+    CloseButton,
+    Text,
+    Box,
+} from "@chakra-ui/react";
 import { useVariablesStore } from "../../store/variables-store";
 import { useState, useEffect, useRef } from "react";
 import { CreateConfigDialog } from "./CreateConfigDialog";
+import { ConfigurationUploader } from "./ConfigurationUploader";
 
 export const EmptyConfigDialog = () => {
     const configurationInfo = useVariablesStore((state) => state.configInfo);
@@ -51,14 +59,24 @@ export const EmptyConfigDialog = () => {
                             </Text>
                         </Dialog.Body>
                         <Dialog.Footer>
-                            <Button size={"xs"} onClick={loadConfigHandler}>
-                                Загрузить конфигурацию
-                            </Button>
-                            <CreateConfigDialog>
-                                <Button size={"xs"} ref={ref}>
-                                    Создать конфигурацию
-                                </Button>
-                            </CreateConfigDialog>
+                            <Box w={"100%"}>
+                                <ConfigurationUploader>
+                                    <Button
+                                        w={"100%"}
+                                        size={"xs"}
+                                        onClick={loadConfigHandler}
+                                    >
+                                        Загрузить конфигурацию
+                                    </Button>
+                                </ConfigurationUploader>
+                            </Box>
+                            <Box w={"100%"}>
+                                <CreateConfigDialog>
+                                    <Button w={"100%"} size={"xs"} ref={ref}>
+                                        Создать конфигурацию
+                                    </Button>
+                                </CreateConfigDialog>
+                            </Box>
                         </Dialog.Footer>
                         <Dialog.CloseTrigger asChild>
                             <CloseButton size={"xs"} />

@@ -1,3 +1,4 @@
+import { parse } from "uuid";
 import { useVariablesStore } from "../store/variables-store";
 
 export function parseXmlToState(xmlString) {
@@ -30,7 +31,9 @@ export function parseXmlToState(xmlString) {
         }
         // число (int или float)
         if (!isNaN(text) && text !== "") {
-            return text.includes(".") ? parseFloat(text) : parseInt(text, 10);
+            if (text.includes(".")) return parseFloat(text);
+            if (text.includes("x")) return parseInt(text, 16);
+            return parseInt(text, 10);
         }
         // всё остальное — оставляем строкой
         return raw;
@@ -69,10 +72,7 @@ export function parseXmlToState(xmlString) {
             name,
             subType,
             ignoreChildren,
-            setting:
-                Object.keys(setting).length > 0
-                    ? { variable: variableId, ...setting }
-                    : undefined,
+            setting: Object.keys(setting).length > 0 ? setting : undefined,
             children: Object.keys(children).length > 0 ? children : undefined,
         };
         if (type === "dataObject") {

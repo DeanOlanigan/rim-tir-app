@@ -4,49 +4,40 @@ import {
     MenuRoot,
     MenuTrigger,
 } from "../../../components/ui/menu";
-import { Button, FileUpload } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import { downloadStateAsXml } from "../../../utils/storeToXml";
-import { uploadXmlFile } from "../../../utils/xmlToStore";
 import { useVariablesStore } from "../../../store/variables-store";
+import { CreateConfigDialog } from "../CreateConfigDialog";
+import { ConfigurationUploader } from "../ConfigurationUploader";
 
 export const ConfMenu = () => {
+    const resetState = useVariablesStore((state) => state.resetState);
+
     const closeHandler = () => {
-        useVariablesStore.setState({
-            configInfo: {},
-            // Деревья для react-arborist
-            send: [],
-            receive: [],
-            variables: [],
-            // Параметры всех узлов деревьев
-            settings: {},
-            // Id выбранных узлов
-            selectedIds: {
-                connections: new Set(),
-                variables: new Set(),
-            },
-        });
+        resetState();
     };
 
     return (
         <MenuRoot size={"md"}>
             <MenuTrigger asChild>
-                <Button variant="ghost" size="2xs" rounded={"md"}>
+                <Button variant="subtle" size="2xs" rounded={"md"}>
                     Конфигурация
                 </Button>
             </MenuTrigger>
             <MenuContent>
-                <MenuItem value="new-file">Создать...</MenuItem>
-                <FileUpload.Root accept={[".xml"]}>
-                    <FileUpload.HiddenInput />
-                    <FileUpload.Trigger asChild>
-                        <UploadInput />
-                        {/* <MenuItem value="new-txt">Открыть...</MenuItem> */}
-                    </FileUpload.Trigger>
-                </FileUpload.Root>
+                <CreateConfigDialog>
+                    <MenuItem value="new-file" closeOnSelect={false}>
+                        Создать...
+                    </MenuItem>
+                </CreateConfigDialog>
+                <ConfigurationUploader>
+                    <MenuItem value="new-txt" closeOnSelect={false}>
+                        Открыть...
+                    </MenuItem>
+                </ConfigurationUploader>
                 <MenuItem value="new-win" onClick={downloadStateAsXml}>
                     Сохранить
                 </MenuItem>
-                <MenuItem value="open-file">Сохранить как...</MenuItem>
                 <MenuItem value="export" onClick={closeHandler}>
                     Закрыть
                 </MenuItem>
@@ -54,8 +45,3 @@ export const ConfMenu = () => {
         </MenuRoot>
     );
 };
-
-function UploadInput() {
-    const onChange = (e) => uploadXmlFile(e.target.files[0]);
-    return <input type="file" accept=".xml" onChange={onChange} />;
-}
