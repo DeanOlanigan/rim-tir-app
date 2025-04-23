@@ -1,30 +1,27 @@
-import { Card, Flex, Text, Input, IconButton, Box } from "@chakra-ui/react";
-import { InputGroup } from "../../components/ui/input-group";
-import { LuSearch, LuX } from "react-icons/lu";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "../../components/ResizebalePanel/ResizebalePanel.css";
-import { config } from "../../config/testData";
-import { AutoSizer } from "react-virtualized";
-import { TreeView } from "../../components/TreeView/TreeView";
-import { VariableNode } from "./VariableNode";
+import { useVariablesStore } from "../../store/variables-store";
+import { useMonitoringStore } from "../../store/monitoring-store";
+import { TreeCard } from "./TreeCard";
 
-import { useEffect, useRef, useState } from "react";
-import { produce, enableMapSet } from "immer";
+import { useEffect, useState } from "react";
+//import { produce, enableMapSet } from "immer";
+import { Flex, InputGroup, Input, IconButton } from "@chakra-ui/react";
+import { LuX, LuSearch } from "react-icons/lu";
+//enableMapSet();
 
-enableMapSet();
+//import WebSocketService from "../../services/websocketService";
+//const wsService = new WebSocketService("ws://192.168.1.1:8800");
 
-import WebSocketService from "../../services/websocketService";
-const wsService = new WebSocketService("ws://192.168.1.1:8800");
-
-function matchesNode(node, part) {
+/* function matchesNode(node, part) {
     return (
         node.type === part ||
         node.setting?.name === part ||
         node.setting?.variable === part
     );
-}
+} */
 
-function updateValuesInConfig(draftConfig, updates) {
+/* function updateValuesInConfig(draftConfig, updates) {
     updates.forEach(([path, newValue]) => {
         const parts = path.split("|");
         // Пример: ["receive", "testName2GPIO", "test1"]
@@ -32,10 +29,10 @@ function updateValuesInConfig(draftConfig, updates) {
         // Рекурсивно ищем нужный узел и обновляем его значение
         updateNode(draftConfig.children, parts, newValue);
     });
-}
+} */
 
 // Рекурсивная функция для обхода массива дочерних элементов
-function updateNode(nodes, parts, newValue) {
+/* function updateNode(nodes, parts, newValue) {
     if (!nodes || parts.length === 0) return;
 
     for (const node of nodes) {
@@ -54,50 +51,39 @@ function updateNode(nodes, parts, newValue) {
         // путь может встречаться глубже в других ветвях)
         updateNode(node.children, parts, newValue);
     }
-}
+} */
 
-const findIdByName = (data, name) => {
+/* const findIdByName = (data, name) => {
     for (const node of data) {
-        if (node?.setting.name === name || node?.setting.variable === name) return node.id;
+        if (node?.setting.name === name || node?.setting.variable === name)
+            return node.id;
         if (node.children) {
             const childId = findIdByName(node.children, name);
             if (childId) return childId;
         }
     }
     return null;
-};
+}; */
 
-function HomePage() {
-    const [data, setData] = useState(config);
+function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");
-    const [filter, setFilter] = useState("");
-    
-    const sendTreeRef = useRef();
-    const variablesTreeRef = useRef();
-    const receiveTreeRef = useRef();
 
-    useEffect(() => {
-        console.log(data);
-    }, [data]);
-
-    useEffect(() => {
+    // TODO Переделать
+    /* useEffect(() => {
         wsService.connect();
         const messageHandler = (message) => {
-            /* console.log(message); */
+            //console.log(message);
 
-            setData((prev) => 
+            setData((prev) =>
                 produce(prev, (draft) => {
-                    /* draft.children[2].children[0].setting.value = i;  */
-                    updateValuesInConfig(
-                        draft,
-                        message
-                    );
+                    //draft.children[2].children[0].setting.value = i; 
+                    updateValuesInConfig(draft, message);
                 })
             );
         };
 
         wsService.addMessageHandler(messageHandler);
-        
+
         let i = 0;
         const messageSender = setInterval(() => {
             wsService.sendMessage({ monitoring: ["OK", i] });
@@ -109,163 +95,81 @@ function HomePage() {
             wsService.removeMessageHandler(messageHandler);
             wsService.close();
         };
-    }, []);
+    }, []); */
 
-    let focusSearchTerm = "";
-    let timeoutId = null;
+    const { variables, send, receive } = useVariablesStore((state) => state);
+    const setValuesMap = useMonitoringStore((state) => state.setValuesMap);
+
+    useEffect(() => {
+        const test = setInterval(() => {
+            setValuesMap({
+                "5e313f51-786c-4830-862b-3f14f8aa2733": Math.random(),
+                "fffff35e-be0e-4047-8fcb-3913ae1681bd": Math.random(),
+                "e08ae12c-b6ad-4b65-b138-03d0bda72c3a": Math.random(),
+                "92524877-a0eb-4d3a-9106-76c4284cbea6": Math.random(),
+            });
+        }, 2000);
+        return () => clearInterval(test);
+    }, [setValuesMap]);
 
     return (
-        <>
+        <Flex h={"100%"} direction={"column"}>
+            <Flex h={"48px"} w={"100%"} direction={"row"}>
+                RESERVED SPACE FOR FILTER
+                <InputGroup
+                    startElement={<LuSearch />}
+                    endElement={
+                        <IconButton
+                            size={"4xs"}
+                            rounded={"full"}
+                            variant={"ghost"}
+                            onClick={() => {
+                                setSearchTerm("");
+                            }}
+                        >
+                            <LuX />
+                        </IconButton>
+                    }
+                >
+                    <Input
+                        placeholder="Поиск"
+                        maxW={"200px"}
+                        size={"2xs"}
+                        variant={"flushed"}
+                        ps={"2rem"}
+                        value={searchTerm}
+                        onChange={(e) => {
+                            setSearchTerm(e.currentTarget.value);
+                        }}
+                    />
+                </InputGroup>
+            </Flex>
             <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
-                    <Card.Root
-                        h={"100%"}
-                        size={"sm"}
-                        data-state={"open"}
-                        animationDuration={"slow"}
-                        animationStyle={{
-                            _open: "scale-fade-in",
-                        }}
-                    >
-                        <Card.Header>
-                            <Card.Title>Прием</Card.Title>
-                        </Card.Header>
-                        <Card.Body px={"1"} pb={"1"}>
-                            <AutoSizer>
-                                {({ height, width }) => (
-                                    <TreeView
-                                        height={height}
-                                        width={width}
-                                        data={data.children[0].children}
-                                        disableDrag
-                                        searchTerm={searchTerm}
-                                        ref={receiveTreeRef}
-                                    >
-                                        <VariableNode />
-                                    </TreeView>
-                                )}
-                            </AutoSizer>
-                        </Card.Body>
-                    </Card.Root>
+                    <TreeCard
+                        data={receive}
+                        title={"Прием"}
+                        searchTerm={searchTerm}
+                    />
                 </Panel>
-                <PanelResizeHandle className="verticalLine"/>
+                <PanelResizeHandle className="verticalLine" />
                 <Panel collapsible={true} collapsedSize={0} minSize={35}>
-                    <Card.Root 
-                        h={"100%"}
-                        size={"sm"}
-                        data-state={"open"}
-                        animationDuration={"slow"}
-                        animationStyle={{
-                            _open: "scale-fade-in",
-                        }}
-                    >
-                        <Card.Header>
-                            <Card.Title>
-                                <Flex gap={"2"} justify={"space-between"}>
-                                    <Text>Переменные</Text>
-                                    <InputGroup
-                                        startElement={<LuSearch />}
-                                        endElement={
-                                            <IconButton
-                                                size={"4xs"}
-                                                rounded={"full"}
-                                                variant={"ghost"}
-                                                onClick={() => {
-                                                    setSearchTerm("");
-                                                    setFilter("");
-                                                }}
-                                            >
-                                                <LuX />
-                                            </IconButton>
-                                        }
-                                    >
-                                        <Input
-                                            placeholder="Поиск"
-                                            maxW={"200px"}
-                                            size={"2xs"} 
-                                            variant={"flushed"}
-                                            ps={"2rem"}
-                                            value={searchTerm}
-                                            onChange={(e) => {
-                                                setSearchTerm(e.currentTarget.value);
-                                                /* const sendSelected = findIdByName(data.children[0].children, e.currentTarget.value);
-                                                if (sendSelected) receiveTreeRef.current.focus(sendSelected); */
-
-                                                /* clearTimeout(timeoutId);
-
-                                                timeoutId = setTimeout(() => {
-                                                    //focusSearchTerm += e.key;
-                                                    setFilter((prev) => prev += e.key);
-                                                }, 600); */
-
-                                                /* const node = receiveTreeRef.current.visibleNodes.find((n) => {
-                                                    const name = n.data.setting.variable;
-                                                    if (typeof name === "string") {
-                                                        return name.toLowerCase().startsWith(e.currentTarget.value.toLowerCase());
-                                                    } else
-                                                        return false;
-                                                });
-
-                                                if (node)
-                                                    receiveTreeRef.current.select(node.id); */
-                                            }}
-                                        />
-                                    </InputGroup>
-                                </Flex>
-                            </Card.Title>
-                        </Card.Header>
-                        <Card.Body px={"1"} pb={"1"}>
-                            <AutoSizer>
-                                {({ height, width }) => (
-                                    <TreeView
-                                        height={height}
-                                        width={width}
-                                        data={data.children[2].children}
-                                        disableDrag
-                                        searchTerm={searchTerm}
-                                        ref={variablesTreeRef}
-                                    >
-                                        <VariableNode editable={true} />
-                                    </TreeView>
-                                )}
-                            </AutoSizer>
-                        </Card.Body>
-                    </Card.Root>
+                    <TreeCard
+                        data={variables}
+                        title={"Переменные"}
+                        searchTerm={searchTerm}
+                    />
                 </Panel>
-                <PanelResizeHandle className="verticalLine"/>
+                <PanelResizeHandle className="verticalLine" />
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
-                    <Card.Root
-                        h={"100%"}
-                        size={"sm"}
-                        data-state={"open"}
-                        animationDuration={"slow"}
-                        animationStyle={{
-                            _open: "scale-fade-in",
-                        }}
-                    >
-                        <Card.Header>
-                            <Card.Title>Передача</Card.Title>
-                        </Card.Header>
-                        <Card.Body px={"1"} pb={"1"}>
-                            <AutoSizer>
-                                {({ height, width }) => (
-                                    <TreeView
-                                        height={height}
-                                        width={width}
-                                        data={config.children[1].children}
-                                        disableDrag
-                                        searchTerm={searchTerm}
-                                        ref={sendTreeRef}
-                                    >
-                                        <VariableNode />
-                                    </TreeView>
-                                )}
-                            </AutoSizer>
-                        </Card.Body>
-                    </Card.Root>
+                    <TreeCard
+                        data={send}
+                        title={"Передача"}
+                        searchTerm={searchTerm}
+                    />
                 </Panel>
             </PanelGroup>
-        </>
+        </Flex>
     );
 }
-export default HomePage;
+export default MonitoringPage;
