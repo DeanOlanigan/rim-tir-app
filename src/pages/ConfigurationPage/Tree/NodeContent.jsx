@@ -1,7 +1,5 @@
 import { NodeEditInput } from "./NodeEditInput";
-import { icons, badges } from "../../../components/TreeView/DefaultView";
-//import { memo } from "react";
-import { Badge, Text } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import { useVariablesStore } from "../../../store/variables-store";
 import { memo } from "react";
 import { CONSTANT_VALUES } from "../../../config/constants";
@@ -20,7 +18,7 @@ export const NodeContent = memo(function NodeContent({
         (state) => state.settings[name]?.name
     );
 
-    const content = isEditing ? (
+    return isEditing ? (
         type === CONSTANT_VALUES.NODE_TYPES.dataObject ? (
             <DroppableInput
                 targetKey={"variable"}
@@ -38,29 +36,5 @@ export const NodeContent = memo(function NodeContent({
                 ? variableName
                 : name}
         </Text>
-    );
-    const showBagde =
-        type === CONSTANT_VALUES.NODE_TYPES.protocol ||
-        type === CONSTANT_VALUES.NODE_TYPES.interface ||
-        type === CONSTANT_VALUES.NODE_TYPES.asdu;
-
-    return (
-        <div
-            style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                paddingLeft: "5px",
-                textWrap: "nowrap",
-                width: "100%",
-            }}
-        >
-            {icons[type]}
-            {showBagde ? badges[subType] || badges[type] : null}
-            {type === CONSTANT_VALUES.NODE_TYPES.dataObject && (
-                <Badge variant={"outline"}>{id.slice(0, 8)}</Badge>
-            )}
-            {content}
-        </div>
     );
 });
