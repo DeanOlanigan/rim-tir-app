@@ -8,6 +8,8 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { CONSTANT_VALUES } from "../../config/constants";
 import { EmptyConfigDialog } from "./EmptyConfigDialog";
+import { memo } from "react";
+import { shallow } from "zustand/shallow";
 
 function ConfigurationPage() {
     //console.log("Render ConfigurationPage");
@@ -22,11 +24,19 @@ function ConfigurationPage() {
                             direction="vertical"
                         >
                             <Panel collapsible collapsedSize={0} minSize={10}>
-                                <ReceiveWrapper />
+                                <TreeWrapper
+                                    selector={(state) => state.receive}
+                                    treeType={
+                                        CONSTANT_VALUES.TREE_TYPES.receive
+                                    }
+                                />
                             </Panel>
                             <PanelResizeHandle className="verticalLine" />
                             <Panel collapsible collapsedSize={0} minSize={10}>
-                                <SendWrapper />
+                                <TreeWrapper
+                                    selector={(state) => state.send}
+                                    treeType={CONSTANT_VALUES.TREE_TYPES.send}
+                                />
                             </Panel>
                         </PanelGroup>
                     </Panel>
@@ -41,7 +51,10 @@ function ConfigurationPage() {
                         defaultSize={30}
                         minSize={15}
                     >
-                        <VariablesWrapper />
+                        <TreeWrapper
+                            selector={(state) => state.variables}
+                            treeType={CONSTANT_VALUES.TREE_TYPES.variables}
+                        />
                     </Panel>
                 </PanelGroup>
             </Box>
@@ -51,31 +64,7 @@ function ConfigurationPage() {
 
 export default ConfigurationPage;
 
-// TODO Подумать над решением с обертками, может быть есть решение лучше
-const VariablesWrapper = () => {
-    //console.log("RENDER VariablesWrapper");
-    const variables = useVariablesStore((state) => state.variables);
-    return (
-        <TreeCard
-            data={variables}
-            treeType={CONSTANT_VALUES.TREE_TYPES.variables}
-        />
-    );
-};
-
-const SendWrapper = () => {
-    //console.log("RENDER SendWrapper");
-    const send = useVariablesStore((state) => state.send);
-    return <TreeCard data={send} treeType={CONSTANT_VALUES.TREE_TYPES.send} />;
-};
-
-const ReceiveWrapper = () => {
-    //console.log("RENDER ReceiveWrapper");
-    const receive = useVariablesStore((state) => state.receive);
-    return (
-        <TreeCard
-            data={receive}
-            treeType={CONSTANT_VALUES.TREE_TYPES.receive}
-        />
-    );
-};
+const TreeWrapper = memo(function TreeWrapper({ selector, treeType }) {
+    const data = useVariablesStore(selector, shallow);
+    return <TreeCard data={data} treeType={treeType} />;
+});
