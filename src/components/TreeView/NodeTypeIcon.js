@@ -12,7 +12,7 @@ export const icons = {
     interface: LuCable,
     protocol: LuUnplug,
     folder: LuFolder,
-    funcGroup: LuPackage,
+    functionGroup: LuPackage,
     dataObject: LuFileDigit,
     asdu: LuFileStack,
     variable: LuVariable,

@@ -5,7 +5,7 @@ import React from "react";
 const getBreadcrumb = (selectedData, settings) => {
     const arr = [
         selectedData.type === "dataObject"
-            ? settings[selectedData.variableId]?.name
+            ? selectedData.id.slice(0, 8)
             : selectedData.name,
     ];
     const recurse = (node) => {

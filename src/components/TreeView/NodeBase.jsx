@@ -38,7 +38,7 @@ export const NodeBase = ({
                         width: "100%",
                     }}
                 >
-                    {Icon && <Icon />}
+                    <div>{Icon && <Icon />}</div>
                     <Badge type={subType || type || null} id={id} />
                     {children}
                 </div>
