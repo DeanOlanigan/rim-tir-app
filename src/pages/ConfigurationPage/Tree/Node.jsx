@@ -34,6 +34,7 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
                     console.log(tree.isFocused(node.id));
                     node.focus();
                 }
+                node.open();
                 updateContext({
                     x: e.clientX,
                     y: e.clientY,
