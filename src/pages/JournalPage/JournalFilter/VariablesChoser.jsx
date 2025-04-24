@@ -1,21 +1,26 @@
-import { 
+import {
     SelectContent,
     SelectItem,
     SelectLabel,
     SelectRoot,
     SelectTrigger,
-    SelectValueText
+    SelectValueText,
 } from "../../../components/ui/select";
-import { rows } from "./filterOptions";
+import { useVariablesOptions } from "../../../hooks/useVariablesOptions";
 
 function VariablesChoser({ filters, setFilters }) {
     console.log("Render VariablesChoser");
+
+    const rows = useVariablesOptions();
+
     return (
         <SelectRoot
             collection={rows}
             size={"xs"}
             multiple
-            onValueChange={(value) => setFilters({...filters, variables: value.value})}
+            onValueChange={(value) =>
+                setFilters({ ...filters, variables: value.value })
+            }
             value={filters.variables}
         >
             <SelectLabel>Переменные:</SelectLabel>
@@ -31,6 +36,6 @@ function VariablesChoser({ filters, setFilters }) {
             </SelectContent>
         </SelectRoot>
     );
-};
+}
 
 export default VariablesChoser;
