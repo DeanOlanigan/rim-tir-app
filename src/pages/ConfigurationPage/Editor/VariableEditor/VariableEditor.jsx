@@ -9,10 +9,8 @@ import {
     Card,
     HStack,
     Checkbox,
-    VStack,
 } from "@chakra-ui/react";
 import { VariableEditorHeader } from "./VariableEditorHeader";
-import { EditorBreadcrumb } from "../Breadcrumb";
 import {
     SelectInput,
     DebouncedTextarea,
@@ -29,32 +27,29 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
     const cardsData = initCardsData(data.setting);
 
     return (
-        <Flex direction={"column"} gap={"4"} w={"100%"} h={"100%"} px={"1"}>
-            <EditorBreadcrumb data={data} />
+        <Stack direction={"column"} w={"100%"} h={"100%"} overflow={"auto"}>
             <VariableEditorHeader name={data.name} />
-            <Stack direction={"column"} w={"100%"} h={"100%"} overflow={"auto"}>
-                <HStack align={"start"}>
-                    <SelectInput
-                        targetKey={"type"}
-                        id={data.id}
-                        value={data.setting.type}
-                        showLabel
-                    />
-                    <DebouncedTextarea
-                        targetKey={"description"}
-                        id={data.id}
-                        value={data.setting.description}
-                        showLabel
-                    />
-                </HStack>
-                <ParameterCards id={data.id} data={cardsData} />
-                <DebouncedEditor
-                    luaExpression={data.setting.luaExpression}
+            <HStack align={"start"}>
+                <SelectInput
+                    targetKey={"type"}
                     id={data.id}
-                    height={360}
+                    value={data.setting.type}
+                    showLabel
                 />
-            </Stack>
-        </Flex>
+                <DebouncedTextarea
+                    targetKey={"description"}
+                    id={data.id}
+                    value={data.setting.description}
+                    showLabel
+                />
+            </HStack>
+            <ParameterCards id={data.id} data={cardsData} />
+            <DebouncedEditor
+                luaExpression={data.setting.luaExpression}
+                id={data.id}
+                height={360}
+            />
+        </Stack>
     );
 });
 

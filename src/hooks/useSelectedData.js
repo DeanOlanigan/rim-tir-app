@@ -1,24 +1,22 @@
 import { useVariablesStore } from "../store/variables-store";
-import { getParentTypeNormalized } from "../utils/utils";
-import { selectSelectedData } from "../store/selectors";
 import { useMemo } from "react";
 
 export function useSelectedData(type) {
-    const settings = useVariablesStore((state) => state.settings);
     const selectedIds = useVariablesStore((state) => state.selectedIds[type]);
+    const settings = useVariablesStore((state) => state.settings);
     const selectedData = useMemo(() => {
-        return selectSelectedData(settings, selectedIds);
-    }, [settings, selectedIds]);
-    const [singleNode] = selectedData;
-    const meaningfulParentType = getParentTypeNormalized({
-        data: settings,
-        id: singleNode?.id,
-    });
-    const nodeType = singleNode?.subType || singleNode?.type;
-
-    return {
-        selectedData,
-        meaningfulParentType,
-        nodeType,
-    };
+        if (!selectedIds.size) return [];
+        const out = [];
+        for (const id of selectedIds) {
+            const node = settings[id];
+            if (!node) continue;
+            const children =
+                node?.children
+                    ?.map((childId) => settings[childId])
+                    .filter(Boolean) ?? [];
+            out.push({ node, children });
+        }
+        return out;
+    }, [selectedIds, settings]);
+    return selectedData;
 }
