@@ -5,10 +5,30 @@ import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 
 export const SelectInput = memo(function SelectInput(props) {
     //console.log("Render SelectInput");
-    const { targetKey, id, value, showLabel = false, ...rest } = props;
+    const {
+        targetKey,
+        id,
+        value,
+        showLabel = false,
+        noPortal,
+        ...rest
+    } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
     const label = PARAM_DEFINITIONS[targetKey].label;
     const collection = PARAM_DEFINITIONS[targetKey].options;
+
+    const content = (
+        <Select.Positioner>
+            <Select.Content>
+                {collection?.items.map((row) => (
+                    <Select.Item item={row} key={row.value}>
+                        {row.label}
+                        <Select.ItemIndicator />
+                    </Select.Item>
+                ))}
+            </Select.Content>
+        </Select.Positioner>
+    );
 
     return (
         <Select.Root
@@ -38,18 +58,7 @@ export const SelectInput = memo(function SelectInput(props) {
                     <Select.Indicator />
                 </Select.IndicatorGroup>
             </Select.Control>
-            <Portal>
-                <Select.Positioner>
-                    <Select.Content>
-                        {collection?.items.map((row) => (
-                            <Select.Item item={row} key={row.value}>
-                                {row.label}
-                                <Select.ItemIndicator />
-                            </Select.Item>
-                        ))}
-                    </Select.Content>
-                </Select.Positioner>
-            </Portal>
+            {noPortal ? content : <Portal>{content}</Portal>}
         </Select.Root>
     );
 });

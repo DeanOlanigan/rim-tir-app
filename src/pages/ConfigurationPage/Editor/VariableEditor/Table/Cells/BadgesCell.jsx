@@ -215,6 +215,7 @@ const ParamEditBadgePopover = ({ id, color, checked, parameters }) => {
                                             value={param.value}
                                             inputParam={param.key}
                                             showLabel
+                                            noPortal
                                         />
                                     );
                                 })}

@@ -37,6 +37,7 @@ export const BaseInput = memo(function BaseInput(props) {
                     value={value}
                     targetKey={inputParam}
                     showLabel={showLabel}
+                    {...rest}
                 />
             );
         case "number":
