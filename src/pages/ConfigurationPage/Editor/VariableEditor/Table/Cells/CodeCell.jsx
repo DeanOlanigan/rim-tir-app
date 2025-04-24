@@ -21,7 +21,14 @@ export const CodeCell = ({ id, code }) => {
             </Popover.Trigger>
             <Portal>
                 <Popover.Positioner>
-                    <Popover.Content w={"400px"} h={"300px"} p={"2"}>
+                    <Popover.Content
+                        w={"400px"}
+                        h={"300px"}
+                        p={"1"}
+                        bg={"transparent"}
+                        border={"none"}
+                        shadow={"none"}
+                    >
                         <DebouncedEditor id={id} luaExpression={code} />
                     </Popover.Content>
                 </Popover.Positioner>

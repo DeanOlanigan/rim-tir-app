@@ -27,44 +27,43 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
     const cardsData = initCardsData(data.setting);
 
     return (
-        <Stack direction={"column"} w={"100%"} h={"100%"} overflow={"auto"}>
+        <>
             <VariableEditorHeader name={data.name} />
-            <HStack align={"start"}>
-                <SelectInput
-                    targetKey={"type"}
+            <Stack
+                direction={"column"}
+                w={"100%"}
+                h={"100%"}
+                overflow={"auto"}
+                px={"1"}
+            >
+                <HStack align={"start"}>
+                    <SelectInput
+                        targetKey={"type"}
+                        id={data.id}
+                        value={data.setting.type}
+                        showLabel
+                    />
+                    <DebouncedTextarea
+                        targetKey={"description"}
+                        id={data.id}
+                        value={data.setting.description}
+                        showLabel
+                    />
+                </HStack>
+                <ParameterCards id={data.id} data={cardsData} />
+                <DebouncedEditor
+                    luaExpression={data.setting.luaExpression}
                     id={data.id}
-                    value={data.setting.type}
-                    showLabel
+                    height={300}
                 />
-                <DebouncedTextarea
-                    targetKey={"description"}
-                    id={data.id}
-                    value={data.setting.description}
-                    showLabel
-                />
-            </HStack>
-            <ParameterCards id={data.id} data={cardsData} />
-            <DebouncedEditor
-                luaExpression={data.setting.luaExpression}
-                id={data.id}
-                height={360}
-            />
-        </Stack>
+            </Stack>
+        </>
     );
 });
 
 const ParameterCards = ({ id, data }) => {
     return (
-        <Flex
-            gap={"2"}
-            direction={"row"}
-            borderBottom={"1px solid"}
-            borderTop={"1px solid"}
-            borderColor={"border"}
-            py={"2"}
-            h={"200px"}
-            minH={"200px"}
-        >
+        <Flex gap={"2"} direction={"row"} py={"2"} h={"200px"} minH={"200px"}>
             {Object.keys(data).map((key) => {
                 return (
                     <ParameterCard
@@ -84,7 +83,12 @@ const ParameterCard = ({ id, param, checked, parameters }) => {
     const setSettings = useVariablesStore((state) => state.setSettings);
     const ParamIcon = PARAM_DEFINITIONS[param]?.icon || null;
     return (
-        <Card.Root size={"sm"} minW={"220px"} _hover={{ bg: "bg.muted" }}>
+        <Card.Root
+            size={"sm"}
+            minW={"220px"}
+            _hover={{ bg: "bg.muted" }}
+            shadow={"md"}
+        >
             <Card.Body>
                 <Float placement={"top-start"} offset={"6"}>
                     <Checkbox.Root

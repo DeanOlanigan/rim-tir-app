@@ -190,7 +190,7 @@ const ParamEditBadge = ({ id, target, checked, parameters }) => {
 
 const ParamEditBadgePopover = ({ id, color, checked, parameters }) => {
     return (
-        <Popover.Root size={"xs"}>
+        <Popover.Root size={"xs"} lazyMount unmountOnExit>
             <Popover.Trigger asChild>
                 <IconButton
                     size={"3xs"}
