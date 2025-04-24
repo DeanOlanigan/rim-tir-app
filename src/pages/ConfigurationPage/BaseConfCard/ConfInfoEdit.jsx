@@ -16,15 +16,22 @@ import {
 import { useVariablesStore } from "../../../store/variables-store";
 import { useEffect, useState } from "react";
 
-export const ConfInfoEdit = ({ settings }) => {
+export const ConfInfoEdit = () => {
     const setConfigInfo = useVariablesStore((state) => state.setConfigInfo);
-    const [name, setName] = useState(settings?.name);
-    const [description, setDescription] = useState(settings?.description);
+    const {
+        name: stateName,
+        description: stateDescription,
+        version,
+        date,
+    } = useVariablesStore((state) => state.configInfo);
+
+    const [name, setName] = useState(stateName);
+    const [description, setDescription] = useState(stateDescription);
 
     useEffect(() => {
-        setName(settings?.name);
-        setDescription(settings?.description);
-    }, [settings]);
+        setName(stateName);
+        setDescription(stateDescription);
+    }, [stateName, stateDescription]);
 
     const saveHandler = () => {
         setConfigInfo({
@@ -45,7 +52,7 @@ export const ConfInfoEdit = ({ settings }) => {
                         maxW={"250px"}
                         truncate
                     >
-                        {settings?.name}
+                        {stateName}
                     </Text>
                 </Button>
             </PopoverTrigger>
@@ -82,13 +89,13 @@ export const ConfInfoEdit = ({ settings }) => {
                                 <Text fontSize={"sm"} color={"fg.muted"}>
                                     Дата изменения:
                                 </Text>
-                                <Text fontSize={"md"}>{settings?.date}</Text>
+                                <Text fontSize={"md"}>{date}</Text>
                             </Box>
                             <Box>
                                 <Text fontSize={"sm"} color={"fg.muted"}>
                                     Версия:
                                 </Text>
-                                <Text fontSize={"md"}>{settings?.version}</Text>
+                                <Text fontSize={"md"}>{version}</Text>
                             </Box>
                         </Flex>
                         <Flex>
