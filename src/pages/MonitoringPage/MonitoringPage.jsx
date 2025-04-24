@@ -153,7 +153,7 @@ function MonitoringPage() {
                     />
                 </Panel>
                 <PanelResizeHandle className="verticalLine" />
-                <Panel collapsible={true} collapsedSize={0} minSize={35}>
+                <Panel collapsible={true} collapsedSize={0} minSize={25}>
                     <TreeCard
                         data={variables}
                         title={"Переменные"}
