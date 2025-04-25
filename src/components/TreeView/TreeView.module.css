@@ -6,14 +6,16 @@
 
 /* фокус */
 [role="treeitem"]:has(.node):focus-visible {
-    background-color: var(--chakra-colors-bg-emphasized);
-    outline: none;
+    /* background-color: var(--chakra-colors-bg-emphasized); */
+    outline: 1px solid var(--chakra-colors-border-inverted);
+    outline-offset: -1px;
 }
 
 /* Выбранныей узел + фокус */
 [role="treeitem"][aria-selected="true"]:has(.node):focus-visible {
-    background-color: var(--chakra-colors-bg-success);
-    outline: none;
+    background-color: var(--chakra-colors-bg-emphasized);
+    outline: 1px solid var(--chakra-colors-border-inverted);
+    outline-offset: -1px;
 }
 
 /* ховер на узле */
@@ -44,7 +46,7 @@
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     margin-left: 1rem;
-        justify-content: space-between;
+    justify-content: space-between;
     /* border-bottom: var(--chakra-borders-sm) var(--chakra-colors-border); */
 }
 
