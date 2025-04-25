@@ -1,7 +1,17 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Text, Card, Box, Group, AbsoluteCenter, Spinner } from "@chakra-ui/react";
-import { RadioCardItem, RadioCardRoot } from "../../../components/ui/radio-card";
+import {
+    Text,
+    Card,
+    Box,
+    Group,
+    AbsoluteCenter,
+    Spinner,
+} from "@chakra-ui/react";
+import {
+    RadioCardItem,
+    RadioCardRoot,
+} from "../../../components/ui/radio-card";
 import { useLogContext } from "../../../providers/LogProvider/LogContext";
 
 import DownloadAllLogsButton from "./DownloadAllLogsButton";
@@ -9,15 +19,20 @@ import DownloadAllLogsButton from "./DownloadAllLogsButton";
 import PropTypes from "prop-types";
 
 function LogSelectionCard({ headingText, logList, loading }) {
-    const { logData, updateLogData, saveChosenLogToLocalStorage } = useLogContext();
+    const { logData, updateLogData, saveChosenLogToLocalStorage } =
+        useLogContext();
     const navigate = useNavigate();
     const [scrollShadow, setScrollShadow] = useState("none");
     const scrollRef = useRef(null);
     console.log("Render LogSelectionCard");
-    
-    const logType = headingText === "Логи во внутренней памяти роутера" ? "r" :
-        headingText === "Логи на SD карте роутера" ? "sd" : "";
-    
+
+    const logType =
+        headingText === "Логи во внутренней памяти роутера"
+            ? "r"
+            : headingText === "Логи на SD карте роутера"
+            ? "sd"
+            : "";
+
     const formatFileSize = (size) => {
         if (size >= 1073741824) {
             return (size / 1073741824).toFixed(2) + " GB";
@@ -36,7 +51,9 @@ function LogSelectionCard({ headingText, logList, loading }) {
             const atTop = scrollTop === 0;
             const atBottom = scrollTop + clientHeight === scrollHeight;
             if (!atTop && !atBottom) {
-                setScrollShadow("inset 0px 6px 6px -4px rgba(0, 0, 0, 0.2), inset 0px -6px 6px -4px rgba(0, 0, 0, 0.2)");
+                setScrollShadow(
+                    "inset 0px 6px 6px -4px rgba(0, 0, 0, 0.2), inset 0px -6px 6px -4px rgba(0, 0, 0, 0.2)"
+                );
             } else if (atTop) {
                 setScrollShadow("inset 0px -6px 6px -4px rgba(0, 0, 0, 0.2)");
             } else {
@@ -59,39 +76,45 @@ function LogSelectionCard({ headingText, logList, loading }) {
                 <Card.Title>{headingText}</Card.Title>
             </Card.Header>
             <Card.Body position={"relative"}>
-                <Box h={"30vh"} overflowY={"auto"} boxShadow={scrollShadow} ref={scrollRef} onScroll={handleScroll} borderRadius={"md"}>
+                <Box
+                    h={"30vh"}
+                    overflowY={"auto"}
+                    ref={scrollRef}
+                    onScroll={handleScroll}
+                    borderRadius={"md"}
+                    shadow={scrollShadow}
+                >
                     {logList && logList.length > 0 ? (
-                        <RadioCardRoot 
+                        <RadioCardRoot
                             gap={"2"}
                             size={"sm"}
                             variant="outline"
                             p={"0.5"}
-                            onValueChange={
-                                (log) => {
-                                    let params = logList.filter((item) => item.name === log.value)[0];
-                                    updateLogData({
-                                        name: params.name,
-                                        size: formatFileSize(params.size),
-                                        createdAt: params.created_at,
-                                        type: logType,
-                                    });
-                                }
-                            }
-                            onKeyUp={
-                                (e) => {
-                                    if (e.code === "Enter" || e.code === "Space") {
-                                        saveChosenLogToLocalStorage();
-                                        navigate("/log/viewer");
-                                    }
-                                }
-                            }
-                            onDoubleClick={
-                                () => {
+                            onValueChange={(log) => {
+                                let params = logList.filter(
+                                    (item) => item.name === log.value
+                                )[0];
+                                updateLogData({
+                                    name: params.name,
+                                    size: formatFileSize(params.size),
+                                    createdAt: params.created_at,
+                                    type: logType,
+                                });
+                            }}
+                            onKeyUp={(e) => {
+                                if (e.code === "Enter" || e.code === "Space") {
                                     saveChosenLogToLocalStorage();
                                     navigate("/log/viewer");
                                 }
+                            }}
+                            onDoubleClick={() => {
+                                saveChosenLogToLocalStorage();
+                                navigate("/log/viewer");
+                            }}
+                            value={
+                                logData.type === logType ? logData.name : null
                             }
-                            value={logData.type === logType ? logData.name : null}>
+                        >
                             <Group attached orientation={"vertical"}>
                                 {logList.map((log, index) => (
                                     <RadioCardItem
@@ -99,24 +122,33 @@ function LogSelectionCard({ headingText, logList, loading }) {
                                         key={index}
                                         value={log.name}
                                         label={log.name}
-                                        description={`${log.created_at} | ${formatFileSize(log.size)}`}
+                                        description={`${
+                                            log.created_at
+                                        } | ${formatFileSize(log.size)}`}
                                         indicatorPlacement="start"
                                     />
                                 ))}
                             </Group>
                         </RadioCardRoot>
+                    ) : loading ? (
+                        <></>
                     ) : (
-                        loading ? <></> : <Text fontWeight={"medium"} textAlign={"center"} color="tomato">Не найдено</Text>
+                        <Text
+                            fontWeight={"medium"}
+                            textAlign={"center"}
+                            color="tomato"
+                        >
+                            Не найдено
+                        </Text>
                     )}
                 </Box>
                 <AbsoluteCenter display={loading ? "" : "none"}>
-                    <Spinner/>
+                    <Spinner />
                 </AbsoluteCenter>
             </Card.Body>
             <Card.Footer>
                 <DownloadAllLogsButton type={logType} loading={loading} />
             </Card.Footer>
-
         </Card.Root>
     );
 }
