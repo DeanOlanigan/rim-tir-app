@@ -6,7 +6,7 @@ import { TreeCard } from "./TreeCard";
 
 import { useEffect, useState } from "react";
 //import { produce, enableMapSet } from "immer";
-import { Flex, InputGroup, Input, IconButton } from "@chakra-ui/react";
+import { Flex, InputGroup, Input, IconButton, Box } from "@chakra-ui/react";
 import { LuX, LuSearch } from "react-icons/lu";
 //enableMapSet();
 
@@ -113,10 +113,10 @@ function MonitoringPage() {
     }, [setValuesMap]);
 
     return (
-        <Flex h={"100%"} direction={"column"}>
-            <Flex h={"48px"} w={"100%"} direction={"row"}>
-                RESERVED SPACE FOR FILTER
+        <Flex h={"100%"} direction={"column"} gap={"2"}>
+            <Flex direction={"row"} justifyContent={"center"}>
                 <InputGroup
+                    maxW={"300px"}
                     startElement={<LuSearch />}
                     endElement={
                         <IconButton
@@ -133,10 +133,11 @@ function MonitoringPage() {
                 >
                     <Input
                         placeholder="Поиск"
-                        maxW={"200px"}
-                        size={"2xs"}
-                        variant={"flushed"}
+                        size={"xs"}
                         ps={"2rem"}
+                        bg={"bg"}
+                        borderRadius={"full"}
+                        shadow={"md"}
                         value={searchTerm}
                         onChange={(e) => {
                             setSearchTerm(e.currentTarget.value);
