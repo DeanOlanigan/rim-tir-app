@@ -1,9 +1,10 @@
 import { HStack, Text, IconButton, Icon } from "@chakra-ui/react";
 import { Tooltip } from "../../../components/ui/tooltip";
-import { LuFolderPlus, LuCopyMinus, LuFilePlus } from "react-icons/lu";
+import { LuFolderPlus, LuCopyMinus, LuFilePlus, LuBan } from "react-icons/lu";
 import { CONSTANT_VALUES } from "../../../config/constants";
 import { locale } from "../../../config/locale";
 import { useLocaleStore } from "../../../store/locale-store";
+import { useVariablesStore } from "../../../store/variables-store";
 
 export const TreeCardTitle = ({ type, variableTreeRef }) => {
     const lang = useLocaleStore((state) => state.locale);
@@ -16,6 +17,7 @@ export const TreeCardTitle = ({ type, variableTreeRef }) => {
 };
 
 const TitleButtons = ({ type, variableTreeRef }) => {
+    const toggleIgnoreNode = useVariablesStore((state) => state.ignoreNode);
     return (
         <HStack
             gap={"1"}
@@ -26,7 +28,26 @@ const TitleButtons = ({ type, variableTreeRef }) => {
             {type === CONSTANT_VALUES.TREE_TYPES.variables && (
                 <VariablesTitleButtons variableTreeRef={variableTreeRef} />
             )}
-            <Tooltip content={"Свернуть папки"}>
+            <Tooltip content={"Деактивировать узлы"}>
+                <IconButton
+                    size={"2xs"}
+                    variant={"subtle"}
+                    onClick={() => {
+                        const ids = variableTreeRef?.current.root.children.map(
+                            (child) => child.id
+                        );
+                        /* const ignore =
+                            !variableTreeRef?.current.root.children[0].data
+                                .isIgnored; */
+                        toggleIgnoreNode(variableTreeRef?.current, ids, true);
+                    }}
+                >
+                    <Icon size={"sm"} transform={"scaleX(-1)"}>
+                        <LuBan />
+                    </Icon>
+                </IconButton>
+            </Tooltip>
+            <Tooltip content={"Свернуть узлы"}>
                 <IconButton
                     size={"2xs"}
                     variant={"subtle"}

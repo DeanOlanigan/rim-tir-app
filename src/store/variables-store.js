@@ -172,15 +172,8 @@ export const useVariablesStore = create()(
                 });
             },
 
-            ignoreNode: (treeApi) => {
+            ignoreNode: (treeApi, ids, ignore) => {
                 const treeType = treeApi.props.treeType;
-                const ids =
-                    treeApi.selectedIds.size > 1
-                        ? [...treeApi.selectedIds]
-                        : treeApi.focusedNode
-                        ? [treeApi.focusedNode.data.id]
-                        : [];
-                const ignore = !treeApi.focusedNode.data.isIgnored;
                 if (!ids.length) return;
                 console.log(ids, ignore);
                 set((state) => ({

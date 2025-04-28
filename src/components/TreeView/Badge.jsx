@@ -1,6 +1,6 @@
 import { Badge as ChakraBadge } from "@chakra-ui/react";
 
-export const Badge = ({ type, id }) => {
+export const Badge = ({ isIgnored, type, id }) => {
     const color = {
         modbus: "blue",
         "modbus-rtu": "blue",
@@ -32,6 +32,8 @@ export const Badge = ({ type, id }) => {
     }
 
     return (
-        <ChakraBadge colorPalette={color[type]}>{shortName[type]}</ChakraBadge>
+        <ChakraBadge colorPalette={isIgnored ? "gray" : color[type]}>
+            {shortName[type]}
+        </ChakraBadge>
     );
 };

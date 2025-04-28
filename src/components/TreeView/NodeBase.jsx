@@ -18,7 +18,7 @@ export const NodeBase = ({
 }) => {
     const Icon = icons[type];
     const ignoredStyle = {
-        bg: "red.300",
+        color: "fg.subtle",
         borderRadius: "md",
     };
 
@@ -43,6 +43,7 @@ export const NodeBase = ({
                     w={"100%"}
                     textWrap={"wrap"}
                     {...(isIgnored && ignoredStyle)}
+                    colorPalette={"gray"}
                 >
                     {isIgnored && (
                         <ChakraIcon
@@ -50,11 +51,15 @@ export const NodeBase = ({
                             strokeWidth={4}
                             size={"sm"}
                         >
-                            <LuBan title="Ignored" />
+                            <LuBan title="Деактивировать" />
                         </ChakraIcon>
                     )}
                     <div>{Icon && <Icon />}</div>
-                    <Badge type={subType || type || null} id={id} />
+                    <Badge
+                        isIgnored={isIgnored}
+                        type={subType || type || null}
+                        id={id}
+                    />
                     {children}
                 </Flex>
             </div>

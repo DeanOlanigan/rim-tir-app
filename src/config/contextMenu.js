@@ -11,7 +11,6 @@ import {
     LuFileStack,
     LuPackage,
     LuAnchor,
-    LuBan,
 } from "react-icons/lu";
 import { useVariablesStore } from "../store/variables-store";
 
@@ -38,15 +37,22 @@ const createNode = (label, action, icon) => ({
     action: (treeApi) => treeApi.create({ type: action }),
 });
 
-const ignoreNode = {
+const toggleIgnoreNode = {
     type: "change-ignore",
     action: (treeApi) => {
-        const ignoreNode = useVariablesStore.getState().ignoreNode;
-        ignoreNode(treeApi);
+        const ignoreNodeFunc = useVariablesStore.getState().ignoreNode;
+        const ids =
+            treeApi.selectedIds.size > 1
+                ? [...treeApi.selectedIds]
+                : treeApi.focusedNode
+                ? [treeApi.focusedNode.data.id]
+                : [];
+        const ignore = !treeApi.focusedNode.data.isIgnored;
+        ignoreNodeFunc(treeApi, ids, ignore);
     },
 };
 
-export const menuConfigNodeDefault = [renameNode, deleteNode, ignoreNode];
+export const menuConfigNodeDefault = [renameNode, deleteNode, toggleIgnoreNode];
 
 export const menuConfigConnections = {
     rs232: [
@@ -95,7 +101,7 @@ export const menuConfigConnections = {
             action: (treeApi) => treeApi.edit(treeApi.focusedNode),
         },
         deleteNode,
-        ignoreNode,
+        toggleIgnoreNode,
     ],
     default: [
         /* createNode("Создать RS-485...", "rs485", LuCable),

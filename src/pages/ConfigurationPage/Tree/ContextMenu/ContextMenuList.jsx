@@ -23,10 +23,10 @@ export const ContextMenuList = ({
                 }
                 if (item.type === "change-ignore") {
                     if (apiPath.focusedNode.data.isIgnored === true) {
-                        label = "Включить";
+                        label = "Активировать";
                         icon = LuCheckCheck;
                     } else {
-                        label = "Игнорировать";
+                        label = "Деактивировать";
                         icon = LuBan;
                     }
                 }
