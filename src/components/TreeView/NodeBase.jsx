@@ -2,7 +2,7 @@ import { NodeToggleBtn } from "./NodeToggleBtn";
 import { icons } from "./NodeTypeIcon";
 import { IndentLines } from "./IndentLines";
 import { Badge } from "./Badge";
-import { LuBan } from "react-icons/lu";
+import { LuBan, LuPiggyBank } from "react-icons/lu";
 import { Flex, Icon as ChakraIcon } from "@chakra-ui/react";
 
 export const NodeBase = ({
@@ -47,11 +47,11 @@ export const NodeBase = ({
                 >
                     {isIgnored && (
                         <ChakraIcon
-                            color={"red.500"}
-                            strokeWidth={4}
-                            size={"sm"}
+                            color={"red.400"}
+                            strokeWidth={2}
+                            size={"lg"}
                         >
-                            <LuBan title="Деактивировать" />
+                            <LuPiggyBank title="Деактивировать" />
                         </ChakraIcon>
                     )}
                     <div>{Icon && <Icon />}</div>
