@@ -32,7 +32,10 @@ export const Badge = ({ isIgnored, type, id }) => {
     }
 
     return (
-        <ChakraBadge colorPalette={isIgnored ? "gray" : color[type]}>
+        <ChakraBadge
+            color={isIgnored ? "fg.subtle" : ""}
+            colorPalette={isIgnored ? "gray" : color[type]}
+        >
             {shortName[type]}
         </ChakraBadge>
     );
