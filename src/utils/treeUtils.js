@@ -41,36 +41,66 @@ export function renameNodeUtil(nodes, nodeId, name) {
     });
 }
 
-export function ignoreNodeUtil(nodes, nodesToIgnore) {
-    const ignoreMap = new Map(
-        nodesToIgnore.map(({ id, isIgnored }) => [id, isIgnored])
-    );
+export function ignoreNodeUtil(nodes, ids, ignore) {
+    const idsSet = new Set(ids);
 
-    function recursive(nodes) {
+    function update(nodes) {
         return nodes.map((node) => {
-            let updated = node;
-            const shouldIgnore = ignoreMap.has(node.id);
-            const newIsIgnored = !ignoreMap.get(node.id);
+            const shouldUpdate = idsSet.has(node.id);
+
+            if (shouldUpdate) {
+                const newChildren =
+                    node.children?.length > 0
+                        ? propogateIgnore(node.children, ignore)
+                        : node.children;
+
+                return {
+                    ...node,
+                    isIgnored: ignore,
+                    ...(newChildren && { children: newChildren }),
+                };
+            }
 
             let newChildren = node.children;
             if (node.children?.length > 0) {
-                newChildren = recursive(node.children);
-
-                const childrenChanged = newChildren !== node.children;
-                if (childrenChanged) {
-                    updated = { ...updated, children: newChildren };
-                }
+                newChildren = update(node.children);
             }
 
-            if (shouldIgnore && node.isIgnored !== newIsIgnored) {
-                updated = { ...updated, isIgnored: newIsIgnored };
+            let newIsIgnored = node.isIgnored;
+
+            if (newChildren && newChildren.length > 0) {
+                const allIgnored = newChildren.every(
+                    (child) => child.isIgnored
+                );
+                newIsIgnored = allIgnored;
             }
 
-            return updated;
+            const isChildrenChanged = newChildren !== node.children;
+            const isIgnoredChanged = newIsIgnored !== node.isIgnored;
+
+            if (!isChildrenChanged && !isIgnoredChanged) {
+                return node;
+            }
+
+            return {
+                ...node,
+                ...(isIgnoredChanged && { isIgnored: newIsIgnored }),
+                ...(isChildrenChanged && { children: newChildren }),
+            };
         });
     }
 
-    return recursive(nodes);
+    function propogateIgnore(nodes, ignore) {
+        return nodes.map((node) => ({
+            ...node,
+            isIgnored: ignore,
+            ...(node.children?.length > 0 && {
+                children: propogateIgnore(node.children, ignore),
+            }),
+        }));
+    }
+
+    return update(nodes);
 }
 
 export function removeNodeUtil(nodes, nodeIds) {

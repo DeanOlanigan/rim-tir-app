@@ -180,17 +180,11 @@ export const useVariablesStore = create()(
                         : treeApi.focusedNode
                         ? [treeApi.focusedNode.data.id]
                         : [];
+                const ignore = !treeApi.focusedNode.data.isIgnored;
                 if (!ids.length) return;
-                const nodesToIgnore = ids.map((id) => {
-                    const node = treeApi.get(id) || treeApi.focusedNode;
-                    return {
-                        id: node.data.id,
-                        isIgnored: node.data.isIgnored,
-                    };
-                });
-                console.log(nodesToIgnore);
+                console.log(ids, ignore);
                 set((state) => ({
-                    [treeType]: ignoreNodeUtil(state[treeType], nodesToIgnore),
+                    [treeType]: ignoreNodeUtil(state[treeType], ids, ignore),
                 }));
             },
 
