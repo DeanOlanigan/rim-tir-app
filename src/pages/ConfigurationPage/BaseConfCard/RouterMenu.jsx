@@ -17,6 +17,9 @@ export const RouterMenu = () => {
             <MenuContent>
                 <MenuItem value="new-txt">Отправить конфигурацию</MenuItem>
                 <MenuItem value="new-file">Обновить конфигурацию</MenuItem>
+                <MenuItem value="start">Запустить сервер</MenuItem>
+                <MenuItem value="stop">Остановить сервер</MenuItem>
+                <MenuItem value="restart">Перезапустить сервер</MenuItem>
             </MenuContent>
         </MenuRoot>
     );
