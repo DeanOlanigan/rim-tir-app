@@ -31,6 +31,7 @@ export const HexInput = memo(function HexInput(props) {
             }
         >
             <Input
+                autoComplete="off"
                 ref={inputRef}
                 maxLength={6}
                 size={"xs"}

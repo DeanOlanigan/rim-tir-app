@@ -1,8 +1,7 @@
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 import { useVariablesStore } from "../../../store/variables-store";
-//import { useVariableDrop } from "../../../hooks/useVariableDrop";
-import { Badge, Text } from "@chakra-ui/react";
+import { Badge, Flex, Text } from "@chakra-ui/react";
 import { useVariablesCollection } from "../../../hooks/useVariablesCollection";
 import {
     AutoComplete,
@@ -15,7 +14,6 @@ import { LuBan } from "react-icons/lu";
 
 const autocomleteFilter = (query, optionValue, optionLabel) => {
     const lowerCaseQuery = query.toLowerCase();
-    //const lowerCaseOptionValue = optionValue.toLowerCase();
     const lowerCaseOptionLabel = optionLabel.toLowerCase();
     return lowerCaseOptionLabel.indexOf(lowerCaseQuery) !== -1;
 };
@@ -32,25 +30,14 @@ export const DroppableInput = memo(function DroppableInput(props) {
     const label = PARAM_DEFINITIONS[targetKey].label;
 
     console.log("Render DroppableInput");
-    //const { isOver, canDrop, dropRef } = useVariableDrop({ id });
-
     const variables = useVariablesCollection();
     const { bindVariable, unbindVariable } = useVariablesStore(
         (state) => state
     );
-    const variable = useVariablesStore(
-        (state) => state.settings[state.settings[id].variableId]?.name
-    );
-
-    /* let borderColor = variable ? "fg.subtle" : "fg.info";
-    let backgroundColor = variable ? "bg.muted" : "bg.info";
-    if (isOver && canDrop) {
-        borderColor = "fg.success";
-        backgroundColor = "bg.success";
-    } else if (isOver && !canDrop) {
-        borderColor = "fg.error";
-        backgroundColor = "bg.error";
-    } */
+    const variable =
+        useVariablesStore(
+            (state) => state.settings[state.settings[id].variableId]?.name
+        ) || "";
 
     return (
         <Field
@@ -68,24 +55,19 @@ export const DroppableInput = memo(function DroppableInput(props) {
                     bindVariable(id, selected.item.value);
                 }}
                 filter={autocomleteFilter}
+                emptyState={<Empty />}
             >
                 {({ isOpen, onOpen, onClose }) => (
                     <>
                         <AutoCompleteInput
+                            autoComplete="off"
                             autoFocus={forNode}
-                            //ref={dropRef}
-                            placeholder={
-                                isOpen
-                                    ? "Или перетащите переменную"
-                                    : "Введите название переменной"
-                            }
+                            placeholder={"Введите название переменной"}
                             h={forNode ? "24px" : "32px"}
                             border={"1px solid"}
                             borderColor={"border"}
                             background={"transparent"}
-                            //borderColor={borderColor}
                             borderRadius={"sm"}
-                            //backgroundColor={backgroundColor}
                             variant={"subtle"}
                             size={"xs"}
                             onClick={onOpen}
@@ -142,3 +124,11 @@ export const DroppableInput = memo(function DroppableInput(props) {
         </Field>
     );
 });
+
+const Empty = () => {
+    return (
+        <Flex h={"32px"} align={"center"} justify={"center"}>
+            <Text fontWeight={"medium"}>Ничего не найдено</Text>
+        </Flex>
+    );
+};
