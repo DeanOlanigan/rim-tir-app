@@ -54,6 +54,7 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
                 id={node.data.id}
                 type={node.data.type}
                 subType={node.data.subType}
+                isIgnored={node.data.isIgnored}
             >
                 <NodeContent
                     id={node.data.id}

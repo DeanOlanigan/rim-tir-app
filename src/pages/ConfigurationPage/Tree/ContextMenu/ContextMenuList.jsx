@@ -1,5 +1,6 @@
 import { Menu } from "@chakra-ui/react";
 import { menuConfig } from "../../../../config/contextMenu";
+import { LuBan, LuCheckCheck } from "react-icons/lu";
 
 export const ContextMenuList = ({
     subType,
@@ -15,21 +16,32 @@ export const ContextMenuList = ({
     return (
         <Menu.Content>
             {items.map((item, index) => {
+                let icon = item.icon;
+                let label = item.label;
                 if (item.type === "separator") {
                     return <Menu.Separator key={`sep_${index}`} />;
                 }
+                if (item.type === "change-ignore") {
+                    if (apiPath.focusedNode.data.isIgnored === true) {
+                        label = "Включить";
+                        icon = LuCheckCheck;
+                    } else {
+                        label = "Игнорировать";
+                        icon = LuBan;
+                    }
+                }
                 return (
                     <Menu.Item
-                        key={item.key}
-                        value={item.key}
+                        key={item.type}
+                        value={item.type}
                         {...item.style}
                         onClick={() => {
                             item.action?.(apiPath);
                             updateContext({ visible: false });
                         }}
                     >
-                        {item.icon?.()}
-                        {item.label}
+                        {icon?.()}
+                        {label}
                     </Menu.Item>
                 );
             })}

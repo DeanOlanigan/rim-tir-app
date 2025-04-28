@@ -41,6 +41,38 @@ export function renameNodeUtil(nodes, nodeId, name) {
     });
 }
 
+export function ignoreNodeUtil(nodes, nodesToIgnore) {
+    const ignoreMap = new Map(
+        nodesToIgnore.map(({ id, isIgnored }) => [id, isIgnored])
+    );
+
+    function recursive(nodes) {
+        return nodes.map((node) => {
+            let updated = node;
+            const shouldIgnore = ignoreMap.has(node.id);
+            const newIsIgnored = !ignoreMap.get(node.id);
+
+            let newChildren = node.children;
+            if (node.children?.length > 0) {
+                newChildren = recursive(node.children);
+
+                const childrenChanged = newChildren !== node.children;
+                if (childrenChanged) {
+                    updated = { ...updated, children: newChildren };
+                }
+            }
+
+            if (shouldIgnore && node.isIgnored !== newIsIgnored) {
+                updated = { ...updated, isIgnored: newIsIgnored };
+            }
+
+            return updated;
+        });
+    }
+
+    return recursive(nodes);
+}
+
 export function removeNodeUtil(nodes, nodeIds) {
     return nodes
         .filter((node) => !nodeIds.includes(node.id))

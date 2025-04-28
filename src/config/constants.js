@@ -29,7 +29,7 @@ export const CONSTANT_VALUES = {
 const DEFAULT_FOLDER = {
     type: "folder",
     name: "Новая папка",
-    ignoreChildren: false,
+    isIgnored: false,
     children: [],
 };
 
@@ -44,7 +44,7 @@ const DEFAULT_INTERFACE = {
     type: "interface",
     subType: "",
     name: "Новый интерфейс",
-    ignoreChildren: false,
+    isIgnored: false,
     children: [],
 };
 
@@ -52,21 +52,21 @@ const DEFAULT_PROTOCOL = {
     type: "protocol",
     subType: "",
     name: "Новый протокол",
-    ignoreChildren: false,
+    isIgnored: false,
     children: [],
 };
 
 const DEFAULT_FUNCTION_GROUP = {
     type: "functionGroup",
     name: "Новая функциональная группа",
-    ignoreChildren: false,
+    isIgnored: false,
     children: [],
 };
 
 const DEFAULT_ASDU = {
     type: "asdu",
     name: "Новый ASDU",
-    ignoreChildren: false,
+    isIgnored: false,
     children: [],
 };
 
@@ -80,6 +80,7 @@ const DEFAULT_ASDU_SETTING = {
 const DEFAULT_DATA_OBJECT = {
     type: "dataObject",
     name: "",
+    isIgnored: false,
 };
 
 export const DEFAULT_DATA_OBJECT_SETTING = {
@@ -108,6 +109,7 @@ export const DEFAULT_DATA_OBJECT_SETTING = {
 const DEFAULT_VARIABLE = {
     type: "variable",
     name: "Новая переменная",
+    isIgnored: false,
 };
 
 const DEFAULT_VARIABLE_SETTING = {

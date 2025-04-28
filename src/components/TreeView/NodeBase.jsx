@@ -2,6 +2,8 @@ import { NodeToggleBtn } from "./NodeToggleBtn";
 import { icons } from "./NodeTypeIcon";
 import { IndentLines } from "./IndentLines";
 import { Badge } from "./Badge";
+import { LuBan } from "react-icons/lu";
+import { Icon as ChakraIcon } from "@chakra-ui/react";
 
 export const NodeBase = ({
     isLeaf,
@@ -11,6 +13,7 @@ export const NodeBase = ({
     id,
     type,
     subType,
+    isIgnored,
     children,
 }) => {
     const Icon = icons[type];
@@ -42,6 +45,11 @@ export const NodeBase = ({
                     <Badge type={subType || type || null} id={id} />
                     {children}
                 </div>
+                {isIgnored && (
+                    <ChakraIcon color={"red.500"} strokeWidth={4} size={"sm"}>
+                        <LuBan title="Ignored" />
+                    </ChakraIcon>
+                )}
             </div>
         </>
     );

@@ -14,6 +14,7 @@ export const Node = ({ node, style }) => {
                 id={node.data.id}
                 type={node.data.type}
                 subType={node.data.subType}
+                isIgnored={node.data.isIgnored}
             >
                 <NodeContent
                     id={node.data.id}

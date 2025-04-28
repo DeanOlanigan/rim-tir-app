@@ -11,16 +11,18 @@ import {
     LuFileStack,
     LuPackage,
     LuAnchor,
+    LuBan,
 } from "react-icons/lu";
+import { useVariablesStore } from "../store/variables-store";
 
 const renameNode = {
-    key: "rename-node",
+    type: "rename-node",
     icon: () => createElement(LuPencil),
     label: "Переименовать",
     action: (treeApi) => treeApi.edit(treeApi.focusedNode),
 };
 const deleteNode = {
-    key: "delete-node",
+    type: "delete-node",
     icon: () => createElement(LuTrash2),
     label: "Удалить",
     style: {
@@ -30,13 +32,21 @@ const deleteNode = {
     action: (treeApi) => deleteNodeUtil(treeApi),
 };
 const createNode = (label, action, icon) => ({
-    key: `create-${action}`,
+    type: `create-${action}`,
     label,
     icon: () => createElement(icon),
     action: (treeApi) => treeApi.create({ type: action }),
 });
 
-export const menuConfigNodeDefault = [renameNode, deleteNode];
+const ignoreNode = {
+    type: "change-ignore",
+    action: (treeApi) => {
+        const ignoreNode = useVariablesStore.getState().ignoreNode;
+        ignoreNode(treeApi);
+    },
+};
+
+export const menuConfigNodeDefault = [renameNode, deleteNode, ignoreNode];
 
 export const menuConfigConnections = {
     rs232: [
@@ -79,12 +89,13 @@ export const menuConfigConnections = {
     ],
     dataObject: [
         {
-            key: "rename-node",
+            type: "rename-node",
             icon: () => createElement(LuPencil),
             label: "Перепривязать переменную",
             action: (treeApi) => treeApi.edit(treeApi.focusedNode),
         },
         deleteNode,
+        ignoreNode,
     ],
     default: [
         /* createNode("Создать RS-485...", "rs485", LuCable),

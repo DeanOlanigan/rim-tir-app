@@ -15,6 +15,7 @@ import {
     unbindVariableUtil,
     moveSettingUtil,
     bindVariableToNodeUtil,
+    ignoreNodeUtil,
 } from "../utils/treeUtils";
 import { shallow } from "zustand/shallow";
 import { persist } from "zustand/middleware";
@@ -169,6 +170,28 @@ export const useVariablesStore = create()(
                         ),
                     };
                 });
+            },
+
+            ignoreNode: (treeApi) => {
+                const treeType = treeApi.props.treeType;
+                const ids =
+                    treeApi.selectedIds.size > 1
+                        ? [...treeApi.selectedIds]
+                        : treeApi.focusedNode
+                        ? [treeApi.focusedNode.data.id]
+                        : [];
+                if (!ids.length) return;
+                const nodesToIgnore = ids.map((id) => {
+                    const node = treeApi.get(id) || treeApi.focusedNode;
+                    return {
+                        id: node.data.id,
+                        isIgnored: node.data.isIgnored,
+                    };
+                });
+                console.log(nodesToIgnore);
+                set((state) => ({
+                    [treeType]: ignoreNodeUtil(state[treeType], nodesToIgnore),
+                }));
             },
 
             removeNode: (targetKey, nodeIds) =>
