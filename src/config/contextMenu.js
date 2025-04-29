@@ -1,5 +1,5 @@
 import { createElement } from "react";
-import { deleteNode as deleteNodeUtil } from "../utils/utils";
+import { deleteNodeUtil } from "../utils/treeUtils";
 import {
     LuFolder,
     LuVariable,
@@ -11,6 +11,7 @@ import {
     LuFileStack,
     LuPackage,
     LuAnchor,
+    LuCopy,
 } from "react-icons/lu";
 import { useVariablesStore } from "../store/variables-store";
 
@@ -54,7 +55,28 @@ const toggleIgnoreNode = {
     },
 };
 
-export const menuConfigNodeDefault = [renameNode, deleteNode, toggleIgnoreNode];
+const copyNodeBtn = {
+    type: "copy-node",
+    icon: () => createElement(LuCopy),
+    label: "Копировать",
+    action: (treeApi) => {
+        const copyNode = useVariablesStore.getState().copyNode;
+        const ids =
+            treeApi.selectedIds.size > 1
+                ? [...treeApi.selectedIds]
+                : treeApi.focusedNode
+                ? [treeApi.focusedNode.data.id]
+                : [];
+        copyNode(treeApi, ids);
+    },
+};
+
+export const menuConfigNodeDefault = [
+    renameNode,
+    deleteNode,
+    toggleIgnoreNode,
+    copyNodeBtn,
+];
 
 export const menuConfigConnections = {
     rs232: [

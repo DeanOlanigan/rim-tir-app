@@ -1,6 +1,50 @@
 /* ================================================================= */
 /* ======================== NODE OPERATIONS ======================== */
 /* ================================================================= */
+
+// TODO BAD
+export function copyTreeUtil(tree, idSet) {
+    function recursive(node) {
+        if (idSet.has(node.id)) return null;
+
+        const copiedNode = { ...node };
+
+        if (node.children?.length) {
+            const copiedChildren = node.children.map(recursive).filter(Boolean);
+            copiedNode.children = copiedChildren;
+        }
+        return copiedNode;
+    }
+    const copy = [];
+    for (const node of tree) {
+        const result = recursive(node);
+        if (result) copy.push(result);
+    }
+    return copy;
+}
+
+export function deleteNodeUtil(treeApi) {
+    if (!treeApi.props.onDelete) return;
+    const ids = Array.from(treeApi.selectedIds);
+    if (ids.length > 1) {
+        let nextFocus = treeApi.mostRecentNode;
+        while (nextFocus && nextFocus.isSelected) {
+            nextFocus = nextFocus.nextSibling;
+        }
+        if (!nextFocus) nextFocus = treeApi.lastNode;
+        treeApi.focus(nextFocus, { scroll: false });
+        treeApi.delete(Array.from(ids));
+    } else {
+        const node = treeApi.focusedNode;
+        if (node) {
+            const sib = node.nextSibling;
+            const parent = node.parent;
+            treeApi.focus(sib || parent, { scroll: false });
+            treeApi.delete(node);
+        }
+    }
+}
+
 export function addNodeUtil(nodes, parentId, newNode, insertIndex = 0) {
     return nodes.map((node) => {
         if (node.id === parentId) {
@@ -205,6 +249,14 @@ function extractNodesAtOnce(nodes, dragIdsSet, currentParentId = null) {
 /* ================================================================= */
 /* ====================== SETTINGS OPERATIONS ====================== */
 /* ================================================================= */
+export function copySettingsUtil(settings, ids) {
+    const copy = {};
+    for (const id of ids) {
+        copy[id] = { ...settings[id] };
+    }
+    return copy;
+}
+
 export function createSettingUtil(settings, addSettings) {
     let result = { ...settings };
     for (const setting of addSettings) {

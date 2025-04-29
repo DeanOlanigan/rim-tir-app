@@ -1,5 +1,10 @@
 import { create } from "zustand";
-import { getUniqueName, separateDataNEW, separateTree } from "../utils/utils";
+import {
+    getUniqueName,
+    separateDataNEW,
+    separateTree,
+    getIdsSet,
+} from "../utils/utils";
 import { config } from "../config/testData";
 import {
     addNodeUtil,
@@ -16,6 +21,8 @@ import {
     moveSettingUtil,
     bindVariableToNodeUtil,
     ignoreNodeUtil,
+    copyTreeUtil,
+    copySettingsUtil,
 } from "../utils/treeUtils";
 import { shallow } from "zustand/shallow";
 import { persist } from "zustand/middleware";
@@ -39,6 +46,10 @@ export const useVariablesStore = create()(
             selectedIds: {
                 connections: new Set(),
                 variables: new Set(),
+            },
+            copyBuffer: {
+                tree: [],
+                normalized: {},
             },
 
             resetState: () =>
@@ -171,10 +182,35 @@ export const useVariablesStore = create()(
             ignoreNode: (treeApi, ids, ignore) => {
                 const treeType = treeApi.props.treeType;
                 if (!ids.length) return;
-                console.log(ids, ignore);
                 set((state) => ({
                     [treeType]: ignoreNodeUtil(state[treeType], ids, ignore),
                 }));
+            },
+
+            copyNode: (treeApi, ids) => {
+                const idsSet = getIdsSet(treeApi, ids);
+                console.log(idsSet);
+                const settings = get().settings;
+                const treeType = treeApi.props.treeType;
+                const tree = get()[treeType];
+                //const nodes = [];
+                const copyTree = copyTreeUtil(tree, idsSet);
+                const copySettings = copySettingsUtil(settings, idsSet);
+                /* for (const id of idsSet) {
+                    const { tree, normalized } = copyNodeUtil(
+                        treeApi.get(id).data,
+                        settings
+                    );
+                    nodes.push({ tree, normalized });
+                } */
+                console.log("copy", treeType, copySettings, copyTree);
+                //if (!ids.length) return;
+                /* set((state) => ({
+                    copyBuffer: {
+                        tree: state[treeType],
+                        normalized: normalizeTree(state[treeType]),
+                    },
+                })); */
             },
 
             removeNode: (targetKey, nodeIds) =>

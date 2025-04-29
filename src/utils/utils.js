@@ -283,24 +283,20 @@ export function resolveDynProps(data, rules = [], settings) {
     return {};
 }
 
-export function deleteNode(treeApi) {
-    if (!treeApi.props.onDelete) return;
-    const ids = Array.from(treeApi.selectedIds);
-    if (ids.length > 1) {
-        let nextFocus = treeApi.mostRecentNode;
-        while (nextFocus && nextFocus.isSelected) {
-            nextFocus = nextFocus.nextSibling;
-        }
-        if (!nextFocus) nextFocus = treeApi.lastNode;
-        treeApi.focus(nextFocus, { scroll: false });
-        treeApi.delete(Array.from(ids));
-    } else {
-        const node = treeApi.focusedNode;
-        if (node) {
-            const sib = node.nextSibling;
-            const parent = node.parent;
-            treeApi.focus(sib || parent, { scroll: false });
-            treeApi.delete(node);
+export function getIdsSet(treeApi, ids) {
+    const set = new Set();
+
+    function recursive(id) {
+        set.add(id);
+        if (!treeApi.get(id).children?.length) return;
+        for (const child of treeApi.get(id).children) {
+            recursive(child.id);
         }
     }
+
+    for (const id of ids) {
+        recursive(id);
+    }
+
+    return set;
 }
