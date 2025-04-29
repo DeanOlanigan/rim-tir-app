@@ -5,7 +5,7 @@ export function addNodeUtil(nodes, parentId, newNode, insertIndex = 0) {
     return nodes.map((node) => {
         if (node.id === parentId) {
             const updatedChildren = [...node.children];
-            updatedChildren.splice(insertIndex, 0, newNode);
+            updatedChildren.splice(insertIndex, 0, ...newNode);
             return { ...node, children: updatedChildren };
         }
         if (node.children?.length > 0) {
@@ -205,24 +205,30 @@ function extractNodesAtOnce(nodes, dragIdsSet, currentParentId = null) {
 /* ================================================================= */
 /* ====================== SETTINGS OPERATIONS ====================== */
 /* ================================================================= */
-export function createSettingUtil(settings, nodeId, setting) {
+export function createSettingUtil(settings, addSettings) {
     let result = { ...settings };
-    if (setting.parentId !== null) {
+    for (const setting of addSettings) {
+        const nodeId = setting.id;
+
+        if (setting.parentId !== null && result[setting.parentId]) {
+            result = {
+                ...result,
+                [setting.parentId]: {
+                    ...result[setting.parentId],
+                    children: [...result[setting.parentId].children, nodeId],
+                },
+            };
+        }
+
         result = {
             ...result,
-            [setting.parentId]: {
-                ...result[setting.parentId],
-                children: [...result[setting.parentId].children, nodeId],
+            [nodeId]: {
+                id: nodeId,
+                ...setting,
             },
         };
     }
-    return {
-        ...result,
-        [nodeId]: {
-            id: nodeId,
-            ...setting,
-        },
-    };
+    return result;
 }
 
 export function renameNodeSettingUtil(setting, nodeId, name) {

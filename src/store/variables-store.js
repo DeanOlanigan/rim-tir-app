@@ -70,13 +70,9 @@ export const useVariablesStore = create()(
                 }
             },
 
-            createSetting: (nodeId, setting) =>
+            createSetting: (settings) =>
                 set((state) => ({
-                    settings: createSettingUtil(
-                        state.settings,
-                        nodeId,
-                        setting
-                    ),
+                    settings: createSettingUtil(state.settings, settings),
                 })),
 
             setSettings: (nodeId, updateData) =>
@@ -132,11 +128,11 @@ export const useVariablesStore = create()(
                     };
                 }),
 
-            addNode: (targetKey, parentId, newNode) => {
+            addNode: (targetKey, parentId, newNodes) => {
                 if (parentId === null) {
                     set((state) => {
                         const newTargetNode = [...state[targetKey]];
-                        newTargetNode.splice(0, 0, newNode);
+                        newTargetNode.splice(0, 0, ...newNodes);
                         return { [targetKey]: newTargetNode };
                     });
                 } else {
@@ -144,7 +140,7 @@ export const useVariablesStore = create()(
                         [targetKey]: addNodeUtil(
                             state[targetKey],
                             parentId,
-                            newNode
+                            newNodes
                         ),
                     }));
                 }

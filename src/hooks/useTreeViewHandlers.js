@@ -43,19 +43,31 @@ export function useTreeViewHandlers(treeType, ref) {
     );
     const handleCreateNode = useCallback(
         ({ parentId, index, type }) => {
-            if (type === "leaf" || type === "internal") return;
+            if (type.nodeType === "leaf" || type.nodeType === "internal")
+                return;
             console.log("create", parentId, index, type);
-            const { id, node, setting } = initDefaultData(
-                type,
-                parentId,
-                ref?.current
-            );
-            const name = getUniqueName(ref?.current.root.children, node.name);
-            node.name = name;
-            setting.name = name;
-            addNode(treeType, parentId, node);
-            createSetting(id, setting);
-            return node;
+            const nodes = [];
+            const settings = [];
+            for (let i = 0; i < type.times; i++) {
+                const { node, setting } = initDefaultData(
+                    type.nodeType,
+                    parentId,
+                    ref?.current
+                );
+                const name = `${node.name} ${node.id.slice(0, 8)}`;
+                /* const name = getUniqueName(
+                    ref?.current.root.children,
+                    node.name
+                ); */
+                node.name = name;
+                setting.name = name;
+                nodes.push(node);
+                settings.push(setting);
+            }
+            console.log(nodes, settings);
+            addNode(treeType, parentId, nodes);
+            createSetting(settings);
+            //return node;
         },
         [addNode, createSetting, treeType, ref]
     );

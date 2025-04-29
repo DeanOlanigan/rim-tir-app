@@ -30,11 +30,13 @@ const deleteNode = {
     },
     action: (treeApi) => deleteNodeUtil(treeApi),
 };
-const createNode = (label, action, icon) => ({
-    type: `create-${action}`,
+const createNode = (label, action, icon, times = 1) => ({
+    type: `create-${action}-${times}`,
     label,
     icon: () => createElement(icon),
-    action: (treeApi) => treeApi.create({ type: action }),
+    action: (treeApi) => {
+        treeApi.create({ type: { nodeType: action, times } });
+    },
 });
 
 const toggleIgnoreNode = {
@@ -73,6 +75,12 @@ export const menuConfigConnections = {
     ],
     asdu: [
         createNode("Создать объект данных...", "dataObject", LuFileDigit),
+        createNode(
+            "Создать объект данных... (5)",
+            "dataObject",
+            LuFileDigit,
+            5
+        ),
         createNode("Создать папку...", "folder", LuFolder),
         ...menuConfigNodeDefault,
     ],
@@ -82,6 +90,12 @@ export const menuConfigConnections = {
     ],
     functionGroup: [
         createNode("Создать объект данных...", "dataObject", LuFileDigit),
+        createNode(
+            "Создать объект данных... (5)",
+            "dataObject",
+            LuFileDigit,
+            5
+        ),
         ...menuConfigNodeDefault,
     ],
     gpio: [
@@ -91,6 +105,12 @@ export const menuConfigConnections = {
     ],
     folder: [
         createNode("Создать объект данных...", "dataObject", LuFileDigit),
+        createNode(
+            "Создать объект данных... (5)",
+            "dataObject",
+            LuFileDigit,
+            5
+        ),
         ...menuConfigNodeDefault,
     ],
     dataObject: [
@@ -117,11 +137,13 @@ export const menuConfig = {
         variable: [...menuConfigNodeDefault],
         folder: [
             createNode("Создать переменную...", "variable", LuVariable),
+            createNode("Создать переменную...(5)", "variable", LuVariable, 5),
             { type: "separator" },
             ...menuConfigNodeDefault,
         ],
         default: [
             createNode("Создать переменную...", "variable", LuVariable),
+            createNode("Создать переменную...(5)", "variable", LuVariable, 5),
             createNode("Создать папку...", "folder", LuFolder),
         ],
     },

@@ -153,7 +153,7 @@ export function initDefaultData(type, parentId, treeApi) {
         });
         setting.setting = DEFAULT_DATA_OBJECT_SETTING[parentType];
     }
-    return { id, node, setting, name: node.name };
+    return { node, setting, name: node.name };
 }
 
 export function initCardsData(data) {
@@ -208,7 +208,8 @@ export function getUniqueName(nodes, name, ignoreId = null) {
     function recursive(nodes) {
         if (!Array.isArray(nodes)) return;
         for (const node of nodes) {
-            if (node.id !== ignoreId) usedNames.add(node.name);
+            if (node.id !== ignoreId)
+                usedNames.add(node.name || node.data.name);
             if (node.children?.length > 0) recursive(node.children);
         }
     }
