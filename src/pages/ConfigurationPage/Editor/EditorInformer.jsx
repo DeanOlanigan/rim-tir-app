@@ -15,13 +15,13 @@ export const EditorInformer = ({ status, type }) => {
                 <VStack w={"100%"}>
                     <Icon
                         fontSize={"164px"}
-                        color={status === "error" ? "red.800" : "bg.muted"}
+                        color={status === "error" ? "fg.error" : "bg.muted"}
                     >
                         {type === "connections" ? <LuCog /> : <LuVariable />}
                     </Icon>
                     <HStack>
                         <Text
-                            color={status === "error" ? "red.700" : "fg.muted"}
+                            color={status === "error" ? "fg.error" : "fg.muted"}
                             fontWeight={"medium"}
                         >
                             {status !== "error"
