@@ -68,17 +68,17 @@ export const useVariablesStore = create()(
             setConfigInfo: (data) => set({ configInfo: data }),
 
             updateSelectedIds: (targetKey, ids) => {
-                const { selectedIds } = get();
-                const currentIds = selectedIds[targetKey];
+                /* const { selectedIds } = get();
+                const currentIds = selectedIds[targetKey]; */
 
-                if (!shallow(currentIds, ids)) {
-                    set((state) => ({
-                        selectedIds: {
-                            ...state.selectedIds,
-                            [targetKey]: ids,
-                        },
-                    }));
-                }
+                set((state) => ({
+                    selectedIds: {
+                        ...state.selectedIds,
+                        [targetKey]: ids,
+                    },
+                }));
+                /* if (!shallow(currentIds, ids)) {
+                } */
             },
 
             createSetting: (settings) =>
