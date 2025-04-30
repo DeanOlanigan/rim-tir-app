@@ -1,10 +1,5 @@
 import { create } from "zustand";
-import {
-    getUniqueName,
-    separateDataNEW,
-    separateTree,
-    getIdsSet,
-} from "../utils/utils";
+import { getUniqueName, separateDataNEW, separateTree } from "../utils/utils";
 import { config } from "../config/testData";
 import {
     addNodeUtil,
@@ -23,6 +18,10 @@ import {
     ignoreNodeUtil,
     copyTreeUtil,
     copySettingsUtil,
+    getIdsSetNormalized,
+    getIdsSetWithoutNested,
+    generateNewIds,
+    getParentId,
 } from "../utils/treeUtils";
 import { shallow } from "zustand/shallow";
 import { persist } from "zustand/middleware";
@@ -48,6 +47,7 @@ export const useVariablesStore = create()(
                 variables: new Set(),
             },
             copyBuffer: {
+                type: "",
                 tree: [],
                 normalized: {},
             },
@@ -62,6 +62,11 @@ export const useVariablesStore = create()(
                     selectedIds: {
                         connections: new Set(),
                         variables: new Set(),
+                    },
+                    copyBuffer: {
+                        type: "",
+                        tree: [],
+                        normalized: {},
                     },
                 }),
 
@@ -188,29 +193,45 @@ export const useVariablesStore = create()(
             },
 
             copyNode: (treeApi, ids) => {
-                const idsSet = getIdsSet(treeApi, ids);
-                console.log(idsSet);
-                const settings = get().settings;
                 const treeType = treeApi.props.treeType;
-                const tree = get()[treeType];
-                //const nodes = [];
-                const copyTree = copyTreeUtil(tree, idsSet);
-                const copySettings = copySettingsUtil(settings, idsSet);
-                /* for (const id of idsSet) {
-                    const { tree, normalized } = copyNodeUtil(
-                        treeApi.get(id).data,
-                        settings
-                    );
-                    nodes.push({ tree, normalized });
-                } */
-                console.log("copy", treeType, copySettings, copyTree);
-                //if (!ids.length) return;
-                /* set((state) => ({
+                const settings = get().settings;
+                const idsSetNormalized = getIdsSetNormalized(treeApi, ids);
+                const idsSetWithoutNested = getIdsSetWithoutNested(
+                    treeApi,
+                    ids
+                );
+                const copyTree = copyTreeUtil(treeApi, idsSetWithoutNested);
+                const copySettings = copySettingsUtil(
+                    settings,
+                    idsSetNormalized
+                );
+                set(() => ({
                     copyBuffer: {
-                        tree: state[treeType],
-                        normalized: normalizeTree(state[treeType]),
+                        type: treeType,
+                        tree: copyTree,
+                        normalized: copySettings,
                     },
-                })); */
+                }));
+            },
+
+            pasteNode: (treeApi) => {
+                const parentId = getParentId(treeApi);
+                const { type, tree, normalized } = get().copyBuffer;
+                const { tree: newTree, settings: newSettings } = generateNewIds(
+                    tree,
+                    normalized,
+                    parentId
+                );
+                const settings = Object.values(newSettings);
+                get().addNode(type, parentId, newTree);
+                get().createSetting(settings);
+                set(() => ({
+                    copyBuffer: {
+                        type: "",
+                        tree: [],
+                        normalized: {},
+                    },
+                }));
             },
 
             removeNode: (targetKey, nodeIds) =>

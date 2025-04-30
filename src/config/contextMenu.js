@@ -11,7 +11,8 @@ import {
     LuFileStack,
     LuPackage,
     LuAnchor,
-    LuCopy,
+    LuClipboardPaste,
+    LuClipboardCopy,
 } from "react-icons/lu";
 import { useVariablesStore } from "../store/variables-store";
 
@@ -57,7 +58,7 @@ const toggleIgnoreNode = {
 
 const copyNodeBtn = {
     type: "copy-node",
-    icon: () => createElement(LuCopy),
+    icon: () => createElement(LuClipboardCopy),
     label: "Копировать",
     action: (treeApi) => {
         const copyNode = useVariablesStore.getState().copyNode;
@@ -71,11 +72,22 @@ const copyNodeBtn = {
     },
 };
 
+const pasteNodeBtn = {
+    type: "paste-node",
+    icon: () => createElement(LuClipboardPaste),
+    label: "Вставить",
+    action: (treeApi) => {
+        const pasteNode = useVariablesStore.getState().pasteNode;
+        pasteNode(treeApi);
+    },
+};
+
 export const menuConfigNodeDefault = [
     renameNode,
     deleteNode,
     toggleIgnoreNode,
     copyNodeBtn,
+    pasteNodeBtn,
 ];
 
 export const menuConfigConnections = {
@@ -144,6 +156,8 @@ export const menuConfigConnections = {
         },
         deleteNode,
         toggleIgnoreNode,
+        copyNodeBtn,
+        pasteNodeBtn,
     ],
     default: [
         /* createNode("Создать RS-485...", "rs485", LuCable),
@@ -151,6 +165,7 @@ export const menuConfigConnections = {
         createNode("Последовательный порт...", "comport", LuAnchor),
         createNode("Создать IEC-104...", "iec104", LuUnplug),
         createNode("Создать GPIO...", "gpio", LuCable),
+        pasteNodeBtn,
     ],
 };
 
@@ -167,6 +182,7 @@ export const menuConfig = {
             createNode("Создать переменную...", "variable", LuVariable),
             createNode("Создать переменную...(5)", "variable", LuVariable, 5),
             createNode("Создать папку...", "folder", LuFolder),
+            pasteNodeBtn,
         ],
     },
     send: menuConfigConnections,

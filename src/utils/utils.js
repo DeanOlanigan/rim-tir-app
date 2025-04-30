@@ -282,21 +282,3 @@ export function resolveDynProps(data, rules = [], settings) {
 
     return {};
 }
-
-export function getIdsSet(treeApi, ids) {
-    const set = new Set();
-
-    function recursive(id) {
-        set.add(id);
-        if (!treeApi.get(id).children?.length) return;
-        for (const child of treeApi.get(id).children) {
-            recursive(child.id);
-        }
-    }
-
-    for (const id of ids) {
-        recursive(id);
-    }
-
-    return set;
-}

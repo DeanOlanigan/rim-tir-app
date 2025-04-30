@@ -1,24 +1,23 @@
+import { v4 as uuidv4 } from "uuid";
+
 /* ================================================================= */
 /* ======================== NODE OPERATIONS ======================== */
 /* ================================================================= */
 
 // TODO BAD
-export function copyTreeUtil(tree, idSet) {
+export function copyTreeUtil(treeApi, idSet) {
     function recursive(node) {
-        if (idSet.has(node.id)) return null;
-
-        const copiedNode = { ...node };
-
-        if (node.children?.length) {
-            const copiedChildren = node.children.map(recursive).filter(Boolean);
-            copiedNode.children = copiedChildren;
+        if (node.children?.length > 0) {
+            return {
+                ...node.data,
+                children: node.children.map(recursive),
+            };
         }
-        return copiedNode;
+        return node.data;
     }
     const copy = [];
-    for (const node of tree) {
-        const result = recursive(node);
-        if (result) copy.push(result);
+    for (const id of idSet) {
+        copy.push(recursive(treeApi.get(id)));
     }
     return copy;
 }
@@ -498,6 +497,102 @@ export function moveSettingUtil(settings, dragIds, parentId, index) {
         } */
     });
     return updatedSettings;
+}
+
+/* ================================================================= */
+/* ============================== UTILS ============================== */
+/* ================================================================= */
+export function getIdsSetNormalized(treeApi, ids) {
+    const set = new Set();
+    function recursive(id) {
+        set.add(id);
+        const node = treeApi.get(id);
+        if (!node?.children?.length) return;
+        for (const child of treeApi.get(id).children) {
+            recursive(child.id);
+        }
+    }
+    for (const id of ids) {
+        recursive(id);
+    }
+    return set;
+}
+
+export function getIdsSetWithoutNested(treeApi, ids) {
+    const idSet = new Set(ids);
+    function removeDescendants(id) {
+        const node = treeApi.get(id);
+        if (!node?.children?.length) return;
+        for (const child of treeApi.get(id).children) {
+            idSet.delete(child.id);
+            removeDescendants(child.id);
+        }
+    }
+    for (const id of ids) {
+        removeDescendants(id);
+    }
+    return idSet;
+}
+
+export function generateNewIds(copyTree, copySettings, parentId) {
+    const idMap = new Map();
+    const newSettings = {};
+
+    function recursive(node) {
+        const oldId = node.id;
+        const newId = uuidv4();
+
+        idMap.set(oldId, newId);
+
+        const newNode = {
+            ...node,
+            id: newId,
+            children: node.children?.map(recursive),
+        };
+        return newNode;
+    }
+
+    const newTree = copyTree.map(recursive);
+
+    for (const [oldId, setting] of Object.entries(copySettings)) {
+        const newId = idMap.get(oldId);
+        const newParentId = idMap.get(setting.parentId) ?? null;
+
+        /* const newChildren = setting.children
+            ?.map((child) => idMap.get(child))
+            .filter(Boolean); */
+
+        newSettings[newId] = {
+            ...setting,
+            id: newId,
+            parentId: newParentId,
+            children: [],
+        };
+    }
+
+    for (const rootNode of newTree) {
+        const rootNodeId = rootNode.id;
+        newSettings[rootNodeId] = {
+            ...newSettings[rootNodeId],
+            parentId: parentId,
+        };
+    }
+
+    return {
+        tree: newTree,
+        settings: newSettings,
+    };
+}
+
+export function getParentId(treeApi) {
+    return treeApi.focusedNode
+        ? treeApi.focusedNode.children
+            ? treeApi.focusedNode.id
+            : treeApi.focusedNode.parent.id ===
+              "__REACT_ARBORIST_INTERNAL_ROOT__"
+            ? null
+            : treeApi.focusedNode.parent.id
+        : null;
 }
 
 /* ================================================================= */
