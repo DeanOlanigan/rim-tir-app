@@ -14,6 +14,7 @@ export const NodeBase = ({
     type,
     subType,
     isIgnored,
+    isCutted,
     children,
 }) => {
     const Icon = icons[type];
@@ -42,7 +43,7 @@ export const NodeBase = ({
                     pl={"1"}
                     w={"100%"}
                     textWrap={"wrap"}
-                    {...(isIgnored && ignoredStyle)}
+                    {...((isIgnored || isCutted) && ignoredStyle)}
                     colorPalette={"gray"}
                 >
                     {isIgnored && (
@@ -50,13 +51,13 @@ export const NodeBase = ({
                             color={"red.400"}
                             strokeWidth={2}
                             size={"lg"}
-                        >
-                            <LuPiggyBank title="Деактивировать" />
-                        </ChakraIcon>
+                            as={LuPiggyBank}
+                            title={"Деактивирован"}
+                        />
                     )}
                     <div>{Icon && <Icon />}</div>
                     <Badge
-                        isIgnored={isIgnored}
+                        isIgnored={isIgnored || isCutted}
                         type={subType || type || null}
                         id={id}
                     />

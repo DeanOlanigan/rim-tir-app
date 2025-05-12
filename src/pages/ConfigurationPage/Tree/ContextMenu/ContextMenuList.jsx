@@ -2,6 +2,7 @@ import { Menu } from "@chakra-ui/react";
 import { menuConfig } from "../../../../config/contextMenu";
 import { LuBan, LuCheckCheck } from "react-icons/lu";
 import { useVariablesStore } from "../../../../store/variables-store";
+import { ALLOWED_PARENTS } from "../../../../config/constants";
 
 export const ContextMenuList = ({
     subType,
@@ -20,20 +21,26 @@ export const ContextMenuList = ({
                 let icon = item.icon;
                 let label = item.label;
                 let disabled = false;
-                if (item.type === "separator") {
-                    return <Menu.Separator key={`sep_${index}`} />;
-                }
-                if (item.type === "change-ignore") {
-                    if (apiPath.focusedNode.data.isIgnored === true) {
-                        label = "Активировать";
-                        icon = LuCheckCheck;
-                    } else {
-                        label = "Деактивировать";
-                        icon = LuBan;
-                    }
-                }
-                if (item.type === "paste-node") {
-                    disabled = getDisabledState(apiPath);
+                switch (item.type) {
+                    case "separator":
+                        return <Menu.Separator key={`sep_${index}`} />;
+                    case "change-ignore":
+                        if (apiPath.focusedNode.data.isIgnored === true) {
+                            label = "Активировать";
+                            icon = LuCheckCheck;
+                        } else {
+                            label = "Деактивировать";
+                            icon = LuBan;
+                        }
+                        break;
+                    case "paste-node":
+                        disabled = getDisabledState(apiPath);
+                        break;
+                    case "copy-node":
+                        disabled = getCopyDisabledState(apiPath);
+                        break;
+                    default:
+                        break;
                 }
 
                 return (
@@ -43,8 +50,10 @@ export const ContextMenuList = ({
                         disabled={disabled}
                         {...item.style}
                         onClick={() => {
-                            item.action?.(apiPath);
-                            updateContext({ visible: false });
+                            if (!disabled) {
+                                item.action?.(apiPath);
+                                updateContext({ visible: false });
+                            }
                         }}
                     >
                         {icon?.()}
@@ -56,42 +65,79 @@ export const ContextMenuList = ({
     );
 };
 
+function getCopyDisabledState(apiPath) {
+    const selected =
+        apiPath.selectedNodes.length > 1
+            ? apiPath.selectedNodes
+            : apiPath.focusedNode;
+
+    if (!selected || !Array.isArray(selected)) {
+        return false;
+    }
+
+    return !selected.every(
+        (node) => node?.data.type === selected[0]?.data.type
+    );
+}
+
+// TODO НЕ РАБОТАЕТ НОРМАЛЬНО
 function getDisabledState(apiPath) {
-    const copyBuffer = useVariablesStore.getState().copyBuffer;
-    const settings = useVariablesStore.getState().settings;
+    const { copyBuffer, settings } = useVariablesStore.getState();
     const treeType = apiPath.props.treeType;
 
-    if (copyBuffer.type !== treeType) {
-        return true;
-    }
-    if (treeType === "send" || treeType === "receive") {
-        if (
-            copyBuffer.tree.some(
-                (node) => node.type !== copyBuffer.tree[0].type
-            )
-        )
-            return true;
+    if (copyBuffer.type !== treeType) return true;
 
+    const sourceType = copyBuffer.tree[0].type;
+    const targetType = apiPath.focusedNode?.data.type;
+
+    if (treeType === "send" || treeType === "receive") {
+        if (copyBuffer.tree.some((node) => node.type !== sourceType))
+            return true;
+        // ГОВНО
         const testId = copyBuffer.tree[0].id;
         const meaningNode = getMeaningNode(testId, settings);
         const focusedNode = getMeaningNode(
-            apiPath.focusedNode.data.id,
+            apiPath.focusedNode?.data.id,
             settings
         );
         console.log(
             "focusedNode:",
-            focusedNode.subType || focusedNode.type,
+            focusedNode?.subType || focusedNode?.type,
             "meaningNode:",
-            meaningNode.subType || meaningNode.type
+            meaningNode?.subType || meaningNode?.type
         );
         console.log(
             "type",
-            apiPath.focusedNode.data.type,
+            apiPath.focusedNode?.data.type,
             copyBuffer.tree[0].type
         );
-        // TODO Неполная проверка узлов при вставке в узлы соединений
-        return !(focusedNode.type === meaningNode.type);
+        console.log("canPaste", !canPaste(sourceType, focusedNode));
+
+        if (focusedNode?.type !== meaningNode?.type) {
+            return true;
+        }
+
+        if (
+            sourceType === "folder" &&
+            (targetType === "folder" || targetType === "dataObject")
+        ) {
+            return true;
+        }
     }
+    return false;
+}
+
+function firstRealParent(nodeId, settings) {
+    let cur = settings[nodeId];
+    while (cur && cur.type === "dataObject") cur = settings[cur.parentId];
+    return cur?.type;
+}
+
+function canPaste(sourceType, targetContainerType) {
+    return (
+        !!targetContainerType &&
+        ALLOWED_PARENTS[sourceType]?.includes(targetContainerType)
+    );
 }
 
 function getMeaningNode(id, settings) {

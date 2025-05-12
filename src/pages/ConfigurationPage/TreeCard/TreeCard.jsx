@@ -53,9 +53,7 @@ const EmptyCard = () => {
     return (
         <AbsoluteCenter>
             <VStack w={"100%"}>
-                <Icon fontSize={"164px"} color={"bg.muted"}>
-                    <LuBadgePlus />
-                </Icon>
+                <Icon fontSize={"164px"} color={"bg.muted"} as={LuBadgePlus} />
                 <HStack>
                     <Text color={"fg.subtle"} fontWeight={"medium"}>
                         Открыть контекстное меню

@@ -1,5 +1,5 @@
 import { createElement } from "react";
-import { deleteNodeUtil } from "../utils/treeUtils";
+import { deleteNodeUtil, getIdsSetWithoutNested } from "../utils/treeUtils";
 import {
     LuFolder,
     LuVariable,
@@ -13,6 +13,7 @@ import {
     LuAnchor,
     LuClipboardPaste,
     LuClipboardCopy,
+    LuScissors,
 } from "react-icons/lu";
 import { useVariablesStore } from "../store/variables-store";
 
@@ -72,12 +73,39 @@ const copyNodeBtn = {
     },
 };
 
+const cutNodeBtn = {
+    type: "cut-node",
+    icon: () => createElement(LuScissors),
+    label: "Вырезать",
+    action: (treeApi) => {
+        const baseIds = treeApi.root.children.map((child) => child.id);
+        const cutNodeFunc = useVariablesStore.getState().cutNode;
+        const copyNode = useVariablesStore.getState().copyNode;
+        const ids =
+            treeApi.selectedIds.size > 1
+                ? [...treeApi.selectedIds]
+                : treeApi.focusedNode
+                ? [treeApi.focusedNode.data.id]
+                : [];
+        cutNodeFunc(treeApi, baseIds, false);
+        copyNode(treeApi, ids, true);
+        cutNodeFunc(treeApi, ids, true);
+    },
+};
+
 const pasteNodeBtn = {
     type: "paste-node",
     icon: () => createElement(LuClipboardPaste),
     label: "Вставить",
     action: (treeApi) => {
         const pasteNode = useVariablesStore.getState().pasteNode;
+        const removeNode = useVariablesStore.getState().removeNode;
+        const { cut, normalized } = useVariablesStore.getState().copyBuffer;
+        const ids = Object.keys(normalized);
+        const treeType = treeApi.props.treeType;
+        const [...clearIds] = getIdsSetWithoutNested(treeApi, ids);
+        console.log("isCut", cut, clearIds);
+        cut && removeNode(treeType, clearIds);
         pasteNode(treeApi);
     },
 };
@@ -86,6 +114,8 @@ export const menuConfigNodeDefault = [
     renameNode,
     deleteNode,
     toggleIgnoreNode,
+    { type: "separator" },
+    cutNodeBtn,
     copyNodeBtn,
     pasteNodeBtn,
 ];
@@ -157,7 +187,6 @@ export const menuConfigConnections = {
         deleteNode,
         toggleIgnoreNode,
         copyNodeBtn,
-        pasteNodeBtn,
     ],
     default: [
         /* createNode("Создать RS-485...", "rs485", LuCable),

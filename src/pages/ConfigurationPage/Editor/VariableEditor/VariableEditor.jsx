@@ -112,11 +112,7 @@ const ParameterCard = ({ id, param, checked, parameters }) => {
                     direction={"column"}
                 >
                     <Box h={"100%"} textAlign={"center"}>
-                        {ParamIcon && (
-                            <Icon fontSize={"3xl"}>
-                                <ParamIcon />
-                            </Icon>
-                        )}
+                        {ParamIcon && <Icon fontSize={"3xl"} as={ParamIcon} />}
                         <Text fontWeight={"medium"}>
                             {PARAM_DEFINITIONS[param].label}
                         </Text>

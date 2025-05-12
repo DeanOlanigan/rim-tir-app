@@ -50,6 +50,7 @@ export const useVariablesStore = create()(
                 type: "",
                 tree: [],
                 normalized: {},
+                cut: false,
             },
 
             resetState: () =>
@@ -67,6 +68,7 @@ export const useVariablesStore = create()(
                         type: "",
                         tree: [],
                         normalized: {},
+                        cut: false,
                     },
                 }),
 
@@ -188,11 +190,17 @@ export const useVariablesStore = create()(
                 const treeType = treeApi.props.treeType;
                 if (!ids.length) return;
                 set((state) => ({
-                    [treeType]: ignoreNodeUtil(state[treeType], ids, ignore),
+                    [treeType]: ignoreNodeUtil(
+                        state[treeType],
+                        ids,
+                        ignore,
+                        true,
+                        "isIgnored"
+                    ),
                 }));
             },
 
-            copyNode: (treeApi, ids) => {
+            copyNode: (treeApi, ids, isCut = false) => {
                 const treeType = treeApi.props.treeType;
                 const settings = get().settings;
                 const idsSetNormalized = getIdsSetNormalized(treeApi, ids);
@@ -210,8 +218,24 @@ export const useVariablesStore = create()(
                         type: treeType,
                         tree: copyTree,
                         normalized: copySettings,
+                        cut: isCut,
                     },
                 }));
+            },
+
+            cutNode: (treeApi, ids, cut) => {
+                const treeType = treeApi.props.treeType;
+                if (!ids.length) return;
+                set((state) => ({
+                    [treeType]: ignoreNodeUtil(
+                        state[treeType],
+                        ids,
+                        cut,
+                        false,
+                        "isCutted"
+                    ),
+                }));
+                console.log("cut");
             },
 
             pasteNode: (treeApi) => {
@@ -230,6 +254,7 @@ export const useVariablesStore = create()(
                         type: "",
                         tree: [],
                         normalized: {},
+                        cut: false,
                     },
                 }));
             },

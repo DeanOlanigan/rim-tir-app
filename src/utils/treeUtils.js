@@ -84,7 +84,13 @@ export function renameNodeUtil(nodes, nodeId, name) {
     });
 }
 
-export function ignoreNodeUtil(nodes, ids, ignore) {
+export function ignoreNodeUtil(
+    nodes,
+    ids,
+    ignore,
+    aggregateToParents = true,
+    ignoreParam
+) {
     const idsSet = new Set(ids);
 
     function update(nodes) {
@@ -94,12 +100,12 @@ export function ignoreNodeUtil(nodes, ids, ignore) {
             if (shouldUpdate) {
                 const newChildren =
                     node.children?.length > 0
-                        ? propogateIgnore(node.children, ignore)
+                        ? propogateIgnore(node.children, ignore, ignoreParam)
                         : node.children;
 
                 return {
                     ...node,
-                    isIgnored: ignore,
+                    [ignoreParam]: ignore,
                     ...(newChildren && { children: newChildren }),
                 };
             }
@@ -109,17 +115,17 @@ export function ignoreNodeUtil(nodes, ids, ignore) {
                 newChildren = update(node.children);
             }
 
-            let newIsIgnored = node.isIgnored;
+            let newIsIgnored = node[ignoreParam];
 
-            if (newChildren && newChildren.length > 0) {
+            if (aggregateToParents && newChildren && newChildren.length > 0) {
                 const allIgnored = newChildren.every(
-                    (child) => child.isIgnored
+                    (child) => child[ignoreParam]
                 );
                 newIsIgnored = allIgnored;
             }
 
             const isChildrenChanged = newChildren !== node.children;
-            const isIgnoredChanged = newIsIgnored !== node.isIgnored;
+            const isIgnoredChanged = newIsIgnored !== node[ignoreParam];
 
             if (!isChildrenChanged && !isIgnoredChanged) {
                 return node;
@@ -127,18 +133,18 @@ export function ignoreNodeUtil(nodes, ids, ignore) {
 
             return {
                 ...node,
-                ...(isIgnoredChanged && { isIgnored: newIsIgnored }),
+                ...(isIgnoredChanged && { [ignoreParam]: newIsIgnored }),
                 ...(isChildrenChanged && { children: newChildren }),
             };
         });
     }
 
-    function propogateIgnore(nodes, ignore) {
+    function propogateIgnore(nodes, ignore, ignoreParam) {
         return nodes.map((node) => ({
             ...node,
-            isIgnored: ignore,
+            [ignoreParam]: ignore,
             ...(node.children?.length > 0 && {
-                children: propogateIgnore(node.children, ignore),
+                children: propogateIgnore(node.children, ignore, ignoreParam),
             }),
         }));
     }

@@ -26,10 +26,22 @@ export const CONSTANT_VALUES = {
     },
 };
 
+export const ALLOWED_PARENTS = {
+    "modbus-rtu": ["comport"],
+    asdu: ["iec104"],
+    functionGroup: ["modbus-rtu"],
+    dataObject: ["functionGroup", "asdu", "folder"],
+    gpio: [],
+    iec104: [],
+    folder: ["asdu", "gpio"],
+    comport: [],
+};
+
 const DEFAULT_FOLDER = {
     type: "folder",
     name: "Новая папка",
     isIgnored: false,
+    isCutted: false,
     children: [],
 };
 
@@ -45,6 +57,7 @@ const DEFAULT_INTERFACE = {
     subType: "",
     name: "Новый интерфейс",
     isIgnored: false,
+    isCutted: false,
     children: [],
 };
 
@@ -53,6 +66,7 @@ const DEFAULT_PROTOCOL = {
     subType: "",
     name: "Новый протокол",
     isIgnored: false,
+    isCutted: false,
     children: [],
 };
 
@@ -60,6 +74,7 @@ const DEFAULT_FUNCTION_GROUP = {
     type: "functionGroup",
     name: "Новая функциональная группа",
     isIgnored: false,
+    isCutted: false,
     children: [],
 };
 
@@ -67,6 +82,7 @@ const DEFAULT_ASDU = {
     type: "asdu",
     name: "Новый ASDU",
     isIgnored: false,
+    isCutted: false,
     children: [],
 };
 
@@ -81,6 +97,7 @@ const DEFAULT_DATA_OBJECT = {
     type: "dataObject",
     name: "",
     isIgnored: false,
+    isCutted: false,
 };
 
 export const DEFAULT_DATA_OBJECT_SETTING = {
@@ -110,6 +127,7 @@ const DEFAULT_VARIABLE = {
     type: "variable",
     name: "Новая переменная",
     isIgnored: false,
+    isCutted: false,
 };
 
 const DEFAULT_VARIABLE_SETTING = {
