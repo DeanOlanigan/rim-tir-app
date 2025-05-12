@@ -62,7 +62,6 @@ export const ConfInfoEdit = () => {
                         <Field.Root>
                             <Field.Label>Название</Field.Label>
                             <Input
-                                endElement={"test"}
                                 size={"xs"}
                                 value={name}
                                 maxLength={20}

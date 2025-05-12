@@ -42,9 +42,7 @@ const TitleButtons = ({ type, variableTreeRef }) => {
                         toggleIgnoreNode(variableTreeRef?.current, ids, true);
                     }}
                 >
-                    <Icon size={"sm"} transform={"scaleX(-1)"}>
-                        <LuBan />
-                    </Icon>
+                    <LuBan />
                 </IconButton>
             </Tooltip>
             <Tooltip content={"Свернуть узлы"}>
@@ -55,9 +53,11 @@ const TitleButtons = ({ type, variableTreeRef }) => {
                         variableTreeRef?.current.closeAll();
                     }}
                 >
-                    <Icon size={"sm"} transform={"scaleX(-1)"}>
-                        <LuCopyMinus />
-                    </Icon>
+                    <Icon
+                        size={"sm"}
+                        transform={"scaleX(-1)"}
+                        as={LuCopyMinus}
+                    />
                 </IconButton>
             </Tooltip>
         </HStack>
@@ -78,9 +78,7 @@ const VariablesTitleButtons = ({ variableTreeRef }) => {
                         });
                     }}
                 >
-                    <Icon size={"sm"}>
-                        <LuFilePlus />
-                    </Icon>
+                    <LuFilePlus />
                 </IconButton>
             </Tooltip>
             <Tooltip content={locale[lang].createFolder}>
@@ -93,9 +91,7 @@ const VariablesTitleButtons = ({ variableTreeRef }) => {
                         });
                     }}
                 >
-                    <Icon size={"sm"}>
-                        <LuFolderPlus />
-                    </Icon>
+                    <LuFolderPlus />
                 </IconButton>
             </Tooltip>
         </>
