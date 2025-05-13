@@ -186,6 +186,8 @@ export const menuConfigConnections = {
         },
         deleteNode,
         toggleIgnoreNode,
+        { type: "separator" },
+        cutNodeBtn,
         copyNodeBtn,
     ],
     default: [

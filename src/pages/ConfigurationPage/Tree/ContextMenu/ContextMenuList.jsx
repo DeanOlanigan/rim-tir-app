@@ -88,38 +88,31 @@ function getDisabledState(apiPath) {
     if (copyBuffer.type !== treeType) return true;
 
     const sourceType = copyBuffer.tree[0].type;
-    const targetType = apiPath.focusedNode?.data.type;
 
     if (treeType === "send" || treeType === "receive") {
         if (copyBuffer.tree.some((node) => node.type !== sourceType))
             return true;
-        // ГОВНО
-        const testId = copyBuffer.tree[0].id;
-        const meaningNode = getMeaningNode(testId, settings);
-        const focusedNode = getMeaningNode(
-            apiPath.focusedNode?.data.id,
-            settings
-        );
-        console.log(
-            "focusedNode:",
-            focusedNode?.subType || focusedNode?.type,
-            "meaningNode:",
-            meaningNode?.subType || meaningNode?.type
-        );
-        console.log(
-            "type",
-            apiPath.focusedNode?.data.type,
-            copyBuffer.tree[0].type
-        );
-        console.log("canPaste", !canPaste(sourceType, focusedNode));
 
-        if (focusedNode?.type !== meaningNode?.type) {
+        // Получить тип узла, на котором контекстное меню
+        const focusedNodeType =
+            apiPath.focusedNode?.data.subType || apiPath.focusedNode?.data.type;
+        const focusedNodeTypeF = getMeaningFocusedNode(apiPath);
+
+        // Получить значимый тип из иерархии копируемого узла
+        const meaningNode = getMeaningNode(copyBuffer.tree[0].id, settings);
+        const meaningNodeType = meaningNode?.subType || meaningNode?.type;
+
+        console.log("focusedNodeType", focusedNodeType);
+        console.log("focusedNodeTypeF", focusedNodeTypeF);
+        console.log("meaningNodeType", meaningNodeType);
+
+        if (focusedNodeTypeF !== meaningNodeType) {
             return true;
         }
 
         if (
             sourceType === "folder" &&
-            (targetType === "folder" || targetType === "dataObject")
+            (focusedNodeType === "folder" || focusedNodeType === "dataObject")
         ) {
             return true;
         }
@@ -127,29 +120,30 @@ function getDisabledState(apiPath) {
     return false;
 }
 
-function firstRealParent(nodeId, settings) {
-    let cur = settings[nodeId];
-    while (cur && cur.type === "dataObject") cur = settings[cur.parentId];
-    return cur?.type;
-}
-
-function canPaste(sourceType, targetContainerType) {
-    return (
-        !!targetContainerType &&
-        ALLOWED_PARENTS[sourceType]?.includes(targetContainerType)
-    );
-}
-
 function getMeaningNode(id, settings) {
     function recursive(id) {
-        const node = settings[id];
+        const node = settings[settings[id].parentId];
         if (!node) return undefined;
 
         if (node.type === "folder" || node.type === "dataObject") {
-            return recursive(node.parentId);
+            return recursive(node.id);
         } else {
             return node;
         }
     }
     return recursive(id);
+}
+
+function getMeaningFocusedNode(apiPath) {
+    function recursive(node) {
+        if (!node || !node.data) return undefined;
+        if (node.data.type === "folder" || node.data.type === "dataObject") {
+            return recursive(node.parent);
+        } else {
+            return node;
+        }
+    }
+    const node = apiPath.focusedNode;
+    const res = recursive(node);
+    return res?.data?.subType || res?.data?.type;
 }
