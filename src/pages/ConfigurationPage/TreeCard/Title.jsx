@@ -1,10 +1,18 @@
-import { HStack, Text, IconButton, Icon } from "@chakra-ui/react";
+import { HStack, Text, IconButton, Icon, Menu, Portal } from "@chakra-ui/react";
 import { Tooltip } from "../../../components/ui/tooltip";
-import { LuFolderPlus, LuCopyMinus, LuFilePlus, LuBan } from "react-icons/lu";
+import {
+    LuFolderPlus,
+    LuCopyMinus,
+    LuFilePlus,
+    LuBan,
+    LuPlus,
+} from "react-icons/lu";
 import { CONSTANT_VALUES } from "../../../config/constants";
 import { locale } from "../../../config/locale";
 import { useLocaleStore } from "../../../store/locale-store";
 import { useVariablesStore } from "../../../store/variables-store";
+import { LuAnchor, LuUnplug, LuCable } from "react-icons/lu";
+import { useId } from "react";
 
 export const TreeCardTitle = ({ type, variableTreeRef }) => {
     const lang = useLocaleStore((state) => state.locale);
@@ -25,6 +33,10 @@ const TitleButtons = ({ type, variableTreeRef }) => {
             transition={"opacity 0.2s ease-in-out"}
             _groupHover={{ opacity: 1 }}
         >
+            {(type === CONSTANT_VALUES.TREE_TYPES.send ||
+                type === CONSTANT_VALUES.TREE_TYPES.receive) && (
+                <ConnectionsTitleButtons variableTreeRef={variableTreeRef} />
+            )}
             {type === CONSTANT_VALUES.TREE_TYPES.variables && (
                 <VariablesTitleButtons variableTreeRef={variableTreeRef} />
             )}
@@ -74,7 +86,11 @@ const VariablesTitleButtons = ({ variableTreeRef }) => {
                     variant={"subtle"}
                     onClick={() => {
                         variableTreeRef?.current.create({
-                            type: CONSTANT_VALUES.NODE_TYPES.variable,
+                            parentId: null,
+                            type: {
+                                nodeType: CONSTANT_VALUES.NODE_TYPES.variable,
+                                times: 1,
+                            },
                         });
                     }}
                 >
@@ -87,7 +103,11 @@ const VariablesTitleButtons = ({ variableTreeRef }) => {
                     variant={"subtle"}
                     onClick={() => {
                         variableTreeRef?.current.create({
-                            type: CONSTANT_VALUES.NODE_TYPES.folder,
+                            parentId: null,
+                            type: {
+                                nodeType: CONSTANT_VALUES.NODE_TYPES.folder,
+                                times: 1,
+                            },
                         });
                     }}
                 >
@@ -95,5 +115,73 @@ const VariablesTitleButtons = ({ variableTreeRef }) => {
                 </IconButton>
             </Tooltip>
         </>
+    );
+};
+
+const ConnectionsTitleButtons = ({ variableTreeRef }) => {
+    const handleCreateComport = () => {
+        variableTreeRef?.current.create({
+            parentId: null,
+            type: {
+                nodeType: CONSTANT_VALUES.INTERFACES.comport,
+                times: 1,
+            },
+        });
+    };
+
+    const handleCreateIec104 = () => {
+        variableTreeRef?.current.create({
+            parentId: null,
+            type: {
+                nodeType: CONSTANT_VALUES.PROTOCOLS.iec104,
+                times: 1,
+            },
+        });
+    };
+
+    const handleCreateGpio = () => {
+        variableTreeRef?.current.create({
+            parentId: null,
+            type: {
+                nodeType: CONSTANT_VALUES.INTERFACES.gpio,
+                times: 1,
+            },
+        });
+    };
+    const triggerId = useId();
+    return (
+        <Menu.Root ids={{ trigger: triggerId }}>
+            <Tooltip
+                content={"Создать соединение"}
+                ids={{ trigger: triggerId }}
+            >
+                <Menu.Trigger asChild>
+                    <IconButton size={"2xs"} variant={"subtle"}>
+                        <LuPlus />
+                    </IconButton>
+                </Menu.Trigger>
+            </Tooltip>
+            <Portal>
+                <Menu.Positioner>
+                    <Menu.Content>
+                        <Menu.Item
+                            value="comport"
+                            onClick={handleCreateComport}
+                        >
+                            <LuAnchor />
+                            Создать Последовательный порт...
+                        </Menu.Item>
+                        <Menu.Item value="iec104" onClick={handleCreateIec104}>
+                            <LuUnplug />
+                            Создать IEC104...
+                        </Menu.Item>
+                        <Menu.Item value="gpio" onClick={handleCreateGpio}>
+                            <LuCable />
+                            Создать GPIO...
+                        </Menu.Item>
+                    </Menu.Content>
+                </Menu.Positioner>
+            </Portal>
+        </Menu.Root>
     );
 };

@@ -9,6 +9,7 @@ export const CONSTANT_VALUES = {
         rs485: "rs485",
         rs232: "rs232",
         gpio: "gpio",
+        comport: "comport",
     },
     TREE_TYPES: {
         variables: "variables",
