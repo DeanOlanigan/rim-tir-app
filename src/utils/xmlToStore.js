@@ -71,8 +71,14 @@ export function parseXmlToState(xmlString) {
             subType,
             ignoreChildren,
             setting: Object.keys(setting).length > 0 ? setting : undefined,
-            children: Object.keys(children).length > 0 ? children : undefined,
+            children: Object.keys(children).length > 0 ? children : [],
         };
+        if (
+            state.settings[id].type === "dataObject" ||
+            state.settings[id].type === "variable"
+        ) {
+            state.settings[id].children = undefined;
+        }
         if (type === "dataObject") {
             state.settings[id].variableId = variableId;
         }
@@ -83,8 +89,11 @@ export function parseXmlToState(xmlString) {
             subType,
             name: type === "dataObject" ? variableId : name,
             ignoreChildren,
-            children: Object.keys(children).length > 0 ? [] : undefined,
+            children: [],
         };
+        if (type === "dataObject" || type === "variable") {
+            treeNode.children = undefined;
+        }
         childrenElems.forEach((el) => readNode(el, id, treeNode.children));
         stateArr.push(treeNode);
     }
