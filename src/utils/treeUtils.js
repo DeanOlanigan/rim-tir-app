@@ -5,15 +5,19 @@ import { v4 as uuidv4 } from "uuid";
 /* ================================================================= */
 
 // TODO BAD
-export function copyTreeUtil(treeApi, idSet) {
+export function copyTreeUtil(treeApi, idSet, isCut) {
     function recursive(node) {
+        const copiedData = { ...node.data };
+        if (!isCut) {
+            if (copiedData.type === "dataObject") copiedData.name = "";
+        }
         if (node.children?.length > 0) {
             return {
-                ...node.data,
+                ...copiedData,
                 children: node.children.map(recursive),
             };
         }
-        return node.data;
+        return copiedData;
     }
     const copy = [];
     for (const id of idSet) {
@@ -254,10 +258,13 @@ function extractNodesAtOnce(nodes, dragIdsSet, currentParentId = null) {
 /* ================================================================= */
 /* ====================== SETTINGS OPERATIONS ====================== */
 /* ================================================================= */
-export function copySettingsUtil(settings, ids) {
+export function copySettingsUtil(settings, ids, isCut) {
     const copy = {};
     for (const id of ids) {
         copy[id] = { ...settings[id] };
+        if (!isCut) {
+            if (copy[id].type === "dataObject") copy[id].variableId = "";
+        }
     }
     return copy;
 }
@@ -540,7 +547,7 @@ export function getIdsSetWithoutNested(treeApi, ids) {
     return idSet;
 }
 
-export function generateNewIds(copyTree, copySettings, parentId) {
+export function generateNewIds(copyTree, copySettings, parentId, settings) {
     const idMap = new Map();
     const newSettings = {};
 
@@ -563,6 +570,10 @@ export function generateNewIds(copyTree, copySettings, parentId) {
     for (const [oldId, setting] of Object.entries(copySettings)) {
         const newId = idMap.get(oldId);
         const newParentId = idMap.get(setting.parentId) ?? null;
+
+        if (setting.type === "dataObject" && setting.variableId) {
+            settings[setting.variableId].usedIn = newId;
+        }
 
         /* const newChildren = setting.children
             ?.map((child) => idMap.get(child))

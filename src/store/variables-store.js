@@ -208,10 +208,15 @@ export const useVariablesStore = create()(
                     treeApi,
                     ids
                 );
-                const copyTree = copyTreeUtil(treeApi, idsSetWithoutNested);
+                const copyTree = copyTreeUtil(
+                    treeApi,
+                    idsSetWithoutNested,
+                    isCut
+                );
                 const copySettings = copySettingsUtil(
                     settings,
-                    idsSetNormalized
+                    idsSetNormalized,
+                    isCut
                 );
                 set(() => ({
                     copyBuffer: {
@@ -239,12 +244,14 @@ export const useVariablesStore = create()(
             },
 
             pasteNode: (treeApi) => {
+                const stateSettings = get().settings;
                 const parentId = getParentId(treeApi);
                 const { type, tree, normalized } = get().copyBuffer;
                 const { tree: newTree, settings: newSettings } = generateNewIds(
                     tree,
                     normalized,
-                    parentId
+                    parentId,
+                    stateSettings
                 );
                 const settings = Object.values(newSettings);
                 get().addNode(type, parentId, newTree);
