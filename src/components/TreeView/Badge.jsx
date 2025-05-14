@@ -24,7 +24,7 @@ export const Badge = ({ isIgnored, type, id }) => {
         rs232: "RS232",
         comport: "COM",
         asdu: "ASDU",
-        dataObject: id.slice(0, 8),
+        //dataObject: id.slice(0, 8),
     };
 
     if (!color[type] || !shortName[type]) {

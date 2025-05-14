@@ -193,7 +193,7 @@ export const menuConfigConnections = {
     default: [
         /* createNode("Создать RS-485...", "rs485", LuCable),
         createNode("Создать RS-232...", "rs232", LuCable), */
-        createNode("Последовательный порт...", "comport", LuAnchor),
+        createNode("Создать Последовательный порт...", "comport", LuAnchor),
         createNode("Создать IEC-104...", "iec104", LuUnplug),
         createNode("Создать GPIO...", "gpio", LuCable),
         pasteNodeBtn,

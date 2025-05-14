@@ -18,6 +18,10 @@ export const NodeContent = memo(function NodeContent({
         (state) => state.settings[name]?.name
     );
 
+    const testAddress = useVariablesStore(
+        (state) => state.settings[id].setting?.modbusDoAddress
+    );
+
     return isEditing ? (
         type === CONSTANT_VALUES.NODE_TYPES.dataObject ? (
             <DroppableInput
@@ -33,7 +37,7 @@ export const NodeContent = memo(function NodeContent({
     ) : (
         <Text truncate>
             {type === CONSTANT_VALUES.NODE_TYPES.dataObject
-                ? variableName
+                ? (testAddress || "???") + " " + (variableName || "")
                 : name}
         </Text>
     );

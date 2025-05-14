@@ -1,3 +1,4 @@
+//TODO добавить children и сделать параметры в settings в виде аргументов
 import { create } from "xmlbuilder";
 import { useVariablesStore } from "../store/variables-store";
 
