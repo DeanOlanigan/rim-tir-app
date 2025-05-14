@@ -10,6 +10,7 @@ import { CONSTANT_VALUES } from "../../config/constants";
 import { EmptyConfigDialog } from "./EmptyConfigDialog";
 import { memo } from "react";
 import { shallow } from "zustand/shallow";
+import { ContextMenu } from "./Tree/ContextMenu/ContextMenu";
 
 function ConfigurationPage() {
     //console.log("Render ConfigurationPage");
@@ -57,6 +58,7 @@ function ConfigurationPage() {
                         />
                     </Panel>
                 </PanelGroup>
+                <ContextMenu />
             </Box>
         </DndProvider>
     );

@@ -1,35 +1,29 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useLayoutEffect } from "react";
 import { useContextMenuStore } from "../../../../store/contextMenu-store";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, Portal } from "@chakra-ui/react";
 import { ContextMenuList } from "./ContextMenuList";
 
 export const ContextMenu = () => {
+    console.log("%cRender ContextMenu", "color: white; background: purple;");
     const { context, updateContext } = useContextMenuStore((state) => state);
     const { apiPath, type, subType, treeType, x, y, visible } = context;
 
-    const [position, setPosition] = useState({ x: 0, y: 0 });
     const menuRef = useRef(null);
 
-    useEffect(() => {
-        if (menuRef.current) {
-            const menuRect = menuRef.current.getBoundingClientRect();
-            let newX = x;
-            let newY = y;
-            const pad = 16; // небольшой отступ
+    useLayoutEffect(() => {
+        if (!visible || !menuRef.current) return;
 
-            // проверяем правый край
-            if (newX + menuRect.width > window.innerWidth) {
-                newX = window.innerWidth - menuRect.width - pad;
-            }
-            // проверяем нижний край
-            if (newY + menuRect.height > window.innerHeight) {
-                newY = window.innerHeight - menuRect.height - pad;
-            }
+        const node = menuRef.current;
+        const { width, height } = node.getBoundingClientRect();
+        const pad = 16;
 
-            setPosition({ x: newX, y: newY });
-        }
-    }, [x, y]);
+        const newX = Math.min(x, window.innerWidth - width - pad);
+        const newY = Math.min(y, window.innerHeight - height - pad);
+
+        node.style.left = `${newX}px`;
+        node.style.top = `${newY}px`;
+    }, [visible, x, y]);
 
     useEffect(() => {
         function handleOutsideClick(e) {
@@ -65,8 +59,6 @@ export const ContextMenu = () => {
                         transition={{ duration: 0.2 }}
                         style={{
                             position: "fixed",
-                            top: position.y,
-                            left: position.x,
                             zIndex: 9999,
                         }}
                     >

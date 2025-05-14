@@ -2,7 +2,6 @@ import { Menu } from "@chakra-ui/react";
 import { menuConfig } from "../../../../config/contextMenu";
 import { LuBan, LuCheckCheck } from "react-icons/lu";
 import { useVariablesStore } from "../../../../store/variables-store";
-import { ALLOWED_PARENTS } from "../../../../config/constants";
 
 export const ContextMenuList = ({
     subType,

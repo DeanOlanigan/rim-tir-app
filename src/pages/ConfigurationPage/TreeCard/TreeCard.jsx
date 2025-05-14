@@ -43,7 +43,6 @@ export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
                     data={data}
                     treeType={treeType}
                 />
-                <ContextMenu />
             </Card.Body>
         </Card.Root>
     );
