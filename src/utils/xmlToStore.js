@@ -87,7 +87,7 @@ export function parseXmlToState(xmlString) {
             id,
             type,
             subType,
-            name: type === "dataObject" ? variableId : name,
+            name: type === "dataObject" ? variableId || id.slice(0, 8) : name,
             ignoreChildren,
             children: [],
         };
