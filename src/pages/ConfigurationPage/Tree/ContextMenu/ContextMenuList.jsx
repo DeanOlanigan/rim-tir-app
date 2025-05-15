@@ -1,6 +1,6 @@
-import { Menu } from "@chakra-ui/react";
+import { Menu, Portal } from "@chakra-ui/react";
 import { menuConfig } from "../../../../config/contextMenu";
-import { LuBan, LuCheckCheck } from "react-icons/lu";
+import { LuBan, LuCheckCheck, LuChevronRight } from "react-icons/lu";
 import { useVariablesStore } from "../../../../store/variables-store";
 
 export const ContextMenuList = ({
@@ -17,48 +17,7 @@ export const ContextMenuList = ({
     return (
         <Menu.Content>
             {items.map((item, index) => {
-                let icon = item.icon;
-                let label = item.label;
-                let disabled = false;
-                switch (item.type) {
-                    case "separator":
-                        return <Menu.Separator key={`sep_${index}`} />;
-                    case "change-ignore":
-                        if (apiPath.focusedNode.data.isIgnored === true) {
-                            label = "Активировать";
-                            icon = LuCheckCheck;
-                        } else {
-                            label = "Деактивировать";
-                            icon = LuBan;
-                        }
-                        break;
-                    case "paste-node":
-                        disabled = getDisabledState(apiPath);
-                        break;
-                    case "copy-node":
-                        disabled = getCopyDisabledState(apiPath);
-                        break;
-                    default:
-                        break;
-                }
-
-                return (
-                    <Menu.Item
-                        key={item.type}
-                        value={item.type}
-                        disabled={disabled}
-                        {...item.style}
-                        onClick={() => {
-                            if (!disabled) {
-                                item.action?.(apiPath);
-                                updateContext({ visible: false });
-                            }
-                        }}
-                    >
-                        {icon?.()}
-                        {label}
-                    </Menu.Item>
-                );
+                return renderMenuItem(item, index, apiPath, updateContext);
             })}
         </Menu.Content>
     );
@@ -79,7 +38,6 @@ function getCopyDisabledState(apiPath) {
     );
 }
 
-// TODO НЕ РАБОТАЕТ НОРМАЛЬНО
 function getDisabledState(apiPath) {
     const { copyBuffer, settings } = useVariablesStore.getState();
     const treeType = apiPath.props.treeType;
@@ -145,4 +103,75 @@ function getMeaningFocusedNode(apiPath) {
     const node = apiPath.focusedNode;
     const res = recursive(node);
     return res?.data?.subType || res?.data?.type;
+}
+
+function renderMenuItem(item, index, apiPath, updateContext) {
+    if (!item) return null;
+
+    if (item.type === "separator") {
+        return <Menu.Separator key={`sep_${index}`} />;
+    }
+
+    let icon = item.icon;
+    let label = item.label;
+    let disabled = false;
+
+    if (item.type === "change-ignore") {
+        if (apiPath.focusedNode?.data?.isIgnored) {
+            label = "Разблокировать";
+            icon = LuCheckCheck;
+        } else {
+            label = "Заблокировать";
+            icon = LuBan;
+        }
+    }
+
+    if (item.type === "paste-node") {
+        disabled = getDisabledState(apiPath);
+    }
+
+    if (item.type === "copy-node") {
+        disabled = getCopyDisabledState(apiPath);
+    }
+
+    if (item.children && Array.isArray(item.children)) {
+        return (
+            <Menu.Root key={`submenu_${index}`}>
+                <Menu.TriggerItem disabled={disabled}>
+                    {icon?.()} {label} <LuChevronRight />
+                </Menu.TriggerItem>
+                <Portal>
+                    <Menu.Positioner>
+                        <Menu.Content>
+                            {item.children.map((item, index) =>
+                                renderMenuItem(
+                                    item,
+                                    index,
+                                    apiPath,
+                                    updateContext
+                                )
+                            )}
+                        </Menu.Content>
+                    </Menu.Positioner>
+                </Portal>
+            </Menu.Root>
+        );
+    }
+
+    return (
+        <Menu.Item
+            key={item.type || `item_${index}`}
+            value={item.type}
+            disabled={disabled}
+            {...item.style}
+            onClick={() => {
+                if (!disabled) {
+                    item.action?.(apiPath);
+                    updateContext({ visible: false });
+                }
+            }}
+        >
+            {icon?.()} {label}
+        </Menu.Item>
+    );
 }

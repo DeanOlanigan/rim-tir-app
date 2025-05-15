@@ -102,15 +102,15 @@ export function ignoreNodeUtil(
             const shouldUpdate = idsSet.has(node.id);
 
             if (shouldUpdate) {
-                const newChildren =
+                /* const newChildren =
                     node.children?.length > 0
                         ? propogateIgnore(node.children, ignore, ignoreParam)
-                        : node.children;
+                        : node.children; */
 
                 return {
                     ...node,
                     [ignoreParam]: ignore,
-                    ...(newChildren && { children: newChildren }),
+                    //...(newChildren && { children: newChildren }),
                 };
             }
 

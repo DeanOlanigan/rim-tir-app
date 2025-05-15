@@ -11,7 +11,6 @@ import { TreeView } from "../Tree/TreeView";
 import { TreeCardTitle } from "./Title";
 import { useRef, memo } from "react";
 import { LuBadgePlus } from "react-icons/lu";
-import { ContextMenu } from "../Tree/ContextMenu/ContextMenu";
 
 export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
     console.log("RENDER VariableCard", treeType);

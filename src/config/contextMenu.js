@@ -42,6 +42,66 @@ const createNode = (label, action, icon, times = 1) => ({
     },
 });
 
+const nestedVariables = {
+    type: "submenu",
+    icon: () => createElement(LuVariable),
+    label: "Создать переменную...",
+    children: [
+        createNode("Создать переменную... (1)", "variable", LuVariable),
+        createNode("Создать переменную... (2)", "variable", LuVariable, 2),
+        createNode("Создать переменную... (3)", "variable", LuVariable, 3),
+        createNode("Создать переменную... (4)", "variable", LuVariable, 4),
+        createNode("Создать переменную... (5)", "variable", LuVariable, 5),
+        createNode("Создать переменную... (10)", "variable", LuVariable, 10),
+        createNode("Создать переменную... (15)", "variable", LuVariable, 15),
+    ],
+};
+
+const nestedDataObjects = {
+    type: "submenu",
+    icon: () => createElement(LuFileDigit),
+    label: "Создать объект данных...",
+    children: [
+        createNode("Создать объект данных... (1)", "dataObject", LuFileDigit),
+        createNode(
+            "Создать объект данных... (2)",
+            "dataObject",
+            LuFileDigit,
+            2
+        ),
+        createNode(
+            "Создать объект данных... (3)",
+            "dataObject",
+            LuFileDigit,
+            3
+        ),
+        createNode(
+            "Создать объект данных... (4)",
+            "dataObject",
+            LuFileDigit,
+            4
+        ),
+        createNode(
+            "Создать объект данных... (5)",
+            "dataObject",
+            LuFileDigit,
+            5
+        ),
+        createNode(
+            "Создать объект данных... (10)",
+            "dataObject",
+            LuFileDigit,
+            10
+        ),
+        createNode(
+            "Создать объект данных... (15)",
+            "dataObject",
+            LuFileDigit,
+            15
+        ),
+    ],
+};
+
 const toggleIgnoreNode = {
     type: "change-ignore",
     action: (treeApi) => {
@@ -138,13 +198,7 @@ export const menuConfigConnections = {
         ...menuConfigNodeDefault,
     ],
     asdu: [
-        createNode("Создать объект данных...", "dataObject", LuFileDigit),
-        createNode(
-            "Создать объект данных... (5)",
-            "dataObject",
-            LuFileDigit,
-            5
-        ),
+        nestedDataObjects,
         createNode("Создать папку...", "folder", LuFolder),
         ...menuConfigNodeDefault,
     ],
@@ -152,31 +206,13 @@ export const menuConfigConnections = {
         createNode("Создать группу функций...", "functionGroup", LuPackage),
         ...menuConfigNodeDefault,
     ],
-    functionGroup: [
-        createNode("Создать объект данных...", "dataObject", LuFileDigit),
-        createNode(
-            "Создать объект данных... (5)",
-            "dataObject",
-            LuFileDigit,
-            5
-        ),
-        ...menuConfigNodeDefault,
-    ],
+    functionGroup: [nestedDataObjects, ...menuConfigNodeDefault],
     gpio: [
         //createNode("Создать объект данных...", "dataObject", LuFileDigit),
         createNode("Создать папку...", "folder", LuFolder),
         ...menuConfigNodeDefault,
     ],
-    folder: [
-        createNode("Создать объект данных...", "dataObject", LuFileDigit),
-        createNode(
-            "Создать объект данных... (5)",
-            "dataObject",
-            LuFileDigit,
-            5
-        ),
-        ...menuConfigNodeDefault,
-    ],
+    folder: [nestedDataObjects, ...menuConfigNodeDefault],
     dataObject: [
         {
             type: "rename-node",
@@ -204,14 +240,14 @@ export const menuConfig = {
     variables: {
         variable: [...menuConfigNodeDefault],
         folder: [
-            createNode("Создать переменную...", "variable", LuVariable),
-            createNode("Создать переменную...(5)", "variable", LuVariable, 5),
+            //createNode("Создать переменную...", "variable", LuVariable),
+            nestedVariables,
             { type: "separator" },
             ...menuConfigNodeDefault,
         ],
         default: [
-            createNode("Создать переменную...", "variable", LuVariable),
-            createNode("Создать переменную...(5)", "variable", LuVariable, 5),
+            //createNode("Создать переменную...", "variable", LuVariable),
+            nestedVariables,
             createNode("Создать папку...", "folder", LuFolder),
             pasteNodeBtn,
         ],
