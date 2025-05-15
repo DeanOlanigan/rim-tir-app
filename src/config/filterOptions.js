@@ -40,10 +40,10 @@ export const modbusFunctionGroupTypes = createListCollection({
         },
         { label: "Запись значения одного флага (0x05)", value: 5 },
         { label: "Запись значения в один регистр хранения (0x06)", value: 6 },
-        { label: "Чтение сигналов состояния (0x07)", value: 7 },
+        /*  { label: "Чтение сигналов состояния (0x07)", value: 7 },
         { label: "Диагностика (0x08)", value: 8 },
         { label: "Чтение счетчика событий (0x0B)", value: 11 },
-        { label: "Чтение журнала событий (0x0C)", value: 12 },
+        { label: "Чтение журнала событий (0x0C)", value: 12 }, */
         {
             label: "Запись значений в несколько регистров флагов (0x15)",
             value: 15,
@@ -52,7 +52,7 @@ export const modbusFunctionGroupTypes = createListCollection({
             label: "Запись значений в несколько регистров хранения (0x16)",
             value: 16,
         },
-        { label: "Чтение информации об устройстве (0x11)", value: 17 },
+        /* { label: "Чтение информации об устройстве (0x11)", value: 17 },
         { label: "Чтение из файла (0x14)", value: 20 },
         { label: "Запись в файл (0x15)", value: 21 },
         {
@@ -60,7 +60,7 @@ export const modbusFunctionGroupTypes = createListCollection({
             value: 22,
         },
         { label: "Чтение/запись нескольких регистров (0x17)", value: 23 },
-        { label: "Чтение данных из очереди (0x18)", value: 24 },
+        { label: "Чтение данных из очереди (0x18)", value: 24 }, */
         //{ label: "read device identification", value: 43 },
     ],
 });

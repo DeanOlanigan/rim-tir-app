@@ -1,4 +1,3 @@
-//TODO добавить children и сделать параметры в settings в виде аргументов
 import { create } from "xmlbuilder";
 import { useVariablesStore } from "../store/variables-store";
 
@@ -8,7 +7,9 @@ function toTagName(key) {
 
 function buildNode(xmlParent, node, settingsMap) {
     const tag = toTagName(node.type);
-    const attrs = { id: node.id };
+
+    const attrs = {};
+    if (node.id) attrs.id = node.id;
     if (node.name) attrs.name = node.name;
     if (node.subType) attrs.subType = node.subType;
     if (node.variableId) attrs.variableId = node.variableId;
@@ -16,24 +17,55 @@ function buildNode(xmlParent, node, settingsMap) {
     const el = xmlParent.ele(tag, attrs);
 
     if (node.setting) {
-        const setEl = el.ele("Settings");
-        Object.entries(node.setting).forEach(([key, value]) => {
-            setEl.ele(toTagName(key), {}, value == null ? "" : value);
-        });
+        const settingsAttrs = {};
+        let description = "";
+        let code = "";
+        for (const [key, value] of Object.entries(node.setting)) {
+            if (key === "description") {
+                description = value ?? "";
+                continue;
+            }
+            if (key === "luaExpression") {
+                code = value ?? "";
+                continue;
+            }
+            settingsAttrs[toTagName(key)] = value ?? "";
+        }
+        if (description) el.ele("Description").txt(description).up();
+        if (code) el.ele("Code").dat(code).up();
+        el.ele("Settings", settingsAttrs).up();
     }
 
-    if (Array.isArray(node.children)) {
+    if (Array.isArray(node.children) && node.children?.length > 0) {
+        const childrenEl = el.ele("Children");
         node.children.forEach((childId) => {
             const child = settingsMap[childId];
-            if (child) buildNode(el, child, settingsMap);
+            if (child) buildNode(childrenEl, child, settingsMap);
         });
+        childrenEl.up();
     }
 
     el.up();
 }
 
+function appendSection(parentEl, sectionName, nodes, settingsMap) {
+    const sectionEl = parentEl.ele(sectionName);
+    nodes.forEach((node) => {
+        const full = settingsMap[node.id];
+        if (full) buildNode(sectionEl, full, settingsMap);
+    });
+    sectionEl.up();
+}
+
 export function convertStateToXml(state) {
-    const { configInfo, send, receive, variables, settings, version } = state;
+    const {
+        configInfo = {},
+        send = [],
+        receive = [],
+        variables = [],
+        settings = {},
+        version = 0,
+    } = state;
 
     const doc = create("State", { version: "1.0", encoding: "UTF-8" }).att(
         "version",
@@ -47,26 +79,11 @@ export function convertStateToXml(state) {
         .up();
 
     const comm = doc.ele("Communication");
-    const recv = comm.ele("Receive");
-    receive.forEach((node) => {
-        const full = settings[node.id];
-        if (full) buildNode(recv, full, settings);
-    });
-    recv.up();
-    const snd = comm.ele("Send");
-    send.forEach((node) => {
-        const full = settings[node.id];
-        if (full) buildNode(snd, full, settings);
-    });
-    snd.up();
+    appendSection(comm, "Receive", receive, settings);
+    appendSection(comm, "Send", send, settings);
     comm.up();
 
-    const vars = doc.ele("Variables");
-    variables.forEach((node) => {
-        const full = settings[node.id];
-        if (full) buildNode(vars, full, settings);
-    });
-    vars.up();
+    appendSection(doc, "Variables", variables, settings);
 
     return doc.end({ pretty: true });
 }
