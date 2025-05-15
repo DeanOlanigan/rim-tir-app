@@ -194,7 +194,7 @@ export const useVariablesStore = create()(
                         state[treeType],
                         ids,
                         ignore,
-                        true,
+                        false,
                         "isIgnored"
                     ),
                 }));

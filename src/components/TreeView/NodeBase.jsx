@@ -52,7 +52,7 @@ export const NodeBase = ({
                             strokeWidth={2}
                             size={"lg"}
                             as={LuPiggyBank}
-                            title={"Деактивирован"}
+                            title={"Заблокирован"}
                         />
                     )}
                     <div>{Icon && <Icon />}</div>

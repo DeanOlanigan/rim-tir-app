@@ -6,13 +6,15 @@ import {
     LuFilePlus,
     LuBan,
     LuPlus,
+    LuPiggyBank,
+    LuHam,
 } from "react-icons/lu";
 import { CONSTANT_VALUES } from "../../../config/constants";
 import { locale } from "../../../config/locale";
 import { useLocaleStore } from "../../../store/locale-store";
 import { useVariablesStore } from "../../../store/variables-store";
 import { LuAnchor, LuUnplug, LuCable } from "react-icons/lu";
-import { useId } from "react";
+import { useId, useState } from "react";
 
 export const TreeCardTitle = ({ type, variableTreeRef }) => {
     const lang = useLocaleStore((state) => state.locale);
@@ -25,7 +27,6 @@ export const TreeCardTitle = ({ type, variableTreeRef }) => {
 };
 
 const TitleButtons = ({ type, variableTreeRef }) => {
-    const toggleIgnoreNode = useVariablesStore((state) => state.ignoreNode);
     return (
         <HStack
             gap={"1"}
@@ -40,23 +41,7 @@ const TitleButtons = ({ type, variableTreeRef }) => {
             {type === CONSTANT_VALUES.TREE_TYPES.variables && (
                 <VariablesTitleButtons variableTreeRef={variableTreeRef} />
             )}
-            <Tooltip content={"Деактивировать узлы"}>
-                <IconButton
-                    size={"2xs"}
-                    variant={"subtle"}
-                    onClick={() => {
-                        const ids = variableTreeRef?.current.root.children.map(
-                            (child) => child.id
-                        );
-                        /* const ignore =
-                            !variableTreeRef?.current.root.children[0].data
-                                .isIgnored; */
-                        toggleIgnoreNode(variableTreeRef?.current, ids, true);
-                    }}
-                >
-                    <LuBan />
-                </IconButton>
-            </Tooltip>
+            <SetIgnoreBtn variableTreeRef={variableTreeRef} />
             <Tooltip content={"Свернуть узлы"}>
                 <IconButton
                     size={"2xs"}
@@ -183,5 +168,44 @@ const ConnectionsTitleButtons = ({ variableTreeRef }) => {
                 </Menu.Positioner>
             </Portal>
         </Menu.Root>
+    );
+};
+
+const SetIgnoreBtn = ({ variableTreeRef }) => {
+    const toggleIgnoreNode = useVariablesStore((state) => state.ignoreNode);
+    const [ignoreMode, setIgnoreMode] = useState(false);
+    return (
+        <Tooltip
+            content={
+                ignoreMode
+                    ? "Разблокировать корневые узлы"
+                    : "Заблокировать корневые узлы"
+            }
+        >
+            <IconButton
+                size={"2xs"}
+                variant={"subtle"}
+                onClick={() => {
+                    const ids = variableTreeRef?.current.root.children.map(
+                        (child) => child.id
+                    );
+                    /* const ignore =
+                        !variableTreeRef?.current.root.children[0].data
+                            .isIgnored; */
+                    toggleIgnoreNode(
+                        variableTreeRef?.current,
+                        ids,
+                        !ignoreMode
+                    );
+                    setIgnoreMode(!ignoreMode);
+                }}
+            >
+                {ignoreMode ? (
+                    <Icon as={LuHam} color={"red.400"} fill={"red.800"} />
+                ) : (
+                    <Icon as={LuPiggyBank} color={"red.400"} />
+                )}
+            </IconButton>
+        </Tooltip>
     );
 };

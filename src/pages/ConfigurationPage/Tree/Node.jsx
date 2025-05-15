@@ -15,17 +15,14 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
             prevProps.current = node;
         }
     }, [node]); */
+    const isIgnored = hasIgnoreAccessor(node);
     const updateContext = useContextMenuStore((state) => state.updateContext);
-
     return (
         <div
             ref={dragHandle}
             style={style}
             className={clsx(styles.node, node.state, {
-                [styles.highlight]:
-                    tree.dragDestinationParent?.isAncestorOf(node) &&
-                    tree.dragDestinationParent?.id !==
-                        tree.dragNode?.parent?.id,
+                [styles.highlight]: isIgnored,
             })}
             onContextMenu={(e) => {
                 e.preventDefault();
@@ -70,3 +67,9 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
         </div>
     );
 });
+
+function hasIgnoreAccessor(node) {
+    if (node.data.isIgnored) return true;
+    if (node.parent) return hasIgnoreAccessor(node.parent);
+    return false;
+}
