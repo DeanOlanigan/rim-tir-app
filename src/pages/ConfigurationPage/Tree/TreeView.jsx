@@ -6,8 +6,11 @@ import { DropCursor } from "../../../components/TreeView/DropCursor";
 import { Node } from "./Node";
 import { Box } from "@chakra-ui/react";
 import { useTreeViewHandlers } from "../../../hooks/useTreeViewHandlers";
-import { CONSTANT_VALUES } from "../../../config/constants";
+import { combineRefs } from "../../../utils/utils";
 import { useDragDropManager } from "react-dnd";
+import { useHotkeys } from "react-hotkeys-hook";
+import { useVariablesStore } from "../../../store/variables-store";
+import { getIdsSetWithoutNested } from "../../../utils/treeUtils";
 
 export const TreeView = memo(
     forwardRef(function TreeView({ data, treeType }, ref) {
@@ -23,8 +26,54 @@ export const TreeView = memo(
             handleDisableDrop,
         } = useTreeViewHandlers(treeType, ref);
 
+        // TODO Улучшать хоткеи, вынести в отдельный хук, ограничить вставку
+        const cutRef = useHotkeys("ctrl+x", () => {
+            console.log("cut from hotkey", treeType);
+            const baseIds = ref.current.root.children.map((child) => child.id);
+            const cutNodeFunc = useVariablesStore.getState().cutNode;
+            const copyNode = useVariablesStore.getState().copyNode;
+            const ids =
+                ref.current.selectedIds.size > 1
+                    ? [...ref.current.selectedIds]
+                    : ref.current.focusedNode
+                    ? [ref.current.focusedNode.data.id]
+                    : [];
+            cutNodeFunc(ref.current, baseIds, false);
+            copyNode(ref.current, ids, true);
+            cutNodeFunc(ref.current, ids, true);
+        });
+
+        const copyRef = useHotkeys("ctrl+c", () => {
+            console.log("copy from hotkey", treeType);
+            const baseIds = ref.current.root.children.map((child) => child.id);
+            const cutNodeFunc = useVariablesStore.getState().cutNode;
+            const copyNode = useVariablesStore.getState().copyNode;
+            const ids =
+                ref.current.selectedIds.size > 1
+                    ? [...ref.current.selectedIds]
+                    : ref.current.focusedNode
+                    ? [ref.current.focusedNode.data.id]
+                    : [];
+            cutNodeFunc(ref.current, baseIds, false);
+            copyNode(ref.current, ids, true);
+            cutNodeFunc(ref.current, ids, true);
+        });
+
+        const pasteRef = useHotkeys("ctrl+v", () => {
+            console.log("paste from hotkey", treeType);
+            const pasteNode = useVariablesStore.getState().pasteNode;
+            const removeNode = useVariablesStore.getState().removeNode;
+            const { cut, normalized } = useVariablesStore.getState().copyBuffer;
+            const ids = Object.keys(normalized);
+            const [...clearIds] = getIdsSetWithoutNested(ref.current, ids);
+            console.log("isCut", cut, clearIds);
+            cut && removeNode(treeType, clearIds);
+            pasteNode(ref.current);
+        });
+
         return (
             <Box
+                ref={combineRefs(cutRef, copyRef, pasteRef)}
                 w={"100%"}
                 h={"100%"}
                 position={"relative"}

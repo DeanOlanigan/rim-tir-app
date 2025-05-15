@@ -282,3 +282,11 @@ export function resolveDynProps(data, rules = [], settings) {
 
     return {};
 }
+
+export function combineRefs(...refs) {
+    return (node) => {
+        for (const ref of refs) {
+            ref.current = node;
+        }
+    };
+}
