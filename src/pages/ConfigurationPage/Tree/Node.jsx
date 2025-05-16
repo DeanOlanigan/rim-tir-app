@@ -15,15 +15,12 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
             prevProps.current = node;
         }
     }, [node]); */
-    const isIgnored = hasIgnoreAccessor(node);
     const updateContext = useContextMenuStore((state) => state.updateContext);
     return (
         <div
             ref={dragHandle}
             style={style}
-            className={clsx(styles.node, node.state, {
-                [styles.highlight]: isIgnored,
-            })}
+            className={clsx(styles.node, node.state)}
             onContextMenu={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -43,33 +40,9 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
                 });
             }}
         >
-            <NodeBase
-                isLeaf={node.isLeaf}
-                toggle={() => node.toggle()}
-                isOpen={node.isOpen}
-                paddingLeft={style.paddingLeft}
-                id={node.data.id}
-                type={node.data.type}
-                subType={node.data.subType}
-                isIgnored={node.data.isIgnored}
-                isCutted={node.data.isCutted}
-            >
-                <NodeContent
-                    id={node.data.id}
-                    type={node.data.type}
-                    subType={node.data.subType}
-                    name={node.data.name}
-                    isEditing={node.isEditing}
-                    submit={(e) => node.submit(e)}
-                    reset={() => node.reset()}
-                />
+            <NodeBase node={node} paddingLeft={style.paddingLeft}>
+                <NodeContent node={node} />
             </NodeBase>
         </div>
     );
 });
-
-function hasIgnoreAccessor(node) {
-    if (node.data.isIgnored) return true;
-    if (node.parent) return hasIgnoreAccessor(node.parent);
-    return false;
-}

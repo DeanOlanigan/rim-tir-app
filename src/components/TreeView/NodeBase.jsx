@@ -5,26 +5,25 @@ import { Badge } from "./Badge";
 import { LuBan, LuPiggyBank } from "react-icons/lu";
 import { Flex, Icon as ChakraIcon } from "@chakra-ui/react";
 
-export const NodeBase = ({
-    isLeaf,
-    toggle,
-    isOpen,
-    paddingLeft,
-    id,
-    type,
-    subType,
-    isIgnored,
-    isCutted,
-    children,
-}) => {
+export const NodeBase = ({ paddingLeft, node, children }) => {
+    const { isLeaf, isOpen } = node;
+    const { id, type, subType, isIgnored, isCutted } = node.data;
+
     const Icon = icons[type];
-    const ignoredStyle = {
-        color: "fg.subtle",
-        borderRadius: "md",
-    };
+
+    const accessorisIgnored = hasIgnoreAccessor(node);
 
     return (
-        <>
+        <Flex
+            w={"100%"}
+            h={"90%"}
+            borderRadius={"md"}
+            px={"2"}
+            {...(accessorisIgnored && {
+                bg: "bg.emphasized",
+                color: "fg.subtle",
+            })}
+        >
             <IndentLines paddingLeft={paddingLeft} />
             <div
                 style={{
@@ -35,7 +34,10 @@ export const NodeBase = ({
                 }}
             >
                 {isLeaf ? null : (
-                    <NodeToggleBtn toggle={() => toggle()} isOpen={isOpen} />
+                    <NodeToggleBtn
+                        toggle={() => node.toggle()}
+                        isOpen={isOpen}
+                    />
                 )}
                 <Flex
                     alignItems={"center"}
@@ -43,7 +45,7 @@ export const NodeBase = ({
                     pl={"1"}
                     w={"100%"}
                     textWrap={"wrap"}
-                    {...((isIgnored || isCutted) && ignoredStyle)}
+                    {...(isCutted && { color: "fg.subtle" })}
                     colorPalette={"gray"}
                 >
                     {isIgnored && (
@@ -57,13 +59,19 @@ export const NodeBase = ({
                     )}
                     <div>{Icon && <Icon />}</div>
                     <Badge
-                        isIgnored={isIgnored || isCutted}
+                        isIgnored={isIgnored || isCutted || accessorisIgnored}
                         type={subType || type || null}
                         id={id}
                     />
                     {children}
                 </Flex>
             </div>
-        </>
+        </Flex>
     );
 };
+
+function hasIgnoreAccessor(node) {
+    if (node.data.isIgnored) return true;
+    if (node.parent) return hasIgnoreAccessor(node.parent);
+    return false;
+}

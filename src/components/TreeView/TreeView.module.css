@@ -72,8 +72,3 @@
     border-right: 1px solid var(--chakra-colors-fg-subtle);
     margin-right: calc(var(--indent-size) - 9px - 2px);
 }
-
-.highlight {
-    background-color: var(--chakra-colors-bg-emphasized);
-    color: var(--chakra-colors-fg-subtle);
-}

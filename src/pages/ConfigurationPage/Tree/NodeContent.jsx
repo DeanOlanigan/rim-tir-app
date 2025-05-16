@@ -5,15 +5,10 @@ import { memo } from "react";
 import { CONSTANT_VALUES } from "../../../config/constants";
 import { DroppableInput } from "../InputComponents";
 
-export const NodeContent = memo(function NodeContent({
-    id,
-    type,
-    subType,
-    name,
-    isEditing,
-    submit,
-    reset,
-}) {
+export const NodeContent = memo(function NodeContent({ node }) {
+    const { isEditing } = node;
+    const { id, type, subType, name } = node.data;
+
     const variableName = useVariablesStore(
         (state) => state.settings[name]?.name
     );
@@ -27,12 +22,16 @@ export const NodeContent = memo(function NodeContent({
             <DroppableInput
                 targetKey={"variable"}
                 id={id}
-                submit={submit}
-                reset={reset}
+                submit={(value) => node.submit(value)}
+                reset={() => node.reset()}
                 forNode
             />
         ) : (
-            <NodeEditInput name={name} submit={submit} reset={reset} />
+            <NodeEditInput
+                name={name}
+                submit={(value) => node.submit(value)}
+                reset={() => node.reset()}
+            />
         )
     ) : (
         <Text truncate>
