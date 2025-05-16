@@ -69,9 +69,11 @@ const EmptyCard = () => {
     return (
         <AbsoluteCenter>
             <VStack w={"100%"}>
-                <Icon fontSize={"164px"} color={"bg.muted"}>
-                    <LuCircleAlert />
-                </Icon>
+                <Icon
+                    fontSize={"164px"}
+                    color={"bg.muted"}
+                    as={LuCircleAlert}
+                />
                 <HStack>
                     <Text color={"fg.subtle"} fontWeight={"medium"}>
                         Нет данных

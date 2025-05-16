@@ -20,7 +20,7 @@ export const NodeBase = ({ paddingLeft, node, children }) => {
             borderRadius={"md"}
             px={"2"}
             {...(accessorisIgnored && {
-                bg: "bg.emphasized",
+                bg: "bg.muted",
                 color: "fg.subtle",
             })}
         >

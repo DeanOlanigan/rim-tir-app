@@ -20,7 +20,7 @@
 
 /* ховер на узле */
 [role="treeitem"]:has(.node):hover {
-    background-color: var(--chakra-colors-bg-muted);
+    background-color: var(--chakra-colors-bg-info);
 }
 
 /* Выбранныей узел + ховер] */
