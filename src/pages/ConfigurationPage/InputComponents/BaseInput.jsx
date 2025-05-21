@@ -1,4 +1,5 @@
 import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
+import { validateVisability } from "../../../utils/validator";
 import {
     SelectInput,
     NumberInput,
@@ -10,14 +11,28 @@ import {
     IpInput,
     HexInput,
 } from "./index";
+import {
+    selectParamsErrors,
+    useValidationStore,
+} from "../../../store/validation-store";
 import { memo } from "react";
+import { useShallow } from "zustand/shallow";
 
 export const BaseInput = memo(function BaseInput(props) {
     const { value, id, inputParam, showLabel = false, ...rest } = props;
     const definition = PARAM_DEFINITIONS[inputParam];
-    if (!definition) {
-        return null;
-    }
+    const errors = useValidationStore(
+        useShallow((state) => selectParamsErrors(state, id, inputParam))
+    );
+    if (!definition) return null;
+    if (definition.hidden) return null;
+
+    const isVisible = validateVisability(definition.dependencies, id);
+    if (!isVisible) return null;
+
+    //const errors = validateParameter(definition, id, value, inputParam);
+    //console.log(errors);
+
     const { type } = definition;
 
     switch (type) {
@@ -47,6 +62,7 @@ export const BaseInput = memo(function BaseInput(props) {
                     id={id}
                     value={value}
                     showLabel={showLabel}
+                    errorText={errors}
                     {...rest}
                 />
             );
@@ -83,6 +99,7 @@ export const BaseInput = memo(function BaseInput(props) {
                     targetKey={inputParam}
                     id={id}
                     value={value}
+                    errorText={errors}
                     showLabel={showLabel}
                 />
             );

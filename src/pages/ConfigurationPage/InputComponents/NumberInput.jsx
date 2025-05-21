@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Field } from "../../../components/ui/field";
+import { Field } from "@chakra-ui/react";
 import {
     NumberInputField,
     NumberInputRoot,
@@ -8,14 +8,22 @@ import { useVariablesStore } from "../../../store/variables-store";
 import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 
 export const NumberInput = memo(function NumberInput(props) {
-    const { targetKey, id, value, showLabel = false, ...rest } = props;
+    const {
+        targetKey,
+        id,
+        value,
+        showLabel = false,
+        errorText,
+        ...rest
+    } = props;
     const label = PARAM_DEFINITIONS[targetKey].label;
 
     //console.log("Render NumberInput");
     const setSettings = useVariablesStore((state) => state.setSettings);
 
     return (
-        <Field label={showLabel ? label : ""} maxW={"250px"}>
+        <Field.Root maxW={"250px"} invalid={errorText && errorText.length > 0}>
+            {showLabel && <Field.Label>{label || ""}</Field.Label>}
             <NumberInputRoot
                 value={value}
                 size={"xs"}
@@ -28,6 +36,11 @@ export const NumberInput = memo(function NumberInput(props) {
             >
                 <NumberInputField />
             </NumberInputRoot>
-        </Field>
+            {errorText &&
+                errorText.length > 0 &&
+                errorText.map((error, index) => (
+                    <Field.ErrorText key={index}>{error}</Field.ErrorText>
+                ))}
+        </Field.Root>
     );
 });

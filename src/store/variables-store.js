@@ -23,279 +23,320 @@ import {
     generateNewIds,
     getParentId,
 } from "../utils/treeUtils";
-import { shallow } from "zustand/shallow";
-import { persist } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
+import { PARAM_DEFINITIONS } from "../config/paramDefinitions";
+import { validateAll, validateParameter } from "../utils/validator";
+import { useValidationStore } from "./validation-store";
 
 const { treeData, nodeData } = separateDataNEW(config);
-const { trees, configurationInfo } = separateTree(treeData);
+const { trees } = separateTree(treeData);
 console.log(nodeData, trees);
 
 export const useVariablesStore = create()(
-    persist(
-        (set, get) => ({
-            // Базовая информация о конфигурации
-            configInfo: {},
-            // Деревья для react-arborist
-            send: [],
-            receive: [],
-            variables: [],
-            // Параметры всех узлов деревьев
-            settings: {},
-            // Id выбранных узлов
-            selectedIds: {
-                connections: new Set(),
-                variables: new Set(),
-            },
-            copyBuffer: {
-                type: "",
-                tree: [],
-                normalized: {},
-                cut: false,
-            },
+    devtools(
+        persist(
+            (set, get) => ({
+                // Базовая информация о конфигурации
+                configInfo: {},
+                // Деревья для react-arborist
+                send: [],
+                receive: [],
+                variables: [],
+                // Параметры всех узлов деревьев
+                settings: {},
+                // Id выбранных узлов
+                selectedIds: {
+                    connections: new Set(),
+                    variables: new Set(),
+                },
+                copyBuffer: {
+                    type: "",
+                    tree: [],
+                    normalized: {},
+                    cut: false,
+                },
 
-            resetState: () =>
-                set({
-                    configInfo: {},
-                    send: [],
-                    receive: [],
-                    variables: [],
-                    settings: {},
-                    selectedIds: {
-                        connections: new Set(),
-                        variables: new Set(),
-                    },
-                    copyBuffer: {
-                        type: "",
-                        tree: [],
-                        normalized: {},
-                        cut: false,
-                    },
-                }),
+                resetState: () =>
+                    set({
+                        configInfo: {},
+                        send: [],
+                        receive: [],
+                        variables: [],
+                        settings: {},
+                        selectedIds: {
+                            connections: new Set(),
+                            variables: new Set(),
+                        },
+                        copyBuffer: {
+                            type: "",
+                            tree: [],
+                            normalized: {},
+                            cut: false,
+                        },
+                    }),
 
-            setConfigInfo: (data) => set({ configInfo: data }),
+                setConfigInfo: (data) => set({ configInfo: data }),
 
-            updateSelectedIds: (targetKey, ids) => {
-                /* const { selectedIds } = get();
+                updateSelectedIds: (targetKey, ids) => {
+                    /* const { selectedIds } = get();
                 const currentIds = selectedIds[targetKey]; */
 
-                set((state) => ({
-                    selectedIds: {
-                        ...state.selectedIds,
-                        [targetKey]: ids,
-                    },
-                }));
-                /* if (!shallow(currentIds, ids)) {
+                    set((state) => ({
+                        selectedIds: {
+                            ...state.selectedIds,
+                            [targetKey]: ids,
+                        },
+                    }));
+                    /* if (!shallow(currentIds, ids)) {
                 } */
-            },
+                },
 
-            createSetting: (settings) =>
-                set((state) => ({
-                    settings: createSettingUtil(state.settings, settings),
-                })),
+                createSetting: (settings) => {
+                    set((state) => ({
+                        settings: createSettingUtil(state.settings, settings),
+                    }));
+                    validateAll();
+                },
 
-            setSettings: (nodeId, updateData) =>
-                set((state) => ({
-                    settings: editSettingUtil(
-                        state.settings,
-                        nodeId,
-                        updateData
-                    ),
-                })),
-
-            setSettingsNode: (nodeId, updateData) =>
-                set((state) => ({
-                    settings: editSettingNodeUtil(
-                        state.settings,
-                        nodeId,
-                        updateData
-                    ),
-                })),
-
-            bindVariable: (nodeId, variableId) => {
-                set((state) => {
-                    const { receive, send } = bindVariableToNodeUtil(
-                        state.receive,
-                        state.send,
-                        nodeId,
-                        variableId
-                    );
-                    return {
-                        settings: bindVariableUtil(
+                setSettings: (nodeId, updateData) =>
+                    set((state) => {
+                        const newSettings = editSettingUtil(
                             state.settings,
+                            nodeId,
+                            updateData
+                        );
+
+                        const param = Object.keys(updateData)[0];
+                        const def = PARAM_DEFINITIONS[param];
+                        const errors = validateParameter(
+                            def,
+                            nodeId,
+                            Object.values(updateData)[0],
+                            param,
+                            newSettings
+                        );
+                        useValidationStore.getState().setBulkErrors(errors);
+
+                        return { settings: newSettings };
+                    }),
+
+                setSettingsNode: (nodeId, updateData) =>
+                    set((state) => ({
+                        settings: editSettingNodeUtil(
+                            state.settings,
+                            nodeId,
+                            updateData
+                        ),
+                    })),
+
+                bindVariable: (nodeId, variableId) => {
+                    set((state) => {
+                        const { receive, send } = bindVariableToNodeUtil(
+                            state.receive,
+                            state.send,
                             nodeId,
                             variableId
-                        ),
-                        receive,
-                        send,
-                    };
-                });
-            },
-
-            unbindVariable: (nodeId) =>
-                set((state) => {
-                    const { receive, send } = bindVariableToNodeUtil(
-                        state.receive,
-                        state.send,
-                        nodeId,
-                        null
-                    );
-                    return {
-                        settings: unbindVariableUtil(state.settings, nodeId),
-                        receive,
-                        send,
-                    };
-                }),
-
-            addNode: (targetKey, parentId, newNodes) => {
-                if (parentId === null) {
-                    set((state) => {
-                        const newTargetNode = [...state[targetKey]];
-                        newTargetNode.splice(0, 0, ...newNodes);
-                        return { [targetKey]: newTargetNode };
+                        );
+                        return {
+                            settings: bindVariableUtil(
+                                state.settings,
+                                nodeId,
+                                variableId
+                            ),
+                            receive,
+                            send,
+                        };
                     });
-                } else {
-                    set((state) => ({
-                        [targetKey]: addNodeUtil(
+                },
+
+                unbindVariable: (nodeId) =>
+                    set((state) => {
+                        const { receive, send } = bindVariableToNodeUtil(
+                            state.receive,
+                            state.send,
+                            nodeId,
+                            null
+                        );
+                        return {
+                            settings: unbindVariableUtil(
+                                state.settings,
+                                nodeId
+                            ),
+                            receive,
+                            send,
+                        };
+                    }),
+
+                addNode: (targetKey, parentId, newNodes) => {
+                    if (parentId === null) {
+                        set((state) => {
+                            const newTargetNode = [...state[targetKey]];
+                            newTargetNode.splice(0, 0, ...newNodes);
+                            return { [targetKey]: newTargetNode };
+                        });
+                    } else {
+                        set((state) => ({
+                            [targetKey]: addNodeUtil(
+                                state[targetKey],
+                                parentId,
+                                newNodes
+                            ),
+                        }));
+                    }
+                },
+
+                renameNode: (targetKey, nodeId, name) => {
+                    set((state) => {
+                        const uniqueName = getUniqueName(
                             state[targetKey],
-                            parentId,
-                            newNodes
+                            name,
+                            nodeId
+                        );
+                        return {
+                            [targetKey]: renameNodeUtil(
+                                state[targetKey],
+                                nodeId,
+                                uniqueName
+                            ),
+                            settings: renameNodeSettingUtil(
+                                state.settings,
+                                nodeId,
+                                uniqueName
+                            ),
+                        };
+                    });
+                },
+
+                ignoreNode: (treeApi, ids, ignore) => {
+                    const treeType = treeApi.props.treeType;
+                    if (!ids.length) return;
+                    set((state) => ({
+                        [treeType]: ignoreNodeUtil(
+                            state[treeType],
+                            ids,
+                            ignore,
+                            false,
+                            "isIgnored"
                         ),
                     }));
-                }
-            },
+                },
 
-            renameNode: (targetKey, nodeId, name) => {
-                set((state) => {
-                    const uniqueName = getUniqueName(
-                        state[targetKey],
-                        name,
-                        nodeId
+                copyNode: (treeApi, ids, isCut = false) => {
+                    const treeType = treeApi.props.treeType;
+                    const settings = get().settings;
+                    const idsSetNormalized = getIdsSetNormalized(treeApi, ids);
+                    const idsSetWithoutNested = getIdsSetWithoutNested(
+                        treeApi,
+                        ids
                     );
-                    return {
-                        [targetKey]: renameNodeUtil(
-                            state[targetKey],
-                            nodeId,
-                            uniqueName
+                    const copyTree = copyTreeUtil(
+                        treeApi,
+                        idsSetWithoutNested,
+                        isCut
+                    );
+                    const copySettings = copySettingsUtil(
+                        settings,
+                        idsSetNormalized,
+                        isCut
+                    );
+                    set(() => ({
+                        copyBuffer: {
+                            type: treeType,
+                            tree: copyTree,
+                            normalized: copySettings,
+                            cut: isCut,
+                        },
+                    }));
+                },
+
+                cutNode: (treeApi, ids, cut) => {
+                    const treeType = treeApi.props.treeType;
+                    if (!ids.length) return;
+                    set((state) => ({
+                        [treeType]: ignoreNodeUtil(
+                            state[treeType],
+                            ids,
+                            cut,
+                            false,
+                            "isCutted"
                         ),
-                        settings: renameNodeSettingUtil(
+                    }));
+                    console.log("cut");
+                },
+
+                pasteNode: (treeApi) => {
+                    const stateSettings = get().settings;
+                    const parentId = getParentId(treeApi);
+                    const { type, tree, normalized } = get().copyBuffer;
+                    const { tree: newTree, settings: newSettings } =
+                        generateNewIds(
+                            tree,
+                            normalized,
+                            parentId,
+                            stateSettings
+                        );
+                    const settings = Object.values(newSettings);
+                    get().addNode(type, parentId, newTree);
+                    get().createSetting(settings);
+                    set(() => ({
+                        copyBuffer: {
+                            type: "",
+                            tree: [],
+                            normalized: {},
+                            cut: false,
+                        },
+                    }));
+                    // TODO Реализовать более точечную валидацию
+                    validateAll();
+                },
+
+                removeNode: (targetKey, nodeIds) => {
+                    set((state) => {
+                        useValidationStore.getState().clearErrors(nodeIds);
+                        const newSettings = removeSettingUtil(
                             state.settings,
-                            nodeId,
-                            uniqueName
+                            nodeIds
+                        );
+                        // TODO Реализовать более точечную валидацию
+                        return {
+                            [targetKey]: removeNodeUtil(
+                                state[targetKey],
+                                nodeIds
+                            ),
+                            settings: newSettings,
+                        };
+                    });
+                    validateAll();
+                },
+
+                moveNode: (targetKey, dragIds, parentId, index) => {
+                    set((state) => ({
+                        [targetKey]: moveNodesUtil(
+                            state[targetKey],
+                            dragIds,
+                            parentId,
+                            index
                         ),
-                    };
-                });
-            },
-
-            ignoreNode: (treeApi, ids, ignore) => {
-                const treeType = treeApi.props.treeType;
-                if (!ids.length) return;
-                set((state) => ({
-                    [treeType]: ignoreNodeUtil(
-                        state[treeType],
-                        ids,
-                        ignore,
-                        false,
-                        "isIgnored"
+                        settings: moveSettingUtil(
+                            state.settings,
+                            dragIds,
+                            parentId,
+                            index
+                        ),
+                    }));
+                    // TODO Реализовать более точечную валидацию
+                    validateAll();
+                },
+            }),
+            {
+                name: "configuration-storage",
+                partialize: (state) =>
+                    Object.fromEntries(
+                        Object.entries(state).filter(
+                            ([key]) => !["selectedIds"].includes(key)
+                        )
                     ),
-                }));
-            },
-
-            copyNode: (treeApi, ids, isCut = false) => {
-                const treeType = treeApi.props.treeType;
-                const settings = get().settings;
-                const idsSetNormalized = getIdsSetNormalized(treeApi, ids);
-                const idsSetWithoutNested = getIdsSetWithoutNested(
-                    treeApi,
-                    ids
-                );
-                const copyTree = copyTreeUtil(
-                    treeApi,
-                    idsSetWithoutNested,
-                    isCut
-                );
-                const copySettings = copySettingsUtil(
-                    settings,
-                    idsSetNormalized,
-                    isCut
-                );
-                set(() => ({
-                    copyBuffer: {
-                        type: treeType,
-                        tree: copyTree,
-                        normalized: copySettings,
-                        cut: isCut,
-                    },
-                }));
-            },
-
-            cutNode: (treeApi, ids, cut) => {
-                const treeType = treeApi.props.treeType;
-                if (!ids.length) return;
-                set((state) => ({
-                    [treeType]: ignoreNodeUtil(
-                        state[treeType],
-                        ids,
-                        cut,
-                        false,
-                        "isCutted"
-                    ),
-                }));
-                console.log("cut");
-            },
-
-            pasteNode: (treeApi) => {
-                const stateSettings = get().settings;
-                const parentId = getParentId(treeApi);
-                const { type, tree, normalized } = get().copyBuffer;
-                const { tree: newTree, settings: newSettings } = generateNewIds(
-                    tree,
-                    normalized,
-                    parentId,
-                    stateSettings
-                );
-                const settings = Object.values(newSettings);
-                get().addNode(type, parentId, newTree);
-                get().createSetting(settings);
-                set(() => ({
-                    copyBuffer: {
-                        type: "",
-                        tree: [],
-                        normalized: {},
-                        cut: false,
-                    },
-                }));
-            },
-
-            removeNode: (targetKey, nodeIds) =>
-                set((state) => ({
-                    [targetKey]: removeNodeUtil(state[targetKey], nodeIds),
-                    settings: removeSettingUtil(state.settings, nodeIds),
-                })),
-
-            moveNode: (targetKey, dragIds, parentId, index) =>
-                set((state) => ({
-                    [targetKey]: moveNodesUtil(
-                        state[targetKey],
-                        dragIds,
-                        parentId,
-                        index
-                    ),
-                    settings: moveSettingUtil(
-                        state.settings,
-                        dragIds,
-                        parentId,
-                        index
-                    ),
-                })),
-        }),
-        {
-            name: "configuration-storage",
-            partialize: (state) =>
-                Object.fromEntries(
-                    Object.entries(state).filter(
-                        ([key]) => !["selectedIds"].includes(key)
-                    )
-                ),
-        }
+            }
+        )
     )
 );

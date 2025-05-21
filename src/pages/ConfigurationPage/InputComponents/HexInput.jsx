@@ -1,12 +1,12 @@
 import { memo } from "react";
 import { useVariablesStore } from "../../../store/variables-store";
 import { useMaskito } from "@maskito/react";
-import { Field } from "../../../components/ui/field";
-import { Input } from "@chakra-ui/react";
+import { Input, Field } from "@chakra-ui/react";
 import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 
 export const HexInput = memo(function HexInput(props) {
-    const { targetKey, id, value, showLabel = false, label } = props;
+    console.log("Render HexInput");
+    const { targetKey, id, value, showLabel = false, label, errorText } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
 
     const hexMask = {
@@ -25,11 +25,12 @@ export const HexInput = memo(function HexInput(props) {
     const inputRef = useMaskito({ options: hexMask });
 
     return (
-        <Field
-            label={
-                showLabel ? label || PARAM_DEFINITIONS[targetKey]?.label : ""
-            }
-        >
+        <Field.Root invalid={errorText}>
+            {showLabel && (
+                <Field.Label>
+                    {label || PARAM_DEFINITIONS[targetKey]?.label}
+                </Field.Label>
+            )}
             <Input
                 autoComplete="off"
                 ref={inputRef}
@@ -43,6 +44,10 @@ export const HexInput = memo(function HexInput(props) {
                     });
                 }}
             />
-        </Field>
+            {errorText &&
+                errorText.map((error, index) => (
+                    <Field.ErrorText key={index}>{error}</Field.ErrorText>
+                ))}
+        </Field.Root>
     );
 });

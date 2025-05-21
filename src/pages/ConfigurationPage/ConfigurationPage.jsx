@@ -11,13 +11,17 @@ import { EmptyConfigDialog } from "./EmptyConfigDialog";
 import { memo } from "react";
 import { shallow } from "zustand/shallow";
 import { ContextMenu } from "./Tree/ContextMenu/ContextMenu";
+import { ValidationErrorsContainer } from "./Validation/ValidationErrorsContainer";
+import { validateAll } from "../../utils/validator";
 
 function ConfigurationPage() {
+    validateAll();
+
     //console.log("Render ConfigurationPage");
     return (
         <DndProvider backend={HTML5Backend}>
             <EmptyConfigDialog />
-            <Box height="100%">
+            <Box height="100%" position="relative">
                 <PanelGroup autoSaveId="persistence" direction="horizontal">
                     <Panel collapsible collapsedSize={0} minSize={15}>
                         <PanelGroup
@@ -59,6 +63,7 @@ function ConfigurationPage() {
                     </Panel>
                 </PanelGroup>
                 <ContextMenu />
+                <ValidationErrorsContainer />
             </Box>
         </DndProvider>
     );

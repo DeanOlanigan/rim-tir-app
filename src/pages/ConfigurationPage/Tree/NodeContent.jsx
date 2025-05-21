@@ -1,13 +1,15 @@
 import { NodeEditInput } from "./NodeEditInput";
-import { Text } from "@chakra-ui/react";
+import { Icon, Text } from "@chakra-ui/react";
 import { useVariablesStore } from "../../../store/variables-store";
 import { memo } from "react";
 import { CONSTANT_VALUES } from "../../../config/constants";
 import { DroppableInput } from "../InputComponents";
+import { LuTriangleAlert } from "react-icons/lu";
+import { useValidationStore } from "../../../store/validation-store";
 
 export const NodeContent = memo(function NodeContent({ node }) {
     const { isEditing } = node;
-    const { id, type, subType, name } = node.data;
+    const { id, type, /* subType, */ name } = node.data;
 
     const variableName = useVariablesStore(
         (state) => state.settings[name]?.name
@@ -16,6 +18,8 @@ export const NodeContent = memo(function NodeContent({ node }) {
     const testAddress = useVariablesStore(
         (state) => state.settings[id].setting?.modbusDoAddress
     );
+
+    const validationErrors = useValidationStore((state) => state.errors?.[id]);
 
     return isEditing ? (
         type === CONSTANT_VALUES.NODE_TYPES.dataObject ? (
@@ -34,10 +38,21 @@ export const NodeContent = memo(function NodeContent({ node }) {
             />
         )
     ) : (
-        <Text truncate>
-            {type === CONSTANT_VALUES.NODE_TYPES.dataObject
-                ? (testAddress || "???") + " " + (variableName || "")
-                : name}
-        </Text>
+        <>
+            <Text truncate>
+                {type === CONSTANT_VALUES.NODE_TYPES.dataObject
+                    ? (testAddress || "???") + " " + (variableName || "")
+                    : name}
+            </Text>
+            {validationErrors && (
+                <Icon
+                    color={"fg.error"}
+                    as={LuTriangleAlert}
+                    title={Object.values(Object.values(validationErrors)[0])
+                        .flat()
+                        .join("\n")}
+                />
+            )}
+        </>
     );
 });

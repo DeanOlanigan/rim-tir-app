@@ -2,8 +2,7 @@ import { Table } from "@chakra-ui/react";
 import { PARAM_DEFINITIONS } from "../../../../../config/paramDefinitions";
 import { BaseInput } from "../../../InputComponents/BaseInput";
 import { TypeCell } from "../../VariableEditor/Table/Cells";
-import { checkDependsOn2, resolveDynProps } from "../../../../../utils/utils";
-import { useVariablesStore } from "../../../../../store/variables-store";
+import { validateVisability } from "../../../../../utils/validator";
 
 export const DataObjectsTable = ({ data }) => {
     let keys;
@@ -29,7 +28,7 @@ export const DataObjectsTable = ({ data }) => {
                 </Table.Row>
             </Table.Header>
             <Table.Body>
-                {data.map((element, index) => {
+                {data.map((element) => {
                     if (element.type === "folder") return null;
                     return <TableRow key={element.id} element={element} />;
                 })}
@@ -39,39 +38,22 @@ export const DataObjectsTable = ({ data }) => {
 };
 
 const TableRow = ({ element }) => {
-    const settings = useVariablesStore((state) => state.settings);
-
     return (
         <Table.Row
             background={"transparent"}
             className="group"
             _hover={{ bg: "bg.muted" }}
         >
-            {Object.keys(element.setting).map((key, index) => {
+            {Object.keys(element.setting).map((key) => {
                 //if (key === "variable") return null;
 
                 const definition = PARAM_DEFINITIONS[key];
                 if (!definition) return null;
+                const isVisible = validateVisability(definition, element.id);
 
-                if (
-                    definition.dependsOn &&
-                    !checkDependsOn2(element, definition.dependsOn, settings)
-                ) {
-                    return (
-                        <Table.Cell
-                            key={element.id + "_" + key}
-                            minW={"150px"}
-                            maxW={"150px"}
-                            p={"0.5"}
-                        />
-                    );
+                if (!isVisible) {
+                    return <Table.Cell key={element.id + "_" + key} />;
                 }
-
-                const dynProps = resolveDynProps(
-                    element,
-                    definition.rules,
-                    settings
-                );
 
                 return (
                     <Table.Cell
@@ -90,7 +72,6 @@ const TableRow = ({ element }) => {
                                 value={element.setting[key]}
                                 id={element.id}
                                 inputParam={key}
-                                {...dynProps}
                             />
                         )}
                     </Table.Cell>
