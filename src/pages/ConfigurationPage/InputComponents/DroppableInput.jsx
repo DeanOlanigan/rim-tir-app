@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
 import { useVariablesStore } from "../../../store/variables-store";
 import { Badge, Flex, Text } from "@chakra-ui/react";
@@ -17,6 +17,8 @@ const autocomleteFilter = (query, optionValue, optionLabel) => {
     const lowerCaseOptionLabel = optionLabel.toLowerCase();
     return lowerCaseOptionLabel.indexOf(lowerCaseQuery) !== -1;
 };
+
+// TODO В Chakra ui появился свой компонент, переписать
 
 export const DroppableInput = memo(function DroppableInput(props) {
     const {

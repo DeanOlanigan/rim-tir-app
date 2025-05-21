@@ -12,6 +12,8 @@ import { AutoSizer, Table, Column, ColumnSizer } from "react-virtualized";
 import { LuPencil, LuPencilOff } from "react-icons/lu";
 import { dataTypesBytes } from "../../../../../config/filterOptions";
 
+// TODO Навести порядок
+
 export const VariablesTable = memo(function TableConfig({ data }) {
     //console.log("RENDER VariablesTable");
     const [isEditing, setIsEditing] = useState(false);

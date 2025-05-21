@@ -65,7 +65,7 @@ const modbusFunctionGroupTypes = {
 };
 
 const modbusFuncTypesBadges = Object.fromEntries(
-    Object.entries(modbusFunctionGroupTypes).map(([key, value]) => [
+    Object.entries(modbusFunctionGroupTypes).map(([key]) => [
         key,
         <Badge key={key} colorPalette={"purple"}>
             {key}

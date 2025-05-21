@@ -172,9 +172,7 @@ const ParamEditBadge = ({ id, target, checked, parameters }) => {
                 </Switch.Control>
             </Switch.Root>
             <Flex align={"center"} gap={"1"} overflow={"hidden"}>
-                <Icon size={"sm"}>
-                    <ParamIcon />
-                </Icon>
+                <Icon size={"sm"} as={ParamIcon} />
                 <ParamBadgeInfo parameters={parameters} />
             </Flex>
             {parameters.length > 0 ? (

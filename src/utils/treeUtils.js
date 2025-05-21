@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from "uuid";
 /* ======================== NODE OPERATIONS ======================== */
 /* ================================================================= */
 
-// TODO BAD
 export function copyTreeUtil(treeApi, idSet, isCut) {
     function recursive(node) {
         const copiedData = { ...node.data };

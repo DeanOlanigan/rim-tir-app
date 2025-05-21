@@ -1,9 +1,8 @@
 import { useVariablesStore } from "../store/variables-store";
 import { useCallback } from "react";
-import { getParentType, initDefaultData, getUniqueName } from "../utils/utils";
+import { getParentType, initDefaultData } from "../utils/utils";
 import { useContextMenuStore } from "../store/contextMenu-store";
 import { CONSTANT_VALUES } from "../config/constants";
-import { toaster } from "../components/ui/toaster";
 
 export function useTreeViewHandlers(treeType, ref) {
     const addNode = useVariablesStore((state) => state.addNode);

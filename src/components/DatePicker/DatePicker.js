@@ -3,6 +3,7 @@ import { useColorMode } from "../ui/color-mode";
 import { Field } from "../ui/field";
 import React, { useEffect, useState, forwardRef } from "react";
 import ReactDatePicker from "react-datepicker";
+// TODO Разобраться с темами
 const datePickerThemes = {
     light: {
         gray100: "gray.100",
@@ -68,16 +69,17 @@ const generateTheme = (mode, colorPalette) => ({
     fg: "fg",
 });
 
-const ChakraInputWithRef = (props, ref) => (React.createElement(Input, { ...props, ref: ref }));
+const ChakraInputWithRef = (props, ref) =>
+    React.createElement(Input, { ...props, ref: ref });
 const CustomInput = forwardRef(ChakraInputWithRef);
-const DatePicker = ({ 
+const DatePicker = ({
     rootProps,
     inputProps,
     datePickerSize: datePickerSizeProps = "md",
     colorPalete = "gray",
     datePickerColorSchema,
     extendDatePickerTheme,
-    ...datePickerProps 
+    ...datePickerProps
 }) => {
     const colorMode = useColorMode().colorMode;
     const isLight = colorMode === "light";
@@ -87,13 +89,18 @@ const DatePicker = ({
     }
     const datePickerTheme = customizeDatePickerTheme(
         //datePickerThemes[isLight ? "light" : "dark"],
-        isLight ? generateTheme("light", colorPalete) : generateTheme("dark", colorPalete),
+        isLight
+            ? generateTheme("light", colorPalete)
+            : generateTheme("dark", colorPalete),
         datePickerColorSchema,
         extendDatePickerTheme
             ? (theme) => extendDatePickerTheme(colorMode, theme)
             : undefined
     );
-    const normalizedInputProps = { ...inputProps, isDisabled: datePickerProps.disabled };
+    const normalizedInputProps = {
+        ...inputProps,
+        isDisabled: datePickerProps.disabled,
+    };
     const timeWidth = getTimeWidth(datepickerSize);
     const container = {
         borderColor: datePickerTheme.borderInverted,
@@ -158,7 +165,12 @@ const DatePicker = ({
                 "&::after": {
                     backgroundColor: "unset",
                     borderRadius: "unset",
-                    fontSize: inputProps?.size === "lg" ? "2xl" : inputProps?.size === "xs" ? "md" : "xl",
+                    fontSize:
+                        inputProps?.size === "lg"
+                            ? "2xl"
+                            : inputProps?.size === "xs"
+                            ? "md"
+                            : "xl",
                     color: datePickerTheme.gray300,
                     h: "20px",
                     w: "20px",
@@ -180,25 +192,37 @@ const DatePicker = ({
                 _empty: {
                     display: "none",
                 },
-                [multipleSelector("& .react-datepicker__month-dropdown-container", "& .react-datepicker__year-dropdown-container")]: {
+                [multipleSelector(
+                    "& .react-datepicker__month-dropdown-container",
+                    "& .react-datepicker__year-dropdown-container"
+                )]: {
                     cursor: "pointer",
                     borderRadius: "md",
                     paddingInlineStart: 1,
                     paddingInlineEnd: 1,
                 },
-                [multipleSelector("& .react-datepicker__month-read-view", "& .react-datepicker__year-read-view")]: {
+                [multipleSelector(
+                    "& .react-datepicker__month-read-view",
+                    "& .react-datepicker__year-read-view"
+                )]: {
                     display: "flex",
                     flexDirection: "row-reverse",
                     paddingInlineEnd: 4,
                     paddingInlineStart: 1,
                     _hover: {
                         bg: datePickerTheme.gray200,
-                        [multipleSelector("& .react-datepicker__month-read-view--down-arrow", "& .react-datepicker__year-read-view--down-arrow")]: {
+                        [multipleSelector(
+                            "& .react-datepicker__month-read-view--down-arrow",
+                            "& .react-datepicker__year-read-view--down-arrow"
+                        )]: {
                             borderColor: navigationButton.hover.color,
                         },
                     },
                 },
-                [multipleSelector("& .react-datepicker__month-read-view--down-arrow", "& .react-datepicker__year-read-view--down-arrow")]: {
+                [multipleSelector(
+                    "& .react-datepicker__month-read-view--down-arrow",
+                    "& .react-datepicker__year-read-view--down-arrow"
+                )]: {
                     position: "relative",
                     top: 2,
                     right: "-0.5rem",
@@ -207,7 +231,10 @@ const DatePicker = ({
                     h: "7px",
                     w: "7px",
                 },
-                [multipleSelector("& .react-datepicker__month-dropdown", "& .react-datepicker__year-dropdown")]: {
+                [multipleSelector(
+                    "& .react-datepicker__month-dropdown",
+                    "& .react-datepicker__year-dropdown"
+                )]: {
                     bg: datePickerTheme.monthBackground,
                     borderColor: datePickerTheme.gray200,
                     boxShadow: "md",
@@ -221,7 +248,11 @@ const DatePicker = ({
                     },
                 },
             },
-            [multipleSelector("& .react-datepicker__current-month", "& .react-datepicker-time__header", "& .react-datepicker-year-header")]: {
+            [multipleSelector(
+                "& .react-datepicker__current-month",
+                "& .react-datepicker-time__header",
+                "& .react-datepicker-year-header"
+            )]: {
                 fontWeight: header.fontWeight,
                 color: header.color,
                 fontSize: header.fontSize,
@@ -270,12 +301,16 @@ const DatePicker = ({
             "&.react-datepicker__navigation--next": {
                 right: navigationButton.leftRightSpace,
             },
-            "&.react-datepicker__navigation--next--with-time:not(.react-datepicker__navigation--next--with-today-button)": {
-                right: `calc(${timeWidth}px - -0.8rem)`,
-            },
+            "&.react-datepicker__navigation--next--with-time:not(.react-datepicker__navigation--next--with-today-button)":
+                {
+                    right: `calc(${timeWidth}px - -0.8rem)`,
+                },
         },
         /* / .react-datepicker__navigation" */
-        [multipleSelector("& .react-datepicker__month-read-view--selected-month", "& .react-datepicker__year-read-view--selected-year")]: {
+        [multipleSelector(
+            "& .react-datepicker__month-read-view--selected-month",
+            "& .react-datepicker__year-read-view--selected-year"
+        )]: {
             fontWeight: header.fontWeight,
             color: header.color,
         },
@@ -296,10 +331,22 @@ const DatePicker = ({
                         ...day.disabled,
                     },
                 },
-                [multipleSelector("&.react-datepicker__day--in-selecting-range", "&.react-datepicker__month-text--in-selecting-range", "&.react-datepicker__day--keyboard-selected", "&.react-datepicker__month-text--keyboard-selected", "&.react-datepicker__quarter-text--keyboard-selected", "&.react-datepicker__year-text--keyboard-selected")]: {
+                [multipleSelector(
+                    "&.react-datepicker__day--in-selecting-range",
+                    "&.react-datepicker__month-text--in-selecting-range",
+                    "&.react-datepicker__day--keyboard-selected",
+                    "&.react-datepicker__month-text--keyboard-selected",
+                    "&.react-datepicker__quarter-text--keyboard-selected",
+                    "&.react-datepicker__year-text--keyboard-selected"
+                )]: {
                     bg: day.selecting.bg,
                 },
-                [multipleSelector("&.react-datepicker__day--selected:not(.react-datepicker__day--disabled)", "&.react-datepicker__day--in-range:not(.react-datepicker__day--disabled)", "&.react-datepicker__month-text--selected:not(.react-datepicker__day--disabled)", "&.react-datepicker__month-text--in-range:not(.react-datepicker__day--disabled)")]: {
+                [multipleSelector(
+                    "&.react-datepicker__day--selected:not(.react-datepicker__day--disabled)",
+                    "&.react-datepicker__day--in-range:not(.react-datepicker__day--disabled)",
+                    "&.react-datepicker__month-text--selected:not(.react-datepicker__day--disabled)",
+                    "&.react-datepicker__month-text--in-range:not(.react-datepicker__day--disabled)"
+                )]: {
                     bg: day.selected.bg,
                     fontWeight: day.selected.fontWeight,
                     color: day.selected.color,
@@ -331,14 +378,15 @@ const DatePicker = ({
                                 bg: day.hoverBg,
                             },
                         },
-                        "& li.react-datepicker__time-list-item--selected:not(.react-datepicker__day--disabled)": {
-                            bg: day.selected.bg,
-                            fontWeight: day.selected.fontWeight,
-                            color: day.selected.color,
-                            _hover: {
-                                bg: day.selected.hover.bg,
+                        "& li.react-datepicker__time-list-item--selected:not(.react-datepicker__day--disabled)":
+                            {
+                                bg: day.selected.bg,
+                                fontWeight: day.selected.fontWeight,
+                                color: day.selected.color,
+                                _hover: {
+                                    bg: day.selected.hover.bg,
+                                },
                             },
-                        },
                     },
                 },
             },
@@ -347,9 +395,13 @@ const DatePicker = ({
         "& .react-datepicker__triangle": {
             // https://github.com/Hacker0x01/react-datepicker/issues/3176
             "& @media screen and (min-width:420px)": {
-                left: `${["top-end", "bottom-end"].includes(datePickerProps.popperPlacement || "")
-                    ? "3rem"
-                    : "-3rem"} !important`,
+                left: `${
+                    ["top-end", "bottom-end"].includes(
+                        datePickerProps.popperPlacement || ""
+                    )
+                        ? "3rem"
+                        : "-3rem"
+                } !important`,
             },
         },
         "& .react-datepicker-popper[data-placement^=bottom]": {
@@ -388,9 +440,16 @@ const DatePicker = ({
             bg: "blackAlpha.600",
         },
     };
-    return (React.createElement(Box, { css: css, w: "100%", lineHeight: "normal", ...rootProps },
-        React.createElement(ReactDatePicker, { ...datePickerProps, customInput: datePickerProps.customInput 
-            || React.createElement(CustomInput, { ...normalizedInputProps }) })));
+    return React.createElement(
+        Box,
+        { css: css, w: "100%", lineHeight: "normal", ...rootProps },
+        React.createElement(ReactDatePicker, {
+            ...datePickerProps,
+            customInput:
+                datePickerProps.customInput ||
+                React.createElement(CustomInput, { ...normalizedInputProps }),
+        })
+    );
 };
 const getTimeWidth = (size) => {
     if (size === "xl") {
@@ -422,7 +481,8 @@ const getBaseSize = (size) => {
 };
 const useDetermineSize = (size) => {
     const [tick, setTick] = useState(0);
-    const breakPoints = size == null || typeof size === "string" ? [size || "md"] : size;
+    const breakPoints =
+        size == null || typeof size === "string" ? [size || "md"] : size;
     const result = useBreakpointValue(breakPoints) ?? undefined;
     useEffect(() => {
         setTick((v) => v + 1);
@@ -434,7 +494,11 @@ const useDetermineSize = (size) => {
     return result;
 };
 const multipleSelector = (...selectors) => selectors.join(",");
-const customizeDatePickerTheme = (theme, colorScheme, extendDatePickerTheme) => {
+const customizeDatePickerTheme = (
+    theme,
+    colorScheme,
+    extendDatePickerTheme
+) => {
     let customizedTheme = theme;
     if (colorScheme) {
         customizedTheme = {

@@ -12,15 +12,13 @@ import {
 import { Tooltip } from "../../components/ui/tooltip";
 import { useEffect, useState } from "react";
 import { ColorModeButton } from "../ui/color-mode";
-import { LuSettings, LuLogOut, LuLanguages } from "react-icons/lu";
+import { LuSettings, LuLogOut } from "react-icons/lu";
 import { useContext } from "react";
 import { AuthContext } from "../../providers/AuthProvider/AuthContext";
 import PropTypes from "prop-types";
 
 import Navigation from "../Navigation/Navigation";
 import ConnectionStatus from "../ConnectionStatus/ConnectionStatus";
-
-import { useLocaleStore } from "../../store/locale-store";
 
 function Header() {
     const [version, setVersion] = useState("");
@@ -98,55 +96,6 @@ Header.propTypes = {
 };
 
 export default Header;
-
-const langItems = [
-    { label: "Русский", value: "ru" },
-    { label: "English", value: "en" },
-];
-
-const LocaleButton = () => {
-    const { locale, setLocale } = useLocaleStore((state) => state);
-    return (
-        <Menu.Root>
-            <Menu.Trigger asChild>
-                <IconButton
-                    size={"xs"}
-                    variant={"ghost"}
-                    css={{
-                        _icon: {
-                            width: "5",
-                            height: "5",
-                        },
-                    }}
-                >
-                    <LuLanguages />
-                </IconButton>
-            </Menu.Trigger>
-            <Portal>
-                <Menu.Positioner>
-                    <Menu.Content minW="10rem">
-                        <Menu.RadioItemGroup
-                            value={locale}
-                            onValueChange={(e) => {
-                                setLocale(e.value);
-                            }}
-                        >
-                            {langItems.map((item) => (
-                                <Menu.RadioItem
-                                    key={item.value}
-                                    value={item.value}
-                                >
-                                    <Menu.ItemIndicator />
-                                    {item.label}
-                                </Menu.RadioItem>
-                            ))}
-                        </Menu.RadioItemGroup>
-                    </Menu.Content>
-                </Menu.Positioner>
-            </Portal>
-        </Menu.Root>
-    );
-};
 
 const SettingsMenu = () => {
     return (

@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Table, Text } from "@chakra-ui/react";
+import { Table } from "@chakra-ui/react";
 import { initCardsData } from "../../../../../utils/utils";
 
 import {
