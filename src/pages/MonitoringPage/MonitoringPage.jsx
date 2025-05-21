@@ -1,13 +1,13 @@
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import "../../components/ResizebalePanel/ResizebalePanel.css";
-import { useVariablesStore } from "../../store/variables-store";
-import { useMonitoringStore } from "../../store/monitoring-store";
+import "@/components/ResizebalePanel/ResizebalePanel.css";
+import { useVariablesStore } from "@/store/variables-store";
+import { useMonitoringStore } from "@/store/monitoring-store";
 import { TreeCard } from "./TreeCard";
-
 import { useEffect, useState } from "react";
-//import { produce, enableMapSet } from "immer";
-import { Flex, InputGroup, Input, IconButton, Box } from "@chakra-ui/react";
+import { Flex, InputGroup, Input, IconButton } from "@chakra-ui/react";
 import { LuX, LuSearch } from "react-icons/lu";
+
+//import { produce, enableMapSet } from "immer";
 //enableMapSet();
 
 //import WebSocketService from "../../services/websocketService";

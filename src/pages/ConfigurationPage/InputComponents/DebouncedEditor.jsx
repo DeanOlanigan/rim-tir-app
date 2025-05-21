@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, memo } from "react";
-import { useColorMode } from "../../../components/ui/color-mode";
+import { useColorMode } from "@/components/ui/color-mode";
 import { Editor } from "@monaco-editor/react";
-import { useVariablesStore } from "../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import debounce from "debounce";
 import { Box } from "@chakra-ui/react";
 

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { LogContext } from "./LogContext";
-//import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
+//import { useNavigate } from "react-router-dom";
+
 function LogProvider({ children }) {
-    const savedSettings = JSON.parse(localStorage.getItem("user-settings")) || {};
+    const savedSettings =
+        JSON.parse(localStorage.getItem("user-settings")) || {};
     //const navigate = useNavigate();
     //const [isLoading, setIsLoading] = useState(true);
 
@@ -49,7 +51,8 @@ function LogProvider({ children }) {
     }, []);
 
     useEffect(() => {
-        const oldSettings = JSON.parse(localStorage.getItem("user-settings")) || {};
+        const oldSettings =
+            JSON.parse(localStorage.getItem("user-settings")) || {};
         const updatedSettings = {
             ...oldSettings,
             logRowsCount: logData.rows,
@@ -58,20 +61,20 @@ function LogProvider({ children }) {
     }, [logData.rows]);
 
     return (
-        <LogContext.Provider 
+        <LogContext.Provider
             value={{
                 logData,
                 updateLogData,
                 saveChosenLogToLocalStorage,
                 removeChosenLogFromLocalStorage,
                 /* isLoading */
-                hasChosenLog
+                hasChosenLog,
             }}
         >
             {children}
         </LogContext.Provider>
     );
-};
+}
 LogProvider.propTypes = {
     children: PropTypes.node.isRequired,
 };

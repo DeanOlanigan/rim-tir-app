@@ -1,18 +1,18 @@
 import { Box } from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import "../../components/ResizebalePanel/ResizebalePanel.css";
+import "@/components/ResizebalePanel/ResizebalePanel.css";
 import { TreeCard } from "./TreeCard/TreeCard";
-import { useVariablesStore } from "../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import { EditorCard } from "./EditorCard";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { CONSTANT_VALUES } from "../../config/constants";
+import { CONSTANT_VALUES } from "@/config/constants";
 import { EmptyConfigDialog } from "./EmptyConfigDialog";
 import { memo } from "react";
 import { shallow } from "zustand/shallow";
 import { ContextMenu } from "./Tree/ContextMenu/ContextMenu";
 import { ValidationErrorsContainer } from "./Validation/ValidationErrorsContainer";
-import { validateAll } from "../../utils/validator";
+import { validateAll } from "@/utils/validator";
 
 function ConfigurationPage() {
     validateAll();

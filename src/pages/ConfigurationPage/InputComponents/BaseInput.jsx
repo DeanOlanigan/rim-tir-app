@@ -1,5 +1,5 @@
-import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
-import { validateVisability } from "../../../utils/validator";
+import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
+import { validateVisability } from "@/utils/validator";
 import {
     SelectInput,
     NumberInput,
@@ -14,7 +14,7 @@ import {
 import {
     selectParamsErrors,
     useValidationStore,
-} from "../../../store/validation-store";
+} from "@/store/validation-store";
 import { memo } from "react";
 import { useShallow } from "zustand/shallow";
 

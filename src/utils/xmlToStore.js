@@ -1,4 +1,4 @@
-import { useVariablesStore } from "../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 
 export function parseXmlToState(xmlString) {
     const parser = new DOMParser();

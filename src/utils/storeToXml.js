@@ -1,5 +1,5 @@
 import { create } from "xmlbuilder";
-import { useVariablesStore } from "../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 
 function toTagName(key) {
     return key[0].toUpperCase() + key.slice(1);

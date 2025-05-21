@@ -1,6 +1,6 @@
 import { Box, useBreakpointValue, Input } from "@chakra-ui/react";
-import { useColorMode } from "../ui/color-mode";
-import { Field } from "../ui/field";
+import { useColorMode } from "@/components/ui/color-mode";
+import { Field } from "@/components/ui/field";
 import React, { useEffect, useState, forwardRef } from "react";
 import ReactDatePicker from "react-datepicker";
 // TODO Разобраться с темами

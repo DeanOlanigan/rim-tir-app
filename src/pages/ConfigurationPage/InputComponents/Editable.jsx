@@ -1,6 +1,6 @@
 import { Editable } from "@chakra-ui/react";
 import { useState } from "react";
-import { useVariablesStore } from "../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 
 export const EditableInput = ({ id, value, targetKey }) => {
     const [innerValue, setValue] = useState(value);

@@ -1,4 +1,4 @@
-import { useVariablesStore } from "../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import { createListCollection } from "@chakra-ui/react";
 
 export function useVariablesCollection() {

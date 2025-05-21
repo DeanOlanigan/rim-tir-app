@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { getUniqueName, separateDataNEW, separateTree } from "../utils/utils";
-import { config } from "../config/testData";
+import { getUniqueName, separateDataNEW, separateTree } from "@/utils/utils";
+import { config } from "@/config/testData";
 import {
     addNodeUtil,
     removeNodeUtil,
@@ -22,11 +22,11 @@ import {
     getIdsSetWithoutNested,
     generateNewIds,
     getParentId,
-} from "../utils/treeUtils";
+} from "@/utils/treeUtils";
 import { devtools, persist } from "zustand/middleware";
-import { PARAM_DEFINITIONS } from "../config/paramDefinitions";
-import { validateAll, validateParameter } from "../utils/validator";
-import { useValidationStore } from "./validation-store";
+import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
+import { validateAll, validateParameter } from "@/utils/validator";
+import { useValidationStore } from "@/store/validation-store";
 
 const { treeData, nodeData } = separateDataNEW(config);
 const { trees } = separateTree(treeData);

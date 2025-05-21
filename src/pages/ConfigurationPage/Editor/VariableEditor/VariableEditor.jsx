@@ -17,9 +17,9 @@ import {
     DebouncedEditor,
     BaseInput,
 } from "../../InputComponents";
-import { PARAM_DEFINITIONS } from "../../../../config/paramDefinitions";
-import { useVariablesStore } from "../../../../store/variables-store";
-import { initCardsData } from "../../../../utils/utils";
+import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
+import { useVariablesStore } from "@/store/variables-store";
+import { initCardsData } from "@/utils/utils";
 
 export const VariableEditor = memo(function VariableEditor({ data }) {
     //console.log("RENDER VariableEditor");

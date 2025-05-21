@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { Container } from "@chakra-ui/react";
-import LogProvider from "../../providers/LogProvider/LogProvider";
+import LogProvider from "@/providers/LogProvider/LogProvider";
 import LogSourceManager from "./SourceManager/LogSourceManager";
 import LogViewer from "./Viewer/LogViewer";
 

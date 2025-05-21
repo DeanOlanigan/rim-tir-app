@@ -1,5 +1,5 @@
 import { Stack, CheckboxGroup } from "@chakra-ui/react";
-import { Checkbox } from "../../../components/ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { messageTypes } from "./filterOptions";
 
 function MessageTypes({ filters, setFilters }) {
@@ -8,10 +8,14 @@ function MessageTypes({ filters, setFilters }) {
         <Stack p={"1"}>
             <CheckboxGroup
                 value={filters.events}
-                onValueChange={(types) => setFilters({...filters, events: types})}
+                onValueChange={(types) =>
+                    setFilters({ ...filters, events: types })
+                }
             >
                 {messageTypes.map((type) => (
-                    <Checkbox key={type.value} value={type.value}>{type.label}</Checkbox>
+                    <Checkbox key={type.value} value={type.value}>
+                        {type.label}
+                    </Checkbox>
                 ))}
             </CheckboxGroup>
         </Stack>

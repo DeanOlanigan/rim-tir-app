@@ -1,11 +1,9 @@
 /* ABANDONED */
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { Container } from "@chakra-ui/react";
-
-import GraphProvider from "../../providers/GraphProvider/GraphProvider";
+import GraphProvider from "@/providers/GraphProvider/GraphProvider";
 import GraphSettings from "./GraphSettings/GraphSettings";
 import GraphViewer from "./Viewer/GraphViewer";
-
 import { useAtomValue } from "jotai";
 import { wsMessageAtom } from "./atoms";
 import { useEffect } from "react";

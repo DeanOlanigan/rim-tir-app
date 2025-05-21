@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { GraphContext } from "./GraphContext";
 import PropTypes from "prop-types";
-import { getStartDate, getEndDate, getRandomColor } from "../../utils/utils";
+import { getStartDate, getEndDate, getRandomColor } from "@/utils/utils";
 
 function GraphProvider({ children }) {
     const [maxPointsCount, setMaxPointsCount] = useState(100);
@@ -11,7 +11,7 @@ function GraphProvider({ children }) {
     const [endDate, setEndDate] = useState(getEndDate());
 
     const [variables, setVariables] = useState([]);
-        
+
     const addVariable = useCallback(() => {
         setVariables((prevVars) => [
             ...prevVars,
@@ -19,21 +19,23 @@ function GraphProvider({ children }) {
                 id: Date.now(),
                 color: getRandomColor(),
                 variableName: "",
-                variableMeasurement: ""
-            }
+                variableMeasurement: "",
+            },
         ]);
     }, []);
 
     const updateVariable = useCallback((index, updatedVariable) => {
         setVariables((prevVars) =>
-            prevVars.map((variable, i) => (i === index ? updatedVariable : variable))
+            prevVars.map((variable, i) =>
+                i === index ? updatedVariable : variable
+            )
         );
     }, []);
 
     const removeVariable = useCallback((index) => {
-        setVariables(prevVars => prevVars.filter((_, i) => i !== index));
+        setVariables((prevVars) => prevVars.filter((_, i) => i !== index));
     }, []);
-    
+
     const createMessageForWS = () => ({
         graph: {
             maxPointsCount,
@@ -41,21 +43,29 @@ function GraphProvider({ children }) {
             offset,
             startDate,
             endDate,
-            variables
-        }
+            variables,
+        },
     });
 
     return (
         <GraphContext.Provider
             value={{
-                maxPointsCount, setMaxPointsCount,
-                isWsActive, setIsWsActive,
-                offset, setOffset,
-                startDate, setStartDate,
-                endDate, setEndDate,
+                maxPointsCount,
+                setMaxPointsCount,
+                isWsActive,
+                setIsWsActive,
+                offset,
+                setOffset,
+                startDate,
+                setStartDate,
+                endDate,
+                setEndDate,
                 createMessageForWS,
-                variables, setVariables,
-                addVariable, updateVariable, removeVariable
+                variables,
+                setVariables,
+                addVariable,
+                updateVariable,
+                removeVariable,
             }}
         >
             {children}
@@ -63,7 +73,7 @@ function GraphProvider({ children }) {
     );
 }
 GraphProvider.propTypes = {
-    children: PropTypes.node
+    children: PropTypes.node,
 };
 
 export default GraphProvider;

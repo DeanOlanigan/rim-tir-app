@@ -7,7 +7,7 @@ import { ContainerNodeEditor } from "./ConnectionEditor/ContainerNodeEditor";
 import { DataObjectEditor } from "./ConnectionEditor/DataObjectEditor";
 import { EditorBreadcrumb } from "./Breadcrumb";
 import { EditorInformer } from "./EditorInformer";
-import { useSelectedData } from "../../../hooks/useSelectedData";
+import { useSelectedData } from "@/hooks/useSelectedData";
 
 // TODO Лишний ререндер, мб вынести логику с выбором данных в другое место?
 export const EditorWrapper = memo(function EditorWrapper({ type }) {

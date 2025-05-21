@@ -4,9 +4,9 @@ import {
     PARAM_DEFINITIONS,
     SCOPE,
     VALIDATOR,
-} from "../config/paramDefinitions";
-import { useValidationStore } from "../store/validation-store";
-import { useVariablesStore } from "../store/variables-store";
+} from "@/config/paramDefinitions";
+import { useValidationStore } from "@/store/validation-store";
+import { useVariablesStore } from "@/store/variables-store";
 
 // TODO подумать над формированием структуры ошибок с валидаторами
 /* 

@@ -1,11 +1,11 @@
 import { NodeEditInput } from "./NodeEditInput";
 import { Icon, Text } from "@chakra-ui/react";
-import { useVariablesStore } from "../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import { memo } from "react";
-import { CONSTANT_VALUES } from "../../../config/constants";
-import { DroppableInput } from "../InputComponents";
+import { CONSTANT_VALUES } from "@/config/constants";
+import { DroppableInput } from "@/pages/ConfigurationPage/InputComponents";
 import { LuTriangleAlert } from "react-icons/lu";
-import { useValidationStore } from "../../../store/validation-store";
+import { useValidationStore } from "@/store/validation-store";
 
 export const NodeContent = memo(function NodeContent({ node }) {
     const { isEditing } = node;

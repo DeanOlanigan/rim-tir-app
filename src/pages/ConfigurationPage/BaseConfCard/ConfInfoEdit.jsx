@@ -3,7 +3,7 @@ import {
     PopoverContent,
     PopoverRoot,
     PopoverTrigger,
-} from "../../../components/ui/popover";
+} from "@/components/ui/popover";
 import {
     Button,
     Text,
@@ -13,7 +13,7 @@ import {
     Input,
     Textarea,
 } from "@chakra-ui/react";
-import { useVariablesStore } from "../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import { useEffect, useState } from "react";
 
 export const ConfInfoEdit = () => {

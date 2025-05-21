@@ -1,5 +1,5 @@
 import { HStack, Text, IconButton, Icon, Menu, Portal } from "@chakra-ui/react";
-import { Tooltip } from "../../../components/ui/tooltip";
+import { Tooltip } from "@/components/ui/tooltip";
 import {
     LuFolderPlus,
     LuCopyMinus,
@@ -9,10 +9,10 @@ import {
     LuPiggyBank,
     LuHam,
 } from "react-icons/lu";
-import { CONSTANT_VALUES } from "../../../config/constants";
-import { locale } from "../../../config/locale";
-import { useLocaleStore } from "../../../store/locale-store";
-import { useVariablesStore } from "../../../store/variables-store";
+import { CONSTANT_VALUES } from "@/config/constants";
+import { locale } from "@/config/locale";
+import { useLocaleStore } from "@/store/locale-store";
+import { useVariablesStore } from "@/store/variables-store";
 import { LuAnchor, LuUnplug, LuCable } from "react-icons/lu";
 import { useId, useState } from "react";
 

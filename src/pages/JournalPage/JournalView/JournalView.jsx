@@ -1,26 +1,29 @@
-import { Card, Flex, IconButton, Link, Box, CheckboxGroup, AbsoluteCenter, Spinner } from "@chakra-ui/react";
-import { Checkbox } from "../../../components/ui/checkbox";
 import {
-    MenuContent,
-    MenuRoot,
-    MenuTrigger
-} from "../../../components/ui/menu";
+    Card,
+    Flex,
+    IconButton,
+    Link,
+    Box,
+    CheckboxGroup,
+    AbsoluteCenter,
+    Spinner,
+} from "@chakra-ui/react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { MenuContent, MenuRoot, MenuTrigger } from "@/components/ui/menu";
 import { LuPause, LuPlay, LuDownload } from "react-icons/lu";
-import { useJournalContext } from "../../../providers/JournalProvider/JournalContext";
+import { useJournalContext } from "@/providers/JournalProvider/JournalContext";
 import { tableColumns } from "../JournalFilter/filterOptions";
 import { useMemo, useEffect, useRef } from "react";
 import "react-virtualized/styles.css";
 import JournalTable from "./JournalTable";
 
 function JournalView() {
-    const { isPaused, journalHeaders, journalRows, setIsPaused, setHeaders } = useJournalContext();
+    const { isPaused, journalHeaders, journalRows, setIsPaused, setHeaders } =
+        useJournalContext();
     console.log("Render JournalView");
-    
+
     const visibleColumns = useMemo(
-        () => 
-            tableColumns.filter((col) => 
-                journalHeaders.includes(col.value)
-            ),
+        () => tableColumns.filter((col) => journalHeaders.includes(col.value)),
         [journalHeaders]
     );
     const scrollContainer = useRef(null);
@@ -52,15 +55,15 @@ function JournalView() {
             <Card.Header>
                 <Flex justifyContent={"space-between"}>
                     <Flex gap={"1"}>
-                        <IconButton variant={"outline"} size={"xs"}><LuDownload/></IconButton>
-                        <IconButton 
+                        <IconButton variant={"outline"} size={"xs"}>
+                            <LuDownload />
+                        </IconButton>
+                        <IconButton
                             variant={"outline"}
                             size={"xs"}
                             onClick={() => setIsPaused(!isPaused)}
                         >
-                            {
-                                isPaused ? <LuPlay/> : <LuPause/>
-                            }
+                            {isPaused ? <LuPlay /> : <LuPause />}
                         </IconButton>
                     </Flex>
                     <MenuRoot>
@@ -73,10 +76,15 @@ function JournalView() {
                             <Box p={"2"}>
                                 <CheckboxGroup
                                     value={journalHeaders}
-                                    onValueChange={(columns) => setHeaders(columns)}
+                                    onValueChange={(columns) =>
+                                        setHeaders(columns)
+                                    }
                                 >
                                     {tableColumns.map((column) => (
-                                        <Checkbox key={column.value} value={column.value}>
+                                        <Checkbox
+                                            key={column.value}
+                                            value={column.value}
+                                        >
                                             {column.label}
                                         </Checkbox>
                                     ))}
@@ -88,8 +96,15 @@ function JournalView() {
             </Card.Header>
             <Card.Body h={"100%"} pt={"0"} mt={"1rem"}>
                 <Box w={"100%"} h={"100%"} position={"relative"}>
-                    <JournalTable scrollRef={scrollContainer} rows={journalRows} columns={visibleColumns}/>
-                    <AbsoluteCenter hidden={journalRows.length > 0} axis={"both"}>
+                    <JournalTable
+                        scrollRef={scrollContainer}
+                        rows={journalRows}
+                        columns={visibleColumns}
+                    />
+                    <AbsoluteCenter
+                        hidden={journalRows.length > 0}
+                        axis={"both"}
+                    >
                         <Spinner size={"xl"} />
                     </AbsoluteCenter>
                 </Box>

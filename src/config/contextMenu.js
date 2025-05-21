@@ -1,5 +1,5 @@
 import { createElement } from "react";
-import { deleteNodeUtil, getIdsSetWithoutNested } from "../utils/treeUtils";
+import { deleteNodeUtil, getIdsSetWithoutNested } from "@/utils/treeUtils";
 import {
     LuFolder,
     LuVariable,
@@ -15,7 +15,7 @@ import {
     LuClipboardCopy,
     LuScissors,
 } from "react-icons/lu";
-import { useVariablesStore } from "../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 
 const renameNode = {
     type: "rename-node",

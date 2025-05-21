@@ -10,11 +10,11 @@ import {
     Portal,
     Icon,
 } from "@chakra-ui/react";
-import { Tooltip } from "../../../../../../components/ui/tooltip";
+import { Tooltip } from "@/components/ui/tooltip";
 import { LuPencil, LuPencilOff, LuChevronDown } from "react-icons/lu";
-import { PARAM_DEFINITIONS } from "../../../../../../config/paramDefinitions";
-import { BaseInput } from "../../../../InputComponents";
-import { useVariablesStore } from "../../../../../../store/variables-store";
+import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
+import { BaseInput } from "@/pages/ConfigurationPage/InputComponents";
+import { useVariablesStore } from "@/store/variables-store";
 
 const badgesColorMap = {
     cmd: "blue",

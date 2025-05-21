@@ -1,5 +1,5 @@
 import { Code, Popover, Portal } from "@chakra-ui/react";
-import { DebouncedEditor } from "../../../../InputComponents";
+import { DebouncedEditor } from "@/pages/ConfigurationPage/InputComponents";
 
 export const CodeCell = ({ id, code }) => {
     return (

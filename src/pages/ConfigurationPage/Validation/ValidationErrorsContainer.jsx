@@ -1,5 +1,5 @@
 import { Presence, Box } from "@chakra-ui/react";
-import { useValidationStore } from "../../../store/validation-store";
+import { useValidationStore } from "@/store/validation-store";
 import { ValidationAlert } from "./ValidationAlert";
 import { ValidationContent } from "./ValidationContent";
 

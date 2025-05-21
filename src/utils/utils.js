@@ -3,7 +3,7 @@ import {
     DEFAULT_CONFIGURATION_DATA,
     DEFAULT_DATA_OBJECT_SETTING,
     CONSTANT_VALUES,
-} from "../config/constants";
+} from "@/config/constants";
 
 const startDate = new Date();
 startDate.setDate(startDate.getDate() - 3);

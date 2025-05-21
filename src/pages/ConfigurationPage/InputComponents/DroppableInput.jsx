@@ -1,15 +1,15 @@
 import { memo } from "react";
-import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
-import { useVariablesStore } from "../../../store/variables-store";
+import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
+import { useVariablesStore } from "@/store/variables-store";
 import { Badge, Flex, Text } from "@chakra-ui/react";
-import { useVariablesCollection } from "../../../hooks/useVariablesCollection";
+import { useVariablesCollection } from "@/hooks/useVariablesCollection";
 import {
     AutoComplete,
     AutoCompleteInput,
     AutoCompleteItem,
     AutoCompleteList,
 } from "@choc-ui/chakra-autocomplete";
-import { Field } from "../../../components/ui/field";
+import { Field } from "@/components/ui/field";
 import { LuBan } from "react-icons/lu";
 
 const autocomleteFilter = (query, optionValue, optionLabel) => {

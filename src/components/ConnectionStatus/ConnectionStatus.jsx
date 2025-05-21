@@ -1,6 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { LuTriangleAlert } from "react-icons/lu";
-import websocketService from "../../services/websocketService";
+import websocketService from "@/services/websocketService";
 import { useEffect, useState } from "react";
 
 const wsService = new websocketService("ws://192.168.1.1:8800");
@@ -36,15 +36,18 @@ function ConnectionStatus() {
 
     return (
         <Flex align={"center"} gap={"2"} justify={"between"}>
-            <LuTriangleAlert color="orange" style={{display: isConnected ? "none" : "" }}/>
+            <LuTriangleAlert
+                color="orange"
+                style={{ display: isConnected ? "none" : "" }}
+            />
             <Text
                 textStyle={"sm"}
                 fontWeight={"semibold"}
                 textAlign={"center"}
                 textWrap={"nowrap"}
-                color={ isConnected ? "" : "orange"}
+                color={isConnected ? "" : "orange"}
             >
-                { isConnected ? serverTime : "Нет соединения" }
+                {isConnected ? serverTime : "Нет соединения"}
             </Text>
         </Flex>
     );

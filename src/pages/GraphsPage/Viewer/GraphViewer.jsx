@@ -2,16 +2,14 @@ import { useEffect, useState, useRef } from "react";
 import { HStack, IconButton, Card } from "@chakra-ui/react";
 import { LuArrowLeft } from "react-icons/lu";
 import { Line } from "react-chartjs-2";
-import { useColorModeValue } from "../../../components/ui/color-mode";
-
-import WebSocketService from "../../../services/websocketService";
-const wsService = new WebSocketService("ws://192.168.1.1:8800");
-
+import { useColorModeValue } from "@/components/ui/color-mode";
+import WebSocketService from "@/services/websocketService";
 //import { useGraphContext } from "../../../providers/GraphProvider/GraphContext";
 import { createOptions } from "./chartOptions";
-
 import { useAtomValue, useAtom } from "jotai";
 import { wsMessageAtom, clearWsMessageAtom } from "../atoms";
+
+const wsService = new WebSocketService("ws://192.168.1.1:8800");
 
 function GraphViewer() {
     console.log("Render GraphViewer");
@@ -32,12 +30,12 @@ function GraphViewer() {
 
         const handleWebSocketMessage = (message) => {
             console.log(message);
-    
+
             if (!Array.isArray(message) || message.length === 0) {
                 console.warn("Received empty message from WebSocket");
                 return;
             }
-    
+
             const newPoints = message.map((el) => ({
                 x: +el.timestamp, // parseInt если строка
                 y: parseFloat(el.variableValue),
@@ -45,23 +43,23 @@ function GraphViewer() {
                 measurementUnit: el.measureUnit,
                 variableName: el.variableName, // сохраним тут же, чтобы удобно было ниже
             }));
-    
+
             setData((prevData) => ({
                 ...prevData,
                 datasets: updateDatasets(newPoints, prevData.datasets),
             }));
         };
 
-        const updateDatasets = (newPoints, prevDatasets) =>{
+        const updateDatasets = (newPoints, prevDatasets) => {
             // Копируем предыдущие датасеты
             const updatedDatasets = [...prevDatasets];
-                    
+
             // Для каждой новой точки ищем/создаём датасет
             newPoints.forEach((point) => {
                 const dsIndex = updatedDatasets.findIndex(
                     (ds) => ds.label === point.variableName
                 );
-    
+
                 if (dsIndex >= 0) {
                     // Добавляем новую точку в существующий датасет
                     updatedDatasets[dsIndex] = {
@@ -79,17 +77,19 @@ function GraphViewer() {
                     });
                 }
             });
-    
+
             return updatedDatasets;
         };
 
         const getColorForVariable = (variableName) => {
             const variables = wsMessage.graph.variables;
-            const variable = variables.find((v) => v.variableName === variableName);
+            const variable = variables.find(
+                (v) => v.variableName === variableName
+            );
             return variable ? variable.color : "#000000"; // Цвет по умолчанию, если не найден
         };
 
-        wsService.addMessageHandler(handleWebSocketMessage); 
+        wsService.addMessageHandler(handleWebSocketMessage);
         wsService.sendMessage(wsMessage);
         return () => {
             wsService.removeMessageHandler(handleWebSocketMessage);
@@ -101,7 +101,7 @@ function GraphViewer() {
         const chart = chartRef.current;
         if (chart) {
             chart.resetZoom("active");
-        };
+        }
     };
 
     return (
@@ -125,12 +125,17 @@ function GraphViewer() {
                                 clearWsMessage();
                             }}
                         >
-                            <LuArrowLeft/>
+                            <LuArrowLeft />
                         </IconButton>
                     </HStack>
                 </Card.Header>
                 <Card.Body>
-                    <Line ref={chartRef} options={options} data={data} onDoubleClick={resetZoom}/>
+                    <Line
+                        ref={chartRef}
+                        options={options}
+                        data={data}
+                        onDoubleClick={resetZoom}
+                    />
                 </Card.Body>
             </Card.Root>
         </>

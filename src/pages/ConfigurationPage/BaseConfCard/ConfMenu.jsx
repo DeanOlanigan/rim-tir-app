@@ -3,12 +3,12 @@ import {
     MenuItem,
     MenuRoot,
     MenuTrigger,
-} from "../../../components/ui/menu";
+} from "@/components/ui/menu";
 import { Button } from "@chakra-ui/react";
-import { downloadStateAsXml } from "../../../utils/storeToXml";
-import { useVariablesStore } from "../../../store/variables-store";
-import { CreateConfigDialog } from "../CreateConfigDialog";
-import { ConfigurationUploader } from "../ConfigurationUploader";
+import { downloadStateAsXml } from "@/utils/storeToXml";
+import { useVariablesStore } from "@/store/variables-store";
+import { CreateConfigDialog } from "../CreateConfigDialog"; // ?
+import { ConfigurationUploader } from "../ConfigurationUploader"; // ?
 
 export const ConfMenu = () => {
     const resetState = useVariablesStore((state) => state.resetState);

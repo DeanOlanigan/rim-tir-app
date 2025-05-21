@@ -1,5 +1,5 @@
 import { Box, AbsoluteCenter, Card, Button } from "@chakra-ui/react";
-import GradientBackground from "../components/GradientBackground/GradientBackground";
+import GradientBackground from "@/components/GradientBackground/GradientBackground";
 import { Link } from "react-router-dom";
 
 export const SessionExpired = () => {
@@ -10,7 +10,9 @@ export const SessionExpired = () => {
                 <Card.Root>
                     <Card.Body gap={"2"}>
                         <Card.Title>Сессия истекла</Card.Title>
-                        <Card.Description>Пожалуйста, авторизуйтесь заново</Card.Description>    
+                        <Card.Description>
+                            Пожалуйста, авторизуйтесь заново
+                        </Card.Description>
                     </Card.Body>
                     <Card.Footer>
                         <Button

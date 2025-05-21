@@ -1,14 +1,16 @@
-import { Button } from "../../../components/ui/button";
-import { toaster } from "../../../components/ui/toaster";
+import { Button } from "@/components/ui/button";
+import { toaster } from "@/components/ui/toaster";
 import { LuDownload } from "react-icons/lu";
 import PropTypes from "prop-types";
 
 function DownloadAllLogsButton({ type, loading }) {
     console.log("Render DownloadAllLogsButton");
-            
+
     const fetchDownload = async () => {
         try {
-            const response = await fetch(`/api/v1/getArchive?archive=logs&type=${type}`);
+            const response = await fetch(
+                `/api/v1/getArchive?archive=logs&type=${type}`
+            );
             if (!response.ok) {
                 throw new Error(`Ошибка: ${response.statusText}`);
             }
@@ -26,7 +28,9 @@ function DownloadAllLogsButton({ type, loading }) {
 
     const checkStatus = async (taskId) => {
         try {
-            const response = await fetch(`api/v1/getArchiveStatus?task_id=${taskId}`);
+            const response = await fetch(
+                `api/v1/getArchiveStatus?task_id=${taskId}`
+            );
             if (!response.ok) {
                 localStorage.removeItem("logTaskId");
                 throw new Error(response.data.code);
@@ -53,12 +57,10 @@ function DownloadAllLogsButton({ type, loading }) {
     const downloadAllLogFiles = () => {
         //fetchDownload();
         toaster.promise(
-            (
-                async () => {
-                    const taskId = await fetchDownload();
-                    return await checkStatus(taskId);   
-                }
-            )(),
+            (async () => {
+                const taskId = await fetchDownload();
+                return await checkStatus(taskId);
+            })(),
             {
                 loading: {
                     title: "Идет формирование архива...",
@@ -77,12 +79,13 @@ function DownloadAllLogsButton({ type, loading }) {
     };
 
     return (
-        <Button 
+        <Button
             loading={loading}
             loadingText="Подождите..."
             variant="solid"
-            style={{width: "100%"}}
-            onClick={downloadAllLogFiles}>
+            style={{ width: "100%" }}
+            onClick={downloadAllLogFiles}
+        >
             <LuDownload /> Скачать все логи из списка
         </Button>
     );

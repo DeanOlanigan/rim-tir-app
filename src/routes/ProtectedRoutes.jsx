@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import { useAuthContext } from "../providers/AuthProvider/AuthContext";
-import { Toaster, toaster } from "./../components/ui/toaster";
-import Header from "../components/Header/Header";
+import { useAuthContext } from "@/providers/AuthProvider/AuthContext";
+import { Toaster, toaster } from "@/components/ui/toaster";
+import Header from "@/components/Header/Header";
 import { Outlet, Navigate } from "react-router-dom";
 
 function ProtectedRoutes() {

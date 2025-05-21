@@ -1,16 +1,16 @@
 import { Tree } from "react-arborist";
-import styles from "../../../components/TreeView/TreeView.module.css";
+import styles from "@/components/TreeView/TreeView.module.css";
 import { memo, forwardRef } from "react";
 import { AutoSizer } from "react-virtualized";
-import { DropCursor } from "../../../components/TreeView/DropCursor";
+import { DropCursor } from "@/components/TreeView/DropCursor";
 import { Node } from "./Node";
 import { Box } from "@chakra-ui/react";
-import { useTreeViewHandlers } from "../../../hooks/useTreeViewHandlers";
-import { combineRefs } from "../../../utils/utils";
+import { useTreeViewHandlers } from "@/hooks/useTreeViewHandlers";
+import { combineRefs } from "@/utils/utils";
 import { useDragDropManager } from "react-dnd";
 import { useHotkeys } from "react-hotkeys-hook";
-import { useVariablesStore } from "../../../store/variables-store";
-import { getIdsSetWithoutNested } from "../../../utils/treeUtils";
+import { useVariablesStore } from "@/store/variables-store";
+import { getIdsSetWithoutNested } from "@/utils/treeUtils";
 
 export const TreeView = memo(
     forwardRef(function TreeView({ data, treeType }, ref) {

@@ -1,18 +1,28 @@
 import { SHA1 } from "crypto-js";
-import { Input, Stack, Box, AbsoluteCenter, Alert, Card } from "@chakra-ui/react";
-import { Button } from "../../components/ui/button";
-import { Field } from "../../components/ui/field";
-import { PasswordInput } from "../../components/ui/password-input";
+import {
+    Input,
+    Stack,
+    Box,
+    AbsoluteCenter,
+    Alert,
+    Card,
+} from "@chakra-ui/react";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { PasswordInput } from "@/components/ui/password-input";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import Gradient from "../../components/GradientBackground/GradientBackground";
+import Gradient from "@/components/GradientBackground/GradientBackground";
 import { LuLogIn } from "react-icons/lu";
 import { Navigate } from "react-router-dom";
-import { useAuthContext } from "../../providers/AuthProvider/AuthContext";
+import { useAuthContext } from "@/providers/AuthProvider/AuthContext";
 
 function LoginForm() {
     const [loading, setLoading] = useState(false);
-    const [sharedMessage, setSharedMessage] = useState({ type: null, message: null });
+    const [sharedMessage, setSharedMessage] = useState({
+        type: null,
+        message: null,
+    });
     const {
         register,
         handleSubmit,
@@ -33,7 +43,7 @@ function LoginForm() {
                 },
                 body: new URLSearchParams({
                     login: data.username,
-                    password: hashPassword
+                    password: hashPassword,
                 }),
                 credentials: "include",
             });
@@ -42,33 +52,32 @@ function LoginForm() {
                 const data = await response.json();
 
                 if (!data.data.csrf_token) {
-                    setSharedMessage({type: "error", message: data.message});
+                    setSharedMessage({ type: "error", message: data.message });
                     return;
                 }
 
-                setSharedMessage({type: "success", message: data.message});
+                setSharedMessage({ type: "success", message: data.message });
                 setLoading(false);
                 setTimeout(() => {
                     login({
                         serverTime: data.data.server_time,
                         sessionTimeLeft: data.data.session_time_left,
-                        csrfToken: data.data.csrf_token
+                        csrfToken: data.data.csrf_token,
                     });
                 }, 500);
             } else {
                 const errorData = await response.json();
                 setLoading(false);
-                setSharedMessage({type: "error", message: errorData.message});
+                setSharedMessage({ type: "error", message: errorData.message });
             }
-
         } catch (error) {
             setLoading(false);
-            setSharedMessage({ type: "error", message: error.message});
+            setSharedMessage({ type: "error", message: error.message });
         }
     };
 
     if (isAuthenticated) {
-        return <Navigate to="/configuration" replace/>;
+        return <Navigate to="/configuration" replace />;
     }
 
     return (
@@ -106,8 +115,6 @@ function LoginForm() {
                                 </Field>
                                 <Box h={"50px"}>
                                     {sharedMessage.type && (
-                            
-                                        
                                         <Alert.Root
                                             status={sharedMessage.type}
                                             data-state={"open"}
@@ -117,11 +124,17 @@ function LoginForm() {
                                             }}
                                         >
                                             <Alert.Indicator />
-                                            <Alert.Title>{sharedMessage.message}</Alert.Title>
+                                            <Alert.Title>
+                                                {sharedMessage.message}
+                                            </Alert.Title>
                                         </Alert.Root>
                                     )}
                                 </Box>
-                                <Button loading={loading} size={"xs"} type="submit">
+                                <Button
+                                    loading={loading}
+                                    size={"xs"}
+                                    type="submit"
+                                >
                                     <LuLogIn />
                                     Войти
                                 </Button>

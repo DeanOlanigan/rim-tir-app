@@ -8,7 +8,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { LuChevronRight, LuDot } from "react-icons/lu";
-import { useVariablesStore } from "../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 
 export const ValidationContent = ({ errors }) => {
     const settings = useVariablesStore((state) => state.settings);

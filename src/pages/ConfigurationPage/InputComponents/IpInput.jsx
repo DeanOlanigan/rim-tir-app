@@ -1,9 +1,9 @@
 import { memo } from "react";
-import { useVariablesStore } from "../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import { useMaskito } from "@maskito/react";
-import { Field } from "../../../components/ui/field";
+import { Field } from "@/components/ui/field";
 import { Input } from "@chakra-ui/react";
-import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
+import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 
 export const IpInput = memo(function IpInput(props) {
     const { targetKey, id, value, showLabel = false, label } = props;

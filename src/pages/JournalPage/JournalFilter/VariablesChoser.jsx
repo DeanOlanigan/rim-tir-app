@@ -5,8 +5,8 @@ import {
     SelectRoot,
     SelectTrigger,
     SelectValueText,
-} from "../../../components/ui/select";
-import { useVariablesOptions } from "../../../hooks/useVariablesOptions";
+} from "@/components/ui/select";
+import { useVariablesOptions } from "@/hooks/useVariablesOptions";
 
 function VariablesChoser({ filters, setFilters }) {
     console.log("Render VariablesChoser");

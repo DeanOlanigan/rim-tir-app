@@ -3,9 +3,9 @@ import { Field } from "@chakra-ui/react";
 import {
     NumberInputField,
     NumberInputRoot,
-} from "../../../components/ui/number-input";
-import { useVariablesStore } from "../../../store/variables-store";
-import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
+} from "@/components/ui/number-input";
+import { useVariablesStore } from "@/store/variables-store";
+import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 
 export const NumberInput = memo(function NumberInput(props) {
     const {

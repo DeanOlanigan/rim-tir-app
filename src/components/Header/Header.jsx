@@ -9,16 +9,16 @@ import {
     Dialog,
     CloseButton,
 } from "@chakra-ui/react";
-import { Tooltip } from "../../components/ui/tooltip";
+import { Tooltip } from "@/components/ui/tooltip";
 import { useEffect, useState } from "react";
-import { ColorModeButton } from "../ui/color-mode";
+import { ColorModeButton } from "@/components/ui/color-mode";
 import { LuSettings, LuLogOut } from "react-icons/lu";
 import { useContext } from "react";
-import { AuthContext } from "../../providers/AuthProvider/AuthContext";
+import { AuthContext } from "@/providers/AuthProvider/AuthContext";
 import PropTypes from "prop-types";
 
-import Navigation from "../Navigation/Navigation";
-import ConnectionStatus from "../ConnectionStatus/ConnectionStatus";
+import Navigation from "@/components/Navigation/Navigation";
+import ConnectionStatus from "@/components/ConnectionStatus/ConnectionStatus";
 
 function Header() {
     const [version, setVersion] = useState("");

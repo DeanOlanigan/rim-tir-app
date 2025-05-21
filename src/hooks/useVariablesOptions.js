@@ -1,4 +1,4 @@
-import { useVariablesList } from "../store/selectors";
+import { useVariablesList } from "@/store/selectors";
 import { createListCollection } from "@chakra-ui/react";
 import { useMemo } from "react";
 

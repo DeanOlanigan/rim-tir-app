@@ -8,14 +8,9 @@ import {
     AbsoluteCenter,
     Spinner,
 } from "@chakra-ui/react";
-import {
-    RadioCardItem,
-    RadioCardRoot,
-} from "../../../components/ui/radio-card";
-import { useLogContext } from "../../../providers/LogProvider/LogContext";
-
+import { RadioCardItem, RadioCardRoot } from "@/components/ui/radio-card";
+import { useLogContext } from "@/providers/LogProvider/LogContext";
 import DownloadAllLogsButton from "./DownloadAllLogsButton";
-
 import PropTypes from "prop-types";
 
 function LogSelectionCard({ headingText, logList, loading }) {

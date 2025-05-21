@@ -1,7 +1,6 @@
 import { memo } from "react";
 import { Table } from "@chakra-ui/react";
-import { initCardsData } from "../../../../../utils/utils";
-
+import { initCardsData } from "@/utils/utils";
 import {
     BadgesCell,
     CodeCell,

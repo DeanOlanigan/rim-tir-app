@@ -1,9 +1,11 @@
 import { useDrop } from "react-dnd";
-import { useVariablesStore } from "../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 
 export function useVariableDrop({ id }) {
     const settings = useVariablesStore((state) => state.settings);
-    const {bindVariable, unbindVariable} = useVariablesStore((state) => state);
+    const { bindVariable, unbindVariable } = useVariablesStore(
+        (state) => state
+    );
 
     const [{ isOver, canDrop }, dropRef] = useDrop(
         () => ({

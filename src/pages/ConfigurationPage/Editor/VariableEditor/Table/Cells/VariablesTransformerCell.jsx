@@ -3,10 +3,13 @@ import {
     PopoverContent,
     PopoverRoot,
     PopoverTrigger,
-} from "../../../../../../components/ui/popover";
+} from "@/components/ui/popover";
 import { Button, Text, Box } from "@chakra-ui/react";
 import { memo } from "react";
-import { DebouncedEditor, NumberInput } from "../../../../InputComponents";
+import {
+    DebouncedEditor,
+    NumberInput,
+} from "@/pages/ConfigurationPage/InputComponents";
 
 export const VariablesTransformerCell = memo(function VariablesTransformerCell(
     props

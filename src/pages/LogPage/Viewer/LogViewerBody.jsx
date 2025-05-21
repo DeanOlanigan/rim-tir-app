@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useRef } from "react";
 import { Text, Box, Badge, Flex } from "@chakra-ui/react";
-import { toaster } from "../../../components/ui/toaster"; // Chakra UI toaster
+import { toaster } from "@/components/ui/toaster"; // Chakra UI toaster
+import { useLogContext } from "@/providers/LogProvider/LogContext";
+import { useLogViewerContext } from "@/providers/LogViewerProvider/LogViewerContext";
+import websocketService from "@/services/websocketService";
 
-import { useLogContext } from "../../../providers/LogProvider/LogContext";
-import { useLogViewerContext } from "../../../providers/LogViewerProvider/LogViewerContext";
-
-import websocketService from "../../../services/websocketService";
 const wsService = new websocketService("ws://192.168.1.1:8800");
 
 function LogViewerBody() {
@@ -19,7 +18,7 @@ function LogViewerBody() {
         logs,
         setLogs,
     } = useLogViewerContext();
-    
+
     const logsContainerRef = useRef(null);
     let logIndex = 1;
 
@@ -34,11 +33,14 @@ function LogViewerBody() {
             return;
         }
         const fetchLogs = async () => {
-            
             try {
-                const response = await fetch(`/api/v1/getLog?logfile=${logData.name}&limit=${logData.rows}&type=${logData.type}`);
+                const response = await fetch(
+                    `/api/v1/getLog?logfile=${logData.name}&limit=${logData.rows}&type=${logData.type}`
+                );
                 if (!response.ok) {
-                    throw new Error(`Ошибка получения логов: ${response.statusText}`);
+                    throw new Error(
+                        `Ошибка получения логов: ${response.statusText}`
+                    );
                 }
                 const result = await response.json();
                 if (result.code === 200) {
@@ -56,7 +58,6 @@ function LogViewerBody() {
         };
 
         fetchLogs();
-
     }, [isLoading, logData.name, logData.rows, logData.type]);
 
     useEffect(() => {
@@ -68,8 +69,10 @@ function LogViewerBody() {
         };
 
         wsService.addMessageHandler(messageHandler);
-        
-        wsService.sendMessage({ log: {fileName: logData.name, type: logData.type} });
+
+        wsService.sendMessage({
+            log: { fileName: logData.name, type: logData.type },
+        });
 
         return () => {
             wsService.removeMessageHandler(messageHandler);
@@ -85,12 +88,12 @@ function LogViewerBody() {
 
     const extractLogPart = (line) => {
         const splitData = line.split("\t");
-        return ({
+        return {
             id: logIndex++,
             dateTime: splitData[0]?.slice(1, -1),
             severity: splitData[1]?.slice(1, -1), // Убираем квадратные скобки
             message: splitData[2],
-        });
+        };
     };
 
     const getColor = (severity) => {
@@ -102,16 +105,16 @@ function LogViewerBody() {
         return color[severity] || "gray.500";
     };
 
-    const filteredLogs = useMemo(
-        () => {
-            return logs.filter((log) => log.severity === "STATUS" || currentFilter[log.severity]);
-        },
-        [logs, currentFilter]
-    );
+    const filteredLogs = useMemo(() => {
+        return logs.filter(
+            (log) => log.severity === "STATUS" || currentFilter[log.severity]
+        );
+    }, [logs, currentFilter]);
 
     const scrollToBottom = () => {
         if (logsContainerRef.current) {
-            logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight;
+            logsContainerRef.current.scrollTop =
+                logsContainerRef.current.scrollHeight;
         }
     };
 
@@ -141,9 +144,9 @@ function LogViewerBody() {
                 fontSize={logTextSize}
                 color={getColor(log.severity)}
             >
-                {
-                    `[${log.dateTime}]\t${("["+log.severity+"]").toString().padStart(9)}\t${log.message}`
-                }
+                {`[${log.dateTime}]\t${("[" + log.severity + "]")
+                    .toString()
+                    .padStart(9)}\t${log.message}`}
             </Text>
         );
     });

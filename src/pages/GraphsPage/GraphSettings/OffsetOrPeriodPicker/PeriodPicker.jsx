@@ -1,7 +1,7 @@
 import { Stack } from "@chakra-ui/react";
-import { Field } from "../../../../components/ui/field";
+import { Field } from "@/components/ui/field";
 import { ru } from "date-fns/locale";
-import { DatePicker } from "../../../../components/DatePicker/DatePicker";
+import { DatePicker } from "@/components/DatePicker/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 //import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
@@ -42,7 +42,7 @@ function PeriodPicker() {
                     placeholderText="Дата начала"
                 />
             </Field>
-            <Field label="Дата окончания"   >
+            <Field label="Дата окончания">
                 <DatePicker
                     selected={new Date(endDate)}
                     onChange={(date) => {

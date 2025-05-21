@@ -1,12 +1,12 @@
 import { CheckboxCard, CheckboxGroup, Group } from "@chakra-ui/react";
 import { LuCircleAlert, LuInfo, LuTriangleAlert } from "react-icons/lu";
-import { useLogViewerContext } from "../../../../providers/LogViewerProvider/LogViewerContext";
+import { useLogViewerContext } from "@/providers/LogViewerProvider/LogViewerContext";
 import { useEffect } from "react";
 
 function LogTypesFilterButtons() {
     const { setCurrentFilter } = useLogViewerContext();
     console.log("Render LogTypesFilterButtons");
-    
+
     useEffect(() => {
         console.log("LogTypesFilterButtons useEffect triggered");
     });
@@ -24,22 +24,37 @@ function LogTypesFilterButtons() {
             defaultValue={["WARNING", "ERROR", "INFO"]}
         >
             <Group attached shadow={"xs"}>
-                <CheckboxCard.Root variant={"surface"} colorPalette={"yellow"} value={"WARNING"} key={"WARNING"}>
+                <CheckboxCard.Root
+                    variant={"surface"}
+                    colorPalette={"yellow"}
+                    value={"WARNING"}
+                    key={"WARNING"}
+                >
                     <CheckboxCard.HiddenInput />
                     <CheckboxCard.Control p={"0.45rem"}>
-                        <LuTriangleAlert size={"16px"}/>
+                        <LuTriangleAlert size={"16px"} />
                     </CheckboxCard.Control>
                 </CheckboxCard.Root>
-                <CheckboxCard.Root variant={"surface"} colorPalette={"red"} value={"ERROR"} key={"ERROR"}>
+                <CheckboxCard.Root
+                    variant={"surface"}
+                    colorPalette={"red"}
+                    value={"ERROR"}
+                    key={"ERROR"}
+                >
                     <CheckboxCard.HiddenInput />
                     <CheckboxCard.Control p={"0.45rem"}>
-                        <LuCircleAlert size={"16px"}/>
+                        <LuCircleAlert size={"16px"} />
                     </CheckboxCard.Control>
                 </CheckboxCard.Root>
-                <CheckboxCard.Root variant={"surface"} colorPalette={"blue"} value={"INFO"} key={"INFO"}>
+                <CheckboxCard.Root
+                    variant={"surface"}
+                    colorPalette={"blue"}
+                    value={"INFO"}
+                    key={"INFO"}
+                >
                     <CheckboxCard.HiddenInput />
                     <CheckboxCard.Control p={"0.45rem"}>
-                        <LuInfo size={"16px"}/>
+                        <LuInfo size={"16px"} />
                     </CheckboxCard.Control>
                 </CheckboxCard.Root>
             </Group>

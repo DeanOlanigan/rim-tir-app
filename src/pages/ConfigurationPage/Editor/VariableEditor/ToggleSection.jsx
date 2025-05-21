@@ -1,5 +1,5 @@
 import { Flex } from "@chakra-ui/react";
-import { CheckboxCard } from "../../../../components/ui/checkbox-card";
+import { CheckboxCard } from "@/components/ui/checkbox-card";
 import {
     LuArchive,
     LuSquareTerminal,
@@ -7,9 +7,9 @@ import {
     LuRefreshCcwDot,
     LuChartSpline,
 } from "react-icons/lu";
-import { useVariablesStore } from "../../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import { memo } from "react";
-import { PARAM_DEFINITIONS } from "../../../../config/paramDefinitions";
+import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 
 const iconMap = {
     isSpecial: LuRefreshCcwDot,

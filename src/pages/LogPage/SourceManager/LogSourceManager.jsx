@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { Flex, Heading, Stack } from "@chakra-ui/react";
-import { toaster } from "../../../components/ui/toaster";
+import { toaster } from "@/components/ui/toaster";
 import LogSelectionCard from "./LogSelectionCard";
 import LogFileViewerControls from "./LogFileViewerControls";
 import PropTypes from "prop-types";
-
 
 function LogSourceManager() {
     const [logs, setLogs] = useState({ internal: [], sd: [] });
@@ -22,7 +21,7 @@ function LogSourceManager() {
                 if (result.code === 200) {
                     setLogs({
                         internal: result.data.internal || [],
-                        sd: result.data.sd || []
+                        sd: result.data.sd || [],
                     });
                 } else {
                     throw new Error(result.message || "Неизвестная ошибка");
@@ -53,29 +52,25 @@ function LogSourceManager() {
                 Выберите файл
             </Heading>
 
-            <LogFileViewerControls 
-                loading={loading}
-            />
+            <LogFileViewerControls loading={loading} />
 
             <Flex gap={"4"} justify={"center"}>
-                <LogSelectionCard 
-                    headingText={"Логи на SD карте роутера"}  
+                <LogSelectionCard
+                    headingText={"Логи на SD карте роутера"}
                     loading={loading}
                     logList={logs.sd}
-                />  
-                <LogSelectionCard 
-                    headingText={"Логи во внутренней памяти роутера"} 
+                />
+                <LogSelectionCard
+                    headingText={"Логи во внутренней памяти роутера"}
                     loading={loading}
                     logList={logs.internal}
                 />
             </Flex>
-            
-            
         </Stack>
     );
 }
 LogSourceManager.propTypes = {
-    apiEndpoint: PropTypes.string
+    apiEndpoint: PropTypes.string,
 };
 
 export default LogSourceManager;

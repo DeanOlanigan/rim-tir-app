@@ -1,7 +1,7 @@
 import { Menu, Portal } from "@chakra-ui/react";
-import { menuConfig } from "../../../../config/contextMenu";
+import { menuConfig } from "@/config/contextMenu";
 import { LuBan, LuCheckCheck, LuChevronRight } from "react-icons/lu";
-import { useVariablesStore } from "../../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 
 export const ContextMenuList = ({
     subType,

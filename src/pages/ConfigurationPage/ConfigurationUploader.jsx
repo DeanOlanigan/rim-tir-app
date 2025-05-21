@@ -1,7 +1,8 @@
 import { FileUpload } from "@chakra-ui/react";
-import { uploadXmlFile } from "../../utils/xmlToStore";
-import { toaster } from "../../components/ui/toaster";
+import { uploadXmlFile } from "@/utils/xmlToStore";
+import { toaster } from "@/components/ui/toaster";
 
+// TODO В Chakra ui появился свой компонент, переписать
 export const ConfigurationUploader = ({ children }) => {
     const acceptHandler = (details) => {
         console.log("accept", details);

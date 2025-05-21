@@ -8,8 +8,8 @@ import {
 } from "@chakra-ui/react";
 import { AutoSizer } from "react-virtualized";
 import { Tree } from "react-arborist";
-import styles from "../../components/TreeView/TreeView.module.css";
-import { DropCursor } from "../../components/TreeView/DropCursor";
+import styles from "@/components/TreeView/TreeView.module.css";
+import { DropCursor } from "@/components/TreeView/DropCursor";
 import { Node } from "./Tree/Node";
 import { LuCircleAlert } from "react-icons/lu";
 

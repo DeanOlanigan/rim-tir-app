@@ -3,7 +3,7 @@ import {
     MenuItem,
     MenuRoot,
     MenuTrigger,
-} from "../../../components/ui/menu";
+} from "@/components/ui/menu";
 import { Button } from "@chakra-ui/react";
 
 export const RouterMenu = () => {

@@ -1,8 +1,8 @@
 import { Table } from "@chakra-ui/react";
-import { PARAM_DEFINITIONS } from "../../../../../config/paramDefinitions";
-import { BaseInput } from "../../../InputComponents/BaseInput";
-import { TypeCell } from "../../VariableEditor/Table/Cells";
-import { validateVisability } from "../../../../../utils/validator";
+import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
+import { BaseInput } from "@/pages/ConfigurationPage/InputComponents";
+import { TypeCell } from "@/pages/ConfigurationPage/Editor/VariableEditor/Table/Cells"; // TODO спорно
+import { validateVisability } from "@/utils/validator";
 
 export const DataObjectsTable = ({ data }) => {
     let keys;

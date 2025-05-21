@@ -1,7 +1,7 @@
 import { memo } from "react";
-import { useVariablesStore } from "../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import { Text, IconButton, HStack } from "@chakra-ui/react";
-import { CONSTANT_VALUES } from "../../../config/constants";
+import { CONSTANT_VALUES } from "@/config/constants";
 import { NodeValues } from "./NodeValues";
 import { LuInfo, LuPencil } from "react-icons/lu";
 
@@ -34,9 +34,10 @@ export const NodeContent = memo(function NodeContent({ id, type, name }) {
     );
 });
 
+// TODO Вынести в отдельный файл
 import { Popover, Stack, Box, StackSeparator, Portal } from "@chakra-ui/react";
-import { Field } from "../../../components/ui/field";
-import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
+import { Field } from "@/components/ui/field";
+import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 
 const ConnectionHeadderAdditionalInfo = ({ id }) => {
     const { setting } = useVariablesStore((state) => state.settings[id]);

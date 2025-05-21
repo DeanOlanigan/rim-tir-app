@@ -6,7 +6,7 @@ import {
     Text,
     Box,
 } from "@chakra-ui/react";
-import { useVariablesStore } from "../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import { useState, useEffect, useRef } from "react";
 import { CreateConfigDialog } from "./CreateConfigDialog";
 import { ConfigurationUploader } from "./ConfigurationUploader";

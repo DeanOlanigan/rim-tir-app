@@ -1,8 +1,8 @@
 import { memo } from "react";
-import { useVariablesStore } from "../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import { useMaskito } from "@maskito/react";
 import { Input, Field } from "@chakra-ui/react";
-import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
+import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 
 export const HexInput = memo(function HexInput(props) {
     console.log("Render HexInput");

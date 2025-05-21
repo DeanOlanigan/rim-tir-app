@@ -1,16 +1,16 @@
 import { Box, Flex, IconButton, createListCollection } from "@chakra-ui/react";
-import { Button } from "../../../components/ui/button";
-import { Tooltip } from "../../../components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { Tooltip } from "@/components/ui/tooltip";
 import { LuDownload, LuEye, LuEyeClosed } from "react-icons/lu";
-import { 
+import {
     SelectContent,
     SelectItem,
     SelectLabel,
     SelectRoot,
     SelectTrigger,
-    SelectValueText
-} from "../../../components/ui/select";
-import { useLogContext } from "../../../providers/LogProvider/LogContext";
+    SelectValueText,
+} from "@/components/ui/select";
+import { useLogContext } from "@/providers/LogProvider/LogContext";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
@@ -42,15 +42,14 @@ function LogFileViewerControls({ isLoading }) {
                 _open: "scale-fade-in",
             }}
         >
-            <Tooltip
-                content={"Скачать все логи"}
-            >
+            <Tooltip content={"Скачать все логи"}>
                 <Button
                     hidden
                     shadow={"xl"}
                     size={"xs"}
                     loading={isLoading}
-                    variant="outline">
+                    variant="outline"
+                >
                     <LuDownload />
                 </Button>
             </Tooltip>
@@ -59,13 +58,11 @@ function LogFileViewerControls({ isLoading }) {
                     collection={rows}
                     value={[logData.rows]}
                     size={"xs"}
-                    onValueChange={
-                        (e) => updateLogData({ rows: e.value[0] })
-                    }
+                    onValueChange={(e) => updateLogData({ rows: e.value[0] })}
                 >
                     <SelectLabel>Количество отображаемых строк:</SelectLabel>
                     <SelectTrigger shadow={"xl"}>
-                        <SelectValueText/>
+                        <SelectValueText />
                     </SelectTrigger>
                     <SelectContent>
                         {rows.items.map((row) => (
@@ -76,9 +73,7 @@ function LogFileViewerControls({ isLoading }) {
                     </SelectContent>
                 </SelectRoot>
             </Box>
-            <Tooltip
-                content={"Просмотр выбранного файла"}
-            >
+            <Tooltip content={"Просмотр выбранного файла"}>
                 <IconButton
                     shadow={"xl"}
                     size={"xs"}
@@ -88,10 +83,8 @@ function LogFileViewerControls({ isLoading }) {
                         navigate("/log/viewer");
                     }}
                 >
-                    {
-                        logData.name ? <LuEye /> : <LuEyeClosed />
-                    }
-                </IconButton>   
+                    {logData.name ? <LuEye /> : <LuEyeClosed />}
+                </IconButton>
             </Tooltip>
         </Flex>
     );
@@ -99,7 +92,7 @@ function LogFileViewerControls({ isLoading }) {
 LogFileViewerControls.propTypes = {
     isLoading: PropTypes.bool,
     selectedLog: PropTypes.object,
-    onViewBtnClick: PropTypes.func
+    onViewBtnClick: PropTypes.func,
 };
 
 export default LogFileViewerControls;

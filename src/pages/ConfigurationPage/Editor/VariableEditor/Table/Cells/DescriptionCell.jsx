@@ -1,6 +1,6 @@
 import { Editable } from "@chakra-ui/react";
 import { useState } from "react";
-import { useVariablesStore } from "../../../../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 
 export const DescriptionCell = ({ id, description }) => {
     const [value, setValue] = useState(description);

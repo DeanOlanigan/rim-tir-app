@@ -1,8 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { useLogContext } from "@/providers/LogProvider/LogContext";
 //import { useAtomValue } from "jotai";
 //import { wsMessageAtom } from "./atoms";
-
-import { useLogContext } from "../../providers/LogProvider/LogContext";
 
 export default function RequireLogData() {
     console.log("Render RequireLogData");

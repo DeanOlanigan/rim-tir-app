@@ -1,8 +1,8 @@
 import { Box, AbsoluteCenter, Text, IconButton } from "@chakra-ui/react";
-import { useVariablesStore } from "../../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import { memo } from "react";
 import { LuTrash2 } from "react-icons/lu";
-import { useVariableDrop } from "../../../../hooks/useVariableDrop";
+import { useVariableDrop } from "@/hooks/useVariableDrop";
 
 export const DropComponent = memo(function DropComponent(props) {
     //console.log("RENDER DropComponent");

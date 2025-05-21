@@ -7,8 +7,8 @@ import {
     PopoverTrigger,
     PopoverHeader,
     PopoverFooter,
-    PopoverCloseTrigger
-} from "../../../../components/ui/popover";
+    PopoverCloseTrigger,
+} from "@/components/ui/popover";
 import {
     ColorPickerArea,
     ColorPickerContent,
@@ -19,15 +19,15 @@ import {
     ColorPickerSwatchGroup,
     ColorPickerSwatchTrigger,
     ColorPickerTrigger,
-} from "../../../../components/ui/color-picker";
-import { 
+} from "@/components/ui/color-picker";
+import {
     SelectContent,
     SelectItem,
     SelectLabel,
     SelectRoot,
     SelectTrigger,
-    SelectValueText
-} from "../../../../components/ui/select";
+    SelectValueText,
+} from "@/components/ui/select";
 import { swatches, points } from "../graphSettingsConstants";
 
 function AddGraphVariableMenu() {
@@ -41,7 +41,7 @@ function AddGraphVariableMenu() {
             <PopoverContent width="full" height="214px">
                 <PopoverHeader>
                     <PopoverTitle>
-                        <Text>Добавить переменную</Text>        
+                        <Text>Добавить переменную</Text>
                         <PopoverCloseTrigger />
                     </PopoverTitle>
                 </PopoverHeader>
@@ -56,15 +56,13 @@ function AddGraphVariableMenu() {
                                 <ColorPickerArea />
                                 <ColorPickerSliders />
                                 <ColorPickerSwatchGroup>
-                                    {
-                                        swatches.map((swatch) => (
-                                            <ColorPickerSwatchTrigger
-                                                swatchSize={"4.5"}
-                                                key={swatch}
-                                                value={swatch}
-                                            />
-                                        ))
-                                    }
+                                    {swatches.map((swatch) => (
+                                        <ColorPickerSwatchTrigger
+                                            swatchSize={"4.5"}
+                                            key={swatch}
+                                            value={swatch}
+                                        />
+                                    ))}
                                 </ColorPickerSwatchGroup>
                             </ColorPickerContent>
                         </ColorPickerRoot>

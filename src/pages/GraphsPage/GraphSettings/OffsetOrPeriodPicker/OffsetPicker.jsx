@@ -1,11 +1,11 @@
-import { 
+import {
     SelectContent,
     SelectItem,
     SelectLabel,
     SelectRoot,
     SelectTrigger,
-    SelectValueText
-} from "../../../../components/ui/select";
+    SelectValueText,
+} from "@/components/ui/select";
 import { offsets } from "../graphSettingsConstants";
 
 //import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";

@@ -1,7 +1,7 @@
-import { NodeBase } from "../../../components/TreeView/NodeBase";
+import { NodeBase } from "@/components/TreeView/NodeBase";
 import { NodeContent } from "./NodeContent";
 import clsx from "clsx";
-import styles from "../../../components/TreeView/TreeView.module.css";
+import styles from "@/components/TreeView/TreeView.module.css";
 
 export const Node = ({ node, style }) => {
     return (

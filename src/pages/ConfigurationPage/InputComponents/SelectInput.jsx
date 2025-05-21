@@ -1,7 +1,9 @@
 import { memo } from "react";
-import { useVariablesStore } from "../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import { Portal, Select } from "@chakra-ui/react";
-import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
+import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
+
+// TODO Передавать label через фабрику, проверить для всех инпутов
 
 export const SelectInput = memo(function SelectInput(props) {
     //console.log("Render SelectInput");

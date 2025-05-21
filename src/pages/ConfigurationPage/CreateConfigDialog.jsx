@@ -9,7 +9,7 @@ import {
     Alert,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useVariablesStore } from "../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 
 export const CreateConfigDialog = ({ children }) => {
     const configInfo = useVariablesStore((state) => state.configInfo);

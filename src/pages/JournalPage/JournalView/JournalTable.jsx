@@ -1,5 +1,5 @@
 import { Box, Text } from "@chakra-ui/react";
-import { useColorModeValue } from "../../../components/ui/color-mode";
+import { useColorModeValue } from "@/components/ui/color-mode";
 import { AutoSizer, Table, Column } from "react-virtualized";
 
 function JournalTable({ scrollRef, columns, rows }) {
@@ -9,14 +9,7 @@ function JournalTable({ scrollRef, columns, rows }) {
     const rowGetter = ({ index }) => rows[index];
 
     const rowRenderer = (props) => {
-        const {
-            index,
-            style,
-            key,
-            className,
-            columns,
-            rowData
-        } = props;
+        const { index, style, key, className, columns, rowData } = props;
 
         if (rowData.mark) {
             return (
@@ -36,7 +29,8 @@ function JournalTable({ scrollRef, columns, rows }) {
 
         //const rowData = rows[index];
         if (!rowData) return null;
-        const backgroundColor = index % 2 === 0 ? oddBackgroundColor : evenBackgroundColor;
+        const backgroundColor =
+            index % 2 === 0 ? oddBackgroundColor : evenBackgroundColor;
 
         return (
             <Box
@@ -65,13 +59,21 @@ function JournalTable({ scrollRef, columns, rows }) {
             return <Text textWrap={"wrap"}>{cellData}</Text>;
         }
 
-        return <Text textWrap={"wrap"} textAlign={"start"} textOverflow={"ellipsis"}>{cellData}</Text>;
+        return (
+            <Text
+                textWrap={"wrap"}
+                textAlign={"start"}
+                textOverflow={"ellipsis"}
+            >
+                {cellData}
+            </Text>
+        );
     };
 
     return (
         <Box w={"100%"} h={"100%"}>
             <AutoSizer>
-                {({height, width}) => (
+                {({ height, width }) => (
                     <Table
                         ref={scrollRef}
                         width={width}
@@ -83,10 +85,10 @@ function JournalTable({ scrollRef, columns, rows }) {
                         rowRenderer={rowRenderer}
                         headerStyle={{
                             fontSize: "14px",
-                            textTransform: "math-auto"
+                            textTransform: "math-auto",
                         }}
                         rowStyle={{
-                            borderBottom: "1px solid #ccc"
+                            borderBottom: "1px solid #ccc",
                         }}
                     >
                         {columns.map((col) => (

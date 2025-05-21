@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
 import { Container } from "@chakra-ui/react";
-import LogProvider from "../../providers/LogProvider/LogProvider";
+import LogProvider from "@/providers/LogProvider/LogProvider";
 
 function LogLayout() {
     console.log("Render LogLayout");
-    
+
     return (
         <Container
             maxW={"6xl"}

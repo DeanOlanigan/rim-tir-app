@@ -4,10 +4,10 @@ import {
     MenuRoot,
     MenuTrigger,
     MenuSeparator,
-} from "../../../components/ui/menu";
-import { Tooltip } from "../../../components/ui/tooltip";
+} from "@/components/ui/menu";
+import { Tooltip } from "@/components/ui/tooltip";
 import { IconButton, Icon } from "@chakra-ui/react";
-import { menuConfigConnections } from "../../../config/contextMenu";
+import { menuConfigConnections } from "@/config/contextMenu";
 import { useId } from "react";
 import { LuPackagePlus } from "react-icons/lu";
 

@@ -3,8 +3,7 @@ import { LuArrowLeft } from "react-icons/lu";
 import LogName from "./LogName";
 import LogTypesFilterButtons from "./LogTypesFilterButtons";
 import LogToolBox from "./LogToolBox";
-import { useLogContext } from "../../../../providers/LogProvider/LogContext";
-
+import { useLogContext } from "@/providers/LogProvider/LogContext";
 
 function LogViewerHeader() {
     console.log("Render LogViewerHeader");
@@ -20,11 +19,11 @@ function LogViewerHeader() {
                     removeChosenLogFromLocalStorage();
                 }}
             >
-                <LuArrowLeft/>
+                <LuArrowLeft />
             </IconButton>
-            <LogName/>
-            <LogTypesFilterButtons/>
-            <LogToolBox/>
+            <LogName />
+            <LogTypesFilterButtons />
+            <LogToolBox />
         </HStack>
     );
 }

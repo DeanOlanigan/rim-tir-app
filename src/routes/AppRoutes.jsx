@@ -1,27 +1,27 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthProvider from "../providers/AuthProvider/AuthProvider";
+import AuthProvider from "@/providers/AuthProvider/AuthProvider";
 import ProtectedRouter from "./ProtectedRoutes";
 
-import { Redirect } from "../pages/Redirect";
+import { Redirect } from "@/pages/Redirect";
 
-import ConfigurationPage from "../pages/ConfigurationPage/ConfigurationPage";
-import MonitoringPage from "../pages/MonitoringPage/MonitoringPage";
-import JournalPage from "../pages/JournalPage/JournalPage";
-import LoginForm from "../pages/LoginPage/LoginPage";
-import { SessionExpired } from "../pages/SessionExpired";
+import ConfigurationPage from "@/pages/ConfigurationPage/ConfigurationPage";
+import MonitoringPage from "@/pages/MonitoringPage/MonitoringPage";
+import JournalPage from "@/pages/JournalPage/JournalPage";
+import LoginForm from "@/pages/LoginPage/LoginPage";
+import { SessionExpired } from "@/pages/SessionExpired";
 
 //import LogPage from "../pages/LogPage/LogPage";
-import LogLayout from "../pages/LogPage/LogLayout";
-import LogRedirect from "../pages/LogPage/LogRedirect";
-import LogSourceManager from "../pages/LogPage/SourceManager/LogSourceManager";
-import RequireLogData from "../pages/LogPage/RequireLogData";
-import LogViewer from "../pages/LogPage/Viewer/LogViewer";
+import LogLayout from "@/pages/LogPage/LogLayout";
+import LogRedirect from "@/pages/LogPage/LogRedirect";
+import LogSourceManager from "@/pages/LogPage/SourceManager/LogSourceManager";
+import RequireLogData from "@/pages/LogPage/RequireLogData";
+import LogViewer from "@/pages/LogPage/Viewer/LogViewer";
 
-import GraphLayout from "../pages/GraphsPage/GraphLayout";
-import GraphRedirect from "../pages/GraphsPage/GraphRedirect";
-import GraphSettings from "../pages/GraphsPage/GraphSettings/GraphSettings";
-import RequireGraphData from "../pages/GraphsPage/RequireGraphData";
-import GraphViewer from "../pages/GraphsPage/Viewer/GraphViewer";
+import GraphLayout from "@/pages/GraphsPage/GraphLayout";
+import GraphRedirect from "@/pages/GraphsPage/GraphRedirect";
+import GraphSettings from "@/pages/GraphsPage/GraphSettings/GraphSettings";
+import RequireGraphData from "@/pages/GraphsPage/RequireGraphData";
+import GraphViewer from "@/pages/GraphsPage/Viewer/GraphViewer";
 
 function AppRouter() {
     return (
@@ -44,20 +44,32 @@ function AppRouter() {
                         Если до конца сессии отсталось меньше минуты, то пользователя нужно предупредить о скором истечении сессии с возможностью ее продления.
                     */}
                     <Route element={<ProtectedRouter />}>
-                        <Route path="/configuration" element={<ConfigurationPage />} />
-                        <Route path="/monitoring" element={<MonitoringPage />} />
-                        <Route path="/log" element={<LogLayout />} >
+                        <Route
+                            path="/configuration"
+                            element={<ConfigurationPage />}
+                        />
+                        <Route
+                            path="/monitoring"
+                            element={<MonitoringPage />}
+                        />
+                        <Route path="/log" element={<LogLayout />}>
                             <Route index element={<LogRedirect />} />
-                            <Route path="settings" element={<LogSourceManager />} />
-                            <Route path="viewer" element={<RequireLogData />} >
+                            <Route
+                                path="settings"
+                                element={<LogSourceManager />}
+                            />
+                            <Route path="viewer" element={<RequireLogData />}>
                                 <Route index element={<LogViewer />} />
                             </Route>
                         </Route>
                         <Route path="/journal" element={<JournalPage />} />
-                        <Route path="/graph" element={<GraphLayout />} >
+                        <Route path="/graph" element={<GraphLayout />}>
                             <Route index element={<GraphRedirect />} />
-                            <Route path="settings" element={<GraphSettings />} />
-                            <Route path="viewer" element={<RequireGraphData />} >
+                            <Route
+                                path="settings"
+                                element={<GraphSettings />}
+                            />
+                            <Route path="viewer" element={<RequireGraphData />}>
                                 <Route index element={<GraphViewer />} />
                             </Route>
                         </Route>

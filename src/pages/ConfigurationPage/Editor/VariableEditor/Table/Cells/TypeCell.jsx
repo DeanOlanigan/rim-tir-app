@@ -1,7 +1,7 @@
 import { Text } from "@chakra-ui/react";
 import { useState } from "react";
-import { dataTypesBytes } from "../../../../../../config/filterOptions";
-import { SelectInput } from "../../../../InputComponents";
+import { dataTypesBytes } from "@/config/filterOptions";
+import { SelectInput } from "@/pages/ConfigurationPage/InputComponents";
 
 export const TypeCell = ({ id, type }) => {
     const [isEditType, setIsEditType] = useState(false);

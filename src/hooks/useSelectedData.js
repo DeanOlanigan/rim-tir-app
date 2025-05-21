@@ -1,4 +1,4 @@
-import { useVariablesStore } from "../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import { useMemo } from "react";
 
 // TODO попытаться еще раз... useShallow

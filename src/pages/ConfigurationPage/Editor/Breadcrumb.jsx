@@ -1,5 +1,5 @@
 import { Breadcrumb } from "@chakra-ui/react";
-import { useVariablesStore } from "../../../store/variables-store";
+import { useVariablesStore } from "@/store/variables-store";
 import React from "react";
 
 const getBreadcrumb = (selectedData, settings) => {

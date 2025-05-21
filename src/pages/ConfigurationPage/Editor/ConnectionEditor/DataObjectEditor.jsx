@@ -1,5 +1,5 @@
 import { SimpleGrid } from "@chakra-ui/react";
-import { BaseInput } from "../../InputComponents/BaseInput";
+import { BaseInput } from "@/pages/ConfigurationPage/InputComponents";
 
 export const DataObjectEditor = ({ data }) => {
     return (

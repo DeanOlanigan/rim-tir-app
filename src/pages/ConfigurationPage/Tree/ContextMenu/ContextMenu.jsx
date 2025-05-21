@@ -1,5 +1,5 @@
 import { useEffect, useRef, useLayoutEffect } from "react";
-import { useContextMenuStore } from "../../../../store/contextMenu-store";
+import { useContextMenuStore } from "@/store/contextMenu-store";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, Portal } from "@chakra-ui/react";
 import { ContextMenuList } from "./ContextMenuList";

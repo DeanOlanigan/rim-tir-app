@@ -1,6 +1,6 @@
 import { Text, Stack, StackSeparator } from "@chakra-ui/react";
-import { Skeleton } from "../../../components/ui/skeleton";
-import { useVariablesStore } from "../../../store/variables-store";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useVariablesStore } from "@/store/variables-store";
 
 export const ConfMiscInfo = () => {
     const { date, version } = useVariablesStore((state) => state.configInfo);

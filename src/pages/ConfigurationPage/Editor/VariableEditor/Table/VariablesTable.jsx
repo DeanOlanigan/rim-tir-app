@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo /* useState */ } from "react";
 import {
     Box,
     Table as ChakraTable,
@@ -8,16 +8,16 @@ import {
 } from "@chakra-ui/react";
 import { VariablesTableHeader } from "./VariablesTableHeader";
 import { VariablesTableBody } from "./VariablesTableBody";
-import { AutoSizer, Table, Column, ColumnSizer } from "react-virtualized";
+/* import { AutoSizer, Table, Column, ColumnSizer } from "react-virtualized"; */
 import { LuPencil, LuPencilOff } from "react-icons/lu";
-import { dataTypesBytes } from "../../../../../config/filterOptions";
+import { dataTypesBytes } from "@/config/filterOptions";
 
 // TODO Навести порядок
 
 export const VariablesTable = memo(function TableConfig({ data }) {
     //console.log("RENDER VariablesTable");
-    const [isEditing, setIsEditing] = useState(false);
-    const [editingRowIndex, setEditingRowIndex] = useState(null);
+    //const [isEditing, setIsEditing] = useState(false);
+    //const [editingRowIndex, setEditingRowIndex] = useState(null);
 
     return (
         <ChakraTable.Root>

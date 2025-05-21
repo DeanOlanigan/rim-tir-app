@@ -1,7 +1,7 @@
 import { Card } from "@chakra-ui/react";
 import LogViewerHeader from "./Header/LogViewerHeader";
 import LogViewerBody from "./LogViewerBody";
-import LogViewerProvider from "../../../providers/LogViewerProvider/LogViewerProvider";
+import LogViewerProvider from "@/providers/LogViewerProvider/LogViewerProvider";
 
 function LogViewer() {
     console.log("Render LogViewer");
@@ -19,16 +19,20 @@ function LogViewer() {
                     _open: "scale-fade-in",
                 }}
             >
-                
                 <Card.Header>
                     <LogViewerHeader />
                 </Card.Header>
-                
-                <Card.Body flex={"1"} display={"flex"} flexDirection={"column"} minH={"0"}>
-                    <LogViewerBody/>
+
+                <Card.Body
+                    flex={"1"}
+                    display={"flex"}
+                    flexDirection={"column"}
+                    minH={"0"}
+                >
+                    <LogViewerBody />
                 </Card.Body>
             </Card.Root>
-        </LogViewerProvider>                
+        </LogViewerProvider>
     );
 }
 

@@ -5,7 +5,7 @@ import {
     LuLightbulb,
     LuCircle,
 } from "react-icons/lu";
-import { useMonitoringStore } from "../../../store/monitoring-store";
+import { useMonitoringStore } from "@/store/monitoring-store";
 
 export const NodeValues = ({ id }) => {
     const valuesMap = useMonitoringStore((state) => state.valuesMap);

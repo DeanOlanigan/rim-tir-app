@@ -1,8 +1,8 @@
-import { Field } from "../../../components/ui/field";
-import { Switch } from "../../../components/ui/switch";
-import { useVariablesStore } from "../../../store/variables-store";
+import { Field } from "@/components/ui/field";
+import { Switch } from "@/components/ui/switch";
+import { useVariablesStore } from "@/store/variables-store";
 import { memo } from "react";
-import { PARAM_DEFINITIONS } from "../../../config/paramDefinitions";
+import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 
 export const SwitchInput = memo(function SwitchInput(props) {
     const { targetKey, id, value, showLabel = false } = props;

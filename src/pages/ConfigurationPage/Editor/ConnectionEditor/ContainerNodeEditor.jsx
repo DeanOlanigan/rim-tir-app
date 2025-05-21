@@ -1,6 +1,6 @@
 import { Heading, Flex, HStack, SimpleGrid } from "@chakra-ui/react";
-import { PARENT_NAMES } from "../../../../config/paramDefinitions";
-import { BaseInput } from "../../InputComponents/BaseInput";
+import { PARENT_NAMES } from "@/config/paramDefinitions";
+import { BaseInput } from "@/pages/ConfigurationPage/InputComponents";
 
 export const ContainerNodeEditor = ({ data }) => {
     return (

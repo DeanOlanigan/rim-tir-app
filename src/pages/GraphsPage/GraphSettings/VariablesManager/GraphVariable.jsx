@@ -10,19 +10,18 @@ import {
     ColorPickerSwatchGroup,
     ColorPickerSwatchTrigger,
     ColorPickerTrigger,
-} from "../../../../components/ui/color-picker";
+} from "@/components/ui/color-picker";
 import {
     SelectContent,
     SelectItem,
     SelectRoot,
     SelectTrigger,
     SelectValueText,
-} from "../../../../components/ui/select";
+} from "@/components/ui/select";
 import { swatches, measurements } from "../graphSettingsConstants";
-
 import { useAtom } from "jotai";
 import { removeVariableAtom, updateVariableAtom } from "../../atoms";
-import { useVariablesOptions } from "../../../../hooks/useVariablesOptions";
+import { useVariablesOptions } from "@/hooks/useVariablesOptions";
 
 function GraphVariable({
     variable,
