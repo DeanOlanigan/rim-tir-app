@@ -8,10 +8,9 @@ import {
     SelectValueText,
 } from "@/components/ui/select";
 import { points } from "./graphSettingsConstants";
-//import { useGraphContext } from "../../../providers/GraphProvider/GraphContext";
-
 import { useAtom } from "jotai";
 import { maxPointsCountAtom } from "../atoms";
+//import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
 
 function PointsCountChooser() {
     console.log("Render PointsCountChooser");

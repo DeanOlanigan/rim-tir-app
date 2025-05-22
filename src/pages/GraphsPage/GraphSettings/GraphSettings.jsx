@@ -1,16 +1,14 @@
 import { Card, Flex, Stack, Group } from "@chakra-ui/react";
-
 import OffsetOrPeriodPicker from "./OffsetOrPeriodPicker/OffsetOrPeriodPicker";
 import PointsCountChooser from "./PointsCountChooser";
 import VariablesManager from "./VariablesManager/VariablesManager";
 import ViewGraphButton from "./ViewGraphButton";
-
-//import { useGraphContext } from "../../../providers/GraphProvider/GraphContext";
+//import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
 
 function GraphSettings() {
     console.log("Render GraphSettings");
     //const { createMessageForWS, variables } = useGraphContext();
-    
+
     return (
         <Flex
             w={"2xl"}
@@ -23,7 +21,7 @@ function GraphSettings() {
                 shadow={"xl"}
                 data-state={"open"}
                 animationDuration={"slow"}
-                animationStyle={{"_open": "scale-fade-in"}}
+                animationStyle={{ _open: "scale-fade-in" }}
             >
                 <Card.Header>
                     <Card.Title>Настройки отображения</Card.Title>

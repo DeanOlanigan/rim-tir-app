@@ -171,7 +171,7 @@ const ToggleEditingCell = ({
         </Flex>
     );
 };
-import { DebouncedEditor } from "../../../InputComponents";
+import { DebouncedEditor } from "@/pages/ConfigurationPage/InputComponents";
 const LuaViewCell = ({ rowData, isEditing }) => {
     if (isEditing) {
         return (
@@ -192,7 +192,7 @@ const LuaViewCell = ({ rowData, isEditing }) => {
 };
 
 import { Editor } from "@monaco-editor/react";
-import { useColorMode } from "../../../../../components/ui/color-mode";
+import { useColorMode } from "@/components/ui/color-mode";
 import { HoverCard, Code, Portal } from "@chakra-ui/react";
 const CodePreview = ({ code }) => {
     const { colorMode } = useColorMode();

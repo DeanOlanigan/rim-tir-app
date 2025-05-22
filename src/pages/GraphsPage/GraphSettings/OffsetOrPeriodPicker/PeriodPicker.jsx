@@ -3,11 +3,9 @@ import { Field } from "@/components/ui/field";
 import { ru } from "date-fns/locale";
 import { DatePicker } from "@/components/DatePicker/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
-
-//import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
-
 import { useAtom } from "jotai";
 import { startDateAtom, endDateAtom } from "../../atoms";
+//import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
 
 function PeriodPicker() {
     console.log("Render PeriodPicker");

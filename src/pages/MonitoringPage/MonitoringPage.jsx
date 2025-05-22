@@ -10,7 +10,7 @@ import { LuX, LuSearch } from "react-icons/lu";
 //import { produce, enableMapSet } from "immer";
 //enableMapSet();
 
-//import WebSocketService from "../../services/websocketService";
+//import WebSocketService from "@/services/websocketService";
 //const wsService = new WebSocketService("ws://192.168.1.1:8800");
 
 /* function matchesNode(node, part) {

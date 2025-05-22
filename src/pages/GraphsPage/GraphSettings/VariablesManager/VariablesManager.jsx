@@ -1,9 +1,8 @@
 import { Flex, Button } from "@chakra-ui/react";
 import { useAtom, useAtomValue } from "jotai";
 import { variablesAtom, addVariableAtom } from "../../atoms";
-
 import GraphVariable from "./GraphVariable";
-//import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
+//import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
 
 function VariablesManager() {
     console.log("Render VariablesManager");
@@ -11,7 +10,7 @@ function VariablesManager() {
 
     const variables = useAtomValue(variablesAtom);
     const [, addVariable] = useAtom(addVariableAtom);
-    
+
     return (
         <>
             <Flex
@@ -26,17 +25,15 @@ function VariablesManager() {
                 gap={"2"}
                 direction={"column"}
             >
-                {
-                    variables.map((variable, index) => (
-                        <GraphVariable 
-                            key={variable.id}
-                            index={index}
-                            variable={variable}
-                            /* removeVariable={removeVariable}
+                {variables.map((variable, index) => (
+                    <GraphVariable
+                        key={variable.id}
+                        index={index}
+                        variable={variable}
+                        /* removeVariable={removeVariable}
                             updateVariable={updateVariable} */
-                        />
-                    ))
-                }
+                    />
+                ))}
             </Flex>
             <Button
                 size={"xs"}
@@ -47,6 +44,6 @@ function VariablesManager() {
             </Button>
         </>
     );
-};
+}
 
 export default VariablesManager;

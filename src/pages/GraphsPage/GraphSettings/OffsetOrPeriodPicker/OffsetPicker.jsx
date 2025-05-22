@@ -7,11 +7,9 @@ import {
     SelectValueText,
 } from "@/components/ui/select";
 import { offsets } from "../graphSettingsConstants";
-
-//import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
-
 import { useAtom } from "jotai";
 import { offsetAtom } from "../../atoms";
+//import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
 
 function OffsetPicker() {
     console.log("Render OffsetPicker");

@@ -1,6 +1,6 @@
 import { HStack, Heading /* IconButton, Editable */ } from "@chakra-ui/react";
 //import { LuPencilLine, LuX, LuCheck } from "react-icons/lu";
-//import { useVariablesStore } from "../../../store/variables-store";
+//import { useVariablesStore } from "@/store/variables-store";
 
 export const VariableEditorHeader = ({ name }) => {
     //const updateNode = useVariablesStore((state) => state.updateNode);

@@ -1,16 +1,14 @@
 import { Box, Tabs } from "@chakra-ui/react";
-
 import PeriodPicker from "./PeriodPicker";
 import OffsetPicker from "./OffsetPicker";
-
-//import { useGraphContext } from "../../../../providers/GraphProvider/GraphContext";
 import { useAtom } from "jotai";
 import { isWsActiveAtom } from "../../atoms";
+//import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
 
 function OffsetOrPeriodPicker() {
     console.log("Render OffsetOrPeriodPicker");
     //const { isWsActive, setIsWsActive } = useGraphContext();
-    const [ isWsActive, setIsWsActive ] = useAtom(isWsActiveAtom);
+    const [isWsActive, setIsWsActive] = useAtom(isWsActiveAtom);
 
     return (
         <Tabs.Root
@@ -26,7 +24,7 @@ function OffsetOrPeriodPicker() {
                 <Tabs.Trigger value="2">Период</Tabs.Trigger>
             </Tabs.List>
             <Box pos="relative" width="full">
-                <Tabs.Content 
+                <Tabs.Content
                     value="1"
                     position="absolute"
                     inset="0"
@@ -41,7 +39,7 @@ function OffsetOrPeriodPicker() {
                 >
                     <OffsetPicker />
                 </Tabs.Content>
-                <Tabs.Content 
+                <Tabs.Content
                     value="2"
                     position="absolute"
                     inset="0"
