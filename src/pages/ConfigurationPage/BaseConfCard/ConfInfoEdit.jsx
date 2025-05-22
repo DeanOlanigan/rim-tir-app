@@ -45,7 +45,13 @@ export const ConfInfoEdit = () => {
     return (
         <PopoverRoot>
             <PopoverTrigger asChild>
-                <Button variant="subtle" size="2xs" rounded={"md"} py={"0"}>
+                <Button
+                    variant="subtle"
+                    size="2xs"
+                    rounded={"md"}
+                    py={"0"}
+                    shadow={"md"}
+                >
                     <Text
                         fontSize={"sm"}
                         fontWeight={"bold"}

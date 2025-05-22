@@ -1,29 +1,20 @@
+.verticalLineConf,
 .verticalLine {
     outline: none;
-    flex: 0 0 .25rem;
+    flex: 0 0 0.25rem;
     justify-content: stretch;
-    transition: background-color .2s linear;
+    transition: background-color 0.2s linear;
     display: flex;
+    border-radius: 10px;
+    background-color: var(--chakra-colors-color-palette-subtle);
 }
 .verticalLine:hover,
-.verticalLine[data-resize-handle-active] {
+.verticalLine[data-resize-handle-active],
+.verticalLineConf:hover,
+.verticalLineConf[data-resize-handle-active] {
     background-color: var(--chakra-colors-color-palette-solid);
 }
 
 .panelWithShadow {
     box-shadow: var(--chakra-shadows-xl);
-}
-
-.verticalLineConf {
-    outline: none;
-    flex: 0 0 .25rem;
-    justify-content: stretch;
-    transition: background-color .2s linear;
-    background-color: var(--chakra-colors-border);
-    border-radius: 10px;
-    display: flex;
-}
-.verticalLineConf:hover,
-.verticalLineConf[data-resize-handle-active] {
-    background-color: var(--chakra-colors-color-palette-solid);
 }

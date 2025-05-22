@@ -5,7 +5,7 @@ export const VariablesTableHeader = () => {
 
     return (
         <Table.Header>
-            <Table.Row background={"bg.subtle"}>
+            <Table.Row>
                 <Table.ColumnHeader minW={"150px"}>Имя</Table.ColumnHeader>
                 <Table.ColumnHeader>Параметры</Table.ColumnHeader>
                 <Table.ColumnHeader minW={"150px"}>

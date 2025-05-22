@@ -6,7 +6,7 @@ import { RouterMenu } from "./RouterMenu";
 
 export const BaseConfCard = () => {
     return (
-        <Card.Root>
+        <Card.Root border={"none"} bg={"transparent"}>
             <Card.Body p={"2"}>
                 <Card.Title>
                     <Stack

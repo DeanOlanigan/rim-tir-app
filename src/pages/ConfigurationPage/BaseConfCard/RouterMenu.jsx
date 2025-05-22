@@ -10,7 +10,12 @@ export const RouterMenu = () => {
     return (
         <MenuRoot size={"md"}>
             <MenuTrigger asChild>
-                <Button variant="subtle" size="2xs" rounded={"md"}>
+                <Button
+                    variant="subtle"
+                    size="2xs"
+                    rounded={"md"}
+                    shadow={"md"}
+                >
                     Роутер
                 </Button>
             </MenuTrigger>

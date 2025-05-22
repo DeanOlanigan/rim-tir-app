@@ -28,6 +28,8 @@ export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
                 _open: "scale-fade-in",
             }}
             className="group"
+            border={"none"}
+            bg={"transparent"}
         >
             <Card.Header>
                 <Card.Title>

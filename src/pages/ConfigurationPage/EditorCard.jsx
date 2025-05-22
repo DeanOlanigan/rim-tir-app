@@ -15,6 +15,8 @@ export const EditorCard = () => {
                 animationStyle={{
                     _open: "scale-fade-in",
                 }}
+                border={"none"}
+                bg={"transparent"}
             >
                 <Card.Body overflow={"auto"} w={"100%"} h={"100%"}>
                     <PanelGroup direction="vertical">

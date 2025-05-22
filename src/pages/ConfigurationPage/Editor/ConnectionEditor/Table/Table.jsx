@@ -18,7 +18,7 @@ export const DataObjectsTable = ({ data }) => {
     return (
         <Table.Root size={"sm"} stickyHeader>
             <Table.Header>
-                <Table.Row background={"bg.subtle"}>
+                <Table.Row>
                     {keys.map((key, index) => {
                         return (
                             <Table.ColumnHeader

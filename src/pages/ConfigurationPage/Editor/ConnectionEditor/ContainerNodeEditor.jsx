@@ -13,6 +13,7 @@ export const ContainerNodeEditor = ({ data }) => {
             borderRadius={"md"}
             shadow={"md"}
             p={"4"}
+            bg={"bg.panel"}
         >
             <HStack justify={"space-between"}>
                 <Heading textWrap={"nowrap"}>
