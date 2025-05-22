@@ -5,14 +5,14 @@ export const InputController = ({
     inputType,
     inputId,
     value,
-    Empty = () => null,
+    empty = null,
     Factory,
     showLabel = false,
 }) => {
     const definition = PARAM_DEFINITIONS[inputType];
-    if (!definition || definition.hidden) return <Empty />;
+    if (!definition || definition.hidden) return empty;
     const isVisible = validateVisability(definition.dependencies, inputId);
-    if (!isVisible) return <Empty />;
+    if (!isVisible) return empty;
     return (
         <Factory
             type={definition.type}
