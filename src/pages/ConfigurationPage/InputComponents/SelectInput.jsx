@@ -7,16 +7,8 @@ import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 
 export const SelectInput = memo(function SelectInput(props) {
     //console.log("Render SelectInput");
-    const {
-        targetKey,
-        id,
-        value,
-        showLabel = false,
-        noPortal,
-        ...rest
-    } = props;
+    const { id, targetKey, value, noPortal, ...rest } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
-    const label = PARAM_DEFINITIONS[targetKey].label;
     const collection = PARAM_DEFINITIONS[targetKey].options;
 
     const content = (
@@ -36,9 +28,8 @@ export const SelectInput = memo(function SelectInput(props) {
         <Select.Root
             lazyMount
             unmountOnExit
-            maxW={"250px"}
             size={"xs"}
-            {...rest}
+            positioning={{ sameWidth: true, placement: "bottom" }}
             collection={collection}
             value={[value]}
             onValueChange={(details) => {
@@ -46,15 +37,12 @@ export const SelectInput = memo(function SelectInput(props) {
                     [targetKey]: details.value[0],
                 });
             }}
-            positioning={{ sameWidth: true, placement: "bottom" }}
+            {...rest}
         >
-            {showLabel && <Select.Label>{label}</Select.Label>}
             <Select.HiddenSelect />
             <Select.Control>
                 <Select.Trigger>
-                    <Select.ValueText
-                        placeholder={`Выберите ${label.toLowerCase()}`}
-                    />
+                    <Select.ValueText placeholder={"Выберите параметр"} />
                 </Select.Trigger>
                 <Select.IndicatorGroup>
                     <Select.Indicator />

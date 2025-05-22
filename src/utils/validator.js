@@ -240,7 +240,10 @@ export function validateParameter(
 
     if (
         definition.required &&
-        (value === undefined || value === null || value === "")
+        (value === undefined ||
+            value === null ||
+            value === "" ||
+            value === false)
     ) {
         return { [id]: { [inputParam]: { required: ["Обязательное поле"] } } };
     }

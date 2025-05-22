@@ -2,7 +2,8 @@ import { Editable } from "@chakra-ui/react";
 import { useState } from "react";
 import { useVariablesStore } from "@/store/variables-store";
 
-export const EditableInput = ({ id, value, targetKey }) => {
+export const EditableInput = (props) => {
+    const { id, targetKey, value, ...rest } = props;
     const [innerValue, setValue] = useState(value);
     const setSettings = useVariablesStore((state) => state.setSettings);
 
@@ -14,6 +15,7 @@ export const EditableInput = ({ id, value, targetKey }) => {
             onValueCommit={(e) => setSettings(id, { [targetKey]: e.value })}
             onValueRevert={() => setValue(value)}
             placeholder={"Введите описание"}
+            {...rest}
         >
             <Editable.Preview />
             <Editable.Textarea />

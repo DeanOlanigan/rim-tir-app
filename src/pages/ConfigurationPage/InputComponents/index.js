@@ -8,10 +8,11 @@ import { EditableInput } from "./Editable";
 import { DroppableInput } from "./DroppableInput";
 import { IpInput } from "./IpInput";
 import { HexInput } from "./HexInput";
-import { BaseInput } from "./BaseInput";
+import { InputFactory } from "./InputFactory";
+import { InputController } from "./InputController";
 
 export {
-    BaseInput,
+    InputFactory as BaseInput,
     TextInput,
     NumberInput,
     SelectInput,
@@ -22,4 +23,5 @@ export {
     DroppableInput,
     IpInput,
     HexInput,
+    InputController,
 };

@@ -1,8 +1,9 @@
 import { Table } from "@chakra-ui/react";
 import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
-import { BaseInput } from "@/pages/ConfigurationPage/InputComponents";
-import { TypeCell } from "@/pages/ConfigurationPage/Editor/VariableEditor/Table/Cells"; // TODO спорно
-import { validateVisability } from "@/utils/validator";
+import {
+    BaseInput,
+    InputController,
+} from "@/pages/ConfigurationPage/InputComponents";
 
 export const DataObjectsTable = ({ data }) => {
     let keys;
@@ -20,7 +21,12 @@ export const DataObjectsTable = ({ data }) => {
                 <Table.Row background={"bg.subtle"}>
                     {keys.map((key, index) => {
                         return (
-                            <Table.ColumnHeader key={key + "_" + index}>
+                            <Table.ColumnHeader
+                                key={key + "_" + index}
+                                minW={"150px"}
+                                maxW={"150px"}
+                                p={"0.5"}
+                            >
                                 {PARAM_DEFINITIONS[key].label}
                             </Table.ColumnHeader>
                         );
@@ -45,16 +51,6 @@ const TableRow = ({ element }) => {
             _hover={{ bg: "bg.muted" }}
         >
             {Object.keys(element.setting).map((key) => {
-                //if (key === "variable") return null;
-
-                const definition = PARAM_DEFINITIONS[key];
-                if (!definition) return null;
-                const isVisible = validateVisability(definition, element.id);
-
-                if (!isVisible) {
-                    return <Table.Cell key={element.id + "_" + key} />;
-                }
-
                 return (
                     <Table.Cell
                         key={element.id + "_" + key}
@@ -62,18 +58,12 @@ const TableRow = ({ element }) => {
                         maxW={"150px"}
                         p={"0.5"}
                     >
-                        {key === "type" ? (
-                            <TypeCell
-                                id={element.id}
-                                type={element.setting[key]}
-                            />
-                        ) : (
-                            <BaseInput
-                                value={element.setting[key]}
-                                id={element.id}
-                                inputParam={key}
-                            />
-                        )}
+                        <InputController
+                            inputType={key}
+                            inputId={element.id}
+                            value={element.setting[key]}
+                            Factory={BaseInput}
+                        />
                     </Table.Cell>
                 );
             })}

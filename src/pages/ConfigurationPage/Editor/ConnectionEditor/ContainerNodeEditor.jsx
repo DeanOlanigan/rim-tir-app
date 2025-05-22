@@ -1,6 +1,6 @@
-import { Heading, Flex, HStack, SimpleGrid } from "@chakra-ui/react";
+import { Heading, Flex, HStack } from "@chakra-ui/react";
 import { PARENT_NAMES } from "@/config/paramDefinitions";
-import { BaseInput } from "@/pages/ConfigurationPage/InputComponents";
+import { ConnectionParamContainer } from "./ConnectionParamContainer";
 
 export const ContainerNodeEditor = ({ data }) => {
     return (
@@ -22,23 +22,7 @@ export const ContainerNodeEditor = ({ data }) => {
                     Элементов: {data.children.length}
                 </Heading>
             </HStack>
-            {data.setting && (
-                <SimpleGrid columns={4} columnGap={"2"} rowGap={"2"}>
-                    {Object.keys(data.setting).map((key, index) => {
-                        if (key === "variable") return null;
-
-                        return (
-                            <BaseInput
-                                key={index}
-                                value={data.setting[key]}
-                                id={data.id}
-                                inputParam={key}
-                                showLabel
-                            />
-                        );
-                    })}
-                </SimpleGrid>
-            )}
+            {data.setting && <ConnectionParamContainer data={data} />}
         </Flex>
     );
 };

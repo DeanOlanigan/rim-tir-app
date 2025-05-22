@@ -4,7 +4,7 @@ import { VariablesTable } from "./VariableEditor/Table/VariablesTable";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { DataObjectsTable } from "./ConnectionEditor/Table/Table";
 import { ContainerNodeEditor } from "./ConnectionEditor/ContainerNodeEditor";
-import { DataObjectEditor } from "./ConnectionEditor/DataObjectEditor";
+import { ConnectionParamContainer } from "./ConnectionEditor/ConnectionParamContainer";
 import { EditorBreadcrumb } from "./Breadcrumb";
 import { EditorInformer } from "./EditorInformer";
 import { useSelectedData } from "@/hooks/useSelectedData";
@@ -94,7 +94,7 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
             break;
         }
         case "dataObject": {
-            content = <DataObjectEditor data={node} />;
+            content = <ConnectionParamContainer data={node} />;
             break;
         }
         case "variable": {
