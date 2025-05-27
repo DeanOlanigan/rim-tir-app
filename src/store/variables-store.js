@@ -23,7 +23,6 @@ import {
     getParentId,
 } from "@/utils/treeUtils";
 import { devtools, persist } from "zustand/middleware";
-import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 import { validateAll, validateParameter } from "@/utils/validator";
 import { useValidationStore } from "@/store/validation-store";
 
@@ -85,11 +84,8 @@ export const useVariablesStore = create()(
                         );
 
                         const param = Object.keys(updateData)[0];
-                        const def = PARAM_DEFINITIONS[param];
                         const errors = validateParameter(
-                            def,
                             nodeId,
-                            Object.values(updateData)[0],
                             param,
                             newSettings
                         );

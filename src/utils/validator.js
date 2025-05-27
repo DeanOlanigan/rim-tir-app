@@ -8,125 +8,84 @@ import {
 import { useValidationStore } from "@/store/validation-store";
 import { useVariablesStore } from "@/store/variables-store";
 
-// TODO подумать над формированием структуры ошибок с валидаторами
-/* 
-errors: {
-    [nodeId]: {
-        [param]: {
-            unique: [],
-            range: [],
-            required: []
-        }
-    }
-}
-*/
+const validatorRegistry = {
+    [VALIDATOR.RANGE]: rangeValidator,
+    [VALIDATOR.REGEX]: regexValidator,
+    [VALIDATOR.UNIQUE]: uniqueValidator,
+    [VALIDATOR.CUSTOM]: customValidator,
+    [VALIDATOR.REQUIRED]: requiredValidator,
+};
 
-export function validateModbusAdressUnique(id) {
-    const settings = useVariablesStore.getState().settings;
-    const parentNode = settings[settings[id].parentId];
-    const seen = {};
-    const errors = [];
-
-    for (const childId of parentNode.children) {
-        const child = settings[childId];
-        const address = child.setting?.modbusDoAddress;
-        const normalized = String(address).toLowerCase().trim();
-
-        if (seen[normalized]) {
-            errors.push(childId);
-        } else {
-            seen[normalized] = childId;
-        }
-    }
-
-    return errors.length ? true : false;
-}
-
-function getContextValue(context, node, key, scope) {
+function getContextIds(context, nodeId, param, scope) {
     switch (scope) {
         case SCOPE.SELF:
-            return node.setting ? node.setting[key] : undefined;
+            return [nodeId];
         case SCOPE.SIBLINGS: {
-            if (!node.parentId) return [];
-            const parent = context[node.parentId];
-            return (parent.children || [])
-                .filter((id) => id !== node.id)
-                .map((id) => context[id]);
+            const parentId = context[nodeId]?.parentId;
+            if (!parentId) return [];
+            const parent = context[parentId];
+            return parent.children ?? [];
         }
         case SCOPE.PARENT: {
-            let parent = node;
+            let parent = context[nodeId];
             while (parent.parentId) {
                 parent = context[parent.parentId];
                 if (parent.setting) {
-                    const val = parent.setting[key];
-                    if (val !== undefined) return val;
+                    const val = parent.setting[param];
+                    if (val) return [parent.id];
                 }
             }
-            return undefined;
+            return [];
         }
         default:
-            return undefined;
+            return [];
     }
 }
 
-function checkDependencies(dependencies, context, node) {
+function checkDependencies(dependencies, context, nodeId) {
     if (!dependencies) return true;
     if (dependencies.key) {
-        const val = getContextValue(
+        const ids = getContextIds(
             context,
-            node,
+            nodeId,
             dependencies.key,
             dependencies.scope || SCOPE.SELF
         );
-        if (Array.isArray(val)) {
-            if (dependencies.match === MATCH.NONE) {
-                return !val.some(
-                    (item) =>
-                        item.setting &&
-                        item.setting[dependencies.key] === dependencies.value
-                );
-            }
-            if (dependencies.match === MATCH.ALL) {
-                return val.every(
-                    (item) =>
-                        item.setting &&
-                        item.setting[dependencies.key] === dependencies.value
-                );
-            }
-            return val.some(
-                (item) =>
-                    item.setting &&
-                    item.setting[dependencies.key] === dependencies.value
-            );
-        } else {
-            return val === dependencies.value;
+
+        const pred = (id) =>
+            context[id]?.setting &&
+            context[id].setting[dependencies.key] === dependencies.value;
+        switch (dependencies.match) {
+            case MATCH.NONE:
+                return !ids.some(pred);
+            case MATCH.ALL:
+                return ids.every(pred);
+            default:
+                return ids.some(pred);
         }
     }
     if (dependencies.type === LOGIC.AND) {
         return dependencies.conditions.every((condition) =>
-            checkDependencies(condition, context, node)
+            checkDependencies(condition, context, nodeId)
         );
     }
     if (dependencies.type === LOGIC.OR) {
         return dependencies.conditions.some((condition) =>
-            checkDependencies(condition, context, node)
+            checkDependencies(condition, context, nodeId)
         );
+    }
+    if (dependencies.type === LOGIC.NOT) {
+        return !checkDependencies(dependencies.condition, context, nodeId);
     }
     return true;
 }
 
-function validateRules(rules, value, context, node, inputParam) {
+function validateRules(rules, context, nodeId, inputParam) {
     const errors = {};
-    errors[node.id] = { [inputParam]: {} };
 
-    const validatoTypes = [
-        VALIDATOR.RANGE,
-        VALIDATOR.REGEX,
-        VALIDATOR.UNIQUE,
-        VALIDATOR.CUSTOM,
-    ];
+    const validatorTypes = Object.keys(validatorRegistry);
 
-    for (const validator of validatoTypes) {
+    for (const validator of validatorTypes) {
         const rulesOfType = (rules || []).filter(
             (r) => r.validator === validator
         );
@@ -135,7 +94,7 @@ function validateRules(rules, value, context, node, inputParam) {
         for (const rule of rulesOfType) {
             if (
                 rule.condition &&
-                checkDependencies(rule.condition, context, node)
+                checkDependencies(rule.condition, context, nodeId)
             ) {
                 matchedRule = rule;
                 break;
@@ -147,106 +106,27 @@ function validateRules(rules, value, context, node, inputParam) {
         }
 
         if (matchedRule) {
-            if (!errors[node.id][inputParam][validator]) {
-                errors[node.id][inputParam][validator] = [];
-            }
-
-            if (validator === VALIDATOR.RANGE) {
-                const { min, max } = matchedRule.params || {};
-                if (value < min || value > max) {
-                    errors[node.id][inputParam][validator].push(
-                        matchedRule.message || "Value is out of range"
-                    );
-                }
-            }
-
-            if (validator === VALIDATOR.REGEX) {
-                const { pattern } = matchedRule.params || {};
-                if (
-                    typeof value !== "string" ||
-                    !new RegExp(pattern).test(value)
-                ) {
-                    errors[node.id][inputParam][validator].push(
-                        matchedRule.message || "Value does not match regex"
-                    );
-                }
-            }
-
-            if (validator === VALIDATOR.UNIQUE) {
-                const { within } = matchedRule.params || {};
-                let siblings = [];
-                if (within === SCOPE.SIBLINGS) {
-                    siblings = getContextValue(
-                        context,
-                        node,
-                        null,
-                        SCOPE.SIBLINGS
-                    );
-                }
-
-                if (siblings.length) {
-                    let isDuplicate = false;
-                    siblings.forEach((sib) => {
-                        if (!errors[sib.id]) {
-                            errors[sib.id] = {};
-                        }
-                        if (!errors[sib.id][inputParam]) {
-                            errors[sib.id][inputParam] = {};
-                        }
-                        if (!errors[sib.id][inputParam][validator]) {
-                            errors[sib.id][inputParam][validator] = [];
-                        }
-                        if (sib.setting && sib.setting[inputParam] === value) {
-                            isDuplicate = true;
-                            errors[sib.id][inputParam][validator].push(
-                                matchedRule.message || "Value is not unique"
-                            );
-                        }
-                    });
-
-                    if (isDuplicate) {
-                        errors[node.id][inputParam][validator].push(
-                            matchedRule.message || "Value is not unique"
-                        );
-                    }
-                }
-            }
-
-            if (validator === VALIDATOR.CUSTOM) {
-                const fn = matchedRule.params && matchedRule.params.fn;
-                if (typeof fn === "function" && !fn(value)) {
-                    errors[node.id][inputParam][validator].push(
-                        matchedRule.message ||
-                            "Value does not match custom validator"
-                    );
-                }
-            }
+            const fn = validatorRegistry[validator];
+            if (fn)
+                fn({
+                    nodeId,
+                    param: inputParam,
+                    rule: matchedRule,
+                    context,
+                    draft: errors,
+                });
         }
     }
     return errors;
 }
 
 export function validateParameter(
-    definition,
     id,
-    value,
     inputParam,
     settings = useVariablesStore.getState().settings
 ) {
-    //const settings = useVariablesStore.getState().settings;
-    const node = settings[id];
-    /* const isVisible = validateVisability(definition, id);
-    if (!isVisible) return []; */
-
-    if (
-        definition.required &&
-        (value === undefined ||
-            value === null ||
-            value === "" ||
-            value === false)
-    ) {
-        return { [id]: { [inputParam]: { required: ["Обязательное поле"] } } };
-    }
+    const definition = PARAM_DEFINITIONS[inputParam];
+    if (!definition) return;
 
     if (!definition.rules) {
         return { [id]: { [inputParam]: { required: [] } } };
@@ -254,42 +134,111 @@ export function validateParameter(
 
     const rulesErrors = validateRules(
         definition.rules,
-        value,
         settings,
-        node,
+        id,
         inputParam
     );
-    rulesErrors[id][inputParam].required = [];
+
     return rulesErrors;
 }
 
-export function validateVisability(dependencies, id) {
-    const settings = useVariablesStore.getState().settings;
-    const node = settings[id];
-    return checkDependencies(dependencies, settings, node);
+function rangeValidator({ nodeId, param, rule, context, draft }) {
+    const { min, max } = rule.params || {};
+    const val = context[nodeId]?.setting?.[param];
+    const res =
+        (min != null ? val >= min : true) && (max != null ? val <= max : true);
+    setDraftMessage(
+        draft,
+        nodeId,
+        param,
+        VALIDATOR.RANGE,
+        res ? [] : [rule.message || `Value must be between ${min} and ${max}`]
+    );
 }
 
-export function getSiblingsIds(settings, parentId) {
-    if (!parentId) return [];
-    return settings[parentId].children;
+function regexValidator({ nodeId, param, rule, context, draft }) {
+    const { pattern } = rule.params || {};
+    const re = rule._regex || (rule._regex = new RegExp(pattern));
+    const val = context[nodeId]?.setting?.[param];
+    const res = typeof val === "string" && re.test(val);
+    setDraftMessage(
+        draft,
+        nodeId,
+        param,
+        VALIDATOR.REGEX,
+        res ? [] : [rule.message || "Value does not match regex"]
+    );
 }
 
-export function validateSiblings(verrors, settings, inputParam, parentId) {
-    const ids = getSiblingsIds(settings, parentId);
-    const result = verrors;
+function customValidator({ nodeId, param, rule, context, draft }) {
+    const fn = rule.params?.fn;
+    const val = context[nodeId]?.setting?.[param];
+    const res = typeof fn === "function" ? fn(nodeId, context, val) : true;
+    setDraftMessage(
+        draft,
+        nodeId,
+        param,
+        VALIDATOR.CUSTOM,
+        res ? [] : [rule.message || "Value does not match custom validator"]
+    );
+}
+
+function uniqueValidator({ nodeId, param, rule, context, draft }) {
+    const { within } = rule.params || {};
+    const ids = getContextIds(context, nodeId, param, within || SCOPE.SIBLINGS);
+
+    const map = new Map();
     for (const id of ids) {
-        const node = settings[id];
-        const def = PARAM_DEFINITIONS[inputParam];
-        const value = node.setting[inputParam];
-        const errors = validateParameter(def, id, value, inputParam, settings);
-        result[id] = {
-            ...verrors[id],
-            [inputParam]: errors,
-        };
+        const val = context[id]?.setting?.[param];
+        if (val === undefined || val == "") continue;
+        if (!map.has(val)) map.set(val, []);
+        map.get(val).push(id);
     }
-    return result;
+    for (const id of ids) {
+        const val = context[id]?.setting?.[param];
+        const dupIds = map.get(val) || [];
+        let msg = [];
+        if (dupIds.length > 1) {
+            msg = [
+                rule.message ||
+                    `Значение "${val}" уже существует: ${dupIds
+                        .filter((dId) => dId !== id)
+                        .join(", ")}`,
+            ];
+        }
+        setDraftMessage(draft, id, param, VALIDATOR.UNIQUE, msg);
+    }
 }
 
+function requiredValidator({ nodeId, param, rule, context, draft }) {
+    const val = context[nodeId]?.setting?.[param];
+    const res =
+        val !== undefined && val !== null && val !== "" && val !== false;
+    setDraftMessage(
+        draft,
+        nodeId,
+        param,
+        VALIDATOR.REQUIRED,
+        res ? [] : [rule.message || "Обязательное поле"]
+    );
+}
+
+function setDraftMessage(draft, nodeId, param, validator, message) {
+    if (!draft[nodeId]) draft[nodeId] = {};
+    if (!draft[nodeId][param]) draft[nodeId][param] = {};
+    if (!draft[nodeId][param][validator]) draft[nodeId][param][validator] = [];
+    draft[nodeId][param][validator] = message;
+}
+
+export function validateVisability(
+    dependencies,
+    nodeId,
+    settings = useVariablesStore.getState().settings
+) {
+    return checkDependencies(dependencies, settings, nodeId);
+}
+
+// TODO Бог покинул это место
 export function validateAll(settings = useVariablesStore.getState().settings) {
     //const settings = useVariablesStore.getState().settings;
     let errors = {};
@@ -297,43 +246,34 @@ export function validateAll(settings = useVariablesStore.getState().settings) {
     for (const node of Object.values(settings)) {
         if (!node.setting) continue;
         Object.keys(node.setting).forEach((param) => {
-            const def = PARAM_DEFINITIONS[param];
-            if (def) {
-                const error = validateParameter(
-                    def,
-                    node.id,
-                    node.setting[param],
-                    param,
-                    settings
-                );
-                if (error) {
-                    // error — это {[nodeId]: {[param]: {[validator]: [messages]}}}
-                    Object.entries(error).forEach(([nodeId, paramErrors]) => {
-                        if (!errors[nodeId]) errors[nodeId] = {};
-                        Object.entries(paramErrors).forEach(
-                            ([p, validatorErrors]) => {
-                                if (!errors[nodeId][p]) errors[nodeId][p] = {};
-                                Object.entries(validatorErrors).forEach(
-                                    ([validator, msgs]) => {
-                                        if (msgs && msgs.length) {
-                                            errors[nodeId][p][validator] = msgs;
-                                        } else {
-                                            delete errors[nodeId][p][validator];
-                                        }
+            const error = validateParameter(node.id, param, settings);
+            if (error) {
+                // error — это {[nodeId]: {[param]: {[validator]: [messages]}}}
+                Object.entries(error).forEach(([nodeId, paramErrors]) => {
+                    if (!errors[nodeId]) errors[nodeId] = {};
+                    Object.entries(paramErrors).forEach(
+                        ([p, validatorErrors]) => {
+                            if (!errors[nodeId][p]) errors[nodeId][p] = {};
+                            Object.entries(validatorErrors).forEach(
+                                ([validator, msgs]) => {
+                                    if (msgs && msgs.length) {
+                                        errors[nodeId][p][validator] = msgs;
+                                    } else {
+                                        delete errors[nodeId][p][validator];
                                     }
-                                );
-                                // если нет ошибок валидаторов, удалить param
-                                if (!Object.keys(errors[nodeId][p]).length) {
-                                    delete errors[nodeId][p];
                                 }
+                            );
+                            // если нет ошибок валидаторов, удалить param
+                            if (!Object.keys(errors[nodeId][p]).length) {
+                                delete errors[nodeId][p];
                             }
-                        );
-                        // если нет ошибок параметров, удалить node
-                        if (!Object.keys(errors[nodeId]).length) {
-                            delete errors[nodeId];
                         }
-                    });
-                }
+                    );
+                    // если нет ошибок параметров, удалить node
+                    if (!Object.keys(errors[nodeId]).length) {
+                        delete errors[nodeId];
+                    }
+                });
             }
         });
     }

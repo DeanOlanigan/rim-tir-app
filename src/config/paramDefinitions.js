@@ -34,6 +34,7 @@ export const PARENT_NAMES = {
     folder: "Директория",
     functionGroup: "Функциональная группа",
     asdu: "ASDU",
+    dataObject: "Информационный объект",
 };
 
 export const SCOPE = {
@@ -48,11 +49,13 @@ export const VALIDATOR = {
     REGEX: "regex",
     UNIQUE: "unique",
     CUSTOM: "custom",
+    REQUIRED: "required",
 };
 
 export const LOGIC = {
     AND: "and",
     OR: "or",
+    NOT: "not",
 };
 
 export const MATCH = {
@@ -67,6 +70,7 @@ export const PARAM_DEFINITIONS = {
         label: "Цикличная",
         icon: LuRefreshCcwDot,
         defaultValue: false,
+        dependencies: { key: "type", value: "bit", scope: SCOPE.SELF },
     },
     type: {
         type: "select",
@@ -94,6 +98,10 @@ export const PARAM_DEFINITIONS = {
         label: "В архив ТИ",
         icon: LuChartSpline,
         defaultValue: false,
+        dependencies: {
+            type: LOGIC.NOT,
+            condition: [{ key: "type", value: "bit", scope: SCOPE.SELF }],
+        },
     },
     description: {
         type: "textarea",
@@ -104,17 +112,38 @@ export const PARAM_DEFINITIONS = {
         label: "ТУ",
         icon: LuSquareTerminal,
         defaultValue: false,
+        dependencies: {
+            type: LOGIC.OR,
+            conditions: [
+                { key: "type", value: "bit", scope: SCOPE.SELF },
+                { key: "type", value: "twoByteUnsigned", scope: SCOPE.SELF },
+            ],
+        },
     },
     archive: {
         type: "boolean",
         label: "В архив ТС",
         icon: LuArchive,
         defaultValue: false,
+        dependencies: {
+            type: LOGIC.OR,
+            conditions: [
+                { key: "type", value: "bit", scope: SCOPE.SELF },
+                { key: "type", value: "twoByteUnsigned", scope: SCOPE.SELF },
+            ],
+        },
     },
     group: {
         type: "select",
         label: "Группа",
         options: groups,
+        dependencies: {
+            type: LOGIC.OR,
+            conditions: [
+                { key: "type", value: "bit", scope: SCOPE.SELF },
+                { key: "type", value: "twoByteUnsigned", scope: SCOPE.SELF },
+            ],
+        },
     },
     measurement: {
         type: "select",
@@ -125,17 +154,30 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "Коэффициент",
     },
-    luaExpression: "textarea",
+    luaExpression: {
+        type: "code",
+        label: "Lua-выражение",
+    },
     specialCycleDelay: {
         type: "number",
         label: "Цикличный вызов, сек",
         description: "Время, через которое будет вызвана функция",
-        required: false,
         defaultValue: 1,
         hidden: false,
         order: 1,
         helpText: "Время, через которое будет вызвана функция",
+        dependencies: {
+            type: LOGIC.AND,
+            conditions: [
+                { key: "isSpecial", value: true, scope: SCOPE.SELF },
+                { key: "type", value: "bit", scope: SCOPE.SELF },
+            ],
+        },
         rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
             {
                 validator: VALIDATOR.RANGE,
                 params: { min: 1, max: 255 },
@@ -162,12 +204,15 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "Период дребезга",
         description: "Период дребезга контакта, сек",
-        required: true,
         defaultValue: 1,
         hidden: false,
         order: 1,
         helpText: "Период дребезга контакта, сек",
         rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
             {
                 validator: VALIDATOR.RANGE,
                 params: { min: 1, max: 10000 },
@@ -184,25 +229,31 @@ export const PARAM_DEFINITIONS = {
         type: "ip",
         label: "IP-адрес",
         description: "IP-адрес в формате IPv4.",
-        required: true,
         defaultValue: "192.168.0.1",
         hidden: false,
         order: 1,
         helpText: "IP-адрес в формате IPv4.",
-        //rules: [{ props: { placeholder: "192.168.0.1" } }],
+        rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
+        ],
     },
     modbusDoAddress: {
         type: "hex",
         label: "Адрес информационного объекта",
         description: "Адрес информационного объекта в формате hex (0x00-0xFF).",
-        required: true,
         defaultValue: "0x00",
         uniqueWithin: SCOPE.SIBLINGS,
         hidden: false,
         order: 1,
         helpText: "Адрес информационного объекта в формате hex (0x00-0xFF).",
-
         rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
             {
                 validator: VALIDATOR.UNIQUE,
                 params: { within: SCOPE.SIBLINGS },
@@ -215,13 +266,16 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "Адрес информационного объекта",
         description: "Адрес информационного объекта в формате dec.",
-        required: true,
         defaultValue: 0,
         uniqueWithin: SCOPE.SIBLINGS,
         hidden: false,
         order: 1,
         helpText: "Адрес информационного объекта в формате dec.",
         rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
             {
                 validator: VALIDATOR.RANGE,
                 params: { min: 0, max: 255 },
@@ -235,7 +289,11 @@ export const PARAM_DEFINITIONS = {
             {
                 validator: VALIDATOR.RANGE,
                 params: { min: 0, max: 16777215 },
-                condition: { key: "lengthOfAdr", value: 3, scope: "parent" },
+                condition: {
+                    key: "lengthOfAdr",
+                    value: 3,
+                    scope: SCOPE.PARENT,
+                },
                 message: "Значение должно быть в диапазоне от 0 до 16777215",
             },
             {
@@ -255,7 +313,6 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "Адрес ASDU",
         description: "Адрес ASDU в формате dec.",
-        required: true,
         defaultValue: 1,
         uniqueWithin: SCOPE.SIBLINGS,
         hidden: false,
@@ -263,9 +320,17 @@ export const PARAM_DEFINITIONS = {
         helpText: "Адрес ASDU в формате dec.",
         rules: [
             {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
+            {
                 validator: VALIDATOR.RANGE,
                 params: { min: 1, max: 65535 },
-                condition: { key: "lengthOfASDU", value: 2, scope: "parent" },
+                condition: {
+                    key: "lengthOfASDU",
+                    value: 2,
+                    scope: SCOPE.PARENT,
+                },
                 message: "Значение должно быть в диапазоне от 1 до 65535",
             },
             {
@@ -285,13 +350,16 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "Адрес устройства",
         description: "Адрес устройства в формате dec.",
-        required: true,
         defaultValue: 1,
         uniqueWithin: SCOPE.SIBLINGS,
         hidden: false,
         order: 1,
         helpText: "Адрес устройства в формате dec.",
         rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
             {
                 validator: VALIDATOR.RANGE,
                 params: { min: 1, max: 255 },
@@ -314,12 +382,15 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "Порт",
         description: "Порт, на котором будет работать сервер, в формате dec.",
-        required: true,
         defaultValue: 502,
         hidden: false,
         order: 1,
         helpText: "Порт, на котором будет работать сервер, в формате dec.",
         rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
             {
                 validator: VALIDATOR.RANGE,
                 params: { min: 1, max: 65535 },
@@ -346,12 +417,15 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "k",
         description: "k",
-        required: true,
         defaultValue: 1,
         hidden: false,
         order: 1,
         helpText: "k",
         rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
             {
                 validator: VALIDATOR.RANGE,
                 params: { min: 1, max: 255 },
@@ -363,12 +437,15 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "w",
         description: "w",
-        required: true,
         defaultValue: 1,
         hidden: false,
         order: 1,
         helpText: "w",
         rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
             {
                 validator: VALIDATOR.RANGE,
                 params: { min: 1, max: 255 },
@@ -380,12 +457,15 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "t0",
         description: "t0",
-        required: true,
         defaultValue: 1,
         hidden: false,
         order: 1,
         helpText: "t0",
         rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
             {
                 validator: VALIDATOR.RANGE,
                 params: { min: 1, max: 255 },
@@ -397,12 +477,15 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "t1",
         description: "t1",
-        required: true,
         defaultValue: 1,
         hidden: false,
         order: 1,
         helpText: "t1",
         rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
             {
                 validator: VALIDATOR.RANGE,
                 params: { min: 1, max: 255 },
@@ -414,12 +497,15 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "t2",
         description: "t2",
-        required: true,
         defaultValue: 1,
         hidden: false,
         order: 1,
         helpText: "t2",
         rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
             {
                 validator: VALIDATOR.RANGE,
                 params: { min: 1, max: 255 },
@@ -431,12 +517,15 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "t3",
         description: "t3",
-        required: true,
         defaultValue: 1,
         hidden: false,
         order: 1,
         helpText: "t3",
         rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
             {
                 validator: VALIDATOR.RANGE,
                 params: { min: 1, max: 255 },
@@ -522,7 +611,6 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "Апертура",
         description: "Апертура",
-        required: true,
         defaultValue: 1,
         hidden: false,
         order: 1,
@@ -555,6 +643,10 @@ export const PARAM_DEFINITIONS = {
         },
         rules: [
             {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
+            {
                 validator: VALIDATOR.RANGE,
                 params: { min: 0, max: 10000 },
                 message: "Значение должно быть в диапазоне от 0 до 10000",
@@ -572,5 +664,45 @@ export const PARAM_DEFINITIONS = {
                 { key: "sigType", value: "tu_two_position", scope: SCOPE.SELF },
             ],
         },
+    },
+    sendTimeout: {
+        type: "number",
+        label: "Таймаут приема, сек.",
+        description: "Таймаут приема, сек.",
+        defaultValue: 1,
+        hidden: false,
+        order: 1,
+        helpText: "Таймаут приема, сек.",
+        rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
+            {
+                validator: VALIDATOR.RANGE,
+                params: { min: 0, max: 255 },
+                message: "Значение должно быть в диапазоне от 0 до 255",
+            },
+        ],
+    },
+    connectionTimeout: {
+        type: "number",
+        label: "Таймаут соединения, сек.",
+        description: "Таймаут соединения, сек.",
+        defaultValue: 1,
+        hidden: false,
+        order: 1,
+        helpText: "Таймаут соединения, сек.",
+        rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
+            {
+                validator: VALIDATOR.RANGE,
+                params: { min: 0, max: 255 },
+                message: "Значение должно быть в диапазоне от 0 до 255",
+            },
+        ],
     },
 };
