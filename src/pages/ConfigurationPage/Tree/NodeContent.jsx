@@ -2,10 +2,14 @@ import { NodeEditInput } from "./NodeEditInput";
 import { Icon, Text } from "@chakra-ui/react";
 import { useVariablesStore } from "@/store/variables-store";
 import { memo } from "react";
-import { CONSTANT_VALUES } from "@/config/constants";
+import {
+    CONSTANT_VALUES,
+    DEFAULT_CONFIGURATION_DATA,
+} from "@/config/constants";
 import { DroppableInput } from "@/pages/ConfigurationPage/InputComponents";
 import { LuTriangleAlert } from "react-icons/lu";
 import { useValidationStore } from "@/store/validation-store";
+import { getParentType } from "@/utils/utils";
 
 export const NodeContent = memo(function NodeContent({ node }) {
     const { isEditing } = node;
@@ -15,11 +19,19 @@ export const NodeContent = memo(function NodeContent({ node }) {
         (state) => state.settings[name]?.name
     );
 
-    const testAddress = useVariablesStore(
-        (state) => state.settings[id].setting?.modbusDoAddress
+    // TODO Реализация отображения параметра - говно
+    const setting = useVariablesStore(
+        (state) => state.settings[id]?.setting || {}
     );
-
     const validationErrors = useValidationStore((state) => state.errors?.[id]);
+
+    const parentType = getParentType({ id, treeApi: node.tree });
+    const viewParams =
+        DEFAULT_CONFIGURATION_DATA.dataObject.nodeViewParam?.[parentType] || [];
+
+    const paramValues = Object.entries(setting)
+        .filter(([key]) => viewParams.includes(key))
+        .map(([_, value]) => value);
 
     return isEditing ? (
         type === CONSTANT_VALUES.NODE_TYPES.dataObject ? (
@@ -39,9 +51,14 @@ export const NodeContent = memo(function NodeContent({ node }) {
         )
     ) : (
         <>
+            {type === CONSTANT_VALUES.NODE_TYPES.dataObject && (
+                <Text color={"fg.muted"} fontSize={"xs"}>
+                    {paramValues.join(", ")}
+                </Text>
+            )}
             <Text truncate>
                 {type === CONSTANT_VALUES.NODE_TYPES.dataObject
-                    ? (testAddress || "???") + " " + (variableName || "")
+                    ? variableName
                     : name}
             </Text>
             {validationErrors && (

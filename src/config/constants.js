@@ -190,6 +190,11 @@ export const DEFAULT_CONFIGURATION_DATA = {
             ...DEFAULT_DATA_OBJECT,
             setting: {},
         },
+        nodeViewParam: {
+            asdu: ["address"],
+            gpio: ["gpioPort"],
+            functionGroup: ["modbusDoAddress"],
+        },
     },
     gpio: {
         node: { ...DEFAULT_INTERFACE, name: "GPIO", subType: "gpio" },
