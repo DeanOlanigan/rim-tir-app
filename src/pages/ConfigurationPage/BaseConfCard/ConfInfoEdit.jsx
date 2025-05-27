@@ -1,10 +1,4 @@
 import {
-    PopoverBody,
-    PopoverContent,
-    PopoverRoot,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import {
     Button,
     Text,
     Flex,
@@ -12,110 +6,105 @@ import {
     Field,
     Input,
     Textarea,
+    Dialog,
+    Portal,
 } from "@chakra-ui/react";
-import { useVariablesStore } from "@/store/variables-store";
-import { useEffect, useState } from "react";
+import { useConfigInfoStore } from "@/store/config-info-store";
+import { useState } from "react";
 
-export const ConfInfoEdit = () => {
-    const setConfigInfo = useVariablesStore((state) => state.setConfigInfo);
-    const {
-        name: stateName,
-        description: stateDescription,
-        version,
-        date,
-    } = useVariablesStore((state) => state.configInfo);
+export const ConfInfoEdit = ({ children }) => {
+    const { name, description, date, version } = useConfigInfoStore(
+        (state) => state.configInfo
+    );
 
-    const [name, setName] = useState(stateName);
-    const [description, setDescription] = useState(stateDescription);
+    const [initialName, setName] = useState(name ?? "");
+    const [initialDescription, setDescription] = useState(description ?? "");
 
-    useEffect(() => {
-        setName(stateName);
-        setDescription(stateDescription);
-    }, [stateName, stateDescription]);
+    const isNameValid = initialName?.trim().length > 3;
 
     const saveHandler = () => {
-        setConfigInfo({
-            name,
-            description,
-            date: new Date().toLocaleString("ru-RU", {}),
-            version: "1.0",
+        useConfigInfoStore.setState({
+            configInfo: {
+                name: initialName,
+                description: initialDescription,
+                date: new Date().toLocaleString("ru-RU", {}),
+                version: "1.0.0",
+            },
         });
     };
 
     return (
-        <PopoverRoot>
-            <PopoverTrigger asChild>
-                <Button
-                    variant="subtle"
-                    size="2xs"
-                    rounded={"md"}
-                    py={"0"}
-                    shadow={"md"}
-                >
-                    <Text
-                        fontSize={"sm"}
-                        fontWeight={"bold"}
-                        maxW={"250px"}
-                        truncate
-                    >
-                        {stateName}
-                    </Text>
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent>
-                <PopoverBody>
-                    <Flex gap={"2"} direction={"column"}>
-                        <Field.Root>
-                            <Field.Label>Название</Field.Label>
-                            <Input
-                                size={"xs"}
-                                value={name}
-                                maxLength={20}
-                                onChange={(e) => {
-                                    setName(e.currentTarget.value);
-                                }}
-                            />
-                        </Field.Root>
-                        <Field.Root>
-                            <Field.Label>Описание</Field.Label>
-                            <Textarea
-                                resize={"none"}
-                                rows={5}
-                                size={"xs"}
-                                value={description}
-                                placeholder="Описание"
-                                onChange={(e) => {
-                                    setDescription(e.target.value);
-                                }}
-                            />
-                        </Field.Root>
-                        <Flex justify={"space-between"}>
-                            <Box>
-                                <Text fontSize={"sm"} color={"fg.muted"}>
-                                    Дата изменения:
-                                </Text>
-                                <Text fontSize={"md"}>{date}</Text>
-                            </Box>
-                            <Box>
-                                <Text fontSize={"sm"} color={"fg.muted"}>
-                                    Версия:
-                                </Text>
-                                <Text fontSize={"md"}>{version}</Text>
-                            </Box>
-                        </Flex>
-                        <Flex>
-                            <Button
-                                w={"100%"}
-                                size={"xs"}
-                                disabled={!name?.trim()}
-                                onClick={saveHandler}
-                            >
-                                Сохранить
-                            </Button>
-                        </Flex>
-                    </Flex>
-                </PopoverBody>
-            </PopoverContent>
-        </PopoverRoot>
+        <Dialog.Root>
+            <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+            <Portal>
+                <Dialog.Backdrop />
+                <Dialog.Positioner>
+                    <Dialog.Content>
+                        <Dialog.Header>
+                            <Dialog.Title>
+                                Редактирование конфигурации
+                            </Dialog.Title>
+                        </Dialog.Header>
+                        <Dialog.Body>
+                            <Flex gap={"2"} direction={"column"}>
+                                <Field.Root>
+                                    <Field.Label>Название</Field.Label>
+                                    <Input
+                                        size={"xs"}
+                                        value={initialName}
+                                        maxLength={20}
+                                        autoComplete={"off"}
+                                        onChange={(e) => {
+                                            setName(e.currentTarget.value);
+                                        }}
+                                    />
+                                </Field.Root>
+                                <Field.Root>
+                                    <Field.Label>Описание</Field.Label>
+                                    <Textarea
+                                        resize={"none"}
+                                        rows={5}
+                                        size={"xs"}
+                                        value={initialDescription}
+                                        placeholder="Описание"
+                                        onChange={(e) => {
+                                            setDescription(e.target.value);
+                                        }}
+                                    />
+                                </Field.Root>
+                                <Flex justify={"space-between"}>
+                                    <Box>
+                                        <Text
+                                            fontSize={"sm"}
+                                            color={"fg.muted"}
+                                        >
+                                            Дата изменения:
+                                        </Text>
+                                        <Text fontSize={"md"}>{date}</Text>
+                                    </Box>
+                                    <Box>
+                                        <Text
+                                            fontSize={"sm"}
+                                            color={"fg.muted"}
+                                        >
+                                            Версия:
+                                        </Text>
+                                        <Text fontSize={"md"}>{version}</Text>
+                                    </Box>
+                                </Flex>
+                                <Button
+                                    w={"100%"}
+                                    size={"xs"}
+                                    disabled={!isNameValid}
+                                    onClick={saveHandler}
+                                >
+                                    Сохранить
+                                </Button>
+                            </Flex>
+                        </Dialog.Body>
+                    </Dialog.Content>
+                </Dialog.Positioner>
+            </Portal>
+        </Dialog.Root>
     );
 };

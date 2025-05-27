@@ -1,8 +1,8 @@
 import { Card, Stack } from "@chakra-ui/react";
 import { ConfMenu } from "./ConfMenu";
 import { ConfMiscInfo } from "./ConfMiscInfo";
-import { ConfInfoEdit } from "./ConfInfoEdit";
 import { RouterMenu } from "./RouterMenu";
+import { ValidationErrorsContainer } from "../Validation/ValidationErrorsContainer";
 
 export const BaseConfCard = () => {
     return (
@@ -14,12 +14,13 @@ export const BaseConfCard = () => {
                         gap={"2"}
                         justify={"space-between"}
                         align={"center"}
+                        position={"relative"}
                     >
                         <Stack direction={"row"} gap={"2"}>
                             <ConfMenu />
                             <RouterMenu />
+                            <ValidationErrorsContainer />
                         </Stack>
-                        <ConfInfoEdit />
                         <ConfMiscInfo />
                     </Stack>
                 </Card.Title>

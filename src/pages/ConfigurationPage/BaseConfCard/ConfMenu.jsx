@@ -9,12 +9,17 @@ import { downloadStateAsXml } from "@/utils/storeToXml";
 import { useVariablesStore } from "@/store/variables-store";
 import { CreateConfigDialog } from "../CreateConfigDialog"; // ?
 import { ConfigurationUploader } from "../ConfigurationUploader"; // ?
+import { ConfInfoEdit } from "./ConfInfoEdit";
+import { useConfigInfoStore } from "@/store/config-info-store";
 
 export const ConfMenu = () => {
     const resetState = useVariablesStore((state) => state.resetState);
 
     const closeHandler = () => {
         resetState();
+        useConfigInfoStore.setState({
+            configInfo: {},
+        });
     };
 
     return (
@@ -40,6 +45,11 @@ export const ConfMenu = () => {
                         Открыть...
                     </MenuItem>
                 </ConfigurationUploader>
+                <ConfInfoEdit>
+                    <MenuItem value="rename" closeOnSelect={false}>
+                        Переименовать
+                    </MenuItem>
+                </ConfInfoEdit>
                 <MenuItem value="new-win" onClick={downloadStateAsXml}>
                     Сохранить
                 </MenuItem>

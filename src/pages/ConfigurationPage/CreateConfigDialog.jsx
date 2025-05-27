@@ -9,31 +9,29 @@ import {
     Alert,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useConfigInfoStore } from "@/store/config-info-store";
 import { useVariablesStore } from "@/store/variables-store";
 
 export const CreateConfigDialog = ({ children }) => {
-    const configInfo = useVariablesStore((state) => state.configInfo);
-    const setConfigInfo = useVariablesStore((state) => state.setConfigInfo);
+    const configInfo = useConfigInfoStore((state) => state.configInfo);
     const resetState = useVariablesStore((state) => state.resetState);
     const [isOpen, setIsOpen] = useState(false);
+    const [hasPreviousConfig, setHasPreviousConfig] = useState(false);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
-    const submitCreateConfig = () => {
-        console.log("submitCreateConfig");
-        resetState();
-        setConfigInfo({
-            name,
-            description,
-            date: new Date().toLocaleString("ru-RU", {}),
-            version: "1.0",
-        });
-        setIsOpen(false);
-    };
+    const isNameValid = name?.trim().length > 3;
 
-    const cancelCreateConfig = () => {
-        setName("");
-        setDescription("");
+    const submitCreateConfig = () => {
+        resetState();
+        useConfigInfoStore.setState({
+            configInfo: {
+                name,
+                description,
+                date: new Date().toLocaleString("ru-RU", {}),
+                version: "1.0",
+            },
+        });
         setIsOpen(false);
     };
 
@@ -42,11 +40,13 @@ export const CreateConfigDialog = ({ children }) => {
             placement={"center"}
             open={isOpen}
             onOpenChange={(e) => {
-                console.log("onOpenChange");
                 setIsOpen(e.open);
-                if (!e.open) {
+                if (e.open) {
+                    setHasPreviousConfig(Boolean(configInfo?.name));
+                } else {
                     setName("");
                     setDescription("");
+                    setHasPreviousConfig(false);
                 }
             }}
         >
@@ -59,7 +59,7 @@ export const CreateConfigDialog = ({ children }) => {
                         </Dialog.Header>
                         <Dialog.Body>
                             <VStack spacing={4} align="stretch">
-                                {configInfo.name && (
+                                {hasPreviousConfig && (
                                     <Alert.Root status={"warning"}>
                                         <Alert.Indicator />
                                         <Alert.Title>
@@ -86,17 +86,15 @@ export const CreateConfigDialog = ({ children }) => {
                             </VStack>
                         </Dialog.Body>
                         <Dialog.Footer>
-                            <Button
-                                variant="ghost"
-                                size="xs"
-                                onClick={cancelCreateConfig}
-                            >
-                                Отмена
-                            </Button>
+                            <Dialog.ActionTrigger asChild>
+                                <Button variant="ghost" size="xs">
+                                    Отмена
+                                </Button>
+                            </Dialog.ActionTrigger>
                             <Button
                                 size="xs"
                                 onClick={submitCreateConfig}
-                                disabled={!name.trim()}
+                                disabled={!isNameValid}
                             >
                                 Создать
                             </Button>

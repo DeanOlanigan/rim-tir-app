@@ -6,39 +6,29 @@ import {
     Text,
     Box,
 } from "@chakra-ui/react";
-import { useVariablesStore } from "@/store/variables-store";
-import { useState, useEffect, useRef } from "react";
+import { useRef } from "react";
 import { CreateConfigDialog } from "./CreateConfigDialog";
 import { ConfigurationUploader } from "./ConfigurationUploader";
+import { useConfigInfoStore } from "@/store/config-info-store";
 
 export const EmptyConfigDialog = () => {
-    const configurationInfo = useVariablesStore((state) => state.configInfo);
-    const setConfigInfo = useVariablesStore((state) => state.setConfigInfo);
-
+    const configInfo = useConfigInfoStore((state) => state.configInfo);
     const ref = useRef(null);
-
-    const [open, setOpen] = useState(false);
-
-    useEffect(() => {
-        setOpen(Object.keys(configurationInfo).length === 0);
-    }, [configurationInfo]);
-
-    const loadConfigHandler = () => {
-        console.log("loadConfigHandler");
-    };
+    const open = Object.keys(configInfo).length === 0;
 
     return (
         <Dialog.Root
             role="alertdialog"
             open={open}
             onOpenChange={(e) => {
-                setOpen(e.open);
                 if (!e.open) {
-                    setConfigInfo({
-                        name: "Конфигурация без названия",
-                        description: "",
-                        date: new Date().toLocaleString("ru-RU", {}),
-                        version: "1.0",
+                    useConfigInfoStore.setState({
+                        configInfo: {
+                            name: "Конфигурация без названия",
+                            description: "",
+                            date: new Date().toLocaleString("ru-RU", {}),
+                            version: "1.0",
+                        },
                     });
                 }
             }}
@@ -61,11 +51,7 @@ export const EmptyConfigDialog = () => {
                         <Dialog.Footer>
                             <Box w={"100%"}>
                                 <ConfigurationUploader>
-                                    <Button
-                                        w={"100%"}
-                                        size={"xs"}
-                                        onClick={loadConfigHandler}
-                                    >
+                                    <Button w={"100%"} size={"xs"}>
                                         Загрузить конфигурацию
                                     </Button>
                                 </ConfigurationUploader>

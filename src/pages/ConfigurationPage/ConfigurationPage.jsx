@@ -11,7 +11,6 @@ import { EmptyConfigDialog } from "./EmptyConfigDialog";
 import { memo } from "react";
 import { shallow } from "zustand/shallow";
 import { ContextMenu } from "./Tree/ContextMenu/ContextMenu";
-import { ValidationErrorsContainer } from "./Validation/ValidationErrorsContainer";
 import { validateAll } from "@/utils/validator";
 
 function ConfigurationPage() {
@@ -63,7 +62,6 @@ function ConfigurationPage() {
                     </Panel>
                 </PanelGroup>
                 <ContextMenu />
-                <ValidationErrorsContainer />
             </Box>
         </DndProvider>
     );

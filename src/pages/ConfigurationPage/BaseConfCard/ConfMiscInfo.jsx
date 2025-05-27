@@ -1,12 +1,19 @@
 import { Text, Stack, StackSeparator } from "@chakra-ui/react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useVariablesStore } from "@/store/variables-store";
+import { useConfigInfoStore } from "@/store/config-info-store";
 
 export const ConfMiscInfo = () => {
-    const { date, version } = useVariablesStore((state) => state.configInfo);
+    const { name, date, version } = useConfigInfoStore(
+        (state) => state.configInfo
+    );
 
     return (
         <Stack direction={"row"} gap={"2"} separator={<StackSeparator />}>
+            {name ? (
+                <Text fontSize={"sm"}>{name}</Text>
+            ) : (
+                <Skeleton w={"200px"} h={"24px"} />
+            )}
             {date ? (
                 <Text fontSize={"sm"}>{date}</Text>
             ) : (
