@@ -191,28 +191,6 @@ export const DEFAULT_CONFIGURATION_DATA = {
             setting: {},
         },
     },
-    rs232: {
-        node: { ...DEFAULT_INTERFACE, name: "RS-232", subType: "rs232" },
-        setting: {
-            ...DEFAULT_INTERFACE,
-            name: "RS-232",
-            subType: "rs232",
-            setting: {
-                baudRate: "57600",
-            },
-        },
-    },
-    rs485: {
-        node: { ...DEFAULT_INTERFACE, name: "RS-485", subType: "rs485" },
-        setting: {
-            ...DEFAULT_INTERFACE,
-            name: "RS-485",
-            subType: "rs485",
-            setting: {
-                baudRate: "57600",
-            },
-        },
-    },
     gpio: {
         node: { ...DEFAULT_INTERFACE, name: "GPIO", subType: "gpio" },
         setting: {

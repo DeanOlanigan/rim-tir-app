@@ -181,14 +181,6 @@ export const menuConfigNodeDefault = [
 ];
 
 export const menuConfigConnections = {
-    rs232: [
-        createNode("Создать Modbus-RTU...", "modbus-rtu", LuUnplug),
-        ...menuConfigNodeDefault,
-    ],
-    rs485: [
-        createNode("Создать Modbus-RTU...", "modbus-rtu", LuUnplug),
-        ...menuConfigNodeDefault,
-    ],
     comport: [
         createNode("Создать Modbus-RTU...", "modbus-rtu", LuUnplug),
         ...menuConfigNodeDefault,
@@ -227,8 +219,6 @@ export const menuConfigConnections = {
         copyNodeBtn,
     ],
     default: [
-        /* createNode("Создать RS-485...", "rs485", LuCable),
-        createNode("Создать RS-232...", "rs232", LuCable), */
         createNode("Создать Последовательный порт...", "comport", LuAnchor),
         createNode("Создать IEC-104...", "iec104", LuUnplug),
         createNode("Создать GPIO...", "gpio", LuCable),

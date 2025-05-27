@@ -12,8 +12,6 @@ export const locale = {
         send: "Передача",
         receive: "Прием",
 
-        rs485: "RS-485",
-        rs232: "RS-232",
         gpio: "GPIO",
 
         modbusRTU: "Modbus-RTU",
@@ -37,8 +35,6 @@ export const locale = {
         send: "Send",
         receive: "Receive",
 
-        rs485: "RS-485",
-        rs232: "RS-232",
         gpio: "GPIO",
 
         modbusRTU: "Modbus-RTU",
