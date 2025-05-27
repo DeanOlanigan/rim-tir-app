@@ -117,6 +117,8 @@ export function getParentType({ id, treeApi, checkNode }) {
     const recursive = (node) => {
         if (node.data.type === "folder" || node.data.type === "dataObject")
             return recursive(node.parent);
+        if (node.data.type === "interface" || node.data.type === "protocol")
+            return node.data.subType;
         return node.data.type;
     };
     return recursive(checkNode);

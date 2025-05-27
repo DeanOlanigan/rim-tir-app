@@ -110,8 +110,7 @@ export const DEFAULT_DATA_OBJECT_SETTING = {
         description: "",
         variable: "",
     },
-    // gpio Bruh
-    interface: {
+    gpio: {
         gpioPort: 1,
         function: "IN",
         description: "",

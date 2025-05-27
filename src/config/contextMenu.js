@@ -208,7 +208,7 @@ export const menuConfigConnections = {
     ],
     functionGroup: [nestedDataObjects, ...menuConfigNodeDefault],
     gpio: [
-        //createNode("Создать объект данных...", "dataObject", LuFileDigit),
+        nestedDataObjects,
         createNode("Создать папку...", "folder", LuFolder),
         ...menuConfigNodeDefault,
     ],
