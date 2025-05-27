@@ -1,6 +1,5 @@
 import { create } from "zustand";
-import { getUniqueName, separateDataNEW, separateTree } from "@/utils/utils";
-import { config } from "@/config/testData";
+import { getUniqueName } from "@/utils/utils";
 import {
     addNodeUtil,
     removeNodeUtil,
@@ -28,54 +27,33 @@ import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 import { validateAll, validateParameter } from "@/utils/validator";
 import { useValidationStore } from "@/store/validation-store";
 
-const { treeData, nodeData } = separateDataNEW(config);
-const { trees } = separateTree(treeData);
-console.log(nodeData, trees);
+const initialState = {
+    // Деревья для react-arborist
+    send: [],
+    receive: [],
+    variables: [],
+    // Параметры всех узлов деревьев
+    settings: {},
+    // Id выбранных узлов
+    selectedIds: {
+        connections: new Set(),
+        variables: new Set(),
+    },
+    copyBuffer: {
+        type: "",
+        tree: [],
+        normalized: {},
+        cut: false,
+    },
+};
 
 export const useVariablesStore = create()(
     devtools(
         persist(
             (set, get) => ({
-                // Базовая информация о конфигурации
-                configInfo: {},
-                // Деревья для react-arborist
-                send: [],
-                receive: [],
-                variables: [],
-                // Параметры всех узлов деревьев
-                settings: {},
-                // Id выбранных узлов
-                selectedIds: {
-                    connections: new Set(),
-                    variables: new Set(),
-                },
-                copyBuffer: {
-                    type: "",
-                    tree: [],
-                    normalized: {},
-                    cut: false,
-                },
+                ...initialState,
 
-                resetState: () =>
-                    set({
-                        configInfo: {},
-                        send: [],
-                        receive: [],
-                        variables: [],
-                        settings: {},
-                        selectedIds: {
-                            connections: new Set(),
-                            variables: new Set(),
-                        },
-                        copyBuffer: {
-                            type: "",
-                            tree: [],
-                            normalized: {},
-                            cut: false,
-                        },
-                    }),
-
-                setConfigInfo: (data) => set({ configInfo: data }),
+                resetState: () => set(initialState),
 
                 updateSelectedIds: (targetKey, ids) => {
                     /* const { selectedIds } = get();
