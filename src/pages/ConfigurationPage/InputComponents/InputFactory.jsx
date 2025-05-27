@@ -1,4 +1,5 @@
 import {
+    ComboboxInput,
     SelectInput,
     NumberInput,
     TextInput,

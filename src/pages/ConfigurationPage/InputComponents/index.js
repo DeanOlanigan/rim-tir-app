@@ -8,6 +8,7 @@ import { EditableInput } from "./Editable";
 import { DroppableInput } from "./DroppableInput";
 import { IpInput } from "./IpInput";
 import { HexInput } from "./HexInput";
+import { ComboboxInput } from "./ComboboxInput";
 import { InputFactory } from "./InputFactory";
 import { InputController } from "./InputController";
 
@@ -23,5 +24,6 @@ export {
     DroppableInput,
     IpInput,
     HexInput,
+    ComboboxInput,
     InputController,
 };
