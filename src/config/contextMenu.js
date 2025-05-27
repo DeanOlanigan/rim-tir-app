@@ -14,6 +14,7 @@ import {
     LuClipboardPaste,
     LuClipboardCopy,
     LuScissors,
+    LuChevronsLeftRightEllipsis,
 } from "react-icons/lu";
 import { useVariablesStore } from "@/store/variables-store";
 
@@ -183,7 +184,20 @@ export const menuConfigNodeDefault = [
 export const menuConfigConnections = {
     comport: [
         createNode("Создать Modbus-RTU...", "modbus-rtu", LuUnplug),
+        createNode(
+            "Создать TCP-коннектор...",
+            "tcpBridge",
+            LuChevronsLeftRightEllipsis
+        ),
         ...menuConfigNodeDefault,
+    ],
+    tcpBridge: [
+        renameNode,
+        deleteNode,
+        toggleIgnoreNode,
+        { type: "separator" },
+        cutNodeBtn,
+        copyNodeBtn,
     ],
     iec104: [
         createNode("Создать ASDU...", "asdu", LuFileStack),

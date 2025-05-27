@@ -256,4 +256,22 @@ export const DEFAULT_CONFIGURATION_DATA = {
             },
         },
     },
+    tcpBridge: {
+        node: {
+            type: "tcpBridge",
+            name: "TCP-коннектор",
+        },
+        setting: {
+            type: "tcpBridge",
+            name: "TCP-коннектор",
+            setting: {
+                logging: false,
+                ipAddress: "127.0.0.1",
+                port: "1002",
+                side: "client",
+                sendTimeout: 0.5,
+                connectionTimeout: 0.5,
+            },
+        },
+    },
 };

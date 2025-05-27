@@ -6,6 +6,7 @@ import {
     LuFileDigit,
     LuFileStack,
     LuVariable,
+    LuChevronsLeftRightEllipsis,
 } from "react-icons/lu";
 
 export const icons = {
@@ -16,4 +17,5 @@ export const icons = {
     dataObject: LuFileDigit,
     asdu: LuFileStack,
     variable: LuVariable,
+    tcpBridge: LuChevronsLeftRightEllipsis,
 };

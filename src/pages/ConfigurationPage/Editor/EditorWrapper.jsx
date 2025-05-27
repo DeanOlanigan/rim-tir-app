@@ -93,6 +93,7 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
             );
             break;
         }
+        case "tcpBridge":
         case "dataObject": {
             content = <ConnectionParamContainer data={node} />;
             break;
