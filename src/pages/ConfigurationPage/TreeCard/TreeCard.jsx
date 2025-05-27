@@ -11,12 +11,16 @@ import { TreeView } from "../Tree/TreeView";
 import { TreeCardTitle } from "./Title";
 import { useRef, memo } from "react";
 import { LuBadgePlus } from "react-icons/lu";
+import { useConfigTreeApiStore } from "@/store/config-tree-api-store";
 
 // TODO МБ использовать slot паттерн
 
 export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
     console.log("RENDER VariableCard", treeType);
     const variableTreeRef = useRef(null);
+    useConfigTreeApiStore
+        .getState()
+        .setConfigTreeApi(treeType, variableTreeRef);
 
     return (
         <Card.Root

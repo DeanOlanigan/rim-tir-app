@@ -9,17 +9,31 @@ import {
 } from "@chakra-ui/react";
 import { LuChevronRight, LuDot } from "react-icons/lu";
 import { useVariablesStore } from "@/store/variables-store";
+import { useConfigTreeApiStore } from "@/store/config-tree-api-store";
 
 export const ValidationContent = ({ errors }) => {
     const settings = useVariablesStore((state) => state.settings);
     const updateSelectedIds = useVariablesStore(
         (state) => state.updateSelectedIds
     );
+    const treeApis = useConfigTreeApiStore((state) => state.configTreeApi);
 
     const selectNodeHandler = (nodeId) => {
         const targetType =
             settings[nodeId]?.type === "variable" ? "variables" : "connections";
         updateSelectedIds(targetType, new Set([nodeId]));
+        // TODO Полное уебанство
+        if (settings[nodeId]?.type === "variable") {
+            treeApis.variables.current.scrollTo(nodeId);
+            treeApis.variables.current.select(nodeId);
+        } else {
+            Object.entries(treeApis).forEach(([key, api]) => {
+                if (key !== "variables") {
+                    api.current.scrollTo(nodeId);
+                    api.current.select(nodeId);
+                }
+            });
+        }
     };
 
     return (
