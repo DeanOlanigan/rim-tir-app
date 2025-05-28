@@ -3,13 +3,14 @@ import { IconButton, Icon } from "@chakra-ui/react";
 import { useState } from "react";
 import { LuCopyPlus, LuCopyMinus } from "react-icons/lu";
 
-export const ExpandButton = ({ variableTreeRef }) => {
+export const ExpandButton = ({ treeApi }) => {
     const [expanded, setExpanded] = useState(false);
-    const handleExpand = () => {
+    const handleExpand = (e) => {
+        e.stopPropagation();
         if (expanded) {
-            variableTreeRef?.current.openAll();
+            treeApi?.openAll();
         } else {
-            variableTreeRef?.current.closeAll();
+            treeApi?.closeAll();
         }
         setExpanded(!expanded);
     };

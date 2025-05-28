@@ -4,9 +4,19 @@ import { IconButton, Icon } from "@chakra-ui/react";
 import { useState } from "react";
 import { LuHam, LuPiggyBank } from "react-icons/lu";
 
-export const SetIgnoreBtn = ({ variableTreeRef }) => {
+export const SetIgnoreBtn = ({ treeApi }) => {
     const toggleIgnoreNode = useVariablesStore((state) => state.ignoreNode);
     const [ignoreMode, setIgnoreMode] = useState(false);
+    const handleIgnore = (e) => {
+        e.stopPropagation();
+        const ids = treeApi?.root.children.map((child) => child.id);
+        /* const ignore =
+            !variableTreeRef?.root.children[0].data
+                .isIgnored; */
+        toggleIgnoreNode(treeApi, ids, !ignoreMode);
+        setIgnoreMode(!ignoreMode);
+    };
+
     return (
         <Tooltip
             content={
@@ -15,24 +25,7 @@ export const SetIgnoreBtn = ({ variableTreeRef }) => {
                     : "Заблокировать корневые узлы"
             }
         >
-            <IconButton
-                size={"2xs"}
-                variant={"subtle"}
-                onClick={() => {
-                    const ids = variableTreeRef?.current.root.children.map(
-                        (child) => child.id
-                    );
-                    /* const ignore =
-                        !variableTreeRef?.current.root.children[0].data
-                            .isIgnored; */
-                    toggleIgnoreNode(
-                        variableTreeRef?.current,
-                        ids,
-                        !ignoreMode
-                    );
-                    setIgnoreMode(!ignoreMode);
-                }}
-            >
+            <IconButton size={"2xs"} variant={"subtle"} onClick={handleIgnore}>
                 {ignoreMode ? (
                     <Icon as={LuHam} color={"red.400"} fill={"red.800"} />
                 ) : (

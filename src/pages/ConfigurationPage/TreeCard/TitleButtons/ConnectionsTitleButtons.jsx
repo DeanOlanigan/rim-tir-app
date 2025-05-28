@@ -4,9 +4,9 @@ import { IconButton, Portal, Menu } from "@chakra-ui/react";
 import { useId } from "react";
 import { LuPlus, LuAnchor, LuUnplug, LuCable } from "react-icons/lu";
 
-export const ConnectionsTitleButtons = ({ variableTreeRef }) => {
+export const ConnectionsTitleButtons = ({ treeApi }) => {
     const handleCreateComport = () => {
-        variableTreeRef?.current.create({
+        treeApi?.create({
             parentId: null,
             type: {
                 nodeType: CONSTANT_VALUES.INTERFACES.comport,
@@ -16,7 +16,7 @@ export const ConnectionsTitleButtons = ({ variableTreeRef }) => {
     };
 
     const handleCreateIec104 = () => {
-        variableTreeRef?.current.create({
+        treeApi?.create({
             parentId: null,
             type: {
                 nodeType: CONSTANT_VALUES.PROTOCOLS.iec104,
@@ -26,7 +26,7 @@ export const ConnectionsTitleButtons = ({ variableTreeRef }) => {
     };
 
     const handleCreateGpio = () => {
-        variableTreeRef?.current.create({
+        treeApi?.create({
             parentId: null,
             type: {
                 nodeType: CONSTANT_VALUES.INTERFACES.gpio,
@@ -42,7 +42,11 @@ export const ConnectionsTitleButtons = ({ variableTreeRef }) => {
                 ids={{ trigger: triggerId }}
             >
                 <Menu.Trigger asChild>
-                    <IconButton size={"2xs"} variant={"subtle"}>
+                    <IconButton
+                        size={"2xs"}
+                        variant={"subtle"}
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <LuPlus />
                     </IconButton>
                 </Menu.Trigger>

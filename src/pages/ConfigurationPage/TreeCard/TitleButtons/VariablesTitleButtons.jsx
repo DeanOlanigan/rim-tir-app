@@ -5,23 +5,37 @@ import { useLocaleStore } from "@/store/locale-store";
 import { IconButton } from "@chakra-ui/react";
 import { LuFilePlus, LuFolderPlus } from "react-icons/lu";
 
-export const VariablesTitleButtons = ({ variableTreeRef }) => {
+export const VariablesTitleButtons = ({ treeApi }) => {
     const lang = useLocaleStore((state) => state.locale);
+    const handleCreateVariable = (e) => {
+        e.stopPropagation();
+        treeApi?.create({
+            parentId: null,
+            type: {
+                nodeType: CONSTANT_VALUES.NODE_TYPES.variable,
+                times: 1,
+            },
+        });
+    };
+
+    const handleCreateFolder = (e) => {
+        e.stopPropagation();
+        treeApi?.create({
+            parentId: null,
+            type: {
+                nodeType: CONSTANT_VALUES.NODE_TYPES.folder,
+                times: 1,
+            },
+        });
+    };
+
     return (
         <>
             <Tooltip content={locale[lang].createVariable}>
                 <IconButton
                     size={"2xs"}
                     variant={"subtle"}
-                    onClick={() => {
-                        variableTreeRef?.current.create({
-                            parentId: null,
-                            type: {
-                                nodeType: CONSTANT_VALUES.NODE_TYPES.variable,
-                                times: 1,
-                            },
-                        });
-                    }}
+                    onClick={handleCreateVariable}
                 >
                     <LuFilePlus />
                 </IconButton>
@@ -30,15 +44,7 @@ export const VariablesTitleButtons = ({ variableTreeRef }) => {
                 <IconButton
                     size={"2xs"}
                     variant={"subtle"}
-                    onClick={() => {
-                        variableTreeRef?.current.create({
-                            parentId: null,
-                            type: {
-                                nodeType: CONSTANT_VALUES.NODE_TYPES.folder,
-                                times: 1,
-                            },
-                        });
-                    }}
+                    onClick={handleCreateFolder}
                 >
                     <LuFolderPlus />
                 </IconButton>

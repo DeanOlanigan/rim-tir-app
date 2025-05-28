@@ -15,16 +15,15 @@ import { useConfigTreeApiStore } from "@/store/config-tree-api-store";
 import { CONSTANT_VALUES } from "@/config/constants";
 
 // TODO МБ использовать slot паттерн
-
+// TODO Убрать Header из Card, т.к. он не используется
 export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
     console.log("RENDER VariableCard", treeType);
     const variableTreeRef = useRef(null);
     useConfigTreeApiStore
         .getState()
         .setConfigTreeApi(treeType, variableTreeRef);
-
     const isEmpty =
-        data[0].id === CONSTANT_VALUES.NODE_TYPES.root &&
+        data[0].type === CONSTANT_VALUES.NODE_TYPES.root &&
         data[0].children.length === 0;
     return (
         <Card.Root
@@ -39,14 +38,14 @@ export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
             border={"none"}
             bg={"transparent"}
         >
-            <Card.Header>
+            {/* <Card.Header>
                 <Card.Title>
                     <TreeCardTitle
                         type={treeType}
                         variableTreeRef={variableTreeRef}
                     />
                 </Card.Title>
-            </Card.Header>
+            </Card.Header> */}
             <Card.Body px={"0"} overflow={"hidden"}>
                 {isEmpty && <EmptyCard />}
                 <TreeView

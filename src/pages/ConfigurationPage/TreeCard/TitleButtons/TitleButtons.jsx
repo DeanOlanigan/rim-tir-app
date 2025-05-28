@@ -5,7 +5,7 @@ import { ExpandButton } from "./ExpandButton";
 import { SetIgnoreBtn } from "./SetIgnoreBtn";
 import { VariablesTitleButtons } from "./VariablesTitleButtons";
 
-export const TitleButtons = ({ type, variableTreeRef }) => {
+export const TitleButtons = ({ type, treeApi }) => {
     return (
         <HStack
             gap={"1"}
@@ -15,13 +15,13 @@ export const TitleButtons = ({ type, variableTreeRef }) => {
         >
             {(type === CONSTANT_VALUES.TREE_TYPES.send ||
                 type === CONSTANT_VALUES.TREE_TYPES.receive) && (
-                <ConnectionsTitleButtons variableTreeRef={variableTreeRef} />
+                <ConnectionsTitleButtons treeApi={treeApi} />
             )}
             {type === CONSTANT_VALUES.TREE_TYPES.variables && (
-                <VariablesTitleButtons variableTreeRef={variableTreeRef} />
+                <VariablesTitleButtons treeApi={treeApi} />
             )}
-            <SetIgnoreBtn variableTreeRef={variableTreeRef} />
-            <ExpandButton variableTreeRef={variableTreeRef} />
+            <SetIgnoreBtn treeApi={treeApi} />
+            <ExpandButton treeApi={treeApi} />
         </HStack>
     );
 };
