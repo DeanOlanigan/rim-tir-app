@@ -18,6 +18,18 @@ import {
 } from "react-icons/lu";
 import { useVariablesStore } from "@/store/variables-store";
 
+function checkIds(treeApi) {
+    let ids;
+    if (treeApi.selectedIds.size > 1) {
+        ids = [...treeApi.selectedIds];
+    } else if (treeApi.focusedNode) {
+        ids = [treeApi.focusedNode.data.id];
+    } else {
+        ids = [];
+    }
+    return ids;
+}
+
 const renameNode = {
     type: "rename-node",
     icon: () => createElement(LuPencil),
@@ -107,12 +119,7 @@ const toggleIgnoreNode = {
     type: "change-ignore",
     action: (treeApi) => {
         const ignoreNodeFunc = useVariablesStore.getState().ignoreNode;
-        const ids =
-            treeApi.selectedIds.size > 1
-                ? [...treeApi.selectedIds]
-                : treeApi.focusedNode
-                ? [treeApi.focusedNode.data.id]
-                : [];
+        const ids = checkIds(treeApi);
         const ignore = !treeApi.focusedNode.data.isIgnored;
         ignoreNodeFunc(treeApi, ids, ignore);
     },
@@ -124,12 +131,7 @@ const copyNodeBtn = {
     label: "Копировать",
     action: (treeApi) => {
         const copyNode = useVariablesStore.getState().copyNode;
-        const ids =
-            treeApi.selectedIds.size > 1
-                ? [...treeApi.selectedIds]
-                : treeApi.focusedNode
-                ? [treeApi.focusedNode.data.id]
-                : [];
+        const ids = checkIds(treeApi);
         copyNode(treeApi, ids);
     },
 };
@@ -142,12 +144,7 @@ const cutNodeBtn = {
         const baseIds = treeApi.root.children.map((child) => child.id);
         const cutNodeFunc = useVariablesStore.getState().cutNode;
         const copyNode = useVariablesStore.getState().copyNode;
-        const ids =
-            treeApi.selectedIds.size > 1
-                ? [...treeApi.selectedIds]
-                : treeApi.focusedNode
-                ? [treeApi.focusedNode.data.id]
-                : [];
+        const ids = checkIds(treeApi);
         cutNodeFunc(treeApi, baseIds, false);
         copyNode(treeApi, ids, true);
         cutNodeFunc(treeApi, ids, true);
@@ -232,7 +229,7 @@ export const menuConfigConnections = {
         cutNodeBtn,
         copyNodeBtn,
     ],
-    default: [
+    root: [
         createNode("Создать Последовательный порт...", "comport", LuAnchor),
         createNode("Создать IEC-104...", "iec104", LuUnplug),
         createNode("Создать GPIO...", "gpio", LuCable),
@@ -249,7 +246,7 @@ export const menuConfig = {
             { type: "separator" },
             ...menuConfigNodeDefault,
         ],
-        default: [
+        root: [
             //createNode("Создать переменную...", "variable", LuVariable),
             nestedVariables,
             createNode("Создать папку...", "folder", LuFolder),
