@@ -27,6 +27,7 @@ const typeMap = {
     drop: DroppableInput,
     ip: IpInput,
     hex: HexInput,
+    text: TextInput,
 };
 
 export const InputFactory = memo(function InputFactory(props) {

@@ -155,6 +155,22 @@ export const PARAM_DEFINITIONS = {
         type: "number",
         label: "Коэффициент",
     },
+    luaTag: {
+        type: "text",
+        label: "Lua-тег",
+        rules: [
+            {
+                validator: VALIDATOR.REGEX,
+                params: { pattern: "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*" },
+                message: "Некорректный Lua-тег",
+            },
+            {
+                validator: VALIDATOR.UNIQUE,
+                params: { within: SCOPE.ROOT },
+                message: "Lua-тег должен быть уникальным",
+            },
+        ],
+    },
     luaExpression: {
         type: "code",
         label: "Lua-выражение",
