@@ -16,9 +16,7 @@ export const NodeValues = ({ id }) => {
                 {valuesMap[id]}
             </Code>
             <LuUserCheck />
-            <Icon color={"red.500"} fill={"red.500"}>
-                <LuArrowBigRight />
-            </Icon>
+            <Icon color={"red.500"} fill={"red.500"} as={LuArrowBigRight} />
             <LuLightbulb />
             <LuCircle />
         </>

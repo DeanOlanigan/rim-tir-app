@@ -37,6 +37,8 @@ function getContextIds(context, nodeId, param, scope) {
             }
             return [];
         }
+        // TODO Без корневого узла не работает
+        case SCOPE.ROOT:
         default:
             return [];
     }

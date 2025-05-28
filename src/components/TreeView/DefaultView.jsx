@@ -11,8 +11,6 @@ import {
 } from "react-icons/lu";
 
 const interfaceTypes = {
-    rs485: "rs485",
-    rs232: "rs232",
     comport: "comport",
 };
 
@@ -85,12 +83,6 @@ export const badges = {
     ),
     [protocolTypes.iec104]: (
         <Badge colorPalette={"red"}>{protocolTypes.iec104}</Badge>
-    ),
-    [interfaceTypes.rs485]: (
-        <Badge colorPalette={"yellow"}>{interfaceTypes.rs485}</Badge>
-    ),
-    [interfaceTypes.rs232]: (
-        <Badge colorPalette={"purple"}>{interfaceTypes.rs232}</Badge>
     ),
     [interfaceTypes.comport]: (
         <Badge colorPalette={"purple"}>

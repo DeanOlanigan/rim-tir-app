@@ -40,7 +40,7 @@ import { Field } from "@/components/ui/field";
 import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 
 const ConnectionHeadderAdditionalInfo = ({ id }) => {
-    const { setting } = useVariablesStore((state) => state.settings[id]);
+    const setting = useVariablesStore((state) => state.settings[id]?.setting);
     if (!setting) return null;
     return (
         <Popover.Root

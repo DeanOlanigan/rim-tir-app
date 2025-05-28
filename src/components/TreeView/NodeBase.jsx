@@ -5,9 +5,15 @@ import { Badge } from "./Badge";
 import { LuBan, LuPiggyBank } from "react-icons/lu";
 import { Flex, Icon as ChakraIcon } from "@chakra-ui/react";
 
+function hasIgnoreAccessor(node) {
+    if (node.data.isIgnored) return true;
+    if (node.parent) return hasIgnoreAccessor(node.parent);
+    return false;
+}
+
 export const NodeBase = ({ paddingLeft, node, children }) => {
     const { isLeaf, isOpen } = node;
-    const { id, type, subType, isIgnored, isCutted } = node.data;
+    const { type, subType, isIgnored, isCutted } = node.data;
 
     const Icon = icons[type];
 
@@ -33,7 +39,7 @@ export const NodeBase = ({ paddingLeft, node, children }) => {
                     width: "100%",
                 }}
             >
-                {isLeaf ? null : (
+                {!isLeaf && (
                     <NodeToggleBtn
                         toggle={() => node.toggle()}
                         isOpen={isOpen}
@@ -60,8 +66,7 @@ export const NodeBase = ({ paddingLeft, node, children }) => {
                     <div>{Icon && <Icon />}</div>
                     <Badge
                         isIgnored={isIgnored || isCutted || accessorisIgnored}
-                        type={subType || type || null}
-                        id={id}
+                        type={subType || type}
                     />
                     {children}
                 </Flex>
@@ -69,9 +74,3 @@ export const NodeBase = ({ paddingLeft, node, children }) => {
         </Flex>
     );
 };
-
-function hasIgnoreAccessor(node) {
-    if (node.data.isIgnored) return true;
-    if (node.parent) return hasIgnoreAccessor(node.parent);
-    return false;
-}

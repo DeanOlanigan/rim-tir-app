@@ -40,6 +40,7 @@ export const PARENT_NAMES = {
 export const SCOPE = {
     SELF: "self", // current node
     PARENT: "parent", // find param in parent recursively
+    // TODO root не работает, т.к. нет корневого узла
     ROOT: "root", // root node only
     SIBLINGS: "siblings", // all nodes in the same parent
 };

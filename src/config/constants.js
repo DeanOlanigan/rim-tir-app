@@ -6,8 +6,6 @@ export const CONSTANT_VALUES = {
         iec104: "iec104",
     },
     INTERFACES: {
-        rs485: "rs485",
-        rs232: "rs232",
         gpio: "gpio",
         comport: "comport",
     },
@@ -88,8 +86,8 @@ const DEFAULT_ASDU = {
 };
 
 const DEFAULT_ASDU_SETTING = {
-    sporadical: false,
     asduAddress: 1,
+    sporadical: false,
     pollMode: "manual",
     pollPeriod: "1",
 };
@@ -131,19 +129,20 @@ const DEFAULT_VARIABLE = {
 };
 
 const DEFAULT_VARIABLE_SETTING = {
-    isSpecial: false,
     type: "bit",
-    isLua: false,
-    description: "Введите описание",
+    isSpecial: false,
+    specialCycleDelay: "1",
     cmd: false,
     archive: false,
     group: "noGroup",
     graph: false,
-    aperture: "10",
     measurement: "V",
-    coefficient: "1",
+    aperture: "10",
+    //isLua: false,
+    description: "Введите описание",
+    //coefficient: "1",
+    luaTag: "",
     luaExpression: null,
-    specialCycleDelay: "1",
 };
 
 export const DEFAULT_CONFIGURATION_DATA = {
@@ -158,8 +157,8 @@ export const DEFAULT_CONFIGURATION_DATA = {
             name: "Modbus-RTU",
             subType: "modbus-rtu",
             setting: {
-                logging: false,
                 deviceAddress: "1",
+                logging: false,
                 stopBit: 1,
                 parity: "none",
                 order2: "LittleEndian",
@@ -215,8 +214,8 @@ export const DEFAULT_CONFIGURATION_DATA = {
             name: "IEC-104",
             subType: "iec104",
             setting: {
-                logging: false,
                 side: "client",
+                logging: false,
                 ipAddress: "0.0.0.0",
                 port: "1",
                 lengthOfASDU: 1,

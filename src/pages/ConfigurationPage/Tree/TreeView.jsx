@@ -77,7 +77,7 @@ export const TreeView = memo(
                 w={"100%"}
                 h={"100%"}
                 position={"relative"}
-                onContextMenu={handleContextMenu}
+                //onContextMenu={handleContextMenu}
             >
                 <AutoSizer>
                     {({ height, width }) => (
@@ -98,6 +98,7 @@ export const TreeView = memo(
                             onDelete={handleDeleteNode}
                             onMove={handleMoveNode}
                             onSelect={handleSelect}
+                            onContextMenu={handleContextMenu}
                             disableDrop={handleDisableDrop}
                             dndManager={dragDropManager}
                             /* disableEdit={(data) =>
