@@ -4,6 +4,8 @@ import { NodeContent } from "./NodeContent";
 import { memo } from "react";
 import { useContextMenuStore } from "@/store/contextMenu-store";
 import { NodeBase } from "@/components/TreeView/NodeBase";
+import { getNodeFactory } from "./NodeViews/factory";
+import { nodeTypeVisualMap } from "./NodeViews/nodeTypeVisualMap";
 
 export const Node = memo(function Node({ node, style, dragHandle, tree }) {
     //console.log("%cRender NEW Node", "color: white; background: purple;");
@@ -26,6 +28,8 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
             visible: true,
         });
     };
+    const getNodeVisual = getNodeFactory(nodeTypeVisualMap);
+    const NodeVisual = getNodeVisual(node);
     return (
         <div
             ref={dragHandle}
@@ -34,7 +38,7 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
             onContextMenu={handleContextMenu}
         >
             <NodeBase node={node} paddingLeft={style.paddingLeft}>
-                <NodeContent node={node} />
+                <NodeVisual node={node} />
             </NodeBase>
         </div>
     );

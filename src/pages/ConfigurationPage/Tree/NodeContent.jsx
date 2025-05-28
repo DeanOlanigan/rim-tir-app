@@ -10,28 +10,40 @@ import { DroppableInput } from "@/pages/ConfigurationPage/InputComponents";
 import { LuTriangleAlert } from "react-icons/lu";
 import { useValidationStore } from "@/store/validation-store";
 import { getParentType } from "@/utils/utils";
+import { variable } from "@/config/testData";
+
+const VIEW_PARAMS = {
+    dataObject: ["address", "gpioPort", "modbusDoAddress"],
+    variable: ["type"],
+    functionGroup: ["functionModbus"],
+    comport: ["iface"],
+    asdu: ["asduAddress"],
+    "modbus-rtu": ["deviceAddress"],
+    iec104: ["side"],
+};
 
 export const NodeContent = memo(function NodeContent({ node }) {
     const { isEditing } = node;
-    const { id, type, /* subType, */ name } = node.data;
+    const { id, type, subType, name } = node.data;
 
     const variableName = useVariablesStore(
         (state) => state.settings[name]?.name
     );
 
-    // TODO Реализация отображения параметра - говно
-    const setting = useVariablesStore(
-        (state) => state.settings[id]?.setting || {}
-    );
     const validationErrors = useValidationStore((state) => state.errors?.[id]);
 
-    const parentType = getParentType({ id, treeApi: node.tree });
-    const viewParams =
-        DEFAULT_CONFIGURATION_DATA.dataObject.nodeViewParam?.[parentType] || [];
+    // TODO Реализация отображения параметра - говно
+    /* const setting = useVariablesStore(
+        (state) => state.settings[id]?.setting || {}
+    ); */
 
-    const paramValues = Object.entries(setting)
+    /* const parentType = getParentType({ id, treeApi: node.tree });
+    const viewParams =
+        DEFAULT_CONFIGURATION_DATA.dataObject.nodeViewParam?.[parentType] || []; */
+
+    /* const paramValues = Object.entries(setting)
         .filter(([key]) => viewParams.includes(key))
-        .map(([_, value]) => value);
+        .map(([_, value]) => value); */
 
     return isEditing ? (
         type === CONSTANT_VALUES.NODE_TYPES.dataObject ? (
@@ -51,11 +63,11 @@ export const NodeContent = memo(function NodeContent({ node }) {
         )
     ) : (
         <>
-            {type === CONSTANT_VALUES.NODE_TYPES.dataObject && (
+            {/* {type === CONSTANT_VALUES.NODE_TYPES.dataObject && (
                 <Text color={"fg.muted"} fontSize={"xs"}>
                     {paramValues.join(", ")}
                 </Text>
-            )}
+            )} */}
             <Text truncate>
                 {type === CONSTANT_VALUES.NODE_TYPES.dataObject
                     ? variableName
