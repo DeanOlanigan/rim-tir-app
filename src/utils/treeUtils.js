@@ -601,14 +601,11 @@ export function generateNewIds(copyTree, copySettings, parentId, settings) {
 }
 
 export function getParentId(treeApi) {
-    return treeApi.focusedNode
-        ? treeApi.focusedNode.children
-            ? treeApi.focusedNode.id
-            : treeApi.focusedNode.parent.id ===
-              "__REACT_ARBORIST_INTERNAL_ROOT__"
-            ? null
-            : treeApi.focusedNode.parent.id
-        : null;
+    const { focusedNode, props } = treeApi;
+    if (!focusedNode) return props.treeType;
+    if (focusedNode.children) return focusedNode.id;
+    if (focusedNode.parent.id === props.treeType) return props.treeType;
+    return focusedNode.parent.id;
 }
 
 /* ================================================================= */

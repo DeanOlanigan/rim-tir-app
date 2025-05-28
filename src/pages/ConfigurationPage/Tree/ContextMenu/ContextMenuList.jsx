@@ -2,6 +2,7 @@ import { Menu, Portal } from "@chakra-ui/react";
 import { menuConfig } from "@/config/contextMenu";
 import { LuBan, LuCheckCheck, LuChevronRight } from "react-icons/lu";
 import { useVariablesStore } from "@/store/variables-store";
+import { CONSTANT_VALUES } from "@/config/constants";
 
 export const ContextMenuList = ({
     subType,
@@ -10,7 +11,7 @@ export const ContextMenuList = ({
     updateContext,
     apiPath,
 }) => {
-    const focusedNodeType = subType || type || "default";
+    const focusedNodeType = subType || type || CONSTANT_VALUES.NODE_TYPES.root;
     const items = menuConfig[treeType]?.[focusedNodeType];
     if (!items) return null;
 

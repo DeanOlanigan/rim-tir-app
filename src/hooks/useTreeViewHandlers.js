@@ -44,13 +44,13 @@ export function useTreeViewHandlers(treeType, ref) {
         ({ parentId, index, type }) => {
             if (type.nodeType === "leaf" || type.nodeType === "internal")
                 return;
-            console.log("create", parentId, index, type);
+            console.log("create", parentId, index, type, treeType);
             const nodes = [];
             const settings = [];
             for (let i = 0; i < type.times; i++) {
                 const { node, setting } = initDefaultData(
                     type.nodeType,
-                    parentId,
+                    parentId || treeType,
                     ref?.current
                 );
                 const name = `${node.name} ${node.id.slice(0, 8)}`;
@@ -64,7 +64,7 @@ export function useTreeViewHandlers(treeType, ref) {
                 settings.push(setting);
             }
             console.log(nodes, settings);
-            addNode(treeType, parentId, nodes);
+            addNode(treeType, parentId || treeType, nodes);
             createSetting(settings);
             //return node;
         },

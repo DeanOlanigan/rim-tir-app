@@ -12,6 +12,7 @@ import { TreeCardTitle } from "./Title";
 import { useRef, memo } from "react";
 import { LuBadgePlus } from "react-icons/lu";
 import { useConfigTreeApiStore } from "@/store/config-tree-api-store";
+import { CONSTANT_VALUES } from "@/config/constants";
 
 // TODO МБ использовать slot паттерн
 
@@ -22,6 +23,9 @@ export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
         .getState()
         .setConfigTreeApi(treeType, variableTreeRef);
 
+    const isEmpty =
+        data[0].id === CONSTANT_VALUES.NODE_TYPES.root &&
+        data[0].children.length === 0;
     return (
         <Card.Root
             size={"sm"}
@@ -44,7 +48,7 @@ export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
                 </Card.Title>
             </Card.Header>
             <Card.Body px={"0"} overflow={"hidden"}>
-                {data.length === 0 && <EmptyCard />}
+                {isEmpty && <EmptyCard />}
                 <TreeView
                     ref={variableTreeRef}
                     data={data}

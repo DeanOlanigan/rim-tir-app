@@ -25,14 +25,55 @@ import {
 import { devtools, persist } from "zustand/middleware";
 import { validateAll, validateParameter } from "@/utils/validator";
 import { useValidationStore } from "@/store/validation-store";
+import { CONSTANT_VALUES } from "@/config/constants";
 
 const initialState = {
     // Деревья для react-arborist
-    send: [],
-    receive: [],
-    variables: [],
+    send: [
+        {
+            id: CONSTANT_VALUES.TREE_TYPES.send,
+            type: CONSTANT_VALUES.NODE_TYPES.root,
+            //subType: CONSTANT_VALUES.TREE_TYPES.send,
+            name: "Передача",
+            children: [],
+        },
+    ],
+    receive: [
+        {
+            id: CONSTANT_VALUES.TREE_TYPES.receive,
+            type: CONSTANT_VALUES.NODE_TYPES.root,
+            //subType: CONSTANT_VALUES.TREE_TYPES.receive,
+            name: "Прием",
+            children: [],
+        },
+    ],
+    variables: [
+        {
+            id: CONSTANT_VALUES.TREE_TYPES.variables,
+            type: CONSTANT_VALUES.NODE_TYPES.root,
+            //subType: CONSTANT_VALUES.TREE_TYPES.variables,
+            name: "Переменные",
+            children: [],
+        },
+    ],
     // Параметры всех узлов деревьев
-    settings: {},
+    settings: {
+        [CONSTANT_VALUES.TREE_TYPES.send]: {
+            id: CONSTANT_VALUES.TREE_TYPES.send,
+            name: "Передача",
+            children: [],
+        },
+        [CONSTANT_VALUES.TREE_TYPES.receive]: {
+            id: CONSTANT_VALUES.TREE_TYPES.receive,
+            name: "Прием",
+            children: [],
+        },
+        [CONSTANT_VALUES.TREE_TYPES.variables]: {
+            id: CONSTANT_VALUES.TREE_TYPES.variables,
+            name: "Переменные",
+            children: [],
+        },
+    },
     // Id выбранных узлов
     selectedIds: {
         connections: new Set(),

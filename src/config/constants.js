@@ -15,6 +15,7 @@ export const CONSTANT_VALUES = {
         receive: "receive",
     },
     NODE_TYPES: {
+        root: "root",
         variable: "variable",
         folder: "folder",
         dataObject: "dataObject",
@@ -188,11 +189,6 @@ export const DEFAULT_CONFIGURATION_DATA = {
         setting: {
             ...DEFAULT_DATA_OBJECT,
             setting: {},
-        },
-        nodeViewParam: {
-            asdu: ["address"],
-            gpio: ["gpioPort"],
-            functionGroup: ["modbusDoAddress"],
         },
     },
     gpio: {
