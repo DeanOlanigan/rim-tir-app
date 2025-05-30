@@ -2,60 +2,50 @@ import { NodeToggleBtn } from "./NodeToggleBtn";
 import { icons } from "./NodeTypeIcon";
 import { IndentLines } from "./IndentLines";
 import { Badge } from "./Badge";
-import { LuBan, LuPiggyBank } from "react-icons/lu";
-import { Flex, Icon as ChakraIcon } from "@chakra-ui/react";
+import { LuPiggyBank } from "react-icons/lu";
+import { Icon, HStack } from "@chakra-ui/react";
 
 function hasIgnoreAccessor(node) {
-    if (node.data.isIgnored) return true;
-    if (node.parent) return hasIgnoreAccessor(node.parent);
+    while (node) {
+        if (node.data.isIgnored) return true;
+        node = node.parent;
+    }
     return false;
 }
 
-export const NodeBase = ({ paddingLeft, node, children }) => {
+export const NodeBase = ({ paddingLeft, node, errors, visual }) => {
     const { isLeaf, isOpen } = node;
     const { type, subType, isIgnored, isCutted } = node.data;
 
-    const Icon = icons[type];
-
-    const accessorisIgnored = hasIgnoreAccessor(node);
-
+    const accessorIsIgnored = hasIgnoreAccessor(node);
+    const TypeIcon = icons[type];
     return (
-        <Flex
+        <HStack
             w={"100%"}
-            h={"90%"}
             borderRadius={"md"}
-            px={"2"}
-            {...(accessorisIgnored && {
+            pe={"2"}
+            {...(accessorIsIgnored && {
                 bg: "bg.muted",
                 color: "fg.subtle",
+                colorPalette: "gray",
             })}
         >
             <IndentLines paddingLeft={paddingLeft} />
-            <div
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    width: "100%",
-                }}
-            >
+            <HStack w={"100%"}>
                 {!isLeaf && (
                     <NodeToggleBtn
                         toggle={() => node.toggle()}
                         isOpen={isOpen}
                     />
                 )}
-                <Flex
-                    alignItems={"center"}
-                    gap={"2"}
-                    pl={"1"}
+                <HStack
                     w={"100%"}
-                    textWrap={"wrap"}
+                    pl={"2"}
                     {...(isCutted && { color: "fg.subtle" })}
-                    colorPalette={"gray"}
+                    truncate
                 >
                     {isIgnored && (
-                        <ChakraIcon
+                        <Icon
                             color={"red.400"}
                             strokeWidth={2}
                             size={"lg"}
@@ -63,14 +53,15 @@ export const NodeBase = ({ paddingLeft, node, children }) => {
                             title={"Заблокирован"}
                         />
                     )}
-                    <div>{Icon && <Icon />}</div>
+                    {TypeIcon && <Icon as={TypeIcon} />}
                     <Badge
-                        isIgnored={isIgnored || isCutted || accessorisIgnored}
+                        isIgnored={isCutted || accessorIsIgnored}
                         type={subType || type}
                     />
-                    {children}
-                </Flex>
-            </div>
-        </Flex>
+                    {visual}
+                </HStack>
+            </HStack>
+            {errors}
+        </HStack>
     );
 };

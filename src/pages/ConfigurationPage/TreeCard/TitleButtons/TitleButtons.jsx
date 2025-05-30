@@ -5,7 +5,8 @@ import { ExpandButton } from "./ExpandButton";
 import { SetIgnoreBtn } from "./SetIgnoreBtn";
 import { VariablesTitleButtons } from "./VariablesTitleButtons";
 
-export const TitleButtons = ({ type, treeApi }) => {
+export const TitleButtons = ({ treeApi }) => {
+    const type = treeApi.props.treeType;
     return (
         <HStack
             gap={"1"}

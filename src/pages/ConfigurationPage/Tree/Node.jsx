@@ -1,13 +1,11 @@
 import styles from "@/components/TreeView/TreeView.module.css";
 import clsx from "clsx";
-import { NodeContent } from "./NodeContent";
-import { memo } from "react";
 import { useContextMenuStore } from "@/store/contextMenu-store";
 import { NodeBase } from "@/components/TreeView/NodeBase";
 import { nodeTypeVisualMap } from "./NodeViews/nodeTypeVisualMap";
+import { NodeError } from "./NodeError";
 
-export const Node = memo(function Node({ node, style, dragHandle, tree }) {
-    //console.log("%cRender NEW Node", "color: white; background: purple;");
+export const Node = ({ node, style, dragHandle, tree }) => {
     const updateContext = useContextMenuStore((state) => state.updateContext);
     const handleContextMenu = (e) => {
         e.preventDefault();
@@ -36,9 +34,12 @@ export const Node = memo(function Node({ node, style, dragHandle, tree }) {
             className={clsx(styles.node, node.state)}
             onContextMenu={handleContextMenu}
         >
-            <NodeBase node={node} paddingLeft={style.paddingLeft}>
-                <NodeVisual node={node} />
-            </NodeBase>
+            <NodeBase
+                node={node}
+                paddingLeft={style.paddingLeft}
+                visual={<NodeVisual node={node} />}
+                errors={<NodeError id={node.id} />}
+            />
         </div>
     );
-});
+};
