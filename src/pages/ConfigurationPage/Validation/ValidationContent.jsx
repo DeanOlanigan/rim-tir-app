@@ -22,18 +22,9 @@ export const ValidationContent = ({ errors }) => {
         const targetType =
             settings[nodeId]?.type === "variable" ? "variables" : "connections";
         updateSelectedIds(targetType, new Set([nodeId]));
-        // TODO Полное уебанство
-        if (settings[nodeId]?.type === "variable") {
-            treeApis.variables.current.scrollTo(nodeId);
-            treeApis.variables.current.select(nodeId);
-        } else {
-            Object.entries(treeApis).forEach(([key, api]) => {
-                if (key !== "variables") {
-                    api.current.scrollTo(nodeId);
-                    api.current.select(nodeId);
-                }
-            });
-        }
+        const target = settings[nodeId]?.rootId;
+        treeApis[target].current.scrollTo(nodeId);
+        treeApis[target].current.select(nodeId);
     };
 
     return (

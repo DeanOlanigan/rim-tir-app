@@ -60,6 +60,7 @@ export function useTreeViewHandlers(treeType, ref) {
                 ); */
                 node.name = name;
                 setting.name = name;
+                setting.rootId = treeType;
                 nodes.push(node);
                 settings.push(setting);
             }
