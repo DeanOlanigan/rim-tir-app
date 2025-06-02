@@ -6,7 +6,7 @@ import {
 import { useVariablesStore } from "@/store/variables-store";
 
 export const NumberInput = memo(function NumberInput(props) {
-    //console.log("Render NumberInput");
+    console.log("Render NumberInput");
     const { id, targetKey, value, ...rest } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
 
@@ -19,6 +19,7 @@ export const NumberInput = memo(function NumberInput(props) {
                     [targetKey]: details.value,
                 });
             }}
+            onClick={(e) => e.stopPropagation()}
             {...rest}
         >
             <NumberInputField />

@@ -18,6 +18,8 @@ const autocomleteFilter = (query, optionValue, optionLabel) => {
 
 // TODO В Chakra ui появился свой компонент, переписать
 
+const test = ["Переменная 1", "Переменная 2", "Переменная 3"];
+
 export const DroppableInput = memo(function DroppableInput(props) {
     const {
         id,
@@ -29,15 +31,13 @@ export const DroppableInput = memo(function DroppableInput(props) {
     } = props;
 
     console.log("Render DroppableInput");
+    // TODO variables ререндерит компонент при каждом изменении
     const variables = useVariablesCollection();
-    const { bindVariable, unbindVariable } = useVariablesStore(
-        (state) => state
+    const bindVariable = useVariablesStore((state) => state.bindVariable);
+    const unbindVariable = useVariablesStore((state) => state.unbindVariable);
+    const variable = useVariablesStore(
+        (state) => state.settings[state.settings[id].variableId]?.name
     );
-    const variable =
-        useVariablesStore(
-            (state) => state.settings[state.settings[id].variableId]?.name
-        ) || "";
-
     return (
         <AutoComplete
             prefocusFirstItem={false}
@@ -49,7 +49,6 @@ export const DroppableInput = memo(function DroppableInput(props) {
             }}
             filter={autocomleteFilter}
             emptyState={<Empty />}
-            {...rest}
         >
             {({ isOpen, onOpen, onClose }) => (
                 <>

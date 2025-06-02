@@ -35,6 +35,7 @@ export const SelectInput = memo(function SelectInput(props) {
                     [targetKey]: details.value[0],
                 });
             }}
+            onClick={(e) => e.stopPropagation()}
             {...rest}
         >
             <Select.HiddenSelect />

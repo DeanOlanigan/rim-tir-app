@@ -1,22 +1,22 @@
 import { useVariablesStore } from "@/store/variables-store";
 import { Switch } from "@chakra-ui/react";
-import { memo, useState } from "react";
+import { memo /* useState */ } from "react";
 
 export const SwitchInput = memo(function SwitchInput(props) {
     const { id, targetKey, value, ...rest } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
-    const [checked, setChecked] = useState(value);
+    //const [checked, setChecked] = useState(value);
     return (
         <Switch.Root
             size={"lg"}
-            checked={Boolean(checked)}
+            checked={Boolean(value)}
             onCheckedChange={(e) => {
-                setChecked(e.checked);
+                setSettings(id, {
+                    [targetKey]: e.checked,
+                });
+                /* setChecked(e.checked);
                 setTimeout(() => {
-                    setSettings(id, {
-                        [targetKey]: e.checked,
-                    });
-                }, 150);
+                }, 150); */
             }}
             {...rest}
         >
