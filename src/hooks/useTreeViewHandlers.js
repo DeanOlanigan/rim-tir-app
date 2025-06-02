@@ -109,6 +109,39 @@ export function useTreeViewHandlers(treeType, ref) {
             ref?.current?.root?.focus();
             ref?.current?.root?.select();
         }
+        // Проверка на разность типов узлов,
+        // оставлять только один выбранный узел, если типы разные
+        if (ref?.current?.selectedIds?.size > 1) {
+            const selectedNodes = Array.from(ref?.current?.selectedIds).map(
+                (id) => ref?.current?.get(id)
+            );
+            const firstType =
+                selectedNodes[0]?.data.subType || selectedNodes[0]?.data.type;
+            const isSameType = selectedNodes.every(
+                (node) =>
+                    node.data.subType === firstType ||
+                    node.data.type === firstType
+            );
+            if (!isSameType) {
+                ref?.current?.select(
+                    selectedNodes[selectedNodes.length - 1].id
+                );
+                ref?.current?.focus();
+            } else {
+                const parentTypes = new Set(
+                    selectedNodes.map((node) =>
+                        getParentType({ checkNode: node })
+                    )
+                );
+                if (parentTypes.size > 1) {
+                    ref?.current?.select(
+                        selectedNodes[selectedNodes.length - 1].id
+                    );
+                    ref?.current?.focus();
+                }
+            }
+        }
+
         updateSelectedIds(settingType, ref?.current?.selectedIds);
     }, [updateSelectedIds, ref, settingType]);
 
