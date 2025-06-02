@@ -228,6 +228,18 @@ export const useVariablesStore = create()(
                     });
                 },
 
+                renameNodeSetting: (nodeId, name) => {
+                    set((state) => {
+                        return {
+                            settings: renameNodeSettingUtil(
+                                state.settings,
+                                nodeId,
+                                name
+                            ),
+                        };
+                    });
+                },
+
                 ignoreNode: (treeApi, ids, ignore) => {
                     const treeType = treeApi.props.treeType;
                     if (!ids.length) return;

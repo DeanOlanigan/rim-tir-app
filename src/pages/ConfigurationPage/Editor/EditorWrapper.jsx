@@ -1,5 +1,5 @@
-import { memo } from "react";
-import { Box, VStack, Heading, Flex } from "@chakra-ui/react";
+import { memo, useEffect, useState } from "react";
+import { Box, VStack, Heading, Flex, HStack, Input } from "@chakra-ui/react";
 import { VariablesTable } from "./VariableEditor/Table/VariablesTable";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { DataObjectsTable } from "./ConnectionEditor/Table/Table";
@@ -8,6 +8,9 @@ import { ConnectionParamContainer } from "./ConnectionEditor/ConnectionParamCont
 import { EditorBreadcrumb } from "./Breadcrumb";
 import { EditorInformer } from "./EditorInformer";
 import { useSelectedData } from "@/hooks/useSelectedData";
+import { Wrapper } from "./Header";
+import { PARENT_NAMES } from "@/config/paramDefinitions";
+import { useVariablesStore } from "@/store/variables-store";
 
 // TODO Лишний ререндер, мб вынести логику с выбором данных в другое место?
 export const EditorWrapper = memo(function EditorWrapper({ type }) {
@@ -66,6 +69,23 @@ export const EditorWrapper = memo(function EditorWrapper({ type }) {
     return <EditorInformer status={"error"} type={type} />;
 });
 
+const PARAMETER_COMPONENTS = {
+    root: ConnectionParamContainer,
+    protocol: ConnectionParamContainer,
+    interface: ConnectionParamContainer,
+    functionGroup: ConnectionParamContainer,
+    asdu: ConnectionParamContainer,
+    folder: ConnectionParamContainer,
+    dataObject: ConnectionParamContainer,
+    variable: VariableEditor,
+    tcpBridge: ConnectionParamContainer,
+};
+
+const TABLE_COMPONENTS = {
+    connections: DataObjectsTable,
+    variables: VariablesTable,
+};
+
 const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
     const [{ node, children }] = data;
     let content;
@@ -106,10 +126,72 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
             content = <div>Неизвестный узел</div>;
         }
     }
+
+    const nodeType = node.subType || node.type;
+    const Parameters =
+        PARAMETER_COMPONENTS[node.type] || (() => "Неизвестный узел");
+    const Table = TABLE_COMPONENTS[type];
+
     return (
-        <VStack gap={"4"} px={"1"} h={"100%"} align={"start"}>
+        <Wrapper
+            breadcrumbs={<EditorBreadcrumb data={node} />}
+            title={
+                <HStack>
+                    <Heading textWrap={"nowrap"}>
+                        {PARENT_NAMES[node.type]} &quot;
+                        <RenameInput id={node.id} name={node.name} />
+                        &quot;
+                    </Heading>
+                </HStack>
+            }
+            counter={
+                children.length > 0 && (
+                    <Heading textWrap={"nowrap"}>
+                        Элементов: {children.length}
+                    </Heading>
+                )
+            }
+            parameters={<Parameters data={node} />}
+            table={
+                children.length > 0 &&
+                ["folder", "functionGroup", "asdu", "gpio"].includes(
+                    nodeType
+                ) && <Table data={children} />
+            }
+        />
+        /* <VStack gap={"4"} px={"1"} h={"100%"} align={"start"}>
             <EditorBreadcrumb data={node} />
             {content}
-        </VStack>
+        </VStack> */
     );
 });
+
+const RenameInput = ({ id, name }) => {
+    const [innerName, setInnerName] = useState(name);
+    const renameNodeSetting = useVariablesStore(
+        (state) => state.renameNodeSetting
+    );
+
+    useEffect(() => {
+        setInnerName(name);
+    }, [name]);
+
+    return (
+        <Input
+            size={"sm"}
+            textAlign={"center"}
+            variant={"flushed"}
+            value={innerName}
+            onChange={(e) => setInnerName(e.target.value)}
+            onBlur={(e) => renameNodeSetting(id, e.target.value)}
+            onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                    renameNodeSetting(id, e.target.value);
+                }
+                if (e.key === "Escape") {
+                    setInnerName(name);
+                }
+            }}
+        />
+    );
+};

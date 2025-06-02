@@ -26,17 +26,6 @@ export const CONSTANT_VALUES = {
     },
 };
 
-export const ALLOWED_PARENTS = {
-    "modbus-rtu": ["comport"],
-    asdu: ["iec104"],
-    functionGroup: ["modbus-rtu"],
-    dataObject: ["functionGroup", "asdu", "folder"],
-    gpio: [],
-    iec104: [],
-    folder: ["asdu", "gpio"],
-    comport: [],
-};
-
 const DEFAULT_FOLDER = {
     type: "folder",
     name: "Новая папка",
