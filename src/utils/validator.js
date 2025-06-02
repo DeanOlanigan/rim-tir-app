@@ -37,8 +37,20 @@ function getContextIds(context, nodeId, param, scope) {
             }
             return [];
         }
-        // TODO Без корневого узла не работает
-        case SCOPE.ROOT:
+        case SCOPE.ROOT: {
+            const ids = [];
+            const rootId = context[nodeId]?.rootId;
+            if (!rootId) return [];
+            function dfs(id) {
+                ids.push(id);
+                const children = context[id]?.children || [];
+                for (const childId of children) {
+                    dfs(childId);
+                }
+            }
+            dfs(rootId);
+            return ids;
+        }
         default:
             return [];
     }
@@ -279,7 +291,7 @@ export function validateAll(settings = useVariablesStore.getState().settings) {
             }
         });
     }
-    console.log(errors);
+    //console.log(errors);
     useValidationStore.setState({
         errors: errors,
     });
