@@ -241,13 +241,11 @@ export const menuConfig = {
     variables: {
         variable: [...menuConfigNodeDefault],
         folder: [
-            //createNode("Создать переменную...", "variable", LuVariable),
             nestedVariables,
             { type: "separator" },
             ...menuConfigNodeDefault,
         ],
         root: [
-            //createNode("Создать переменную...", "variable", LuVariable),
             nestedVariables,
             createNode("Создать папку...", "folder", LuFolder),
             pasteNodeBtn,

@@ -16,7 +16,7 @@ import {
 } from "@/store/validation-store";
 import { memo } from "react";
 import { useShallow } from "zustand/shallow";
-import { Field } from "@chakra-ui/react";
+import { Field, Text } from "@chakra-ui/react";
 
 // Следи за тем, что добавляешь в мапу. Проверяй пропсы.
 const typeMap = {
@@ -31,16 +31,7 @@ const typeMap = {
 };
 
 export const InputFactory = memo(function InputFactory(props) {
-    const {
-        type,
-        id,
-        inputParam,
-        value,
-        label,
-        showLabel = false,
-        ...rest
-    } = props;
-    console.log("RENDER InputFactory");
+    const { type, id, inputParam, value, label, showLabel = false } = props;
     const errors = useValidationStore(
         useShallow((state) => selectParamsErrors(state, id, inputParam))
     );
@@ -48,8 +39,12 @@ export const InputFactory = memo(function InputFactory(props) {
     const Component = typeMap[type] || TextInput;
     return (
         <Field.Root maxW={"250px"} invalid={errors && errors.length > 0}>
-            {showLabel && <Field.Label>{label}</Field.Label>}
-            <Component id={id} targetKey={inputParam} value={value} {...rest} />
+            {showLabel && (
+                <Field.Label w={"100%"}>
+                    <Text truncate>{label}</Text>
+                </Field.Label>
+            )}
+            <Component id={id} targetKey={inputParam} value={value} />
             {errors &&
                 errors.length > 0 &&
                 errors.map((error, index) => (

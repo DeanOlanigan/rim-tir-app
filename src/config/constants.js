@@ -138,7 +138,7 @@ const DEFAULT_VARIABLE_SETTING = {
     group: "noGroup",
     graph: false,
     measurement: "V",
-    aperture: "10",
+    graphInterval: 10,
     //isLua: false,
     description: "Введите описание",
     //coefficient: "1",

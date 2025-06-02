@@ -5,17 +5,19 @@ import {
     CONSTANT_VALUES,
 } from "@/config/constants";
 
-const startDate = new Date();
-startDate.setDate(startDate.getDate() - 3);
-startDate.setMinutes(Math.round(startDate.getMinutes() / 15) * 15);
+export const getStartDate = () => {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 3);
+    startDate.setMinutes(Math.round(startDate.getMinutes() / 15) * 15);
+    return startDate.getTime();
+};
 
-export const getStartDate = () => startDate.getTime();
-
-const endDate = new Date();
-endDate.setDate(endDate.getDate());
-endDate.setMinutes(Math.round(endDate.getMinutes() / 15) * 15);
-
-export const getEndDate = () => endDate.getTime();
+export const getEndDate = () => {
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate());
+    endDate.setMinutes(Math.round(endDate.getMinutes() / 15) * 15);
+    return endDate.getTime();
+};
 
 export function getRandomColor() {
     return (
@@ -23,6 +25,7 @@ export function getRandomColor() {
     );
 }
 
+// DEPRECATED
 export function normalizeData(data, result = {}, parentId = null) {
     data.forEach((element) => {
         const id = uuidv4();
@@ -39,8 +42,7 @@ export function normalizeData(data, result = {}, parentId = null) {
     return result;
 }
 
-//console.log("Normalized:", normalizeData(config.children[2].children));
-
+// DEPRECATED
 export function separateData(data, treeData = [], nodeData = {}) {
     data.forEach((element) => {
         const { setting, children, ...rest } = element;
@@ -56,8 +58,7 @@ export function separateData(data, treeData = [], nodeData = {}) {
     return { treeData, nodeData };
 }
 
-//console.log("Separated:", separateData(config.children[2].children));
-
+// DEPRECATED
 export function separateDataNEW(data, nodeData = {}, parentId = null) {
     if (!data) {
         return { treeData: null, nodeData };
@@ -100,6 +101,7 @@ export function separateDataNEW(data, nodeData = {}, parentId = null) {
     return { treeData, nodeData };
 }
 
+// DEPRECATED
 export function separateTree(data) {
     const { children, ...rest } = data;
     const configurationInfo = rest;
@@ -110,20 +112,18 @@ export function separateTree(data) {
     return { trees, configurationInfo };
 }
 
-//console.log("SEPARATED NEW", separateDataNEW(config));
-
+// MOSTLY DEPRECATED
 export function getParentType({ id, treeApi, checkNode }) {
     if (!checkNode) checkNode = treeApi.get(id);
     const recursive = (node) => {
         if (node.data.type === "folder" || node.data.type === "dataObject")
             return recursive(node.parent);
-        if (node.data.type === "interface" || node.data.type === "protocol")
-            return node.data.subType;
-        return node.data.type;
+        return node.data.subType || node.data.type;
     };
     return recursive(checkNode);
 }
 
+// DEPRECATED
 export function getParentTypeNormalized({ data, id }) {
     if (!id) return null;
     const recursive = (id) => {
@@ -158,6 +158,7 @@ export function initDefaultData(type, parentId, treeApi) {
     return { node, setting, name: node.name };
 }
 
+// MOSTLY DEPRECATED
 export function initCardsData(data) {
     const cardsData = {};
 
@@ -230,6 +231,7 @@ export function getUniqueName(nodes, name, ignoreId = null) {
     }
 }
 
+// DEPRECATED
 export function checkDependsOn(data, dependsOn, settings) {
     const conditions = Array.isArray(dependsOn) ? dependsOn : [dependsOn];
 
@@ -248,6 +250,7 @@ export function checkDependsOn(data, dependsOn, settings) {
     return conditions.every((cond) => checkCondition(cond, data));
 }
 
+// DEPRECATED
 export function checkDependsOn2(data, dependsOn, settings) {
     const evaluate = (cond, node) => {
         if ("type" in cond && Array.isArray(cond.conditions)) {
@@ -273,6 +276,7 @@ export function checkDependsOn2(data, dependsOn, settings) {
     return evaluate(dependsOn, data);
 }
 
+// DEPRECATED
 export function resolveDynProps(data, rules = [], settings) {
     for (const rule of rules) {
         if (!rule.condition) return rule.props;

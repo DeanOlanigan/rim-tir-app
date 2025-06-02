@@ -35,12 +35,12 @@ export const PARENT_NAMES = {
     functionGroup: "Функциональная группа",
     asdu: "ASDU",
     dataObject: "Информационный объект",
+    variable: "Переменная",
 };
 
 export const SCOPE = {
     SELF: "self", // current node
     PARENT: "parent", // find param in parent recursively
-    // TODO root не работает, т.к. нет корневого узла
     ROOT: "root", // root node only
     SIBLINGS: "siblings", // all nodes in the same parent
 };
@@ -101,7 +101,7 @@ export const PARAM_DEFINITIONS = {
         defaultValue: false,
         dependencies: {
             type: LOGIC.NOT,
-            condition: [{ key: "type", value: "bit", scope: SCOPE.SELF }],
+            condition: { key: "type", value: "bit", scope: SCOPE.SELF },
         },
     },
     description: {
@@ -623,6 +623,10 @@ export const PARAM_DEFINITIONS = {
         label: "Спорадический",
         defaultValue: false,
         dependencies: { key: "side", value: "server", scope: SCOPE.PARENT },
+    },
+    graphInterval: {
+        type: "number",
+        label: "Интервал",
     },
     aperture: {
         type: "number",

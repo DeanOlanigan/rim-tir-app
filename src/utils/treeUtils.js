@@ -35,7 +35,8 @@ export function deleteNodeUtil(treeApi) {
         }
         if (!nextFocus) nextFocus = treeApi.lastNode;
         treeApi.focus(nextFocus, { scroll: false });
-        treeApi.delete(Array.from(ids));
+        const idsSet = getIdsSetWithoutNested(treeApi, ids);
+        treeApi.delete(Array.from(idsSet));
     } else {
         const node = treeApi.focusedNode;
         if (node) {
@@ -606,74 +607,4 @@ export function getParentId(treeApi) {
     if (focusedNode.children) return focusedNode.id;
     if (focusedNode.parent.id === props.treeType) return props.treeType;
     return focusedNode.parent.id;
-}
-
-/* ================================================================= */
-/* ============================== OLD ============================== */
-/* ================================================================= */
-export function moveNodeUtil(state, dragIds, parentId, index) {
-    let updatedNodes = [...state];
-    const draggedNodes = [];
-
-    dragIds.forEach((dragId) => {
-        const { nodes, node, oldParentId, oldIndex } = extractNode(
-            updatedNodes,
-            dragId
-        );
-        updatedNodes = nodes;
-        if (node) {
-            draggedNodes.push({ node, oldParentId, oldIndex });
-        }
-    });
-
-    if (draggedNodes.length === 1) {
-        const { node, oldParentId, oldIndex } = draggedNodes[0];
-
-        if (oldParentId === parentId && oldIndex < index) {
-            index--;
-        }
-
-        if (parentId === null) {
-            updatedNodes.splice(index, 0, node);
-        } else {
-            updatedNodes = insertNodes(updatedNodes, parentId, [node], index);
-        }
-    }
-
-    return updatedNodes;
-}
-
-// Вспомогательная функция для рекурсивного поиска и удаления узла по id.
-// Функция возвращает объект с обновлённым деревом (nodes) и извлечённым узлом (node).
-function extractNode(nodes, nodeId, parentId = null) {
-    console.log("extractNode");
-    let extracted = null;
-    let oldIndex = -1;
-    let extractedParentId = null;
-
-    // Рекурсивная функция, которая обходит узлы и удаляет найденный узел
-    const recursive = (items, currentParentId) => {
-        return items.reduce((acc, node, idx) => {
-            if (node.id === nodeId) {
-                // Если найден нужный узел, запоминаем его и не включаем в результирующий массив
-                extracted = node;
-                oldIndex = idx;
-                extractedParentId = currentParentId;
-                return acc;
-            }
-            // Если есть дочерние узлы – рекурсивно ищем в них
-            if (node.children) {
-                node = { ...node, children: recursive(node.children, node.id) };
-            }
-            return [...acc, node];
-        }, []);
-    };
-
-    const newNodes = recursive(nodes, parentId);
-    return {
-        nodes: newNodes,
-        node: extracted,
-        oldIndex,
-        oldParentId: extractedParentId,
-    };
 }
