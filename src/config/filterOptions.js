@@ -113,6 +113,13 @@ export const sideList = createListCollection({
     ],
 });
 
+export const modbusRole = createListCollection({
+    items: [
+        { label: "Ведущий", value: "master" },
+        { label: "Ведомый", value: "slave" },
+    ],
+});
+
 export const pollModeList = createListCollection({
     items: [
         { label: "Ручной", value: "manual" },
