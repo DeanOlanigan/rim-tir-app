@@ -2,10 +2,9 @@ import { create } from "zustand";
 
 export const useContextMenuStore = create()((set) => ({
     context: {
+        apiPath: null,
         type: null,
         subType: null,
-        treeType: null,
-        apiPath: null,
         x: 0,
         y: 0,
         visible: false,

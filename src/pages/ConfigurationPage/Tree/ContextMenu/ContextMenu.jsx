@@ -7,7 +7,7 @@ import { ContextMenuList } from "./ContextMenuList";
 export const ContextMenu = () => {
     console.log("%cRender ContextMenu", "color: white; background: purple;");
     const { context, updateContext } = useContextMenuStore((state) => state);
-    const { apiPath, type, subType, treeType, x, y, visible } = context;
+    const { apiPath, type, subType, x, y, visible } = context;
 
     const menuRef = useRef(null);
 
@@ -65,9 +65,8 @@ export const ContextMenu = () => {
                         <Menu.Root open>
                             <ContextMenuList
                                 apiPath={apiPath}
-                                subType={subType}
                                 type={type}
-                                treeType={treeType}
+                                subType={subType}
                                 updateContext={updateContext}
                             />
                         </Menu.Root>

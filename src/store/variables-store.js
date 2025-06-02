@@ -33,7 +33,7 @@ const initialState = {
         {
             id: CONSTANT_VALUES.TREE_TYPES.send,
             type: CONSTANT_VALUES.NODE_TYPES.root,
-            //subType: CONSTANT_VALUES.TREE_TYPES.send,
+            subType: CONSTANT_VALUES.TREE_TYPES.send,
             name: "Передача",
             children: [],
         },
@@ -42,7 +42,7 @@ const initialState = {
         {
             id: CONSTANT_VALUES.TREE_TYPES.receive,
             type: CONSTANT_VALUES.NODE_TYPES.root,
-            //subType: CONSTANT_VALUES.TREE_TYPES.receive,
+            subType: CONSTANT_VALUES.TREE_TYPES.receive,
             name: "Прием",
             children: [],
         },
@@ -51,7 +51,7 @@ const initialState = {
         {
             id: CONSTANT_VALUES.TREE_TYPES.variables,
             type: CONSTANT_VALUES.NODE_TYPES.root,
-            //subType: CONSTANT_VALUES.TREE_TYPES.variables,
+            subType: CONSTANT_VALUES.TREE_TYPES.variables,
             name: "Переменные",
             children: [],
         },
@@ -60,16 +60,22 @@ const initialState = {
     settings: {
         [CONSTANT_VALUES.TREE_TYPES.send]: {
             id: CONSTANT_VALUES.TREE_TYPES.send,
+            type: CONSTANT_VALUES.NODE_TYPES.root,
+            subType: CONSTANT_VALUES.TREE_TYPES.variables,
             name: "Передача",
             children: [],
         },
         [CONSTANT_VALUES.TREE_TYPES.receive]: {
             id: CONSTANT_VALUES.TREE_TYPES.receive,
+            type: CONSTANT_VALUES.NODE_TYPES.root,
+            subType: CONSTANT_VALUES.TREE_TYPES.variables,
             name: "Прием",
             children: [],
         },
         [CONSTANT_VALUES.TREE_TYPES.variables]: {
             id: CONSTANT_VALUES.TREE_TYPES.variables,
+            type: CONSTANT_VALUES.NODE_TYPES.root,
+            subType: CONSTANT_VALUES.TREE_TYPES.variables,
             name: "Переменные",
             children: [],
         },

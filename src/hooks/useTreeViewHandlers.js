@@ -95,7 +95,6 @@ export function useTreeViewHandlers(treeType, ref) {
             ref?.current.root.select();
             updateContext({
                 apiPath: ref?.current,
-                treeType: treeType,
                 type: null,
                 subType: null,
                 x: e.clientX,
@@ -103,7 +102,7 @@ export function useTreeViewHandlers(treeType, ref) {
                 visible: true,
             });
         },
-        [ref, treeType, updateContext]
+        [ref, updateContext]
     );
     const handleSelect = useCallback(() => {
         if (ref?.current?.selectedIds?.size === 0) {

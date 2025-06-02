@@ -16,12 +16,11 @@ export const Node = ({ node, style, dragHandle, tree }) => {
         }
         node.open();
         updateContext({
-            x: e.clientX,
-            y: e.clientY,
+            apiPath: tree,
             type: node.data.type,
             subType: node.data.subType,
-            treeType: tree.props.treeType,
-            apiPath: tree,
+            x: e.clientX,
+            y: e.clientY,
             visible: true,
         });
     };

@@ -3,15 +3,14 @@ import { menuConfig } from "@/config/contextMenu";
 import { LuBan, LuCheckCheck, LuChevronRight } from "react-icons/lu";
 import { useVariablesStore } from "@/store/variables-store";
 import { CONSTANT_VALUES } from "@/config/constants";
+import { getParentType } from "@/utils/utils";
 
-export const ContextMenuList = ({
-    subType,
-    type,
-    treeType,
-    updateContext,
-    apiPath,
-}) => {
-    const focusedNodeType = subType || type || CONSTANT_VALUES.NODE_TYPES.root;
+export const ContextMenuList = ({ apiPath, type, subType, updateContext }) => {
+    const focusedNodeType =
+        type === CONSTANT_VALUES.NODE_TYPES.root
+            ? CONSTANT_VALUES.NODE_TYPES.root
+            : subType || type || CONSTANT_VALUES.NODE_TYPES.root;
+    const treeType = apiPath.props.treeType;
     const items = menuConfig[treeType]?.[focusedNodeType];
     if (!items) return null;
 
@@ -34,6 +33,8 @@ function getCopyDisabledState(apiPath) {
         return false;
     }
 
+    // Проверяем, что все выбранные узлы одного типа
+    // TODO Можно избавиться от этой проверки, если будем принудительно не давать выбирать узлы разных типов
     return !selected.every(
         (node) => node?.data.type === selected[0]?.data.type
     );
@@ -54,7 +55,9 @@ function getDisabledState(apiPath) {
         // Получить тип узла, на котором контекстное меню
         const focusedNodeType =
             apiPath.focusedNode?.data.subType || apiPath.focusedNode?.data.type;
-        const focusedNodeTypeF = getMeaningFocusedNode(apiPath);
+        const focusedNodeTypeF = getParentType({
+            checkNode: apiPath?.focusedNode,
+        });
 
         // Получить значимый тип из иерархии копируемого узла
         const meaningNode = getMeaningNode(copyBuffer.tree[0].id, settings);
@@ -78,6 +81,7 @@ function getDisabledState(apiPath) {
     return false;
 }
 
+// TODO Эта функция должна быть в utils.js
 function getMeaningNode(id, settings) {
     function recursive(id) {
         const node = settings[settings[id].parentId];
@@ -90,20 +94,6 @@ function getMeaningNode(id, settings) {
         }
     }
     return recursive(id);
-}
-
-function getMeaningFocusedNode(apiPath) {
-    function recursive(node) {
-        if (!node || !node.data) return undefined;
-        if (node.data.type === "folder" || node.data.type === "dataObject") {
-            return recursive(node.parent);
-        } else {
-            return node;
-        }
-    }
-    const node = apiPath.focusedNode;
-    const res = recursive(node);
-    return res?.data?.subType || res?.data?.type;
 }
 
 function renderMenuItem(item, index, apiPath, updateContext) {
