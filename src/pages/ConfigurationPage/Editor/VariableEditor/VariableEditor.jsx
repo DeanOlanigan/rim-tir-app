@@ -10,16 +10,12 @@ import {
     HStack,
     Checkbox,
 } from "@chakra-ui/react";
-import { VariableEditorHeader } from "./VariableEditorHeader";
 import {
-    SelectInput,
-    DebouncedTextarea,
     DebouncedEditor,
     BaseInput,
 } from "../../InputComponents";
 import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 import { useVariablesStore } from "@/store/variables-store";
-import { initCardsData } from "@/utils/utils";
 import { InputFactory } from "../../InputComponents/InputFactory";
 import { CompositeSection } from "./CompositeSection";
 

@@ -131,7 +131,6 @@ const DEFAULT_VARIABLE_SETTING = {
     //isLua: false,
     description: "Введите описание",
     //coefficient: "1",
-    luaTag: "",
     luaExpression: null,
 };
 

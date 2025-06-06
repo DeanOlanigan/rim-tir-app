@@ -1,10 +1,8 @@
 import {
     Box,
     Card,
-    CardBody,
     Checkbox,
     Float,
-    HStack,
     Icon,
     SimpleGrid,
     Text,
@@ -35,8 +33,8 @@ export const CompositeSection = ({
     // Проверяем видимость секции
     const isVisible = validateVisability(dep.dependencies, data.id);
     if (!isVisible) return null; // Если секция не видима, ничего не рендерим
-    console.log(checkedParam);
-    console.log(data.setting);
+    //console.log(checkedParam);
+    //console.log(data.setting);
     const isChecked = data.setting?.[checkedParam] ?? false;
     //console.log(childrenParams);
     //console.log(isChecked);
@@ -70,7 +68,9 @@ export const CompositeSection = ({
 
                 <Box h={"100%"} textAlign={"center"}>
                     {ParamIcon && <Icon fontSize={"3xl"} as={ParamIcon} />}
-                    <Text fontWeight={"medium"}>{label}</Text>
+                    <Text userSelect={"none"} fontWeight={"medium"}>
+                        {label}
+                    </Text>
                 </Box>
 
                 {isChecked && (

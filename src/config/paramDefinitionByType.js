@@ -43,14 +43,27 @@ export const PARAM_DEFINITIONS_BY_TYPE = {
         iface: {
             type: "select",
             label: "Интерфейс",
-            defaultValue: ifaceList.items[0].value,
             options: ifaceList,
+            defaultValue: ifaceList.items[0].value,
         },
         /** @type {nodeParam} */
         baudRate: {
             type: "select",
             label: "Скорость",
             options: baudRateList,
+            defaultValue: baudRateList.items[0].value,
+        },
+        /** @type {nodeParam} */
+        stopBit: {
+            type: "select",
+            label: "Стоп-бит",
+            options: stopBitList,
+        },
+        /** @type {nodeParam} */
+        parity: {
+            type: "select",
+            label: "Паритет",
+            options: parityList,
         },
     },
     modbusRTU: {
@@ -58,12 +71,14 @@ export const PARAM_DEFINITIONS_BY_TYPE = {
         logging: {
             type: "boolean",
             label: "Логирование",
+            defaultValue: false,
         },
         /** @type {nodeParam} */
         role: {
             type: "select",
             label: "Режим",
             options: modbusRole,
+            defaultValue: modbusRole.items[0].value,
         },
         /** @type {nodeParam} */
         address: {
@@ -80,18 +95,6 @@ export const PARAM_DEFINITIONS_BY_TYPE = {
                     message: "Значение должно быть в диапазоне от 1 до 255",
                 },
             ],
-        },
-        /** @type {nodeParam} */
-        stopBit: {
-            type: "select",
-            label: "Стоп-бит",
-            options: stopBitList,
-        },
-        /** @type {nodeParam} */
-        parity: {
-            type: "select",
-            label: "Паритет",
-            options: parityList,
         },
         /** @type {nodeParam} */
         order2: {
@@ -188,7 +191,7 @@ export const PARAM_DEFINITIONS_BY_TYPE = {
             label: "Ожидать ответ",
         },
     },
-    funcGroup: {
+    functionGroup: {
         /** @type {nodeParam} */
         function: {
             type: "select",
@@ -238,7 +241,7 @@ export const PARAM_DEFINITIONS_BY_TYPE = {
             options: sideList,
         },
         /** @type {nodeParam} */
-        ip: {
+        ipAddress: {
             type: "ip",
             label: "IP-адрес",
             rules: [
@@ -470,7 +473,7 @@ export const PARAM_DEFINITIONS_BY_TYPE = {
                 label: "Переменная",
             },
         },
-        modbus: {
+        functionGroup: {
             /** @type {nodeParam} */
             address: {
                 type: "hex",
