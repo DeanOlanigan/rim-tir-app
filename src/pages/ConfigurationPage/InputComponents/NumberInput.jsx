@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import {
     NumberInputField,
     NumberInputRoot,
@@ -8,15 +8,19 @@ import { useVariablesStore } from "@/store/variables-store";
 export const NumberInput = memo(function NumberInput(props) {
     console.log("Render NumberInput");
     const { id, targetKey, value, ...rest } = props;
+    const [innerValue, setInnerValue] = useState(value);
     const setSettings = useVariablesStore((state) => state.setSettings);
 
     return (
         <NumberInputRoot
-            value={value}
+            value={innerValue}
             size={"xs"}
             onValueChange={(details) => {
+                setInnerValue(details.value);
+            }}
+            onBlur={() => {
                 setSettings(id, {
-                    [targetKey]: details.value,
+                    [targetKey]: innerValue,
                 });
             }}
             onClick={(e) => e.stopPropagation()}

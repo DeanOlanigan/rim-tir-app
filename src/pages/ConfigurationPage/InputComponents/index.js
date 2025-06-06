@@ -11,6 +11,7 @@ import { HexInput } from "./HexInput";
 import { ComboboxInput } from "./ComboboxInput";
 import { InputFactory } from "./InputFactory";
 import { InputController } from "./InputController";
+import { NameInput } from "./NameInput";
 
 export {
     InputFactory as BaseInput,
@@ -24,6 +25,7 @@ export {
     DroppableInput,
     IpInput,
     HexInput,
+    NameInput,
     ComboboxInput,
     InputController,
 };

@@ -43,6 +43,7 @@ export const SCOPE = {
     PARENT: "parent", // find param in parent recursively
     ROOT: "root", // root node only
     SIBLINGS: "siblings", // all nodes in the same parent
+    IGNOREFOLDER: "ignoreFolder", // find param in parent recursively without folders
 };
 
 export const VALIDATOR = {
@@ -320,9 +321,9 @@ export const PARAM_DEFINITIONS = {
             },
             {
                 validator: VALIDATOR.UNIQUE,
-                params: { within: SCOPE.SIBLINGS },
+                params: { within: SCOPE.IGNOREFOLDER },
                 message:
-                    "Адрес должен быть уникальным внутри родительского элемента",
+                    "Адрес должен быть уникальным внутри значимого родительского элемента",
             },
         ],
     },

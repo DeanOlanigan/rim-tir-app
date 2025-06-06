@@ -1,5 +1,5 @@
-import { memo, useEffect, useState } from "react";
-import { Box, VStack, Heading, Flex, HStack, Input } from "@chakra-ui/react";
+import { memo } from "react";
+import { Box, VStack, Heading, Flex, HStack } from "@chakra-ui/react";
 import { VariablesTable } from "./VariableEditor/Table/VariablesTable";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { DataObjectsTable } from "./ConnectionEditor/Table/Table";
@@ -10,7 +10,7 @@ import { EditorInformer } from "./EditorInformer";
 import { useSelectedData } from "@/hooks/useSelectedData";
 import { Wrapper } from "./Header";
 import { PARENT_NAMES } from "@/config/paramDefinitions";
-import { useVariablesStore } from "@/store/variables-store";
+import { InputFactory } from "../InputComponents/InputFactory";
 
 // TODO Лишний ререндер, мб вынести логику с выбором данных в другое место?
 export const EditorWrapper = memo(function EditorWrapper({ type }) {
@@ -137,11 +137,14 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
             breadcrumbs={<EditorBreadcrumb data={node} />}
             title={
                 <HStack>
-                    <Heading textWrap={"nowrap"}>
-                        {PARENT_NAMES[node.type]} &quot;
-                        <RenameInput id={node.id} name={node.name} />
-                        &quot;
-                    </Heading>
+                    <InputFactory
+                        type={"name"}
+                        id={node.id}
+                        inputParam={"name"}
+                        value={node.name}
+                        label={PARENT_NAMES[node.type]}
+                        showLabel
+                    />
                 </HStack>
             }
             counter={
@@ -165,33 +168,3 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
         </VStack> */
     );
 });
-
-const RenameInput = ({ id, name }) => {
-    const [innerName, setInnerName] = useState(name);
-    const renameNodeSetting = useVariablesStore(
-        (state) => state.renameNodeSetting
-    );
-
-    useEffect(() => {
-        setInnerName(name);
-    }, [name]);
-
-    return (
-        <Input
-            size={"sm"}
-            textAlign={"center"}
-            variant={"flushed"}
-            value={innerName}
-            onChange={(e) => setInnerName(e.target.value)}
-            onBlur={(e) => renameNodeSetting(id, e.target.value)}
-            onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                    renameNodeSetting(id, e.target.value);
-                }
-                if (e.key === "Escape") {
-                    setInnerName(name);
-                }
-            }}
-        />
-    );
-};

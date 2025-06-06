@@ -51,6 +51,26 @@ function getContextIds(context, nodeId, param, scope) {
             dfs(rootId);
             return ids;
         }
+        case SCOPE.IGNOREFOLDER: {
+            const ids = [];
+            const parentId = context[nodeId]?.parentId;
+            if (!parentId) return [];
+            function getMeanId(id){
+                if (context[id].type === "folder")
+                    return getMeanId(context[id].parentId);
+                return id;
+            }
+            function dfs(id) {
+                ids.push(id);
+                const children = context[id]?.children || [];
+                for (const childId of children) {
+                    dfs(childId);
+                }
+            }
+            const meanId = getMeanId(parentId);
+            dfs(meanId);
+            return ids;
+        }
         default:
             return [];
     }
@@ -295,4 +315,35 @@ export function validateAll(settings = useVariablesStore.getState().settings) {
     useValidationStore.setState({
         errors: errors,
     });
+}
+
+export function validateName({
+    id,
+    settings = useVariablesStore.getState().settings,
+    scope = SCOPE.SELF,
+}) {
+    const errors = {};
+    const ids = getContextIds(settings, id, "name", scope || SCOPE.SELF);
+    //console.log("validateNameIDS", ids);
+    const map = new Map();
+    for (const id of ids) {
+        const val = settings[id]?.name;
+        if (val === undefined || val == "") continue;
+        if (!map.has(val)) map.set(val, []);
+        map.get(val).push(id);
+    }
+    for (const id of ids) {
+        const val = settings[id]?.name;
+        const dupIds = map.get(val) || [];
+        let msg = [];
+        if (dupIds.length > 1) {
+            msg = [
+                `Значение "${val}" уже существует`,
+            ];
+        }
+        setDraftMessage(errors, id, "name", VALIDATOR.UNIQUE, msg);
+    }
+
+    //console.log(errors);
+    useValidationStore.getState().setBulkErrors(errors);
 }

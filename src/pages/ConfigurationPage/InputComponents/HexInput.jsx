@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useVariablesStore } from "@/store/variables-store";
 import { useMaskito } from "@maskito/react";
 import { Input } from "@chakra-ui/react";
@@ -19,6 +19,7 @@ const hexMask = {
 export const HexInput = memo(function HexInput(props) {
     console.log("Render HexInput");
     const { id, targetKey, value, ...rest } = props;
+    const [innerValue, setInnerValue] = useState(value);
     const setSettings = useVariablesStore((state) => state.setSettings);
 
     const inputRef = useMaskito({ options: hexMask });
@@ -30,10 +31,13 @@ export const HexInput = memo(function HexInput(props) {
             maxLength={6}
             size={"xs"}
             maxW={"250px"}
-            value={value}
+            value={innerValue}
             onInput={(e) => {
+                setInnerValue(e.target.value);
+            }}
+            onBlur={() => {
                 setSettings(id, {
-                    [targetKey]: e.target.value,
+                    [targetKey]: innerValue,
                 });
             }}
             {...rest}

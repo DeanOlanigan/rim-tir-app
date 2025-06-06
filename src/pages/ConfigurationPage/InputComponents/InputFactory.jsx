@@ -9,6 +9,7 @@ import {
     DroppableInput,
     IpInput,
     HexInput,
+    NameInput
 } from "./index";
 import {
     selectParamsErrors,
@@ -28,6 +29,7 @@ const typeMap = {
     ip: IpInput,
     hex: HexInput,
     text: TextInput,
+    name: NameInput
 };
 
 export const InputFactory = memo(function InputFactory(props) {
