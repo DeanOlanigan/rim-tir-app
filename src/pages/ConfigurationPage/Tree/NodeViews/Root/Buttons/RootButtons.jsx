@@ -1,11 +1,11 @@
 import { CONSTANT_VALUES } from "@/config/constants";
 import { HStack } from "@chakra-ui/react";
-import { ConnectionsTitleButtons } from "./ConnectionsTitleButtons";
+import { ConnectionsButtons } from "./ConnectionsButtons";
 import { ExpandButton } from "./ExpandButton";
-import { SetIgnoreBtn } from "./SetIgnoreBtn";
-import { VariablesTitleButtons } from "./VariablesTitleButtons";
+import { IgnoreButton } from "./IgnoreButton";
+import { VariablesButtons } from "./VariablesButtons";
 
-export const TitleButtons = ({ treeApi }) => {
+export const RootButtons = ({ treeApi }) => {
     const type = treeApi.props.treeType;
     return (
         <HStack
@@ -16,12 +16,12 @@ export const TitleButtons = ({ treeApi }) => {
         >
             {(type === CONSTANT_VALUES.TREE_TYPES.send ||
                 type === CONSTANT_VALUES.TREE_TYPES.receive) && (
-                <ConnectionsTitleButtons treeApi={treeApi} />
+                <ConnectionsButtons treeApi={treeApi} />
             )}
             {type === CONSTANT_VALUES.TREE_TYPES.variables && (
-                <VariablesTitleButtons treeApi={treeApi} />
+                <VariablesButtons treeApi={treeApi} />
             )}
-            <SetIgnoreBtn treeApi={treeApi} />
+            <IgnoreButton treeApi={treeApi} />
             <ExpandButton treeApi={treeApi} />
         </HStack>
     );

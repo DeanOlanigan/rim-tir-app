@@ -7,8 +7,7 @@ import {
     HStack,
     VStack,
 } from "@chakra-ui/react";
-import { TreeView } from "../Tree/TreeView";
-import { TreeCardTitle } from "./Title";
+import { TreeView } from "./Tree/TreeView";
 import { useRef, memo } from "react";
 import { LuBadgePlus } from "react-icons/lu";
 import { useConfigTreeApiStore } from "@/store/config-tree-api-store";

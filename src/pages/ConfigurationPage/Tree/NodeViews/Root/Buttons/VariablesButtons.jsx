@@ -1,12 +1,9 @@
 import { Tooltip } from "@/components/ui/tooltip";
 import { CONSTANT_VALUES } from "@/config/constants";
-import { locale } from "@/config/locale";
-import { useLocaleStore } from "@/store/locale-store";
 import { IconButton } from "@chakra-ui/react";
 import { LuFilePlus, LuFolderPlus } from "react-icons/lu";
 
-export const VariablesTitleButtons = ({ treeApi }) => {
-    const lang = useLocaleStore((state) => state.locale);
+export const VariablesButtons = ({ treeApi }) => {
     const handleCreateVariable = (e) => {
         e.stopPropagation();
         treeApi?.create({
@@ -31,7 +28,7 @@ export const VariablesTitleButtons = ({ treeApi }) => {
 
     return (
         <>
-            <Tooltip content={locale[lang].createVariable}>
+            <Tooltip content={"Создать переменную..."}>
                 <IconButton
                     size={"2xs"}
                     variant={"subtle"}
@@ -40,7 +37,7 @@ export const VariablesTitleButtons = ({ treeApi }) => {
                     <LuFilePlus />
                 </IconButton>
             </Tooltip>
-            <Tooltip content={locale[lang].createFolder}>
+            <Tooltip content={"Создать папку..."}>
                 <IconButton
                     size={"2xs"}
                     variant={"subtle"}

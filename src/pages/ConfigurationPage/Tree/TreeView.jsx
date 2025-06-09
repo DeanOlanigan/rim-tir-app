@@ -6,16 +6,10 @@ import { DropCursor } from "@/components/TreeView/DropCursor";
 import { Node } from "./Node";
 import { Box } from "@chakra-ui/react";
 import { useTreeViewHandlers } from "@/hooks/useTreeViewHandlers";
-import { combineRefs } from "@/utils/utils";
-import { useDragDropManager } from "react-dnd";
-import { useHotkeys } from "react-hotkeys-hook";
-import { useVariablesStore } from "@/store/variables-store";
-import { getIdsSetWithoutNested } from "@/utils/treeUtils";
 
 export const TreeView = memo(
     forwardRef(function TreeView({ data, treeType }, ref) {
         console.log("%cRender NEW TreeView", "color: white; background: red;");
-        const dragDropManager = useDragDropManager();
         const {
             handleRenameNode,
             handleCreateNode,
@@ -27,7 +21,7 @@ export const TreeView = memo(
         } = useTreeViewHandlers(treeType, ref);
 
         // TODO Улучшать хоткеи, вынести в отдельный хук, ограничить вставку
-        const cutRef = useHotkeys("ctrl+x", () => {
+        /* const cutRef = useHotkeys("ctrl+x", () => {
             console.log("cut from hotkey", treeType);
             const baseIds = ref.current.root.children.map((child) => child.id);
             const cutNodeFunc = useVariablesStore.getState().cutNode;
@@ -69,15 +63,14 @@ export const TreeView = memo(
             console.log("isCut", cut, clearIds);
             cut && removeNode(treeType, clearIds);
             pasteNode(ref.current);
-        });
+        }); */
 
         return (
             <Box
-                ref={combineRefs(cutRef, copyRef, pasteRef)}
+                //ref={combineRefs(cutRef, copyRef, pasteRef)}
                 w={"100%"}
                 h={"100%"}
                 position={"relative"}
-                //onContextMenu={handleContextMenu}
             >
                 <AutoSizer>
                     {({ height, width }) => (
@@ -100,7 +93,6 @@ export const TreeView = memo(
                             onSelect={handleSelect}
                             onContextMenu={handleContextMenu}
                             disableDrop={handleDisableDrop}
-                            dndManager={dragDropManager}
                             /* disableEdit={(data) =>
                                 data.type ===
                                 CONSTANT_VALUES.NODE_TYPES.dataObject

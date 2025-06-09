@@ -4,7 +4,7 @@ import { IconButton, Portal, Menu } from "@chakra-ui/react";
 import { useId } from "react";
 import { LuPlus, LuAnchor, LuUnplug, LuCable } from "react-icons/lu";
 
-export const ConnectionsTitleButtons = ({ treeApi }) => {
+export const ConnectionsButtons = ({ treeApi }) => {
     const handleCreateComport = () => {
         treeApi?.create({
             parentId: null,

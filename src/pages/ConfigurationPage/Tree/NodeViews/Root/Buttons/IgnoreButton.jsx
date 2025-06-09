@@ -4,7 +4,7 @@ import { IconButton, Icon } from "@chakra-ui/react";
 import { useState } from "react";
 import { LuHam, LuPiggyBank } from "react-icons/lu";
 
-export const SetIgnoreBtn = ({ treeApi }) => {
+export const IgnoreButton = ({ treeApi }) => {
     const toggleIgnoreNode = useVariablesStore((state) => state.ignoreNode);
     const [ignoreMode, setIgnoreMode] = useState(false);
     const handleIgnore = (e) => {
