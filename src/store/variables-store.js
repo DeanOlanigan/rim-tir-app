@@ -1,19 +1,15 @@
 import { create } from "zustand";
-import { getUniqueName } from "@/utils/utils";
 import {
     addNodeUtil,
     removeNodeUtil,
     moveNodesUtil,
-    renameNodeUtil,
     renameNodeSettingUtil,
     createSettingUtil,
     removeSettingUtil,
     editSettingUtil,
-    editSettingNodeUtil,
     bindVariableUtil,
     unbindVariableUtil,
     moveSettingUtil,
-    bindVariableToNodeUtil,
     ignoreNodeUtil,
     copyTreeUtil,
     copySettingsUtil,
@@ -27,58 +23,35 @@ import { validateAll, validateParameter } from "@/utils/validator";
 import { useValidationStore } from "@/store/validation-store";
 import { CONSTANT_VALUES } from "@/config/constants";
 
+const baseNodeInit = (type, name) => ({
+    id: type,
+    type: CONSTANT_VALUES.NODE_TYPES.root,
+    subType: type,
+    name: name,
+    children: [],
+});
+
 const initialState = {
     // Деревья для react-arborist
-    send: [
-        {
-            id: CONSTANT_VALUES.TREE_TYPES.send,
-            type: CONSTANT_VALUES.NODE_TYPES.root,
-            subType: CONSTANT_VALUES.TREE_TYPES.send,
-            name: "Передача",
-            children: [],
-        },
-    ],
-    receive: [
-        {
-            id: CONSTANT_VALUES.TREE_TYPES.receive,
-            type: CONSTANT_VALUES.NODE_TYPES.root,
-            subType: CONSTANT_VALUES.TREE_TYPES.receive,
-            name: "Прием",
-            children: [],
-        },
-    ],
+    send: [baseNodeInit(CONSTANT_VALUES.TREE_TYPES.send, "Передача")],
+    receive: [baseNodeInit(CONSTANT_VALUES.TREE_TYPES.receive, "Прием")],
     variables: [
-        {
-            id: CONSTANT_VALUES.TREE_TYPES.variables,
-            type: CONSTANT_VALUES.NODE_TYPES.root,
-            subType: CONSTANT_VALUES.TREE_TYPES.variables,
-            name: "Переменные",
-            children: [],
-        },
+        baseNodeInit(CONSTANT_VALUES.TREE_TYPES.variables, "Переменные"),
     ],
     // Параметры всех узлов деревьев
     settings: {
-        [CONSTANT_VALUES.TREE_TYPES.send]: {
-            id: CONSTANT_VALUES.TREE_TYPES.send,
-            type: CONSTANT_VALUES.NODE_TYPES.root,
-            subType: CONSTANT_VALUES.TREE_TYPES.variables,
-            name: "Передача",
-            children: [],
-        },
-        [CONSTANT_VALUES.TREE_TYPES.receive]: {
-            id: CONSTANT_VALUES.TREE_TYPES.receive,
-            type: CONSTANT_VALUES.NODE_TYPES.root,
-            subType: CONSTANT_VALUES.TREE_TYPES.variables,
-            name: "Прием",
-            children: [],
-        },
-        [CONSTANT_VALUES.TREE_TYPES.variables]: {
-            id: CONSTANT_VALUES.TREE_TYPES.variables,
-            type: CONSTANT_VALUES.NODE_TYPES.root,
-            subType: CONSTANT_VALUES.TREE_TYPES.variables,
-            name: "Переменные",
-            children: [],
-        },
+        [CONSTANT_VALUES.TREE_TYPES.send]: baseNodeInit(
+            CONSTANT_VALUES.TREE_TYPES.send,
+            "Передача"
+        ),
+        [CONSTANT_VALUES.TREE_TYPES.receive]: baseNodeInit(
+            CONSTANT_VALUES.TREE_TYPES.receive,
+            "Прием"
+        ),
+        [CONSTANT_VALUES.TREE_TYPES.variables]: baseNodeInit(
+            CONSTANT_VALUES.TREE_TYPES.variables,
+            "Переменные"
+        ),
     },
     // Id выбранных узлов
     selectedIds: {
@@ -101,19 +74,13 @@ export const useVariablesStore = create()(
 
                 resetState: () => set(initialState),
 
-                updateSelectedIds: (targetKey, ids) => {
-                    /* const { selectedIds } = get();
-                const currentIds = selectedIds[targetKey]; */
-
+                updateSelectedIds: (targetKey, ids) =>
                     set((state) => ({
                         selectedIds: {
                             ...state.selectedIds,
                             [targetKey]: ids,
                         },
-                    }));
-                    /* if (!shallow(currentIds, ids)) {
-                } */
-                },
+                    })),
 
                 createSetting: (settings) => {
                     set((state) => ({
@@ -141,52 +108,19 @@ export const useVariablesStore = create()(
                         return { settings: newSettings };
                     }),
 
-                setSettingsNode: (nodeId, updateData) =>
+                bindVariable: (nodeId, variableId) =>
                     set((state) => ({
-                        settings: editSettingNodeUtil(
+                        settings: bindVariableUtil(
                             state.settings,
                             nodeId,
-                            updateData
+                            variableId
                         ),
                     })),
 
-                bindVariable: (nodeId, variableId) => {
-                    set((state) => {
-                        const { receive, send } = bindVariableToNodeUtil(
-                            state.receive,
-                            state.send,
-                            nodeId,
-                            variableId
-                        );
-                        return {
-                            settings: bindVariableUtil(
-                                state.settings,
-                                nodeId,
-                                variableId
-                            ),
-                            receive,
-                            send,
-                        };
-                    });
-                },
-
                 unbindVariable: (nodeId) =>
-                    set((state) => {
-                        const { receive, send } = bindVariableToNodeUtil(
-                            state.receive,
-                            state.send,
-                            nodeId,
-                            null
-                        );
-                        return {
-                            settings: unbindVariableUtil(
-                                state.settings,
-                                nodeId
-                            ),
-                            receive,
-                            send,
-                        };
-                    }),
+                    set((state) => ({
+                        settings: unbindVariableUtil(state.settings, nodeId),
+                    })),
 
                 addNode: (targetKey, parentId, newNodes) => {
                     if (parentId === null) {
@@ -206,39 +140,14 @@ export const useVariablesStore = create()(
                     }
                 },
 
-                renameNode: (targetKey, nodeId, name) => {
-                    set((state) => {
-                        const uniqueName = getUniqueName(
-                            state[targetKey],
-                            name,
-                            nodeId
-                        );
-                        return {
-                            [targetKey]: renameNodeUtil(
-                                state[targetKey],
-                                nodeId,
-                                uniqueName
-                            ),
-                            settings: renameNodeSettingUtil(
-                                state.settings,
-                                nodeId,
-                                uniqueName
-                            ),
-                        };
-                    });
-                },
-
-                renameNodeSetting: (nodeId, name) => {
-                    set((state) => {
-                        return {
-                            settings: renameNodeSettingUtil(
-                                state.settings,
-                                nodeId,
-                                name
-                            ),
-                        };
-                    });
-                },
+                renameNode: (nodeId, name) =>
+                    set((state) => ({
+                        settings: renameNodeSettingUtil(
+                            state.settings,
+                            nodeId,
+                            name
+                        ),
+                    })),
 
                 ignoreNode: (treeApi, ids, ignore) => {
                     const treeType = treeApi.props.treeType;

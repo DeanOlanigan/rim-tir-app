@@ -4,11 +4,9 @@ import { validateName } from "@/utils/validator";
 import { Input } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
-export const NameInput = ({ id, value}) => {
+export const NameInput = ({ id, value }) => {
     const [innerName, setInnerName] = useState(value);
-    const renameNodeSetting = useVariablesStore(
-        (state) => state.renameNodeSetting
-    );
+    const renameNode = useVariablesStore((state) => state.renameNode);
 
     useEffect(() => {
         setInnerName(value);
@@ -21,13 +19,13 @@ export const NameInput = ({ id, value}) => {
             onChange={(e) => setInnerName(e.target.value)}
             onBlur={(e) => {
                 setInnerName(e.target.value.trim());
-                renameNodeSetting(id, e.target.value.trim());
+                renameNode(id, e.target.value.trim());
                 validateName({ id: id, scope: SCOPE.IGNOREFOLDER });
             }}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
                     setInnerName(e.target.value.trim());
-                    renameNodeSetting(id, e.target.value.trim());
+                    renameNode(id, e.target.value.trim());
                     validateName({ id: id, scope: SCOPE.IGNOREFOLDER });
                 }
                 if (e.key === "Escape") {

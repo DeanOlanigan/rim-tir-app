@@ -55,7 +55,7 @@ function getContextIds(context, nodeId, param, scope) {
             const ids = [];
             const parentId = context[nodeId]?.parentId;
             if (!parentId) return [];
-            function getMeanId(id){
+            function getMeanId(id) {
                 if (context[id].type === "folder")
                     return getMeanId(context[id].parentId);
                 return id;
@@ -275,46 +275,21 @@ export function validateVisability(
 // TODO Бог покинул это место
 export function validateAll(settings = useVariablesStore.getState().settings) {
     //const settings = useVariablesStore.getState().settings;
-    let errors = {};
+    const errors = {};
 
     for (const node of Object.values(settings)) {
         if (!node.setting) continue;
-        Object.keys(node.setting).forEach((param) => {
-            const error = validateParameter(node.id, param, settings);
-            if (error) {
-                // error — это {[nodeId]: {[param]: {[validator]: [messages]}}}
-                Object.entries(error).forEach(([nodeId, paramErrors]) => {
-                    if (!errors[nodeId]) errors[nodeId] = {};
-                    Object.entries(paramErrors).forEach(
-                        ([p, validatorErrors]) => {
-                            if (!errors[nodeId][p]) errors[nodeId][p] = {};
-                            Object.entries(validatorErrors).forEach(
-                                ([validator, msgs]) => {
-                                    if (msgs && msgs.length) {
-                                        errors[nodeId][p][validator] = msgs;
-                                    } else {
-                                        delete errors[nodeId][p][validator];
-                                    }
-                                }
-                            );
-                            // если нет ошибок валидаторов, удалить param
-                            if (!Object.keys(errors[nodeId][p]).length) {
-                                delete errors[nodeId][p];
-                            }
-                        }
-                    );
-                    // если нет ошибок параметров, удалить node
-                    if (!Object.keys(errors[nodeId]).length) {
-                        delete errors[nodeId];
-                    }
-                });
-            }
-        });
+        for (const paramKey of Object.keys(node.setting)) {
+            const paramError = validateParameter(node.id, paramKey, settings);
+            mergeErrors(errors, paramError);
+        }
     }
+
+    const nameErrors = collectNameErrors(settings);
+    mergeErrors(errors, nameErrors);
+
     //console.log(errors);
-    useValidationStore.setState({
-        errors: errors,
-    });
+    useValidationStore.setState({ errors });
 }
 
 export function validateName({
@@ -337,13 +312,66 @@ export function validateName({
         const dupIds = map.get(val) || [];
         let msg = [];
         if (dupIds.length > 1) {
-            msg = [
-                `Значение "${val}" уже существует`,
-            ];
+            msg = [`Значение "${val}" уже существует`];
         }
         setDraftMessage(errors, id, "name", VALIDATOR.UNIQUE, msg);
     }
-
     //console.log(errors);
     useValidationStore.getState().setBulkErrors(errors);
+}
+
+function mergeErrors(target, source) {
+    if (!source) return;
+    for (const [nodeId, params] of Object.entries(source)) {
+        for (const [paramKey, validators] of Object.entries(params)) {
+            for (const [validatorName, messages] of Object.entries(
+                validators
+            )) {
+                if (messages?.length) {
+                    target[nodeId] = target[nodeId] || {};
+                    target[nodeId][paramKey] = target[nodeId][paramKey] || {};
+                    target[nodeId][paramKey][validatorName] = messages;
+                }
+            }
+            if (
+                target[nodeId] &&
+                target[nodeId][paramKey] &&
+                !Object.keys(target[nodeId][paramKey]).length
+            ) {
+                delete target[nodeId][paramKey];
+            }
+        }
+        if (target[nodeId] && !Object.keys(target[nodeId]).length) {
+            delete target[nodeId];
+        }
+    }
+}
+
+/**
+ * Собирает ошибки UNIQUE для поля name во всём settings.
+ */
+function collectNameErrors(settings) {
+    const errors = {};
+    // 1) Собираем все id в рамках контекста (можно расширить по scope)
+    const allIds = Object.keys(settings);
+    // 2) Группируем по значению name
+    const map = new Map();
+    allIds.forEach((id) => {
+        const name = settings[id]?.name;
+        if (name) {
+            map.set(name, [...(map.get(name) || []), id]);
+        }
+    });
+    // 3) Если в группе больше одного — пишем ошибку каждому
+    for (const [name, ids] of map.entries()) {
+        if (ids.length > 1) {
+            ids.forEach((id) => {
+                errors[id] = errors[id] || {};
+                errors[id].name = {
+                    [VALIDATOR.UNIQUE]: [`Значение "${name}" уже существует`],
+                };
+            });
+        }
+    }
+    return errors;
 }

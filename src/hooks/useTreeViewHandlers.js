@@ -3,6 +3,8 @@ import { useCallback } from "react";
 import { getParentType, initDefaultData } from "@/utils/utils";
 import { useContextMenuStore } from "@/store/contextMenu-store";
 import { CONSTANT_VALUES } from "@/config/constants";
+import { validateName } from "@/utils/validator";
+import { SCOPE } from "@/config/paramDefinitions";
 
 export function useTreeViewHandlers(treeType, ref) {
     const addNode = useVariablesStore((state) => state.addNode);
@@ -24,26 +26,14 @@ export function useTreeViewHandlers(treeType, ref) {
 
     const handleRenameNode = useCallback(
         ({ id, name }) => {
-            /* const uniqueName = getUniqueName(
-                ref?.current.root.children,
-                name,
-                id
-            );
-            if (uniqueName !== name) {
-                toaster.create({
-                    title: "Внимание",
-                    description: `Такое имя уже существует, взято "${uniqueName}"`,
-                    type: "warning",
-                });
-            } */
-            renameNode(treeType, id, name);
+            renameNode(id, name);
+            validateName({ id: id, scope: SCOPE.IGNOREFOLDER });
         },
-        [renameNode, treeType /* ref */]
+        [renameNode]
     );
     const handleCreateNode = useCallback(
         ({ parentId, index, type }) => {
-            if (type.nodeType === "leaf" || type.nodeType === "internal")
-                return;
+            if (type === "leaf" || type === "internal") return;
             console.log("create", parentId, index, type, treeType);
             const nodes = [];
             const settings = [];
@@ -53,13 +43,6 @@ export function useTreeViewHandlers(treeType, ref) {
                     parentId || treeType,
                     ref?.current
                 );
-                const name = `${node.name} ${node.id.slice(0, 8)}`;
-                /* const name = getUniqueName(
-                    ref?.current.root.children,
-                    node.name
-                ); */
-                node.name = name;
-                setting.name = name;
                 setting.rootId = treeType;
                 nodes.push(node);
                 settings.push(setting);
