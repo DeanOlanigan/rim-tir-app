@@ -81,6 +81,11 @@ const PARAMETER_COMPONENTS = {
     tcpBridge: ConnectionParamContainer,
 };
 
+const TITLE = {
+    root: <Heading>Корневой узел</Heading>,
+    dataObject: <Heading>Информационный объект</Heading>,
+};
+
 const TABLE_COMPONENTS = {
     connections: DataObjectsTable,
     variables: VariablesTable,
@@ -137,14 +142,16 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
             breadcrumbs={<EditorBreadcrumb data={node} />}
             title={
                 <HStack>
-                    <InputFactory
-                        type={"name"}
-                        id={node.id}
-                        inputParam={"name"}
-                        value={node.name}
-                        label={PARENT_NAMES[node.type]}
-                        showLabel
-                    />
+                    {TITLE[node.type] || (
+                        <InputFactory
+                            type={"name"}
+                            id={node.id}
+                            inputParam={"name"}
+                            value={node.name}
+                            label={PARENT_NAMES[node.type]}
+                            showLabel
+                        />
+                    )}
                 </HStack>
             }
             counter={
