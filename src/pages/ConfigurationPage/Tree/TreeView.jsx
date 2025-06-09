@@ -1,27 +1,33 @@
 import { Tree } from "react-arborist";
 import styles from "@/components/TreeView/TreeView.module.css";
-import { memo, forwardRef } from "react";
+import { memo, useRef } from "react";
 import { AutoSizer } from "react-virtualized";
 import { DropCursor } from "@/components/TreeView/DropCursor";
 import { Node } from "./Node";
 import { Box } from "@chakra-ui/react";
 import { useTreeViewHandlers } from "@/hooks/useTreeViewHandlers";
+import { useConfigTreeApiStore } from "@/store/config-tree-api-store";
+import { CONSTANT_VALUES } from "@/config/constants";
 
-export const TreeView = memo(
-    forwardRef(function TreeView({ data, treeType }, ref) {
-        console.log("%cRender NEW TreeView", "color: white; background: red;");
-        const {
-            handleRenameNode,
-            handleCreateNode,
-            handleDeleteNode,
-            handleMoveNode,
-            handleContextMenu,
-            handleSelect,
-            handleDisableDrop,
-        } = useTreeViewHandlers(treeType, ref);
+export const TreeView = memo(function TreeView({ data, treeType }) {
+    console.log("%cRender NEW TreeView", "color: white; background: red;");
+    const variableTreeRef = useRef(null);
+    useConfigTreeApiStore
+        .getState()
+        .setConfigTreeApi(treeType, variableTreeRef);
 
-        // TODO Улучшать хоткеи, вынести в отдельный хук, ограничить вставку
-        /* const cutRef = useHotkeys("ctrl+x", () => {
+    const {
+        handleRenameNode,
+        handleCreateNode,
+        handleDeleteNode,
+        handleMoveNode,
+        handleContextMenu,
+        handleSelect,
+        handleDisableDrop,
+    } = useTreeViewHandlers(treeType, variableTreeRef);
+
+    // TODO Улучшать хоткеи, вынести в отдельный хук, ограничить вставку
+    /* const cutRef = useHotkeys("ctrl+x", () => {
             console.log("cut from hotkey", treeType);
             const baseIds = ref.current.root.children.map((child) => child.id);
             const cutNodeFunc = useVariablesStore.getState().cutNode;
@@ -65,44 +71,42 @@ export const TreeView = memo(
             pasteNode(ref.current);
         }); */
 
-        return (
-            <Box
-                //ref={combineRefs(cutRef, copyRef, pasteRef)}
-                w={"100%"}
-                h={"100%"}
-                position={"relative"}
-            >
-                <AutoSizer>
-                    {({ height, width }) => (
-                        <Tree
-                            ref={ref}
-                            data={data}
-                            treeType={treeType}
-                            height={height}
-                            width={width}
-                            className={styles.tree}
-                            openByDefault={true}
-                            overscanCount={2}
-                            rowHeight={32}
-                            indent={16}
-                            renderCursor={DropCursor}
-                            onRename={handleRenameNode}
-                            onCreate={handleCreateNode}
-                            onDelete={handleDeleteNode}
-                            onMove={handleMoveNode}
-                            onSelect={handleSelect}
-                            onContextMenu={handleContextMenu}
-                            disableDrop={handleDisableDrop}
-                            /* disableEdit={(data) =>
-                                data.type ===
-                                CONSTANT_VALUES.NODE_TYPES.dataObject
-                            } */
-                        >
-                            {Node}
-                        </Tree>
-                    )}
-                </AutoSizer>
-            </Box>
-        );
-    })
-);
+    return (
+        <Box
+            //ref={combineRefs(cutRef, copyRef, pasteRef)}
+            w={"100%"}
+            h={"100%"}
+            position={"relative"}
+        >
+            <AutoSizer>
+                {({ height, width }) => (
+                    <Tree
+                        ref={variableTreeRef}
+                        data={data}
+                        treeType={treeType}
+                        height={height}
+                        width={width}
+                        className={styles.tree}
+                        openByDefault={true}
+                        overscanCount={2}
+                        rowHeight={32}
+                        indent={16}
+                        renderCursor={DropCursor}
+                        onRename={handleRenameNode}
+                        onCreate={handleCreateNode}
+                        onDelete={handleDeleteNode}
+                        onMove={handleMoveNode}
+                        onSelect={handleSelect}
+                        onContextMenu={handleContextMenu}
+                        disableDrop={handleDisableDrop}
+                        disableEdit={(data) =>
+                            data.type === CONSTANT_VALUES.NODE_TYPES.root
+                        }
+                    >
+                        {Node}
+                    </Tree>
+                )}
+            </AutoSizer>
+        </Box>
+    );
+});

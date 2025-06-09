@@ -10,9 +10,6 @@ export const IgnoreButton = ({ treeApi }) => {
     const handleIgnore = (e) => {
         e.stopPropagation();
         const ids = treeApi?.root.children.map((child) => child.id);
-        /* const ignore =
-            !variableTreeRef?.root.children[0].data
-                .isIgnored; */
         toggleIgnoreNode(treeApi, ids, !ignoreMode);
         setIgnoreMode(!ignoreMode);
     };

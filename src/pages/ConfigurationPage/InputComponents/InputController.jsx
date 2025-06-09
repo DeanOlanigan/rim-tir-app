@@ -2,22 +2,22 @@ import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 import { validateVisability } from "@/utils/validator";
 
 export const InputController = ({
-    inputType,
-    inputId,
+    settingParam,
+    nodeId,
     value,
     empty = null,
     Factory,
     showLabel = false,
 }) => {
-    const definition = PARAM_DEFINITIONS[inputType];
+    const definition = PARAM_DEFINITIONS[settingParam];
     if (!definition || definition.hidden) return empty;
-    const isVisible = validateVisability(definition.dependencies, inputId);
+    const isVisible = validateVisability(definition.dependencies, nodeId);
     if (!isVisible) return empty;
     return (
         <Factory
             type={definition.type}
-            id={inputId}
-            inputParam={inputType}
+            id={nodeId}
+            inputParam={settingParam}
             value={value}
             label={definition.label}
             showLabel={showLabel}

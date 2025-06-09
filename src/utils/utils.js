@@ -289,6 +289,7 @@ export function resolveDynProps(data, rules = [], settings) {
     return {};
 }
 
+// DEPRECATED
 export function combineRefs(...refs) {
     return (node) => {
         for (const ref of refs) {
