@@ -57,8 +57,8 @@ const TableRow = ({ element }) => {
                         p={"0.5"}
                     >
                         <InputController
-                            inputType={key}
-                            inputId={element.id}
+                            settingParam={key}
+                            nodeId={element.id}
                             value={element.setting[key]}
                             Factory={InputFactory}
                         />
