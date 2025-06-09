@@ -1,9 +1,7 @@
 import { Table } from "@chakra-ui/react";
 import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
-import {
-    BaseInput,
-    InputController,
-} from "@/pages/ConfigurationPage/InputComponents";
+import { InputController } from "@/pages/ConfigurationPage/InputComponents/InputController";
+import { InputFactory } from "@/pages/ConfigurationPage/InputComponents/InputFactory";
 
 export const DataObjectsTable = ({ data }) => {
     let keys;
@@ -62,7 +60,7 @@ const TableRow = ({ element }) => {
                             inputType={key}
                             inputId={element.id}
                             value={element.setting[key]}
-                            Factory={BaseInput}
+                            Factory={InputFactory}
                         />
                     </Table.Cell>
                 );

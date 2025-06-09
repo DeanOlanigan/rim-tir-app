@@ -1,8 +1,6 @@
 import { SimpleGrid } from "@chakra-ui/react";
-import {
-    BaseInput,
-    InputController,
-} from "@/pages/ConfigurationPage/InputComponents";
+import { InputController } from "../../InputComponents/InputController";
+import { InputFactory } from "../../InputComponents/InputFactory";
 
 export const ConnectionParamContainer = ({ data }) => {
     if (!data || !data.setting) {
@@ -17,7 +15,7 @@ export const ConnectionParamContainer = ({ data }) => {
                         inputType={key}
                         inputId={data.id}
                         value={data.setting[key]}
-                        Factory={BaseInput}
+                        Factory={InputFactory}
                         showLabel
                     />
                 );

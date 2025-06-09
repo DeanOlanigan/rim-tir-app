@@ -7,7 +7,7 @@ import {
     SimpleGrid,
     Text,
 } from "@chakra-ui/react";
-import { InputController } from "../../InputComponents";
+import { InputController } from "../../InputComponents/InputController";
 import { InputFactory } from "../../InputComponents/InputFactory";
 import { useVariablesStore } from "@/store/variables-store";
 import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";

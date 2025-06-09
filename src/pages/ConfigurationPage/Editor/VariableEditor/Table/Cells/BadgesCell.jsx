@@ -13,7 +13,7 @@ import {
 import { Tooltip } from "@/components/ui/tooltip";
 import { LuPencil, LuPencilOff, LuChevronDown } from "react-icons/lu";
 import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
-import { BaseInput } from "@/pages/ConfigurationPage/InputComponents";
+import { InputFactory } from "@/pages/ConfigurationPage/InputComponents/InputFactory";
 import { useVariablesStore } from "@/store/variables-store";
 
 const badgesColorMap = {
@@ -207,7 +207,7 @@ const ParamEditBadgePopover = ({ id, color, checked, parameters }) => {
                             {checked &&
                                 parameters.map((param, index) => {
                                     return (
-                                        <BaseInput
+                                        <InputFactory
                                             key={index}
                                             id={id}
                                             value={param.value}

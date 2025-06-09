@@ -10,14 +10,11 @@ import {
     HStack,
     Checkbox,
 } from "@chakra-ui/react";
-import {
-    DebouncedEditor,
-    BaseInput,
-} from "../../InputComponents";
+import { InputFactory } from "../../InputComponents/InputFactory";
 import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 import { useVariablesStore } from "@/store/variables-store";
-import { InputFactory } from "../../InputComponents/InputFactory";
 import { CompositeSection } from "./CompositeSection";
+import { DebouncedEditor } from "../../InputComponents";
 
 export const VariableEditor = memo(function VariableEditor({ data }) {
     //console.log("RENDER VariableEditor");
@@ -161,7 +158,7 @@ const ParameterCard = ({ id, param, checked, parameters }) => {
                     {checked &&
                         parameters.map((param, index) => {
                             return (
-                                <BaseInput
+                                <InputFactory
                                     key={index}
                                     id={id}
                                     value={param.value}
