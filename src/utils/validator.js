@@ -6,7 +6,6 @@ import {
     VALIDATOR,
 } from "@/config/paramDefinitions";
 import { useValidationStore } from "@/store/validation-store";
-import { useVariablesStore } from "@/store/variables-store";
 
 const validatorRegistry = {
     [VALIDATOR.RANGE]: rangeValidator,
@@ -154,11 +153,7 @@ function validateRules(rules, context, nodeId, inputParam) {
     return errors;
 }
 
-export function validateParameter(
-    id,
-    inputParam,
-    settings = useVariablesStore.getState().settings
-) {
+export function validateParameter(id, inputParam, settings) {
     const definition = PARAM_DEFINITIONS[inputParam];
     if (!definition) return;
 
@@ -264,17 +259,12 @@ function setDraftMessage(draft, nodeId, param, validator, message) {
     draft[nodeId][param][validator] = message;
 }
 
-export function validateVisability(
-    dependencies,
-    nodeId,
-    settings = useVariablesStore.getState().settings
-) {
+export function validateVisability(dependencies, nodeId, settings) {
     return checkDependencies(dependencies, settings, nodeId);
 }
 
 // TODO Бог покинул это место
-export function validateAll(settings = useVariablesStore.getState().settings) {
-    //const settings = useVariablesStore.getState().settings;
+export function validateAll(settings) {
     const errors = {};
 
     for (const node of Object.values(settings)) {
@@ -292,11 +282,8 @@ export function validateAll(settings = useVariablesStore.getState().settings) {
     useValidationStore.setState({ errors });
 }
 
-export function validateName({
-    id,
-    settings = useVariablesStore.getState().settings,
-    scope = SCOPE.SELF,
-}) {
+export function validateName({ id, settings, scope = SCOPE.SELF }) {
+    console.log("VALIDATE NAME");
     const errors = {};
     const ids = getContextIds(settings, id, "name", scope || SCOPE.SELF);
     //console.log("validateNameIDS", ids);

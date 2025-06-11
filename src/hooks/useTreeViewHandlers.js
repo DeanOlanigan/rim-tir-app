@@ -3,8 +3,6 @@ import { useCallback } from "react";
 import { getParentType, initDefaultData } from "@/utils/utils";
 import { useContextMenuStore } from "@/store/contextMenu-store";
 import { CONSTANT_VALUES } from "@/config/constants";
-import { validateName } from "@/utils/validator";
-import { SCOPE } from "@/config/paramDefinitions";
 
 export function useTreeViewHandlers(treeType, ref) {
     const addNode = useVariablesStore((state) => state.addNode);
@@ -27,7 +25,6 @@ export function useTreeViewHandlers(treeType, ref) {
     const handleRenameNode = useCallback(
         ({ id, name }) => {
             renameNode(id, name);
-            validateName({ id: id, scope: SCOPE.IGNOREFOLDER });
         },
         [renameNode]
     );

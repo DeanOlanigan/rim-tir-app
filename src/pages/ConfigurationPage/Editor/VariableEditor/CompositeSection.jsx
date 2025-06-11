@@ -28,10 +28,11 @@ export const CompositeSection = ({
     label,
 }) => {
     const setSettings = useVariablesStore((state) => state.setSettings);
+    const settings = useVariablesStore.getState().settings;
     const dep = PARAM_DEFINITIONS[checkedParam];
     if (!dep || dep.hidden) return null; // Если параметр не определен или скрыт, ничего не рендерим
     // Проверяем видимость секции
-    const isVisible = validateVisability(dep.dependencies, data.id);
+    const isVisible = validateVisability(dep.dependencies, data.id, settings);
     if (!isVisible) return null; // Если секция не видима, ничего не рендерим
     //console.log(checkedParam);
     //console.log(data.setting);

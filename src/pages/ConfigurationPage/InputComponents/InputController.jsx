@@ -1,4 +1,5 @@
 import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
+import { useVariablesStore } from "@/store/variables-store";
 import { validateVisability } from "@/utils/validator";
 
 export const InputController = ({
@@ -9,9 +10,14 @@ export const InputController = ({
     Factory,
     showLabel = false,
 }) => {
+    const settings = useVariablesStore.getState().settings;
     const definition = PARAM_DEFINITIONS[settingParam];
     if (!definition || definition.hidden) return empty;
-    const isVisible = validateVisability(definition.dependencies, nodeId);
+    const isVisible = validateVisability(
+        definition.dependencies,
+        nodeId,
+        settings
+    );
     if (!isVisible) return empty;
     return (
         <Factory

@@ -11,7 +11,8 @@ import { validateAll } from "@/utils/validator";
 
 function ConfigurationPage() {
     //console.log("Render ConfigurationPage");
-    validateAll();
+    const state = useVariablesStore.getState().settings;
+    validateAll(state);
 
     return (
         <Box height="100%" position="relative">

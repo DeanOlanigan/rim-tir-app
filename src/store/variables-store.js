@@ -19,9 +19,14 @@ import {
     getParentId,
 } from "@/utils/treeUtils";
 import { devtools, persist } from "zustand/middleware";
-import { validateAll, validateParameter } from "@/utils/validator";
+import {
+    validateAll,
+    validateName,
+    validateParameter,
+} from "@/utils/validator";
 import { useValidationStore } from "@/store/validation-store";
 import { CONSTANT_VALUES } from "@/config/constants";
+import { SCOPE } from "@/config/paramDefinitions";
 
 const baseNodeInit = (type, name) => ({
     id: type,
@@ -86,7 +91,8 @@ export const useVariablesStore = create()(
                     set((state) => ({
                         settings: createSettingUtil(state.settings, settings),
                     }));
-                    validateAll();
+                    const state = get().settings;
+                    validateAll(state);
                 },
 
                 setSettings: (nodeId, updateData) =>
@@ -141,13 +147,21 @@ export const useVariablesStore = create()(
                 },
 
                 renameNode: (nodeId, name) =>
-                    set((state) => ({
-                        settings: renameNodeSettingUtil(
+                    set((state) => {
+                        const newSettings = renameNodeSettingUtil(
                             state.settings,
                             nodeId,
                             name
-                        ),
-                    })),
+                        );
+
+                        validateName({
+                            id: nodeId,
+                            settings: newSettings,
+                            scope: SCOPE.IGNOREFOLDER,
+                        });
+
+                        return { settings: newSettings };
+                    }),
 
                 ignoreNode: (treeApi, ids, ignore) => {
                     const treeType = treeApi.props.treeType;
@@ -229,7 +243,8 @@ export const useVariablesStore = create()(
                         },
                     }));
                     // TODO Реализовать более точечную валидацию
-                    validateAll();
+                    const state = get().settings;
+                    validateAll(state);
                 },
 
                 removeNode: (targetKey, nodeIds) => {
@@ -248,7 +263,8 @@ export const useVariablesStore = create()(
                             settings: newSettings,
                         };
                     });
-                    validateAll();
+                    const state = get().settings;
+                    validateAll(state);
                 },
 
                 moveNode: (targetKey, dragIds, parentId, index) => {
@@ -267,7 +283,8 @@ export const useVariablesStore = create()(
                         ),
                     }));
                     // TODO Реализовать более точечную валидацию
-                    validateAll();
+                    const state = get().settings;
+                    validateAll(state);
                 },
             }),
             {
