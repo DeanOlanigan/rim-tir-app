@@ -13,8 +13,6 @@ import { LuBadgePlus } from "react-icons/lu";
 import { CONSTANT_VALUES } from "@/config/constants";
 
 // TODO МБ использовать slot паттерн
-// TODO Убрать Header из Card, т.к. он не используется
-// TODO Перенести ref ближе к TreeView
 export const TreeCard = memo(function TreeCard({ data = [], treeType }) {
     console.log("RENDER VariableCard", treeType);
     const isEmpty =
