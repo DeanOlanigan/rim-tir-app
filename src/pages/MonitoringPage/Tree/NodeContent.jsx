@@ -18,7 +18,7 @@ export const NodeContent = memo(function NodeContent({ id, type, name }) {
                         ? variableName
                         : name}
                 </Text>
-                <ConnectionHeadderAdditionalInfo id={id} />
+                {/* <ConnectionHeadderAdditionalInfo id={id} /> */}
             </HStack>
             <HStack>
                 {type === "variable" && (

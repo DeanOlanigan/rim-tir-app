@@ -1,11 +1,12 @@
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
-import { useVariablesStore } from "@/store/variables-store";
 import { useMonitoringStore } from "@/store/monitoring-store";
 import { TreeCard } from "./TreeCard";
 import { useEffect, useState } from "react";
-import { Flex, InputGroup, Input, IconButton } from "@chakra-ui/react";
+import { Flex, InputGroup, Input, IconButton, Spinner } from "@chakra-ui/react";
 import { LuX, LuSearch } from "react-icons/lu";
+import axios from "axios";
+import { parseXmlToState } from "@/utils/xmlToStore";
 
 //import { produce, enableMapSet } from "immer";
 //enableMapSet();
@@ -67,6 +68,26 @@ import { LuX, LuSearch } from "react-icons/lu";
 
 function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");
+    const [data, setData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        setIsLoading(true);
+        setError(null);
+        axios
+            .get("/api/v2/getConfiguration")
+            .then((res) => {
+                const { state } = parseXmlToState(res.data.data);
+                setData(state);
+            })
+            .catch((err) => {
+                setError(err);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+    }, []);
 
     // TODO Переделать
     /* useEffect(() => {
@@ -97,10 +118,9 @@ function MonitoringPage() {
         };
     }, []); */
 
-    const { variables, send, receive } = useVariablesStore((state) => state);
-    const setValuesMap = useMonitoringStore((state) => state.setValuesMap);
+    //const { setValuesMap } = useMonitoringStore();
 
-    useEffect(() => {
+    /* useEffect(() => {
         const test = setInterval(() => {
             setValuesMap({
                 "5e313f51-786c-4830-862b-3f14f8aa2733": Math.random(),
@@ -110,7 +130,7 @@ function MonitoringPage() {
             });
         }, 2000);
         return () => clearInterval(test);
-    }, [setValuesMap]);
+    }, [setValuesMap]); */
 
     return (
         <Flex h={"100%"} direction={"column"} gap={"2"}>
@@ -148,25 +168,28 @@ function MonitoringPage() {
             <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
                     <TreeCard
-                        data={receive}
-                        title={"Прием"}
+                        data={data?.receive}
                         searchTerm={searchTerm}
+                        isLoading={isLoading}
+                        error={error}
                     />
                 </Panel>
                 <PanelResizeHandle className="verticalLine" />
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
                     <TreeCard
-                        data={variables}
-                        title={"Переменные"}
+                        data={data?.variables}
                         searchTerm={searchTerm}
+                        isLoading={isLoading}
+                        error={error}
                     />
                 </Panel>
                 <PanelResizeHandle className="verticalLine" />
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
                     <TreeCard
-                        data={send}
-                        title={"Передача"}
+                        data={data?.send}
                         searchTerm={searchTerm}
+                        isLoading={isLoading}
+                        error={error}
                     />
                 </Panel>
             </PanelGroup>
