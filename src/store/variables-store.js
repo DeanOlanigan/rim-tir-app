@@ -166,15 +166,22 @@ export const useVariablesStore = create()(
                 ignoreNode: (treeApi, ids, ignore) => {
                     const treeType = treeApi.props.treeType;
                     if (!ids.length) return;
-                    set((state) => ({
-                        [treeType]: ignoreNodeUtil(
-                            state[treeType],
-                            ids,
-                            ignore,
-                            false,
-                            "isIgnored"
-                        ),
-                    }));
+                    set((state) => {
+                        const newSettings = { ...state.settings };
+                        for (const id of ids) {
+                            newSettings[id].isIgnored = ignore;
+                        }
+                        return {
+                            [treeType]: ignoreNodeUtil(
+                                state[treeType],
+                                ids,
+                                ignore,
+                                false,
+                                "isIgnored"
+                            ),
+                            settings: newSettings,
+                        };
+                    });
                 },
 
                 copyNode: (treeApi, ids, isCut = false) => {
