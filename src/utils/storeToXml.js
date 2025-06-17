@@ -1,5 +1,6 @@
 import { create } from "xmlbuilder";
 import { useVariablesStore } from "@/store/variables-store";
+import { useConfigInfoStore } from "@/store/config-info-store";
 
 function toTagName(key) {
     return key[0].toUpperCase() + key.slice(1);
@@ -9,30 +10,34 @@ function buildNode(xmlParent, node, settingsMap) {
     const tag = toTagName(node.type);
 
     const attrs = {};
-    if (node.id) attrs.id = node.id;
-    if (node.name) attrs.name = node.name;
+    attrs.id = node.id;
+    attrs.name = node.name || "";
+    if (node.parentId) attrs.parentId = node.parentId;
+    if (node.rootId) attrs.rootId = node.rootId;
     if (node.subType) attrs.subType = node.subType;
+    if (node.usedIn) attrs.usedIn = node.usedIn;
     if (node.variableId) attrs.variableId = node.variableId;
+    attrs.isIgnored = node.isIgnored;
 
     const el = xmlParent.ele(tag, attrs);
 
     if (node.setting) {
         const settingsAttrs = {};
-        let description = "";
-        let code = "";
+        //let description = "";
+        //let code = "";
         for (const [key, value] of Object.entries(node.setting)) {
-            if (key === "description") {
+            /* if (key === "description") {
                 description = value ?? "";
                 continue;
             }
             if (key === "luaExpression") {
                 code = value ?? "";
                 continue;
-            }
+            } */
             settingsAttrs[toTagName(key)] = value ?? "";
         }
-        if (description) el.ele("Description").txt(description).up();
-        if (code) el.ele("Code").dat(code).up();
+        //if (description) el.ele("Description").txt(description).up();
+        //if (code) el.ele("Code").dat(code).up();
         el.ele("Settings", settingsAttrs).up();
     }
 
@@ -57,22 +62,13 @@ function appendSection(parentEl, sectionName, nodes, settingsMap) {
     sectionEl.up();
 }
 
-export function convertStateToXml(state) {
-    const {
-        configInfo = {},
-        send = [],
-        receive = [],
-        variables = [],
-        settings = {},
-        version = 0,
-    } = state;
+export function convertStateToXml(state, configInfo) {
+    const { send = [], receive = [], variables = [], settings = {} } = state;
 
-    const doc = create("State", { version: "1.0", encoding: "UTF-8" }).att(
-        "version",
-        String(version ?? 0)
-    );
+    const doc = create("Root", { version: "1.0", encoding: "UTF-8" });
 
     doc.ele("ConfigInfo")
+        .att("name", configInfo.name)
         .att("description", configInfo.description)
         .att("date", configInfo.date)
         .att("version", configInfo.version)
@@ -90,12 +86,13 @@ export function convertStateToXml(state) {
 
 export function downloadStateAsXml() {
     const state = useVariablesStore.getState();
-    const xmlString = convertStateToXml(state);
+    const configInfo = useConfigInfoStore.getState().configInfo;
+    const xmlString = convertStateToXml(state, configInfo);
     const blob = new Blob([xmlString], { type: "application/xml" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = state.configInfo.name + ".xml";
+    a.download = configInfo.name + ".xml";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
