@@ -16,6 +16,7 @@ import Gradient from "@/components/GradientBackground/GradientBackground";
 import { LuLogIn } from "react-icons/lu";
 import { Navigate } from "react-router-dom";
 import { useAuthContext } from "@/providers/AuthProvider/AuthContext";
+import Lightning from "@/components/Lightning/Lightning";
 
 function LoginForm() {
     const [loading, setLoading] = useState(false);
@@ -81,10 +82,26 @@ function LoginForm() {
     }
 
     return (
-        <Box position={"relative"} h={"100vh"}>
-            <Gradient />
-            <AbsoluteCenter axis={"both"}>
-                <Card.Root w={"sm"} bg="bg/50" border={"none"}>
+        <Box position={"relative"} h={"100vh"} w={"100vw"}>
+            {/* <Gradient /> */}
+
+            {/* <AbsoluteCenter> */}
+            <Box
+                position={"absolute"}
+                top={"50%"}
+                right={"25%"}
+                zIndex={1}
+                display={"flex"}
+                alignItems={"center"}
+                justifyContent={"center"}
+            >
+                <Card.Root
+                    w={"sm"}
+                    bg="bg/50"
+                    border={"none"}
+                    position={"absolute"}
+                    zIndex={1}
+                >
                     <Card.Body>
                         <form onSubmit={handleSubmit(onSubmit)} noValidate>
                             <Stack>
@@ -142,7 +159,16 @@ function LoginForm() {
                         </form>
                     </Card.Body>
                 </Card.Root>
-            </AbsoluteCenter>
+            </Box>
+
+            {/* </AbsoluteCenter> */}
+            <Lightning
+                hue={220}
+                xOffset={1.2}
+                speed={0.6}
+                intensity={0.4}
+                size={1}
+            />
         </Box>
     );
 }
