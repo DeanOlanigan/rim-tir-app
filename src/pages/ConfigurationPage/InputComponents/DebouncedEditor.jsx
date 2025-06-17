@@ -69,7 +69,6 @@ export const DebouncedEditor = memo(function DebouncedEditor(props) {
     const modelRef = useRef(null);
     const monacoRef = useRef(null);
     const variables = useVariablesOptions();
-    console.log(variables.items.map((v) => v.value));
 
     function handleEditorDidMount(editor, monaco) {
         console.log(editor, monaco);
@@ -83,7 +82,6 @@ export const DebouncedEditor = memo(function DebouncedEditor(props) {
         if (!monacoRef.current || !model) return;
         const markers = validateLua(code);
         monacoRef.current.editor.setModelMarkers(model, "owner", markers);
-        console.log("handleValidate");
     }
 
     const setSettings = useVariablesStore((state) => state.setSettings);
@@ -105,9 +103,9 @@ export const DebouncedEditor = memo(function DebouncedEditor(props) {
     );
 
     function highlightVariables(editor, code) {
-        if (!editor) return;
+        if (!editor || !code) return;
         const decorations = [];
-        const lines = code.split("\n");
+        const lines = code?.split("\n");
         variables.items.forEach((v) => {
             const regex = new RegExp(`\\b${v.value}\\b`, "g");
             lines.forEach((line, i) => {

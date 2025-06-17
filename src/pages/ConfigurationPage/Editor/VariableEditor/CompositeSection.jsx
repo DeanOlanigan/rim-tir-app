@@ -79,8 +79,8 @@ export const CompositeSection = ({
                         {childrenParams.map((key) => (
                             <InputController
                                 key={data.id + "_" + key}
-                                inputType={key}
-                                inputId={data.id}
+                                settingParam={key}
+                                nodeId={data.id}
                                 value={data.setting?.[key]}
                                 Factory={InputFactory} // <-- стандартная фабрика!
                                 showLabel

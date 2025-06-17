@@ -113,7 +113,7 @@ export const DEFAULT_DATA_OBJECT_SETTING = {
 
 const DEFAULT_VARIABLE = {
     type: "variable",
-    name: "Новая переменная",
+    name: "newVariable",
     isIgnored: false,
     isCutted: false,
 };
