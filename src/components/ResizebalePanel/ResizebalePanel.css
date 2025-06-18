@@ -55,7 +55,3 @@
 .PanelResizeHandle[data-resize-handle-active] .PanelResizeGrip svg {
     color: var(--chakra-colors-color-palette-emphasized);
 }
-
-.panelWithShadow {
-    box-shadow: var(--chakra-shadows-xl);
-}

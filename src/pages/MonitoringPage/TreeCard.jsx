@@ -101,7 +101,7 @@ const Loader = () => {
     return (
         <AbsoluteCenter>
             <VStack w={"100%"}>
-                <Spinner size={"lg"} />
+                <Spinner size={"xl"} />
                 <HStack>
                     <Text color={"fg.subtle"} fontWeight={"medium"}>
                         Загрузка...
