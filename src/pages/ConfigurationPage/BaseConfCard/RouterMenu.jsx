@@ -11,10 +11,13 @@ import { convertStateToXml } from "@/utils/storeToXml";
 import { useVariablesStore } from "@/store/variables-store";
 import { useConfigInfoStore } from "@/store/config-info-store";
 import { parseXmlToState } from "@/utils/xmlToStore";
+import { useValidationStore } from "@/store/validation-store";
 
 export const RouterMenu = () => {
     const state = useVariablesStore.getState();
     const configInfo = useConfigInfoStore.getState().configInfo;
+    const errors = useValidationStore((state) => state.errors);
+    const hasErrors = Object.keys(errors).length > 0;
 
     const startHandler = () => {
         axios
@@ -131,7 +134,11 @@ export const RouterMenu = () => {
                 </Button>
             </MenuTrigger>
             <MenuContent>
-                <MenuItem value="new-txt" onClick={sendConfigHandler}>
+                <MenuItem
+                    value="new-txt"
+                    onClick={sendConfigHandler}
+                    disabled={hasErrors}
+                >
                     Отправить конфигурацию
                 </MenuItem>
                 <MenuItem value="new-file" onClick={getConfigHandler}>
