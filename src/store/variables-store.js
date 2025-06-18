@@ -296,6 +296,10 @@ export const useVariablesStore = create()(
             }),
             {
                 name: "configuration-storage",
+                onRehydrateStorage: () => (state) => {
+                    const settings = state.settings || {};
+                    validateAll(settings);
+                },
                 partialize: (state) =>
                     Object.fromEntries(
                         Object.entries(state).filter(

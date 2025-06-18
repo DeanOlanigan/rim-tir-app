@@ -7,13 +7,8 @@ import { EditorCard } from "./EditorCard";
 import { CONSTANT_VALUES } from "@/config/constants";
 import { EmptyConfigDialog } from "./EmptyConfigDialog";
 import { ContextMenu } from "./Tree/ContextMenu/ContextMenu";
-import { validateAll } from "@/utils/validator";
 
 function ConfigurationPage() {
-    //console.log("Render ConfigurationPage");
-    const state = useVariablesStore.getState().settings;
-    validateAll(state);
-
     return (
         <Box height="100%" position="relative">
             <EmptyConfigDialog />
