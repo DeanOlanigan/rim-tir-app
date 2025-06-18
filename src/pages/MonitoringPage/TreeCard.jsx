@@ -12,7 +12,7 @@ import { Tree } from "react-arborist";
 import styles from "@/components/TreeView/TreeView.module.css";
 import { DropCursor } from "@/components/TreeView/DropCursor";
 import { Node } from "./Tree/Node";
-import { LuCircleAlert } from "react-icons/lu";
+import { LuFileQuestion, LuTriangleAlert } from "react-icons/lu";
 import { CONSTANT_VALUES } from "@/config/constants";
 
 // TODO может быть сравнить с TreeCard в configuration и сделать общую функциональность
@@ -85,7 +85,7 @@ const EmptyCard = () => {
                 <Icon
                     fontSize={"164px"}
                     color={"bg.muted"}
-                    as={LuCircleAlert}
+                    as={LuFileQuestion}
                 />
                 <HStack>
                     <Text color={"fg.subtle"} fontWeight={"medium"}>
@@ -119,7 +119,7 @@ const Error = () => {
                 <Icon
                     fontSize={"164px"}
                     color={"fg.error"}
-                    as={LuCircleAlert}
+                    as={LuTriangleAlert}
                 />
                 <HStack>
                     <Text color={"fg.error"} fontWeight={"medium"}>
