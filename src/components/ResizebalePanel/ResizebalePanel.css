@@ -1,18 +1,59 @@
-.verticalLineConf,
-.verticalLine {
-    outline: none;
-    flex: 0 0 0.25rem;
-    justify-content: stretch;
-    transition: background-color 0.2s linear;
+.PanelResizeHandle {
+    position: relative;
     display: flex;
-    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
     background-color: var(--chakra-colors-color-palette-subtle);
+    transition: background-color 0.2s linear;
+    width: 0.25rem;
+    min-width: 0.25rem;
+    height: 100%;
+    cursor: col-resize;
+    border-radius: 10px;
 }
-.verticalLine:hover,
-.verticalLine[data-resize-handle-active],
-.verticalLineConf:hover,
-.verticalLineConf[data-resize-handle-active] {
+
+.PanelResizeHandle[data-panel-group-direction="vertical"] {
+    width: 100%;
+    min-width: 0;
+    height: 0.25rem;
+    min-height: 0.25rem;
+    cursor: row-resize;
+}
+
+.PanelResizeHandle:hover,
+.PanelResizeHandle[data-resize-handle-active] {
     background-color: var(--chakra-colors-color-palette-solid);
+}
+
+.PanelResizeHandle .PanelResizeGrip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 32px;
+    border-radius: 6px;
+    background: var(--chakra-colors-color-palette-muted);
+    transition: background-color 0.2s linear;
+    pointer-events: none; /* чтобы не мешала drag-событиям */
+}
+
+.PanelResizeHandle:hover .PanelResizeGrip,
+.PanelResizeHandle[data-resize-handle-active] .PanelResizeGrip {
+    background: var(--chakra-colors-color-palette-solid);
+    border-color: var(--chakra-colors-color-palette-solid);
+}
+
+.PanelResizeHandle[data-panel-group-direction="vertical"] .PanelResizeGrip {
+    transform: rotate(90deg);
+}
+
+.PanelResizeGrip svg {
+    color: var(--chakra-colors-color-palette-solid);
+}
+
+.PanelResizeHandle:hover .PanelResizeGrip svg,
+.PanelResizeHandle[data-resize-handle-active] .PanelResizeGrip svg {
+    color: var(--chakra-colors-color-palette-emphasized);
 }
 
 .panelWithShadow {

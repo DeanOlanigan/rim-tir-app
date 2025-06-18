@@ -25,7 +25,7 @@ function ConfigurationPage() {
                                 treeType={CONSTANT_VALUES.TREE_TYPES.receive}
                             />
                         </Panel>
-                        <PanelResizeHandle className="verticalLine" />
+                        <PanelResizeHandle className="PanelResizeHandle" />
                         <Panel collapsible collapsedSize={0} minSize={10}>
                             <TreeWrapper
                                 treeType={CONSTANT_VALUES.TREE_TYPES.send}
@@ -33,11 +33,11 @@ function ConfigurationPage() {
                         </Panel>
                     </PanelGroup>
                 </Panel>
-                <PanelResizeHandle className="verticalLine" />
+                <PanelResizeHandle className="PanelResizeHandle" />
                 <Panel minSize={45}>
                     <EditorCard />
                 </Panel>
-                <PanelResizeHandle className="verticalLine" />
+                <PanelResizeHandle className="PanelResizeHandle" />
                 <Panel
                     collapsible
                     collapsedSize={0}

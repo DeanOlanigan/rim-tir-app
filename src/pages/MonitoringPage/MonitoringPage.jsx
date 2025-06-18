@@ -4,7 +4,7 @@ import { useMonitoringStore } from "@/store/monitoring-store";
 import { TreeCard } from "./TreeCard";
 import { useEffect, useState } from "react";
 import { Flex, InputGroup, Input, IconButton, Spinner } from "@chakra-ui/react";
-import { LuX, LuSearch } from "react-icons/lu";
+import { LuX, LuSearch, LuGripVertical } from "react-icons/lu";
 import axios from "axios";
 import { parseXmlToState } from "@/utils/xmlToStore";
 
@@ -174,7 +174,11 @@ function MonitoringPage() {
                         error={error}
                     />
                 </Panel>
-                <PanelResizeHandle className="verticalLine" />
+                <PanelResizeHandle className="PanelResizeHandle">
+                    <div className="PanelResizeGrip">
+                        <LuGripVertical />
+                    </div>
+                </PanelResizeHandle>
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
                     <TreeCard
                         data={data?.variables}
@@ -183,7 +187,11 @@ function MonitoringPage() {
                         error={error}
                     />
                 </Panel>
-                <PanelResizeHandle className="verticalLine" />
+                <PanelResizeHandle className="PanelResizeHandle">
+                    <div className="PanelResizeGrip">
+                        <LuGripVertical />
+                    </div>
+                </PanelResizeHandle>
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
                     <TreeCard
                         data={data?.send}
