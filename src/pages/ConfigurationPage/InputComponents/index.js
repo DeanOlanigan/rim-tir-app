@@ -2,7 +2,7 @@ import { TextInput } from "./TextInput";
 import { NumberInput } from "./NumberInput";
 import { SelectInput } from "./SelectInput";
 import { SwitchInput } from "./SwitchInput";
-import { DebouncedEditor } from "./DebouncedEditor";
+import { DebouncedEditor } from "./DebouncedEditor/DebouncedEditor";
 import { EditableInput } from "./Editable";
 import { DroppableInput } from "./DroppableInput";
 import { IpInput } from "./IpInput";

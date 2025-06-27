@@ -6,6 +6,11 @@ main {
     min-height: 0;
 }
 
+.highlight-variable {
+    color: rgb(211, 1, 1) !important;
+    font-weight: bold;
+}
+
 ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
