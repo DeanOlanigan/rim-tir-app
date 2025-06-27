@@ -1,3 +1,4 @@
+import { CONSTANT_VALUES } from "@/config/constants";
 import {
     LOGIC,
     MATCH,
@@ -282,9 +283,55 @@ export function validateAll(settings) {
     useValidationStore.setState({ errors });
 }
 
+const LUA_KEYWORDS = [
+    "and",
+    "break",
+    "do",
+    "else",
+    "elseif",
+    "end",
+    "false",
+    "for",
+    "function",
+    "goto",
+    "if",
+    "in",
+    "local",
+    "nil",
+    "not",
+    "or",
+    "repeat",
+    "return",
+    "then",
+    "true",
+    "until",
+    "while",
+];
+const VARIABLE_NAME_PATTERN = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+function validateLuaIdentifier({ name }) {
+    if (LUA_KEYWORDS.includes(name))
+        return "Имя переменной не должно быть ключевым словом lua";
+    if (!VARIABLE_NAME_PATTERN.test(name))
+        return "Имя переменной должно быть валидным lua-идентификатором";
+    return null;
+}
+
 export function validateName({ id, settings, scope = SCOPE.SELF }) {
     console.log("VALIDATE NAME");
     const errors = {};
+    const tree = settings[id].rootId;
+    if (tree === CONSTANT_VALUES.TREE_TYPES.variables) {
+        const name = settings[id]?.name;
+        const error = validateLuaIdentifier({ name });
+        setDraftMessage(
+            errors,
+            id,
+            "name",
+            VALIDATOR.REGEX,
+            error ? [error] : []
+        );
+    }
+
     const ids = getContextIds(settings, id, "name", scope || SCOPE.SELF);
     //console.log("validateNameIDS", ids);
     const map = new Map();
