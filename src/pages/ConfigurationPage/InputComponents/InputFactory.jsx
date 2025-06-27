@@ -45,9 +45,6 @@ export const InputFactory = memo(function InputFactory(props) {
     const errors = useValidationStore(
         useShallow((state) => selectParamsErrors(state, id, inputParam))
     );
-    if (type === "numberF") {
-        console.log("InputFactory", id, inputParam, value);
-    }
     const Component = typeMap[type] || TextInput;
     const noPortal = type === "select" && rest?.noPortal;
     const isF = type === "numberF";

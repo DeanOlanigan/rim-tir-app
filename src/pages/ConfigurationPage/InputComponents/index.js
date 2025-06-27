@@ -7,7 +7,7 @@ import { EditableInput } from "./Editable";
 import { DroppableInput } from "./DroppableInput";
 import { IpInput } from "./IpInput";
 import { HexInput } from "./HexInput";
-import { ComboboxInput } from "./ComboboxInput"
+import { ComboboxInput } from "./ComboboxInput";
 import { NameInput } from "./NameInput";
 
 export {

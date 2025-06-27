@@ -169,6 +169,7 @@ const pasteNodeBtn = {
 };
 
 export const menuConfigNodeDefault = [
+    { type: "separator" },
     renameNode,
     deleteNode,
     toggleIgnoreNode,
@@ -240,11 +241,7 @@ export const menuConfigConnections = {
 export const menuConfig = {
     variables: {
         variable: [...menuConfigNodeDefault],
-        folder: [
-            nestedVariables,
-            { type: "separator" },
-            ...menuConfigNodeDefault,
-        ],
+        folder: [nestedVariables, ...menuConfigNodeDefault],
         root: [
             nestedVariables,
             createNode("Создать папку...", "folder", LuFolder),
