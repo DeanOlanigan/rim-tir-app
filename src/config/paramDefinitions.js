@@ -625,9 +625,21 @@ export const PARAM_DEFINITIONS = {
         defaultValue: false,
         dependencies: { key: "side", value: "server", scope: SCOPE.PARENT },
     },
-    graphInterval: {
+    graphAperture: {
         type: "number",
-        label: "Интервал",
+        label: "Апертура",
+        defaultValue: 1,
+        rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
+            {
+                validator: VALIDATOR.RANGE,
+                params: { min: 0, max: 10000 },
+                message: "Значение должно быть в диапазоне от 0 до 10000",
+            },
+        ],
     },
     aperture: {
         type: "number",

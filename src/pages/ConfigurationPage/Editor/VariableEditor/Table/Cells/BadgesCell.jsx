@@ -15,6 +15,7 @@ import { LuPencil, LuPencilOff, LuChevronDown } from "react-icons/lu";
 import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 import { InputFactory } from "@/pages/ConfigurationPage/InputComponents/InputFactory";
 import { useVariablesStore } from "@/store/variables-store";
+import { InputController } from "@/pages/ConfigurationPage/InputComponents/InputController";
 
 const badgesColorMap = {
     cmd: "blue",
@@ -207,11 +208,12 @@ const ParamEditBadgePopover = ({ id, color, checked, parameters }) => {
                             {checked &&
                                 parameters.map((param, index) => {
                                     return (
-                                        <InputFactory
+                                        <InputController
                                             key={index}
-                                            id={id}
+                                            settingParam={param.key}
+                                            nodeId={id}
                                             value={param.value}
-                                            inputParam={param.key}
+                                            Factory={InputFactory}
                                             showLabel
                                             noPortal
                                         />

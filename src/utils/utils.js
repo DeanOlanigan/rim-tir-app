@@ -197,7 +197,7 @@ export function initCardsData(data) {
         cardsData.graph = {
             checked: data.graph,
             parameters: [
-                { key: "aperture", value: data.aperture },
+                { key: "graphAperture", value: data.graphAperture },
                 { key: "measurement", value: data.measurement },
             ],
         };
