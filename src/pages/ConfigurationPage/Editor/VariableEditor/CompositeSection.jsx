@@ -34,11 +34,7 @@ export const CompositeSection = ({
     // Проверяем видимость секции
     const isVisible = validateVisability(dep.dependencies, data.id, settings);
     if (!isVisible) return null; // Если секция не видима, ничего не рендерим
-    //console.log(checkedParam);
-    //console.log(data.setting);
     const isChecked = data.setting?.[checkedParam] ?? false;
-    //console.log(childrenParams);
-    //console.log(isChecked);
 
     const ParamIcon = dep?.icon;
     return (
@@ -82,7 +78,7 @@ export const CompositeSection = ({
                                 settingParam={key}
                                 nodeId={data.id}
                                 value={data.setting?.[key]}
-                                Factory={InputFactory} // <-- стандартная фабрика!
+                                Factory={InputFactory}
                                 showLabel
                             />
                         ))}

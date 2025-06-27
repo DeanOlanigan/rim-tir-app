@@ -22,33 +22,31 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
     //const cardsData = initCardsData(data.setting);
 
     return (
-        <>
-            {/* <VariableEditorHeader name={data.name} /> */}
-            <Stack
-                direction={"column"}
-                w={"100%"}
-                h={"100%"}
-                overflow={"auto"}
-                px={"1"}
-            >
-                <HStack align={"start"}>
-                    <InputFactory
-                        type={"select"}
-                        id={data.id}
-                        inputParam={"type"}
-                        value={data.setting.type}
-                        label={"Тип переменной"}
-                        showLabel
-                    />
-                    <InputFactory
-                        type={"textarea"}
-                        id={data.id}
-                        inputParam={"description"}
-                        value={data.setting.description}
-                        label={"Описание переменной"}
-                        showLabel
-                    />
-                    {/* <SelectInput
+        <Stack
+            direction={"column"}
+            w={"100%"}
+            h={"100%"}
+            overflow={"auto"}
+            px={"1"}
+        >
+            <HStack align={"start"}>
+                <InputFactory
+                    type={"select"}
+                    id={data.id}
+                    inputParam={"type"}
+                    value={data.setting.type}
+                    label={"Тип переменной"}
+                    showLabel
+                />
+                <InputFactory
+                    type={"textarea"}
+                    id={data.id}
+                    inputParam={"description"}
+                    value={data.setting.description}
+                    label={"Описание переменной"}
+                    showLabel
+                />
+                {/* <SelectInput
                         targetKey={"type"}
                         id={data.id}
                         value={data.setting.type}
@@ -60,41 +58,40 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
                         value={data.setting.description}
                         showLabel
                     /> */}
-                </HStack>
-                <HStack w={"100%"} gap={"2"}>
-                    {/* TODO Развить */}
-                    <CompositeSection
-                        checkedParam={"isSpecial"}
-                        childrenParams={["specialCycleDelay"]}
-                        data={data}
-                        label={"Специальная переменная"}
-                    />
-                    <CompositeSection
-                        checkedParam={"graph"}
-                        childrenParams={["measurement", "graphInterval"]}
-                        data={data}
-                        label={"График"}
-                    />
-                    <CompositeSection
-                        checkedParam={"archive"}
-                        childrenParams={["group"]}
-                        data={data}
-                        label={"Архив"}
-                    />
-                    <CompositeSection
-                        checkedParam={"cmd"}
-                        data={data}
-                        label={"Команда пользователя"}
-                    />
-                </HStack>
-                {/* <ParameterCards id={data.id} data={cardsData} /> */}
-                <DebouncedEditor
-                    luaExpression={data.setting.luaExpression}
-                    id={data.id}
-                    height={300}
+            </HStack>
+            <HStack w={"100%"} gap={"2"}>
+                {/* TODO Развить */}
+                <CompositeSection
+                    checkedParam={"isSpecial"}
+                    childrenParams={["specialCycleDelay"]}
+                    data={data}
+                    label={"Специальная переменная"}
                 />
-            </Stack>
-        </>
+                <CompositeSection
+                    checkedParam={"graph"}
+                    childrenParams={["measurement", "graphAperture"]}
+                    data={data}
+                    label={"График"}
+                />
+                <CompositeSection
+                    checkedParam={"archive"}
+                    childrenParams={["group"]}
+                    data={data}
+                    label={"Архив"}
+                />
+                <CompositeSection
+                    checkedParam={"cmd"}
+                    data={data}
+                    label={"Команда пользователя"}
+                />
+            </HStack>
+            {/* <ParameterCards id={data.id} data={cardsData} /> */}
+            <DebouncedEditor
+                luaExpression={data.setting.luaExpression}
+                id={data.id}
+                height={300}
+            />
+        </Stack>
     );
 });
 

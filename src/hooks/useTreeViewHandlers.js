@@ -75,7 +75,7 @@ export function useTreeViewHandlers(treeType, ref) {
             ref?.current.root.select();
             updateContext({
                 apiPath: ref?.current,
-                type: null,
+                type: "root",
                 subType: null,
                 x: e.clientX,
                 y: e.clientY,

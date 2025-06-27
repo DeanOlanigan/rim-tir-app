@@ -59,7 +59,7 @@ export const ContextMenu = () => {
                         transition={{ duration: 0.2 }}
                         style={{
                             position: "fixed",
-                            zIndex: 9999,
+                            zIndex: 1000,
                         }}
                     >
                         <Menu.Root open>
