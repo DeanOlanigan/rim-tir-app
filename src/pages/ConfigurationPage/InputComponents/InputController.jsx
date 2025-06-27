@@ -9,6 +9,7 @@ export const InputController = ({
     empty = null,
     Factory,
     showLabel = false,
+    ...props
 }) => {
     const settings = useVariablesStore.getState().settings;
     const definition = PARAM_DEFINITIONS[settingParam];
@@ -27,6 +28,7 @@ export const InputController = ({
             value={value}
             label={definition.label}
             showLabel={showLabel}
+            {...props}
         />
     );
 };

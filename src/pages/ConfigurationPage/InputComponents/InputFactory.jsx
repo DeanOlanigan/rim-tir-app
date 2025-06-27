@@ -8,7 +8,7 @@ import {
     DroppableInput,
     IpInput,
     HexInput,
-    NameInput
+    NameInput,
 } from "./index";
 import {
     selectParamsErrors,
@@ -23,21 +23,34 @@ const typeMap = {
     boolean: SwitchInput,
     select: SelectInput,
     number: NumberInput,
+    numberF: NumberInput,
     textarea: EditableInput,
     drop: DroppableInput,
     ip: IpInput,
     hex: HexInput,
     text: TextInput,
-    name: NameInput
+    name: NameInput,
 };
 
 export const InputFactory = memo(function InputFactory(props) {
-    const { type, id, inputParam, value, label, showLabel = false } = props;
+    const {
+        type,
+        id,
+        inputParam,
+        value,
+        label,
+        showLabel = false,
+        ...rest
+    } = props;
     const errors = useValidationStore(
         useShallow((state) => selectParamsErrors(state, id, inputParam))
     );
-
+    if (type === "numberF") {
+        console.log("InputFactory", id, inputParam, value);
+    }
     const Component = typeMap[type] || TextInput;
+    const noPortal = type === "select" && rest?.noPortal;
+    const isF = type === "numberF";
     return (
         <Field.Root maxW={"250px"} invalid={errors && errors.length > 0}>
             {showLabel && (
@@ -45,7 +58,13 @@ export const InputFactory = memo(function InputFactory(props) {
                     <Text truncate>{label}</Text>
                 </Field.Label>
             )}
-            <Component id={id} targetKey={inputParam} value={value} />
+            <Component
+                id={id}
+                targetKey={inputParam}
+                value={value}
+                {...(rest?.noPortal && { noPortal })}
+                {...(type === "numberF" && { isF })}
+            />
             {errors &&
                 errors.length > 0 &&
                 errors.map((error, index) => (

@@ -14,6 +14,11 @@ export const NumberInput = memo(function NumberInput(props) {
     return (
         <NumberInputRoot
             value={innerValue}
+            formatOptions={{
+                style: "decimal",
+                maximumFractionDigits: rest.isF ? 3 : 0,
+                useGrouping: false,
+            }}
             size={"xs"}
             onValueChange={(details) => {
                 setInnerValue(details.value);
@@ -23,8 +28,17 @@ export const NumberInput = memo(function NumberInput(props) {
                     [targetKey]: innerValue,
                 });
             }}
+            onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                    setSettings(id, {
+                        [targetKey]: innerValue,
+                    });
+                }
+                if (e.key === "Escape") {
+                    setInnerValue(value);
+                }
+            }}
             onClick={(e) => e.stopPropagation()}
-            {...rest}
         >
             <NumberInputField />
         </NumberInputRoot>
