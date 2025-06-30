@@ -20,7 +20,9 @@ export const ValidationContent = ({ errors }) => {
 
     const selectNodeHandler = (nodeId) => {
         const targetType =
-            settings[nodeId]?.type === "variable" ? "variables" : "connections";
+            settings[nodeId]?.rootId === "variables"
+                ? "variables"
+                : "connections";
         updateSelectedIds(targetType, new Set([nodeId]));
         const target = settings[nodeId]?.rootId;
         treeApis[target].current.scrollTo(nodeId);

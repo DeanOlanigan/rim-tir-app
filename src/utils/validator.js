@@ -270,6 +270,12 @@ export function validateAll(settings) {
     const map = {};
     for (const node of Object.values(settings)) {
         if (node.name && node.rootId) {
+            const nameError = {};
+            nameError[node.id] = nameError[node.id] || {};
+            nameError[node.id].name = {
+                [VALIDATOR.REGEX]: validateLuaIdentifier({ name: node.name }),
+            };
+            mergeErrors(errors, nameError);
             if (!map[node.rootId]) map[node.rootId] = new Map();
             map[node.rootId].set(node.name, [
                 ...(map[node.rootId].get(node.name) || []),
@@ -333,10 +339,12 @@ const LUA_KEYWORDS = [
 const VARIABLE_NAME_PATTERN = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 function validateLuaIdentifier({ name }) {
     if (LUA_KEYWORDS.includes(name))
-        return "Имя узла содержит неподходящее слово";
+        return ["Имя узла содержит неподходящее слово"];
     if (!VARIABLE_NAME_PATTERN.test(name))
-        return "Разрешены только буквы латинского алфавита, цифры и нижнее подчеркивание";
-    return null;
+        return [
+            "Разрешены только буквы латинского алфавита, цифры и нижнее подчеркивание",
+        ];
+    return [];
 }
 
 export function validateName({ id, settings, scope = SCOPE.ROOT }) {
@@ -344,7 +352,7 @@ export function validateName({ id, settings, scope = SCOPE.ROOT }) {
 
     const name = settings[id]?.name;
     const error = validateLuaIdentifier({ name });
-    setDraftMessage(errors, id, "name", VALIDATOR.REGEX, error ? [error] : []);
+    setDraftMessage(errors, id, "name", VALIDATOR.REGEX, error);
 
     const ids = getContextIds(settings, id, "name", scope || SCOPE.ROOT);
     const map = new Map();

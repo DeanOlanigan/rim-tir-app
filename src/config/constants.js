@@ -28,7 +28,7 @@ export const CONSTANT_VALUES = {
 
 const DEFAULT_FOLDER = {
     type: "folder",
-    name: "Новая папка",
+    name: "New_folder",
     isIgnored: false,
     isCutted: false,
     children: [],
@@ -44,7 +44,7 @@ const DEFAULT_FOLDER_SETTING = {
 const DEFAULT_INTERFACE = {
     type: "interface",
     subType: "",
-    name: "Новый интерфейс",
+    name: "New_interface",
     isIgnored: false,
     isCutted: false,
     children: [],
@@ -53,7 +53,7 @@ const DEFAULT_INTERFACE = {
 const DEFAULT_PROTOCOL = {
     type: "protocol",
     subType: "",
-    name: "Новый протокол",
+    name: "New_protocol",
     isIgnored: false,
     isCutted: false,
     children: [],
@@ -61,7 +61,7 @@ const DEFAULT_PROTOCOL = {
 
 const DEFAULT_FUNCTION_GROUP = {
     type: "functionGroup",
-    name: "Новая функциональная группа",
+    name: "New_function_group",
     isIgnored: false,
     isCutted: false,
     children: [],
@@ -69,7 +69,7 @@ const DEFAULT_FUNCTION_GROUP = {
 
 const DEFAULT_ASDU = {
     type: "asdu",
-    name: "Новый ASDU",
+    name: "New_asdu",
     isIgnored: false,
     isCutted: false,
     children: [],
@@ -113,7 +113,7 @@ export const DEFAULT_DATA_OBJECT_SETTING = {
 
 const DEFAULT_VARIABLE = {
     type: "variable",
-    name: "newVariable",
+    name: "New_variable",
     isIgnored: false,
     isCutted: false,
 };
@@ -138,12 +138,12 @@ export const DEFAULT_CONFIGURATION_DATA = {
     "modbus-rtu": {
         node: {
             ...DEFAULT_PROTOCOL,
-            name: "Modbus-RTU",
+            name: "Modbus_RTU",
             subType: "modbus-rtu",
         },
         setting: {
             ...DEFAULT_PROTOCOL,
-            name: "Modbus-RTU",
+            name: "Modbus_RTU",
             subType: "modbus-rtu",
             setting: {
                 deviceAddress: "1",
@@ -192,10 +192,10 @@ export const DEFAULT_CONFIGURATION_DATA = {
         },
     },
     iec104: {
-        node: { ...DEFAULT_PROTOCOL, name: "IEC-104", subType: "iec104" },
+        node: { ...DEFAULT_PROTOCOL, name: "IEC104", subType: "iec104" },
         setting: {
             ...DEFAULT_PROTOCOL,
-            name: "IEC-104",
+            name: "IEC104",
             subType: "iec104",
             setting: {
                 side: "client",
@@ -231,12 +231,12 @@ export const DEFAULT_CONFIGURATION_DATA = {
     comport: {
         node: {
             ...DEFAULT_INTERFACE,
-            name: "COM порт",
+            name: "COM_port",
             subType: "comport",
         },
         setting: {
             ...DEFAULT_INTERFACE,
-            name: "COM порт",
+            name: "COM_port",
             subType: "comport",
             setting: {
                 iface: "ttyS0",
@@ -247,11 +247,11 @@ export const DEFAULT_CONFIGURATION_DATA = {
     tcpBridge: {
         node: {
             type: "tcpBridge",
-            name: "TCP-коннектор",
+            name: "TCP_bridge",
         },
         setting: {
             type: "tcpBridge",
-            name: "TCP-коннектор",
+            name: "TCP_bridge",
             setting: {
                 logging: false,
                 ipAddress: "127.0.0.1",
