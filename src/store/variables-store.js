@@ -21,12 +21,12 @@ import {
 import { devtools, persist } from "zustand/middleware";
 import {
     validateAll,
+    validateCyclicVariable,
     validateName,
     validateParameter,
 } from "@/utils/validator";
 import { useValidationStore } from "@/store/validation-store";
 import { CONSTANT_VALUES } from "@/config/constants";
-import { SCOPE } from "@/config/paramDefinitions";
 
 const baseNodeInit = (type, name) => ({
     id: type,
@@ -154,10 +154,19 @@ export const useVariablesStore = create()(
                             name
                         );
 
+                        if (
+                            newSettings[nodeId].rootId ===
+                            CONSTANT_VALUES.TREE_TYPES.variables
+                        ) {
+                            const variables = Object.values(newSettings).filter(
+                                (node) => node.type === "variable"
+                            );
+                            validateCyclicVariable(variables);
+                        }
+
                         validateName({
                             id: nodeId,
                             settings: newSettings,
-                            scope: SCOPE.IGNOREFOLDER,
                         });
 
                         return { settings: newSettings };

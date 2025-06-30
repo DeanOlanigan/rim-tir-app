@@ -1,13 +1,12 @@
-import { useCallback, useEffect, useState, memo, useRef } from "react";
+import { useEffect, memo, useRef } from "react";
 import { useColorMode } from "@/components/ui/color-mode";
 import { Editor } from "@monaco-editor/react";
 import { useVariablesStore } from "@/store/variables-store";
 import debounce from "debounce";
-import { useVariablesOptions } from "@/hooks/useVariablesOptions";
 import { useLuaDiagnostics } from "./useLuaDiagnostics";
-import { useVariableHighlight } from "./useVariableHighlight";
-import { useCyclicDepsFinder } from "./useCyclicDepsFinder";
 import { useVariableHighlightLuaParse } from "./useVariableHighlightLuaParse";
+import { useVariablesList } from "@/store/selectors";
+import { validateCyclicVariable } from "@/utils/validator";
 
 export const DebouncedEditor = memo(function DebouncedEditor({
     luaExpression,
@@ -17,35 +16,23 @@ export const DebouncedEditor = memo(function DebouncedEditor({
 }) {
     const { colorMode } = useColorMode();
     const setSettings = useVariablesStore.getState().setSettings;
-    const variables = useVariablesOptions();
+    const variables = useVariablesList();
 
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
 
-    const [innerValue, setInnerValue] = useState(luaExpression);
-
-    const model = editorRef.current?.editor?.getModel();
-    const editor = editorRef.current?.editor;
     const diagnostics = useLuaDiagnostics();
     const highlight = useVariableHighlightLuaParse();
-    // TODO Вынести поиск цикличных зависимостей из редактора на уровень состояния,
-    // т.к. если переименовать узел из контекстного меню, то циклические зависимости не обновятся
-    const findCyclic = useCyclicDepsFinder();
 
     useEffect(() => {
-        setInnerValue(luaExpression);
-    }, [luaExpression]);
-
-    useEffect(() => {
-        if (innerValue !== undefined) {
-            highlight(innerValue, editor, variables);
-            diagnostics(innerValue, monacoRef.current, model);
+        if (luaExpression !== undefined) {
+            const editor = editorRef.current?.editor;
+            const model = editorRef.current?.editor?.getModel();
+            highlight(luaExpression, editor, variables);
+            diagnostics(luaExpression, monacoRef.current, model);
+            validateCyclicVariable(variables);
         }
-    }, [innerValue, highlight, diagnostics, editor, variables, model]);
-
-    useEffect(() => {
-        findCyclic(id);
-    }, [variables, findCyclic, id]);
+    }, [luaExpression, highlight, diagnostics, id, variables]);
 
     function handleEditorDidMount(editor, monaco) {
         editorRef.current = { editor, monaco };
@@ -54,25 +41,22 @@ export const DebouncedEditor = memo(function DebouncedEditor({
         diagnostics(luaExpression, monaco, editor.getModel());
     }
 
-    const debounced = useCallback(
-        debounce((newCode) => {
+    const debounced = useRef(
+        debounce((id, newCode) => {
             setSettings(id, {
                 luaExpression: newCode,
             });
-            findCyclic(id);
-        }, 500),
-        [id, setSettings]
-    );
+        }, 500)
+    ).current;
 
     const onChangeHandler = (value) => {
-        setInnerValue(value);
-        debounced(value);
+        debounced(id, value);
     };
 
     return (
         <Editor
             defaultLanguage="lua"
-            value={innerValue}
+            value={luaExpression}
             height={height}
             width={width}
             theme={colorMode === "light" ? "vs" : "vs-dark"}

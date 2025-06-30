@@ -10,7 +10,7 @@ export function useVariableHighlightLuaParse() {
         try {
             usages = getVariableUsages(
                 code,
-                variables.items.map((v) => v.value)
+                variables.map((v) => v.name)
             );
         } catch {
             return;

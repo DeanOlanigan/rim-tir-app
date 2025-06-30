@@ -1,4 +1,3 @@
-import { CONSTANT_VALUES } from "@/config/constants";
 import {
     LOGIC,
     MATCH,
@@ -6,6 +5,7 @@ import {
     SCOPE,
     VALIDATOR,
 } from "@/config/paramDefinitions";
+import { findCyclic } from "@/pages/ConfigurationPage/InputComponents/DebouncedEditor/useCyclicDepsFinder";
 import { useValidationStore } from "@/store/validation-store";
 
 const validatorRegistry = {
@@ -267,19 +267,42 @@ export function validateVisability(dependencies, nodeId, settings) {
 // TODO Бог покинул это место
 export function validateAll(settings) {
     const errors = {};
-
+    const map = {};
     for (const node of Object.values(settings)) {
-        if (!node.setting) continue;
-        for (const paramKey of Object.keys(node.setting)) {
-            const paramError = validateParameter(node.id, paramKey, settings);
-            mergeErrors(errors, paramError);
+        if (node.name && node.rootId) {
+            if (!map[node.rootId]) map[node.rootId] = new Map();
+            map[node.rootId].set(node.name, [
+                ...(map[node.rootId].get(node.name) || []),
+                node.id,
+            ]);
         }
+        if (node.setting)
+            for (const paramKey of Object.keys(node.setting)) {
+                const paramError = validateParameter(
+                    node.id,
+                    paramKey,
+                    settings
+                );
+                mergeErrors(errors, paramError);
+            }
     }
 
-    const nameErrors = collectNameErrors(settings);
+    const nameErrors = {};
+    for (const rootId in map) {
+        for (const [name, ids] of map[rootId].entries()) {
+            if (ids.length > 1) {
+                ids.forEach((id) => {
+                    nameErrors[id] = nameErrors[id] || {};
+                    nameErrors[id].name = {
+                        [VALIDATOR.UNIQUE]: [
+                            `Значение "${name}" уже существует`,
+                        ],
+                    };
+                });
+            }
+        }
+    }
     mergeErrors(errors, nameErrors);
-
-    //console.log(errors);
     useValidationStore.setState({ errors });
 }
 
@@ -310,30 +333,20 @@ const LUA_KEYWORDS = [
 const VARIABLE_NAME_PATTERN = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 function validateLuaIdentifier({ name }) {
     if (LUA_KEYWORDS.includes(name))
-        return "Имя переменной не должно быть ключевым словом lua";
+        return "Имя узла содержит неподходящее слово";
     if (!VARIABLE_NAME_PATTERN.test(name))
-        return "Имя переменной должно быть валидным lua-идентификатором";
+        return "Разрешены только буквы латинского алфавита, цифры и нижнее подчеркивание";
     return null;
 }
 
-export function validateName({ id, settings, scope = SCOPE.SELF }) {
-    console.log("VALIDATE NAME");
+export function validateName({ id, settings, scope = SCOPE.ROOT }) {
     const errors = {};
-    const tree = settings[id].rootId;
-    if (tree === CONSTANT_VALUES.TREE_TYPES.variables) {
-        const name = settings[id]?.name;
-        const error = validateLuaIdentifier({ name });
-        setDraftMessage(
-            errors,
-            id,
-            "name",
-            VALIDATOR.REGEX,
-            error ? [error] : []
-        );
-    }
 
-    const ids = getContextIds(settings, id, "name", scope || SCOPE.SELF);
-    //console.log("validateNameIDS", ids);
+    const name = settings[id]?.name;
+    const error = validateLuaIdentifier({ name });
+    setDraftMessage(errors, id, "name", VALIDATOR.REGEX, error ? [error] : []);
+
+    const ids = getContextIds(settings, id, "name", scope || SCOPE.ROOT);
     const map = new Map();
     for (const id of ids) {
         const val = settings[id]?.name;
@@ -350,7 +363,6 @@ export function validateName({ id, settings, scope = SCOPE.SELF }) {
         }
         setDraftMessage(errors, id, "name", VALIDATOR.UNIQUE, msg);
     }
-    //console.log(errors);
     useValidationStore.getState().setBulkErrors(errors);
 }
 
@@ -381,31 +393,20 @@ function mergeErrors(target, source) {
     }
 }
 
-/**
- * Собирает ошибки UNIQUE для поля name во всём settings.
- */
-function collectNameErrors(settings) {
+export function validateCyclicVariable(variables) {
+    const cyclicFinderResult = findCyclic(variables);
     const errors = {};
-    // 1) Собираем все id в рамках контекста (можно расширить по scope)
-    const allIds = Object.keys(settings);
-    // 2) Группируем по значению name
-    const map = new Map();
-    allIds.forEach((id) => {
-        const name = settings[id]?.name;
-        if (name) {
-            map.set(name, [...(map.get(name) || []), id]);
+    for (const [nodeId, val] of Object.entries(cyclicFinderResult)) {
+        let msg;
+        if (val) {
+            const names = val
+                .map((v) => variables.find((v2) => v2.id === v).name)
+                .join("->");
+            msg = [`Обнаружена циклическая зависимость: ${names}`];
+        } else {
+            msg = [];
         }
-    });
-    // 3) Если в группе больше одного — пишем ошибку каждому
-    for (const [name, ids] of map.entries()) {
-        if (ids.length > 1) {
-            ids.forEach((id) => {
-                errors[id] = errors[id] || {};
-                errors[id].name = {
-                    [VALIDATOR.UNIQUE]: [`Значение "${name}" уже существует`],
-                };
-            });
-        }
+        setDraftMessage(errors, nodeId, "name", "cyclic", msg);
     }
-    return errors;
+    useValidationStore.getState().setBulkErrors(errors);
 }
