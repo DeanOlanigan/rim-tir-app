@@ -11,6 +11,7 @@ import { CreateConfigDialog } from "../CreateConfigDialog"; // ?
 import { ConfigurationUploader } from "../ConfigurationUploader"; // ?
 import { ConfInfoEdit } from "./ConfInfoEdit";
 import { useConfigInfoStore } from "@/store/config-info-store";
+import { useValidationStore } from "@/store/validation-store";
 
 export const ConfMenu = () => {
     const resetState = useVariablesStore((state) => state.resetState);
@@ -20,6 +21,7 @@ export const ConfMenu = () => {
         useConfigInfoStore.setState({
             configInfo: {},
         });
+        useValidationStore.getState().clear();
     };
 
     return (

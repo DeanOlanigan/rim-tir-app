@@ -4,6 +4,7 @@ import { devtools } from "zustand/middleware";
 export const useValidationStore = create(
     devtools((set) => ({
         errors: {},
+        clear: () => set({ errors: {} }),
         setFieldErrors: (nodeId, param, validator, errors) =>
             set((state) => {
                 const updated = { ...state.errors };
