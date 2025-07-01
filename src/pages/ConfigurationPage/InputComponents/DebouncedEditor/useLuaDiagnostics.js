@@ -65,7 +65,7 @@ export function analyzeLuaForMonacoMarkers(code) {
         return markers;
     }
 
-    function walk(node) {
+    function walk(node, parent) {
         if (!node) return;
 
         // 1. Проверка на запрещённые конструкции
@@ -77,11 +77,26 @@ export function analyzeLuaForMonacoMarkers(code) {
             });
         }
         if (node.type === "FunctionDeclaration") {
-            markers.push({
-                ...getRangeFromNode(node),
-                message: "Запрещено объявление своих функций",
-                severity: 8,
-            });
+            let isAllowed = false;
+            if (
+                parent &&
+                parent.type === "CallExpression" &&
+                parent.base.type === "Identifier" &&
+                parent.base.name === "delay"
+            ) {
+                const idx = parent.arguments.indexOf(node);
+                if (idx === 1) {
+                    isAllowed = true;
+                }
+            }
+
+            if (!isAllowed) {
+                markers.push({
+                    ...getRangeFromNode(node),
+                    message: "Объявление функций разрешено только через delay",
+                    severity: 8,
+                });
+            }
         }
         if (
             node.type === "ForNumericStatement" ||
@@ -146,12 +161,32 @@ export function analyzeLuaForMonacoMarkers(code) {
             }
         }
 
+        if (
+            node.type === "CallExpression" &&
+            node.base.type === "Identifier" &&
+            node.base.name === "delay"
+        ) {
+            // Проверяем что первый аргумент - Literal (число), второй - Function
+            if (
+                node.arguments.length !== 2 ||
+                node.arguments[0].type !== "NumericLiteral" ||
+                node.arguments[1].type !== "FunctionDeclaration"
+            ) {
+                markers.push({
+                    ...getRangeFromNode(node),
+                    message:
+                        "delay должен вызываться как delay(<секунды>, function() ... end)",
+                    severity: 8,
+                });
+            }
+        }
+
         // Рекурсивно обходим AST
         for (const key in node) {
             if (Array.isArray(node[key])) {
                 node[key].forEach((child) => {
                     if (typeof child === "object" && child !== null) {
-                        walk(child);
+                        walk(child, node);
                     }
                 });
             } else if (
@@ -159,12 +194,12 @@ export function analyzeLuaForMonacoMarkers(code) {
                 node[key] !== null &&
                 node[key].type
             ) {
-                walk(node[key]);
+                walk(node[key], node);
             }
         }
     }
 
-    walk(ast);
+    walk(ast, null);
 
     // Возврат для setModelMarkers (если ошибок нет — массив пустой)
     return markers;

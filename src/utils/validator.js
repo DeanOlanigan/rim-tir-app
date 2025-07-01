@@ -474,9 +474,24 @@ function analyzeLuaAST(code) {
             case "LocalStatement":
                 errors.push("Локальные переменные не поддерживаются");
                 break;
-            case "FunctionDeclaration":
-                errors.push("Функции не поддерживаются");
+            case "FunctionDeclaration": {
+                let isAllowed = false;
+                if (
+                    parent &&
+                    parent.type === "CallExpression" &&
+                    parent.base.type === "Identifier" &&
+                    parent.base.name === "delay"
+                ) {
+                    const idx = parent.arguments.indexOf(node);
+                    if (idx === 1) {
+                        isAllowed = true;
+                    }
+                }
+                if (!isAllowed) {
+                    errors.push("Функции не поддерживаются");
+                }
                 break;
+            }
             case "ForNumericStatement":
                 errors.push("Циклы for не поддерживаются");
                 break;
