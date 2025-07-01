@@ -29,7 +29,7 @@ export const DebouncedEditor = memo(function DebouncedEditor({
             const editor = editorRef.current?.editor;
             const model = editorRef.current?.editor?.getModel();
             highlight(luaExpression, editor, variables);
-            diagnostics(luaExpression, monacoRef.current, model);
+            diagnostics(id, luaExpression, monacoRef.current, model);
             validateCyclicVariable(variables);
         }
     }, [luaExpression, highlight, diagnostics, id, variables]);
@@ -38,7 +38,7 @@ export const DebouncedEditor = memo(function DebouncedEditor({
         editorRef.current = { editor, monaco };
         monacoRef.current = monaco;
         highlight(luaExpression, editor, variables);
-        diagnostics(luaExpression, monaco, editor.getModel());
+        diagnostics(id, luaExpression, monaco, editor.getModel());
     }
 
     const debounced = useRef(

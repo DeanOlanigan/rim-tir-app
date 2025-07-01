@@ -7,6 +7,7 @@ import {
 } from "@/config/paramDefinitions";
 import { findCyclic } from "@/pages/ConfigurationPage/InputComponents/DebouncedEditor/useCyclicDepsFinder";
 import { useValidationStore } from "@/store/validation-store";
+import { parse } from "luaparse";
 
 const validatorRegistry = {
     [VALIDATOR.RANGE]: rangeValidator,
@@ -268,7 +269,17 @@ export function validateVisability(dependencies, nodeId, settings) {
 export function validateAll(settings) {
     const errors = {};
     const map = {};
+    const variables = [];
     for (const node of Object.values(settings)) {
+        if (node.type === "variable") {
+            variables.push(node);
+            const codeError = {};
+            codeError[node.id] = codeError[node.id] || {};
+            codeError[node.id].luaExpression = {
+                ["code"]: analyzeLuaAST(node.setting.luaExpression),
+            };
+            mergeErrors(errors, codeError);
+        }
         if (node.name && node.rootId) {
             const nameError = {};
             nameError[node.id] = nameError[node.id] || {};
@@ -310,6 +321,8 @@ export function validateAll(settings) {
     }
     mergeErrors(errors, nameErrors);
     useValidationStore.setState({ errors });
+
+    validateCyclicVariable(variables);
 }
 
 const LUA_KEYWORDS = [
@@ -417,4 +430,103 @@ export function validateCyclicVariable(variables) {
         setDraftMessage(errors, nodeId, "name", "cyclic", msg);
     }
     useValidationStore.getState().setBulkErrors(errors);
+}
+
+// TODO ВСЯ РАБОТА С ЛУА ДОЛЖНА БЫТЬ ВЫНЕСЕНА В ОТДЕЛЬНЫЙ МОДУЛЬ
+// Касает как этого файла, так и useLuaDiagnostic
+
+export function setLuaCodeError(id, errorMsg) {
+    const errors = {};
+    setDraftMessage(
+        errors,
+        id,
+        "luaExpression",
+        "code",
+        errorMsg ? errorMsg : []
+    );
+    useValidationStore.getState().setBulkErrors(errors);
+}
+
+const ALLOWED_FUNCTIONS = [
+    "self",
+    "update",
+    "delay",
+    "set",
+    "abs",
+    "sin",
+    "cos",
+    "sqrt",
+];
+
+function analyzeLuaAST(code) {
+    let errors = [];
+    let ast;
+    try {
+        ast = parse(code, { locations: true });
+    } catch (error) {
+        return [`Ошибка в скрипте: ${error.message}`];
+    }
+
+    function walk(node, parent) {
+        if (!node) return;
+
+        switch (node.type) {
+            case "LocalStatement":
+                errors.push("Локальные переменные не поддерживаются");
+                break;
+            case "FunctionDeclaration":
+                errors.push("Функции не поддерживаются");
+                break;
+            case "ForNumericStatement":
+                errors.push("Циклы for не поддерживаются");
+                break;
+            case "ForGenericStatement":
+                errors.push("Циклы for не поддерживаются");
+                break;
+            case "WhileStatement":
+                errors.push("Циклы while не поддерживаются");
+                break;
+            case "RepeatStatement":
+                errors.push("Циклы repeat не поддерживаются");
+                break;
+            case "GotoStatement":
+                errors.push("Goto не поддерживается");
+                break;
+            case "BreakStatement":
+                errors.push("Break не поддерживается");
+                break;
+            case "ReturnStatement":
+                errors.push("Return не поддерживается");
+                break;
+            default:
+                break;
+        }
+
+        if (node.type === "CallExpression") {
+            let functionName = "";
+            if (node.base.type === "Identifier") {
+                functionName = node.base.name;
+            } else if (node.base.type === "MemberExpression") {
+                functionName = node.base.identifier.name;
+            }
+            if (functionName && !ALLOWED_FUNCTIONS.includes(functionName)) {
+                errors.push(`Функция ${functionName} не поддерживается`);
+            }
+        }
+
+        for (const key in node) {
+            if (Array.isArray(node[key])) {
+                node[key].forEach((child) => {
+                    if (typeof child === "object" && child !== null) {
+                        walk(child, node);
+                    }
+                });
+            } else if (typeof node[key] === "object" && node[key] !== null) {
+                walk(node[key], node);
+            }
+        }
+    }
+
+    walk(ast, null);
+    return errors.length > 0 ? errors : [];
 }
