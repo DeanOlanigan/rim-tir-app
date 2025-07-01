@@ -16,7 +16,6 @@ export function useLuaDiagnostics() {
 }
 
 function getRangeFromNode(node) {
-    // luaparse даёт node.loc, если { locations: true } опция включена
     if (!node.loc)
         return {
             startLineNumber: 1,
@@ -51,14 +50,10 @@ export function analyzeLuaForMonacoMarkers(code) {
     } catch (e) {
         // Ошибка синтаксиса — подсвечиваем её на первой строке (или парсим e.hash)
         markers.push({
-            startLineNumber: e.hash?.loc?.first_line ?? 1,
-            startColumn: e.hash?.loc?.first_column
-                ? e.hash.loc.first_column + 1
-                : 1,
-            endLineNumber: e.hash?.loc?.last_line ?? 1,
-            endColumn: e.hash?.loc?.last_column
-                ? e.hash.loc.last_column + 2
-                : 1,
+            startLineNumber: e.line || 1,
+            startColumn: e.column || 1,
+            endLineNumber: e.line || 1,
+            endColumn: e.column || 1 + 1,
             message: "Синтаксическая ошибка: " + e.message,
             severity: 8, // Error
         });

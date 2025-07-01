@@ -5,9 +5,9 @@ import {
     SCOPE,
     VALIDATOR,
 } from "@/config/paramDefinitions";
-import { findCyclic } from "@/pages/ConfigurationPage/InputComponents/DebouncedEditor/useCyclicDepsFinder";
+import { findCyclic } from "@/pages/ConfigurationPage/InputComponents/DebouncedEditor/findCyclic";
+import { analyzeLuaForMonacoMarkers } from "@/pages/ConfigurationPage/InputComponents/DebouncedEditor/useLuaDiagnostics";
 import { useValidationStore } from "@/store/validation-store";
-import { parse } from "luaparse";
 
 const validatorRegistry = {
     [VALIDATOR.RANGE]: rangeValidator,
@@ -273,19 +273,28 @@ export function validateAll(settings) {
     for (const node of Object.values(settings)) {
         if (node.type === "variable") {
             variables.push(node);
+            const markers = analyzeLuaForMonacoMarkers(
+                node.setting.luaExpression
+            );
             const codeError = {};
-            codeError[node.id] = codeError[node.id] || {};
-            codeError[node.id].luaExpression = {
-                ["code"]: analyzeLuaAST(node.setting.luaExpression),
-            };
+            setDraftMessage(
+                codeError,
+                node.id,
+                "luaExpression",
+                "code",
+                markers.map((m) => m.message)
+            );
             mergeErrors(errors, codeError);
         }
         if (node.name && node.rootId) {
             const nameError = {};
-            nameError[node.id] = nameError[node.id] || {};
-            nameError[node.id].name = {
-                [VALIDATOR.REGEX]: validateLuaIdentifier({ name: node.name }),
-            };
+            setDraftMessage(
+                nameError,
+                node.id,
+                "name",
+                VALIDATOR.REGEX,
+                validateNamePatternMatch({ name: node.name })
+            );
             mergeErrors(errors, nameError);
             if (!map[node.rootId]) map[node.rootId] = new Map();
             map[node.rootId].set(node.name, [
@@ -350,7 +359,7 @@ const LUA_KEYWORDS = [
     "while",
 ];
 const VARIABLE_NAME_PATTERN = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
-function validateLuaIdentifier({ name }) {
+function validateNamePatternMatch({ name }) {
     if (LUA_KEYWORDS.includes(name))
         return ["Имя узла содержит неподходящее слово"];
     if (!VARIABLE_NAME_PATTERN.test(name))
@@ -364,7 +373,7 @@ export function validateName({ id, settings, scope = SCOPE.ROOT }) {
     const errors = {};
 
     const name = settings[id]?.name;
-    const error = validateLuaIdentifier({ name });
+    const error = validateNamePatternMatch({ name });
     setDraftMessage(errors, id, "name", VALIDATOR.REGEX, error);
 
     const ids = getContextIds(settings, id, "name", scope || SCOPE.ROOT);
@@ -445,103 +454,4 @@ export function setLuaCodeError(id, errorMsg) {
         errorMsg ? errorMsg : []
     );
     useValidationStore.getState().setBulkErrors(errors);
-}
-
-const ALLOWED_FUNCTIONS = [
-    "self",
-    "update",
-    "delay",
-    "set",
-    "abs",
-    "sin",
-    "cos",
-    "sqrt",
-];
-
-function analyzeLuaAST(code) {
-    let errors = [];
-    let ast;
-    try {
-        ast = parse(code, { locations: true });
-    } catch (error) {
-        return [`Ошибка в скрипте: ${error.message}`];
-    }
-
-    function walk(node, parent) {
-        if (!node) return;
-
-        switch (node.type) {
-            case "LocalStatement":
-                errors.push("Локальные переменные не поддерживаются");
-                break;
-            case "FunctionDeclaration": {
-                let isAllowed = false;
-                if (
-                    parent &&
-                    parent.type === "CallExpression" &&
-                    parent.base.type === "Identifier" &&
-                    parent.base.name === "delay"
-                ) {
-                    const idx = parent.arguments.indexOf(node);
-                    if (idx === 1) {
-                        isAllowed = true;
-                    }
-                }
-                if (!isAllowed) {
-                    errors.push("Функции не поддерживаются");
-                }
-                break;
-            }
-            case "ForNumericStatement":
-                errors.push("Циклы for не поддерживаются");
-                break;
-            case "ForGenericStatement":
-                errors.push("Циклы for не поддерживаются");
-                break;
-            case "WhileStatement":
-                errors.push("Циклы while не поддерживаются");
-                break;
-            case "RepeatStatement":
-                errors.push("Циклы repeat не поддерживаются");
-                break;
-            case "GotoStatement":
-                errors.push("Goto не поддерживается");
-                break;
-            case "BreakStatement":
-                errors.push("Break не поддерживается");
-                break;
-            case "ReturnStatement":
-                errors.push("Return не поддерживается");
-                break;
-            default:
-                break;
-        }
-
-        if (node.type === "CallExpression") {
-            let functionName = "";
-            if (node.base.type === "Identifier") {
-                functionName = node.base.name;
-            } else if (node.base.type === "MemberExpression") {
-                functionName = node.base.identifier.name;
-            }
-            if (functionName && !ALLOWED_FUNCTIONS.includes(functionName)) {
-                errors.push(`Функция ${functionName} не поддерживается`);
-            }
-        }
-
-        for (const key in node) {
-            if (Array.isArray(node[key])) {
-                node[key].forEach((child) => {
-                    if (typeof child === "object" && child !== null) {
-                        walk(child, node);
-                    }
-                });
-            } else if (typeof node[key] === "object" && node[key] !== null) {
-                walk(node[key], node);
-            }
-        }
-    }
-
-    walk(ast, null);
-    return errors.length > 0 ? errors : [];
 }
