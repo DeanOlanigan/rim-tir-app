@@ -54,10 +54,17 @@ function getDisabledState(apiPath) {
 
         // Получить тип узла, на котором контекстное меню
         const focusedNodeType =
-            apiPath.focusedNode?.data.subType || apiPath.focusedNode?.data.type;
-        const focusedNodeTypeF = getParentType({
-            checkNode: apiPath?.focusedNode,
-        });
+            apiPath.focusedNode?.data.subType ||
+            apiPath.focusedNode?.data.type ||
+            treeType;
+        let focusedNodeTypeF;
+        if (focusedNodeType === treeType) {
+            focusedNodeTypeF = treeType;
+        } else {
+            focusedNodeTypeF = getParentType({
+                checkNode: apiPath?.focusedNode,
+            });
+        }
 
         // Получить значимый тип из иерархии копируемого узла
         const meaningNode = getMeaningNode(copyBuffer.tree[0].id, settings);
