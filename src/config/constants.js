@@ -129,7 +129,7 @@ const DEFAULT_VARIABLE_SETTING = {
     measurement: "V",
     graphAperture: 10,
     //isLua: false,
-    description: "Введите описание",
+    description: "",
     //coefficient: "1",
     luaExpression: null,
 };

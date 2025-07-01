@@ -77,6 +77,9 @@ export const RouterMenu = () => {
     };
 
     const sendConfigHandler = () => {
+        if (hasErrors) {
+            return;
+        }
         axios
             .put(
                 "/api/v2/uploadConfiguration",
