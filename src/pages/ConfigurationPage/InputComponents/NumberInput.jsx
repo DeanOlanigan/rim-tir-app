@@ -25,13 +25,17 @@ export const NumberInput = memo(function NumberInput(props) {
             }}
             onBlur={() => {
                 setSettings(id, {
-                    [targetKey]: innerValue,
+                    [targetKey]: rest.isF
+                        ? parseFloat(innerValue)
+                        : parseInt(innerValue),
                 });
             }}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
                     setSettings(id, {
-                        [targetKey]: innerValue,
+                        [targetKey]: rest.isF
+                            ? parseFloat(innerValue)
+                            : parseInt(innerValue),
                     });
                 }
                 if (e.key === "Escape") {
