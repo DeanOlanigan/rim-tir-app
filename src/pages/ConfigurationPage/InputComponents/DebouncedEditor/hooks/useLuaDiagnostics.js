@@ -1,16 +1,10 @@
 import { useCallback } from "react";
-import { parse } from "luaparse";
-import { setLuaCodeError } from "@/utils/validator";
 
 export function useLuaDiagnostics() {
-    const validate = useCallback((id, code, monaco, model) => {
+    const validate = useCallback((ast, error, monaco, model) => {
         if (!monaco || !model) return;
-        const markers = analyzeLuaForMonacoMarkers(code);
+        const markers = analyzeLuaForMonacoMarkers(ast, error);
         monaco.editor.setModelMarkers(model, "lua", markers);
-        setLuaCodeError(
-            id,
-            markers.map((m) => m.message)
-        );
     }, []);
     return validate;
 }
@@ -42,19 +36,15 @@ const ALLOWED_FUNCTIONS = [
     "sqrt",
 ];
 
-export function analyzeLuaForMonacoMarkers(code) {
+export function analyzeLuaForMonacoMarkers(ast, error) {
     const markers = [];
-    let ast;
-    try {
-        ast = parse(code, { locations: true });
-    } catch (e) {
-        // Ошибка синтаксиса — подсвечиваем её на первой строке (или парсим e.hash)
+    if (error) {
         markers.push({
-            startLineNumber: e.line || 1,
-            startColumn: e.column || 1,
-            endLineNumber: e.line || 1,
-            endColumn: e.column || 1 + 1,
-            message: "Синтаксическая ошибка: " + e.message,
+            startLineNumber: error.line || 1,
+            startColumn: error.column || 1,
+            endLineNumber: error.line || 1,
+            endColumn: error.column || 1 + 1,
+            message: "Синтаксическая ошибка: " + error.message,
             severity: 8, // Error
         });
         return markers;
@@ -161,7 +151,6 @@ export function analyzeLuaForMonacoMarkers(code) {
             node.base.type === "Identifier" &&
             node.base.name === "delay"
         ) {
-            // Проверяем что первый аргумент - Literal (число), второй - Function
             if (
                 node.arguments.length !== 2 ||
                 node.arguments[0].type !== "NumericLiteral" ||
@@ -196,6 +185,5 @@ export function analyzeLuaForMonacoMarkers(code) {
 
     walk(ast, null);
 
-    // Возврат для setModelMarkers (если ошибок нет — массив пустой)
     return markers;
 }

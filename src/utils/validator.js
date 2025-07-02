@@ -6,7 +6,8 @@ import {
     VALIDATOR,
 } from "@/config/paramDefinitions";
 import { findCyclic } from "@/pages/ConfigurationPage/InputComponents/DebouncedEditor/findCyclic";
-import { analyzeLuaForMonacoMarkers } from "@/pages/ConfigurationPage/InputComponents/DebouncedEditor/useLuaDiagnostics";
+import { luaAstParse } from "@/pages/ConfigurationPage/InputComponents/DebouncedEditor/luaAstParser";
+import { analyzeLuaForMonacoMarkers } from "@/pages/ConfigurationPage/InputComponents/DebouncedEditor/hooks/useLuaDiagnostics";
 import { useValidationStore } from "@/store/validation-store";
 
 const validatorRegistry = {
@@ -273,9 +274,9 @@ export function validateAll(settings) {
     for (const node of Object.values(settings)) {
         if (node.type === "variable") {
             variables.push(node);
-            const markers = analyzeLuaForMonacoMarkers(
-                node.setting.luaExpression
-            );
+            // TODO Подумать, как можно оптимизировать работу с ast (переиспользование)
+            const { ast, error } = luaAstParse(node.setting.luaExpression);
+            const markers = analyzeLuaForMonacoMarkers(ast, error);
             const codeError = {};
             setDraftMessage(
                 codeError,
@@ -302,7 +303,7 @@ export function validateAll(settings) {
                 node.id,
             ]);
         }
-        if (node.setting)
+        if (node.setting) {
             for (const paramKey of Object.keys(node.setting)) {
                 const paramError = validateParameter(
                     node.id,
@@ -311,6 +312,7 @@ export function validateAll(settings) {
                 );
                 mergeErrors(errors, paramError);
             }
+        }
     }
 
     const nameErrors = {};

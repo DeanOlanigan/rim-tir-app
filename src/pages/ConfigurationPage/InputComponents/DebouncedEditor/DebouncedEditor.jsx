@@ -3,10 +3,11 @@ import { useColorMode } from "@/components/ui/color-mode";
 import { Editor } from "@monaco-editor/react";
 import { useVariablesStore } from "@/store/variables-store";
 import debounce from "debounce";
-import { useLuaDiagnostics } from "./useLuaDiagnostics";
-import { useVariableHighlightLuaParse } from "./useVariableHighlightLuaParse";
+import { useLuaDiagnostics } from "./hooks/useLuaDiagnostics";
+import { useVariableHighlightLuaParse } from "./hooks/useVariableHighlightLuaParse";
 import { useVariablesList } from "@/store/selectors";
-import { validateCyclicVariable } from "@/utils/validator";
+import { setLuaCodeError, validateCyclicVariable } from "@/utils/validator";
+import { luaAstParse } from "./luaAstParser";
 
 export const DebouncedEditor = memo(function DebouncedEditor({
     luaExpression,
@@ -22,23 +23,26 @@ export const DebouncedEditor = memo(function DebouncedEditor({
     const monacoRef = useRef(null);
 
     const diagnostics = useLuaDiagnostics();
-    const highlight = useVariableHighlightLuaParse();
+    const highlight = useVariableHighlightLuaParse(editorRef.current);
 
     useEffect(() => {
         if (luaExpression !== undefined) {
-            const editor = editorRef.current?.editor;
-            const model = editorRef.current?.editor?.getModel();
-            highlight(luaExpression, editor, variables);
-            diagnostics(id, luaExpression, monacoRef.current, model);
+            const editor = editorRef.current;
+            const model = editorRef.current?.getModel();
+            const { ast, error } = luaAstParse(luaExpression);
+            if (ast) highlight(ast, editor, variables);
+            diagnostics(ast, error, monacoRef.current, model);
             validateCyclicVariable(variables);
         }
-    }, [luaExpression, highlight, diagnostics, id, variables]);
+    }, [luaExpression, highlight, diagnostics, variables]);
 
     function handleEditorDidMount(editor, monaco) {
-        editorRef.current = { editor, monaco };
+        editorRef.current = editor;
         monacoRef.current = monaco;
-        highlight(luaExpression, editor, variables);
-        diagnostics(id, luaExpression, monaco, editor.getModel());
+        const code = editor.getValue();
+        const { ast, error } = luaAstParse(code);
+        if (ast) highlight(ast, editor, variables);
+        diagnostics(ast, error, monaco, editor.getModel());
     }
 
     const debounced = useRef(
@@ -53,6 +57,13 @@ export const DebouncedEditor = memo(function DebouncedEditor({
         debounced(id, value);
     };
 
+    const handleValidate = (markers) => {
+        setLuaCodeError(
+            id,
+            markers.map((m) => m.message)
+        );
+    };
+
     return (
         <Editor
             defaultLanguage="lua"
@@ -62,6 +73,7 @@ export const DebouncedEditor = memo(function DebouncedEditor({
             theme={colorMode === "light" ? "vs" : "vs-dark"}
             onChange={onChangeHandler}
             onMount={handleEditorDidMount}
+            onValidate={handleValidate}
             options={{
                 minimap: { enabled: false },
                 lineNumbers: "on",

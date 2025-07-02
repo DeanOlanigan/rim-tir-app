@@ -1,26 +1,30 @@
-import { parse } from "luaparse";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
-export function useVariableHighlightLuaParse() {
+export function useVariableHighlightLuaParse(editor) {
     const decorationIdRef = useRef([]);
 
-    const highlight = useCallback((code, editor, variables) => {
-        if (!editor || !code) return;
+    const highlight = useCallback((ast, editor, variables) => {
+        if (!editor || !ast) return;
         let usages;
-        try {
-            usages = getVariableUsages(
-                code,
-                variables.map((v) => v.name)
-            );
-        } catch {
-            return;
-        }
+        usages = getVariableUsages(
+            ast,
+            variables.map((v) => v.name)
+        );
         const decorations = createVariableDecorations(usages);
         decorationIdRef.current = editor.deltaDecorations(
             decorationIdRef.current,
             decorations
         );
     }, []);
+
+    useEffect(() => {
+        return () => {
+            if (editor && decorationIdRef.current.length > 0) {
+                editor.deltaDecorations(decorationIdRef.current, []);
+                decorationIdRef.current = [];
+            }
+        };
+    }, [editor]);
 
     return highlight;
 }
@@ -39,8 +43,7 @@ function createVariableDecorations(usages) {
     }));
 }
 
-function getVariableUsages(code, variables) {
-    const ast = parse(code, { locations: true, ranges: true });
+function getVariableUsages(ast, variables) {
     const result = [];
 
     function visit(node) {
