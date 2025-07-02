@@ -21,6 +21,7 @@ export const DebouncedEditor = memo(function DebouncedEditor({
 
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
+    const providerRef = useRef(null);
 
     const diagnostics = useLuaDiagnostics();
     const highlight = useVariableHighlightLuaParse(editorRef.current);
@@ -36,9 +37,55 @@ export const DebouncedEditor = memo(function DebouncedEditor({
         }
     }, [luaExpression, highlight, diagnostics, variables]);
 
+    useEffect(() => {
+        return () => {
+            if (providerRef.current) {
+                providerRef.current.dispose();
+                providerRef.current = null;
+            }
+        };
+    }, []);
+
     function handleEditorDidMount(editor, monaco) {
         editorRef.current = editor;
         monacoRef.current = monaco;
+
+        if (providerRef.current) {
+            providerRef.current.dispose();
+            providerRef.current = null;
+        }
+
+        providerRef.current =
+            monacoRef.current.languages.registerCompletionItemProvider("lua", {
+                provideCompletionItems: () => {
+                    return {
+                        suggestions: [
+                            {
+                                label: "Создать блок с задержкой",
+                                kind: monacoRef.current.languages
+                                    .CompletionItemKind.Function,
+                                insertTextRules:
+                                    monacoRef.current.languages
+                                        .CompletionItemInsertTextRule
+                                        .InsertAsSnippet,
+                                insertText: [
+                                    "delay(${1}, function ()",
+                                    "",
+                                    "end)",
+                                    "",
+                                ].join("\n"),
+                            },
+                            ...variables.map((v) => ({
+                                label: v.name,
+                                kind: monacoRef.current.languages
+                                    .CompletionItemKind.Variable,
+                                insertText: v.name,
+                            })),
+                        ],
+                    };
+                },
+            });
+
         const code = editor.getValue();
         const { ast, error } = luaAstParse(code);
         if (ast) highlight(ast, editor, variables);
