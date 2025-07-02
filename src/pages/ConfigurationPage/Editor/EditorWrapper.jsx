@@ -166,7 +166,11 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
                 children.length > 0 &&
                 ["folder", "functionGroup", "asdu", "gpio"].includes(
                     nodeType
-                ) && <Table data={children} />
+                ) && (
+                    <Box w={"100%"} h={"100%"} overflow={"auto"}>
+                        <Table data={children} />
+                    </Box>
+                )
             }
         />
         /* <VStack gap={"4"} px={"1"} h={"100%"} align={"start"}>
