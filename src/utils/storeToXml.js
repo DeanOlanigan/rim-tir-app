@@ -23,21 +23,9 @@ function buildNode(xmlParent, node, settingsMap) {
 
     if (node.setting) {
         const settingsAttrs = {};
-        //let description = "";
-        //let code = "";
         for (const [key, value] of Object.entries(node.setting)) {
-            /* if (key === "description") {
-                description = value ?? "";
-                continue;
-            }
-            if (key === "luaExpression") {
-                code = value ?? "";
-                continue;
-            } */
-            settingsAttrs[toTagName(key)] = value ?? "";
+            settingsAttrs[key] = value ?? "";
         }
-        //if (description) el.ele("Description").txt(description).up();
-        //if (code) el.ele("Code").dat(code).up();
         el.ele("Settings", settingsAttrs).up();
     }
 
