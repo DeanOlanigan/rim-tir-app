@@ -139,7 +139,7 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
 
     return (
         <Wrapper
-            breadcrumbs={<EditorBreadcrumb data={node} />}
+            breadcrumbs={<EditorBreadcrumb id={node.id} />}
             title={
                 <HStack>
                     {TITLE[node.type] || (

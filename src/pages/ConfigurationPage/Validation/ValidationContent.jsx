@@ -10,6 +10,7 @@ import {
 import { LuChevronRight, LuDot } from "react-icons/lu";
 import { useVariablesStore } from "@/store/variables-store";
 import { useConfigTreeApiStore } from "@/store/config-tree-api-store";
+import { EditorBreadcrumb } from "../Editor/Breadcrumb";
 
 export const ValidationContent = ({ errors }) => {
     const settings = useVariablesStore((state) => state.settings);
@@ -48,7 +49,12 @@ export const ValidationContent = ({ errors }) => {
                             variant={"solid"}
                             justifyContent={"space-between"}
                         >
-                            {settings[nodeId]?.name}
+                            {/* TODO: Нарушаем разделение на слои, нужно хлебные крошки выносить на слой выше */}
+                            <EditorBreadcrumb
+                                id={nodeId}
+                                maxLength={2}
+                                color={"fg.inverted"}
+                            />
                             <Icon as={LuChevronRight} />
                         </Badge>
                     </Button>
