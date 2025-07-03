@@ -1,3 +1,9 @@
+//***************************************************************************//
+//                                                                           //
+//                              DEPRECATED                                   //
+//                                                                           //
+//***************************************************************************//
+
 import { memo } from "react";
 import { useVariablesStore } from "@/store/variables-store";
 import { Badge, Flex, Text } from "@chakra-ui/react";
@@ -66,7 +72,7 @@ export const DroppableInput = memo(function DroppableInput(props) {
                         onClick={onOpen}
                         onBlur={(e) => {
                             //submit(e.target.value);
-                            reset();
+                            //reset();
                             if (!e.target.value) {
                                 unbindVariable(id);
                             }

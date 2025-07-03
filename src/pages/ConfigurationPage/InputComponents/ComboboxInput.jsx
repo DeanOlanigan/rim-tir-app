@@ -1,7 +1,4 @@
-import {
-    useVariablesCollection,
-    useVariablesCollectionMemo,
-} from "@/hooks/useVariablesCollection";
+import { useVariablesCollectionMemo } from "@/hooks/useVariablesCollection";
 import { useVariablesStore } from "@/store/variables-store";
 import {
     useListCollection,
@@ -9,52 +6,47 @@ import {
     Portal,
     Combobox,
     Badge,
+    Icon,
+    Flex,
+    Text,
 } from "@chakra-ui/react";
-import { LuBan } from "react-icons/lu";
+import { useEffect, useState } from "react";
+import { LuBan, LuCircleHelp } from "react-icons/lu";
 
-// TODO Доделать
 export const ComboboxInput = ({ id }) => {
-    const variables = useVariablesCollection();
-    console.log(variables);
-    /* const { contains } = useFilter({ sensitivity: "base" });
+    console.log("Render ComboboxInput");
+    const variables = useVariablesCollectionMemo();
+    const val = variables.find((v) => v.usedIn === id)?.value;
+    const [innerValue, setInnerValue] = useState(val ? [val] : []);
+
+    const { contains } = useFilter({ sensitivity: "base" });
     const { collection, filter, set } = useListCollection({
         initialItems: variables,
         filter: contains,
         limit: 10,
-    }); */
+    });
 
-    const variableId = useVariablesStore(
-        (state) => state.settings[id].variableId
-    );
-    const value = variableId ? [variableId] : [];
+    useEffect(() => {
+        set(variables);
+    }, [variables, set]);
 
     const unbindVariable = useVariablesStore.getState().unbindVariable;
     const bindVariable = useVariablesStore.getState().bindVariable;
-
-    /* const handleOpenChange = (e) => {
-        if (e.open) {
-            set(variables);
-        }
-    }; */
-
-    const handleInputChange = (details) => {};
 
     return (
         <Combobox.Root
             lazyMount
             unmountOnExit
-            openOnClick
             size={"xs"}
-            collection={variables}
-            onInputValueChange={handleInputChange}
-            /* defaultValue={value}
-            value={value} */
+            openOnClick
+            collection={collection}
+            defaultValue={innerValue}
+            onInputValueChange={(e) => filter(e.inputValue)}
             onValueChange={(e) => {
+                setInnerValue(e.value);
                 unbindVariable(id);
-                if (!e.value[0]) return;
-                bindVariable(id, e.value[0]);
+                if (e.value[0]) bindVariable(id, e.value[0]);
             }}
-            //onOpenChange={handleOpenChange}
         >
             <Combobox.Control>
                 <Combobox.Input placeholder={"Введите название переменной"} />
@@ -66,8 +58,19 @@ export const ComboboxInput = ({ id }) => {
             <Portal>
                 <Combobox.Positioner>
                     <Combobox.Content>
-                        <Combobox.Empty>Ничего не найдено</Combobox.Empty>
-                        {variables.items.map((item) => (
+                        <Combobox.Empty>
+                            <Flex direction={"column"} align={"center"}>
+                                <Icon
+                                    size={"lg"}
+                                    color={"fg.muted"}
+                                    as={LuCircleHelp}
+                                />
+                                <Text color={"fg.muted"}>
+                                    Ничего не найдено
+                                </Text>
+                            </Flex>
+                        </Combobox.Empty>
+                        {collection.items.map((item) => (
                             <Combobox.Item item={item} key={item.value}>
                                 <Combobox.ItemIndicator />
                                 {item.label}
