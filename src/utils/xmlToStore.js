@@ -1,5 +1,6 @@
 import { useVariablesStore } from "@/store/variables-store";
 import { useConfigInfoStore } from "@/store/config-info-store";
+import { validateAll } from "./validator";
 
 function toCamelCase(str) {
     return str[0].toLowerCase() + str.slice(1);
@@ -136,6 +137,7 @@ export function uploadXmlFile(file) {
         configInfo.name = file.name.slice(0, -4);
         useConfigInfoStore.setState({ configInfo });
         useVariablesStore.setState(state);
+        validateAll(state.settings);
     };
     reader.readAsText(file, "UTF-8");
 }

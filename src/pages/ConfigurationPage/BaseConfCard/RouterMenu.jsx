@@ -12,10 +12,11 @@ import { useVariablesStore } from "@/store/variables-store";
 import { useConfigInfoStore } from "@/store/config-info-store";
 import { parseXmlToState } from "@/utils/xmlToStore";
 import { useValidationStore } from "@/store/validation-store";
+import { validateAll } from "@/utils/validator";
 
 export const RouterMenu = () => {
-    const state = useVariablesStore.getState();
-    const configInfo = useConfigInfoStore.getState().configInfo;
+    const currentState = useVariablesStore.getState();
+    const currentConfigInfo = useConfigInfoStore.getState().configInfo;
     const errors = useValidationStore((state) => state.errors);
     const hasErrors = Object.keys(errors).length > 0;
 
@@ -83,7 +84,7 @@ export const RouterMenu = () => {
         axios
             .put(
                 "/api/v2/uploadConfiguration",
-                convertStateToXml(state, configInfo)
+                convertStateToXml(currentState, currentConfigInfo)
             )
             .then((res) => {
                 console.log(res);
@@ -109,6 +110,7 @@ export const RouterMenu = () => {
                 const { state, configInfo } = parseXmlToState(res.data.data);
                 useConfigInfoStore.setState({ configInfo });
                 useVariablesStore.setState(state);
+                validateAll(state.settings);
                 toaster.create({
                     title: "Конфигурация обновлена",
                     description: "Конфигурация успешно обновлена",

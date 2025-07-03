@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import {
     NumberInputField,
     NumberInputRoot,
@@ -10,6 +10,10 @@ export const NumberInput = memo(function NumberInput(props) {
     const { id, targetKey, value, ...rest } = props;
     const [innerValue, setInnerValue] = useState(value);
     const setSettings = useVariablesStore((state) => state.setSettings);
+
+    useEffect(() => {
+        setInnerValue(value);
+    }, [value]);
 
     return (
         <NumberInputRoot
