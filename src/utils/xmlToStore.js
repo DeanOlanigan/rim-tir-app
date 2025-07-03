@@ -133,7 +133,7 @@ export function uploadXmlFile(file) {
     reader.onload = () => {
         const xml = reader.result;
         const { state, configInfo } = parseXmlToState(xml);
-        state.configInfo.name = file.name.slice(0, -4);
+        configInfo.name = file.name.slice(0, -4);
         useConfigInfoStore.setState({ configInfo });
         useVariablesStore.setState(state);
     };
