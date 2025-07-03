@@ -11,7 +11,7 @@ export const Node = ({ node, style, dragHandle, tree }) => {
         e.preventDefault();
         e.stopPropagation();
         while (tree.isFocused(node.id) === false) {
-            console.log(tree.isFocused(node.id));
+            // TODO : find a better way
             node.focus();
         }
         node.open();

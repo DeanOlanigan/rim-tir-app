@@ -27,17 +27,14 @@ export function useVariablesCollectionMemo() {
 
     return useMemo(
         () =>
-            Object.entries(settings)
-                .map(([, item]) => {
-                    if (item.type === "variable") {
-                        return {
-                            label: item.name,
-                            value: item.id,
-                            disabled: item.usedIn ? true : false,
-                        };
-                    }
-                })
-                .filter(Boolean),
+            Object.values(settings)
+                .filter((item) => item.type === "variable")
+                .map((item) => ({
+                    label: item.name,
+                    value: item.id,
+                    disabled: item.usedIn ? true : false,
+                    usedIn: item.usedIn,
+                })),
         [settings]
     );
 }

@@ -100,7 +100,7 @@ export const DEFAULT_DATA_OBJECT_SETTING = {
     },
     gpio: {
         gpioPort: 1,
-        function: "IN",
+        function: "input",
         description: "",
         variable: "",
     },

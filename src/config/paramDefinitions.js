@@ -16,7 +16,6 @@ import {
     lengthOfASDUList,
     lengthOfAdrList,
     lengthOfCauseList,
-    gpioPortList,
     ifaceList,
 } from "./filterOptions";
 
@@ -610,9 +609,19 @@ export const PARAM_DEFINITIONS = {
         options: gpioFuncType,
     },
     gpioPort: {
-        type: "select",
+        type: "number",
         label: "Порт",
-        options: gpioPortList,
+        rules: [
+            {
+                validator: VALIDATOR.REQUIRED,
+                message: "Это поле обязательно для заполнения",
+            },
+            {
+                validator: VALIDATOR.UNIQUE,
+                params: { within: SCOPE.ROOT },
+                message: "Порт должен быть уникальным",
+            },
+        ],
     },
     functionModbus: {
         type: "select",
