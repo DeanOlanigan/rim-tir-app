@@ -8,6 +8,7 @@ export function copyTreeUtil(treeApi, idSet, isCut) {
     function recursive(node) {
         const copiedData = { ...node.data };
         if (!isCut) {
+            copiedData.name = copiedData.name + "_copy";
             if (copiedData.type === "dataObject") copiedData.name = "";
         }
         if (node.children?.length > 0) {
@@ -262,7 +263,9 @@ export function copySettingsUtil(settings, ids, isCut) {
     const copy = {};
     for (const id of ids) {
         copy[id] = { ...settings[id] };
+        if (copy[id].type === "variable") copy[id].usedIn = "";
         if (!isCut) {
+            copy[id].name = copy[id].name + "_copy";
             if (copy[id].type === "dataObject") copy[id].variableId = "";
         }
     }
