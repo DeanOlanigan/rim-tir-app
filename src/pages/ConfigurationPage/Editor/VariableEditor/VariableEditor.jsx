@@ -26,7 +26,7 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
             direction={"column"}
             w={"100%"}
             h={"100%"}
-            overflow={"auto"}
+            overflow={"visible"}
             px={"1"}
         >
             <HStack align={"start"}>

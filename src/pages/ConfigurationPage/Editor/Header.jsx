@@ -12,6 +12,7 @@ export const Wrapper = ({ title, counter, parameters, breadcrumbs, table }) => {
                 shadow={"md"}
                 p={"4"}
                 gap={"4"}
+                bg={"bg.panel"}
             >
                 <HStack w={"100%"} justify={"space-between"}>
                     {title}

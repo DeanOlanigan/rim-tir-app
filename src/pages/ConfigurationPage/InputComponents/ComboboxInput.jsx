@@ -10,14 +10,15 @@ import {
     Flex,
     Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { LuBan, LuCircleHelp } from "react-icons/lu";
 
 export const ComboboxInput = ({ id }) => {
     console.log("Render ComboboxInput");
     const variables = useVariablesCollectionMemo();
     const val = variables.find((v) => v.usedIn === id)?.value;
-    const [innerValue, setInnerValue] = useState(val ? [val] : []);
+    /* const [innerValue, setInnerValue] = useState(val ? [val] : []);
+    console.log(innerValue); */
 
     const { contains } = useFilter({ sensitivity: "base" });
     const { collection, filter, set } = useListCollection({
@@ -32,7 +33,7 @@ export const ComboboxInput = ({ id }) => {
 
     const unbindVariable = useVariablesStore.getState().unbindVariable;
     const bindVariable = useVariablesStore.getState().bindVariable;
-
+    // TODO значение переменной в самом поле ввода не меняется динамически
     return (
         <Combobox.Root
             lazyMount
@@ -40,10 +41,10 @@ export const ComboboxInput = ({ id }) => {
             size={"xs"}
             openOnClick
             collection={collection}
-            defaultValue={innerValue}
+            defaultValue={val ? [val] : []}
             onInputValueChange={(e) => filter(e.inputValue)}
             onValueChange={(e) => {
-                setInnerValue(e.value);
+                //setInnerValue(e.value);
                 unbindVariable(id);
                 if (e.value[0]) bindVariable(id, e.value[0]);
             }}

@@ -72,6 +72,7 @@ function MonitoringPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // TODO Переделать с использованием tanstack query, запилить инвалидацию
     useEffect(() => {
         setIsLoading(true);
         setError(null);
@@ -174,11 +175,7 @@ function MonitoringPage() {
                         error={error}
                     />
                 </Panel>
-                <PanelResizeHandle className="PanelResizeHandle">
-                    <div className="PanelResizeGrip">
-                        <LuGripVertical />
-                    </div>
-                </PanelResizeHandle>
+                <PanelResizeHandle className="PanelResizeHandle" />
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
                     <TreeCard
                         data={data?.variables}
@@ -187,11 +184,7 @@ function MonitoringPage() {
                         error={error}
                     />
                 </Panel>
-                <PanelResizeHandle className="PanelResizeHandle">
-                    <div className="PanelResizeGrip">
-                        <LuGripVertical />
-                    </div>
-                </PanelResizeHandle>
+                <PanelResizeHandle className="PanelResizeHandle" />
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
                     <TreeCard
                         data={data?.send}

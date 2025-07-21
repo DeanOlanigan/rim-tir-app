@@ -17,6 +17,21 @@ import { CONSTANT_VALUES } from "@/config/constants";
 
 // TODO может быть сравнить с TreeCard в configuration и сделать общую функциональность
 export const TreeCard = ({ data = [], searchTerm, isLoading, error }) => {
+    let content;
+
+    if (isLoading) {
+        content = <Loader />;
+    } else if (error) {
+        content = <Error />;
+    } else if (
+        data[0].type === CONSTANT_VALUES.NODE_TYPES.root &&
+        data[0].children.length === 0
+    ) {
+        content = <EmptyCard />;
+    } else {
+        content = <Content data={data} searchTerm={searchTerm} />;
+    }
+
     return (
         <Card.Root
             size={"sm"}
@@ -31,16 +46,7 @@ export const TreeCard = ({ data = [], searchTerm, isLoading, error }) => {
             bg={"transparent"}
         >
             <Card.Body px={"1"} pb={"1"}>
-                {isLoading ? (
-                    <Loader />
-                ) : error ? (
-                    <Error />
-                ) : data[0].type === CONSTANT_VALUES.NODE_TYPES.root &&
-                  data[0].children.length === 0 ? (
-                    <EmptyCard />
-                ) : (
-                    <Content data={data} searchTerm={searchTerm} />
-                )}
+                {content}
             </Card.Body>
         </Card.Root>
     );
@@ -118,7 +124,7 @@ const Error = () => {
             <VStack w={"100%"}>
                 <Icon
                     fontSize={"164px"}
-                    color={"fg.error"}
+                    color={"fg.error/30"}
                     as={LuTriangleAlert}
                 />
                 <HStack>

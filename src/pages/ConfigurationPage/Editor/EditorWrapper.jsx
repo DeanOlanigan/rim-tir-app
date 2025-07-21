@@ -3,7 +3,7 @@ import { Box, VStack, Heading, Flex, HStack } from "@chakra-ui/react";
 import { VariablesTable } from "./VariableEditor/Table/VariablesTable";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { DataObjectsTable } from "./ConnectionEditor/Table/Table";
-import { ContainerNodeEditor } from "./ConnectionEditor/ContainerNodeEditor";
+//import { ContainerNodeEditor } from "./ConnectionEditor/ContainerNodeEditor";
 import { ConnectionParamContainer } from "./ConnectionEditor/ConnectionParamContainer";
 import { EditorBreadcrumb } from "./Breadcrumb";
 import { EditorInformer } from "./EditorInformer";
@@ -93,7 +93,7 @@ const TABLE_COMPONENTS = {
 
 const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
     const [{ node, children }] = data;
-    let content;
+    /* let content;
     switch (node.type) {
         case "protocol":
         case "interface": {
@@ -130,7 +130,7 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
         default: {
             content = <div>Неизвестный узел</div>;
         }
-    }
+    } */
 
     const nodeType = node.subType || node.type;
     const Parameters =
