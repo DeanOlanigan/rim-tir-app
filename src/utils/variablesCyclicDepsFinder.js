@@ -74,6 +74,52 @@ export function buildDepGraph(variables) {
     return graph;
 }
 
+// TODO Доделать, если будут проблемы с оптимизацией
+function getIdentifiers(ast) {
+    const identifiers = [];
+
+    function walk(node) {
+        if (!node) return;
+
+        if (node.type === "Identifier") {
+            identifiers.push(node.name);
+        }
+
+        for (const key in node) {
+            if (Array.isArray(node[key])) {
+                node[key].forEach((child) => {
+                    if (typeof child === "object" && child !== null) {
+                        walk(child);
+                    }
+                });
+            } else if (
+                typeof node[key] === "object" &&
+                node[key] !== null &&
+                node[key].type
+            ) {
+                walk(node[key]);
+            }
+        }
+    }
+
+    walk(ast);
+    return identifiers;
+}
+
+export function buildDepGraphAst(asts, variables) {
+    const graph = {};
+    for (const { id, ast } of asts) {
+        graph[id] = [];
+        const identifiers = getIdentifiers(ast);
+        for (const variable of variables) {
+            if (identifiers.includes(variable.name)) {
+                graph[id].push(variable.id);
+            }
+        }
+    }
+    return graph;
+}
+
 /**
  * https://ru.wikipedia.org/wiki/%D0%90%D0%BB%D0%B3%D0%BE%D1%80%D0%B8%D1%82%D0%BC_%D0%A2%D0%B0%D1%80%D1%8C%D1%8F%D0%BD%D0%B0
  * @param {Object} graph buildDepGraph result

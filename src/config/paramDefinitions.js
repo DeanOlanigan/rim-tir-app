@@ -35,6 +35,7 @@ export const PARENT_NAMES = {
     asdu: "ASDU",
     dataObject: "Информационный объект",
     variable: "Переменная",
+    tcpBridge: "TCP-мост",
 };
 
 export const SCOPE = {

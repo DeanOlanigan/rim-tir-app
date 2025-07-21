@@ -271,11 +271,13 @@ export function validateAll(settings) {
     const errors = {};
     const map = {};
     const variables = [];
+    const asts = [];
     for (const node of Object.values(settings)) {
         if (node.type === "variable") {
             variables.push(node);
             // TODO Подумать, как можно оптимизировать работу с ast (переиспользование)
             const { ast, error } = luaAstParse(node.setting.luaExpression);
+            if (ast) asts.push({ id: node.id, ast });
             const markers = analyzeLuaForMonacoMarkers(ast, error);
             const codeError = {};
             setDraftMessage(
