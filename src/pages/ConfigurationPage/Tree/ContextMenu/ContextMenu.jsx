@@ -62,7 +62,7 @@ export const ContextMenu = () => {
                             zIndex: 1000,
                         }}
                     >
-                        <Menu.Root open>
+                        <Menu.Root open size={"sm"}>
                             <ContextMenuList
                                 apiPath={apiPath}
                                 type={type}

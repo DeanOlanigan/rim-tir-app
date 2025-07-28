@@ -46,7 +46,7 @@ const deleteNode = {
     },
     action: (treeApi) => deleteNodeUtil(treeApi),
 };
-const createNode = (label, action, icon, times = 1) => ({
+export const createNode = (label, action, icon, times = 1) => ({
     type: `create-${action}-${times}`,
     label,
     icon: () => createElement(icon),
@@ -55,7 +55,7 @@ const createNode = (label, action, icon, times = 1) => ({
     },
 });
 
-const nestedVariables = {
+export const nestedVariables = {
     type: "submenu",
     icon: () => createElement(LuVariable),
     label: "Создать переменную...",
@@ -151,7 +151,7 @@ const cutNodeBtn = {
     },
 };
 
-const pasteNodeBtn = {
+export const pasteNodeBtn = {
     type: "paste-node",
     icon: () => createElement(LuClipboardPaste),
     label: "Вставить",
@@ -176,14 +176,14 @@ export const menuConfigNodeDefault = [
     { type: "separator" },
     cutNodeBtn,
     copyNodeBtn,
-    pasteNodeBtn,
+    /* pasteNodeBtn, */
 ];
 
 export const menuConfigConnections = {
     comport: [
         createNode("Создать Modbus-RTU...", "modbus-rtu", LuUnplug),
         createNode(
-            "Создать TCP-коннектор...",
+            "Создать TCP-мост...",
             "tcpBridge",
             LuChevronsLeftRightEllipsis
         ),
@@ -250,4 +250,14 @@ export const menuConfig = {
     },
     send: menuConfigConnections,
     receive: menuConfigConnections,
+};
+
+export const variablesPathConfig = {
+    "#": [
+        nestedVariables,
+        createNode("Создать папку...", "folder", LuFolder),
+        pasteNodeBtn,
+    ],
+    "#/variable": [...menuConfigNodeDefault],
+    "#/folder": [nestedVariables, ...menuConfigNodeDefault],
 };

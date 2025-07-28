@@ -4,6 +4,7 @@ import {
     DEFAULT_DATA_OBJECT_SETTING,
     CONSTANT_VALUES,
 } from "@/config/constants";
+import { useTestStore } from "@/store/test-store";
 
 export const getStartDate = () => {
     const startDate = new Date();
@@ -135,6 +136,30 @@ export function getParentTypeNormalized({ data, id }) {
             : data[id].type;
     };
     return recursive(data[id]?.parentId);
+}
+
+export function initDefaultDataByPath(path, parentId) {
+    const paths = useTestStore.getState().nodePaths;
+    const id = uuidv4();
+    const node = {
+        id: id,
+        type: paths[path].node,
+        name: paths[path].label,
+        isIgnored: false,
+        isCutted: false,
+    };
+    if (paths[path].children) {
+        node.children = [];
+    }
+    const setting = {
+        ...node,
+        parentId,
+    };
+    setting.setting = {};
+    Object.entries(paths[path].settings).map(
+        ([key, value]) => (setting.setting[key] = value.default)
+    );
+    return { node: node, setting, name: node.name };
 }
 
 export function initDefaultData(type, parentId, treeApi) {

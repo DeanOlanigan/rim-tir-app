@@ -1,22 +1,27 @@
-import { Menu, Portal } from "@chakra-ui/react";
+import { Icon, Menu, Portal } from "@chakra-ui/react";
 import { menuConfig } from "@/config/contextMenu";
 import { LuBan, LuCheckCheck, LuChevronRight } from "react-icons/lu";
 import { useVariablesStore } from "@/store/variables-store";
 import { CONSTANT_VALUES } from "@/config/constants";
 import { getParentType } from "@/utils/utils";
+import { getBaseItems } from "./baseItems";
 
 export const ContextMenuList = ({ apiPath, type, subType, updateContext }) => {
-    const focusedNodeType =
+    /* const focusedNodeType =
         type === CONSTANT_VALUES.NODE_TYPES.root
             ? CONSTANT_VALUES.NODE_TYPES.root
             : subType || type || CONSTANT_VALUES.NODE_TYPES.root;
     const treeType = apiPath.props.treeType;
     const items = menuConfig[treeType]?.[focusedNodeType];
-    if (!items) return null;
+    if (!items) return null; */
+
+    const baseItems = getBaseItems(apiPath);
+
+    if (!baseItems) return null;
 
     return (
         <Menu.Content>
-            {items.map((item, index) => {
+            {baseItems.map((item, index) => {
                 return renderMenuItem(item, index, apiPath, updateContext);
             })}
         </Menu.Content>
@@ -104,23 +109,23 @@ function getMeaningNode(id, settings) {
 }
 
 function renderMenuItem(item, index, apiPath, updateContext) {
-    if (!item) return null;
+    if (!item) return;
 
     if (item.type === "separator") {
         return <Menu.Separator key={`sep_${index}`} />;
     }
 
-    let icon = item.icon;
+    let ContextIcon = item.icon;
     let label = item.label;
     let disabled = false;
 
     if (item.type === "change-ignore") {
         if (apiPath.focusedNode?.data?.isIgnored) {
             label = "Разблокировать";
-            icon = LuCheckCheck;
+            ContextIcon = LuCheckCheck;
         } else {
             label = "Заблокировать";
-            icon = LuBan;
+            ContextIcon = LuBan;
         }
     }
 
@@ -134,9 +139,11 @@ function renderMenuItem(item, index, apiPath, updateContext) {
 
     if (item.children && Array.isArray(item.children)) {
         return (
-            <Menu.Root key={`submenu_${index}`}>
+            <Menu.Root key={`submenu_${index}`} size={"sm"}>
                 <Menu.TriggerItem disabled={disabled}>
-                    {icon?.()} {label} <LuChevronRight />
+                    <Icon as={ContextIcon} />
+                    {label}
+                    <LuChevronRight />
                 </Menu.TriggerItem>
                 <Portal>
                     <Menu.Positioner>
@@ -169,7 +176,8 @@ function renderMenuItem(item, index, apiPath, updateContext) {
                 }
             }}
         >
-            {icon?.()} {label}
+            <Icon as={ContextIcon} />
+            {label}
         </Menu.Item>
     );
 }
