@@ -3,6 +3,7 @@ import globals from "globals";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
+import sonarjs from "eslint-plugin-sonarjs";
 
 export default [
     { ignores: ["dist", "src/components/ui"] },
@@ -42,4 +43,5 @@ export default [
             camelcase: ["error", { properties: "always" }],
         },
     },
+    sonarjs.configs.recommended,
 ];
