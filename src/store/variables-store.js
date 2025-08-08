@@ -142,7 +142,7 @@ export const useVariablesStore = create()(
                     }
                 },
 
-                renameNode: (nodeId, name) =>
+                renameNode: (nodeId, name, shoudValidate = false) =>
                     set((state) => {
                         const newSettings = renameNodeSettingUtil(
                             state.settings,
@@ -160,10 +160,11 @@ export const useVariablesStore = create()(
                             validateCyclicVariable(variables);
                         }
 
-                        validateName({
-                            id: nodeId,
-                            settings: newSettings,
-                        });
+                        shoudValidate &&
+                            validateName({
+                                id: nodeId,
+                                settings: newSettings,
+                            });
 
                         return { settings: newSettings };
                     }),

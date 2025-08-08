@@ -153,7 +153,12 @@ export function validateAll(settings) {
             );
             mergeErrors(errors, codeError);
         }
-        if (node.name && node.rootId && node.type !== "dataObject") {
+        if (
+            node.name &&
+            node.rootId &&
+            node.type !== "dataObject" &&
+            ["protocol", "interface", "variable"].includes(node.type)
+        ) {
             const nameError = {};
             setDraftMessage(
                 nameError,
@@ -250,10 +255,16 @@ export function validateName({ id, settings, scope = SCOPE.ROOT }) {
     const ids = getContextIds(settings, id, "name", scope || SCOPE.ROOT);
     const map = new Map();
     for (const id of ids) {
-        const val = settings[id]?.name;
-        if (val === undefined || val == "") continue;
-        if (!map.has(val)) map.set(val, []);
-        map.get(val).push(id);
+        const node = settings[id] || {};
+        if (
+            node.type !== "dataObject" &&
+            ["protocol", "interface", "variable"].includes(node.type)
+        ) {
+            const val = node?.name;
+            if (val === undefined || val == "") continue;
+            if (!map.has(val)) map.set(val, []);
+            map.get(val).push(id);
+        }
     }
     for (const id of ids) {
         const val = settings[id]?.name;

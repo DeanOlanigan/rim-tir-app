@@ -47,7 +47,9 @@ const inputRenderers = {
         />
     ),
     drop: (props) => <ComboboxInput {...props} />,
-    name: (props) => <NameInput {...props} />,
+    name: (props) => (
+        <NameInput {...props} shoudValidate={props?.shoudValidate} />
+    ),
     default: (props) => <TextInput {...props} />,
 };
 
@@ -73,6 +75,15 @@ export const InputFactory = memo(function InputFactory(props) {
         value,
         ...rest,
     };
+    if (type === "name") {
+        if (
+            ["protocol", "interface", "variable"].includes(
+                configuratorConfig.nodePaths[path]?.type
+            )
+        ) {
+            inputProps.shoudValidate = true;
+        }
+    }
     if (type === "enum") {
         const enumValues =
             configuratorConfig.nodePaths[path]?.settings[inputParam]

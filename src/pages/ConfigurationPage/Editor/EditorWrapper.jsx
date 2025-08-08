@@ -163,9 +163,5 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
                 )
             }
         />
-        /* <VStack gap={"4"} px={"1"} h={"100%"} align={"start"}>
-            <EditorBreadcrumb data={node} />
-            {content}
-        </VStack> */
     );
 });
