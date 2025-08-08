@@ -1,10 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import {
-    DEFAULT_CONFIGURATION_DATA,
-    DEFAULT_DATA_OBJECT_SETTING,
-    CONSTANT_VALUES,
-} from "@/config/constants";
-import { useTestStore } from "@/store/test-store";
+import { configuratorConfig } from "./configurationParser";
 
 export const getStartDate = () => {
     const startDate = new Date();
@@ -139,16 +134,18 @@ export function getParentTypeNormalized({ data, id }) {
 }
 
 export function initDefaultDataByPath(path, parentId) {
-    const paths = useTestStore.getState().nodePaths;
+    const nodePaths = configuratorConfig.nodePaths;
     const id = uuidv4();
     const node = {
         id: id,
-        type: paths[path].node,
-        name: paths[path].label,
+        node: nodePaths[path].node,
+        type: nodePaths[path].type,
+        name: nodePaths[path].label,
+        path: path,
         isIgnored: false,
         isCutted: false,
     };
-    if (paths[path].children) {
+    if (nodePaths[path].children || nodePaths[path].type === "folder") {
         node.children = [];
     }
     const setting = {
@@ -156,31 +153,11 @@ export function initDefaultDataByPath(path, parentId) {
         parentId,
     };
     setting.setting = {};
-    Object.entries(paths[path].settings).map(
-        ([key, value]) => (setting.setting[key] = value.default)
-    );
+    if (nodePaths[path].settings)
+        Object.entries(nodePaths[path].settings).map(
+            ([key, value]) => (setting.setting[key] = value.default)
+        );
     return { node: node, setting, name: node.name };
-}
-
-export function initDefaultData(type, parentId, treeApi) {
-    const id = uuidv4();
-    const node = {
-        id: id,
-        ...DEFAULT_CONFIGURATION_DATA[type].node,
-    };
-    const setting = {
-        id: id,
-        parentId,
-        ...DEFAULT_CONFIGURATION_DATA[type].setting,
-    };
-    if (type === CONSTANT_VALUES.NODE_TYPES.dataObject) {
-        const parentType = getParentType({
-            id: parentId,
-            treeApi: treeApi,
-        });
-        setting.setting = DEFAULT_DATA_OBJECT_SETTING[parentType];
-    }
-    return { node, setting, name: node.name };
 }
 
 // MOSTLY DEPRECATED
@@ -222,7 +199,7 @@ export function initCardsData(data) {
         cardsData.graph = {
             checked: data.graph,
             parameters: [
-                { key: "graphAperture", value: data.graphAperture },
+                { key: "aperture", value: data.aperture },
                 { key: "measurement", value: data.measurement },
             ],
         };

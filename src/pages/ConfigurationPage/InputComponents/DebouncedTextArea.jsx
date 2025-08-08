@@ -4,7 +4,6 @@ import debounce from "debounce";
 import { Textarea } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import { memo } from "react";
-import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 
 export const DebouncedTextarea = memo(function DebouncedTextarea(props) {
     const {
@@ -35,11 +34,7 @@ export const DebouncedTextarea = memo(function DebouncedTextarea(props) {
     );
 
     return (
-        <Field
-            label={
-                showLabel ? label || PARAM_DEFINITIONS[targetKey]?.label : ""
-            }
-        >
+        <Field label={showLabel ? label : ""}>
             <Textarea
                 size={"xs"}
                 minH={"32px"}

@@ -9,7 +9,8 @@
         "build": "vite build",
         "lint": "eslint .",
         "preview": "vite preview",
-        "depcruise:confpage": "depcruise --include-only '^src/pages/ConfigurationPage' --do-not-follow '^src/(components|providers|routes|services|utils|pages/(?!ConfigurationPage))' --output-type dot src/pages/ConfigurationPage | dot -T svg | depcruise-wrap-stream-in-html > depgraph.html"
+        "generate-config": "node scripts/build-config.js",
+        "depgraph": "depcruise --include-only \"^src/(config|hooks|pages|routes|store|utils)\" --do-not-follow \"^src/(components|providers|services)\" --output-type dot src | dot -T svg | depcruise-wrap-stream-in-html > depgraph.html"
     },
     "dependencies": {
         "@chakra-ui/react": "^3.5.1",
@@ -31,9 +32,11 @@
         "esbuild-plugin-react-virtualized": "^1.0.4",
         "fengari-web": "^0.1.4",
         "jotai": "^2.11.1",
+        "json-logic-js": "^2.0.5",
         "luaparse": "^0.3.1",
         "motion": "^12.0.6",
         "next-themes": "^0.4.4",
+        "ogl": "^1.0.11",
         "prop-types": "^15.8.1",
         "react": "^18.3.1",
         "react-arborist": "^3.4.0",

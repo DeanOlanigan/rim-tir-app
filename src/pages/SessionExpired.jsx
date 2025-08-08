@@ -1,5 +1,5 @@
 import { Box, AbsoluteCenter, Card, Button } from "@chakra-ui/react";
-import GradientBackground from "@/components/GradientBackground/GradientBackground";
+import GradientBackground from "@/components/Background/GradientBackground/GradientBackground";
 import { Link } from "react-router-dom";
 
 export const SessionExpired = () => {

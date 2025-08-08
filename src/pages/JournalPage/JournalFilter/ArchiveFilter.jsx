@@ -1,5 +1,5 @@
 import { ru } from "date-fns/locale";
-import { Stack } from "@chakra-ui/react";
+import { createListCollection, Stack } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -12,7 +12,26 @@ import {
 } from "@/components/ui/select";
 import { DatePicker } from "@/components/DatePicker/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { rows, mountType } from "./filterOptions";
+
+const rows = createListCollection({
+    items: [
+        { label: "10", value: "10" },
+        { label: "20", value: "20" },
+        { label: "50", value: "50" },
+        { label: "100", value: "100" },
+        { label: "200", value: "200" },
+        { label: "500", value: "500" },
+        { label: "1000", value: "1000" },
+    ],
+});
+
+const mountType = createListCollection({
+    items: [
+        { label: "SD карта", value: "sd" },
+        { label: "Внутренняя память", value: "r" },
+        { label: "Искать", value: "search" },
+    ],
+});
 
 function ArchiveFilter({ filters, setFilters }) {
     console.log("Render ArchiveFilter");

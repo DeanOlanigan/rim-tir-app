@@ -1,12 +1,25 @@
-import { Badge, HStack, Text } from "@chakra-ui/react";
+import { Badge, HStack, Icon, Text } from "@chakra-ui/react";
+import { LuCheck, LuX } from "react-icons/lu";
 
 export function BaseVisual({
     paramValues = [],
     editor = null,
     name = "",
-    renderValue = (value, index) => (
-        <Badge key={index} variant="outline">
-            {value}
+    renderValue = (key, value) => (
+        <Badge
+            key={key}
+            title={key}
+            variant="surface"
+            size={"xs"}
+            colorPalette={
+                typeof value === "boolean" ? (value ? "green" : "red") : "gray"
+            }
+        >
+            {typeof value === "boolean" ? (
+                <Icon as={value ? LuCheck : LuX} />
+            ) : (
+                value
+            )}
         </Badge>
     ),
     nameRenderer = (name) => (name ? <Text>{name}</Text> : null),
@@ -15,10 +28,13 @@ export function BaseVisual({
     if (!paramValues.length && !name && !isEditing) return null;
 
     return (
-        <HStack w="100%">
-            {paramValues.map((value, index) => renderValue(value, index))}
+        // TODO Разобраться с truncate, сделать чтобы текст обрезался как в vscode
+        <HStack w={"100%"} minW={0} truncate>
+            {Object.entries(paramValues).map(([key, value]) =>
+                renderValue(key, value)
+            )}
             {isEditing && editor}
-            {!isEditing && name && nameRenderer(name)}
+            {!isEditing && <Text truncate>{name}</Text> && nameRenderer(name)}
         </HStack>
     );
 }

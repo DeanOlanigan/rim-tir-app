@@ -1,7 +1,7 @@
-import { Popover, Portal, Button } from "@chakra-ui/react";
+import { Popover, Portal, Button, Icon } from "@chakra-ui/react";
 import { useValidationStore } from "@/store/validation-store";
 import { ValidationContent } from "./ValidationContent";
-import { LuTriangleAlert } from "react-icons/lu";
+import { LuArrowRight, LuTriangleAlert } from "react-icons/lu";
 
 export const ValidationErrorsContainer = () => {
     const errors = useValidationStore((state) => state.errors);
@@ -11,7 +11,7 @@ export const ValidationErrorsContainer = () => {
     }
 
     return (
-        <Popover.Root lazyMount unmountOnExit>
+        <Popover.Root size={"xs"} lazyMount unmountOnExit>
             <Popover.Trigger asChild>
                 <Button
                     colorPalette={"red"}
@@ -20,14 +20,15 @@ export const ValidationErrorsContainer = () => {
                     rounded="md"
                     shadow="md"
                 >
-                    <LuTriangleAlert />
+                    <Icon as={LuTriangleAlert} />
                     Показать ошибки
+                    <Icon as={LuArrowRight} />
                 </Button>
             </Popover.Trigger>
             <Portal>
                 <Popover.Positioner>
                     <Popover.Content
-                        w={"450px"}
+                        w={"100%"}
                         colorPalette={"red"}
                         boxShadow={"xl"}
                         bg={"bg.error/40"}

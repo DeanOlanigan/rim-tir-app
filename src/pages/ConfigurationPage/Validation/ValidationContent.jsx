@@ -7,7 +7,7 @@ import {
     Separator,
     Text,
 } from "@chakra-ui/react";
-import { LuChevronRight, LuDot } from "react-icons/lu";
+import { LuArrowRight, LuChevronRight, LuDot } from "react-icons/lu";
 import { useVariablesStore } from "@/store/variables-store";
 import { useConfigTreeApiStore } from "@/store/config-tree-api-store";
 import { EditorBreadcrumb } from "../Editor/Breadcrumb";
@@ -42,20 +42,20 @@ export const ValidationContent = ({ errors }) => {
                 <Flex key={nodeId} direction={"column"} gap={"2"}>
                     <Button
                         asChild
-                        size={"2xs"}
+                        size={"1.5xs"}
                         onClick={() => selectNodeHandler(nodeId)}
                     >
                         <Badge
                             variant={"solid"}
                             justifyContent={"space-between"}
+                            overflowX={"auto"}
                         >
                             {/* TODO: Нарушаем разделение на слои, нужно хлебные крошки выносить на слой выше */}
                             <EditorBreadcrumb
                                 id={nodeId}
-                                maxLength={2}
                                 color={"fg.inverted"}
                             />
-                            <Icon as={LuChevronRight} />
+                            <Icon as={LuArrowRight} />
                         </Badge>
                     </Button>
                     <Box>

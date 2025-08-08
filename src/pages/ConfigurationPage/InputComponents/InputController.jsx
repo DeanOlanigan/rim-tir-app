@@ -1,9 +1,10 @@
-import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 import { useVariablesStore } from "@/store/variables-store";
-import { validateVisability } from "@/utils/validator";
+import { configuratorConfig } from "@/utils/configurationParser";
+import { validateVisability } from "@/utils/validation/validator";
 
 export const InputController = ({
     settingParam,
+    path,
     nodeId,
     value,
     empty = null,
@@ -12,21 +13,18 @@ export const InputController = ({
     ...props
 }) => {
     const settings = useVariablesStore.getState().settings;
-    const definition = PARAM_DEFINITIONS[settingParam];
-    if (!definition || definition.hidden) return empty;
-    const isVisible = validateVisability(
-        definition.dependencies,
-        nodeId,
-        settings
-    );
+    const def = configuratorConfig.nodePaths[path].settings[settingParam];
+    if (!def) return empty;
+    const isVisible = validateVisability(def.visibleIf, nodeId, settings);
     if (!isVisible) return empty;
     return (
         <Factory
-            type={definition.type}
+            type={def.type}
             id={nodeId}
             inputParam={settingParam}
+            path={path}
             value={value}
-            label={definition.label}
+            label={def.label}
             showLabel={showLabel}
             {...props}
         />

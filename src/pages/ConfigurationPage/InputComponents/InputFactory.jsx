@@ -4,9 +4,9 @@ import {
     NumberInput,
     TextInput,
     SwitchInput,
-    EditableInput,
+    /* EditableInput,
     IpInput,
-    HexInput,
+    HexInput, */
     NameInput,
 } from "./index";
 import {
@@ -16,9 +16,10 @@ import {
 import { memo } from "react";
 import { useShallow } from "zustand/shallow";
 import { Field, Text } from "@chakra-ui/react";
+import { configuratorConfig } from "@/utils/configurationParser";
 
 // Следи за тем, что добавляешь в мапу. Проверяй пропсы.
-const typeMap = {
+/* const typeMap = {
     boolean: SwitchInput,
     select: SelectInput,
     number: NumberInput,
@@ -29,6 +30,25 @@ const typeMap = {
     hex: HexInput,
     text: TextInput,
     name: NameInput,
+    string: TextInput,
+    enum: SelectInput,
+}; */
+
+const inputRenderers = {
+    boolean: (props) => <SwitchInput {...props} />,
+    number: (props) => <NumberInput {...props} />,
+    float: (props) => <NumberInput {...props} isF />,
+    string: (props) => <TextInput {...props} />,
+    enum: (props) => (
+        <SelectInput
+            {...props}
+            options={props?.options}
+            noPortal={props?.noPortal}
+        />
+    ),
+    drop: (props) => <ComboboxInput {...props} />,
+    name: (props) => <NameInput {...props} />,
+    default: (props) => <TextInput {...props} />,
 };
 
 export const InputFactory = memo(function InputFactory(props) {
@@ -36,6 +56,7 @@ export const InputFactory = memo(function InputFactory(props) {
         type,
         id,
         inputParam,
+        path,
         value,
         label,
         showLabel = false,
@@ -44,9 +65,21 @@ export const InputFactory = memo(function InputFactory(props) {
     const errors = useValidationStore(
         useShallow((state) => selectParamsErrors(state, id, inputParam))
     );
-    const Component = typeMap[type] || TextInput;
-    const noPortal = type === "select" && rest?.noPortal;
-    const isF = type === "numberF";
+
+    const renderer = inputRenderers[type] || inputRenderers.default;
+    const inputProps = {
+        id,
+        targetKey: inputParam,
+        value,
+        ...rest,
+    };
+    if (type === "enum") {
+        const enumValues =
+            configuratorConfig.nodePaths[path]?.settings[inputParam]
+                ?.enumValues;
+        inputProps.options = enumValues;
+    }
+
     return (
         <Field.Root maxW={"250px"} invalid={errors && errors.length > 0}>
             {showLabel && (
@@ -54,13 +87,7 @@ export const InputFactory = memo(function InputFactory(props) {
                     <Text truncate>{label}</Text>
                 </Field.Label>
             )}
-            <Component
-                id={id}
-                targetKey={inputParam}
-                value={value}
-                {...(rest?.noPortal && { noPortal })}
-                {...(type === "numberF" && { isF })}
-            />
+            {renderer(inputProps)}
             {errors &&
                 errors.length > 0 &&
                 errors.map((error, index) => (

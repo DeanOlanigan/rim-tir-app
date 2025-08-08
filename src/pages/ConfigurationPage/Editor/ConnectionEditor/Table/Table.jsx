@@ -1,70 +1,38 @@
 import { Table } from "@chakra-ui/react";
-import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
-import { InputController } from "@/pages/ConfigurationPage/InputComponents/InputController";
-import { InputFactory } from "@/pages/ConfigurationPage/InputComponents/InputFactory";
+import { TableRow } from "./TableRow";
+import { configuratorConfig } from "@/utils/configurationParser";
 
 export const DataObjectsTable = ({ data }) => {
-    let keys;
-    for (const rows of data) {
-        if (rows.type === "folder") continue;
-        keys = Object.keys(rows.setting);
-        break;
-    }
-
-    if (!keys) return null;
+    const node = data?.find((node) => node.type !== "folder");
+    if (!node) return null;
+    const settings = configuratorConfig.nodePaths[node.path]?.settings;
+    if (!settings) return null;
+    const labels = Object.values(settings).map((setting) => setting.label);
 
     return (
         <Table.Root size={"sm"} stickyHeader>
             <Table.Header>
                 <Table.Row>
-                    {keys.map((key, index) => {
+                    {labels.map((label, index) => {
                         return (
                             <Table.ColumnHeader
-                                key={key + "_" + index}
+                                key={index}
                                 minW={"150px"}
                                 maxW={"150px"}
                                 p={"0.5"}
                             >
-                                {PARAM_DEFINITIONS[key].label}
+                                {label}
                             </Table.ColumnHeader>
                         );
                     })}
                 </Table.Row>
             </Table.Header>
             <Table.Body>
-                {data.map((element) => {
-                    if (element.type === "folder") return null;
-                    return <TableRow key={element.id} element={element} />;
+                {data.map((node) => {
+                    if (node.type === "folder") return null;
+                    return <TableRow key={node.id} element={node} />;
                 })}
             </Table.Body>
         </Table.Root>
-    );
-};
-
-const TableRow = ({ element }) => {
-    return (
-        <Table.Row
-            background={"transparent"}
-            className="group"
-            _hover={{ bg: "bg.muted" }}
-        >
-            {Object.keys(element.setting).map((key) => {
-                return (
-                    <Table.Cell
-                        key={element.id + "_" + key}
-                        minW={"150px"}
-                        maxW={"150px"}
-                        p={"0.5"}
-                    >
-                        <InputController
-                            settingParam={key}
-                            nodeId={element.id}
-                            value={element.setting[key]}
-                            Factory={InputFactory}
-                        />
-                    </Table.Cell>
-                );
-            })}
-        </Table.Row>
     );
 };

@@ -11,7 +11,6 @@ import {
     Checkbox,
 } from "@chakra-ui/react";
 import { InputFactory } from "../../InputComponents/InputFactory";
-import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 import { useVariablesStore } from "@/store/variables-store";
 import { CompositeSection } from "./CompositeSection";
 import { DebouncedEditor } from "../../InputComponents";
@@ -31,9 +30,10 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
         >
             <HStack align={"start"}>
                 <InputFactory
-                    type={"select"}
+                    type={"enum"}
                     id={data.id}
                     inputParam={"type"}
+                    path={data.path}
                     value={data.setting.type}
                     label={"Тип переменной"}
                     showLabel
@@ -42,6 +42,7 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
                     type={"textarea"}
                     id={data.id}
                     inputParam={"description"}
+                    path={data.path}
                     value={data.setting.description}
                     label={"Описание переменной"}
                     showLabel
@@ -69,7 +70,7 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
                 />
                 <CompositeSection
                     checkedParam={"graph"}
-                    childrenParams={["measurement", "graphAperture"]}
+                    childrenParams={["measurement", "aperture"]}
                     data={data}
                     label={"График"}
                 />
@@ -115,7 +116,7 @@ const ParameterCards = ({ id, data }) => {
 
 const ParameterCard = ({ id, param, checked, parameters }) => {
     const setSettings = useVariablesStore((state) => state.setSettings);
-    const ParamIcon = PARAM_DEFINITIONS[param]?.icon || null;
+    //const ParamIcon = **paramdef**[param]?.icon || null;
     return (
         <Card.Root
             size={"sm"}
@@ -146,10 +147,8 @@ const ParameterCard = ({ id, param, checked, parameters }) => {
                     direction={"column"}
                 >
                     <Box h={"100%"} textAlign={"center"}>
-                        {ParamIcon && <Icon fontSize={"3xl"} as={ParamIcon} />}
-                        <Text fontWeight={"medium"}>
-                            {PARAM_DEFINITIONS[param].label}
-                        </Text>
+                        {/* {ParamIcon && <Icon fontSize={"3xl"} as={ParamIcon} />} */}
+                        <Text fontWeight={"medium"}>Тут был paramdef</Text>
                     </Box>
 
                     {checked &&

@@ -1,14 +1,24 @@
+// TODO Подумать над улучшением функционала контекстного меню
+// TODO Подумать над необходимостью изменить описание параметров не мапой, а массивом объектов (чтобы был reorder)
 export const testConfig = [
+    {
+        node: "folder",
+        type: "folder",
+        icon: { name: "folder" },
+        label: "Папка",
+    },
     {
         node: "comport",
         type: "interface",
         label: "Comport",
-        icon: { color: "#ff0000", name: "cable" },
+        shortName: "com",
+        icon: { color: "blue", name: "cable" },
         settings: {
             iface: {
                 type: "enum",
                 label: "Интерфейс",
                 default: "ttyS0",
+                showInTree: true,
                 enumValues: [
                     { value: "ttyS0", label: "ttyS0" },
                     { value: "ttyS1", label: "ttyS1" },
@@ -47,23 +57,25 @@ export const testConfig = [
             },
         },
         usedIn: "both",
-        nodeSettingsView: ["iface"],
         children: [
             {
                 node: "modbusRTU",
                 type: "protocol",
                 label: "Modbus-RTU",
-                icon: { color: "#ff0000", name: "unplug" },
+                shortName: "Mb-RTU",
+                icon: { color: "purple", name: "unplug" },
                 settings: {
                     logging: {
                         type: "boolean",
                         label: "Логирование",
                         default: false,
+                        showInTree: false,
                     },
                     role: {
                         type: "enum",
                         label: "Роль",
                         default: "master",
+                        showInTree: false,
                         enumValues: [
                             { value: "master", label: "Master" },
                             { value: "slave", label: "Slave" },
@@ -73,6 +85,7 @@ export const testConfig = [
                         type: "number",
                         label: "Адрес устройства",
                         default: 1,
+                        showInTree: false,
                         rules: [
                             {
                                 validator: "required",
@@ -105,6 +118,7 @@ export const testConfig = [
                         type: "enum",
                         label: "Порядок 4-х байт",
                         default: "1-0 3-2",
+                        showInTree: true,
                         enumValues: [
                             { value: "1-0 3-2", label: "1-0 3-2" },
                             { value: "3-2 1-0", label: "3-2 1-0" },
@@ -124,6 +138,7 @@ export const testConfig = [
                         node: "functionGroup",
                         type: "protocolSpecific",
                         label: "Функциональная группа",
+                        icon: { color: "green", name: "unplug" },
                         settings: {
                             function: {
                                 type: "enum",
@@ -206,7 +221,6 @@ export const testConfig = [
                                     presets: [1, 2, 3, 5, 10],
                                 },
                                 icon: {
-                                    color: "#ff0000",
                                     name: "variable",
                                 },
                                 settings: {
@@ -235,9 +249,18 @@ export const testConfig = [
                             {
                                 node: "folder",
                                 type: "folder",
-                                allowedTypes: [
-                                    "#/comport/modbusRTU/functionGroup/dataObject",
-                                ],
+                                label: "Папка",
+                            },
+                        ],
+                        validationRules: [
+                            {
+                                validator: "uniqueComposite",
+                                params: {
+                                    fields: ["function", "dataType"],
+                                    within: "siblings",
+                                },
+                                message:
+                                    "Функция и тип данных должны быть уникальными внутри родительского элемента",
                             },
                         ],
                     },
@@ -247,7 +270,7 @@ export const testConfig = [
                 node: "tcpBridge",
                 type: "interfaceSpecific",
                 label: "TCP-мост",
-                icon: { color: "#ff0000", name: "lrEllipsis" },
+                icon: { name: "lrEllipsis" },
                 settings: {
                     logging: {
                         type: "boolean",
@@ -333,7 +356,7 @@ export const testConfig = [
         node: "modbusTCP",
         type: "protocol",
         label: "Modbus-TCP",
-        icon: { color: "#ff0000", name: "unplug" },
+        icon: { name: "unplug" },
         settings: {
             logging: {
                 type: "boolean",
@@ -514,7 +537,7 @@ export const testConfig = [
                             enabled: true,
                             presets: [1, 2, 3, 5, 10],
                         },
-                        icon: { color: "#ff0000", name: "variable" },
+                        icon: { name: "variable" },
                         settings: {
                             address: {
                                 type: "string",
@@ -539,7 +562,7 @@ export const testConfig = [
                     {
                         node: "folder",
                         type: "folder",
-                        allowedTypes: ["#/modbusTCP/functionGroup/dataObject"],
+                        label: "Папка",
                     },
                 ],
                 validationRules: [
@@ -560,7 +583,7 @@ export const testConfig = [
         node: "gpio",
         type: "interface",
         label: "GPIO",
-        icon: { color: "#ff0000", name: "cable" },
+        icon: { name: "cable" },
         settings: {
             logging: {
                 type: "boolean",
@@ -590,12 +613,11 @@ export const testConfig = [
                 node: "dataObject",
                 type: "dataObject",
                 label: "Объект данных",
-                // TODO Подумать над улучшением функционала контекстного меню
                 bulkCreation: {
                     enabled: true,
                     presets: [1, 2, 3, 5, 10],
                 },
-                icon: { color: "#ff0000", name: "fileDigit" },
+                icon: { name: "fileDigit" },
                 settings: {
                     port: {
                         type: "enum",
@@ -625,14 +647,23 @@ export const testConfig = [
             {
                 node: "folder",
                 type: "folder",
-                allowedTypes: ["#/gpio/dataObject"],
+                label: "Папка",
+                icon: { name: "folder" },
+                settings: {
+                    test: {
+                        type: "boolean",
+                        label: "Тест",
+                        default: false,
+                    },
+                },
             },
         ],
     },
     {
         node: "iec104",
-        type: "interface",
+        type: "protocol",
         label: "IEC 104",
+        shortName: "iec104",
         settings: {
             logging: {
                 type: "boolean",
@@ -829,8 +860,12 @@ export const testConfig = [
                                 workIf: {
                                     "==": [
                                         {
-                                            key: "lengthOfASDU",
-                                            scope: "parent",
+                                            find: [
+                                                {
+                                                    what: "lengthOfASDU",
+                                                    where: "parent",
+                                                },
+                                            ],
                                         },
                                         2,
                                     ],
@@ -857,7 +892,17 @@ export const testConfig = [
                         label: "Спорадический",
                         default: false,
                         visibleIf: {
-                            "==": [{ key: "side", scope: "parent" }, "server"],
+                            "==": [
+                                {
+                                    find: [
+                                        {
+                                            what: "side",
+                                            where: "parent",
+                                        },
+                                    ],
+                                },
+                                "server",
+                            ],
                         },
                     },
                     pollMode: {
@@ -874,7 +919,17 @@ export const testConfig = [
                             { label: "Без опроса", value: "noPoll" },
                         ],
                         visibleIf: {
-                            "==": [{ key: "side", scope: "parent" }, "client"],
+                            "==": [
+                                {
+                                    find: [
+                                        {
+                                            what: "side",
+                                            where: "parent",
+                                        },
+                                    ],
+                                },
+                                "server",
+                            ],
                         },
                     },
                     pollPeriod: {
@@ -885,13 +940,27 @@ export const testConfig = [
                             and: [
                                 {
                                     "==": [
-                                        { key: "side", scope: "parent" },
-                                        "client",
+                                        {
+                                            find: [
+                                                {
+                                                    what: "side",
+                                                    where: "parent",
+                                                },
+                                            ],
+                                        },
+                                        "server",
                                     ],
                                 },
                                 {
                                     "==": [
-                                        { key: "pollMode", scope: "self" },
+                                        {
+                                            find: [
+                                                {
+                                                    what: "pollMode",
+                                                    where: "self",
+                                                },
+                                            ],
+                                        },
                                         "manual",
                                     ],
                                 },
@@ -916,7 +985,7 @@ export const testConfig = [
                             enabled: true,
                             presets: [1, 2, 3, 5, 10],
                         },
-                        icon: { color: "#ff0000", name: "variable" },
+                        icon: { name: "variable" },
                         settings: {
                             address: {
                                 type: "number",
@@ -934,8 +1003,10 @@ export const testConfig = [
                                         workIf: {
                                             "==": [
                                                 {
-                                                    key: "lengthOfAdr",
-                                                    scope: "parent",
+                                                    find: {
+                                                        what: "lengthOfAdr",
+                                                        where: "parent",
+                                                    },
                                                 },
                                                 1,
                                             ],
@@ -949,8 +1020,10 @@ export const testConfig = [
                                         workIf: {
                                             "==": [
                                                 {
-                                                    key: "lengthOfAdr",
-                                                    scope: "parent",
+                                                    find: {
+                                                        what: "lengthOfAdr",
+                                                        where: "parent",
+                                                    },
                                                 },
                                                 3,
                                             ],
@@ -1012,12 +1085,16 @@ export const testConfig = [
                                 label: "Апертура",
                                 default: 0,
                                 visibleIf: {
-                                    or: [
+                                    and: [
                                         {
                                             "==": [
                                                 {
-                                                    key: "sporadical",
-                                                    scope: "parent",
+                                                    find: [
+                                                        {
+                                                            what: "sporadical",
+                                                            where: "parent",
+                                                        },
+                                                    ],
                                                 },
                                                 true,
                                             ],
@@ -1027,8 +1104,12 @@ export const testConfig = [
                                                 {
                                                     "==": [
                                                         {
-                                                            key: "sigType",
-                                                            scope: "self",
+                                                            find: [
+                                                                {
+                                                                    what: "sigType",
+                                                                    where: "self",
+                                                                },
+                                                            ],
                                                         },
                                                         "ti_scaled",
                                                     ],
@@ -1036,8 +1117,12 @@ export const testConfig = [
                                                 {
                                                     "==": [
                                                         {
-                                                            key: "sigType",
-                                                            scope: "self",
+                                                            find: [
+                                                                {
+                                                                    what: "sigType",
+                                                                    where: "self",
+                                                                },
+                                                            ],
                                                         },
                                                         "ti_normalized",
                                                     ],
@@ -1045,8 +1130,12 @@ export const testConfig = [
                                                 {
                                                     "==": [
                                                         {
-                                                            key: "sigType",
-                                                            scope: "self",
+                                                            find: [
+                                                                {
+                                                                    what: "sigType",
+                                                                    where: "self",
+                                                                },
+                                                            ],
                                                         },
                                                         "ti_float",
                                                     ],
@@ -1072,8 +1161,12 @@ export const testConfig = [
                                         {
                                             "==": [
                                                 {
-                                                    key: "sigType",
-                                                    scope: "parent",
+                                                    find: [
+                                                        {
+                                                            what: "sigType",
+                                                            where: "self",
+                                                        },
+                                                    ],
                                                 },
                                                 "tu_one_position",
                                             ],
@@ -1081,8 +1174,12 @@ export const testConfig = [
                                         {
                                             "==": [
                                                 {
-                                                    key: "sigType",
-                                                    scope: "parent",
+                                                    find: [
+                                                        {
+                                                            what: "sigType",
+                                                            where: "self",
+                                                        },
+                                                    ],
                                                 },
                                                 "tu_two_position",
                                             ],
@@ -1095,7 +1192,7 @@ export const testConfig = [
                     {
                         node: "folder",
                         type: "folder",
-                        allowedTypes: ["#/iec104/asdu/dataObject"],
+                        label: "Папка",
                     },
                 ],
             },
@@ -1105,7 +1202,7 @@ export const testConfig = [
         node: "gooseSub",
         type: "protocol",
         label: "GOOSE-подписчик",
-        icon: { color: "#ff0000", name: "goose" },
+        icon: { name: "goose" },
         usedIn: "receive",
         settings: {
             iface: {
@@ -1148,10 +1245,9 @@ export const testConfig = [
                 children: [
                     {
                         node: "array",
-                        label: "Элементы набора данных",
                         type: "folder",
                         usedIn: "receive",
-                        allowedTypes: ["#/gooseSub/dataSet/dataObject"],
+                        label: "Массив набора данных",
                     },
                     {
                         node: "dataObject",
@@ -1199,8 +1295,12 @@ export const testConfig = [
                                 visibleIf: {
                                     "==": [
                                         {
-                                            key: "type",
-                                            scope: "self",
+                                            find: [
+                                                {
+                                                    what: "type",
+                                                    where: "self",
+                                                },
+                                            ],
                                         },
                                         "ti",
                                     ],
@@ -1213,8 +1313,12 @@ export const testConfig = [
                                 visibleIf: {
                                     "==": [
                                         {
-                                            key: "type",
-                                            scope: "self",
+                                            find: [
+                                                {
+                                                    what: "type",
+                                                    where: "self",
+                                                },
+                                            ],
                                         },
                                         "ts",
                                     ],
@@ -1231,15 +1335,19 @@ export const testConfig = [
                                 visibleIf: {
                                     "==": [
                                         {
-                                            key: "type",
-                                            scope: "self",
+                                            find: [
+                                                {
+                                                    what: "type",
+                                                    where: "self",
+                                                },
+                                            ],
                                         },
                                         "ts",
                                     ],
                                 },
                             },
                         },
-                        icon: { color: "#ff0000", name: "variable" },
+                        icon: { name: "variable" },
                     },
                 ],
             },
@@ -1247,7 +1355,7 @@ export const testConfig = [
                 node: "folder",
                 type: "folder",
                 usedIn: "receive",
-                allowedTypes: ["#/gooseSub/dataSet"],
+                label: "Папка",
             },
         ],
     },
@@ -1255,7 +1363,7 @@ export const testConfig = [
         node: "goosePub",
         type: "protocol",
         label: "GOOSE-публикатор",
-        icon: { color: "#ff0000", name: "goose" },
+        icon: { color: "purple", name: "goose" },
         usedIn: "send",
         settings: {
             iface: {
@@ -1267,6 +1375,7 @@ export const testConfig = [
                 type: "number",
                 label: "appid",
                 default: 0,
+                showInTree: true,
             },
             vlanid: {
                 type: "number",
@@ -1309,7 +1418,6 @@ export const testConfig = [
                 default: 100,
             },
         },
-        nodeSettingsView: ["iface"],
         children: [
             {
                 node: "dataSet",
@@ -1358,14 +1466,14 @@ export const testConfig = [
                                 ],
                             },
                         },
-                        icon: { color: "#ff0000", name: "variable" },
+                        icon: { name: "variable" },
                     },
                 ],
             },
             {
                 node: "folder",
                 type: "folder",
-                allowedTypes: ["#/goosePub/dataSet"],
+                label: "Папка",
             },
         ],
     },

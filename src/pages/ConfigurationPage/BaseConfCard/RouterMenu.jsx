@@ -12,7 +12,7 @@ import { useVariablesStore } from "@/store/variables-store";
 import { useConfigInfoStore } from "@/store/config-info-store";
 import { parseXmlToState } from "@/utils/xmlToStore";
 import { useValidationStore } from "@/store/validation-store";
-import { validateAll } from "@/utils/validator";
+import { validateAll } from "@/utils/validation/validator";
 
 export const RouterMenu = () => {
     const currentState = useVariablesStore.getState();

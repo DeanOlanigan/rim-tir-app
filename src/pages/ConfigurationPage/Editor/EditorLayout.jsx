@@ -1,6 +1,13 @@
-import { HStack, VStack } from "@chakra-ui/react";
+import { Float, HStack, VStack } from "@chakra-ui/react";
 
-export const Wrapper = ({ title, counter, parameters, breadcrumbs, table }) => {
+export const EditorLayout = ({
+    title,
+    counter,
+    parameters,
+    breadcrumbs,
+    table,
+    errors,
+}) => {
     return (
         <VStack gap={"4"} px={"1"} align={"start"} w={"100%"} h={"100%"}>
             {breadcrumbs}
@@ -13,10 +20,12 @@ export const Wrapper = ({ title, counter, parameters, breadcrumbs, table }) => {
                 p={"4"}
                 gap={"4"}
                 bg={"bg.panel"}
+                position={"relative"}
             >
+                <Float placement={"top-center"}>{errors}</Float>
                 <HStack w={"100%"} justify={"space-between"}>
                     {title}
-                    {counter}
+                    <HStack justify={"end"}>{counter}</HStack>
                 </HStack>
                 {parameters}
             </VStack>

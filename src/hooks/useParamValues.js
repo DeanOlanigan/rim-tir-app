@@ -1,23 +1,15 @@
 import { useVariablesStore } from "@/store/variables-store";
 import { useShallow } from "zustand/shallow";
 
-const VIEW_PARAMS = [
-    "deviceAddress",
-    "side",
-    "asduAddress",
-    "iface",
-    "functionModbus",
-    "type",
-    "address",
-    "gpioPort",
-    "modbusDoAddress",
-];
-export function useParamValues(id) {
+export function useParamValues(id, filter) {
     return useVariablesStore(
-        useShallow((state) =>
-            VIEW_PARAMS.filter((key) => state.settings[id]?.setting?.[key]).map(
-                (key) => state.settings[id]?.setting?.[key]
-            )
-        )
+        useShallow((state) => {
+            const settings = state.settings[id]?.setting ?? {};
+            return filter.reduce((acc, key) => {
+                if (settings[key.param] !== undefined)
+                    acc[key.label] = settings[key.param];
+                return acc;
+            }, {});
+        })
     );
 }

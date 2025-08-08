@@ -37,7 +37,6 @@ export const NodeContent = memo(function NodeContent({ id, type, name }) {
 // TODO Вынести в отдельный файл
 import { Popover, Stack, Box, StackSeparator, Portal } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
-import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 
 const ConnectionHeadderAdditionalInfo = ({ id }) => {
     const setting = useVariablesStore((state) => state.settings[id]?.setting);
@@ -60,10 +59,7 @@ const ConnectionHeadderAdditionalInfo = ({ id }) => {
                             <Stack gap={"1"} separator={<StackSeparator />}>
                                 {Object.keys(setting).map((key) => {
                                     return (
-                                        <Field
-                                            key={key}
-                                            label={PARAM_DEFINITIONS[key].label}
-                                        >
+                                        <Field key={key}>
                                             <Box
                                                 maxH={"100px"}
                                                 overflow={"auto"}

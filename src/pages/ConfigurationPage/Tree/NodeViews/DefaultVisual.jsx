@@ -1,14 +1,13 @@
-import { useParamValues } from "@/hooks/useParamValues";
 import { useVariablesStore } from "@/store/variables-store";
 import { NodeEditInput } from "../NodeEditInput";
 import { BaseVisual } from "./BaseVisual";
+import { useGetParameters } from "./getParameters";
 
 export const DefaultVisual = ({ node }) => {
     const name = useVariablesStore((state) => {
         return state.settings[node.id]?.name || "";
     });
-
-    const paramValues = useParamValues(node.id);
+    const paramValues = useGetParameters(node);
 
     return (
         <BaseVisual

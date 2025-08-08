@@ -6,7 +6,8 @@ import debounce from "debounce";
 import { useLuaDiagnostics } from "./hooks/useLuaDiagnostics";
 import { useVariableHighlightLuaParse } from "./hooks/useVariableHighlightLuaParse";
 import { useVariablesList } from "@/store/selectors";
-import { setLuaCodeError, validateCyclicVariable } from "@/utils/validator";
+import { setLuaCodeError } from "@/utils/validation/luaValidationService";
+import { validateCyclicVariable } from "@/utils/validation/luaValidationService";
 import { luaAstParse } from "./luaAstParser";
 
 export const DebouncedEditor = memo(function DebouncedEditor({
@@ -75,12 +76,12 @@ export const DebouncedEditor = memo(function DebouncedEditor({
                                     "",
                                 ].join("\n"),
                             },
-                            ...variables.map((v) => ({
+                            /* ...variables.map((v) => ({
                                 label: v.name,
                                 kind: monacoRef.current.languages
                                     .CompletionItemKind.Variable,
                                 insertText: v.name,
-                            })),
+                            })), */
                         ],
                     };
                 },

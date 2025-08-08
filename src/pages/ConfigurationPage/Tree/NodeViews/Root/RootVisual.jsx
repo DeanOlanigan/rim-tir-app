@@ -3,8 +3,8 @@ import { RootButtons } from "./Buttons/RootButtons";
 
 export const RootVisual = ({ node }) => {
     return (
-        <HStack justify={"space-between"} w={"100%"}>
-            <Text>{node.data.name || "Root Node"}</Text>
+        <HStack justify={"space-between"} w={"100%"} minW={0}>
+            <Text truncate>{node.data.name || "Root Node"}</Text>
             <RootButtons treeApi={node.tree} />
         </HStack>
     );

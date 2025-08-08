@@ -1,10 +1,6 @@
 import { useVariablesStore } from "@/store/variables-store";
 import { useCallback } from "react";
-import {
-    getParentType,
-    initDefaultData,
-    initDefaultDataByPath,
-} from "@/utils/utils";
+import { getParentType, initDefaultDataByPath } from "@/utils/utils";
 import { useContextMenuStore } from "@/store/contextMenu-store";
 import { CONSTANT_VALUES } from "@/config/constants";
 
@@ -36,19 +32,9 @@ export function useTreeViewHandlers(treeType, ref) {
         ({ parentId, index, type }) => {
             if (type === "leaf" || type === "internal") return;
             console.log("create", parentId, index, type, treeType);
-            /* const { node, setting, name } = initDefaultDataByPath(
-                type.path,
-                parentId || treeType
-            );
-            console.log(node, setting, name); */
             const nodes = [];
             const settings = [];
             for (let i = 0; i < type.times; i++) {
-                /* const { node, setting } = initDefaultData(
-                    type.nodeType,
-                    parentId || treeType,
-                    ref?.current
-                ); */
                 const { node, setting } = initDefaultDataByPath(
                     type.path,
                     parentId || treeType

@@ -11,12 +11,13 @@ export const RootButtons = ({ treeApi }) => {
         <HStack
             gap={"1"}
             opacity={"0"}
-            transition={"opacity 0.2s ease-in-out"}
+            display={{ base: "none", _groupHover: "flex" }}
+            /* transition={"opacity 0.2s ease-in-out"} */
             _groupHover={{ opacity: 1 }}
         >
             {(type === CONSTANT_VALUES.TREE_TYPES.send ||
                 type === CONSTANT_VALUES.TREE_TYPES.receive) && (
-                <ConnectionsButtons treeApi={treeApi} />
+                <ConnectionsButtons treeApi={treeApi} type={type} />
             )}
             {type === CONSTANT_VALUES.TREE_TYPES.variables && (
                 <VariablesButtons treeApi={treeApi} />

@@ -3,14 +3,15 @@ import { Box, VStack, Heading, Flex, HStack } from "@chakra-ui/react";
 import { VariablesTable } from "./VariableEditor/Table/VariablesTable";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { DataObjectsTable } from "./ConnectionEditor/Table/Table";
-//import { ContainerNodeEditor } from "./ConnectionEditor/ContainerNodeEditor";
 import { ConnectionParamContainer } from "./ConnectionEditor/ConnectionParamContainer";
 import { EditorBreadcrumb } from "./Breadcrumb";
 import { EditorInformer } from "./EditorInformer";
 import { useSelectedData } from "@/hooks/useSelectedData";
-import { Wrapper } from "./Header";
-import { PARENT_NAMES } from "@/config/paramDefinitions";
+import { EditorLayout } from "./EditorLayout";
 import { InputFactory } from "../InputComponents/InputFactory";
+import { configuratorConfig } from "@/utils/configurationParser";
+import { NodeError } from "./NodeError";
+//import { ContainerNodeEditor } from "./ConnectionEditor/ContainerNodeEditor";
 
 // TODO Лишний ререндер, мб вынести логику с выбором данных в другое место?
 export const EditorWrapper = memo(function EditorWrapper({ type }) {
@@ -69,26 +70,9 @@ export const EditorWrapper = memo(function EditorWrapper({ type }) {
     return <EditorInformer status={"error"} type={type} />;
 });
 
-const PARAMETER_COMPONENTS = {
-    root: ConnectionParamContainer,
-    protocol: ConnectionParamContainer,
-    interface: ConnectionParamContainer,
-    functionGroup: ConnectionParamContainer,
-    asdu: ConnectionParamContainer,
-    folder: ConnectionParamContainer,
-    dataObject: ConnectionParamContainer,
-    variable: VariableEditor,
-    tcpBridge: ConnectionParamContainer,
-};
-
 const TITLE = {
     root: <Heading>Корневой узел</Heading>,
-    dataObject: <Heading>Информационный объект</Heading>,
-};
-
-const TABLE_COMPONENTS = {
-    connections: DataObjectsTable,
-    variables: VariablesTable,
+    dataObject: <Heading>Объект данных</Heading>,
 };
 
 const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
@@ -132,13 +116,17 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
         }
     } */
 
-    const nodeType = node.subType || node.type;
     const Parameters =
-        PARAMETER_COMPONENTS[node.type] || (() => "Неизвестный узел");
-    const Table = TABLE_COMPONENTS[type];
+        configuratorConfig.nodePaths[node.path] &&
+        (node.path === "#/variable"
+            ? VariableEditor
+            : ConnectionParamContainer);
+
+    const isVariable = children.every((node) => node.type === "variable");
+    const Table = isVariable ? VariablesTable : DataObjectsTable;
 
     return (
-        <Wrapper
+        <EditorLayout
             breadcrumbs={<EditorBreadcrumb id={node.id} />}
             title={
                 <HStack>
@@ -147,13 +135,15 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
                             type={"name"}
                             id={node.id}
                             inputParam={"name"}
+                            path={node.path}
                             value={node.name}
-                            label={PARENT_NAMES[node.type]}
+                            label={"Название"}
                             showLabel
                         />
                     )}
                 </HStack>
             }
+            errors={<NodeError id={node.id} />}
             counter={
                 children.length > 0 && (
                     <Heading textWrap={"nowrap"}>
@@ -164,8 +154,8 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
             parameters={<Parameters data={node} />}
             table={
                 children.length > 0 &&
-                ["folder", "functionGroup", "asdu", "gpio"].includes(
-                    nodeType
+                ["folder", "protocolSpecific", "protocol"].includes(
+                    node.type
                 ) && (
                     <Box w={"100%"} h={"100%"} overflow={"auto"}>
                         <Table data={children} />

@@ -9,6 +9,12 @@ import {
     LuAnchor,
     LuCirclePlus,
     LuChevronsLeftRightEllipsis,
+    LuClipboardPaste,
+    LuPencil,
+    LuTrash2,
+    LuScissors,
+    LuClipboardCopy,
+    LuListTree,
 } from "react-icons/lu";
 import { GiGoose } from "react-icons/gi";
 
@@ -24,4 +30,10 @@ export const iconsMap = {
     plus: LuCirclePlus,
     lrEllipsis: LuChevronsLeftRightEllipsis,
     goose: GiGoose,
+    paste: LuClipboardPaste,
+    pencil: LuPencil,
+    trash: LuTrash2,
+    scissors: LuScissors,
+    copy: LuClipboardCopy,
+    listTree: LuListTree,
 };

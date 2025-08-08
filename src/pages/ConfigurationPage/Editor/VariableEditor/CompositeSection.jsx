@@ -10,8 +10,8 @@ import {
 import { InputController } from "../../InputComponents/InputController";
 import { InputFactory } from "../../InputComponents/InputFactory";
 import { useVariablesStore } from "@/store/variables-store";
-import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
-import { validateVisability } from "@/utils/validator";
+import { validateVisability } from "@/utils/validation/validator";
+import { configuratorConfig } from "@/utils/configurationParser";
 
 // TODO Развить идею
 /**
@@ -27,23 +27,23 @@ export const CompositeSection = ({
     data,
     label,
 }) => {
-    const setSettings = useVariablesStore((state) => state.setSettings);
-    const settings = useVariablesStore.getState().settings;
-    const dep = PARAM_DEFINITIONS[checkedParam];
+    const { settings, setSettings } = useVariablesStore.getState();
+    const dep = configuratorConfig.nodePaths[data.path]?.settings[checkedParam];
     if (!dep || dep.hidden) return null; // Если параметр не определен или скрыт, ничего не рендерим
-    // Проверяем видимость секции
-    const isVisible = validateVisability(dep.dependencies, data.id, settings);
+    // TODO Проверяем видимость секции
+    const isVisible = validateVisability(dep.visibleIf, data.id, settings);
     if (!isVisible) return null; // Если секция не видима, ничего не рендерим
     const isChecked = data.setting?.[checkedParam] ?? false;
 
     const ParamIcon = dep?.icon;
     return (
         <Card.Root
+            colorPalette={dep.color}
             size={"sm"}
             w={"100%"}
             h={"100%"}
             border={"none"}
-            _hover={{ shadow: "md" }}
+            _hover={{ shadow: "lg" }}
             variant="outline"
             onClick={() =>
                 setSettings(data.id, {
@@ -64,26 +64,32 @@ export const CompositeSection = ({
                 </Float>
 
                 <Box h={"100%"} textAlign={"center"}>
-                    {ParamIcon && <Icon fontSize={"3xl"} as={ParamIcon} />}
+                    {ParamIcon && (
+                        <Icon
+                            fontSize={"3xl"}
+                            as={ParamIcon}
+                            color={`${dep.color}.500`}
+                        />
+                    )}
                     <Text userSelect={"none"} fontWeight={"medium"}>
                         {label}
                     </Text>
                 </Box>
 
-                {isChecked && (
-                    <SimpleGrid gap={4} columns={2} spacing={2}>
-                        {childrenParams.map((key) => (
+                <SimpleGrid gap={4} columns={2} spacing={2}>
+                    {isChecked &&
+                        childrenParams.map((key) => (
                             <InputController
                                 key={data.id + "_" + key}
                                 settingParam={key}
+                                path={data.path}
                                 nodeId={data.id}
                                 value={data.setting?.[key]}
                                 Factory={InputFactory}
                                 showLabel
                             />
                         ))}
-                    </SimpleGrid>
-                )}
+                </SimpleGrid>
             </Card.Body>
         </Card.Root>
     );

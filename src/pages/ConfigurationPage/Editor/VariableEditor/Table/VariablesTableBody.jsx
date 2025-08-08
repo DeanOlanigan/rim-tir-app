@@ -4,16 +4,18 @@ import { memo } from "react";
 
 export const VariablesTableBody = memo(function VariablesTableBody({ data }) {
     //console.log("RENDER VariablesTableBody");
+
     return (
         <Table.Body>
-            {data.map((element) => {
-                if (element.type === "folder") return null;
+            {data.map((node) => {
+                if (node.type === "folder") return null;
                 return (
                     <VariablesTableRow
-                        key={element.id}
-                        id={element.id}
-                        name={element.name}
-                        setting={element.setting}
+                        key={node.id}
+                        id={node.id}
+                        name={node.name}
+                        path={node.path}
+                        setting={node.setting}
                     />
                 );
             })}

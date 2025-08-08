@@ -12,10 +12,11 @@ import {
 } from "@chakra-ui/react";
 import { Tooltip } from "@/components/ui/tooltip";
 import { LuPencil, LuPencilOff, LuChevronDown } from "react-icons/lu";
-import { PARAM_DEFINITIONS } from "@/config/paramDefinitions";
 import { InputFactory } from "@/pages/ConfigurationPage/InputComponents/InputFactory";
 import { useVariablesStore } from "@/store/variables-store";
 import { InputController } from "@/pages/ConfigurationPage/InputComponents/InputController";
+import { CellLayout } from "./BadgesCell/CellLayout";
+import { Badge as MyBadge } from "./BadgesCell/Badge";
 
 const badgesColorMap = {
     cmd: "blue",
@@ -30,7 +31,41 @@ const archiveColorMap = {
     state: "teal",
 };
 
-export const BadgesCell = ({ id, badges }) => {
+export const BadgesCell = ({ id }) => {
+    const [isEditing, setIsEditing] = useState(false);
+
+    return (
+        <CellLayout isEditing={isEditing} setIsEditing={setIsEditing}>
+            <MyBadge
+                id={id}
+                param={"cmd"}
+                childrenParams={null}
+                isEditing={isEditing}
+            />
+            <MyBadge
+                id={id}
+                param={"isSpecial"}
+                childrenParams={["specialCycleDelay"]}
+                isEditing={isEditing}
+            />
+            <MyBadge
+                id={id}
+                param={"graph"}
+                childrenParams={["measurement", "aperture"]}
+                isEditing={isEditing}
+            />
+            <MyBadge
+                id={id}
+                param={"archive"}
+                childrenParams={["group"]}
+                isEditing={isEditing}
+            />
+        </CellLayout>
+    );
+};
+
+/* export const BadgesCell = ({ id, badges }) => {
+    console.log(badges);
     const [isEditing, setIsEditing] = useState(false);
     return (
         <Flex gap={"1"}>
@@ -75,7 +110,7 @@ export const BadgesCell = ({ id, badges }) => {
             </IconButton>
         </Flex>
     );
-};
+}; */
 
 function getBadgeColor(target, parameters) {
     return target === "archive"
@@ -86,18 +121,14 @@ function getBadgeColor(target, parameters) {
 function getBadgeLabel(target, parameters) {
     let label;
     if (target === "archive") {
-        label =
-            PARAM_DEFINITIONS[parameters[0].key].options.items.find(
-                (item) => item.value === parameters[0].value
-            )?.label || "N/A";
+        label = "ifArchiveLabel";
     } else {
-        label = PARAM_DEFINITIONS[target]?.label || "N/A";
+        label = "ifNotArchiveLabel";
     }
     return label;
 }
 
 const ParamBadge = ({ target, parameters }) => {
-    const ParamIcon = PARAM_DEFINITIONS[target]?.icon || null;
     const label = getBadgeLabel(target, parameters);
     const color = getBadgeColor(target, parameters);
     const variant = target === "archive" ? "solid" : "outline";
@@ -112,7 +143,6 @@ const ParamBadge = ({ target, parameters }) => {
                 h={"24px"}
             >
                 <HStack gap={"2"}>
-                    {ParamIcon && <ParamIcon />}
                     {target !== "archive" && (
                         <ParamBadgeInfo parameters={parameters} />
                     )}
@@ -124,7 +154,7 @@ const ParamBadge = ({ target, parameters }) => {
 
 const ParamBadgeInfo = ({ parameters }) => {
     const render = parameters.map((param, index) => {
-        const selectOptions = PARAM_DEFINITIONS[param.key]?.options || null;
+        const selectOptions = null;
         let value;
         if (selectOptions) {
             value = selectOptions.items.find(
@@ -144,7 +174,6 @@ const ParamBadgeInfo = ({ parameters }) => {
 
 const ParamEditBadge = ({ id, target, checked, parameters }) => {
     const setSettings = useVariablesStore((state) => state.setSettings);
-    const ParamIcon = PARAM_DEFINITIONS[target]?.icon || null;
     //const label = getBadgeLabel(target, parameters);
     const color = checked ? getBadgeColor(target, parameters) : "gray";
 
@@ -173,7 +202,6 @@ const ParamEditBadge = ({ id, target, checked, parameters }) => {
                 </Switch.Control>
             </Switch.Root>
             <Flex align={"center"} gap={"1"} overflow={"hidden"}>
-                <Icon size={"sm"} as={ParamIcon} />
                 <ParamBadgeInfo parameters={parameters} />
             </Flex>
             {parameters.length > 0 ? (
@@ -210,6 +238,7 @@ const ParamEditBadgePopover = ({ id, color, checked, parameters }) => {
                                     return (
                                         <InputController
                                             key={index}
+                                            path={"#/variable"}
                                             settingParam={param.key}
                                             nodeId={id}
                                             value={param.value}

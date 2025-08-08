@@ -6,12 +6,14 @@ export const ConnectionParamContainer = ({ data }) => {
     if (!data || !data.setting) {
         return null; // Возвращаем null, если нет данных или настроек
     }
+
     return (
         <SimpleGrid columns={4} columnGap={"2"} rowGap={"2"} w={"100%"}>
             {Object.keys(data.setting).map((key) => {
                 return (
                     <InputController
                         key={data.id + "_" + key}
+                        path={data.path}
                         settingParam={key}
                         nodeId={data.id}
                         value={data.setting[key]}

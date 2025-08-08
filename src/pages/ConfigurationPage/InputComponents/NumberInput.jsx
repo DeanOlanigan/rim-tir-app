@@ -7,7 +7,7 @@ import { useVariablesStore } from "@/store/variables-store";
 
 export const NumberInput = memo(function NumberInput(props) {
     console.log("Render NumberInput");
-    const { id, targetKey, value, ...rest } = props;
+    const { id, targetKey, value, isF } = props;
     const [innerValue, setInnerValue] = useState(value);
     const setSettings = useVariablesStore((state) => state.setSettings);
 
@@ -20,7 +20,7 @@ export const NumberInput = memo(function NumberInput(props) {
             value={innerValue}
             formatOptions={{
                 style: "decimal",
-                maximumFractionDigits: rest.isF ? 3 : 0,
+                maximumFractionDigits: isF ? 3 : 0,
                 useGrouping: false,
             }}
             size={"xs"}
@@ -29,15 +29,15 @@ export const NumberInput = memo(function NumberInput(props) {
             }}
             onBlur={() => {
                 setSettings(id, {
-                    [targetKey]: rest.isF
-                        ? parseFloat(innerValue)
+                    [targetKey]: isF
+                        ? parseFloat(innerValue).toFixed(3)
                         : parseInt(innerValue),
                 });
             }}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
                     setSettings(id, {
-                        [targetKey]: rest.isF
+                        [targetKey]: isF
                             ? parseFloat(innerValue)
                             : parseInt(innerValue),
                     });

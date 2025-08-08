@@ -21,16 +21,17 @@ import {
 import { devtools, persist } from "zustand/middleware";
 import {
     validateAll,
-    validateCyclicVariable,
     validateName,
     validateParameter,
-} from "@/utils/validator";
+} from "@/utils/validation/validator";
+import { validateCyclicVariable } from "@/utils/validation/luaValidationService";
 import { useValidationStore } from "@/store/validation-store";
 import { CONSTANT_VALUES } from "@/config/constants";
 
 const baseNodeInit = (type, name) => ({
     id: type,
     type: CONSTANT_VALUES.NODE_TYPES.root,
+    path: "#",
     subType: type,
     name: name,
     children: [],
@@ -104,12 +105,7 @@ export const useVariablesStore = create()(
                         );
 
                         const param = Object.keys(updateData)[0];
-                        const errors = validateParameter(
-                            nodeId,
-                            param,
-                            newSettings
-                        );
-                        useValidationStore.getState().setBulkErrors(errors);
+                        validateParameter(nodeId, param, newSettings);
 
                         return { settings: newSettings };
                     }),

@@ -1,9 +1,10 @@
 import { NodeToggleBtn } from "./NodeToggleBtn";
-import { icons } from "./NodeTypeIcon";
 import { IndentLines } from "./IndentLines";
 import { Badge } from "./Badge";
 import { LuPiggyBank } from "react-icons/lu";
 import { Icon, HStack } from "@chakra-ui/react";
+import { iconsMap } from "@/config/icons";
+import { configuratorConfig } from "@/utils/configurationParser";
 
 function hasIgnoreAccessor(node) {
     while (node) {
@@ -14,11 +15,13 @@ function hasIgnoreAccessor(node) {
 }
 
 export const NodeBase = ({ paddingLeft, node, errors, visual }) => {
-    const { isLeaf, isOpen } = node;
-    const { type, subType, isIgnored, isCutted } = node.data;
-
     const accessorIsIgnored = hasIgnoreAccessor(node);
-    const TypeIcon = icons[type];
+    const icon = configuratorConfig.nodePaths[node.data.path]?.icon;
+    const TypeIcon = iconsMap[icon?.name];
+    const iconColor = icon?.color;
+    const shortName = configuratorConfig.nodePaths[node.data.path]?.shortName;
+    const label = configuratorConfig.nodePaths[node.data.path]?.label;
+
     return (
         <HStack
             w={"100%"}
@@ -31,20 +34,21 @@ export const NodeBase = ({ paddingLeft, node, errors, visual }) => {
             })}
         >
             <IndentLines paddingLeft={paddingLeft} />
-            <HStack w={"100%"}>
-                {!isLeaf && (
+            <HStack w={"100%"} minW={0} truncate>
+                {!node.isLeaf && (
                     <NodeToggleBtn
                         toggle={() => node.toggle()}
-                        isOpen={isOpen}
+                        isOpen={node.isOpen}
                     />
                 )}
                 <HStack
                     w={"100%"}
                     pl={"2"}
-                    {...(isCutted && { color: "fg.subtle" })}
+                    {...(node.data.isCutted && { color: "fg.subtle" })}
+                    minW={0}
                     truncate
                 >
-                    {isIgnored && (
+                    {node.data.isIgnored && (
                         <Icon
                             color={"red.400"}
                             strokeWidth={2}
@@ -53,11 +57,17 @@ export const NodeBase = ({ paddingLeft, node, errors, visual }) => {
                             title={"Заблокирован"}
                         />
                     )}
-                    {TypeIcon && <Icon as={TypeIcon} />}
-                    <Badge
-                        isIgnored={isCutted || accessorIsIgnored}
-                        type={subType || type}
-                    />
+                    {TypeIcon && (
+                        <Icon as={TypeIcon} color={`${iconColor}.500`} />
+                    )}
+                    {shortName && (
+                        <Badge
+                            isIgnored={node.data.isCutted || accessorIsIgnored}
+                            shortName={shortName}
+                            label={label}
+                            color={iconColor}
+                        />
+                    )}
                     {visual}
                 </HStack>
             </HStack>
