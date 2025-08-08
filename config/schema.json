@@ -1,0 +1,368 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://example.com/config.json",
+    "version": "1.0.0",
+    "type": "array",
+    "items": { "$ref": "#/$defs/Node" },
+    "$defs": {
+        "Node": {
+            "type": "object",
+            "required": ["node", "type"],
+            "additionalProperties": false,
+            "properties": {
+                "node": { "type": "string" },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "interface",
+                        "protocol",
+                        "protocolSpecific",
+                        "interfaceSpecific",
+                        "dataObject",
+                        "variable",
+                        "folder"
+                    ]
+                },
+                "label": { "type": "string" },
+                "settings": { "$ref": "#/$defs/Settings" },
+                "icon": {
+                    "type": "object",
+                    "required": ["name", "color"],
+                    "additionalProperties": false,
+                    "properties": {
+                        "name": {
+                            "enum": [
+                                "folder",
+                                "variable",
+                                "plug",
+                                "unplug",
+                                "cable",
+                                "fileDigit",
+                                "fileStack",
+                                "package",
+                                "anchor",
+                                "goose",
+                                "lrEllipsis"
+                            ]
+                        },
+                        "color": {
+                            "enum": [
+                                "gray",
+                                "red",
+                                "orange",
+                                "yellow",
+                                "green",
+                                "teal",
+                                "blue",
+                                "cyan",
+                                "purple",
+                                "pink",
+                                "black"
+                            ]
+                        }
+                    }
+                },
+                "children": {
+                    "type": "array",
+                    "items": { "$ref": "#/$defs/Node" }
+                },
+                "bulkCreation": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": { "type": "boolean" },
+                        "presets": {
+                            "type": "array",
+                            "items": { "type": "integer", "minimum": 1 }
+                        }
+                    }
+                },
+                "validationRules": {
+                    "$ref": "#/$defs/NodeValidationRules"
+                },
+                "usedIn": {
+                    "type": "string",
+                    "enum": ["send", "receive", "both"]
+                }
+            }
+        },
+
+        "Settings": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "required": ["type", "label"],
+                "additionalProperties": false,
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["float", "number", "string", "boolean", "enum"]
+                    },
+                    "label": { "type": "string" },
+                    "default": {},
+                    "showInTree": {
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "enumValues": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": ["value", "label"],
+                            "additionalProperties": false,
+                            "properties": {
+                                "value": {
+                                    "oneOf": [
+                                        { "type": "string" },
+                                        { "type": "number" },
+                                        { "type": "boolean" }
+                                    ]
+                                },
+                                "label": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "rules": {
+                        "$ref": "#/$defs/SettingValidationRules"
+                    },
+                    "visibleIf": {
+                        "$ref": "#/$defs/WorkIf",
+                        "minProperties": 1,
+                        "maxProperties": 1
+                    }
+                },
+                "allOf": [
+                    {
+                        "if": {
+                            "properties": { "type": { "const": "number" } }
+                        },
+                        "then": {
+                            "properties": {
+                                "default": { "type": "number", "default": 0 }
+                            }
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": { "type": { "const": "string" } }
+                        },
+                        "then": {
+                            "properties": {
+                                "default": { "type": "string", "default": "" }
+                            }
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": { "type": { "const": "boolean" } }
+                        },
+                        "then": {
+                            "properties": {
+                                "default": {
+                                    "type": "boolean",
+                                    "default": false
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "if": { "properties": { "type": { "const": "enum" } } },
+                        "then": { "required": ["enumValues"] }
+                    }
+                ]
+            }
+        },
+
+        "SettingValidationRules": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "oneOf": [
+                    {
+                        "required": ["validator", "message"],
+                        "additionalProperties": false,
+                        "properties": {
+                            "validator": {
+                                "const": "required"
+                            },
+                            "message": { "type": "string" }
+                        }
+                    },
+                    {
+                        "required": ["validator", "params", "message"],
+                        "additionalProperties": false,
+                        "properties": {
+                            "validator": {
+                                "const": "range"
+                            },
+                            "params": {
+                                "type": "object",
+                                "required": ["min", "max"],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "min": {
+                                        "type": "number"
+                                    },
+                                    "max": {
+                                        "type": "number"
+                                    }
+                                }
+                            },
+                            "workIf": {
+                                "$ref": "#/$defs/WorkIf",
+                                "minProperties": 1,
+                                "maxProperties": 1
+                            },
+                            "message": { "type": "string" }
+                        }
+                    },
+                    {
+                        "required": ["validator", "params", "message"],
+                        "additionalProperties": false,
+                        "properties": {
+                            "validator": {
+                                "const": "regex"
+                            },
+                            "params": {
+                                "type": "object",
+                                "required": ["regex"],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "regex": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "message": { "type": "string" }
+                        }
+                    },
+                    {
+                        "required": ["validator", "params", "message"],
+                        "additionalProperties": false,
+                        "properties": {
+                            "validator": {
+                                "const": "unique"
+                            },
+                            "params": {
+                                "type": "object",
+                                "required": ["within"],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "within": {
+                                        "type": "string",
+                                        "enum": [
+                                            "siblings",
+                                            "ignorefolder",
+                                            "parent"
+                                        ]
+                                    }
+                                }
+                            },
+                            "message": { "type": "string" }
+                        }
+                    }
+                ]
+            }
+        },
+
+        "NodeValidationRules": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "oneOf": [
+                    {
+                        "required": ["validator", "params", "message"],
+                        "additionalProperties": false,
+                        "properties": {
+                            "validator": {
+                                "const": "uniqueComposite"
+                            },
+                            "params": {
+                                "type": "object",
+                                "required": ["within", "fields"],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "within": {
+                                        "type": "string",
+                                        "enum": [
+                                            "siblings",
+                                            "ignorefolder",
+                                            "parent"
+                                        ]
+                                    },
+                                    "fields": {
+                                        "type": "array",
+                                        "minItems": 1,
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "message": { "type": "string" }
+                        }
+                    }
+                ]
+            }
+        },
+
+        "WorkIf": {
+            "type": "object",
+            "minProperties": 1,
+            "maxProperties": 1,
+            "propertyNames": {
+                "enum": [">", "<", "==", "and", "or", "not", "find"]
+            },
+            "patternProperties": {
+                "^(and|or)$": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": { "$ref": "#/$defs/WorkIf" }
+                },
+                "^not$": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": { "$ref": "#/$defs/WorkIf" }
+                },
+                "^(>|<|==)$": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": { "$ref": "#/$defs/Operand" }
+                },
+                "^find$": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": { "$ref": "#/$defs/Variable" }
+                }
+            },
+            "additionalProperties": false
+        },
+
+        "Operand": {
+            "oneOf": [
+                { "type": "number" },
+                { "type": "string" },
+                { "type": "boolean" },
+                { "$ref": "#/$defs/Variable" },
+                { "$ref": "#/$defs/WorkIf" }
+            ]
+        },
+
+        "Variable": {
+            "type": "object",
+            "required": ["what", "where"],
+            "properties": {
+                "what": { "type": "string", "minLength": 1 },
+                "where": {
+                    "type": "string",
+                    "enum": ["self", "parent", "siblings", "ignorefolder"]
+                }
+            },
+            "additionalProperties": false
+        }
+    }
+}
