@@ -44,7 +44,7 @@ export function parseXmlToState(xmlString) {
         const id = nodeElem.getAttribute("id");
         const name = nodeElem.getAttribute("name") || "";
         const type = toCamelCase(nodeElem.tagName);
-        const subType = nodeElem.getAttribute("subType") || undefined;
+        const path = nodeElem.getAttribute("path") || undefined;
         const variableId = nodeElem.getAttribute("variableId") || undefined;
         const usedIn = nodeElem.getAttribute("usedIn") || undefined;
         const rootId = nodeElem.getAttribute("rootId") || undefined;
@@ -75,7 +75,7 @@ export function parseXmlToState(xmlString) {
             children,
         };
         if (parentId) state.settings[id].parentId = parentId;
-        if (subType) state.settings[id].subType = subType;
+        if (path) state.settings[id].path = path;
         if (setting) state.settings[id].setting = setting;
         if (variableId) state.settings[id].variableId = variableId;
         if (usedIn) state.settings[id].usedIn = usedIn;
@@ -88,7 +88,7 @@ export function parseXmlToState(xmlString) {
             isIgnored: isIgnored === "true",
             children: [],
         };
-        if (subType) treeNode.subType = subType;
+        if (path) treeNode.path = path;
         if (
             state.settings[id].type === "dataObject" ||
             state.settings[id].type === "variable"

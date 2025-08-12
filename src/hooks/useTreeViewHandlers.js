@@ -74,8 +74,6 @@ export function useTreeViewHandlers(treeType, ref) {
             ref?.current.root.select();
             updateContext({
                 apiPath: ref?.current,
-                type: "root",
-                subType: null,
                 x: e.clientX,
                 y: e.clientY,
                 visible: true,
@@ -94,30 +92,15 @@ export function useTreeViewHandlers(treeType, ref) {
             const selectedNodes = Array.from(ref?.current?.selectedIds).map(
                 (id) => ref?.current?.get(id)
             );
-            const firstType =
-                selectedNodes[0]?.data.subType || selectedNodes[0]?.data.type;
+            const firstType = selectedNodes[0].data.path;
             const isSameType = selectedNodes.every(
-                (node) =>
-                    node.data.subType === firstType ||
-                    node.data.type === firstType
+                (node) => node.data.path === firstType
             );
             if (!isSameType) {
                 ref?.current?.select(
                     selectedNodes[selectedNodes.length - 1].id
                 );
                 ref?.current?.focus();
-            } else {
-                const parentTypes = new Set(
-                    selectedNodes.map((node) =>
-                        getParentType({ checkNode: node })
-                    )
-                );
-                if (parentTypes.size > 1) {
-                    ref?.current?.select(
-                        selectedNodes[selectedNodes.length - 1].id
-                    );
-                    ref?.current?.focus();
-                }
             }
         }
 
@@ -127,15 +110,14 @@ export function useTreeViewHandlers(treeType, ref) {
     const handleDisableDrop = useCallback(({ parentNode, dragNodes }) => {
         if (!parentNode || dragNodes.length === 0) return true;
         const isDragNodesTypeSame = dragNodes.every(
-            (node) => node.data.type === dragNodes[0].data.type
+            (node) => node.data.path === dragNodes[0].data.path
         );
         if (!isDragNodesTypeSame) return true;
         const dragParentType = getParentType({
             checkNode: dragNodes[0].parent,
         });
         const parentType = getParentType({ checkNode: parentNode });
-        if (parentType === dragParentType) return false;
-        return true;
+        return parentType !== dragParentType;
     }, []);
 
     return {

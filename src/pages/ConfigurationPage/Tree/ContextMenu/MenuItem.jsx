@@ -2,23 +2,7 @@ import { Icon, Menu, Portal } from "@chakra-ui/react";
 import { LuBan, LuCheckCheck, LuChevronRight } from "react-icons/lu";
 import { iconsMap } from "@/config/icons";
 import { useVariablesStore } from "@/store/variables-store";
-
-function getCopyDisabledState(apiPath) {
-    const selected =
-        apiPath.selectedNodes.length > 1
-            ? apiPath.selectedNodes
-            : apiPath.focusedNode;
-
-    if (!selected || !Array.isArray(selected)) {
-        return false;
-    }
-
-    // Проверяем, что все выбранные узлы одного типа
-    // TODO Можно избавиться от этой проверки, если будем принудительно не давать выбирать узлы разных типов
-    return !selected.every(
-        (node) => node?.data.type === selected[0]?.data.type
-    );
-}
+import { getMeaningNode, getParentType } from "@/utils/utils";
 
 function getDisabledState(apiPath) {
     const { copyBuffer, settings } = useVariablesStore.getState();
@@ -32,55 +16,17 @@ function getDisabledState(apiPath) {
         if (copyBuffer.tree.some((node) => node.type !== sourceType))
             return true;
 
-        // Получить тип узла, на котором контекстное меню
-        const focusedNodeType =
-            apiPath.focusedNode?.data.subType ||
-            apiPath.focusedNode?.data.type ||
-            treeType;
-        let focusedNodeTypeF;
-        if (focusedNodeType === treeType) {
-            focusedNodeTypeF = treeType;
-        } else {
-            focusedNodeTypeF = getParentType({
-                checkNode: apiPath?.focusedNode,
-            });
-        }
-
-        // Получить значимый тип из иерархии копируемого узла
+        const focusedNodePath =
+            apiPath.focusedNode?.data.type === "folder"
+                ? getParentType({ checkNode: apiPath?.focusedNode })
+                : apiPath.focusedNode?.data.path;
         const meaningNode = getMeaningNode(copyBuffer.tree[0].id, settings);
-        const meaningNodeType = meaningNode?.subType || meaningNode?.type;
+        const meaningNodePath = meaningNode.path;
 
-        console.log("focusedNodeType", focusedNodeType);
-        console.log("focusedNodeTypeF", focusedNodeTypeF);
-        console.log("meaningNodeType", meaningNodeType);
-
-        if (focusedNodeTypeF !== meaningNodeType) {
-            return true;
-        }
-
-        if (
-            sourceType === "folder" &&
-            (focusedNodeType === "folder" || focusedNodeType === "dataObject")
-        ) {
-            return true;
-        }
+        console.log(focusedNodePath, meaningNodePath);
+        if (focusedNodePath !== meaningNodePath) return true;
     }
     return false;
-}
-
-// TODO Эта функция должна быть в utils.js
-function getMeaningNode(id, settings) {
-    function recursive(id) {
-        const node = settings[settings[id].parentId];
-        if (!node) return undefined;
-
-        if (node.type === "folder" || node.type === "dataObject") {
-            return recursive(node.id);
-        } else {
-            return node;
-        }
-    }
-    return recursive(id);
 }
 
 export const MenuItem = ({ item, index, apiPath, updateContext }) => {
@@ -120,10 +66,6 @@ export const MenuItem = ({ item, index, apiPath, updateContext }) => {
 
     if (item.type === "paste") {
         disabled = getDisabledState(apiPath);
-    }
-
-    if (item.type === "copy") {
-        disabled = getCopyDisabledState(apiPath);
     }
 
     if (item.children && Array.isArray(item.children)) {

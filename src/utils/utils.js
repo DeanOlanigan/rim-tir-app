@@ -21,116 +21,28 @@ export function getRandomColor() {
     );
 }
 
-// DEPRECATED
-export function normalizeData(data, result = {}, parentId = null) {
-    data.forEach((element) => {
-        const id = uuidv4();
-        result[id] = { ...element, id, parentId };
-
-        if (element.children) {
-            result[id].children = element.children.map((child) => {
-                const childId = uuidv4();
-                normalizeData([child], result, childId);
-                return childId;
-            });
-        }
-    });
-    return result;
-}
-
-// DEPRECATED
-export function separateData(data, treeData = [], nodeData = {}) {
-    data.forEach((element) => {
-        const { setting, children, ...rest } = element;
-        nodeData[element.id] = { id: element.id, ...setting };
-        if (children) {
-            const newNode = { ...rest, children: [] };
-            separateData(children, newNode.children, nodeData);
-            treeData.push(newNode);
-        } else {
-            treeData.push(rest);
-        }
-    });
-    return { treeData, nodeData };
-}
-
-// DEPRECATED
-export function separateDataNEW(data, nodeData = {}, parentId = null) {
-    if (!data) {
-        return { treeData: null, nodeData };
-    }
-
-    const { setting, children, ...rest } = data;
-
-    nodeData[data.id] = {
-        id: data.id,
-        parentId,
-        name: data.name,
-        setting,
-        ...rest,
-    };
-
-    const treeData = {
-        id: data.id,
-        name: data.name,
-        type: data.type,
-    };
-
-    if (data.subType) treeData.subType = data.subType;
-
-    if (Array.isArray(children)) {
-        treeData.children = [];
-        nodeData[data.id].children = [];
-        for (const child of children) {
-            const { treeData: childNested } = separateDataNEW(
-                child,
-                nodeData,
-                data.id
-            );
-            if (childNested) {
-                treeData.children.push(childNested);
-                nodeData[data.id].children.push(child.id);
-            }
-        }
-    }
-
-    return { treeData, nodeData };
-}
-
-// DEPRECATED
-export function separateTree(data) {
-    const { children, ...rest } = data;
-    const configurationInfo = rest;
-    const trees = {};
-    for (const child of children) {
-        trees[child.type] = child.children;
-    }
-    return { trees, configurationInfo };
-}
-
-// MOSTLY DEPRECATED
 export function getParentType({ id, treeApi, checkNode }) {
     if (!checkNode) checkNode = treeApi.get(id);
     const recursive = (node) => {
         if (node.data.type === "folder" || node.data.type === "dataObject")
             return recursive(node.parent);
-        return node.data.subType || node.data.type;
+        return node.data.path;
     };
     return recursive(checkNode);
 }
 
-// DEPRECATED
-export function getParentTypeNormalized({ data, id }) {
-    if (!id) return null;
-    const recursive = (id) => {
-        if (!id) return "root";
-        if (data[id].type === "folder" || data[id].type === "dataObject")
-            return recursive(data[id].parentId);
-        return data[id].type === "interface" || data[id].type === "protocol"
-            ? data[id].subType
-            : data[id].type;
-    };
-    return recursive(data[id]?.parentId);
+export function getMeaningNode(id, settings) {
+    function recursive(id) {
+        const node = settings[settings[id].parentId];
+        if (!node) return undefined;
+
+        if (node.type === "folder" || node.type === "dataObject") {
+            return recursive(node.id);
+        } else {
+            return node;
+        }
+    }
+    return recursive(id);
 }
 
 export function initDefaultDataByPath(path, parentId) {
@@ -208,6 +120,7 @@ export function initCardsData(data) {
     return cardsData;
 }
 
+// MOSTLY DEPRECATED
 export function getUniqueName(nodes, name, ignoreId = null) {
     const usedNames = new Set();
     function recursive(nodes) {
@@ -231,64 +144,6 @@ export function getUniqueName(nodes, name, ignoreId = null) {
         }
         copyCount++;
     }
-}
-
-// DEPRECATED
-export function checkDependsOn(data, dependsOn, settings) {
-    const conditions = Array.isArray(dependsOn) ? dependsOn : [dependsOn];
-
-    const checkCondition = (cond, node) => {
-        if (cond.scope === "self") {
-            return node.setting?.[cond.key] === cond.value;
-        } else {
-            const checkParent = (current) => {
-                if (!current) return false;
-                if (current.setting?.[cond.key] === cond.value) return true;
-                return checkParent(settings[current.parentId]);
-            };
-            return checkParent(node);
-        }
-    };
-    return conditions.every((cond) => checkCondition(cond, data));
-}
-
-// DEPRECATED
-export function checkDependsOn2(data, dependsOn, settings) {
-    const evaluate = (cond, node) => {
-        if ("type" in cond && Array.isArray(cond.conditions)) {
-            const results = cond.conditions.map((c) => evaluate(c, node));
-            return cond.type === "and"
-                ? results.every(Boolean)
-                : results.some(Boolean);
-        }
-
-        const { key, value, scope } = cond;
-        if (scope === "self") {
-            return node.setting?.[key] === value;
-        }
-
-        const checkParent = (current) => {
-            if (!current) return false;
-            if (current.setting?.[key] === value) return true;
-            return checkParent(settings[current.parentId]);
-        };
-        return checkParent(settings[node.parentId]);
-    };
-
-    return evaluate(dependsOn, data);
-}
-
-// DEPRECATED
-export function resolveDynProps(data, rules = [], settings) {
-    for (const rule of rules) {
-        if (!rule.condition) return rule.props;
-
-        if (checkDependsOn2(data, rule.condition, settings)) {
-            return rule.props;
-        }
-    }
-
-    return {};
 }
 
 // DEPRECATED

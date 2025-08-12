@@ -14,7 +14,7 @@ function buildNode(xmlParent, node, settingsMap) {
     attrs.name = node.name || "";
     if (node.parentId) attrs.parentId = node.parentId;
     if (node.rootId) attrs.rootId = node.rootId;
-    if (node.subType) attrs.subType = node.subType;
+    if (node.path) attrs.path = node.path;
     if (node.usedIn) attrs.usedIn = node.usedIn;
     if (node.variableId) attrs.variableId = node.variableId;
     attrs.isIgnored = node.isIgnored;

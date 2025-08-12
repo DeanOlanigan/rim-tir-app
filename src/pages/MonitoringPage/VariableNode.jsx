@@ -1,4 +1,3 @@
-import { DefaultView } from "@/components/TreeView/DefaultView";
 import {
     Flex,
     IconButton,
@@ -71,7 +70,6 @@ const ConnectionHeadderAdditionalInfo = ({ protocol }) => {
 
 export const VariableNode = memo(function VariableNode({
     type,
-    subType,
     setting,
     editable,
     name,
@@ -121,12 +119,5 @@ export const VariableNode = memo(function VariableNode({
             </Flex>
         );
 
-    return (
-        <DefaultView
-            type={type}
-            subType={subType}
-            setting={setting}
-            name={name}
-        />
-    );
+    return null;
 });

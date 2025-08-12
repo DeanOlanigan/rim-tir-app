@@ -17,8 +17,6 @@ export const Node = ({ node, style, dragHandle, tree }) => {
         node.open();
         updateContext({
             apiPath: tree,
-            type: node.data.type,
-            subType: node.data.subType,
             x: e.clientX,
             y: e.clientY,
             visible: true,
