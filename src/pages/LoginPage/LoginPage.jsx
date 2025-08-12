@@ -32,8 +32,12 @@ function LoginForm() {
 
     return (
         <Grid minH={"100svh"} templateColumns={{ base: "1fr", lg: "1fr 1fr" }}>
-            {/* <Gradient /> */}
-            <Box display={{ base: "none", lg: "block" }} position={"relative"}>
+            <Box
+                display={{ base: "none", lg: "block" }}
+                position={"relative"}
+                p={"4"}
+                bg={"bg.muted"}
+            >
                 <Lightning
                     hue={220}
                     xOffset={0}
@@ -44,7 +48,6 @@ function LoginForm() {
             </Box>
             <Flex
                 direction={"column"}
-                gap={"4"}
                 p={{ base: "6", md: "12" }}
                 bg={"bg.muted"}
             >

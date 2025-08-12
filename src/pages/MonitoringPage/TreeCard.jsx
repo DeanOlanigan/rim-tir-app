@@ -22,7 +22,7 @@ export const TreeCard = ({ data = [], searchTerm, isLoading, error }) => {
     if (isLoading) {
         content = <Loader />;
     } else if (error) {
-        content = <Error />;
+        content = <ErrorInformer />;
     } else if (
         data[0].type === CONSTANT_VALUES.NODE_TYPES.root &&
         data[0].children.length === 0
@@ -118,7 +118,7 @@ const Loader = () => {
     );
 };
 
-const Error = () => {
+const ErrorInformer = () => {
     return (
         <AbsoluteCenter>
             <VStack w={"100%"}>

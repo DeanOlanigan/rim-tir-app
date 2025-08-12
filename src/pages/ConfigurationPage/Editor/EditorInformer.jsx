@@ -9,6 +9,15 @@ import {
 import { LuCog, LuVariable } from "react-icons/lu";
 
 export const EditorInformer = ({ status, type }) => {
+    let message;
+    if (status === "error") {
+        message = "Выберите узлы одинакового типа.";
+    } else if (type === "connections") {
+        message = "Выберите узел в дереве приема или передачи";
+    } else {
+        message = "Выберите узел в дереве переменных";
+    }
+
     return (
         <Box w={"100%"} h={"100%"} position={"relative"}>
             <AbsoluteCenter>
@@ -23,11 +32,7 @@ export const EditorInformer = ({ status, type }) => {
                             color={status === "error" ? "fg.error" : "fg.muted"}
                             fontWeight={"medium"}
                         >
-                            {status !== "error"
-                                ? type === "connections"
-                                    ? "Выберите узел в дереве приема или передачи"
-                                    : "Выберите узел в дереве переменных"
-                                : "Выберите узлы одинакового типа."}
+                            {message}
                         </Text>
                     </HStack>
                 </VStack>
