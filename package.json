@@ -9,8 +9,11 @@
         "build": "vite build",
         "lint": "eslint .",
         "preview": "vite preview",
-        "generate-config": "node scripts/build-config.js",
-        "depgraph": "depcruise --include-only \"^src/(config|hooks|pages|routes|store|utils)\" --do-not-follow \"^src/(components|providers|services)\" --output-type dot src | dot -T svg | depcruise-wrap-stream-in-html > depgraph.html"
+        "generate-test-config": "node scripts/build-test-config.js",
+        "depgraph": "depcruise --include-only \"^src/(config|hooks|pages|routes|store|utils)\" --do-not-follow \"^src/(components|providers|services)\" --output-type dot src | dot -T svg | depcruise-wrap-stream-in-html > depgraph.html",
+        "depgraph-html": "depcruise --include-only \"^src/(config|hooks|pages|routes|store|utils)\" --do-not-follow \"^src/(components|providers|services)\" --output-type html src > depgraph_html.html",
+        "depgraph-report": "depcruise --include-only \"^src/(config|hooks|pages|routes|store|utils)\" --do-not-follow \"^src/(components|providers|services)\" --output-type err-html src > depgraph_report.html",
+        "depgraph-err": "depcruise --include-only \"^src/(config|hooks|pages|routes|store|utils)\" --do-not-follow \"^src/(components|providers|services)\""
     },
     "dependencies": {
         "@chakra-ui/react": "^3.5.1",

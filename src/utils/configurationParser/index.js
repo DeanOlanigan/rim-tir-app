@@ -1,14 +1,14 @@
-import { testConfig } from "@/config/testConfig";
+import { config } from "@/config/generated/generatedConfig";
 import { resolveFind } from "./logicDependency";
 import { buildDependenciesGraph, parseTree } from "./treeParser";
 import { createContextMenu } from "../contextMenuBuilder";
 
-const { nodePaths, settingPaths } = parseTree(testConfig);
+const { nodePaths, settingPaths } = parseTree(config);
 
 resolveFind(nodePaths, settingPaths);
 const graph = buildDependenciesGraph(settingPaths);
 
-const contextMenu = createContextMenu(testConfig, nodePaths);
+const contextMenu = createContextMenu(config, nodePaths);
 
 console.log("nodePaths", nodePaths, Object.keys(nodePaths).length);
 console.log("settingPaths", settingPaths, Object.keys(settingPaths).length);
