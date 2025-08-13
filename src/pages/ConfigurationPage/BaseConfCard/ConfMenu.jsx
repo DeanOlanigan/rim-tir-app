@@ -21,7 +21,7 @@ export const ConfMenu = () => {
         useConfigInfoStore.setState({
             configInfo: {},
         });
-        useValidationStore.getState().clear();
+        useValidationStore.getState().clearErrors();
     };
 
     return (

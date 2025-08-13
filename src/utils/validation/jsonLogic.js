@@ -23,9 +23,13 @@ jsonLogic.add_operation("find", find);
 
 export function checkDependencies(dependencies, context, nodeId) {
     if (!dependencies) return true;
-    const logicResult = applyWithContext(dependencies, {
-        data: context,
-        id: nodeId,
-    });
-    return logicResult;
+    try {
+        const logicResult = applyWithContext(dependencies, {
+            data: context,
+            id: nodeId,
+        });
+        return logicResult;
+    } catch {
+        return false;
+    }
 }

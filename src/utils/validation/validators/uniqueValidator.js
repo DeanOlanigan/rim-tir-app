@@ -1,6 +1,5 @@
 import { SCOPE, VALIDATOR } from "../const";
 import { getContextIds } from "../contextUtils";
-import { setDraftMessage } from "../validator";
 
 export function uniqueValidator({ nodeId, param, rule, context, draft }) {
     const { within } = rule.params || {};
@@ -25,6 +24,6 @@ export function uniqueValidator({ nodeId, param, rule, context, draft }) {
                         .join(", ")}`,
             ];
         }
-        setDraftMessage(draft, id, param, VALIDATOR.UNIQUE, msg);
+        draft.set(id, param, VALIDATOR.UNIQUE, msg);
     }
 }

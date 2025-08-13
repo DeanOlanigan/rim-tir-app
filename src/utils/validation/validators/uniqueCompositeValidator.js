@@ -1,6 +1,5 @@
 import { SCOPE } from "../const";
 import { getContextIds } from "../contextUtils";
-import { setDraftMessage } from "../validator";
 
 export function uniqueCompositeValidator({ nodeId, rule, context, draft }) {
     const { within, fields } = rule.params || {};
@@ -20,7 +19,6 @@ export function uniqueCompositeValidator({ nodeId, rule, context, draft }) {
         if (dupIds.length > 1) {
             msg = [rule.message];
         }
-        console.log("Тест валидации", msg);
-        setDraftMessage(draft, id, "node", "uniqueComposite", msg);
+        draft.set(id, "node", "uniqueComposite", msg);
     }
 }

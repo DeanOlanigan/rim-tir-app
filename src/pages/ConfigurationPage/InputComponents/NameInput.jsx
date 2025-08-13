@@ -2,7 +2,7 @@ import { useVariablesStore } from "@/store/variables-store";
 import { Input } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
-export const NameInput = ({ id, value, shoudValidate }) => {
+export const NameInput = ({ id, value }) => {
     const [innerName, setInnerName] = useState(value);
     const renameNode = useVariablesStore((state) => state.renameNode);
 
@@ -17,12 +17,12 @@ export const NameInput = ({ id, value, shoudValidate }) => {
             onChange={(e) => setInnerName(e.target.value)}
             onBlur={(e) => {
                 setInnerName(e.target.value.trim());
-                renameNode(id, e.target.value.trim(), shoudValidate);
+                renameNode(id, e.target.value.trim());
             }}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
                     setInnerName(e.target.value.trim());
-                    renameNode(id, e.target.value.trim(), shoudValidate);
+                    renameNode(id, e.target.value.trim());
                 }
                 if (e.key === "Escape") {
                     setInnerName(value);

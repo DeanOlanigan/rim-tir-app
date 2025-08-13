@@ -4,35 +4,12 @@ import {
     NumberInput,
     TextInput,
     SwitchInput,
-    /* EditableInput,
-    IpInput,
-    HexInput, */
     NameInput,
 } from "./index";
-import {
-    selectParamsErrors,
-    useValidationStore,
-} from "@/store/validation-store";
+import { useValidationStore } from "@/store/validation-store";
 import { memo } from "react";
-import { useShallow } from "zustand/shallow";
 import { Field, Text } from "@chakra-ui/react";
 import { configuratorConfig } from "@/utils/configurationParser";
-
-// Следи за тем, что добавляешь в мапу. Проверяй пропсы.
-/* const typeMap = {
-    boolean: SwitchInput,
-    select: SelectInput,
-    number: NumberInput,
-    numberF: NumberInput,
-    textarea: EditableInput,
-    drop: ComboboxInput,
-    ip: IpInput,
-    hex: HexInput,
-    text: TextInput,
-    name: NameInput,
-    string: TextInput,
-    enum: SelectInput,
-}; */
 
 const inputRenderers = {
     boolean: (props) => <SwitchInput {...props} />,
@@ -47,9 +24,7 @@ const inputRenderers = {
         />
     ),
     drop: (props) => <ComboboxInput {...props} />,
-    name: (props) => (
-        <NameInput {...props} shoudValidate={props?.shoudValidate} />
-    ),
+    name: (props) => <NameInput {...props} />,
     default: (props) => <TextInput {...props} />,
 };
 
@@ -64,8 +39,8 @@ export const InputFactory = memo(function InputFactory(props) {
         showLabel = false,
         ...rest
     } = props;
-    const errors = useValidationStore(
-        useShallow((state) => selectParamsErrors(state, id, inputParam))
+    const errors = useValidationStore((state) =>
+        state.errorsTree.get(id)?.get(inputParam)
     );
 
     const renderer = inputRenderers[type] || inputRenderers.default;
@@ -75,15 +50,6 @@ export const InputFactory = memo(function InputFactory(props) {
         value,
         ...rest,
     };
-    if (type === "name") {
-        if (
-            ["protocol", "interface", "variable"].includes(
-                configuratorConfig.nodePaths[path]?.type
-            )
-        ) {
-            inputProps.shoudValidate = true;
-        }
-    }
     if (type === "enum") {
         const enumValues =
             configuratorConfig.nodePaths[path]?.settings[inputParam]
@@ -92,7 +58,7 @@ export const InputFactory = memo(function InputFactory(props) {
     }
 
     return (
-        <Field.Root maxW={"250px"} invalid={errors && errors.length > 0}>
+        <Field.Root maxW={"250px"} invalid={errors && errors.size !== 0}>
             {showLabel && (
                 <Field.Label w={"100%"}>
                     <Text truncate>{label}</Text>
@@ -100,10 +66,13 @@ export const InputFactory = memo(function InputFactory(props) {
             )}
             {renderer(inputProps)}
             {errors &&
-                errors.length > 0 &&
-                errors.map((error, index) => (
-                    <Field.ErrorText key={index}>{error}</Field.ErrorText>
-                ))}
+                errors.size !== 0 &&
+                Array.from(errors)
+                    .map(([, error]) => error.messages)
+                    .flat()
+                    .map((message, index) => (
+                        <Field.ErrorText key={index}>{message}</Field.ErrorText>
+                    ))}
         </Field.Root>
     );
 });

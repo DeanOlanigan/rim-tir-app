@@ -12,13 +12,13 @@ import { useVariablesStore } from "@/store/variables-store";
 import { useConfigInfoStore } from "@/store/config-info-store";
 import { parseXmlToState } from "@/utils/xmlToStore";
 import { useValidationStore } from "@/store/validation-store";
-import { validateAll } from "@/utils/validation/validator";
+import { validateAll } from "@/utils/validation/validateAll";
 
 export const RouterMenu = () => {
     const currentState = useVariablesStore.getState();
     const currentConfigInfo = useConfigInfoStore.getState().configInfo;
-    const errors = useValidationStore((state) => state.errors);
-    const hasErrors = Object.keys(errors).length > 0;
+    const errors = useValidationStore((state) => state.errorsTree);
+    const hasErrors = errors && errors.size !== 0;
 
     const startHandler = () => {
         axios

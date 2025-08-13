@@ -4,18 +4,19 @@ import { VariablesTable } from "./VariableEditor/Table/VariablesTable";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { DataObjectsTable } from "./ConnectionEditor/Table/Table";
 import { ConnectionParamContainer } from "./ConnectionEditor/ConnectionParamContainer";
-import { EditorBreadcrumb } from "./Breadcrumb";
+import { EditorBreadcrumb } from "../Breadcrumb";
 import { EditorInformer } from "./EditorInformer";
 import { useSelectedData } from "@/hooks/useSelectedData";
 import { EditorLayout } from "./EditorLayout";
 import { InputFactory } from "../InputComponents/InputFactory";
 import { configuratorConfig } from "@/utils/configurationParser";
 import { NodeError } from "./NodeError";
+import { useBreadcrumb } from "@/hooks/useBreadcrumb";
 //import { ContainerNodeEditor } from "./ConnectionEditor/ContainerNodeEditor";
 
 // TODO Лишний ререндер, мб вынести логику с выбором данных в другое место?
 export const EditorWrapper = memo(function EditorWrapper({ type }) {
-    //console.log("Render EditorWrapper");
+    //console.log("Render EditorWrapper", type);
 
     const data = useSelectedData(type);
 
@@ -124,10 +125,11 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
 
     const isVariable = children.every((node) => node.type === "variable");
     const Table = isVariable ? VariablesTable : DataObjectsTable;
+    const breadcrumbs = useBreadcrumb(node.id);
 
     return (
         <EditorLayout
-            breadcrumbs={<EditorBreadcrumb id={node.id} />}
+            breadcrumbs={<EditorBreadcrumb breadcrumbs={breadcrumbs} />}
             title={
                 <HStack>
                     {TITLE[node.type] || (

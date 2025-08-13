@@ -3,8 +3,8 @@ import { Button, Flex, Icon, Popover, Portal, Text } from "@chakra-ui/react";
 import { LuArrowRight, LuDot, LuTriangleAlert } from "react-icons/lu";
 
 export const NodeError = ({ id }) => {
-    const validationErrors = useValidationStore(
-        (state) => state.errors?.[id]?.node
+    const validationErrors = useValidationStore((state) =>
+        state.errorsTree.get(id)?.get("node")
     );
 
     return (
@@ -41,11 +41,11 @@ export const NodeError = ({ id }) => {
                                     maxH={"110px"}
                                     overflow={"auto"}
                                 >
-                                    {Object.values(validationErrors).map(
-                                        (e, i) => (
-                                            <Flex key={i} align={"center"}>
+                                    {Array.from(validationErrors).map(
+                                        ([, e]) => (
+                                            <Flex key={e.id} align={"center"}>
                                                 <Icon size={"md"} as={LuDot} />
-                                                <Text>{e}</Text>
+                                                <Text>{e.messages}</Text>
                                             </Flex>
                                         )
                                     )}

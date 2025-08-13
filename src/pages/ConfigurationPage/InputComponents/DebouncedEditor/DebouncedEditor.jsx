@@ -6,9 +6,10 @@ import debounce from "debounce";
 import { useLuaDiagnostics } from "./hooks/useLuaDiagnostics";
 import { useVariableHighlightLuaParse } from "./hooks/useVariableHighlightLuaParse";
 import { useVariablesList } from "@/store/selectors";
-import { setLuaCodeError } from "@/utils/validation/luaValidationService";
-import { validateCyclicVariable } from "@/utils/validation/luaValidationService";
-import { luaAstParse } from "./luaAstParser";
+import { setLuaCodeError } from "@/utils/validation/luaValidationService/luaValidationService";
+import { validateCyclicVariable } from "@/utils/validation/luaValidationService/luaValidationService";
+import { luaAstParse } from "@/utils/validation/luaValidationService/luaAstParser";
+import { getCompletionSnippets } from "./snippets";
 
 export const DebouncedEditor = memo(function DebouncedEditor({
     luaExpression,
@@ -34,7 +35,7 @@ export const DebouncedEditor = memo(function DebouncedEditor({
             const { ast, error } = luaAstParse(luaExpression);
             if (ast) highlight(ast, editor, variables);
             diagnostics(ast, error, monacoRef.current, model);
-            validateCyclicVariable(variables);
+            validateCyclicVariable({ variables, apply: true });
         }
     }, [luaExpression, highlight, diagnostics, variables]);
 
@@ -56,36 +57,7 @@ export const DebouncedEditor = memo(function DebouncedEditor({
             providerRef.current = null;
         }
 
-        providerRef.current =
-            monacoRef.current.languages.registerCompletionItemProvider("lua", {
-                provideCompletionItems: () => {
-                    return {
-                        suggestions: [
-                            {
-                                label: "Создать блок с задержкой",
-                                kind: monacoRef.current.languages
-                                    .CompletionItemKind.Function,
-                                insertTextRules:
-                                    monacoRef.current.languages
-                                        .CompletionItemInsertTextRule
-                                        .InsertAsSnippet,
-                                insertText: [
-                                    "delay(${1}, function ()",
-                                    "",
-                                    "end)",
-                                    "",
-                                ].join("\n"),
-                            },
-                            /* ...variables.map((v) => ({
-                                label: v.name,
-                                kind: monacoRef.current.languages
-                                    .CompletionItemKind.Variable,
-                                insertText: v.name,
-                            })), */
-                        ],
-                    };
-                },
-            });
+        providerRef.current = getCompletionSnippets(monacoRef);
 
         const code = editor.getValue();
         const { ast, error } = luaAstParse(code);
@@ -95,9 +67,13 @@ export const DebouncedEditor = memo(function DebouncedEditor({
 
     const debounced = useRef(
         debounce((id, newCode) => {
-            setSettings(id, {
-                luaExpression: newCode,
-            });
+            setSettings(
+                id,
+                {
+                    luaExpression: newCode,
+                },
+                false
+            );
         }, 500)
     ).current;
 

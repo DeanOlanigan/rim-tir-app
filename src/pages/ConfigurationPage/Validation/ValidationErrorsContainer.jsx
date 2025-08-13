@@ -4,11 +4,8 @@ import { ValidationContent } from "./ValidationContent";
 import { LuArrowRight, LuTriangleAlert } from "react-icons/lu";
 
 export const ValidationErrorsContainer = () => {
-    const errors = useValidationStore((state) => state.errors);
-    const hasErrors = Object.keys(errors).length > 0;
-    if (!hasErrors) {
-        return null;
-    }
+    const errorsTree = useValidationStore((state) => state.errorsTree);
+    if (!errorsTree || errorsTree.size === 0) return null;
 
     return (
         <Popover.Root size={"xs"} lazyMount unmountOnExit>
@@ -38,7 +35,7 @@ export const ValidationErrorsContainer = () => {
                         borderEndWidth={"3px"}
                     >
                         <Popover.Body>
-                            <ValidationContent errors={errors} />
+                            <ValidationContent errors={errorsTree} />
                         </Popover.Body>
                     </Popover.Content>
                 </Popover.Positioner>

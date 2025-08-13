@@ -1,23 +1,7 @@
 import { Breadcrumb } from "@chakra-ui/react";
-import { useVariablesStore } from "@/store/variables-store";
 import React from "react";
 
-const getBreadcrumb = (id, settings) => {
-    const arr = [];
-    let node = settings[id];
-    while (node) {
-        arr.unshift(
-            node.type === "dataObject" ? node.id.slice(0, 8) : node.name
-        );
-        node = node.parentId ? settings[node.parentId] : null;
-    }
-    return arr;
-};
-
-export const EditorBreadcrumb = ({ id, color, maxLength = 8 }) => {
-    const settings = useVariablesStore((state) => state.settings);
-    const breadcrumbs = getBreadcrumb(id, settings);
-
+export const EditorBreadcrumb = ({ breadcrumbs, color, maxLength = 8 }) => {
     let items = breadcrumbs;
 
     if (maxLength && breadcrumbs.length > maxLength) {

@@ -1,16 +1,17 @@
 import { SCOPE } from "./const";
 
-function dfsNew(id, context, ids = []) {
+function collectSubtreeIds(id, context, ids = []) {
     ids.push(id);
     const children = context[id]?.children || [];
     for (const childId of children) {
-        dfsNew(childId, context, ids);
+        collectSubtreeIds(childId, context, ids);
     }
     return ids;
 }
 
-function getMeanId(id, context) {
-    if (context[id].type === "folder") return getMeanId(context[id].parentId);
+function getNearestNonFolderAncestorId(id, context) {
+    if (context[id].type === "folder")
+        return getNearestNonFolderAncestorId(context[id].parentId, context);
     return id;
 }
 
@@ -43,14 +44,14 @@ export function getContextIds(context, nodeId, param, scope) {
         case SCOPE.ROOT: {
             const rootId = context[nodeId]?.rootId;
             if (!rootId) return [];
-            const ids = dfsNew(rootId, context);
+            const ids = collectSubtreeIds(rootId, context);
             return ids;
         }
         case SCOPE.IGNOREFOLDER: {
             const parentId = context[nodeId]?.parentId;
             if (!parentId) return [];
-            const meanId = getMeanId(parentId, context);
-            const ids = dfsNew(meanId, context);
+            const meanId = getNearestNonFolderAncestorId(parentId, context);
+            const ids = collectSubtreeIds(meanId, context);
             return ids;
         }
         default:

@@ -1,6 +1,6 @@
 import { useVariablesStore } from "@/store/variables-store";
 import { useConfigInfoStore } from "@/store/config-info-store";
-import { validateAll } from "./validation/validator";
+import { validateAll } from "./validation/validateAll";
 
 function toCamelCase(str) {
     return str[0].toLowerCase() + str.slice(1);
