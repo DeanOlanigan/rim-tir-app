@@ -3,15 +3,16 @@ import { Field } from "@/components/ui/field";
 import { ru } from "date-fns/locale";
 import { DatePicker } from "@/components/DatePicker/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useAtom } from "jotai";
-import { startDateAtom, endDateAtom } from "../../atoms";
+import { useGraphStore } from "../../GraphStore";
 //import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
 
 function PeriodPicker() {
     console.log("Render PeriodPicker");
     //const { startDate, endDate, setStartDate, setEndDate} = useGraphContext();
-    const [startDate, setStartDate] = useAtom(startDateAtom);
-    const [endDate, setEndDate] = useAtom(endDateAtom);
+    const startDate = useGraphStore(state => state.startDateZus);
+    const setStartDate = useGraphStore(state => state.setStartDateZus);
+    const endDate = useGraphStore(state => state.endDateZus);
+    const setEndDate = useGraphStore(state => state.setEndDateZus);
 
     return (
         <Stack>

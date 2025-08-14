@@ -1,15 +1,14 @@
 import { Flex, Button } from "@chakra-ui/react";
-import { useAtom, useAtomValue } from "jotai";
-import { variablesAtom, addVariableAtom } from "../../atoms";
 import GraphVariable from "./GraphVariable";
+import { useGraphStore } from "../../GraphStore";
 //import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
 
 function VariablesManager() {
     console.log("Render VariablesManager");
     //const { variables, addVariable, removeVariable, updateVariable } = useGraphContext();
 
-    const variables = useAtomValue(variablesAtom);
-    const [, addVariable] = useAtom(addVariableAtom);
+    const variables = useGraphStore(state => state.variablesZus);
+    const addVariable = useGraphStore(state => state.addVariableZus);
 
     return (
         <>

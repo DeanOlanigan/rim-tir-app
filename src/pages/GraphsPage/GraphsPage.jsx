@@ -4,13 +4,12 @@ import { Container } from "@chakra-ui/react";
 import GraphProvider from "@/providers/GraphProvider/GraphProvider";
 import GraphSettings from "./GraphSettings/GraphSettings";
 import GraphViewer from "./Viewer/GraphViewer";
-import { useAtomValue } from "jotai";
-import { wsMessageAtom } from "./atoms";
 import { useEffect } from "react";
+import { useGraphStore } from "./GraphStore";
 
 function GraphsPage() {
     //console.log("Render GraphsPage");
-    const wsMessage = useAtomValue(wsMessageAtom);
+    const wsMessage = useGraphStore(state => state.wsMessageZus);
     const navigate = useNavigate();
     const location = useLocation();
 

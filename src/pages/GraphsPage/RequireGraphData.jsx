@@ -1,13 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAtomValue } from "jotai";
-import { wsMessageAtom } from "./atoms";
 import { useEffect, useState } from "react";
+import { useGraphStore } from "./GraphStore";
 
 export default function RequireGraphData() {
     //console.log("Render RequireGraphData");
     const [isHydrated, setIsHydrated] = useState(false);
 
-    const wsMessage = useAtomValue(wsMessageAtom);
+    const wsMessage = useGraphStore(state => state.wsMessageZus);
     const hasGraphMessage = Boolean(
         wsMessage.graph && Object.keys(wsMessage.graph).length > 0
     );

@@ -19,9 +19,8 @@ import {
     SelectValueText,
 } from "@/components/ui/select";
 import { swatches, measurements } from "../graphSettingsConstants";
-import { useAtom } from "jotai";
-import { removeVariableAtom, updateVariableAtom } from "../../atoms";
 import { useVariablesOptions } from "@/hooks/useVariablesOptions";
+import { useGraphStore } from "../../GraphStore";
 
 function GraphVariable({
     variable,
@@ -30,8 +29,8 @@ function GraphVariable({
     const variables = useVariablesOptions();
     const [color, setColor] = useState(parseColor(variable.color));
 
-    const [, removeVariable] = useAtom(removeVariableAtom);
-    const [, updateVariable] = useAtom(updateVariableAtom);
+    const removeVariable = useGraphStore(state => state.removeVariableZus);
+    const updateVariable = useGraphStore(state => state.updateVariableZus);
 
     console.log(`Render GraphVariable, index: ${index}`);
     return (

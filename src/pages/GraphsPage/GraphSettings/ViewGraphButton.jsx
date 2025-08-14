@@ -1,27 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useSetAtom, useAtomValue, useAtom } from "jotai";
-import {
-    startDateAtom,
-    endDateAtom,
-    offsetAtom,
-    isWsActiveAtom,
-    getWsMessageAtom,
-    variablesAtom,
-} from "../atoms";
+import { useGraphStore } from "../GraphStore";
 
 function ViewGraphButton() {
     console.log("Render ViewGraphButton");
     const navigate = useNavigate();
 
-    const isWsActive = useAtomValue(isWsActiveAtom);
-    const offset = useAtomValue(offsetAtom);
-    const setStartDate = useSetAtom(startDateAtom);
-    const setEndDate = useSetAtom(endDateAtom);
+    const isWsActive = useGraphStore(state => state.isWsActiveZus);
+    const offset = useGraphStore(state => state.offsetZus);
+    const setStartDate = useGraphStore(state => state.startDateZus);
+    const setEndDate = useGraphStore(state => state.setEndDate);
 
-    const [, getWsMessage] = useAtom(getWsMessageAtom);
+    const getWsMessage = useGraphStore(state => state.getWsMessageZus);
 
-    const variables = useAtomValue(variablesAtom);
+    const variables = useGraphStore(state => state.variablesZus);
+
+
     const isDisabled = !(
         variables.length > 0 &&
         variables.every(

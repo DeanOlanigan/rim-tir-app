@@ -8,14 +8,14 @@ import {
     SelectValueText,
 } from "@/components/ui/select";
 import { points } from "./graphSettingsConstants";
-import { useAtom } from "jotai";
-import { maxPointsCountAtom } from "../atoms";
+import { useGraphStore } from "../GraphStore";
 //import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
 
 function PointsCountChooser() {
     console.log("Render PointsCountChooser");
     //const { maxPointsCount, setMaxPointsCount } = useGraphContext();
-    const [maxPointsCount, setMaxPointsCount] = useAtom(maxPointsCountAtom);
+    const maxPointsCount = useGraphStore(state => state.maxPointsCountZus);
+    const setMaxPointsCount = useGraphStore(state => state.setMaxPointsCountZus);
 
     return (
         <Box>

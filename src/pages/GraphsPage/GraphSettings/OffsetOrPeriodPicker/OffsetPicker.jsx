@@ -7,14 +7,14 @@ import {
     SelectValueText,
 } from "@/components/ui/select";
 import { offsets } from "../graphSettingsConstants";
-import { useAtom } from "jotai";
-import { offsetAtom } from "../../atoms";
+import { useGraphStore } from "../../GraphStore";
 //import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
 
 function OffsetPicker() {
     console.log("Render OffsetPicker");
     //const { setOffset } = useGraphContext();
-    const [offset, setOffset] = useAtom(offsetAtom);
+    const offset = useGraphStore(state => state.offsetZus);
+    const setOffset = useGraphStore(state => state.setOffsetZus);
 
     return (
         <SelectRoot
