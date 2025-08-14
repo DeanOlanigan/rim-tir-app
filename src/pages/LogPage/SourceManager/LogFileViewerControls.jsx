@@ -10,12 +10,14 @@ import {
     SelectTrigger,
     SelectValueText,
 } from "@/components/ui/select";
-import { useLogContext } from "@/providers/LogProvider/LogContext";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import { useLogStore } from "../LogStore/LogStore";
 
 function LogFileViewerControls({ isLoading }) {
-    const { logData, updateLogData } = useLogContext();
+    const logData = useLogStore(state => state.logDataZus);
+    const updateLogData = useLogStore(state => state.updateLogDataZus);
+
     const navigate = useNavigate();
     console.log("Render LogFileViewerControls");
 
@@ -56,9 +58,9 @@ function LogFileViewerControls({ isLoading }) {
             <Box>
                 <SelectRoot
                     collection={rows}
-                    value={[logData.rows]}
+                    value={[logData.logRowsZus]}
                     size={"xs"}
-                    onValueChange={(e) => updateLogData({ rows: e.value[0] })}
+                    onValueChange={(e) => updateLogData({ logRowsZus: e.value[0] })}
                 >
                     <SelectLabel>Количество отображаемых строк:</SelectLabel>
                     <SelectTrigger shadow={"xl"}>

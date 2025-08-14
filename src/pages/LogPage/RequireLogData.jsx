@@ -1,11 +1,11 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useLogContext } from "@/providers/LogProvider/LogContext";
+import { useLogStore } from "./LogStore/LogStore";
 //import { useAtomValue } from "jotai";
 //import { wsMessageAtom } from "./atoms";
 
 export default function RequireLogData() {
     console.log("Render RequireLogData");
-    const { hasChosenLog } = useLogContext();
+    const hasChosenLog  = useLogStore(state => state.hasChosenLogZus);
 
     //const wsMessage = useAtomValue(wsMessageAtom);
     //const hasGraphMessage = Boolean(wsMessage.graph && Object.keys(wsMessage.graph).length > 0);

@@ -1,23 +1,23 @@
 import { HStack, Heading, Text, Em } from "@chakra-ui/react";
 import { InfoTip } from "@/components/ui/toggle-tip";
-import { useLogContext } from "@/providers/LogProvider/LogContext";
+import { useLogStore } from "../../LogStore/LogStore";
 
 function LogName() {
     console.log("Render LogName");
-    const { logData } = useLogContext();
+    const logData = useLogStore(state => state.logDataZus);
 
     return (
         <HStack gap={"0"}>
-            <Heading>{logData.name}</Heading>
+            <Heading>{logData.logNameZus}</Heading>
             <InfoTip>
                 <Text>
-                    Дата создания: <Em>{logData.createdAt}</Em>
+                    Дата создания: <Em>{logData.logCreationDateZus}</Em>
                 </Text>
                 <Text>
-                    Размер: <Em>{logData.size}</Em>
+                    Размер: <Em>{logData.logSizeZus}</Em>
                 </Text>
                 <Text>
-                    Расположение: <Em>{logData.type.toLowerCase()}</Em>
+                    Расположение: <Em>{logData.logTypeZus.toLowerCase()}</Em>
                 </Text>
             </InfoTip>
         </HStack>

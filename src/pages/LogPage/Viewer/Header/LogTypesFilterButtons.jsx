@@ -1,10 +1,10 @@
 import { CheckboxCard, CheckboxGroup, Group } from "@chakra-ui/react";
 import { LuCircleAlert, LuInfo, LuTriangleAlert } from "react-icons/lu";
-import { useLogViewerContext } from "@/providers/LogViewerProvider/LogViewerContext";
 import { useEffect } from "react";
+import useLogViewerStore from "../../LogStore/LogViewerStore";
 
 function LogTypesFilterButtons() {
-    const { setCurrentFilter } = useLogViewerContext();
+    const setCurrentFilter = useLogViewerStore(state => state.setCurrentFilterZus);
     console.log("Render LogTypesFilterButtons");
 
     useEffect(() => {

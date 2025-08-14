@@ -1,23 +1,23 @@
 import { useEffect, useMemo, useRef } from "react";
 import { Text, Box, Badge, Flex } from "@chakra-ui/react";
 import { toaster } from "@/components/ui/toaster"; // Chakra UI toaster
-import { useLogContext } from "@/providers/LogProvider/LogContext";
-import { useLogViewerContext } from "@/providers/LogViewerProvider/LogViewerContext";
 import websocketService from "@/services/websocketService";
+import { useLogStore } from "../LogStore/LogStore";
+import useLogViewerStore from "../LogStore/LogViewerStore";
 
 const wsService = new websocketService("ws://192.168.1.1:8800");
 
 function LogViewerBody() {
     console.log("Render LogViewerBody");
-    const { logData, isLoading } = useLogContext();
-    const {
-        isPaused,
-        isLogTextWrapped,
-        logTextSize,
-        currentFilter,
-        logs,
-        setLogs,
-    } = useLogViewerContext();
+
+    const isPaused = useLogViewerStore(state => state.isPaused);
+    const isLogTextWrapped = useLogViewerStore(state => state.isLogTextWrapped);
+    const logTextSize = useLogViewerStore(state => state.logTextSize);
+    const currentFilter = useLogViewerStore(state => state.currentFilter);
+    const logs = useLogViewerStore(state => state.logs);
+    const setLogs = useLogViewerStore(state => state.setLogsZus);
+    const clearLogs = useLogViewerStore(state => state.clearLogsZus);
+    const logData = useLogStore(state => state.logDataZus);
 
     const logsContainerRef = useRef(null);
     let logIndex = 1;
@@ -29,13 +29,14 @@ function LogViewerBody() {
     }, [logs, isPaused]);
 
     useEffect(() => {
-        if (isLoading) {
-            return;
-        }
+        clearLogs();
+    }, [logData.logNameZus]);
+
+    useEffect(() => {
         const fetchLogs = async () => {
             try {
                 const response = await fetch(
-                    `/api/v1/getLog?logfile=${logData.name}&limit=${logData.rows}&type=${logData.type}`
+                    `/api/v1/getLog?logfile=${logData.logNameZus}&limit=${logData.logRowsZus}&type=${logData.logTypeZus}`
                 );
                 if (!response.ok) {
                     throw new Error(
@@ -58,7 +59,7 @@ function LogViewerBody() {
         };
 
         fetchLogs();
-    }, [isLoading, logData.name, logData.rows, logData.type]);
+    }, [logData.logNameZus, logData.logRowsZus, logData.logTypeZus]);
 
     useEffect(() => {
         wsService.connect();
@@ -71,7 +72,7 @@ function LogViewerBody() {
         wsService.addMessageHandler(messageHandler);
 
         wsService.sendMessage({
-            log: { fileName: logData.name, type: logData.type },
+            log: { fileName: logData.logNameZus, type: logData.logTypeZus },
         });
 
         return () => {
@@ -83,7 +84,7 @@ function LogViewerBody() {
     const appendLogs = (data) => {
         const logDataArr = data.split("\n").filter((line) => line);
         const newLogs = logDataArr.map((element) => extractLogPart(element));
-        setLogs(newLogs);
+        setLogs(newLogs);   
     };
 
     const extractLogPart = (line) => {

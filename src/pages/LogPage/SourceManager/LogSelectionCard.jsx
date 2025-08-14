@@ -9,14 +9,20 @@ import {
     Spinner,
 } from "@chakra-ui/react";
 import { RadioCardItem, RadioCardRoot } from "@/components/ui/radio-card";
-import { useLogContext } from "@/providers/LogProvider/LogContext";
+//import { useLogContext } from "@/providers/LogProvider/LogContext";
 import DownloadAllLogsButton from "./DownloadAllLogsButton";
 import PropTypes from "prop-types";
+import { useLogStore } from "../LogStore/LogStore";
+//import { useLogStore } from "../LogStore/LogStore";
 
 function LogSelectionCard({ headingText, logList, loading }) {
-    const { logData, updateLogData, saveChosenLogToLocalStorage } =
-        useLogContext();
+    /*const { logData, updateLogData, saveChosenLogToLocalStorage } =
+        useLogContext();*/
+    const logData = useLogStore(state => state.logDataZus);
+    const updateLogData = useLogStore(state => state.updateLogDataZus);
+    const saveChosenLog = useLogStore(state => state.saveChosenLogZus);
     const navigate = useNavigate();
+
     const [scrollShadow, setScrollShadow] = useState("none");
     const scrollRef = useRef(null);
     console.log("Render LogSelectionCard");
@@ -25,8 +31,8 @@ function LogSelectionCard({ headingText, logList, loading }) {
         headingText === "Логи во внутренней памяти роутера"
             ? "r"
             : headingText === "Логи на SD карте роутера"
-            ? "sd"
-            : "";
+                ? "sd"
+                : "";
 
     const formatFileSize = (size) => {
         if (size >= 1073741824) {
@@ -90,24 +96,24 @@ function LogSelectionCard({ headingText, logList, loading }) {
                                     (item) => item.name === log.value
                                 )[0];
                                 updateLogData({
-                                    name: params.name,
-                                    size: formatFileSize(params.size),
-                                    createdAt: params.created_at,
-                                    type: logType,
+                                    logNameZus: params.name,
+                                    logSizeZus: formatFileSize(params.size),
+                                    logCreationDateZus: params.created_at,
+                                    logTypeZus: logType,
                                 });
                             }}
                             onKeyUp={(e) => {
                                 if (e.code === "Enter" || e.code === "Space") {
-                                    saveChosenLogToLocalStorage();
+                                    saveChosenLog();
                                     navigate("/log/viewer");
                                 }
                             }}
                             onDoubleClick={() => {
-                                saveChosenLogToLocalStorage();
+                                saveChosenLog();
                                 navigate("/log/viewer");
                             }}
                             value={
-                                logData.type === logType ? logData.name : null
+                                logData.logTypeZus === logType ? logData.logNameZus : null
                             }
                         >
                             <Group attached orientation={"vertical"}>
