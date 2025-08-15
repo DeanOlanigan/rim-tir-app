@@ -313,10 +313,7 @@ export const useVariablesStore = create()(
         }),
         {
             name: "configuration-storage",
-            onRehydrateStorage: () => (state) => {
-                const settings = state.settings || {};
-                validateAll(settings);
-            },
+            skipHydration: true,
             partialize: (state) =>
                 Object.fromEntries(
                     Object.entries(state).filter(
@@ -326,3 +323,5 @@ export const useVariablesStore = create()(
         }
     )
 );
+
+export const rehydrateSettings = () => useVariablesStore.persist.rehydrate();
