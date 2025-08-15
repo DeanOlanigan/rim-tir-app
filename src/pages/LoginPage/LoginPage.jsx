@@ -1,14 +1,11 @@
-import { SHA1 } from "crypto-js";
 import {
     Input,
-    Stack,
     Box,
     Alert,
     Grid,
     Flex,
     VStack,
     Heading,
-    Text,
     Fieldset,
     Field,
 } from "@chakra-ui/react";
@@ -77,7 +74,6 @@ const LoginCard = () => {
     } = useForm();
     const onSubmit = async (data) => {
         setLoading(true);
-        let hashPassword = SHA1(data.password).toString();
         try {
             const response = await fetch("/api/v1/login", {
                 method: "POST",
@@ -86,7 +82,7 @@ const LoginCard = () => {
                 },
                 body: new URLSearchParams({
                     login: data.username,
-                    password: hashPassword,
+                    password: await sha1(data.password),
                 }),
                 credentials: "include",
             });
@@ -181,3 +177,11 @@ const LoginCard = () => {
         </form>
     );
 };
+
+async function sha1(data) {
+    const text = new TextEncoder().encode(data);
+    const hashBuffer = await crypto.subtle.digest("SHA-1", text);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    return hash;
+}
