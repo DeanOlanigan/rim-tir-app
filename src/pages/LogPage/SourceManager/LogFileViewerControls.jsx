@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { useLogContext } from "@/providers/LogProvider/LogContext";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
 
 function LogFileViewerControls({ isLoading }) {
     const { logData, updateLogData } = useLogContext();
@@ -89,10 +88,5 @@ function LogFileViewerControls({ isLoading }) {
         </Flex>
     );
 }
-LogFileViewerControls.propTypes = {
-    isLoading: PropTypes.bool,
-    selectedLog: PropTypes.object,
-    onViewBtnClick: PropTypes.func,
-};
 
 export default LogFileViewerControls;

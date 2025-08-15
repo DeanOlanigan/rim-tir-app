@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { AuthContext } from "./AuthContext";
-import PropTypes from "prop-types";
 
 const checkAuth = () => {
     const sessionExpirationTime = localStorage.getItem("session_expiration_time");
@@ -71,9 +70,6 @@ function AuthProvider({ children }) {
             {children}
         </AuthContext.Provider>
     );
-};
-AuthProvider.propTypes = {
-    children: PropTypes.node.isRequired
-};
+}
 
 export default AuthProvider;

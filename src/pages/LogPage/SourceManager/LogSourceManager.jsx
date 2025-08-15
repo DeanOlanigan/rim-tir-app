@@ -3,7 +3,6 @@ import { Flex, Heading, Stack } from "@chakra-ui/react";
 import { toaster } from "@/components/ui/toaster";
 import LogSelectionCard from "./LogSelectionCard";
 import LogFileViewerControls from "./LogFileViewerControls";
-import PropTypes from "prop-types";
 
 function LogSourceManager() {
     const [logs, setLogs] = useState({ internal: [], sd: [] });
@@ -69,8 +68,5 @@ function LogSourceManager() {
         </Stack>
     );
 }
-LogSourceManager.propTypes = {
-    apiEndpoint: PropTypes.string,
-};
 
 export default LogSourceManager;

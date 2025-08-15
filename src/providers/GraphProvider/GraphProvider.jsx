@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
 import { GraphContext } from "./GraphContext";
-import PropTypes from "prop-types";
 import { getStartDate, getEndDate, getRandomColor } from "@/utils/utils";
 
 function GraphProvider({ children }) {
@@ -72,8 +71,5 @@ function GraphProvider({ children }) {
         </GraphContext.Provider>
     );
 }
-GraphProvider.propTypes = {
-    children: PropTypes.node,
-};
 
 export default GraphProvider;

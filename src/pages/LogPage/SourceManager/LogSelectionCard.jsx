@@ -11,7 +11,6 @@ import {
 import { RadioCardItem, RadioCardRoot } from "@/components/ui/radio-card";
 import { useLogContext } from "@/providers/LogProvider/LogContext";
 import DownloadAllLogsButton from "./DownloadAllLogsButton";
-import PropTypes from "prop-types";
 
 function LogSelectionCard({ headingText, logList, loading }) {
     const { logData, updateLogData, saveChosenLogToLocalStorage } =
@@ -147,10 +146,5 @@ function LogSelectionCard({ headingText, logList, loading }) {
         </Card.Root>
     );
 }
-LogSelectionCard.propTypes = {
-    headingText: PropTypes.string,
-    logList: PropTypes.array,
-    loading: PropTypes.bool,
-};
 
 export default LogSelectionCard;

@@ -1,6 +1,5 @@
 import { useReducer, useMemo, useEffect } from "react";
 import { JournalContext } from "./JournalContext";
-import PropTypes from "prop-types";
 import { defaultFilters } from "@/pages/JournalPage/JournalFilter/filterOptions";
 
 function initialState() {
@@ -101,8 +100,5 @@ function JournalProvider({ children }) {
         </JournalContext.Provider>
     );
 }
-JournalProvider.propTypes = {
-    children: PropTypes.node.isRequired,
-};
 
 export default JournalProvider;

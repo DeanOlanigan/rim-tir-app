@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { toaster } from "@/components/ui/toaster";
 import { LuDownload } from "react-icons/lu";
-import PropTypes from "prop-types";
 
 function DownloadAllLogsButton({ type, loading }) {
     console.log("Render DownloadAllLogsButton");
@@ -90,9 +89,5 @@ function DownloadAllLogsButton({ type, loading }) {
         </Button>
     );
 }
-DownloadAllLogsButton.propTypes = {
-    type: PropTypes.string,
-    loading: PropTypes.bool,
-};
 
 export default DownloadAllLogsButton;

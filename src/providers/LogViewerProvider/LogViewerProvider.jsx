@@ -1,6 +1,5 @@
 import { useReducer, useMemo, useEffect } from "react";
 import { LogViewerContext } from "./LogViewerContext";
-import PropTypes from "prop-types";
 
 function initialState() {
     const savedSettings =
@@ -102,8 +101,5 @@ function LogViewerProvider({ children }) {
         </LogViewerContext.Provider>
     );
 }
-LogViewerProvider.propTypes = {
-    children: PropTypes.node.isRequired,
-};
 
 export default LogViewerProvider;

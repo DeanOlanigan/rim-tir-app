@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { LogContext } from "./LogContext";
-import PropTypes from "prop-types";
 
 //import { useNavigate } from "react-router-dom";
 
@@ -75,8 +74,5 @@ function LogProvider({ children }) {
         </LogContext.Provider>
     );
 }
-LogProvider.propTypes = {
-    children: PropTypes.node.isRequired,
-};
 
 export default LogProvider;

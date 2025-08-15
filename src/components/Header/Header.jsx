@@ -15,7 +15,6 @@ import { ColorModeButton } from "@/components/ui/color-mode";
 import { LuSettings, LuLogOut } from "react-icons/lu";
 import { useContext } from "react";
 import { AuthContext } from "@/providers/AuthProvider/AuthContext";
-import PropTypes from "prop-types";
 
 import Navigation from "@/components/Navigation/Navigation";
 import ConnectionStatus from "@/components/ConnectionStatus/ConnectionStatus";
@@ -91,9 +90,6 @@ function Header() {
         </header>
     );
 }
-Header.propTypes = {
-    onSnowfall: PropTypes.func,
-};
 
 export default Header;
 
