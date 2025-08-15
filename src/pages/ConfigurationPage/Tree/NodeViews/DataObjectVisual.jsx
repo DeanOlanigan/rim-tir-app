@@ -1,6 +1,5 @@
 import { useVariablesStore } from "@/store/variables-store";
 import { Code } from "@chakra-ui/react";
-import { DroppableInput } from "../../InputComponents";
 import { BaseVisual } from "./BaseVisual";
 import { useGetParameters } from "./getParameters";
 
@@ -16,15 +15,7 @@ export const DataObjectVisual = ({ node }) => {
             paramValues={paramValues}
             name={name}
             isEditing={node.isEditing}
-            editor={
-                <DroppableInput
-                    targetKey={"variable"}
-                    id={node.id}
-                    submit={(value) => node.submit(value)}
-                    reset={() => node.reset()}
-                    forNode
-                />
-            }
+            editor={null}
             nameRenderer={(name) => (
                 <Code variant={"subtle"} colorPalette={"blue"}>
                     {name}

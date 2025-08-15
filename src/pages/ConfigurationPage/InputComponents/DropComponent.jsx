@@ -1,4 +1,4 @@
-import { Box, AbsoluteCenter, Text, IconButton } from "@chakra-ui/react";
+/* import { Box, AbsoluteCenter, Text, IconButton } from "@chakra-ui/react";
 import { useVariablesStore } from "@/store/variables-store";
 import { memo } from "react";
 import { LuTrash2 } from "react-icons/lu";
@@ -60,3 +60,4 @@ export const DropComponent = memo(function DropComponent(props) {
         </Box>
     );
 });
+ */

@@ -1,8 +1,7 @@
 import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import fixReactVirtualized from "esbuild-plugin-react-virtualized";
-import { nodePolyfills } from "vite-plugin-node-polyfills";
+import { visualizer } from "rollup-plugin-visualizer";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -15,12 +14,7 @@ export default defineConfig({
             },
         },
     },
-    optimizeDeps: {
-        esbuildOptions: {
-            plugins: [fixReactVirtualized],
-        },
-    },
-    plugins: [react(), nodePolyfills()],
+    plugins: [react(), visualizer({ template: "network" })],
     resolve: {
         alias: {
             // eslint-disable-next-line no-undef

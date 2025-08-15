@@ -113,7 +113,6 @@ function buildMenu(data, nodeByPath, context) {
 }
 
 export function createContextMenu(data, nodeByPath) {
-    console.log("Создаем контекстное меню");
     return {
         send: buildMenu(data, nodeByPath, "send"),
         receive: buildMenu(data, nodeByPath, "receive"),

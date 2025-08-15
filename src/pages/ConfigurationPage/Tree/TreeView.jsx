@@ -27,6 +27,7 @@ export const TreeView = memo(function TreeView({ data, treeType }) {
     } = useTreeViewHandlers(treeType, variableTreeRef);
 
     // TODO Улучшать хоткеи, вынести в отдельный хук, ограничить вставку
+    // react-hotkeys-hook
     /* const cutRef = useHotkeys("ctrl+x", () => {
             console.log("cut from hotkey", treeType);
             const baseIds = ref.current.root.children.map((child) => child.id);

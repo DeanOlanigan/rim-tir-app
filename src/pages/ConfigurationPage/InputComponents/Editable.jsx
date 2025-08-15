@@ -1,4 +1,4 @@
-import { Editable } from "@chakra-ui/react";
+/* import { Editable } from "@chakra-ui/react";
 import { useState } from "react";
 import { useVariablesStore } from "@/store/variables-store";
 
@@ -22,3 +22,4 @@ export const EditableInput = (props) => {
         </Editable.Root>
     );
 };
+ */

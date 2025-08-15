@@ -12,10 +12,10 @@ import { Field, Text } from "@chakra-ui/react";
 import { configuratorConfig } from "@/utils/configurationParser";
 
 const inputRenderers = {
-    boolean: (props) => <SwitchInput {...props} />,
+    drop: (props) => <ComboboxInput {...props} />,
+    name: (props) => <NameInput {...props} />,
     number: (props) => <NumberInput {...props} />,
     float: (props) => <NumberInput {...props} isF />,
-    string: (props) => <TextInput {...props} />,
     enum: (props) => (
         <SelectInput
             {...props}
@@ -23,8 +23,8 @@ const inputRenderers = {
             noPortal={props?.noPortal}
         />
     ),
-    drop: (props) => <ComboboxInput {...props} />,
-    name: (props) => <NameInput {...props} />,
+    boolean: (props) => <SwitchInput {...props} />,
+    string: (props) => <TextInput {...props} />,
     default: (props) => <TextInput {...props} />,
 };
 

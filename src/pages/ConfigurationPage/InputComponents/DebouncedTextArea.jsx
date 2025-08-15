@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
+/* import { useCallback, useState, useEffect } from "react";
 import { useVariablesStore } from "@/store/variables-store";
 import debounce from "debounce";
 import { Textarea } from "@chakra-ui/react";
@@ -52,3 +52,4 @@ export const DebouncedTextarea = memo(function DebouncedTextarea(props) {
         </Field>
     );
 });
+ */

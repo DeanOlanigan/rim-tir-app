@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+/* import { memo, useState } from "react";
 import { useVariablesStore } from "@/store/variables-store";
 import { useMaskito } from "@maskito/react";
 import { Input } from "@chakra-ui/react";
@@ -44,3 +44,4 @@ export const HexInput = memo(function HexInput(props) {
         />
     );
 });
+ */

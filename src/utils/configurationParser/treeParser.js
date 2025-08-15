@@ -15,7 +15,6 @@ function addSettings(node) {
 }
 
 export function parseTree(data) {
-    console.log("Парсим конфигурацию протоколов");
     const { nodePaths, settingPaths } = transformConfiguration(data);
     nodePaths["#/variable"] = variable;
     nodePaths["#"] = {
@@ -57,7 +56,6 @@ function transformConfiguration(
 }
 
 export function buildDependenciesGraph(map) {
-    console.log("Строим граф зависимостей параметров");
     const graph = {};
     for (const [paramPath, deps] of Object.entries(map)) {
         for (const dep of deps) {

@@ -47,18 +47,6 @@ export const VariableEditor = memo(function VariableEditor({ data }) {
                     label={"Описание переменной"}
                     showLabel
                 />
-                {/* <SelectInput
-                        targetKey={"type"}
-                        id={data.id}
-                        value={data.setting.type}
-                        showLabel
-                    />
-                    <DebouncedTextarea
-                        targetKey={"description"}
-                        id={data.id}
-                        value={data.setting.description}
-                        showLabel
-                    /> */}
             </HStack>
             <HStack w={"100%"} gap={"2"}>
                 {/* TODO Развить */}
