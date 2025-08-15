@@ -25,7 +25,8 @@ import { useValidationStore } from "@/store/validation-store";
 import { CONSTANT_VALUES } from "@/config/constants";
 import { validateName } from "@/utils/validation/nameValidation";
 import { ErrorDraft } from "@/utils/validation/ErrorDraft";
-import { validateAll } from "@/utils/validation/validateAll";
+import { validateAll } from "@/utils/validation/validation";
+import { NODE_TYPES, TREE_TYPES } from "@/config/constants";
 
 const baseNodeInit = (type, name) => ({
     id: type,
@@ -37,23 +38,15 @@ const baseNodeInit = (type, name) => ({
 
 const initialState = {
     // Деревья для react-arborist
-    send: [baseNodeInit(CONSTANT_VALUES.TREE_TYPES.send, "Передача")],
-    receive: [baseNodeInit(CONSTANT_VALUES.TREE_TYPES.receive, "Прием")],
-    variables: [
-        baseNodeInit(CONSTANT_VALUES.TREE_TYPES.variables, "Переменные"),
-    ],
+    send: [baseNodeInit(TREE_TYPES.send, "Передача")],
+    receive: [baseNodeInit(TREE_TYPES.receive, "Прием")],
+    variables: [baseNodeInit(TREE_TYPES.variables, "Переменные")],
     // Параметры всех узлов деревьев
     settings: {
-        [CONSTANT_VALUES.TREE_TYPES.send]: baseNodeInit(
-            CONSTANT_VALUES.TREE_TYPES.send,
-            "Передача"
-        ),
-        [CONSTANT_VALUES.TREE_TYPES.receive]: baseNodeInit(
-            CONSTANT_VALUES.TREE_TYPES.receive,
-            "Прием"
-        ),
-        [CONSTANT_VALUES.TREE_TYPES.variables]: baseNodeInit(
-            CONSTANT_VALUES.TREE_TYPES.variables,
+        [TREE_TYPES.send]: baseNodeInit(TREE_TYPES.send, "Передача"),
+        [TREE_TYPES.receive]: baseNodeInit(TREE_TYPES.receive, "Прием"),
+        [TREE_TYPES.variables]: baseNodeInit(
+            TREE_TYPES.variables,
             "Переменные"
         ),
     },
@@ -155,17 +148,16 @@ export const useVariablesStore = create()(
                         name
                     );
                     const isVariables =
-                        newSettings[nodeId].type ===
-                        CONSTANT_VALUES.TREE_TYPES.variables;
+                        newSettings[nodeId].type === NODE_TYPES.variable;
                     const isNeedValidate = [
-                        "protocol",
-                        "variable",
-                        "interface",
+                        NODE_TYPES.protocol,
+                        NODE_TYPES.variable,
+                        NODE_TYPES.interface,
                     ].includes(newSettings[nodeId].type);
                     const draft = new ErrorDraft();
                     if (isVariables) {
                         const variables = Object.values(newSettings).filter(
-                            (node) => node.type === "variable"
+                            (node) => node.type === NODE_TYPES.variable
                         );
                         validateCyclicVariable({ variables, draft });
                     }

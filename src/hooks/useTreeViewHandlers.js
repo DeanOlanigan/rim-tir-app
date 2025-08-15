@@ -2,7 +2,7 @@ import { useVariablesStore } from "@/store/variables-store";
 import { useCallback } from "react";
 import { getParentType, initDefaultDataByPath } from "@/utils/utils";
 import { useContextMenuStore } from "@/store/contextMenu-store";
-import { CONSTANT_VALUES } from "@/config/constants";
+import { TREE_TYPES } from "@/config/constants";
 
 export function useTreeViewHandlers(treeType, ref) {
     const addNode = useVariablesStore((state) => state.addNode);
@@ -17,8 +17,7 @@ export function useTreeViewHandlers(treeType, ref) {
     const updateContext = useContextMenuStore((state) => state.updateContext);
 
     const settingType =
-        treeType === CONSTANT_VALUES.TREE_TYPES.send ||
-        treeType === CONSTANT_VALUES.TREE_TYPES.receive
+        treeType === TREE_TYPES.send || treeType === TREE_TYPES.receive
             ? "connections"
             : treeType;
 

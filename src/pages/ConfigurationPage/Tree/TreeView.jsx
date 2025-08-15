@@ -7,7 +7,7 @@ import { Node } from "./Node";
 import { Box } from "@chakra-ui/react";
 import { useTreeViewHandlers } from "@/hooks/useTreeViewHandlers";
 import { useConfigTreeApiStore } from "@/store/config-tree-api-store";
-import { CONSTANT_VALUES } from "@/config/constants";
+import { NODE_TYPES } from "@/config/constants";
 
 export const TreeView = memo(function TreeView({ data, treeType }) {
     console.log("%cRender NEW TreeView", "color: white; background: red;");
@@ -99,9 +99,7 @@ export const TreeView = memo(function TreeView({ data, treeType }) {
                         onSelect={handleSelect}
                         onContextMenu={handleContextMenu}
                         disableDrop={handleDisableDrop}
-                        disableEdit={(data) =>
-                            data.type === CONSTANT_VALUES.NODE_TYPES.root
-                        }
+                        disableEdit={(data) => data.type === NODE_TYPES.root}
                     >
                         {Node}
                     </Tree>

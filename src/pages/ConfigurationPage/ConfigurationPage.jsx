@@ -4,7 +4,7 @@ import "@/components/ResizebalePanel/ResizebalePanel.css";
 import { TreeCard } from "./TreeCard";
 import { useVariablesStore } from "@/store/variables-store";
 import { EditorCard } from "./EditorCard";
-import { CONSTANT_VALUES } from "@/config/constants";
+import { TREE_TYPES } from "@/config/constants";
 import { EmptyConfigDialog } from "./EmptyConfigDialog";
 import { ContextMenu } from "./Tree/ContextMenu/ContextMenu";
 
@@ -16,15 +16,11 @@ function ConfigurationPage() {
                 <Panel collapsible collapsedSize={0} minSize={15}>
                     <PanelGroup autoSaveId="persistence1" direction="vertical">
                         <Panel collapsible collapsedSize={0} minSize={10}>
-                            <TreeWrapper
-                                treeType={CONSTANT_VALUES.TREE_TYPES.receive}
-                            />
+                            <TreeWrapper treeType={TREE_TYPES.receive} />
                         </Panel>
                         <PanelResizeHandle className="PanelResizeHandle" />
                         <Panel collapsible collapsedSize={0} minSize={10}>
-                            <TreeWrapper
-                                treeType={CONSTANT_VALUES.TREE_TYPES.send}
-                            />
+                            <TreeWrapper treeType={TREE_TYPES.send} />
                         </Panel>
                     </PanelGroup>
                 </Panel>
@@ -39,9 +35,7 @@ function ConfigurationPage() {
                     defaultSize={30}
                     minSize={15}
                 >
-                    <TreeWrapper
-                        treeType={CONSTANT_VALUES.TREE_TYPES.variables}
-                    />
+                    <TreeWrapper treeType={TREE_TYPES.variables} />
                 </Panel>
             </PanelGroup>
             <ContextMenu />

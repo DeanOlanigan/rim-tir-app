@@ -1,4 +1,4 @@
-import { CONSTANT_VALUES } from "@/config/constants";
+import { TREE_TYPES } from "@/config/constants";
 import { HStack } from "@chakra-ui/react";
 import { ConnectionsButtons } from "./ConnectionsButtons";
 import { ExpandButton } from "./ExpandButton";
@@ -15,11 +15,10 @@ export const RootButtons = ({ treeApi }) => {
             /* transition={"opacity 0.2s ease-in-out"} */
             _groupHover={{ opacity: 1 }}
         >
-            {(type === CONSTANT_VALUES.TREE_TYPES.send ||
-                type === CONSTANT_VALUES.TREE_TYPES.receive) && (
+            {(type === TREE_TYPES.send || type === TREE_TYPES.receive) && (
                 <ConnectionsButtons treeApi={treeApi} type={type} />
             )}
-            {type === CONSTANT_VALUES.TREE_TYPES.variables && (
+            {type === TREE_TYPES.variables && (
                 <VariablesButtons treeApi={treeApi} />
             )}
             <IgnoreButton treeApi={treeApi} />

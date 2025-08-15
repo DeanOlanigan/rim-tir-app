@@ -1,5 +1,5 @@
 import { Tooltip } from "@/components/ui/tooltip";
-import { CONSTANT_VALUES } from "@/config/constants";
+import { NODE_TYPES } from "@/config/constants";
 import { IconButton } from "@chakra-ui/react";
 import { LuFilePlus, LuFolderPlus } from "react-icons/lu";
 
@@ -9,7 +9,7 @@ export const VariablesButtons = ({ treeApi }) => {
         treeApi?.create({
             parentId: null,
             type: {
-                nodeType: CONSTANT_VALUES.NODE_TYPES.variable,
+                nodeType: NODE_TYPES.variable,
                 times: 1,
             },
         });
@@ -20,7 +20,7 @@ export const VariablesButtons = ({ treeApi }) => {
         treeApi?.create({
             parentId: null,
             type: {
-                nodeType: CONSTANT_VALUES.NODE_TYPES.folder,
+                nodeType: NODE_TYPES.folder,
                 times: 1,
             },
         });

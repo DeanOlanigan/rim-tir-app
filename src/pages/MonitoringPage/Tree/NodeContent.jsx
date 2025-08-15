@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { useVariablesStore } from "@/store/variables-store";
 import { Text, IconButton, HStack } from "@chakra-ui/react";
-import { CONSTANT_VALUES } from "@/config/constants";
+import { NODE_TYPES } from "@/config/constants";
 import { NodeValues } from "./NodeValues";
 import { LuInfo, LuPencil } from "react-icons/lu";
 
@@ -14,9 +14,7 @@ export const NodeContent = memo(function NodeContent({ id, type, name }) {
         <HStack justifyContent={"space-between"} w={"100%"}>
             <HStack>
                 <Text truncate>
-                    {type === CONSTANT_VALUES.NODE_TYPES.dataObject
-                        ? variableName
-                        : name}
+                    {type === NODE_TYPES.dataObject ? variableName : name}
                 </Text>
                 {/* <ConnectionHeadderAdditionalInfo id={id} /> */}
             </HStack>

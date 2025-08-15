@@ -13,7 +13,7 @@ import styles from "@/components/TreeView/TreeView.module.css";
 import { DropCursor } from "@/components/TreeView/DropCursor";
 import { Node } from "./Tree/Node";
 import { LuFileQuestion, LuTriangleAlert } from "react-icons/lu";
-import { CONSTANT_VALUES } from "@/config/constants";
+import { NODE_TYPES } from "@/config/constants";
 
 // TODO может быть сравнить с TreeCard в configuration и сделать общую функциональность
 export const TreeCard = ({ data = [], searchTerm, isLoading, error }) => {
@@ -24,7 +24,7 @@ export const TreeCard = ({ data = [], searchTerm, isLoading, error }) => {
     } else if (error) {
         content = <ErrorInformer />;
     } else if (
-        data[0].type === CONSTANT_VALUES.NODE_TYPES.root &&
+        data[0].type === NODE_TYPES.root &&
         data[0].children.length === 0
     ) {
         content = <EmptyCard />;
