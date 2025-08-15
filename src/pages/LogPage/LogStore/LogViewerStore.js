@@ -73,7 +73,6 @@ const unsubscribe = useLogViewerStore.subscribe(
         const settings = {
             isLogTextWrapped: state.isLogTextWrapped,
             logTextSize: state.logTextSize,
-            logRows: localStorage.getItem("log-storage"),
         };
         localStorage.setItem("user-settings", JSON.stringify(settings));
     },

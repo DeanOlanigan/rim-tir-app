@@ -1,11 +1,14 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Text, Box, Badge, Flex } from "@chakra-ui/react";
 import { toaster } from "@/components/ui/toaster"; // Chakra UI toaster
 import websocketService from "@/services/websocketService";
 import { useLogStore } from "../LogStore/LogStore";
 import useLogViewerStore from "../LogStore/LogViewerStore";
+import { AutoSizer } from "react-virtualized";
+import { FixedSizeList as List } from "react-window";
 
 const wsService = new websocketService("ws://192.168.1.1:8800");
+//const ROW_HEIGHT = 40;
 
 function LogViewerBody() {
     console.log("Render LogViewerBody");
@@ -16,21 +19,18 @@ function LogViewerBody() {
     const currentFilter = useLogViewerStore(state => state.currentFilter);
     const logs = useLogViewerStore(state => state.logs);
     const setLogs = useLogViewerStore(state => state.setLogsZus);
-    const clearLogs = useLogViewerStore(state => state.clearLogsZus);
     const logData = useLogStore(state => state.logDataZus);
 
     const logsContainerRef = useRef(null);
     let logIndex = 1;
 
-    useEffect(() => {
-        if (!isPaused) {
-            scrollToBottom();
-        }
-    }, [logs, isPaused]);
+    const listRef = useRef();
 
     useEffect(() => {
-        clearLogs();
-    }, [logData.logNameZus]);
+        if (!isPaused) {
+            scrollToBottom("smooth");
+        }
+    }, [logs, isPaused]);
 
     useEffect(() => {
         const fetchLogs = async () => {
@@ -112,17 +112,45 @@ function LogViewerBody() {
         );
     }, [logs, currentFilter]);
 
-    const scrollToBottom = () => {
-        if (logsContainerRef.current) {
-            logsContainerRef.current.scrollTop =
-                logsContainerRef.current.scrollHeight;
-        }
-    };
+    const visibleLogs = ({ index, style }) => {
+        const log = filteredLogs[index];
 
-    // TODO Идея фильтровать колонки (убирать дату, тип лога и т.д.)
-    const renderLogPart = filteredLogs.map((log) => {
         if (log.severity === "STATUS") {
             return (
+                <Flex style={style} justify="center" aligns="center">
+                    <Badge  variant="surface"size={"md"} w={"100%"} mx={"2"}>
+                        {log.message}
+                    </Badge>
+                </Flex>
+            );
+        }
+
+        return (
+            <Box style={style} px={2} py={1}>
+                <Text 
+                    whiteSpace={isLogTextWrapped ? "pre-wrap" : "pre"}
+                    fontFamily="monospace"
+                    frontSize={logTextSize}
+                    color={getColor(log.severity)}
+                >
+                    {`[${log.dateTime}]\t${("[" + log.severity + "]")
+                        .toString()
+                        .padStart(9)}\t${log.message}`}
+                </Text>
+            </Box>
+        );
+    };
+
+    const scrollToBottom = useCallback((behavior = "auto") => {
+        if (listRef.current && logs.length > 0) {
+            listRef.current.scrollToItem(logs.length - 1, behavior === "smooth" ? "smart" : "end");
+        }
+    }, [logs.length]);
+
+    // TODO Идея фильтровать колонки (убирать дату, тип лога и т.д.)
+    /*const renderLogPart = filteredLogs.map((log) => {
+        if (log.severity === "STATUS") {
+            return ( =>
                 <Flex key={`pause-${logIndex++}`} justify={"center"}>
                     <Badge
                         colorPalette="green"
@@ -150,11 +178,33 @@ function LogViewerBody() {
                     .padStart(9)}\t${log.message}`}
             </Text>
         );
-    });
+    });*/
+
+    const setSize = useMemo(() => {
+        if (logTextSize > 14) {
+            let size = 35 + 7 * (logTextSize - 14);
+            return size;
+        }
+        return 40;
+    }, [logTextSize]);
 
     return (
-        <Box ref={logsContainerRef} flex={"1"} minH={"0"} overflow="auto">
-            {renderLogPart}
+        <Box ref={logsContainerRef} flex={"1"} minH={"0"} overflow="hidden">
+            <AutoSizer>
+                {({ height, width }) => (
+                    <List
+                        ref={listRef}
+                        height={height}
+                        width={width}
+                        itemCount={filteredLogs.length}
+                        itemSize={setSize}
+                        overscanCount={15}
+                        style={{fontSize: logTextSize, fontStretch: (logTextSize / 7)}}
+                    >
+                        {visibleLogs}
+                    </List>
+                )}
+            </AutoSizer>
         </Box>
     );
 }

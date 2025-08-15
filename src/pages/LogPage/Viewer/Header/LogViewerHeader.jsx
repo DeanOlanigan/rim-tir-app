@@ -10,6 +10,7 @@ function LogViewerHeader() {
     console.log("Render LogViewerHeader");
     const removeChosenLogFromLocalStorage = useLogStore(state => state.removeChosenLog);
     const resetFilters = useLogViewerStore(state => state.setCurrentFilterZus);
+    const resetLogs = useLogViewerStore.getState().clearLogsZus;
     
     //const resetLogData = useLogStore(state => state.updateLogDataZus);
 
@@ -26,6 +27,7 @@ function LogViewerHeader() {
                         ERROR: true,
                         INFO: true,
                     });
+                    resetLogs();
                 }}
             >
                 <LuArrowLeft />
