@@ -1,4 +1,4 @@
-import { SCOPE } from "./const";
+import { NODE_TYPES, SCOPE } from "./const";
 
 function collectSubtreeIds(id, context, ids = []) {
     ids.push(id);
@@ -10,7 +10,7 @@ function collectSubtreeIds(id, context, ids = []) {
 }
 
 function getNearestNonFolderAncestorId(id, context) {
-    if (context[id].type === "folder")
+    if (context[id].type === NODE_TYPES.folder)
         return getNearestNonFolderAncestorId(context[id].parentId, context);
     return id;
 }

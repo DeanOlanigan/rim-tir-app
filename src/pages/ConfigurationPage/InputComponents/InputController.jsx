@@ -1,6 +1,6 @@
 import { useVariablesStore } from "@/store/variables-store";
 import { configuratorConfig } from "@/utils/configurationParser";
-import { validateVisability } from "@/utils/validation/validator";
+import { validateVisibility } from "@/utils/validation/runners/validateVisibility";
 
 export const InputController = ({
     settingParam,
@@ -15,7 +15,7 @@ export const InputController = ({
     const settings = useVariablesStore.getState().settings;
     const def = configuratorConfig.nodePaths[path].settings[settingParam];
     if (!def) return empty;
-    const isVisible = validateVisability(def.visibleIf, nodeId, settings);
+    const isVisible = validateVisibility(def.visibleIf, nodeId, settings);
     if (!isVisible) return empty;
     return (
         <Factory

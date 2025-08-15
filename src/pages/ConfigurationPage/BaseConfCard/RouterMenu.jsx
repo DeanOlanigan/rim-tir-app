@@ -12,7 +12,8 @@ import { useVariablesStore } from "@/store/variables-store";
 import { useConfigInfoStore } from "@/store/config-info-store";
 import { parseXmlToState } from "@/utils/xmlToStore";
 import { useValidationStore } from "@/store/validation-store";
-import { validateAll } from "@/utils/validation/validateAll";
+import { validateAll } from "@/utils/validation";
+import { configuratorConfig } from "@/utils/configurationParser";
 
 export const RouterMenu = () => {
     const currentState = useVariablesStore.getState();
@@ -110,7 +111,8 @@ export const RouterMenu = () => {
                 const { state, configInfo } = parseXmlToState(res.data.data);
                 useConfigInfoStore.setState({ configInfo });
                 useVariablesStore.setState(state);
-                validateAll(state.settings);
+                const draft = validateAll(state.settings, configuratorConfig);
+                useValidationStore.getState().applyDraft(draft);
                 toaster.create({
                     title: "Конфигурация обновлена",
                     description: "Конфигурация успешно обновлена",

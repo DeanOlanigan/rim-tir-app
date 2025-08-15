@@ -6,10 +6,11 @@ import debounce from "debounce";
 import { useLuaDiagnostics } from "./hooks/useLuaDiagnostics";
 import { useVariableHighlightLuaParse } from "./hooks/useVariableHighlightLuaParse";
 import { useVariablesList } from "@/store/selectors";
-import { setLuaCodeError } from "@/utils/validation/luaValidationService/luaValidationService";
-import { validateCyclicVariable } from "@/utils/validation/luaValidationService/luaValidationService";
-import { luaAstParse } from "@/utils/validation/luaValidationService/luaAstParser";
+import { setLuaCodeError } from "@/utils/validation";
+import { validateCyclicVariable } from "@/utils/validation";
+import { luaAstParse } from "@/utils/validation";
 import { getCompletionSnippets } from "./snippets";
+import { useValidationStore } from "@/store/validation-store";
 
 export const DebouncedEditor = memo(function DebouncedEditor({
     luaExpression,
@@ -35,7 +36,8 @@ export const DebouncedEditor = memo(function DebouncedEditor({
             const { ast, error } = luaAstParse(luaExpression);
             if (ast) highlight(ast, editor, variables);
             diagnostics(ast, error, monacoRef.current, model);
-            validateCyclicVariable({ variables, apply: true });
+            const draft = validateCyclicVariable({ variables });
+            useValidationStore.getState().applyDraft2(draft);
         }
     }, [luaExpression, highlight, diagnostics, variables]);
 
@@ -82,10 +84,11 @@ export const DebouncedEditor = memo(function DebouncedEditor({
     };
 
     const handleValidate = (markers) => {
-        setLuaCodeError(
+        const draft = setLuaCodeError(
             id,
             markers.map((m) => m.message)
         );
+        useValidationStore.getState().applyDraft2(draft);
     };
 
     return (

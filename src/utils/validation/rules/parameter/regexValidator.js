@@ -1,4 +1,4 @@
-import { VALIDATOR } from "../const";
+import { VALIDATOR } from "../../utils/const";
 
 export function regexValidator({ nodeId, param, rule, context, draft }) {
     const { pattern } = rule.params || {};

@@ -19,18 +19,18 @@ import {
     getParentId,
 } from "@/utils/treeUtils";
 import { persist } from "zustand/middleware";
-import { validateParameter } from "@/utils/validation/validator";
-import { validateCyclicVariable } from "@/utils/validation/luaValidationService/luaValidationService";
 import { useValidationStore } from "@/store/validation-store";
-import { CONSTANT_VALUES } from "@/config/constants";
-import { validateName } from "@/utils/validation/nameValidation";
-import { ErrorDraft } from "@/utils/validation/ErrorDraft";
-import { validateAll } from "@/utils/validation/validation";
+import { configuratorConfig } from "@/utils/configurationParser";
+import { validateCyclicVariable } from "@/utils/validation";
+import { validateParameter } from "@/utils/validation";
+import { validateName } from "@/utils/validation";
+import { validateAll } from "@/utils/validation";
+import { ErrorDraft } from "@/utils/validation";
 import { NODE_TYPES, TREE_TYPES } from "@/config/constants";
 
 const baseNodeInit = (type, name) => ({
     id: type,
-    type: CONSTANT_VALUES.NODE_TYPES.root,
+    type: NODE_TYPES.root,
     path: "#",
     name: name,
     children: [],
@@ -83,7 +83,8 @@ export const useVariablesStore = create()(
                     settings: createSettingUtil(state.settings, settings),
                 }));
                 const state = get().settings;
-                validateAll(state);
+                const draft = validateAll(state, configuratorConfig);
+                useValidationStore.getState().applyDraft2(draft);
             },
 
             setSettings: (nodeId, updateData, shoudValidate = true) =>
@@ -99,7 +100,8 @@ export const useVariablesStore = create()(
                         const draft = validateParameter(
                             nodeId,
                             param,
-                            newSettings
+                            newSettings,
+                            configuratorConfig
                         );
                         console.log("Черновик:", draft);
                         useValidationStore.getState().applyDraft2(draft);
@@ -147,6 +149,7 @@ export const useVariablesStore = create()(
                         nodeId,
                         name
                     );
+
                     const isVariables =
                         newSettings[nodeId].type === NODE_TYPES.variable;
                     const isNeedValidate = [
@@ -155,6 +158,7 @@ export const useVariablesStore = create()(
                         NODE_TYPES.interface,
                     ].includes(newSettings[nodeId].type);
                     const draft = new ErrorDraft();
+
                     if (isVariables) {
                         const variables = Object.values(newSettings).filter(
                             (node) => node.type === NODE_TYPES.variable
@@ -264,7 +268,8 @@ export const useVariablesStore = create()(
                 }));
                 // TODO Реализовать более точечную валидацию
                 const state = get().settings;
-                validateAll(state);
+                const draft = validateAll(state, configuratorConfig);
+                useValidationStore.getState().applyDraft2(draft);
             },
 
             removeNode: (targetKey, nodeIds) => {
@@ -281,7 +286,8 @@ export const useVariablesStore = create()(
                     };
                 });
                 const state = get().settings;
-                validateAll(state);
+                const draft = validateAll(state, configuratorConfig);
+                useValidationStore.getState().applyDraft2(draft);
             },
 
             moveNode: (targetKey, dragIds, parentId, index) => {
@@ -301,7 +307,8 @@ export const useVariablesStore = create()(
                 }));
                 // TODO Реализовать более точечную валидацию
                 const state = get().settings;
-                validateAll(state);
+                const draft = validateAll(state, configuratorConfig);
+                useValidationStore.getState().applyDraft2(draft);
             },
         }),
         {

@@ -14,13 +14,13 @@ import { useVariablesStore } from "@/store/variables-store";
 import { LuChevronDown } from "react-icons/lu";
 import { InputController } from "@/pages/ConfigurationPage/InputComponents/InputController";
 import { InputFactory } from "@/pages/ConfigurationPage/InputComponents/InputFactory";
-import { validateVisability } from "@/utils/validation/validator";
+import { validateVisibility } from "@/utils/validation/runners/validateVisibility";
 
 export const Badge = ({ id, param, childrenParams, isEditing }) => {
     const settings = useVariablesStore.getState().settings;
     const paramData =
         configuratorConfig.nodePaths["#/variable"].settings[param];
-    const isVisible = validateVisability(paramData.visibleIf, id, settings);
+    const isVisible = validateVisibility(paramData.visibleIf, id, settings);
     if (!isVisible) return null;
     const value = settings[id].setting[param];
 

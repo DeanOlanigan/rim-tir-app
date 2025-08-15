@@ -1,6 +1,7 @@
-import { SCOPE, VALIDATOR } from "./const";
-import { getContextIds } from "./contextUtils";
-import { ErrorDraft } from "./ErrorDraft";
+import { NODE_TYPES } from "../../utils/const";
+import { SCOPE, VALIDATOR } from "../../utils/const";
+import { getContextIds } from "../../utils/contextUtils";
+import { ErrorDraft } from "../../core/ErrorDraft";
 
 const LUA_KEYWORDS = [
     "and",
@@ -55,8 +56,12 @@ export function validateName({
     for (const id of ids) {
         const node = settings[id] || {};
         if (
-            node.type !== "dataObject" &&
-            ["protocol", "interface", "variable"].includes(node.type)
+            node.type !== NODE_TYPES.dataObject &&
+            [
+                NODE_TYPES.protocol,
+                NODE_TYPES.interface,
+                NODE_TYPES.variable,
+            ].includes(node.type)
         ) {
             const val = node?.name;
             if (val === undefined || val == "") continue;

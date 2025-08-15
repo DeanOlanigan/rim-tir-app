@@ -10,7 +10,7 @@ import {
 import { InputController } from "../../InputComponents/InputController";
 import { InputFactory } from "../../InputComponents/InputFactory";
 import { useVariablesStore } from "@/store/variables-store";
-import { validateVisability } from "@/utils/validation/validator";
+import { validateVisibility } from "@/utils/validation/runners/validateVisibility";
 import { configuratorConfig } from "@/utils/configurationParser";
 
 // TODO Развить идею
@@ -31,7 +31,7 @@ export const CompositeSection = ({
     const dep = configuratorConfig.nodePaths[data.path]?.settings[checkedParam];
     if (!dep || dep.hidden) return null; // Если параметр не определен или скрыт, ничего не рендерим
     // TODO Проверяем видимость секции
-    const isVisible = validateVisability(dep.visibleIf, data.id, settings);
+    const isVisible = validateVisibility(dep.visibleIf, data.id, settings);
     if (!isVisible) return null; // Если секция не видима, ничего не рендерим
     const isChecked = data.setting?.[checkedParam] ?? false;
 

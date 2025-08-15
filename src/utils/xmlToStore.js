@@ -1,6 +1,8 @@
 import { useVariablesStore } from "@/store/variables-store";
 import { useConfigInfoStore } from "@/store/config-info-store";
-import { validateAll } from "./validation/validateAll";
+import { validateAll } from "@/utils/validation";
+import { configuratorConfig } from "@/utils/configurationParser";
+import { useValidationStore } from "@/store/validation-store";
 
 function toCamelCase(str) {
     return str[0].toLowerCase() + str.slice(1);
@@ -140,7 +142,8 @@ export function uploadXmlFile(file) {
         configInfo.name = file.name.slice(0, -4);
         useConfigInfoStore.setState({ configInfo });
         useVariablesStore.setState(state);
-        validateAll(state.settings);
+        const draft = validateAll(state.settings, configuratorConfig);
+        useValidationStore.getState().applyDraft(draft);
     };
     reader.readAsText(file, "UTF-8");
 }

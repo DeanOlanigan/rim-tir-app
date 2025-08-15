@@ -1,21 +1,24 @@
-import { useValidationStore } from "@/store/validation-store";
-import { VALIDATOR } from "./const";
-import { ErrorDraft } from "./ErrorDraft";
-import { validateCyclicVariable } from "./luaValidationService/luaValidationService";
-import { luaAstParse } from "./luaValidationService/luaAstParser";
-import { analyzeLuaForMonacoMarkers } from "@/pages/ConfigurationPage/InputComponents/DebouncedEditor/hooks/useLuaDiagnostics";
-import { validateNamePatternMatch } from "./nameValidation";
-import { validateParameter } from "./validator";
+import { VALIDATOR } from "../utils/const";
+import { ErrorDraft } from "../core/ErrorDraft";
+import {
+    validateCode,
+    validateCyclicVariable,
+} from "../engines/luaValidationService";
+import { luaAstParse } from "../engines/luaValidationService";
+import { validateNamePatternMatch } from "../rules/name/nameValidation";
+import { validateParameter } from "./validateParameter";
+import { NODE_TYPES } from "../utils/const";
 
-export function validateAll(settings) {
+export function validateAll(settings, configuratorConfig) {
+    const t0 = performance.now();
     const draft = new ErrorDraft();
     const map = {};
     const variables = [];
-    const asts = [];
+    const asts = new Map();
     for (const node of Object.values(settings)) {
         validateVariableCode(node, variables, asts, draft);
         validateNamePattern(node, draft, map);
-        validateSettings(node, settings, draft);
+        validateSettings(node, settings, draft, configuratorConfig);
     }
 
     for (const rootId in map) {
@@ -26,13 +29,15 @@ export function validateAll(settings) {
                         `Значение "${name}" уже существует`,
                     ]);
                 });
+            } else {
+                draft.set(ids[0], "name", VALIDATOR.UNIQUE, []);
             }
         }
     }
 
     validateCyclicVariable({ variables, draft });
-    console.log("ALL VALIDATION DRAFT", draft);
-    useValidationStore.getState().applyDraft2(draft);
+    console.log("ALL VALIDATION DRAFT", draft, performance.now() - t0);
+    return draft;
 }
 
 function validateVariableCode(node, variables, asts, draft) {
@@ -40,8 +45,9 @@ function validateVariableCode(node, variables, asts, draft) {
         variables.push(node);
         // TODO Подумать, как можно оптимизировать работу с ast (переиспользование)
         const { ast, error } = luaAstParse(node.setting.luaExpression);
-        if (ast) asts.push({ id: node.id, ast });
-        const markers = analyzeLuaForMonacoMarkers(ast, error);
+        if (ast) asts.set(node.id, { id: node.id, ast });
+        console.log(asts);
+        const markers = validateCode(ast, error);
         draft.set(
             node.id,
             "luaExpression",
@@ -55,8 +61,12 @@ function validateNamePattern(node, draft, map) {
     if (
         node.name &&
         node.rootId &&
-        node.type !== "dataObject" &&
-        ["protocol", "interface", "variable"].includes(node.type)
+        node.type !== NODE_TYPES.dataObject &&
+        [
+            NODE_TYPES.protocol,
+            NODE_TYPES.interface,
+            NODE_TYPES.variable,
+        ].includes(node.type)
     ) {
         draft.set(
             node.id,
@@ -72,10 +82,16 @@ function validateNamePattern(node, draft, map) {
     }
 }
 
-function validateSettings(node, settings, draft) {
+function validateSettings(node, settings, draft, configuratorConfig) {
     if (node.setting) {
         for (const paramKey of Object.keys(node.setting)) {
-            validateParameter(node.id, paramKey, settings, draft);
+            validateParameter(
+                node.id,
+                paramKey,
+                settings,
+                configuratorConfig,
+                draft
+            );
         }
     }
 }

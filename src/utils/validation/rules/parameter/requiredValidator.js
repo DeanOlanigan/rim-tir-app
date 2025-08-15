@@ -1,4 +1,4 @@
-import { VALIDATOR } from "../const";
+import { VALIDATOR } from "../../utils/const";
 
 export function requiredValidator({ nodeId, param, rule, context, draft }) {
     const val = context[nodeId]?.setting?.[param];

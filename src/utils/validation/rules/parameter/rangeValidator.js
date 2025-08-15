@@ -1,4 +1,4 @@
-import { VALIDATOR } from "../const";
+import { VALIDATOR } from "../../utils/const";
 
 export function rangeValidator({ nodeId, param, rule, context, draft }) {
     const { min, max } = rule.params || {};

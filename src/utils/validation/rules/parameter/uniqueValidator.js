@@ -1,5 +1,5 @@
-import { SCOPE, VALIDATOR } from "../const";
-import { getContextIds } from "../contextUtils";
+import { SCOPE, VALIDATOR } from "../../utils/const";
+import { getContextIds } from "../../utils/contextUtils";
 
 export function uniqueValidator({ nodeId, param, rule, context, draft }) {
     const { within } = rule.params || {};

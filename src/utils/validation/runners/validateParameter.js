@@ -1,24 +1,6 @@
-import { VALIDATOR } from "./const";
-import { configuratorConfig } from "../configurationParser";
-import {
-    customValidator,
-    rangeValidator,
-    regexValidator,
-    requiredValidator,
-    uniqueCompositeValidator,
-    uniqueValidator,
-} from "./validators";
-import { checkDependencies } from "./jsonLogic";
-import { ErrorDraft } from "./ErrorDraft";
-
-const validatorRegistry = {
-    [VALIDATOR.RANGE]: rangeValidator,
-    [VALIDATOR.REGEX]: regexValidator,
-    [VALIDATOR.UNIQUE]: uniqueValidator,
-    [VALIDATOR.CUSTOM]: customValidator,
-    [VALIDATOR.REQUIRED]: requiredValidator,
-    uniqueComposite: uniqueCompositeValidator,
-};
+import { checkDependencies } from "../engines/jsonlogic/jsonLogic";
+import { ErrorDraft } from "../core/ErrorDraft";
+import { validatorRegistry } from "../core/validationRegistry";
 
 function validateRules(rules, context, nodeId, inputParam, draft) {
     if (!Array.isArray(rules) || rules.length === 0) return {};
@@ -122,6 +104,7 @@ export function validateParameter(
     id,
     inputParam,
     settings,
+    configuratorConfig,
     draft = new ErrorDraft()
 ) {
     const nodePath = settings[id].path; // #/iec104
@@ -139,15 +122,10 @@ export function validateParameter(
     const deps = configuratorConfig.graph[settingPath]; // #/iec104/asdu/dataObject:address
     if (deps) {
         const depIds = findDepIds(settings, settings[id], deps);
-        console.log("depIds", depIds);
 
         for (const { id, param } of depIds) {
-            validateParameter(id, param, settings, draft);
+            validateParameter(id, param, settings, configuratorConfig, draft);
         }
     }
     return draft;
-}
-
-export function validateVisability(visibleIf, nodeId, settings) {
-    return checkDependencies(visibleIf, settings, nodeId);
 }

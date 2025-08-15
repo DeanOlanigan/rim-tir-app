@@ -10,6 +10,16 @@ export const VALIDATOR = {
     RANGE: "range",
     REGEX: "regex",
     UNIQUE: "unique",
-    CUSTOM: "custom",
     REQUIRED: "required",
+    UNIQUECOMPOSITE: "uniqueComposite",
+    NAME: "name",
+    CODE: "code",
+};
+
+export const NODE_TYPES = {
+    folder: "folder",
+    dataObject: "dataObject",
+    variable: "variable",
+    protocol: "protocol",
+    interface: "interface",
 };

@@ -1,10 +1,8 @@
-import { findCyclic } from "@/utils/validation/luaValidationService/findCyclic";
-import { useValidationStore } from "@/store/validation-store";
-import { ErrorDraft } from "../ErrorDraft";
+import { findCyclic } from "./findCyclic";
+import { ErrorDraft } from "../../core/ErrorDraft";
 
 export function validateCyclicVariable({
     variables,
-    apply = false,
     draft = new ErrorDraft(),
 }) {
     const cyclicFinderResult = findCyclic(variables);
@@ -20,12 +18,5 @@ export function validateCyclicVariable({
         }
         draft.set(nodeId, "name", "cyclic", msg);
     }
-    apply && useValidationStore.getState().applyDraft2(draft);
     return draft;
-}
-
-export function setLuaCodeError(id, errorMsg) {
-    const draft = new ErrorDraft();
-    draft.set(id, "luaExpression", "code", errorMsg ? errorMsg : []);
-    useValidationStore.getState().applyDraft2(draft);
 }

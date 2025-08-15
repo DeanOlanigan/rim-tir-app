@@ -1,5 +1,5 @@
 import jsonLogic from "json-logic-js";
-import { getContextIds } from "./contextUtils";
+import { getContextIds } from "../../utils/contextUtils";
 
 const find = function (a) {
     const context = _jsonLogicContext;
