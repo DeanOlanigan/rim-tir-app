@@ -2,6 +2,7 @@ import { useVariablesStore } from "@/store/variables-store";
 import { Code } from "@chakra-ui/react";
 import { BaseVisual } from "./BaseVisual";
 import { useGetParameters } from "./getParameters";
+import { ComboboxInput } from "../../InputComponents";
 
 export const DataObjectVisual = ({ node }) => {
     const name = useVariablesStore((state) => {
@@ -15,7 +16,7 @@ export const DataObjectVisual = ({ node }) => {
             paramValues={paramValues}
             name={name}
             isEditing={node.isEditing}
-            editor={null}
+            editor={<ComboboxInput id={node.id} reset={() => node.reset()} />}
             nameRenderer={(name) => (
                 <Code variant={"subtle"} colorPalette={"blue"}>
                     {name}

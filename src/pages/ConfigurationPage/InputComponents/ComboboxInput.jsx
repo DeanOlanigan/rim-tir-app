@@ -13,7 +13,7 @@ import {
 import { useEffect } from "react";
 import { LuBan, LuCircleHelp } from "react-icons/lu";
 
-export const ComboboxInput = ({ id }) => {
+export const ComboboxInput = ({ id, reset = null }) => {
     console.log("Render ComboboxInput");
     const variables = useVariablesCollectionMemo();
     const val = variables.find((v) => v.usedIn === id)?.value;
@@ -47,7 +47,10 @@ export const ComboboxInput = ({ id }) => {
                 //setInnerValue(e.value);
                 unbindVariable(id);
                 if (e.value[0]) bindVariable(id, e.value[0]);
+                reset && reset();
             }}
+            open={reset ? true : null}
+            onBlur={() => reset && reset()}
         >
             <Combobox.Control>
                 <Combobox.Input placeholder={"Введите название переменной"} />
