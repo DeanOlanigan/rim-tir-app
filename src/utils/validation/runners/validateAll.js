@@ -46,7 +46,7 @@ function validateVariableCode(node, variables, asts, draft) {
         // TODO Подумать, как можно оптимизировать работу с ast (переиспользование)
         const { ast, error } = luaAstParse(node.setting.luaExpression);
         if (ast) asts.set(node.id, { id: node.id, ast });
-        console.log(asts);
+        //console.log(asts);
         const markers = validateCode(ast, error);
         draft.set(
             node.id,

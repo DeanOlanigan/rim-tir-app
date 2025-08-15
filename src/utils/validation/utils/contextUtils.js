@@ -22,7 +22,7 @@ function getParentWithParam(context, nodeId, param) {
         parent = context[parent.parentId];
         if (parent.setting) {
             const val = parent.setting[param];
-            if (val) return [parent.id];
+            if (val !== undefined) return [parent.id];
         }
     }
     return [];

@@ -7,13 +7,13 @@ export function uniqueCompositeValidator({ nodeId, rule, context, draft }) {
     const map = new Map();
     for (const id of ids) {
         const nodeSettings = context[id]?.setting || {};
-        const val = `${nodeSettings?.[fields[0]]}${nodeSettings?.[fields[1]]}`;
+        const val = fields.map((field) => nodeSettings?.[field]).join("$");
         if (!map.has(val)) map.set(val, []);
         map.get(val).push(id);
     }
     for (const id of ids) {
         const nodeSettings = context[id]?.setting || {};
-        const val = `${nodeSettings?.[fields[0]]}${nodeSettings?.[fields[1]]}`;
+        const val = fields.map((field) => nodeSettings?.[field]).join("$");
         const dupIds = map.get(val) || [];
         let msg = [];
         if (dupIds.length > 1) {

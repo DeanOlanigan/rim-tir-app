@@ -102,29 +102,33 @@ function validateNode(rules, settings, nodeId, draft) {
 
 export function validateParameter(
     id,
-    inputParam,
+    param,
     settings,
-    configuratorConfig,
-    draft = new ErrorDraft()
+    cfg,
+    draft = new ErrorDraft(),
+    visited = new Set()
 ) {
+    const key = `${id}:${param}`;
+    if (visited.has(key)) return draft;
+    visited.add(key);
     const nodePath = settings[id].path; // #/iec104
-    const settingPath = `${nodePath}:${inputParam}`; // #/iec104:lengthOfAdr
+    const settingPath = `${nodePath}:${param}`; // #/iec104:lengthOfAdr
 
-    const def = configuratorConfig.nodePaths[nodePath].settings[inputParam];
+    const def = cfg.nodePaths[nodePath].settings[param];
 
     if (def?.rules?.length) {
-        validateRules(def.rules, settings, id, inputParam, draft);
+        validateRules(def.rules, settings, id, param, draft);
     }
 
-    const nodeRules = configuratorConfig.nodePaths[nodePath].validationRules;
+    const nodeRules = cfg.nodePaths[nodePath].validationRules;
     if (nodeRules) validateNode(nodeRules, settings, id, draft);
 
-    const deps = configuratorConfig.graph[settingPath]; // #/iec104/asdu/dataObject:address
+    const deps = cfg.graph[settingPath]; // #/iec104/asdu/dataObject:address
     if (deps) {
         const depIds = findDepIds(settings, settings[id], deps);
 
         for (const { id, param } of depIds) {
-            validateParameter(id, param, settings, configuratorConfig, draft);
+            validateParameter(id, param, settings, cfg, draft, visited);
         }
     }
     return draft;
