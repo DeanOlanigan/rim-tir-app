@@ -12,6 +12,7 @@ import { InputFactory } from "../InputComponents/InputFactory";
 import { configuratorConfig } from "@/utils/configurationParser";
 import { NodeError } from "./NodeError";
 import { useBreadcrumb } from "@/hooks/useBreadcrumb";
+import { useValidationStore } from "@/store/validation-store";
 //import { ContainerNodeEditor } from "./ConnectionEditor/ContainerNodeEditor";
 
 // TODO Лишний ререндер, мб вынести логику с выбором данных в другое место?
@@ -127,6 +128,10 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
     const Table = isVariable ? VariablesTable : DataObjectsTable;
     const breadcrumbs = useBreadcrumb(node.id);
 
+    const validationErrors = useValidationStore((state) =>
+        state.errorsTree.get(node.id)?.get("node")
+    );
+
     return (
         <EditorLayout
             breadcrumbs={<EditorBreadcrumb breadcrumbs={breadcrumbs} />}
@@ -145,7 +150,7 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
                     )}
                 </HStack>
             }
-            errors={<NodeError id={node.id} />}
+            errors={<NodeError validationErrors={validationErrors} />}
             counter={
                 children.length > 0 && (
                     <Heading textWrap={"nowrap"}>

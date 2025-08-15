@@ -1,12 +1,7 @@
-import { useValidationStore } from "@/store/validation-store";
 import { Button, Flex, Icon, Popover, Portal, Text } from "@chakra-ui/react";
 import { LuArrowRight, LuDot, LuTriangleAlert } from "react-icons/lu";
 
-export const NodeError = ({ id }) => {
-    const validationErrors = useValidationStore((state) =>
-        state.errorsTree.get(id)?.get("node")
-    );
-
+export const NodeError = ({ validationErrors }) => {
     return (
         validationErrors && (
             <Popover.Root size={"xs"} lazyMount unmountOnExit>

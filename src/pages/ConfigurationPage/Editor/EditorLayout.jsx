@@ -22,7 +22,9 @@ export const EditorLayout = ({
                 bg={"bg.panel"}
                 position={"relative"}
             >
-                <Float placement={"top-center"}>{errors}</Float>
+                <Float placement={"top-center"} offset={"5"}>
+                    {errors}
+                </Float>
                 <HStack w={"100%"} justify={"space-between"}>
                     {title}
                     <HStack justify={"end"}>{counter}</HStack>
