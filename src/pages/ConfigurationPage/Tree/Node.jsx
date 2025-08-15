@@ -30,6 +30,7 @@ export const Node = ({ node, style, dragHandle, tree }) => {
             style={style}
             className={clsx(styles.node, node.state)}
             onContextMenu={handleContextMenu}
+            onDoubleClick={() => node.edit()}
         >
             <NodeBase
                 node={node}
