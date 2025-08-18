@@ -534,6 +534,22 @@ export function getIdsSetNormalized(treeApi, ids) {
     return set;
 }
 
+export function getIdsSetNormalizedContext(context, ids) {
+    const set = new Set();
+    function recursive(id) {
+        set.add(id);
+        const node = context[id] || {};
+        if (!node?.children?.length) return;
+        for (const childId of node.children) {
+            recursive(childId);
+        }
+    }
+    for (const id of ids) {
+        recursive(id);
+    }
+    return set;
+}
+
 export function getIdsSetWithoutNested(treeApi, ids) {
     const idSet = new Set(ids);
     function removeDescendants(id) {

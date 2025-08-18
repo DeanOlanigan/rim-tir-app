@@ -17,6 +17,7 @@ import {
     getIdsSetWithoutNested,
     generateNewIds,
     getParentId,
+    getIdsSetNormalizedContext,
 } from "@/utils/treeUtils";
 import { persist } from "zustand/middleware";
 import { useValidationStore } from "@/store/validation-store";
@@ -274,14 +275,19 @@ export const useVariablesStore = create()(
 
             removeNode: (targetKey, nodeIds) => {
                 set((state) => {
-                    useValidationStore.getState().clearErrors(nodeIds);
+                    const ids = getIdsSetNormalizedContext(
+                        state.settings,
+                        nodeIds
+                    );
+                    useValidationStore.getState().clearErrors(ids);
                     const newSettings = removeSettingUtil(
                         state.settings,
                         nodeIds
                     );
+                    const newTree = removeNodeUtil(state[targetKey], nodeIds);
                     // TODO Реализовать более точечную валидацию
                     return {
-                        [targetKey]: removeNodeUtil(state[targetKey], nodeIds),
+                        [targetKey]: newTree,
                         settings: newSettings,
                     };
                 });
