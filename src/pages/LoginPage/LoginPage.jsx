@@ -1,4 +1,4 @@
-import { SHA1 } from "crypto-js";
+
 import {
     Input,
     Stack,
@@ -61,8 +61,8 @@ function LoginForm() {
 export default LoginForm;
 
 const LoginCard = () => {
-    const { login } = useAuthContext();
-    const [loading, setLoading] = useState(false);
+    const { login, isLoggingIn } = useAuthContext();
+    //const [loading, setLoading] = useState(false);
     const [sharedMessage, setSharedMessage] = useState({
         type: null,
         message: null,
@@ -73,46 +73,16 @@ const LoginCard = () => {
         formState: { errors },
     } = useForm();
     const onSubmit = async (data) => {
-        setLoading(true);
-        let hashPassword = SHA1(data.password).toString();
         try {
-            const response = await fetch("/api/v1/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: new URLSearchParams({
-                    login: data.username,
-                    password: hashPassword,
-                }),
-                credentials: "include",
+            login({
+                login: data.username,
+                password: data.password,
             });
-
-            if (response.ok) {
-                const data = await response.json();
-
-                if (!data.data.csrf_token) {
-                    setSharedMessage({ type: "error", message: data.message });
-                    return;
-                }
-
-                setSharedMessage({ type: "success", message: data.message });
-                setLoading(false);
-                setTimeout(() => {
-                    login({
-                        serverTime: data.data.server_time,
-                        sessionTimeLeft: data.data.session_time_left,
-                        csrfToken: data.data.csrf_token,
-                    });
-                }, 500);
-            } else {
-                const errorData = await response.json();
-                setLoading(false);
-                setSharedMessage({ type: "error", message: errorData.message });
-            }
         } catch (error) {
-            setLoading(false);
-            setSharedMessage({ type: "error", message: error.message });
+            setSharedMessage({
+                type: "error",
+                message: "Error: " + error.message
+            });
         }
     };
     return (
@@ -155,7 +125,7 @@ const LoginCard = () => {
                         )}
                     </Field.Root>
                 </Fieldset.Content>
-                <Button loading={loading} size={"xs"} type="submit">
+                <Button loading={isLoggingIn} size={"xs"} type="submit">
                     <LuLogIn />
                     Войти
                 </Button>
