@@ -1,3 +1,4 @@
+import { createListCollection } from "@chakra-ui/react";
 import {
     LuArchive,
     LuChartSpline,
@@ -15,23 +16,25 @@ export const variable = {
         type: {
             type: "enum",
             label: "Тип данных",
-            enumValues: [
-                { label: "1 бит - bool", value: "bit" },
-                {
-                    label: "2 байта - целое без знака",
-                    value: "twoByteUnsigned",
-                },
-                { label: "2 байта - целое", value: "twoByteSigned" },
-                { label: "4 байта - целое", value: "fourByteSigned" },
-                {
-                    label: "4 байта - целое без знака",
-                    value: "fourByteUnsigned",
-                },
-                {
-                    label: "4 байта - с плавающей точкой",
-                    value: "fourByteFloat",
-                },
-            ],
+            enumValues: createListCollection({
+                items: [
+                    { label: "1 бит - bool", value: "bit" },
+                    {
+                        label: "2 байта - целое без знака",
+                        value: "twoByteUnsigned",
+                    },
+                    { label: "2 байта - целое", value: "twoByteSigned" },
+                    { label: "4 байта - целое", value: "fourByteSigned" },
+                    {
+                        label: "4 байта - целое без знака",
+                        value: "fourByteUnsigned",
+                    },
+                    {
+                        label: "4 байта - с плавающей точкой",
+                        value: "fourByteFloat",
+                    },
+                ],
+            }),
             default: "bit",
         },
         description: {
@@ -134,14 +137,16 @@ export const variable = {
         measurement: {
             type: "enum",
             label: "Единица измерения",
-            enumValues: [
-                { label: "В", value: "V" },
-                { label: "кВ", value: "kV" },
-                { label: "мВ", value: "mV" },
-                { label: "А", value: "A" },
-                { label: "кА", value: "kA" },
-                { label: "мА", value: "mA" },
-            ],
+            enumValues: createListCollection({
+                items: [
+                    { label: "В", value: "V" },
+                    { label: "кВ", value: "kV" },
+                    { label: "мВ", value: "mV" },
+                    { label: "А", value: "A" },
+                    { label: "кА", value: "kA" },
+                    { label: "мА", value: "mA" },
+                ],
+            }),
             default: "V",
         },
         aperture: {
@@ -226,32 +231,34 @@ export const variable = {
         group: {
             type: "enum",
             label: "Группа",
-            enumValues: [
-                {
-                    label: "Предупредительные",
-                    value: "warn",
-                    color: "orange",
-                    icon: LuTriangleAlert,
-                },
-                {
-                    label: "Аварийные",
-                    value: "danger",
-                    color: "red",
-                    icon: LuTriangleAlert,
-                },
-                {
-                    label: "Оперативного состояния",
-                    value: "state",
-                    color: "teal",
-                    icon: LuInfo,
-                },
-                {
-                    label: "Без группы",
-                    value: "noGroup",
-                    color: "green",
-                    icon: null,
-                },
-            ],
+            enumValues: createListCollection({
+                items: [
+                    {
+                        label: "Предупредительные",
+                        value: "warn",
+                        color: "orange",
+                        icon: LuTriangleAlert,
+                    },
+                    {
+                        label: "Аварийные",
+                        value: "danger",
+                        color: "red",
+                        icon: LuTriangleAlert,
+                    },
+                    {
+                        label: "Оперативного состояния",
+                        value: "state",
+                        color: "teal",
+                        icon: LuInfo,
+                    },
+                    {
+                        label: "Без группы",
+                        value: "noGroup",
+                        color: "green",
+                        icon: null,
+                    },
+                ],
+            }),
             default: "noGroup",
             visibleIf: {
                 or: [
