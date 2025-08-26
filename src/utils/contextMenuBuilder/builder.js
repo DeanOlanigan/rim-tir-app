@@ -106,6 +106,8 @@ function buildMenu(data, nodeByPath, context) {
         }
         if (key !== "#") {
             addDefaultItems(menu[key], nodeByPath[key]);
+        } else {
+            menu[key].push(actions.paste);
         }
     }
     traverse(data);

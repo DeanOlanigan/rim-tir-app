@@ -30,6 +30,6 @@ function getMeaningPath(api) {
 export function getBaseItems(api) {
     const treeType = api.props.treeType;
     const path = getMeaningPath(api);
-    console.log(treeType, path);
+    console.log("getBaseItems", treeType, path);
     return configuratorConfig.contextMenu[treeType][path];
 }

@@ -19,7 +19,7 @@ function getDisabledState(apiPath) {
         const focusedNodePath =
             apiPath.focusedNode?.data.type === "folder"
                 ? getParentType({ checkNode: apiPath?.focusedNode })
-                : apiPath.focusedNode?.data.path;
+                : apiPath.focusedNode?.data.path || "#";
         const meaningNode = getMeaningNode(copyBuffer.tree[0].id, settings);
         const meaningNodePath = meaningNode.path;
 
