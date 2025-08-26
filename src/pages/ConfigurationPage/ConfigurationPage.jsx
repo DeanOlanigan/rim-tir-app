@@ -1,4 +1,12 @@
-import { Box } from "@chakra-ui/react";
+import {
+    Box,
+    Center,
+    HStack,
+    Icon,
+    Text,
+    useMediaQuery,
+    VStack,
+} from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
 import { TreeCard } from "./TreeCard";
@@ -7,10 +15,12 @@ import { EditorCard } from "./EditorCard";
 import { TREE_TYPES } from "@/config/constants";
 import { EmptyConfigDialog } from "./EmptyConfigDialog";
 import { ContextMenu } from "./Tree/ContextMenu/ContextMenu";
+import { LuLock } from "react-icons/lu";
 
 function ConfigurationPage() {
-    return (
-        <Box height="100%" position="relative">
+    const [isLargerThan1000] = useMediaQuery("(min-width: 1000px)");
+    return isLargerThan1000 ? (
+        <Box h={"100%"} position={"relative"}>
             <EmptyConfigDialog />
             <PanelGroup autoSaveId="persistence" direction="horizontal">
                 <Panel collapsible collapsedSize={0} minSize={15}>
@@ -40,10 +50,26 @@ function ConfigurationPage() {
             </PanelGroup>
             <ContextMenu />
         </Box>
+    ) : (
+        <MobileConfigurationPage />
     );
 }
-
 export default ConfigurationPage;
+
+const MobileConfigurationPage = () => {
+    return (
+        <Center h={"100%"}>
+            <VStack w={"100%"}>
+                <Icon fontSize={"164px"} color={"bg.muted"} as={LuLock} />
+                <HStack>
+                    <Text color={"fg.subtle"} fontWeight={"medium"}>
+                        Данная страница не поддерживает мобильные устройства
+                    </Text>
+                </HStack>
+            </VStack>
+        </Center>
+    );
+};
 
 const TreeWrapper = ({ treeType }) => {
     const data = useVariablesStore((state) => state[treeType]);
