@@ -26,6 +26,7 @@ export const ValidationErrorsContainer = () => {
                 <Popover.Positioner>
                     <Popover.Content
                         w={"100%"}
+                        maxW={"50hw"}
                         colorPalette={"red"}
                         boxShadow={"xl"}
                         bg={"bg.error/40"}

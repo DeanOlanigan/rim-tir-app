@@ -4,7 +4,7 @@ import { VariablesTable } from "./VariableEditor/Table/VariablesTable";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { DataObjectsTable } from "./ConnectionEditor/Table/Table";
 import { ConnectionParamContainer } from "./ConnectionEditor/ConnectionParamContainer";
-import { EditorBreadcrumb } from "../Breadcrumb";
+import { EditorBreadcrumb } from "../Breadcrumb/Breadcrumb";
 import { EditorInformer } from "./EditorInformer";
 import { useSelectedData } from "@/hooks/useSelectedData";
 import { EditorLayout } from "./EditorLayout";

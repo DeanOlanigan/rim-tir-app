@@ -2,7 +2,7 @@ import { useConfigTreeApiStore } from "@/store/config-tree-api-store";
 import { useVariablesStore } from "@/store/variables-store";
 import { Badge, Button, Icon } from "@chakra-ui/react";
 import { LuArrowRight } from "react-icons/lu";
-import { EditorBreadcrumb } from "../Breadcrumb";
+import { EditorBreadcrumb } from "../Breadcrumb/Breadcrumb";
 import { useBreadcrumb } from "@/hooks/useBreadcrumb";
 
 export const RedirectButton = ({ id }) => {
