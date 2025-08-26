@@ -13,6 +13,7 @@ export const Node = ({ node, style, dragHandle, tree }) => {
         while (tree.isFocused(node.id) === false) {
             // TODO : find a better way
             node.focus();
+            node.select();
         }
         node.open();
         updateContext({
