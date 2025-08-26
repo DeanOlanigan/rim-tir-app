@@ -8,6 +8,7 @@ import { luaAstParse } from "../engines/luaValidationService";
 import { validateNamePatternMatch } from "../rules/name/nameValidation";
 import { validateParameter } from "./validateParameter";
 import { NODE_TYPES } from "../utils/const";
+import { NODE_UNIQUE_NAMES } from "@/config/constants";
 
 export function validateAll(settings, configuratorConfig) {
     const t0 = performance.now();
@@ -62,11 +63,7 @@ function validateNamePattern(node, draft, map) {
         node.name &&
         node.rootId &&
         node.type !== NODE_TYPES.dataObject &&
-        [
-            NODE_TYPES.protocol,
-            NODE_TYPES.interface,
-            NODE_TYPES.variable,
-        ].includes(node.type)
+        NODE_UNIQUE_NAMES.includes(node.type)
     ) {
         draft.set(
             node.id,

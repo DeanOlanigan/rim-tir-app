@@ -14,3 +14,11 @@ export const NODE_TYPES = {
     folder: "folder",
     root: "root",
 };
+
+export const NODE_UNIQUE_NAMES = [
+    NODE_TYPES.interface,
+    NODE_TYPES.protocol,
+    NODE_TYPES.variable,
+    NODE_TYPES.protocolSpecific,
+    NODE_TYPES.interfaceSpecific,
+];

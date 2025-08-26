@@ -2,6 +2,7 @@ import { NODE_TYPES } from "../../utils/const";
 import { SCOPE, VALIDATOR } from "../../utils/const";
 import { getContextIds } from "../../utils/contextUtils";
 import { ErrorDraft } from "../../core/ErrorDraft";
+import { NODE_UNIQUE_NAMES } from "@/config/constants";
 
 const LUA_KEYWORDS = [
     "and",
@@ -57,11 +58,7 @@ export function validateName({
         const node = settings[id] || {};
         if (
             node.type !== NODE_TYPES.dataObject &&
-            [
-                NODE_TYPES.protocol,
-                NODE_TYPES.interface,
-                NODE_TYPES.variable,
-            ].includes(node.type)
+            NODE_UNIQUE_NAMES.includes(node.type)
         ) {
             const val = node?.name;
             if (val === undefined || val == "") continue;

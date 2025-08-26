@@ -27,7 +27,7 @@ import { validateParameter } from "@/utils/validation";
 import { validateName } from "@/utils/validation";
 import { validateAll } from "@/utils/validation";
 import { ErrorDraft } from "@/utils/validation";
-import { NODE_TYPES, TREE_TYPES } from "@/config/constants";
+import { NODE_TYPES, NODE_UNIQUE_NAMES, TREE_TYPES } from "@/config/constants";
 
 const baseNodeInit = (type, name) => ({
     id: type,
@@ -153,11 +153,9 @@ export const useVariablesStore = create()(
 
                     const isVariables =
                         newSettings[nodeId].type === NODE_TYPES.variable;
-                    const isNeedValidate = [
-                        NODE_TYPES.protocol,
-                        NODE_TYPES.variable,
-                        NODE_TYPES.interface,
-                    ].includes(newSettings[nodeId].type);
+                    const isNeedValidate = NODE_UNIQUE_NAMES.includes(
+                        newSettings[nodeId].type
+                    );
                     const draft = new ErrorDraft();
 
                     if (isVariables) {
