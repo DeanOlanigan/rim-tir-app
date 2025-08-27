@@ -6,7 +6,7 @@ import { ComboboxInput } from "../../InputComponents";
 
 export const DataObjectVisual = ({ node }) => {
     const name = useVariablesStore((state) => {
-        const variableId = state.settings[node.id]?.variableId;
+        const variableId = state.settings[node.id]?.setting?.variableId;
         return state.settings[variableId]?.name || "";
     });
     const paramValues = useGetParameters(node);

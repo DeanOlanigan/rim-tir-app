@@ -49,28 +49,6 @@ export function deleteNodeUtil(treeApi) {
     }
 }
 
-export function addNodeUtil(nodes, parentId, newNode, insertIndex = 0) {
-    return nodes.map((node) => {
-        if (node.id === parentId) {
-            const updatedChildren = [...node.children];
-            updatedChildren.splice(insertIndex, 0, ...newNode);
-            return { ...node, children: updatedChildren };
-        }
-        if (node.children?.length > 0) {
-            return {
-                ...node,
-                children: addNodeUtil(
-                    node.children,
-                    parentId,
-                    newNode,
-                    insertIndex
-                ),
-            };
-        }
-        return node;
-    });
-}
-
 export function renameNodeUtil(nodes, nodeId, name) {
     return nodes.map((node) => {
         if (node.id === nodeId) {
@@ -155,17 +133,6 @@ export function ignoreNodeUtil(
     }
 
     return update(nodes);
-}
-
-export function removeNodeUtil(nodes, nodeIds) {
-    return nodes
-        .filter((node) => !nodeIds.includes(node.id))
-        .map((node) => ({
-            ...node,
-            children: node.children
-                ? removeNodeUtil(node.children, nodeIds)
-                : undefined,
-        }));
 }
 
 export function moveNodesUtil(state, dragIds, parentId, index) {
@@ -262,40 +229,18 @@ function extractNodesAtOnce(nodes, dragIdsSet, currentParentId = null) {
 export function copySettingsUtil(settings, ids, isCut) {
     const copy = {};
     for (const id of ids) {
-        copy[id] = { ...settings[id] };
-        if (copy[id].type === "variable") copy[id].usedIn = "";
+        copy[id] = {
+            ...settings[id],
+            setting: { ...settings[id].setting },
+        };
+        if (copy[id].type === "variable") copy[id].setting.usedIn = "";
         if (!isCut) {
             copy[id].name = copy[id].name + "_copy";
-            if (copy[id].type === "dataObject") copy[id].variableId = "";
+            if (copy[id].type === "dataObject")
+                copy[id].setting.variableId = "";
         }
     }
     return copy;
-}
-
-export function createSettingUtil(settings, addSettings) {
-    let result = { ...settings };
-    for (const setting of addSettings) {
-        const nodeId = setting.id;
-
-        if (setting.parentId !== null && result[setting.parentId]) {
-            result = {
-                ...result,
-                [setting.parentId]: {
-                    ...result[setting.parentId],
-                    children: [...result[setting.parentId].children, nodeId],
-                },
-            };
-        }
-
-        result = {
-            ...result,
-            [nodeId]: {
-                id: nodeId,
-                ...setting,
-            },
-        };
-    }
-    return result;
 }
 
 export function renameNodeSettingUtil(setting, nodeId, name) {
@@ -306,29 +251,6 @@ export function renameNodeSettingUtil(setting, nodeId, name) {
             name,
         },
     };
-}
-
-export function removeSettingUtil(settings, nodeIds) {
-    let result = { ...settings };
-    nodeIds.forEach((nodeId) => {
-        if (result[nodeId].parentId !== null) {
-            const parentId = result[nodeId].parentId;
-            result = {
-                ...result,
-                [parentId]: {
-                    ...result[parentId],
-                    children: result[parentId].children.filter(
-                        (id) => id !== nodeId
-                    ),
-                },
-            };
-        }
-        if (result[nodeId].children?.length > 0) {
-            result = removeSettingUtil(result, result[nodeId].children);
-        }
-        delete result[nodeId];
-    });
-    return { ...result };
 }
 
 export function editSettingUtil(settings, nodeId, setting) {
@@ -352,90 +274,6 @@ export function editSettingNodeUtil(settings, nodeId, setting) {
             ...setting,
         },
     };
-}
-
-export function bindVariableUtil(settings, nodeId, variableId) {
-    return {
-        ...settings,
-        [nodeId]: {
-            ...settings[nodeId],
-            variableId: variableId,
-        },
-        [variableId]: {
-            ...settings[variableId],
-            usedIn: nodeId,
-        },
-    };
-}
-
-export function bindVariableToNodeUtil(receive, send, nodeId, variableId) {
-    const recursive = (nodes, nodeId) => {
-        return nodes.map((node) => {
-            if (node.id === nodeId) {
-                return { ...node, name: variableId };
-            }
-            if (node.children?.length > 0) {
-                return { ...node, children: recursive(node.children, nodeId) };
-            }
-            return node;
-        });
-    };
-    const receiveNew = recursive(receive, nodeId);
-    const sendNew = recursive(send, nodeId);
-    return { receive: receiveNew, send: sendNew };
-}
-
-export function unbindVariableUtil(settings, nodeId) {
-    let result = { ...settings };
-
-    const recursive = (nodeId) => {
-        const node = result[nodeId];
-
-        if (Array.isArray(node.children) && node.children?.length > 0) {
-            for (const childId of node.children) {
-                recursive(childId);
-            }
-        }
-
-        if (node.variableId) {
-            const varId = node.variableId;
-            result = {
-                ...result,
-                [varId]: {
-                    ...result[varId],
-                    usedIn: null,
-                },
-            };
-        }
-
-        result = {
-            ...result,
-            [nodeId]: {
-                ...node,
-                variableId: null,
-            },
-        };
-    };
-
-    recursive(nodeId);
-    return result;
-
-    /* if (result[nodeId].variableId) {
-        result = {
-            ...result,
-            [result[nodeId].variableId]: {
-                ...result[result[nodeId].variableId],
-                usedIn: null,
-            },
-        };
-    }
-    return {
-        ...result,
-        [nodeId]: {
-            ...result[nodeId],
-            variableId: null,
-        },
-    }; */
 }
 
 export function moveSettingUtil(settings, dragIds, parentId, index) {
@@ -536,17 +374,18 @@ export function getIdsSetNormalized(treeApi, ids) {
 
 export function getIdsSetNormalizedContext(context, ids) {
     const set = new Set();
-    function recursive(id) {
+    const stack = [...ids];
+
+    while (stack.length) {
+        const id = stack.pop();
+        if (set.has(id)) continue;
         set.add(id);
-        const node = context[id] || {};
-        if (!node?.children?.length) return;
-        for (const childId of node.children) {
-            recursive(childId);
+        const node = context[id];
+        if (node?.children?.length) {
+            for (const childId of node.children) stack.push(childId);
         }
     }
-    for (const id of ids) {
-        recursive(id);
-    }
+
     return set;
 }
 
@@ -590,8 +429,8 @@ export function generateNewIds(copyTree, copySettings, parentId, settings) {
         const newId = idMap.get(oldId);
         const newParentId = idMap.get(setting.parentId) ?? null;
 
-        if (setting.type === "dataObject" && setting.variableId) {
-            settings[setting.variableId].usedIn = newId;
+        if (setting.type === "dataObject" && setting.setting.variableId) {
+            settings[setting.setting.variableId].setting.usedIn = newId;
         }
 
         /* const newChildren = setting.children

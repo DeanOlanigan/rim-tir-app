@@ -7,7 +7,7 @@ function addSettings(node) {
         label: "Описание",
         default: "",
     };
-    node.settings.variable = {
+    node.settings.variableId = {
         type: "drop",
         label: "Переменная",
         default: "",

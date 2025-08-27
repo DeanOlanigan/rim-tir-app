@@ -48,8 +48,6 @@ export function parseXmlToState(xmlString) {
         const type = toCamelCase(nodeElem.tagName);
         const path = nodeElem.getAttribute("path") || undefined;
         const node = nodeElem.getAttribute("node") || undefined;
-        const variableId = nodeElem.getAttribute("variableId") || undefined;
-        const usedIn = nodeElem.getAttribute("usedIn") || undefined;
         const rootId = nodeElem.getAttribute("rootId") || undefined;
         const isIgnored = nodeElem.getAttribute("isIgnored");
 
@@ -81,8 +79,6 @@ export function parseXmlToState(xmlString) {
         if (path) state.settings[id].path = path;
         if (node) state.settings[id].node = node;
         if (setting) state.settings[id].setting = setting;
-        if (variableId) state.settings[id].variableId = variableId;
-        if (usedIn) state.settings[id].usedIn = usedIn;
         if (rootId) state.settings[id].rootId = rootId;
 
         const treeNode = {
@@ -121,15 +117,6 @@ export function parseXmlToState(xmlString) {
     xml.querySelectorAll("Variables > *").forEach((el) =>
         readNode(el, null, state.variables)
     );
-
-    /* Object.values(state.settings).forEach((node) => {
-        if (node.variableId) {
-            const vid = node.variableId;
-            if (state.settings[vid]) {
-                state.settings[vid].usedIn = node.id;
-            }
-        }
-    }); */
 
     return { state, configInfo };
 }

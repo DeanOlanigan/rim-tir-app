@@ -11,7 +11,7 @@ export function useVariablesCollection() {
                 return {
                     label: item.name,
                     value: item.name,
-                    disabled: item.usedIn ? true : false,
+                    disabled: item.setting.usedIn ? true : false,
                     id: item.id,
                 };
             }
@@ -32,8 +32,8 @@ export function useVariablesCollectionMemo() {
                 .map((item) => ({
                     label: item.name,
                     value: item.id,
-                    disabled: item.usedIn ? true : false,
-                    usedIn: item.usedIn,
+                    disabled: item.setting.usedIn ? true : false,
+                    usedIn: item.setting.usedIn,
                 })),
         [settings]
     );

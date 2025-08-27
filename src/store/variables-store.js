@@ -1,14 +1,8 @@
 import { create } from "zustand";
 import {
-    addNodeUtil,
-    removeNodeUtil,
     moveNodesUtil,
     renameNodeSettingUtil,
-    createSettingUtil,
-    removeSettingUtil,
     editSettingUtil,
-    bindVariableUtil,
-    unbindVariableUtil,
     moveSettingUtil,
     ignoreNodeUtil,
     copyTreeUtil,
@@ -18,7 +12,7 @@ import {
     generateNewIds,
     getParentId,
     getIdsSetNormalizedContext,
-} from "@/utils/treeUtils";
+} from "@/utils/treeUtils/treeUtils";
 import { persist } from "zustand/middleware";
 import { useValidationStore } from "@/store/validation-store";
 import { configuratorConfig } from "@/utils/configurationParser";
@@ -28,6 +22,14 @@ import { validateName } from "@/utils/validation";
 import { validateAll } from "@/utils/validation";
 import { ErrorDraft } from "@/utils/validation";
 import { NODE_TYPES, NODE_UNIQUE_NAMES, TREE_TYPES } from "@/config/constants";
+import {
+    removeNodeUtil,
+    removeSettingUtil,
+    bindVariableUtil,
+    unbindVariableUtil,
+    addNodeUtil,
+    createSettingUtil,
+} from "@/utils/treeUtils/index";
 
 const baseNodeInit = (type, name) => ({
     id: type,
@@ -272,23 +274,20 @@ export const useVariablesStore = create()(
             },
 
             removeNode: (targetKey, nodeIds) => {
+                const { settings } = get();
+                const ids = getIdsSetNormalizedContext(settings, nodeIds);
+                useValidationStore.getState().clearErrors(ids);
+
                 set((state) => {
-                    const ids = getIdsSetNormalizedContext(
-                        state.settings,
-                        nodeIds
-                    );
-                    useValidationStore.getState().clearErrors(ids);
-                    const newSettings = removeSettingUtil(
-                        state.settings,
-                        nodeIds
-                    );
-                    const newTree = removeNodeUtil(state[targetKey], nodeIds);
-                    // TODO Реализовать более точечную валидацию
+                    const newSettings = removeSettingUtil(state.settings, ids);
+                    const newTree = removeNodeUtil(state[targetKey], ids);
                     return {
                         [targetKey]: newTree,
                         settings: newSettings,
                     };
                 });
+
+                // TODO Реализовать более точечную валидацию
                 const state = get().settings;
                 const draft = validateAll(state, configuratorConfig);
                 useValidationStore.getState().applyDraft2(draft);
