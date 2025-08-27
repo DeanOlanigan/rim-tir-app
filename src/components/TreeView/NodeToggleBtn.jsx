@@ -11,6 +11,7 @@ export const NodeToggleBtn = memo(function NodeToggleBtn({ toggle, isOpen }) {
                 toggle();
             }}
             color={"fg.subtle"}
+            outline={"none"}
             _hover={{ color: "bg.inverted" }}
         >
             <Box

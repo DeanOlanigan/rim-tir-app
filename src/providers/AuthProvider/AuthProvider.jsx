@@ -2,7 +2,9 @@ import { useState } from "react";
 import { AuthContext } from "./AuthContext";
 
 const checkAuth = () => {
-    const sessionExpirationTime = localStorage.getItem("session_expiration_time");
+    const sessionExpirationTime = localStorage.getItem(
+        "session_expiration_time"
+    );
     const csrf = localStorage.getItem("csrf");
     if (sessionExpirationTime && csrf) {
         return true;
@@ -22,7 +24,8 @@ function AuthProvider({ children }) {
         const timeDiff = serverCurrentTime - clientCurrentTime;
 
         const sessionTime = parseInt(data.sessionTimeLeft, 10);
-        const sessionExpirationTime = clientCurrentTime + timeDiff + sessionTime;
+        const sessionExpirationTime =
+            clientCurrentTime + timeDiff + sessionTime;
 
         localStorage.setItem("session_expiration_time", sessionExpirationTime);
         localStorage.setItem("session_time", sessionTime);
@@ -34,7 +37,7 @@ function AuthProvider({ children }) {
         console.log("login", sessionExpirationTime);
     };
 
-    const logout = async () => {      
+    const logout = async () => {
         console.log("logout");
         setIsAuthenticated(false);
         setSessionExpirationTime(0);
@@ -49,16 +52,25 @@ function AuthProvider({ children }) {
         } */
     };
 
-    const extendSession = async () => {      
+    const extendSession = async () => {
         console.log("extendSession");
-        const response = await fetch("/api/v1/extendSession",{ method: "GET", credentials: "include" });
+        const response = await fetch("/api/v1/extendSession", {
+            method: "GET",
+            credentials: "include",
+        });
         console.log(await response.json());
         if (response.ok) {
             let clientCurrentTime = Math.floor(Date.now() / 1000);
             let sessionExpirationTime = clientCurrentTime + sessionTimeLeft;
-            console.log("extendSession sessionExpirationTime", sessionExpirationTime);
+            console.log(
+                "extendSession sessionExpirationTime",
+                sessionExpirationTime
+            );
             setSessionExpirationTime(sessionExpirationTime);
-            localStorage.setItem("session_expiration_time", sessionExpirationTime);
+            localStorage.setItem(
+                "session_expiration_time",
+                sessionExpirationTime
+            );
             return true;
         } else {
             return false;
@@ -66,7 +78,15 @@ function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, sessionExpirationTime, logout, login, extendSession }}>
+        <AuthContext.Provider
+            value={{
+                isAuthenticated,
+                sessionExpirationTime,
+                logout,
+                login,
+                extendSession,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

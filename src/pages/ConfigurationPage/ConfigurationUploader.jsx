@@ -5,7 +5,15 @@ import { toaster } from "@/components/ui/toaster";
 export const ConfigurationUploader = ({ children }) => {
     const acceptHandler = (details) => {
         console.log("accept", details);
-        uploadXmlFile(details.files[0]);
+        try {
+            uploadXmlFile(details.files[0]);
+        } catch (error) {
+            toaster.create({
+                title: "Произошла ошибка",
+                description: error.message,
+                type: "error",
+            });
+        }
         toaster.create({
             title: "Файл загружен",
             type: "success",
@@ -13,9 +21,10 @@ export const ConfigurationUploader = ({ children }) => {
     };
     const rejectHandler = (details) => {
         console.log("reject", details);
-    };
-    const changeHandler = (details) => {
-        console.log("change", details);
+        toaster.create({
+            title: "Файл не загружен",
+            type: "error",
+        });
     };
 
     return (
@@ -24,7 +33,6 @@ export const ConfigurationUploader = ({ children }) => {
             maxFiles={1}
             onFileAccept={acceptHandler}
             onFileReject={rejectHandler}
-            onFileChange={changeHandler}
         >
             <FileUpload.HiddenInput />
             <FileUpload.Trigger asChild>{children}</FileUpload.Trigger>
