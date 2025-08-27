@@ -1,23 +1,19 @@
 import { NavLink } from "react-router-dom";
 import { HStack, Button } from "@chakra-ui/react";
 
-function Navigation() {
-    const navItems = [
-        { name: "Конфигурация", path: "/configuration" },
-        { name: "Мониторинг", path: "/monitoring" },
-        { name: "Логирование", path: "/log" },
-        { name: "Журналирование", path: "/journal" },
-        { name: "Графики", path: "/graph" },
-    ];
+const navItems = [
+    { name: "Конфигурация", path: "/configuration" },
+    { name: "Мониторинг", path: "/monitoring" },
+    { name: "Логирование", path: "/log" },
+    { name: "Журналирование", path: "/journal" },
+    { name: "Графики", path: "/graph" },
+];
 
+function Navigation() {
     return (
         <HStack as="nav" gap={"2"}>
             {navItems.map((item) => (
-                <NavLink
-                    key={item.name}
-                    to={item.path}
-                    tabIndex={-1}
-                >
+                <NavLink key={item.name} to={item.path} tabIndex={-1}>
                     {({ isActive }) => (
                         <Button
                             shadow={isActive ? "md" : ""}
