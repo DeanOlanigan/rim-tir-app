@@ -1,14 +1,12 @@
 
 import {
     Input,
-    Stack,
     Box,
     Alert,
     Grid,
     Flex,
     VStack,
     Heading,
-    Text,
     Fieldset,
     Field,
 } from "@chakra-ui/react";
@@ -18,14 +16,14 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { LuLogIn } from "react-icons/lu";
 import { Navigate } from "react-router-dom";
-import { useAuthContext } from "@/providers/AuthProvider/AuthContext";
+//import { useAuthContext } from "@/providers/AuthProvider/AuthContext";
 import Lightning from "@/components/Lightning/Lightning";
+import { useAuth } from "@/hooks/useAuth";
 
 function LoginForm() {
-    const { isAuthenticated } = useAuthContext();
+    const { isAuthenticated } = useAuth();
 
     console.log("Render LoginForm; isAuthenticated:", isAuthenticated);
-
     if (isAuthenticated) {
         return <Navigate to="/configuration" replace />;
     }
@@ -61,7 +59,7 @@ function LoginForm() {
 export default LoginForm;
 
 const LoginCard = () => {
-    const { login, isLoggingIn } = useAuthContext();
+    const { login, isLoggingIn, isAuthenticated } = useAuth();
     //const [loading, setLoading] = useState(false);
     const [sharedMessage, setSharedMessage] = useState({
         type: null,
@@ -74,17 +72,22 @@ const LoginCard = () => {
     } = useForm();
     const onSubmit = async (data) => {
         try {
-            login({
+            await login({
                 login: data.username,
                 password: data.password,
             });
+            console.log(isAuthenticated + "ЯЯЯЯЯТ");
         } catch (error) {
             setSharedMessage({
                 type: "error",
                 message: "Error: " + error.message
             });
         }
+
     };
+
+        
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <Fieldset.Root size={"lg"}>

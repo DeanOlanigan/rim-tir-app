@@ -13,16 +13,17 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { useEffect, useState } from "react";
 import { ColorModeButton } from "@/components/ui/color-mode";
 import { LuSettings, LuLogOut } from "react-icons/lu";
-import { useContext } from "react";
-import { AuthContext } from "@/providers/AuthProvider/AuthContext";
+//import { useContext } from "react";
+//import { AuthContext } from "@/providers/AuthProvider/AuthContext";
 import PropTypes from "prop-types";
 
 import Navigation from "@/components/Navigation/Navigation";
 import ConnectionStatus from "@/components/ConnectionStatus/ConnectionStatus";
+import { useAuth } from "@/hooks/useAuth";
 
 function Header() {
     const [version, setVersion] = useState("");
-    const { logout } = useContext(AuthContext);
+    const { logout } = useAuth();
 
     useEffect(() => {
         const fetchVersion = async () => {

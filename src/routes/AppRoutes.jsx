@@ -25,58 +25,56 @@ import GraphViewer from "@/pages/GraphsPage/Viewer/GraphViewer";
 
 function AppRouter() {
     return (
-        <AuthProvider>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="*" element={<Redirect />} />
-                    <Route path="/" element={<Redirect />} />
-                    {/*
-                        Страница авторизации, редирект на нее, если пользователь не авторизован. 
-                        Редирект на ConfigurationPage после успешной авторизации.
-                        Если пользователь уже авторизован, то редирект на ConfigurationPage 
-                    */}
-                    <Route path="login" element={<LoginForm />} />
-                    <Route path="expired" element={<SessionExpired />} />
-                    {/* 
-                        Защищенные маршруты, которые доступны после авторизации.
-                        Редирект на страницу авторизации, если пользователь не авторизован.
-                        Проверка авторизации проверкой времени сессии. Сервер отправляет длительность сессии и время сервера для корректирови часовых поясов.
-                        Если до конца сессии отсталось меньше минуты, то пользователя нужно предупредить о скором истечении сессии с возможностью ее продления.
-                    */}
-                    <Route element={<ProtectedRouter />}>
+        <BrowserRouter>
+            <Routes>
+                <Route path="*" element={<Redirect />} />
+                <Route path="/" element={<Redirect />} />
+                {/*
+                    Страница авторизации, редирект на нее, если пользователь не авторизован. 
+                    Редирект на ConfigurationPage после успешной авторизации.
+                    Если пользователь уже авторизован, то редирект на ConfigurationPage 
+                */}
+                <Route path="login" element={<LoginForm />} />
+                <Route path="expired" element={<SessionExpired />} />
+                {/* 
+                    Защищенные маршруты, которые доступны после авторизации.
+                    Редирект на страницу авторизации, если пользователь не авторизован.
+                    Проверка авторизации проверкой времени сессии. Сервер отправляет длительность сессии и время сервера для корректирови часовых поясов.
+                    Если до конца сессии отсталось меньше минуты, то пользователя нужно предупредить о скором истечении сессии с возможностью ее продления.
+                */}
+                <Route element={<ProtectedRouter />}>
+                    <Route
+                        path="/configuration"
+                        element={<ConfigurationPage />}
+                    />
+                    <Route
+                        path="/monitoring"
+                        element={<MonitoringPage />}
+                    />
+                    <Route path="/log" element={<LogLayout />}>
+                        <Route index element={<LogRedirect />} />
                         <Route
-                            path="/configuration"
-                            element={<ConfigurationPage />}
+                            path="settings"
+                            element={<LogSourceManager />}
                         />
-                        <Route
-                            path="/monitoring"
-                            element={<MonitoringPage />}
-                        />
-                        <Route path="/log" element={<LogLayout />}>
-                            <Route index element={<LogRedirect />} />
-                            <Route
-                                path="settings"
-                                element={<LogSourceManager />}
-                            />
-                            <Route path="viewer" element={<RequireLogData />}>
-                                <Route index element={<LogViewer />} />
-                            </Route>
-                        </Route>
-                        <Route path="/journal" element={<JournalPage />} />
-                        <Route path="/graph" element={<GraphLayout />}>
-                            <Route index element={<GraphRedirect />} />
-                            <Route
-                                path="settings"
-                                element={<GraphSettings />}
-                            />
-                            <Route path="viewer" element={<RequireGraphData />}>
-                                <Route index element={<GraphViewer />} />
-                            </Route>
+                        <Route path="viewer" element={<RequireLogData />}>
+                            <Route index element={<LogViewer />} />
                         </Route>
                     </Route>
-                </Routes>
-            </BrowserRouter>
-        </AuthProvider>
+                    <Route path="/journal" element={<JournalPage />} />
+                    <Route path="/graph" element={<GraphLayout />}>
+                        <Route index element={<GraphRedirect />} />
+                        <Route
+                            path="settings"
+                            element={<GraphSettings />}
+                        />
+                        <Route path="viewer" element={<RequireGraphData />}>
+                            <Route index element={<GraphViewer />} />
+                        </Route>
+                    </Route>
+                </Route>
+            </Routes>
+        </BrowserRouter>
     );
 }
 

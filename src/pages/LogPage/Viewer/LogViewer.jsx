@@ -1,9 +1,12 @@
 import { Card } from "@chakra-ui/react";
 import LogViewerHeader from "./Header/LogViewerHeader";
 import LogViewerBody from "./LogViewerBody";
+import { useAuth } from "@/hooks/useAuth";
 
 function LogViewer() {
     console.log("Render LogViewer");
+    const { isAuthenticated } = useAuth();
+    console.log(isAuthenticated+"fdlgdk");
     return (
         <Card.Root
             flex={"1"}
