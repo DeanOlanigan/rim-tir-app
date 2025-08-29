@@ -18,7 +18,7 @@ function ProtectedRoutes() {
             }
         };
         verifyAuthentication();
-    }, []);
+    }, [navigate]);
 
     useEffect(() => {
         const interval = setInterval(async () => {
