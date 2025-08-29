@@ -9,7 +9,7 @@ const queryClient = new QueryClient();
 // This code is for all users
 window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 
-worker.start();
+//worker.start();
 
 function App() {
     return (

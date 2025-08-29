@@ -6,6 +6,7 @@ import { useLogStore } from "../LogStore/LogStore";
 import useLogViewerStore from "../LogStore/LogViewerStore";
 import { AutoSizer } from "react-virtualized";
 import { FixedSizeList as List } from "react-window";
+import { useAuth } from "@/hooks/useAuth";
 
 const wsService = new websocketService("ws://192.168.1.1:8800");
 //const ROW_HEIGHT = 40;
@@ -13,6 +14,7 @@ const wsService = new websocketService("ws://192.168.1.1:8800");
 function LogViewerBody() {
     console.log("Render LogViewerBody");
 
+    const { checkAuth } = useAuth;
     const isPaused = useLogViewerStore(state => state.isPaused);
     const isLogTextWrapped = useLogViewerStore(state => state.isLogTextWrapped);
     const logTextSize = useLogViewerStore(state => state.logTextSize);

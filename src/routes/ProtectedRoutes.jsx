@@ -7,29 +7,27 @@ import { useAuth } from "@/hooks/useAuth";
 
 function ProtectedRoutes() {
     console.log("Render ProtectedRoutes");
-    const { checkAuth, extendSession } = useAuth();
+    const { extendSession } = useAuth();
     const navigate = useNavigate();
     
     useEffect(() => {
         const verifyAuthentication = async () => {
-            const isAuth = await checkAuth();
-            console.log("IsAuth: ", isAuth);
-            if (isAuth !== true) {
+            if (!localStorage.getItem("accessToken") || !localStorage.getItem("refreshToken")) {
                 navigate("/login", { replace: true });
                 return;
             }
         };
         verifyAuthentication();
-    }, [navigate]);
+    }, []);
 
-    /*useEffect(() => {
-        const interval = setInterval(() => {
+    useEffect(() => {
+        const interval = setInterval(async () => {
             console.log("Check DeathTime");
-            extendSession();
-        }, 10*1000);
+            await extendSession();
+        }, 60*1000);
 
         return () => clearInterval(interval);
-    }, [extendSession]);*/
+    }, [extendSession]);
 
     return (
         <>

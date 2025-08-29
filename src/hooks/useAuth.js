@@ -73,6 +73,7 @@ export const useAuth = () => {
 
     const logoutMutation = useMutation({
         mutationFn: async () => {
+            navigate("/login");
             console.log("logout");
             const accessToken = localStorage.getItem("accessToken");
             const login = localStorage.getItem("login");
@@ -97,7 +98,6 @@ export const useAuth = () => {
             localStorage.removeItem("refreshToken");
             localStorage.removeItem("login");
             queryClientInt.clear();
-            navigate("/login");
         }
     });
 
@@ -106,21 +106,24 @@ export const useAuth = () => {
             const refreshToken = localStorage.getItem("refreshToken");
             const accessToken = localStorage.getItem("accessToken");
             const login = localStorage.getItem("login");
-            const response = await fetch("api/v2/refresh", {
+            const response = await fetch("/api/v3/refresh", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ refreshToken, login, accessToken }),
             });
-            
+
             if (!response.ok) {
                 const error = await response.json();
                 throw new Error(error.msg);
             }
+            
+            return response.json();
         },
 
         onSuccess: (data) => {
+            console.log("response ", data.accessToken);
             const newAccessToken = data.accessToken;
             localStorage.setItem("accessToken", newAccessToken);
             console.log("Token has been refreshed");
@@ -132,44 +135,22 @@ export const useAuth = () => {
         }
     });
 
-    const login = (credentials) => {
-        loginMutation.mutate(credentials);
+    const login = async (credentials) => {
+        try {
+            loginMutation.mutate(credentials);
+            if (loginMutation.isError) throw loginMutation.error;
+        } catch (error) {
+            return error;
+        }
     };
 
     const logout = () => {
         logoutMutation.mutate();
     };
 
-    const extendSession = () => {
+    const extendSession = async () => {
         refreshMutation.mutate();
     };
-
-
-    /*useEffect(() => {
-        if (accessToken) {
-            try {
-                const payload = JSON.parse(atob(accessToken.split(".")[1]));
-                if (payload.deathTime <= Date.now() && refreshToken) {
-                    extendSession();
-                }
-            } catch (error) {
-                console.error("Error with refreshing token" + error.msg);
-            }
-        };
-    }, 15000);*/
-
-    /*useEffect(() => {
-        if (refreshToken) {
-            try {
-                const payload = JSON.parse(atob(refreshToken.split(".")[1]));
-                if (payload.deathTime <= Date.now()) {
-                    logout();
-                }
-            } catch (error) {
-                console.error("Error with logging out" + error.msg);
-            }
-        }
-    }, 60000);*/
 
     return {
         login,

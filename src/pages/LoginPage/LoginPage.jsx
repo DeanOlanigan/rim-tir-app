@@ -59,7 +59,7 @@ function LoginForm() {
 export default LoginForm;
 
 const LoginCard = () => {
-    const { login, isLoggingIn, isAuthenticated } = useAuth();
+    const { login, isLoggingIn } = useAuth();
     //const [loading, setLoading] = useState(false);
     const [sharedMessage, setSharedMessage] = useState({
         type: null,
@@ -72,12 +72,13 @@ const LoginCard = () => {
     } = useForm();
     const onSubmit = async (data) => {
         try {
-            await login({
+            const result = await login({
                 login: data.username,
                 password: data.password,
             });
-            console.log(isAuthenticated + "ЯЯЯЯЯТ");
+            throw result;
         } catch (error) {
+            console.log("ERRRROOOORRR", error);
             setSharedMessage({
                 type: "error",
                 message: "Error: " + error.message
