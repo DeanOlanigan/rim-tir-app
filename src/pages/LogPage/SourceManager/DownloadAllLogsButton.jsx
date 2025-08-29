@@ -2,9 +2,11 @@ import { Button } from "@/components/ui/button";
 import { toaster } from "@/components/ui/toaster";
 import { LuDownload } from "react-icons/lu";
 import PropTypes from "prop-types";
+import { useAuth } from "@/hooks/useAuth";
 
 function DownloadAllLogsButton({ type, loading }) {
     console.log("Render DownloadAllLogsButton");
+    const { refreshMutation } = useAuth();
 
     const fetchDownload = async () => {
         try {
@@ -58,9 +60,23 @@ function DownloadAllLogsButton({ type, loading }) {
         //fetchDownload();
         toaster.promise(
             (async () => {
-                const taskId = await fetchDownload();
-                return await checkStatus(taskId);
-            })(),
+                try { 
+                    await refreshMutation.mutateAsync();
+                    console.log(refreshMutation.isError, "ОШИИИИБКА");
+                    if (!refreshMutation.isError) {
+                        const taskId = await fetchDownload();
+                        return await checkStatus(taskId);
+                    }
+                    throw refreshMutation.error;
+                } catch (error) {
+                    toaster.create({
+                        title: "Ошибка",
+                        description: error.message,
+                        type: "error",
+                    });
+                }
+                
+            }),
             {
                 loading: {
                     title: "Идет формирование архива...",

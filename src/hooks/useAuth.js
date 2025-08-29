@@ -106,20 +106,23 @@ export const useAuth = () => {
             const refreshToken = localStorage.getItem("refreshToken");
             const accessToken = localStorage.getItem("accessToken");
             const login = localStorage.getItem("login");
-            const response = await fetch("/api/v3/refresh", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ refreshToken, login, accessToken }),
-            });
+            if (refreshToken || accessToken || login) {
+                const response = await fetch("/api/v3/refresh", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ refreshToken, login, accessToken }),
+                });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.msg);
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.msg);
+                }
+                
+                return response.json();
             }
-            
-            return response.json();
+            throw new Error("Unauthorizied");
         },
 
         onSuccess: (data) => {
@@ -131,7 +134,7 @@ export const useAuth = () => {
 
         onError: (error) => {
             console.error("Refreshing Error", error.message);
-            logoutMutation.mutate();
+            //logoutMutation.mutate();
         }
     });
 
@@ -149,8 +152,14 @@ export const useAuth = () => {
     };
 
     const extendSession = async () => {
-        refreshMutation.mutate();
+        try {
+            refreshMutation.mutate();
+            if (refreshMutation.isError) throw refreshMutation.error;
+        } catch (error) {
+            return error;
+        }
     };
+
 
     return {
         login,
@@ -161,7 +170,8 @@ export const useAuth = () => {
         isAuthenticated,
         setIsAuthenticated,
         checkMutation,
-        checkAuth
+        checkAuth,
+        refreshMutation
     };
 
 };

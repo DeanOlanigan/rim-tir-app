@@ -5,7 +5,7 @@ import { delay, http, HttpResponse } from "msw";
 
 function generateJWT(payload, timer) {
     const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT"}));
-    const deathTime = Date.now() + (timer === "15m" ? 15*60*1000 : 8*60*60*1000);
+    const deathTime = Date.now() + (timer === "15m" ? 1 : 1); //Поменяйте время если нужно, сейчас очень короткий срок жизни токенов для проверки
     payload = { login: payload, deathTime };
     const body = btoa(JSON.stringify(payload));
     return `${header}.${body}.mock-signature`;
@@ -64,7 +64,7 @@ export const handelers = [
         if (checkTokenDeathTime(accessToken)) return HttpResponse.json({msg: "Token is Alive", accessToken: accessToken}, {status: 200});
         try {
             const newAccessToken = refresher(refreshToken);
-            if (newAccessToken === "REFRESHER IS END") return HttpResponse.json({msg: "Refresh token is over"}, {status: 401});
+            if (newAccessToken === "REFRESHER IS END") return HttpResponse.json({msg: "Session time is expired"}, {status: 401});
             return HttpResponse.json({
                 msg: "Token has been refreshed",
                 accessToken: newAccessToken
@@ -72,8 +72,11 @@ export const handelers = [
             {
                 status: 201
             });
-        } catch {
+        } catch (error) {
             return HttpResponse.json(
+                {
+                    msg: error
+                },
                 {
                     status: 403
                 }

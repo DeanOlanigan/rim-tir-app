@@ -3,11 +3,11 @@ import { useEffect } from "react";
 import { Toaster, toaster } from "@/components/ui/toaster";
 import Header from "@/components/Header/Header";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+//import { useAuth } from "@/hooks/useAuth";
 
 function ProtectedRoutes() {
     console.log("Render ProtectedRoutes");
-    const { extendSession } = useAuth();
+    //const { extendSession } = useAuth();
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -20,14 +20,14 @@ function ProtectedRoutes() {
         verifyAuthentication();
     }, []);
 
-    useEffect(() => {
+    /*useEffect(() => {
         const interval = setInterval(async () => {
             console.log("Check DeathTime");
             await extendSession();
         }, 60*1000);
 
         return () => clearInterval(interval);
-    }, [extendSession]);
+    }, [extendSession]);*/
 
     return (
         <>

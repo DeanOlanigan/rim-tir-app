@@ -7,6 +7,7 @@ import { Flex, InputGroup, Input, IconButton, Spinner } from "@chakra-ui/react";
 import { LuX, LuSearch, LuGripVertical } from "react-icons/lu";
 import axios from "axios";
 import { parseXmlToState } from "@/utils/xmlToStore";
+import { useAuth } from "@/hooks/useAuth";
 
 //import { produce, enableMapSet } from "immer";
 //enableMapSet();
@@ -71,11 +72,18 @@ function MonitoringPage() {
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { refreshMutation } = useAuth();
 
     // TODO Переделать с использованием tanstack query, запилить инвалидацию
     useEffect(() => {
         setIsLoading(true);
         setError(null);
+        refreshMutation.mutate();
+        if (refreshMutation.isError) {
+            console.log("ERROR ICI ", refreshMutation.isError);
+            setError(refreshMutation.error);
+            throw refreshMutation.error;
+        }
         axios
             .get("/api/v2/getConfiguration")
             .then((res) => {

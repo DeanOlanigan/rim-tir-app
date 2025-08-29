@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthProvider from "@/providers/AuthProvider/AuthProvider";
 import ProtectedRouter from "./ProtectedRoutes";
 
 import { Redirect } from "@/pages/Redirect";

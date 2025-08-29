@@ -14,7 +14,7 @@ const wsService = new websocketService("ws://192.168.1.1:8800");
 function LogViewerBody() {
     console.log("Render LogViewerBody");
 
-    const { checkAuth } = useAuth;
+    const { refreshMutation } = useAuth();
     const isPaused = useLogViewerStore(state => state.isPaused);
     const isLogTextWrapped = useLogViewerStore(state => state.isLogTextWrapped);
     const logTextSize = useLogViewerStore(state => state.logTextSize);
@@ -37,19 +37,24 @@ function LogViewerBody() {
     useEffect(() => {
         const fetchLogs = async () => {
             try {
-                const response = await fetch(
-                    `/api/v1/getLog?logfile=${logData.logNameZus}&limit=${logData.logRowsZus}&type=${logData.logTypeZus}`
-                );
-                if (!response.ok) {
-                    throw new Error(
-                        `Ошибка получения логов: ${response.statusText}`
+                await refreshMutation.mutateAsync();
+                if (!refreshMutation.isError) {
+                    const response = await fetch(
+                        `/api/v1/getLog?logfile=${logData.logNameZus}&limit=${logData.logRowsZus}&type=${logData.logTypeZus}`
                     );
-                }
-                const result = await response.json();
-                if (result.code === 200) {
-                    appendLogs(result.data);
+                    if (!response.ok) {
+                        throw new Error(
+                            `Ошибка получения логов: ${response.statusText}`
+                        );
+                    }
+                    const result = await response.json();
+                    if (result.code === 200) {
+                        appendLogs(result.data);
+                    } else {
+                        throw new Error(result.message || "Неизвестная ошибка");
+                    }
                 } else {
-                    throw new Error(result.message || "Неизвестная ошибка");
+                    throw refreshMutation.error;
                 }
             } catch (error) {
                 toaster.create({
@@ -59,7 +64,6 @@ function LogViewerBody() {
                 });
             }
         };
-
         fetchLogs();
     }, [logData.logNameZus, logData.logRowsZus, logData.logTypeZus]);
 

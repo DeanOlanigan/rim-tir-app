@@ -4,8 +4,10 @@ import { toaster } from "@/components/ui/toaster";
 import LogSelectionCard from "./LogSelectionCard";
 import LogFileViewerControls from "./LogFileViewerControls";
 import PropTypes from "prop-types";
+import { useAuth } from "@/hooks/useAuth";
 
 function LogSourceManager() {
+    const { refreshMutation } = useAuth();
     const [logs, setLogs] = useState({ internal: [], sd: [] });
     const [loading, setLoading] = useState(true);
     console.log("Render LogSourceManager");
@@ -13,18 +15,24 @@ function LogSourceManager() {
     useEffect(() => {
         const fetchLogs = async () => {
             try {
-                const response = await fetch("/api/v1/getLogfilesList");
-                if (!response.ok) {
-                    throw new Error(`Ошибка загрузки: ${response.statusText}`);
-                }
-                const result = await response.json();
-                if (result.code === 200) {
-                    setLogs({
-                        internal: result.data.internal || [],
-                        sd: result.data.sd || [],
-                    });
+                await refreshMutation.mutateAsync();
+                if (!refreshMutation.isError) {
+                    console.log("ALL CLEAT");
+                    const response = await fetch("/api/v1/getLogfilesList");
+                    if (!response.ok) {
+                        throw new Error(`Ошибка загрузки: ${response.statusText}`);
+                    }
+                    const result = await response.json();
+                    if (result.code === 200) {
+                        setLogs({
+                            internal: result.data.internal || [],
+                            sd: result.data.sd || [],
+                        });
+                    } else {
+                        throw new Error(result.message || "Неизвестная ошибка");
+                    }
                 } else {
-                    throw new Error(result.message || "Неизвестная ошибка");
+                    throw refreshMutation.error;
                 }
             } catch (error) {
                 toaster.create({
