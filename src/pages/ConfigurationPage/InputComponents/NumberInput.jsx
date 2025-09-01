@@ -1,9 +1,6 @@
 import { memo, useEffect, useState } from "react";
-import {
-    NumberInputField,
-    NumberInputRoot,
-} from "@/components/ui/number-input";
 import { useVariablesStore } from "@/store/variables-store";
+import { NumberInput as ChakraNumberInput } from "@chakra-ui/react";
 
 export const NumberInput = memo(function NumberInput(props) {
     console.log("Render NumberInput");
@@ -16,14 +13,15 @@ export const NumberInput = memo(function NumberInput(props) {
     }, [value]);
 
     return (
-        <NumberInputRoot
+        <ChakraNumberInput.Root
+            size={"xs"}
             value={innerValue}
-            formatOptions={{
+            // BUG Chakra update breaks NumberInput format options
+            /* formatOptions={{
                 style: "decimal",
                 maximumFractionDigits: isF ? 3 : 0,
                 useGrouping: false,
-            }}
-            size={"xs"}
+            }} */
             onValueChange={(details) => {
                 setInnerValue(details.value);
             }}
@@ -48,7 +46,8 @@ export const NumberInput = memo(function NumberInput(props) {
             }}
             onClick={(e) => e.stopPropagation()}
         >
-            <NumberInputField />
-        </NumberInputRoot>
+            <ChakraNumberInput.Control />
+            <ChakraNumberInput.Input />
+        </ChakraNumberInput.Root>
     );
 });

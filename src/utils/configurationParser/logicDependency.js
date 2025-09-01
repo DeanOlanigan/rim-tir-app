@@ -27,11 +27,11 @@ export function collectDependenciesFromLogic(logic) {
 }
 
 const resolvers = {
-    self: (dep, nodePath) => {
+    self: ({ dep, nodePath }) => {
         dep.path = `${nodePath}:${dep.what}`;
     },
-    parent: (dep, nodePaths, startPath) => {
-        let currentPath = startPath;
+    parent: ({ dep, nodePaths, nodePath }) => {
+        let currentPath = nodePath;
         while (currentPath !== "#") {
             currentPath = nodePaths[currentPath].parentPath;
             const settings = nodePaths[currentPath]?.settings;
@@ -49,7 +49,7 @@ export function resolveFind(nodePaths, settingPaths) {
         if (deps.length === 0) continue;
         for (const dep of deps) {
             if (dep.path) continue;
-            resolvers[dep.where](dep, nodePaths, nodePath);
+            resolvers[dep.where]({ dep, nodePaths, nodePath });
         }
     }
 }

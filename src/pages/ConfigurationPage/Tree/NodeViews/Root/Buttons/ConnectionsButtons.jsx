@@ -39,6 +39,7 @@ export const ConnectionsButtons = ({ treeApi, type }) => {
                             index={index}
                             apiPath={treeApi}
                             updateContext={null}
+                            resetTreeFocus
                         />
                     ))}
                 </Menu.Content>

@@ -156,9 +156,9 @@ const ChildParamViewer = ({ params }) => {
 
 const ChildEnumViewer = ({ param }) => {
     const choosen = param.enumValues.find((v) => v.value === param.value);
-    return choosen.icon ? (
+    return choosen?.icon ? (
         <Icon as={choosen.icon} color={choosen.color} />
     ) : (
-        <Text>{choosen.label}</Text>
+        <Text>{choosen?.label}</Text>
     );
 };

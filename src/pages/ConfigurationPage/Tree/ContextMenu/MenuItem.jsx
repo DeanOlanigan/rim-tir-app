@@ -29,7 +29,13 @@ function getDisabledState(apiPath) {
     return false;
 }
 
-export const MenuItem = ({ item, index, apiPath, updateContext }) => {
+export const MenuItem = ({
+    item,
+    index,
+    apiPath,
+    updateContext,
+    resetTreeFocus = false,
+}) => {
     if (!item) return null;
 
     if (item.type === "separator") {
@@ -86,6 +92,7 @@ export const MenuItem = ({ item, index, apiPath, updateContext }) => {
                                     index={index}
                                     apiPath={apiPath}
                                     updateContext={updateContext}
+                                    resetTreeFocus={resetTreeFocus}
                                 />
                             ))}
                         </Menu.Content>
@@ -108,6 +115,7 @@ export const MenuItem = ({ item, index, apiPath, updateContext }) => {
                         path: item.path,
                         treeApi: apiPath,
                     }); */
+                    resetTreeFocus && apiPath.deselectAll();
                     item.action?.(apiPath);
                     updateContext({ visible: false });
                 }

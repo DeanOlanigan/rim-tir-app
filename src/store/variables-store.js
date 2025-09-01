@@ -204,6 +204,7 @@ export const useVariablesStore = create()(
             },
 
             copyNode: (treeApi, ids, isCut = false) => {
+                if (!ids.length) return;
                 const treeType = treeApi.props.treeType;
                 const settings = get().settings;
                 const idsSetNormalized = getIdsSetNormalized(treeApi, ids);
@@ -232,8 +233,8 @@ export const useVariablesStore = create()(
             },
 
             cutNode: (treeApi, ids, cut) => {
-                const treeType = treeApi.props.treeType;
                 if (!ids.length) return;
+                const treeType = treeApi.props.treeType;
                 set((state) => ({
                     [treeType]: ignoreNodeUtil(
                         state[treeType],
@@ -243,7 +244,6 @@ export const useVariablesStore = create()(
                         "isCutted"
                     ),
                 }));
-                console.log("cut");
             },
 
             pasteNode: (treeApi) => {
