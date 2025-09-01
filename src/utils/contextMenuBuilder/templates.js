@@ -14,6 +14,12 @@ export const actions = {
         label: "Переименовать",
         action: (treeApi) => treeApi.edit(treeApi.focusedNode),
     },
+    edit: {
+        type: "edit",
+        icon: { name: "pencil" },
+        label: "Редактировать",
+        action: (treeApi) => treeApi.edit(treeApi.focusedNode),
+    },
     delete: {
         type: "delete",
         icon: { color: "fg.error", name: "trash" },
@@ -123,8 +129,6 @@ const nestedVariables = makeCreateMenu({
 });
 
 export const menuConfigNodeDefault = [
-    { type: "separator" },
-    actions.rename,
     actions.delete,
     actions.toggleIgnore,
     { type: "separator" },
@@ -143,7 +147,7 @@ export const variablesPathConfig = {
         nestedVariables,
         actions.paste,
     ],
-    "#/variable": menuConfigNodeDefault.slice(1),
+    "#/variable": [actions.rename, ...menuConfigNodeDefault],
     "#/folder": [
         makeCreateMenu({
             label: "Создать папку",
@@ -152,6 +156,8 @@ export const variablesPathConfig = {
             basePath: "#/folder",
         }),
         nestedVariables,
+        { type: "separator" },
+        actions.rename,
         ...menuConfigNodeDefault,
         actions.paste,
     ],

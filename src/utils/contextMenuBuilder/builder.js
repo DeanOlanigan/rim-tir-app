@@ -15,9 +15,17 @@ function isNodeAllowed(node, context) {
 
 function addDefaultItems(menu, nodeData) {
     if (nodeData.children || nodeData.type === "folder") {
-        menu.push(...menuConfigNodeDefault, actions.paste);
+        const items = [
+            { type: "separator" },
+            actions.rename,
+            ...menuConfigNodeDefault,
+            actions.paste,
+        ];
+        menu.push(...items);
+    } else if (nodeData.type === "dataObject") {
+        menu.push(...[actions.edit, ...menuConfigNodeDefault]);
     } else {
-        menu.push(...menuConfigNodeDefault.slice(1));
+        menu.push(...[actions.rename, ...menuConfigNodeDefault]);
     }
 }
 
