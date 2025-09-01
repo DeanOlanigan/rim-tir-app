@@ -132,6 +132,20 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
         state.errorsTree.get(node.id)?.get("node")
     );
 
+    const renderTable = () => {
+        if (
+            children.length > 0 &&
+            ["folder", "protocolSpecific", "protocol"].includes(node.type)
+        ) {
+            if (node.type === "folder" && node.path === "#/folder") return null;
+            return (
+                <Box w={"100%"} h={"100%"} overflow={"auto"}>
+                    <Table data={children} />
+                </Box>
+            );
+        }
+    };
+
     return (
         <EditorLayout
             breadcrumbs={<EditorBreadcrumb breadcrumbs={breadcrumbs} />}
@@ -159,16 +173,7 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
                 )
             }
             parameters={<Parameters data={node} />}
-            table={
-                children.length > 0 &&
-                ["folder", "protocolSpecific", "protocol"].includes(
-                    node.type
-                ) && (
-                    <Box w={"100%"} h={"100%"} overflow={"auto"}>
-                        <Table data={children} />
-                    </Box>
-                )
-            }
+            table={renderTable()}
         />
     );
 });
