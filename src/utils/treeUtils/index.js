@@ -1,3 +1,17 @@
-export { bindVariableUtil, unbindVariableUtil } from "./bind";
-export { createSettingUtil, addNodeUtil } from "./add";
-export { removeSettingUtil, removeNodeUtil } from "./remove";
+export { bindVariableUtil } from "./bind/bindVariable";
+export { unbindVariableUtil } from "./bind/unbindVariable";
+export { createSettingUtil } from "./add/createSetting";
+export { addNodeUtil } from "./add/addNode";
+export { removeNodeUtil, deleteNodeUtil } from "./remove/removeTreeNodes";
+export { removeAndUnbindSettingsUtil } from "./remove/removeAndUnbindSettings";
+export { removeSettingUtil } from "./remove/removeSettings";
+export {
+    getIdsSetNormalizedContext,
+    getIdsSetNormalized,
+    getIdsSetWithoutNested,
+} from "./core/ids";
+export { getParentId } from "./core/parentOps";
+export { moveNodesUtil } from "./move/moveNode";
+export { moveSettingUtil } from "./move/moveSetting";
+export { renameNodeSettingUtil } from "./edit/renameNodeSetting";
+export { editSettingUtil } from "./edit/editSetting";

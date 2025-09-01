@@ -1,8 +1,5 @@
 import { useVariablesStore } from "@/store/variables-store";
-import {
-    deleteNodeUtil,
-    getIdsSetWithoutNested,
-} from "@/utils/treeUtils/treeUtils";
+import { deleteNodeUtil, getIdsSetWithoutNested } from "../treeUtils";
 
 function getSelectedIds(treeApi) {
     if (treeApi.selectedIds.size > 1) return [...treeApi.selectedIds];

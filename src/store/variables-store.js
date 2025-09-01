@@ -1,17 +1,9 @@
 import { create } from "zustand";
 import {
-    moveNodesUtil,
-    renameNodeSettingUtil,
-    editSettingUtil,
-    moveSettingUtil,
     ignoreNodeUtil,
     copyTreeUtil,
     copySettingsUtil,
-    getIdsSetNormalized,
-    getIdsSetWithoutNested,
     generateNewIds,
-    getParentId,
-    getIdsSetNormalizedContext,
 } from "@/utils/treeUtils/treeUtils";
 import { persist } from "zustand/middleware";
 import { useValidationStore } from "@/store/validation-store";
@@ -24,11 +16,19 @@ import { ErrorDraft } from "@/utils/validation";
 import { NODE_TYPES, NODE_UNIQUE_NAMES, TREE_TYPES } from "@/config/constants";
 import {
     removeNodeUtil,
-    removeSettingUtil,
+    removeAndUnbindSettingsUtil,
     bindVariableUtil,
     unbindVariableUtil,
     addNodeUtil,
     createSettingUtil,
+    getIdsSetNormalizedContext,
+    getIdsSetWithoutNested,
+    getIdsSetNormalized,
+    getParentId,
+    moveNodesUtil,
+    moveSettingUtil,
+    renameNodeSettingUtil,
+    editSettingUtil,
 } from "@/utils/treeUtils/index";
 
 const baseNodeInit = (type, name) => ({
@@ -275,12 +275,15 @@ export const useVariablesStore = create()(
 
             removeNode: (targetKey, nodeIds) => {
                 const { settings } = get();
-                const ids = getIdsSetNormalizedContext(settings, nodeIds);
-                useValidationStore.getState().clearErrors(ids);
+                const idsSet = getIdsSetNormalizedContext(settings, nodeIds);
+                useValidationStore.getState().clearErrors(idsSet);
 
                 set((state) => {
-                    const newSettings = removeSettingUtil(state.settings, ids);
-                    const newTree = removeNodeUtil(state[targetKey], ids);
+                    const newSettings = removeAndUnbindSettingsUtil(
+                        state.settings,
+                        idsSet
+                    );
+                    const newTree = removeNodeUtil(state[targetKey], idsSet);
                     return {
                         [targetKey]: newTree,
                         settings: newSettings,
