@@ -1,5 +1,5 @@
 import { FileUpload } from "@chakra-ui/react";
-import { uploadXmlFile } from "@/utils/xmlToStore";
+import { uploadXmlFile } from "@/utils/xml/xmlToStore";
 import { toaster } from "@/components/ui/toaster";
 
 export const ConfigurationUploader = ({ children }) => {

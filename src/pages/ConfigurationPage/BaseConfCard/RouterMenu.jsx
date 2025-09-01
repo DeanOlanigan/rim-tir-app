@@ -1,136 +1,50 @@
-import {
-    MenuContent,
-    MenuItem,
-    MenuRoot,
-    MenuTrigger,
-} from "@/components/ui/menu";
-import { Button } from "@chakra-ui/react";
-import axios from "axios";
+import { Button, Menu, Portal } from "@chakra-ui/react";
 import { toaster } from "@/components/ui/toaster";
-import { convertStateToXml } from "@/utils/storeToXml";
+import { convertStateToXml } from "@/utils/xml/storeToXml";
 import { useVariablesStore } from "@/store/variables-store";
 import { useConfigInfoStore } from "@/store/config-info-store";
-import { parseXmlToState } from "@/utils/xmlToStore";
 import { useValidationStore } from "@/store/validation-store";
-import { validateAll } from "@/utils/validation";
-import { configuratorConfig } from "@/utils/configurationParser";
+import {
+    useRefreshConfigurationMutation,
+    useRestartTirMutation,
+    useStartTirMutation,
+    useStopTirMutation,
+    useUploadConfigurationMutation,
+} from "@/hooks/useMutation";
 
 export const RouterMenu = () => {
     const currentState = useVariablesStore.getState();
     const currentConfigInfo = useConfigInfoStore.getState().configInfo;
-    const errors = useValidationStore((state) => state.errorsTree);
-    const hasErrors = errors && errors.size !== 0;
 
-    const startHandler = () => {
-        axios
-            .post("/api/v2/startTir")
-            .then(() => {
-                toaster.create({
-                    title: "Сервер запущен",
-                    description: "Сервер успешно запущен",
-                    type: "success",
-                });
-            })
-            .catch((err) => {
-                toaster.create({
-                    title: "Произошла ошибка",
-                    description: err.response.data.message,
-                    type: "error",
-                });
-            });
-    };
+    const errorsTree = useValidationStore((state) => state.errorsTree);
+    const hasErrors = !!errorsTree && errorsTree.size !== 0;
 
-    const stopHandler = () => {
-        axios
-            .post("/api/v2/stopTir")
-            .then(() => {
-                toaster.create({
-                    title: "Сервер остановлен",
-                    description: "Сервер успешно остановлен",
-                    type: "success",
-                });
-            })
-            .catch((err) => {
-                toaster.create({
-                    title: "Произошла ошибка",
-                    description: err.response.data.message,
-                    type: "error",
-                });
-            });
-    };
-
-    const restartHandler = () => {
-        axios
-            .post("/api/v2/restartTir")
-            .then(() => {
-                toaster.create({
-                    title: "Сервер перезапущен",
-                    description: "Сервер успешно перезапущен",
-                    type: "success",
-                });
-            })
-            .catch((err) => {
-                toaster.create({
-                    title: "Произошла ошибка",
-                    description: err.response.data.message,
-                    type: "error",
-                });
-            });
-    };
+    const startM = useStartTirMutation();
+    const stopM = useStopTirMutation();
+    const restartM = useRestartTirMutation();
+    const uploadM = useUploadConfigurationMutation();
+    const refreshM = useRefreshConfigurationMutation();
 
     const sendConfigHandler = () => {
         if (hasErrors) {
+            toaster.create({
+                title: "Конфигурация не отправлена",
+                description: "Конфигурация не прошла валидацию",
+                type: "error",
+            });
             return;
         }
-        axios
-            .put(
-                "/api/v2/uploadConfiguration",
-                convertStateToXml(currentState, currentConfigInfo)
-            )
-            .then((res) => {
-                console.log(res);
-                toaster.create({
-                    title: "Конфигурация отправлена",
-                    description: "Конфигурация успешно отправлена",
-                    type: "success",
-                });
-            })
-            .catch((err) => {
-                toaster.create({
-                    title: "Произошла ошибка",
-                    description: err.response.data.message,
-                    type: "error",
-                });
-            });
+        const xml = convertStateToXml(currentState, currentConfigInfo);
+        uploadM.mutate(xml);
     };
 
     const getConfigHandler = () => {
-        axios
-            .get("/api/v2/getConfiguration")
-            .then((res) => {
-                const { state, configInfo } = parseXmlToState(res.data.data);
-                useConfigInfoStore.setState({ configInfo });
-                useVariablesStore.setState(state);
-                const draft = validateAll(state.settings, configuratorConfig);
-                useValidationStore.getState().applyDraft(draft);
-                toaster.create({
-                    title: "Конфигурация обновлена",
-                    description: "Конфигурация успешно обновлена",
-                    type: "success",
-                });
-            })
-            .catch((err) => {
-                toaster.create({
-                    title: "Произошла ошибка",
-                    description: err.response.data.message,
-                    type: "error",
-                });
-            });
+        refreshM.mutate();
     };
 
     return (
-        <MenuRoot size={"md"}>
-            <MenuTrigger asChild>
+        <Menu.Root size={"md"} closeOnSelect={false}>
+            <Menu.Trigger asChild>
                 <Button
                     variant="subtle"
                     size="2xs"
@@ -139,28 +53,58 @@ export const RouterMenu = () => {
                 >
                     Роутер
                 </Button>
-            </MenuTrigger>
-            <MenuContent>
-                <MenuItem
-                    value="new-txt"
-                    onClick={sendConfigHandler}
-                    disabled={hasErrors}
-                >
-                    Отправить конфигурацию
-                </MenuItem>
-                <MenuItem value="new-file" onClick={getConfigHandler}>
-                    Обновить конфигурацию
-                </MenuItem>
-                <MenuItem value="start" onClick={startHandler}>
-                    Запустить сервер
-                </MenuItem>
-                <MenuItem value="stop" onClick={stopHandler}>
-                    Остановить сервер
-                </MenuItem>
-                <MenuItem value="restart" onClick={restartHandler}>
-                    Перезапустить сервер
-                </MenuItem>
-            </MenuContent>
-        </MenuRoot>
+            </Menu.Trigger>
+            <Portal>
+                <Menu.Positioner>
+                    <Menu.Content>
+                        <Menu.Item
+                            value="new-txt"
+                            onClick={sendConfigHandler}
+                            disabled={uploadM.isPending}
+                        >
+                            {uploadM.isPending
+                                ? "Отправка..."
+                                : "Отправить конфигурацию"}
+                        </Menu.Item>
+                        <Menu.Item
+                            value="new-file"
+                            onClick={getConfigHandler}
+                            disabled={refreshM.isPending}
+                        >
+                            {refreshM.isPending
+                                ? "Обновление..."
+                                : "Обновить конфигурацию"}
+                        </Menu.Item>
+                        <Menu.Item
+                            value="start"
+                            onClick={() => startM.mutate()}
+                            disabled={startM.isPending}
+                        >
+                            {startM.isPending
+                                ? "Запуск..."
+                                : "Запустить сервер"}
+                        </Menu.Item>
+                        <Menu.Item
+                            value="stop"
+                            onClick={() => stopM.mutate()}
+                            disabled={stopM.isPending}
+                        >
+                            {stopM.isPending
+                                ? "Остановка..."
+                                : "Остановить сервер"}
+                        </Menu.Item>
+                        <Menu.Item
+                            value="restart"
+                            onClick={() => restartM.mutate()}
+                            disabled={restartM.isPending}
+                        >
+                            {restartM.isPending
+                                ? "Перезапуск..."
+                                : "Перезапустить сервер"}
+                        </Menu.Item>
+                    </Menu.Content>
+                </Menu.Positioner>
+            </Portal>
+        </Menu.Root>
     );
 };

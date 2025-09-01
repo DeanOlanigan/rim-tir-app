@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { Button } from "@chakra-ui/react";
 import { useJournalContext } from "@/providers/JournalProvider/JournalContext";
-import websocketService from "@/services/websocketService";
+import { WebSocketService } from "@/services/websocketService";
 
-const wsService = new websocketService("ws://192.168.1.1:8800");
+const wsService = new WebSocketService("ws://192.168.1.1:8800");
 
 function FilterControls({ filters, setFilters }) {
     const { setJournalRows, clearJournalRows } = useJournalContext();

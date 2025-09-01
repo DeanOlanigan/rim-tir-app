@@ -1,15 +1,15 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { LuTriangleAlert } from "react-icons/lu";
-import websocketService from "@/services/websocketService";
+import { WebSocketService } from "@/services/websocketService";
 import { useEffect, useState } from "react";
 
-const wsService = new websocketService("ws://192.168.1.1:8800");
+//const wsService = new WebSocketService("ws://192.168.1.1:8800");
 
 function ConnectionStatus() {
     const [serverTime, setServerTime] = useState("");
     const [isConnected, setIsConnected] = useState(false);
 
-    useEffect(() => {
+    /* useEffect(() => {
         wsService.connect();
 
         const messageHandler = (message) => {
@@ -19,12 +19,10 @@ function ConnectionStatus() {
 
         wsService.addMessageHandler(messageHandler);
 
-        let t = 0;
         const internal = setInterval(() => {
             setIsConnected(wsService.isConnected);
             if (wsService.isConnected) {
-                wsService.sendMessage({ sys: ["OK", t] });
-                t++;
+                wsService.sendMessage({ action: "getTime" });
             }
         }, 1000);
 
@@ -32,7 +30,7 @@ function ConnectionStatus() {
             clearInterval(internal);
             wsService.removeMessageHandler(messageHandler);
         };
-    }, []);
+    }, []); */
 
     return (
         <Flex align={"center"} gap={"2"} justify={"between"}>

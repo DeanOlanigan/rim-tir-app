@@ -3,7 +3,7 @@ import { HStack, IconButton, Card } from "@chakra-ui/react";
 import { LuArrowLeft } from "react-icons/lu";
 import { Line } from "react-chartjs-2";
 import { useColorModeValue } from "@/components/ui/color-mode";
-import WebSocketService from "@/services/websocketService";
+import { WebSocketService } from "@/services/websocketService";
 import { createOptions } from "./chartOptions";
 import { useAtomValue, useAtom } from "jotai";
 import { wsMessageAtom, clearWsMessageAtom } from "../atoms";

@@ -3,9 +3,9 @@ import { Text, Box, Badge, Flex } from "@chakra-ui/react";
 import { toaster } from "@/components/ui/toaster"; // Chakra UI toaster
 import { useLogContext } from "@/providers/LogProvider/LogContext";
 import { useLogViewerContext } from "@/providers/LogViewerProvider/LogViewerContext";
-import websocketService from "@/services/websocketService";
+import { WebSocketService } from "@/services/websocketService";
 
-const wsService = new websocketService("ws://192.168.1.1:8800");
+const wsService = new WebSocketService("ws://192.168.1.1:8800");
 
 function LogViewerBody() {
     console.log("Render LogViewerBody");

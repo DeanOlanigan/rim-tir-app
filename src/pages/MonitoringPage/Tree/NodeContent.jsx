@@ -1,82 +1,65 @@
 import { memo } from "react";
-import { useVariablesStore } from "@/store/variables-store";
-import { Text, IconButton, HStack } from "@chakra-ui/react";
+import { Text, IconButton, HStack, Code, Menu, Portal } from "@chakra-ui/react";
 import { NODE_TYPES } from "@/config/constants";
 import { NodeValues } from "./NodeValues";
-import { LuInfo, LuPencil } from "react-icons/lu";
+import { LuPencil } from "react-icons/lu";
+import { ConnectionHeadderAdditionalInfo } from "../ConnectionHeadderAdditionalInfo";
+import { useQuery } from "@tanstack/react-query";
+import { QK } from "@/api/queryKeys";
+import { getConfiguration } from "@/api/configuration";
+import { AdditionalInfo } from "../AdditionalInfo";
 
 export const NodeContent = memo(function NodeContent({ id, type, name }) {
-    const variableName = useVariablesStore(
-        (state) => state.settings[name]?.name
-    );
-
     return (
-        <HStack justifyContent={"space-between"} w={"100%"}>
+        <HStack justifyContent={"space-between"} w={"100%"} className="group">
             <HStack>
-                <Text truncate>
-                    {type === NODE_TYPES.dataObject ? variableName : name}
-                </Text>
-                {/* <ConnectionHeadderAdditionalInfo id={id} /> */}
+                {type === NODE_TYPES.dataObject ? (
+                    <BindedVariable id={id} />
+                ) : (
+                    <Text truncate>{name}</Text>
+                )}
+                {type !== NODE_TYPES.folder && (
+                    <AdditionalInfo id={id} height={"10rem"} />
+                    /* <ConnectionHeadderAdditionalInfo id={id} /> */
+                )}
             </HStack>
             <HStack>
-                {type === "variable" && (
-                    <IconButton size={"2xs"} variant={"subtle"}>
-                        <LuPencil />
-                    </IconButton>
+                {type === NODE_TYPES.variable && (
+                    <Menu.Root>
+                        <Menu.Trigger asChild>
+                            <IconButton
+                                size={"2xs"}
+                                variant={"subtle"}
+                                display={{ base: "none", _groupHover: "flex" }}
+                            >
+                                <LuPencil />
+                            </IconButton>
+                        </Menu.Trigger>
+                        <Portal>
+                            <Menu.Positioner>
+                                <Menu.Content></Menu.Content>
+                            </Menu.Positioner>
+                        </Portal>
+                    </Menu.Root>
                 )}
-                {(type === "dataObject" || type === "variable") && (
-                    <NodeValues id={id} />
-                )}
+                {(type === NODE_TYPES.dataObject ||
+                    type === NODE_TYPES.variable) && <NodeValues id={id} />}
             </HStack>
         </HStack>
     );
 });
 
-// TODO Вынести в отдельный файл
-import { Popover, Stack, Box, StackSeparator, Portal } from "@chakra-ui/react";
-import { Field } from "@/components/ui/field";
+const BindedVariable = ({ id }) => {
+    const { data: name } = useQuery({
+        queryKey: QK.configuration,
+        queryFn: getConfiguration,
+        select: ({ state }) =>
+            state.settings[state.settings[id]?.setting?.variableId]?.name,
+    });
 
-const ConnectionHeadderAdditionalInfo = ({ id }) => {
-    const setting = useVariablesStore((state) => state.settings[id]?.setting);
-    if (!setting) return null;
     return (
-        <Popover.Root
-            positioning={{ placement: "left-center" }}
-            lazyMount
-            unmountOnExit
-        >
-            <Popover.Trigger asChild>
-                <IconButton size={"2xs"} variant={"subtle"}>
-                    <LuInfo />
-                </IconButton>
-            </Popover.Trigger>
-            <Portal>
-                <Popover.Positioner>
-                    <Popover.Content>
-                        <Popover.Body>
-                            <Stack gap={"1"} separator={<StackSeparator />}>
-                                {Object.keys(setting).map((key) => {
-                                    return (
-                                        <Field key={key}>
-                                            <Box
-                                                maxH={"100px"}
-                                                overflow={"auto"}
-                                            >
-                                                <Text
-                                                    wordBreak={"break-all"}
-                                                    fontSize={"sm"}
-                                                >
-                                                    {setting[key]}
-                                                </Text>
-                                            </Box>
-                                        </Field>
-                                    );
-                                })}
-                            </Stack>
-                        </Popover.Body>
-                    </Popover.Content>
-                </Popover.Positioner>
-            </Portal>
-        </Popover.Root>
+        <Code variant={"subtle"} colorPalette={"blue"}>
+            {name ? name : "Нет переменной"}
+        </Code>
     );
 };

@@ -1,7 +1,7 @@
-//TODO Реализовать с помощью rxjs/websocket (или нет, я ебу) PS: Сделано на винилле
+//TODO Реализовать с помощью rxjs/websocket
 //TODO Добавить идентификацию хендлеров по типу
 
-class WebSocketService {
+export class WebSocketService {
     constructor(url) {
         this.url = url;
         this.socket = null;
@@ -70,5 +70,3 @@ class WebSocketService {
         }
     }
 }
-
-export default WebSocketService;

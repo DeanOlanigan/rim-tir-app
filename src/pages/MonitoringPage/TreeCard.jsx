@@ -5,28 +5,30 @@ import {
     VStack,
     Icon,
     HStack,
-    Spinner,
 } from "@chakra-ui/react";
 import { AutoSizer } from "react-virtualized";
 import { Tree } from "react-arborist";
 import styles from "@/components/TreeView/TreeView.module.css";
 import { DropCursor } from "@/components/TreeView/DropCursor";
 import { Node } from "./Tree/Node";
-import { LuFileQuestion, LuTriangleAlert } from "react-icons/lu";
+import { LuFileQuestion } from "react-icons/lu";
 import { NODE_TYPES } from "@/config/constants";
+import { useQuery } from "@tanstack/react-query";
+import { QK } from "@/api/queryKeys";
+import { getConfiguration } from "@/api/configuration";
 
 // TODO может быть сравнить с TreeCard в configuration и сделать общую функциональность
-export const TreeCard = ({ data = [], searchTerm, isLoading, error }) => {
+export const TreeCard = ({ type, searchTerm }) => {
+    const { data = [] } = useQuery({
+        queryKey: QK.configuration,
+        queryFn: getConfiguration,
+        select: ({ state }) => state[type],
+    });
+
     let content;
 
-    if (isLoading) {
-        content = <Loader />;
-    } else if (error) {
-        content = <ErrorInformer />;
-    } else if (
-        data[0].type === NODE_TYPES.root &&
-        data[0].children.length === 0
-    ) {
+    if (data.length === 0) return null;
+    if (data[0].type === NODE_TYPES.root && data[0].children.length === 0) {
         content = <EmptyCard />;
     } else {
         content = <Content data={data} searchTerm={searchTerm} />;
@@ -41,7 +43,6 @@ export const TreeCard = ({ data = [], searchTerm, isLoading, error }) => {
             animationStyle={{
                 _open: "scale-fade-in",
             }}
-            className="group"
             border={"none"}
             bg={"transparent"}
         >
@@ -96,40 +97,6 @@ const EmptyCard = () => {
                 <HStack>
                     <Text color={"fg.subtle"} fontWeight={"medium"}>
                         Нет данных
-                    </Text>
-                </HStack>
-            </VStack>
-        </AbsoluteCenter>
-    );
-};
-
-const Loader = () => {
-    return (
-        <AbsoluteCenter>
-            <VStack w={"100%"}>
-                <Spinner size={"xl"} />
-                <HStack>
-                    <Text color={"fg.subtle"} fontWeight={"medium"}>
-                        Загрузка...
-                    </Text>
-                </HStack>
-            </VStack>
-        </AbsoluteCenter>
-    );
-};
-
-const ErrorInformer = () => {
-    return (
-        <AbsoluteCenter>
-            <VStack w={"100%"}>
-                <Icon
-                    fontSize={"164px"}
-                    color={"fg.error/30"}
-                    as={LuTriangleAlert}
-                />
-                <HStack>
-                    <Text color={"fg.error"} fontWeight={"medium"}>
-                        Ошибка загрузки
                     </Text>
                 </HStack>
             </VStack>

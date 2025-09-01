@@ -5,17 +5,22 @@ import {
     LuLightbulb,
     LuCircle,
 } from "react-icons/lu";
-import { useMonitoringStore } from "@/store/monitoring-store";
+import { useQuery } from "@tanstack/react-query";
+import { getConfiguration } from "@/api/configuration";
+import { QK } from "@/api/queryKeys";
 
 export const NodeValues = ({ id }) => {
-    const valuesMap = useMonitoringStore((state) => state.valuesMap);
-
+    const { data: params } = useQuery({
+        queryKey: QK.configuration,
+        queryFn: getConfiguration,
+        select: ({ state }) => state.settings[id],
+    });
     return (
         <>
             <Code w={"150px"} variant={"surface"} justifyContent={"center"}>
-                {valuesMap[id]}
+                {params.value}
             </Code>
-            <LuUserCheck />
+            {params.setting?.cmd && <LuUserCheck />}
             <Icon color={"red.500"} fill={"red.500"} as={LuArrowBigRight} />
             <LuLightbulb />
             <LuCircle />

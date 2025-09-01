@@ -8,90 +8,76 @@ import {
     Portal,
     Dialog,
     CloseButton,
+    Badge,
+    Center,
+    Icon,
 } from "@chakra-ui/react";
 import { Tooltip } from "@/components/ui/tooltip";
-import { useEffect, useState } from "react";
 import { ColorModeButton } from "@/components/ui/color-mode";
-import { LuSettings, LuLogOut } from "react-icons/lu";
+import {
+    LuSettings,
+    LuLogOut,
+    LuCpu,
+    LuMemoryStick,
+    LuClock,
+    LuHexagon,
+} from "react-icons/lu";
 import { useContext } from "react";
 import { AuthContext } from "@/providers/AuthProvider/AuthContext";
 
 import Navigation from "@/components/Navigation/Navigation";
 import ConnectionStatus from "@/components/ConnectionStatus/ConnectionStatus";
+import { useQuery } from "@tanstack/react-query";
+import { getSoftwareVer } from "@/api/shared";
+import { QK } from "@/api/queryKeys";
+import { useChannel } from "@/ws/useChannel";
 
 function Header() {
-    const [version, setVersion] = useState("");
-    const { logout } = useContext(AuthContext);
-
-    useEffect(() => {
-        const fetchVersion = async () => {
-            try {
-                const response = await fetch(
-                    "http://192.168.1.1:8080/api/v1/getSoftwareVer"
-                );
-                if (!response.ok) {
-                    throw new Error(`Ошибка загрузки: ${response.statusText}`);
-                }
-                const result = await response.json();
-                if (result.code === 200) {
-                    setVersion(result.data || []);
-                } else {
-                    throw new Error(result.message || "Неизвестная ошибка");
-                }
-            } catch (error) {
-                throw new Error(error.message);
-            }
-        };
-        fetchVersion();
-    }, []);
-
     return (
-        <header style={{ padding: "0.5rem 0.5rem 0 0.5rem" }}>
-            <Box
-                bg={"bg.subtle"}
-                padding={"0.5rem"}
+        <Center as={"header"} py={"2"}>
+            <Flex
                 border={"1px solid"}
+                bg={"bg.subtle"}
                 borderColor={"border"}
                 borderRadius={"md"}
                 shadow={"xl"}
+                p={"2"}
+                gap={"1"}
             >
-                <Flex justify={"space-between"}>
-                    <Flex gap="4" align="center" width="270px" justify="start">
-                        <Skeleton loading={!version}>
-                            <Text fontWeight={"medium"}>
-                                {version || "7.7.77-7"}
-                            </Text>
-                        </Skeleton>
-                        <SettingsMenu />
-                    </Flex>
-                    <Navigation />
-                    <Flex gap="2" align="center" width="270px" justify="end">
-                        <ConnectionStatus />
-                        <Tooltip content="Выйти" disabled>
-                            <IconButton
-                                size={"xs"}
-                                variant={"ghost"}
-                                onClick={logout}
-                                css={{
-                                    _icon: {
-                                        width: "5",
-                                        height: "5",
-                                    },
-                                }}
-                            >
-                                <LuLogOut />
-                            </IconButton>
-                        </Tooltip>
-                        <ColorModeButton size={"xs"} />
-                        {/* <LocaleButton /> */}
-                    </Flex>
+                {/* <Logo /> */}
+                <Navigation />
+                <Flex align={"center"} gap={"1"}>
+                    {/* <ConnectionStatus /> */}
+                    <SoftwareVersion />
+                    <TestWs />
+                    <SettingsMenu />
+                    <LogoutBtn />
+                    <ColorModeButton size={"xs"} />
                 </Flex>
-            </Box>
-        </header>
+            </Flex>
+        </Center>
     );
 }
-
 export default Header;
+
+const SoftwareVersion = () => {
+    const { data, isLoading } = useQuery({
+        queryKey: QK.version,
+        queryFn: getSoftwareVer,
+    });
+
+    return (
+        <Skeleton loading={isLoading}>
+            <Badge
+                variant={"subtle"}
+                colorPalette={"cyan"}
+                textAlign={"center"}
+            >
+                <Text minW={"10ch"}>V:{data?.data}</Text>
+            </Badge>
+        </Skeleton>
+    );
+};
 
 const SettingsMenu = () => {
     return (
@@ -136,5 +122,67 @@ const SettingsMenu = () => {
                 </Menu.Content>
             </Menu.Positioner>
         </Menu.Root>
+    );
+};
+
+const TestWs = () => {
+    const value = useChannel("server.stats", {
+        mode: "poll",
+        intervalMs: 1000,
+        fields: ["time", "cpu", "ram"],
+    });
+    return (
+        <Flex gap={"1"}>
+            <Skeleton loading={!value}>
+                <Badge variant={"subtle"} colorPalette={"green"}>
+                    <LuClock />
+                    <Text minW={"7ch"}>
+                        {value && new Date(value?.time).toLocaleTimeString()}
+                    </Text>
+                </Badge>
+            </Skeleton>
+            <Skeleton loading={!value}>
+                <Badge variant={"subtle"} colorPalette={"purple"}>
+                    <LuCpu />
+                    <Text minW={"4ch"}>{value?.cpu}%</Text>
+                </Badge>
+            </Skeleton>
+            <Skeleton loading={!value}>
+                <Badge variant={"subtle"} colorPalette={"orange"}>
+                    <LuMemoryStick />
+                    <Text minW={"4ch"}>{value?.ram}%</Text>
+                </Badge>
+            </Skeleton>
+        </Flex>
+    );
+};
+
+const LogoutBtn = () => {
+    const { logout } = useContext(AuthContext);
+    return (
+        <Tooltip content="Выйти" disabled>
+            <IconButton
+                size={"xs"}
+                variant={"ghost"}
+                onClick={logout}
+                css={{
+                    _icon: {
+                        width: "5",
+                        height: "5",
+                    },
+                }}
+            >
+                <LuLogOut />
+            </IconButton>
+        </Tooltip>
+    );
+};
+
+const Logo = () => {
+    return (
+        <Flex align={"center"} gap={"1"} me={"4"}>
+            <Icon size={"md"} fill={"green.400"} as={LuHexagon} />
+            <Text fontWeight={"bold"}>RIM-TIR</Text>
+        </Flex>
     );
 };

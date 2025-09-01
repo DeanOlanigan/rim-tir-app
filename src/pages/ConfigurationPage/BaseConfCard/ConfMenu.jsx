@@ -5,7 +5,7 @@ import {
     MenuTrigger,
 } from "@/components/ui/menu";
 import { Button } from "@chakra-ui/react";
-import { downloadStateAsXml } from "@/utils/storeToXml";
+import { downloadStateAsXml } from "@/utils/xml/storeToXml";
 import { useVariablesStore } from "@/store/variables-store";
 import { CreateConfigDialog } from "../CreateConfigDialog"; // ?
 import { ConfigurationUploader } from "../ConfigurationUploader"; // ?

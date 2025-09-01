@@ -4,8 +4,10 @@ import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import sonarjs from "eslint-plugin-sonarjs";
+import pluginQuery from "@tanstack/eslint-plugin-query";
 
 export default [
+    ...pluginQuery.configs["flat/recommended"],
     { ignores: ["dist", "src/components/ui"] },
     {
         files: ["**/*.{js,jsx}"],
