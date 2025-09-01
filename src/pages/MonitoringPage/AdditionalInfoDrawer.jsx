@@ -10,7 +10,6 @@ import {
     IconButton,
     Portal,
     ScrollArea,
-    SimpleGrid,
     Stack,
     StackSeparator,
     Text,
@@ -20,7 +19,7 @@ import { Editor } from "@monaco-editor/react";
 import { useQuery } from "@tanstack/react-query";
 import { LuInfo } from "react-icons/lu";
 
-export const AdditionalInfo = ({ id }) => {
+export const AdditionalInfoDrawer = ({ id }) => {
     const {
         data: { setting, path },
     } = useQuery({
@@ -65,7 +64,7 @@ export const AdditionalInfo = ({ id }) => {
                 </IconButton>
             </Drawer.Trigger>
             <Portal>
-                {/* <Drawer.Backdrop /> */}
+                <Drawer.Backdrop />
                 <Drawer.Positioner p={"4"} justifyContent={"center"}>
                     <Drawer.Content rounded={"md"} maxW={"4xl"}>
                         <Drawer.Header>

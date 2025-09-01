@@ -3,11 +3,10 @@ import { Text, IconButton, HStack, Code, Menu, Portal } from "@chakra-ui/react";
 import { NODE_TYPES } from "@/config/constants";
 import { NodeValues } from "./NodeValues";
 import { LuPencil } from "react-icons/lu";
-import { ConnectionHeadderAdditionalInfo } from "../ConnectionHeadderAdditionalInfo";
 import { useQuery } from "@tanstack/react-query";
 import { QK } from "@/api/queryKeys";
 import { getConfiguration } from "@/api/configuration";
-import { AdditionalInfo } from "../AdditionalInfo";
+import { AdditionalInfoDrawer } from "../AdditionalInfoDrawer";
 
 export const NodeContent = memo(function NodeContent({ id, type, name }) {
     return (
@@ -19,8 +18,11 @@ export const NodeContent = memo(function NodeContent({ id, type, name }) {
                     <Text truncate>{name}</Text>
                 )}
                 {type !== NODE_TYPES.folder && (
-                    <AdditionalInfo id={id} height={"10rem"} />
-                    /* <ConnectionHeadderAdditionalInfo id={id} /> */
+                    <>
+                        <AdditionalInfoDrawer id={id} height={"10rem"} />
+                        {/* <AdditionalInfoPopup id={id} height={"10rem"} />
+                        <ConnectionHeadderAdditionalInfo id={id} /> */}
+                    </>
                 )}
             </HStack>
             <HStack>
