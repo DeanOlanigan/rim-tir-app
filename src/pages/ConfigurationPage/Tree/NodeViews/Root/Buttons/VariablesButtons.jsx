@@ -11,6 +11,7 @@ export const VariablesButtons = ({ treeApi }) => {
             type: {
                 nodeType: NODE_TYPES.variable,
                 times: 1,
+                path: "#/variable",
             },
         });
     };
@@ -22,6 +23,7 @@ export const VariablesButtons = ({ treeApi }) => {
             type: {
                 nodeType: NODE_TYPES.folder,
                 times: 1,
+                path: "#/folder",
             },
         });
     };
