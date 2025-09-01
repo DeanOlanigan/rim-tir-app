@@ -13,7 +13,6 @@ export function useTreeViewHandlers(treeType, ref) {
     const updateSelectedIds = useVariablesStore(
         (state) => state.updateSelectedIds
     );
-    const unbindVariable = useVariablesStore((state) => state.unbindVariable);
     const updateContext = useContextMenuStore((state) => state.updateContext);
 
     const settingType =
@@ -51,12 +50,9 @@ export function useTreeViewHandlers(treeType, ref) {
     );
     const handleDeleteNode = useCallback(
         ({ ids }) => {
-            ids.forEach((value) => {
-                unbindVariable(value);
-            });
             removeNode(treeType, ids);
         },
-        [removeNode, treeType, unbindVariable]
+        [removeNode, treeType]
     );
     const handleMoveNode = useCallback(
         ({ dragIds, parentId, index }) => {
