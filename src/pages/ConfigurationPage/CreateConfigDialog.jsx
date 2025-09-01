@@ -11,6 +11,7 @@ import {
 import { useState } from "react";
 import { useConfigInfoStore } from "@/store/config-info-store";
 import { useVariablesStore } from "@/store/variables-store";
+import { useValidationStore } from "@/store/validation-store";
 
 export const CreateConfigDialog = ({ children }) => {
     const configInfo = useConfigInfoStore((state) => state.configInfo);
@@ -32,6 +33,7 @@ export const CreateConfigDialog = ({ children }) => {
                 version: "1.0",
             },
         });
+        useValidationStore.getState().clearErrors();
         setIsOpen(false);
     };
 
