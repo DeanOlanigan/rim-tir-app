@@ -14,6 +14,7 @@ export const VALIDATOR = {
     UNIQUECOMPOSITE: "uniqueComposite",
     NAME: "name",
     CODE: "code",
+    MUSTBE: "mustBe",
 };
 
 export const NODE_TYPES = {
