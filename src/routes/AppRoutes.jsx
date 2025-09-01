@@ -5,7 +5,7 @@ import ProtectedRouter from "./ProtectedRoutes";
 import { Redirect } from "@/pages/Redirect";
 
 //import ConfigurationPage from "@/pages/ConfigurationPage/ConfigurationPage";
-import MonitoringPage from "@/pages/MonitoringPage/MonitoringPage";
+//import MonitoringPage from "@/pages/MonitoringPage/MonitoringPage";
 import JournalPage from "@/pages/JournalPage/JournalPage";
 import LoginForm from "@/pages/LoginPage/LoginPage";
 import { SessionExpired } from "@/pages/SessionExpired";
@@ -24,6 +24,7 @@ import RequireGraphData from "@/pages/GraphsPage/RequireGraphData";
 import GraphViewer from "@/pages/GraphsPage/Viewer/GraphViewer";
 import { Suspense } from "react";
 import ConfigurationPageLazy from "@/pages/ConfigurationPage/ConfigurationPageLazy";
+import MonitoringPageLazy from "@/pages/MonitoringPage/MonitoringPageLazy";
 
 function AppRouter() {
     return (
@@ -53,7 +54,7 @@ function AppRouter() {
                             />
                             <Route
                                 path="/monitoring"
-                                element={<MonitoringPage />}
+                                element={<MonitoringPageLazy />}
                             />
                             <Route path="/log" element={<LogLayout />}>
                                 <Route index element={<LogRedirect />} />
