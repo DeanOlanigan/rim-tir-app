@@ -14,7 +14,7 @@ import { LuArrowBigRight, LuPencil, LuTextCursorInput } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import { QK } from "@/api/queryKeys";
 import { getConfiguration } from "@/api/configuration";
-import { AdditionalInfoDrawer } from "./AdditionalInfo/AdditionalInfoDrawer";
+import { AdditionalInfoDrawer } from "./AdditionalInfo/Drawer/AdditionalInfoDrawer";
 import { dialog } from "../../setValue/dialog";
 import { TbHandStop } from "react-icons/tb";
 import { attributes } from "../../setValue/Attributes/attributes";

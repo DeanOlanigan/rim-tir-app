@@ -13,6 +13,8 @@ import {
     HStack,
     Text,
     Icon,
+    Button,
+    Switch,
 } from "@chakra-ui/react";
 import { LuX, LuSearch, LuTriangleAlert } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
@@ -63,36 +65,12 @@ function MonitoringPage() {
     return (
         <Flex h={"100%"} direction={"column"} gap={"2"} position={"relative"}>
             {isFetching && <Loader text={"Обновление данных"} />}
-            <Flex direction={"row"} justifyContent={"center"}>
-                <InputGroup
-                    maxW={"300px"}
-                    startElement={<LuSearch />}
-                    endElement={
-                        <IconButton
-                            size={"4xs"}
-                            rounded={"full"}
-                            variant={"ghost"}
-                            onClick={() => {
-                                setSearchTerm("");
-                            }}
-                        >
-                            <LuX />
-                        </IconButton>
-                    }
-                >
-                    <Input
-                        placeholder="Поиск"
-                        size={"xs"}
-                        ps={"2rem"}
-                        bg={"bg"}
-                        borderRadius={"full"}
-                        shadow={"md"}
-                        value={searchTerm}
-                        onChange={(e) => {
-                            setSearchTerm(e.currentTarget.value);
-                        }}
-                    />
-                </InputGroup>
+            <Flex direction={"row"} justifyContent={"center"} gap={"2"}>
+                <SearchBar
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
+                />
+                <MqttTester />
             </Flex>
             <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
@@ -155,5 +133,51 @@ const ErrorInformer = ({ error }) => {
                 )}
             </VStack>
         </AbsoluteCenter>
+    );
+};
+
+const SearchBar = ({ searchTerm, setSearchTerm }) => {
+    return (
+        <InputGroup
+            maxW={"300px"}
+            startElement={<LuSearch />}
+            endElement={
+                <IconButton
+                    size={"4xs"}
+                    rounded={"full"}
+                    variant={"ghost"}
+                    onClick={() => {
+                        setSearchTerm("");
+                    }}
+                >
+                    <LuX />
+                </IconButton>
+            }
+        >
+            <Input
+                placeholder="Поиск"
+                size={"xs"}
+                ps={"2rem"}
+                bg={"bg"}
+                borderRadius={"full"}
+                shadow={"md"}
+                value={searchTerm}
+                onChange={(e) => {
+                    setSearchTerm(e.currentTarget.value);
+                }}
+            />
+        </InputGroup>
+    );
+};
+
+const MqttTester = () => {
+    return (
+        <Switch.Root>
+            <Switch.HiddenInput />
+            <Switch.Control>
+                <Switch.Thumb />
+            </Switch.Control>
+            <Switch.Label>MQTT Tester</Switch.Label>
+        </Switch.Root>
     );
 };
