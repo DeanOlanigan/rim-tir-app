@@ -137,7 +137,12 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
             children.length > 0 &&
             ["folder", "protocolSpecific", "protocol"].includes(node.type)
         ) {
-            if (node.type === "folder" && node.path === "#/folder") return null;
+            if (
+                node.type === "folder" &&
+                node.path === "#/folder" &&
+                type === "connections"
+            )
+                return null;
             return (
                 <Box w={"100%"} h={"100%"} overflow={"auto"}>
                     <Table data={children} />
