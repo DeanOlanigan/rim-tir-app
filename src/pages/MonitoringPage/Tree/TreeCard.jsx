@@ -10,7 +10,7 @@ import { AutoSizer } from "react-virtualized";
 import { Tree } from "react-arborist";
 import styles from "@/components/TreeView/TreeView.module.css";
 import { DropCursor } from "@/components/TreeView/DropCursor";
-import { Node } from "./Tree/Node";
+import { Node } from "./Node/Node";
 import { LuFileQuestion } from "react-icons/lu";
 import { NODE_TYPES } from "@/config/constants";
 import { useQuery } from "@tanstack/react-query";

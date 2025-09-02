@@ -1,6 +1,6 @@
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
-import { TreeCard } from "./TreeCard";
+import { TreeCard } from "./Tree/TreeCard";
 import { useEffect, useState } from "react";
 import {
     Flex,
@@ -21,6 +21,7 @@ import { getConfiguration } from "@/api/configuration";
 import { TREE_TYPES } from "@/config/constants";
 import { useChannel } from "@/ws/useChannel";
 import { useMonitoringStore } from "./store/store";
+import { dialog } from "./setValue/dialog";
 
 //import { produce, enableMapSet } from "immer";
 //enableMapSet();
@@ -112,6 +113,7 @@ function MonitoringPage() {
                     <TreeCard type={TREE_TYPES.send} searchTerm={searchTerm} />
                 </Panel>
             </PanelGroup>
+            <dialog.Viewport />
         </Flex>
     );
 }

@@ -1,10 +1,5 @@
-import { Code, Icon } from "@chakra-ui/react";
-import {
-    LuUserCheck,
-    LuArrowBigRight,
-    LuLightbulb,
-    LuCircle,
-} from "react-icons/lu";
+import { Code } from "@chakra-ui/react";
+import { LuUserCheck, LuLightbulb, LuCircle } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import { getConfiguration } from "@/api/configuration";
 import { QK } from "@/api/queryKeys";
@@ -21,7 +16,6 @@ export const NodeValues = ({ id }) => {
                 {params.value}
             </Code>
             {params.setting?.cmd && <LuUserCheck />}
-            <Icon color={"red.500"} fill={"red.500"} as={LuArrowBigRight} />
             <LuLightbulb />
             <LuCircle />
         </>
