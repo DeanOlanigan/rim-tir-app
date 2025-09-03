@@ -16,6 +16,7 @@ import { VariableValueInput } from "./VariableValueInput";
 import { VariableValueSwitch } from "./VariableValueSwitch";
 
 export const dialog = createOverlay((props) => {
+    // TODO Решить проблему с перерисовкой
     const { title, icon, nodeId, mode, ...rest } = props;
     const { data } = useQuery({
         queryKey: QK.configuration,

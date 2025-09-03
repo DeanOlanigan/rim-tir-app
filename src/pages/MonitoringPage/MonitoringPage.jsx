@@ -13,14 +13,12 @@ import {
     HStack,
     Text,
     Icon,
-    Switch,
-    Badge,
 } from "@chakra-ui/react";
 import { LuX, LuSearch, LuTriangleAlert } from "react-icons/lu";
 import { TREE_TYPES } from "@/config/constants";
 import { dialog } from "./setValue/dialog";
-import { useMqttMock } from "@/utils/mqtt/publisher/useMqttMock";
 import { useConfigWithMqtt } from "@/utils/mqtt/listener/useConfigWithMqtt";
+import { MqttTester } from "./MqttTester";
 
 function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -134,30 +132,5 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => {
                 }}
             />
         </InputGroup>
-    );
-};
-
-const MqttTester = () => {
-    const [on, setOn] = useState(false);
-
-    useMqttMock({
-        enabled: on,
-        periodMs: 500,
-        topicBase: "test",
-    });
-
-    return (
-        <HStack>
-            <Switch.Root checked={on} onCheckedChange={(e) => setOn(e.checked)}>
-                <Switch.HiddenInput />
-                <Switch.Control>
-                    <Switch.Thumb />
-                </Switch.Control>
-                <Switch.Label>MQTT Tester</Switch.Label>
-            </Switch.Root>
-            <Badge colorPalette={on ? "green" : "gray"}>
-                {on ? "ON" : "OFF"}
-            </Badge>
-        </HStack>
     );
 };

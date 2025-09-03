@@ -25,14 +25,9 @@ export const TreeCard = ({ type, searchTerm }) => {
         select: ({ state }) => state[type],
     });
 
-    let content;
-
     if (data.length === 0) return null;
-    if (data[0].type === NODE_TYPES.root && data[0].children.length === 0) {
-        content = <EmptyCard />;
-    } else {
-        content = <Content data={data} searchTerm={searchTerm} />;
-    }
+    const isEmptyRoot =
+        data[0].type === NODE_TYPES.root && data[0].children.length === 0;
 
     return (
         <Card.Root
@@ -47,7 +42,11 @@ export const TreeCard = ({ type, searchTerm }) => {
             bg={"transparent"}
         >
             <Card.Body px={"1"} pb={"1"}>
-                {content}
+                {isEmptyRoot ? (
+                    <EmptyCard />
+                ) : (
+                    <Content data={data} searchTerm={searchTerm} />
+                )}
             </Card.Body>
         </Card.Root>
     );
@@ -70,8 +69,10 @@ const Content = ({ data, searchTerm }) => {
                     searchMatch={(node, term) => {
                         const name =
                             node.data.name || node.data.setting?.variable;
-                        if (!name) return false;
-                        return name.toLowerCase().includes(term.toLowerCase());
+                        return (
+                            !!name &&
+                            name.toLowerCase().includes(term.toLowerCase())
+                        );
                     }}
                     renderCursor={DropCursor}
                     disableDrag
