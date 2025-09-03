@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
+import { nanoid } from "nanoid";
 
 /* ================================================================= */
 /* ======================== NODE OPERATIONS ======================== */
@@ -125,7 +125,7 @@ export function generateNewIds(copyTree, copySettings, parentId, settings) {
 
     function recursive(node) {
         const oldId = node.id;
-        const newId = uuidv4();
+        const newId = nanoid(12);
 
         idMap.set(oldId, newId);
 

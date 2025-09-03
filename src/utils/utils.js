@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
+import { nanoid } from "nanoid";
 import { configuratorConfig } from "./configurationParser";
 
 export const getStartDate = () => {
@@ -17,6 +17,7 @@ export const getEndDate = () => {
 
 export function getRandomColor() {
     return (
+        // eslint-disable-next-line
         "#" + (Math.random().toString(16) + "000000").slice(2, 8).toUpperCase()
     );
 }
@@ -47,7 +48,7 @@ export function getMeaningNode(id, settings) {
 
 export function initDefaultDataByPath(path, parentId) {
     const nodePaths = configuratorConfig.nodePaths;
-    const id = uuidv4();
+    const id = nanoid(12);
     const node = {
         id: id,
         node: nodePaths[path].node,
