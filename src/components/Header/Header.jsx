@@ -30,7 +30,8 @@ import ConnectionStatus from "@/components/ConnectionStatus/ConnectionStatus";
 import { useQuery } from "@tanstack/react-query";
 import { getSoftwareVer } from "@/api/shared";
 import { QK } from "@/api/queryKeys";
-import { useChannel } from "@/ws/useChannel";
+//import { useChannel } from "@/ws/useChannel";
+import { useTopic } from "@/utils/mqtt/listener/useTopic";
 
 function Header() {
     return (
@@ -49,7 +50,8 @@ function Header() {
                 <Flex align={"center"} gap={"1"}>
                     {/* <ConnectionStatus /> */}
                     <SoftwareVersion />
-                    <TestWs />
+                    {/* <TestWs /> */}
+                    <TestMqtt />
                     <SettingsMenu />
                     <LogoutBtn />
                     <ColorModeButton size={"xs"} />
@@ -125,7 +127,7 @@ const SettingsMenu = () => {
     );
 };
 
-const TestWs = () => {
+/* const TestWs = () => {
     const value = useChannel("server.stats", {
         mode: "poll",
         intervalMs: 1000,
@@ -154,6 +156,56 @@ const TestWs = () => {
                 </Badge>
             </Skeleton>
         </Flex>
+    );
+}; */
+
+const TestMqtt = () => {
+    return (
+        <Flex gap={"1"}>
+            <MqttTime />
+            <MqttCpu />
+            <MqttRam />
+        </Flex>
+    );
+};
+
+const MqttRam = () => {
+    const value = useTopic("stats/ram");
+    return (
+        <Skeleton loading={!value}>
+            <Badge variant={"subtle"} colorPalette={"orange"}>
+                <LuMemoryStick />
+                <Text minW={"4ch"}>{value}%</Text>
+            </Badge>
+        </Skeleton>
+    );
+};
+
+const MqttCpu = () => {
+    const value = useTopic("stats/cpu");
+
+    return (
+        <Skeleton loading={!value}>
+            <Badge variant={"subtle"} colorPalette={"purple"}>
+                <LuCpu />
+                <Text minW={"4ch"}>{value}%</Text>
+            </Badge>
+        </Skeleton>
+    );
+};
+
+const MqttTime = () => {
+    const value = useTopic("stats/time");
+
+    return (
+        <Skeleton loading={!value}>
+            <Badge variant={"subtle"} colorPalette={"green"}>
+                <LuClock />
+                <Text minW={"7ch"}>
+                    {value && new Date(value).toLocaleTimeString()}
+                </Text>
+            </Badge>
+        </Skeleton>
     );
 };
 

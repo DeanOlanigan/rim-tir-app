@@ -32,7 +32,7 @@ export const dialog = createOverlay((props) => {
         <Dialog.Root
             {...rest}
             placement={"center"}
-            size={"lg"}
+            size={"xl"}
             lazyMount
             unmountOnExit
         >

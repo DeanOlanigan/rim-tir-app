@@ -17,6 +17,7 @@ import { DescriptionField } from "./DescriptionField";
 import { InfoBlock } from "./InfoBlock";
 
 export const AdditionalInfoDrawer = ({ id }) => {
+    // TODO Решить проблему с перерисовкой
     const {
         data: { setting, path },
     } = useQuery({

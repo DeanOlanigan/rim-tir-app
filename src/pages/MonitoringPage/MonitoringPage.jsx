@@ -1,7 +1,7 @@
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
 import { TreeCard } from "./Tree/TreeCard";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Flex,
     InputGroup,
@@ -13,51 +13,18 @@ import {
     HStack,
     Text,
     Icon,
-    Button,
     Switch,
+    Badge,
 } from "@chakra-ui/react";
 import { LuX, LuSearch, LuTriangleAlert } from "react-icons/lu";
-import { useQuery } from "@tanstack/react-query";
-import { QK } from "@/api/queryKeys";
-import { getConfiguration } from "@/api/configuration";
 import { TREE_TYPES } from "@/config/constants";
-import { useChannel } from "@/ws/useChannel";
-import { useMonitoringStore } from "./store/store";
 import { dialog } from "./setValue/dialog";
-
-//import { produce, enableMapSet } from "immer";
-//enableMapSet();
-
-//import { WebSocketService } from "@/services/websocketService";
-//const wsService = new WebSocketService("ws://192.168.1.1:8800");
+import { useMqttMock } from "@/utils/mqtt/publisher/useMqttMock";
+import { useConfigWithMqtt } from "@/utils/mqtt/listener/useConfigWithMqtt";
 
 function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");
-
-    const { isLoading, isFetching, isError, error } = useQuery({
-        queryKey: QK.configuration,
-        queryFn: getConfiguration,
-    });
-
-    /* useEffect(() => {
-        wsService.connect();
-        const messageHandler = (message) => {
-            if (!Array.isArray(message) || message.length === 0) return;
-            useMonitoringStore.getState().setSettings(message);
-        };
-
-        wsService.addMessageHandler(messageHandler);
-
-        const messageSender = setInterval(() => {
-            wsService.sendMessage({ action: "getMonitoringData" });
-        }, 1000);
-
-        return () => {
-            clearInterval(messageSender);
-            wsService.removeMessageHandler(messageHandler);
-            wsService.close();
-        };
-    }, []); */
+    const { isLoading, isFetching, isError, error } = useConfigWithMqtt(true);
 
     if (isLoading) return <Loader text={"Загрузка данных"} />;
     if (isError) return <ErrorInformer error={error} />;
@@ -171,13 +138,26 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => {
 };
 
 const MqttTester = () => {
+    const [on, setOn] = useState(false);
+
+    useMqttMock({
+        enabled: on,
+        periodMs: 500,
+        topicBase: "test",
+    });
+
     return (
-        <Switch.Root>
-            <Switch.HiddenInput />
-            <Switch.Control>
-                <Switch.Thumb />
-            </Switch.Control>
-            <Switch.Label>MQTT Tester</Switch.Label>
-        </Switch.Root>
+        <HStack>
+            <Switch.Root checked={on} onCheckedChange={(e) => setOn(e.checked)}>
+                <Switch.HiddenInput />
+                <Switch.Control>
+                    <Switch.Thumb />
+                </Switch.Control>
+                <Switch.Label>MQTT Tester</Switch.Label>
+            </Switch.Root>
+            <Badge colorPalette={on ? "green" : "gray"}>
+                {on ? "ON" : "OFF"}
+            </Badge>
+        </HStack>
     );
 };

@@ -10,7 +10,12 @@ import {
 } from "@chakra-ui/react";
 import { NODE_TYPES } from "@/config/constants";
 import { NodeValues } from "./NodeValues";
-import { LuArrowBigRight, LuPencil, LuTextCursorInput } from "react-icons/lu";
+import {
+    LuArrowBigRight,
+    LuCircle,
+    LuPencil,
+    LuTextCursorInput,
+} from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import { QK } from "@/api/queryKeys";
 import { getConfiguration } from "@/api/configuration";
@@ -38,10 +43,14 @@ export const NodeContent = memo(function NodeContent({ id, type, name }) {
                 <NodeArrow type={type} />
             </HStack>
             <HStack>
-                {type === NODE_TYPES.variable && <NodeAttributes />}
-                {type === NODE_TYPES.variable && <VariableEditMenu id={id} />}
                 {(type === NODE_TYPES.dataObject ||
-                    type === NODE_TYPES.variable) && <NodeValues id={id} />}
+                    type === NODE_TYPES.variable) && (
+                    <>
+                        <NodeAttributes id={id} />
+                        <NodeValues id={id} />
+                    </>
+                )}
+                {type === NODE_TYPES.variable && <VariableEditMenu id={id} />}
             </HStack>
         </HStack>
     );
@@ -108,18 +117,32 @@ const VariableEditMenu = ({ id }) => {
     );
 };
 
-const NodeAttributes = () => {
-    return attributes.map(
-        (attr) =>
-            attr?.icon?.as && (
-                <Icon
-                    key={attr.name}
-                    size={"md"}
-                    {...attr.icon}
-                    aria-hidden
-                    title={attr.label}
-                />
-            )
+const NodeAttributes = ({ id }) => {
+    const { data: params } = useQuery({
+        queryKey: QK.configuration,
+        queryFn: getConfiguration,
+        select: ({ state }) => state.settings[id]?.mqttPacket?.q?.attrs,
+    });
+    return (
+        <>
+            {attributes.map(
+                (attr) =>
+                    attr?.icon?.as &&
+                    params?.includes(attr.name) && (
+                        <Icon
+                            key={attr.name}
+                            size={"md"}
+                            {...attr.icon}
+                            aria-hidden
+                            title={attr.label}
+                        />
+                    )
+            )}
+            <Icon
+                as={LuCircle}
+                fill={params?.includes("used") ? "fg.success" : "fg.error"}
+            />
+        </>
     );
 };
 
