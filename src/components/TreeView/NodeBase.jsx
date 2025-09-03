@@ -5,6 +5,8 @@ import { LuPiggyBank } from "react-icons/lu";
 import { Icon, HStack } from "@chakra-ui/react";
 import { iconsMap } from "@/config/icons";
 import { configuratorConfig } from "@/utils/configurationParser";
+import { ParamViewer } from "./ParamViewer";
+import { NODE_TYPES } from "@/config/constants";
 
 function hasIgnoreAccessor(node) {
     while (node) {
@@ -68,6 +70,11 @@ export const NodeBase = ({ paddingLeft, node, errors, visual }) => {
                             color={iconColor}
                         />
                     )}
+                    <ParamViewer
+                        id={node.id}
+                        path={node.data.path}
+                        isVariable={node.data.type === NODE_TYPES.variable}
+                    />
                     {visual}
                 </HStack>
             </HStack>

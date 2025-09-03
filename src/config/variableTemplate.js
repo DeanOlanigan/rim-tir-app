@@ -12,6 +12,9 @@ export const variable = {
     node: "variable",
     type: "variable",
     label: "Переменная",
+    icon: {
+        name: "variable",
+    },
     settings: {
         type: {
             type: "enum",
@@ -82,6 +85,7 @@ export const variable = {
             shortname: "Ц",
             icon: LuRefreshCcwDot,
             color: "purple",
+            showInTree: true,
             default: false,
             visibleIf: {
                 "==": [
@@ -149,6 +153,7 @@ export const variable = {
             shortname: "ТИ",
             icon: LuChartSpline,
             color: "red",
+            showInTree: true,
             default: false,
             visibleIf: {
                 "!": [
@@ -194,6 +199,7 @@ export const variable = {
             shortname: "ТУ",
             icon: LuSquareTerminal,
             color: "blue",
+            showInTree: true,
             visibleIf: {
                 or: [
                     {
@@ -231,6 +237,7 @@ export const variable = {
             shortname: "ТС",
             icon: LuArchive,
             color: "teal",
+            showInTree: true,
             visibleIf: {
                 or: [
                     {

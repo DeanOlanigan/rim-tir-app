@@ -11,3 +11,11 @@ export function useGetParameters(node) {
         }));
     return useParamValues(node.id, visibleSettingsKeys);
 }
+
+export function useGetParameters2(path) {
+    const params = configuratorConfig.nodePaths[path]?.settings ?? {};
+    const visibleSettingsKeys = Object.entries(params)
+        .filter(([, value]) => value?.showInTree)
+        .map(([key, value]) => ({ param: key, ...value }));
+    return visibleSettingsKeys;
+}

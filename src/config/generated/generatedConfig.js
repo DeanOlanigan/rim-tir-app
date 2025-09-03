@@ -110,11 +110,13 @@ export const config = [
                     logging: {
                         type: "boolean",
                         label: "Логирование",
+                        showInTree: true,
                         default: false,
                     },
                     role: {
                         type: "enum",
                         label: "Роль",
+                        showInTree: true,
                         default: "master",
                         enumValues: [
                             {
@@ -204,6 +206,7 @@ export const config = [
                             function: {
                                 type: "enum",
                                 label: "Функция",
+                                showInTree: true,
                                 default: 1,
                                 enumValues: [
                                     {
@@ -288,6 +291,7 @@ export const config = [
                                     address: {
                                         type: "string",
                                         label: "Адрес информационного объекта",
+                                        showInTree: true,
                                         default: "",
                                         rules: [
                                             {
