@@ -8,32 +8,36 @@ import { configuratorConfig } from "@/utils/configurationParser";
 import { ParamViewer } from "./ParamViewer";
 import { NODE_TYPES } from "@/config/constants";
 
-function hasIgnoreAccessor(node) {
-    while (node) {
-        if (node.data.isIgnored) return true;
-        node = node.parent;
-    }
-    return false;
-}
-
-export const NodeBase = ({ paddingLeft, node, errors, visual }) => {
-    const accessorIsIgnored = hasIgnoreAccessor(node);
+export const NodeBase = ({
+    paddingLeft,
+    node,
+    errors,
+    visual,
+    isIgnored,
+    accessorIsIgnored,
+    isCutted,
+}) => {
     const icon = configuratorConfig.nodePaths[node.data.path]?.icon;
     const TypeIcon = iconsMap[icon?.name];
     const iconColor = icon?.color;
     const shortName = configuratorConfig.nodePaths[node.data.path]?.shortName;
     const label = configuratorConfig.nodePaths[node.data.path]?.label;
+    const accessorIsIgnoredStyle = accessorIsIgnored && {
+        bg: "bg.muted",
+        color: "fg.subtle",
+        colorPalette: "gray",
+    };
+    const isCuttedStyle = isCutted && {
+        color: "fg.subtle",
+        fontStyle: "italic",
+    };
 
     return (
         <HStack
             w={"100%"}
             borderRadius={"md"}
             pe={"2"}
-            {...(accessorIsIgnored && {
-                bg: "bg.muted",
-                color: "fg.subtle",
-                colorPalette: "gray",
-            })}
+            {...accessorIsIgnoredStyle}
         >
             <IndentLines paddingLeft={paddingLeft} />
             <HStack w={"100%"} minW={0} truncate>
@@ -46,11 +50,11 @@ export const NodeBase = ({ paddingLeft, node, errors, visual }) => {
                 <HStack
                     w={"100%"}
                     pl={"2"}
-                    {...(node.data.isCutted && { color: "fg.subtle" })}
+                    {...isCuttedStyle}
                     minW={0}
                     truncate
                 >
-                    {node.data.isIgnored && (
+                    {isIgnored && (
                         <Icon
                             color={"red.400"}
                             strokeWidth={2}
@@ -64,7 +68,7 @@ export const NodeBase = ({ paddingLeft, node, errors, visual }) => {
                     )}
                     {shortName && (
                         <Badge
-                            isIgnored={node.data.isCutted || accessorIsIgnored}
+                            isIgnored={isCutted || accessorIsIgnored}
                             shortName={shortName}
                             label={label}
                             color={iconColor}

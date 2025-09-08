@@ -1,4 +1,5 @@
 export function addNodeUtil(nodes, parentId, newNodes, insertIndex = 0) {
+    if (!parentId) return nodes;
     return nodes.map((node) => {
         if (node.id === parentId) {
             const updatedChildren = [...node.children];

@@ -4,23 +4,21 @@ export function createSettingUtil(settings, addSettings) {
     let result = { ...settings };
 
     for (const node of addSettings) {
-        const nodeId = node.id;
-        if (!nodeId) continue;
+        if (!node.id) continue;
 
         if (node.parentId !== null && result[node.parentId]) {
             result = {
                 ...result,
                 [node.parentId]: {
                     ...result[node.parentId],
-                    children: [...result[node.parentId].children, nodeId],
+                    children: [...result[node.parentId].children, node.id],
                 },
             };
         }
 
         result = {
             ...result,
-            [nodeId]: {
-                id: nodeId,
+            [node.id]: {
                 ...node,
             },
         };

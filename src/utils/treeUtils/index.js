@@ -15,3 +15,6 @@ export { moveNodesUtil } from "./move/moveNode";
 export { moveSettingUtil } from "./move/moveSetting";
 export { renameNodeSettingUtil } from "./edit/renameNodeSetting";
 export { editSettingUtil } from "./edit/editSetting";
+export { computeClipboard } from "./copy/computeClipboard";
+export { generateFromClipboard } from "./paste/generateFromClipboard";
+export { pasteNodeUtil } from "./paste/pasteNodeUtil";

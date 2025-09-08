@@ -58,7 +58,7 @@ export function validateName({
         const node = settings[id] || {};
         if (
             node.type !== NODE_TYPES.dataObject &&
-            NODE_UNIQUE_NAMES.includes(node.type)
+            NODE_UNIQUE_NAMES.has(node.type)
         ) {
             const val = node?.name;
             if (val === undefined || val == "") continue;

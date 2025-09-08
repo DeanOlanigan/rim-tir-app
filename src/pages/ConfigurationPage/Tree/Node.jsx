@@ -4,9 +4,21 @@ import { useContextMenuStore } from "@/store/contextMenu-store";
 import { NodeBase } from "@/components/TreeView/NodeBase";
 import { nodeTypeVisualMap } from "./NodeViews/nodeTypeVisualMap";
 import { NodeError } from "./NodeError";
+import { useVariablesStore } from "@/store/variables-store";
+import { hasIgnoreAccessor } from "@/utils/utils";
 
 export const Node = ({ node, style, dragHandle, tree }) => {
     const updateContext = useContextMenuStore((state) => state.updateContext);
+    const isIgnored = useVariablesStore(
+        (state) => state.settings[node.id]?.isIgnored
+    );
+    const accessorIsIgnored = useVariablesStore((state) =>
+        hasIgnoreAccessor(state.settings, node.id)
+    );
+    const isCutted = useVariablesStore(
+        (state) =>
+            new Set(state.clipboard.ids).has(node.id) && state.clipboard.cut
+    );
     const handleContextMenu = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -24,7 +36,7 @@ export const Node = ({ node, style, dragHandle, tree }) => {
         });
     };
     const NodeVisual =
-        nodeTypeVisualMap[node.data.type] || nodeTypeVisualMap.default;
+        nodeTypeVisualMap[node.data.type] ?? nodeTypeVisualMap.default;
     return (
         <div
             ref={dragHandle}
@@ -38,6 +50,9 @@ export const Node = ({ node, style, dragHandle, tree }) => {
                 paddingLeft={style.paddingLeft}
                 visual={<NodeVisual node={node} />}
                 errors={<NodeError id={node.id} />}
+                isIgnored={isIgnored}
+                accessorIsIgnored={accessorIsIgnored}
+                isCutted={isCutted}
             />
         </div>
     );

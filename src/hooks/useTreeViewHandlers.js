@@ -27,23 +27,22 @@ export function useTreeViewHandlers(treeType, ref) {
         [renameNode]
     );
     const handleCreateNode = useCallback(
-        ({ parentId, index, type }) => {
+        ({ parentId, type }) => {
             if (type === "leaf" || type === "internal") return;
-            console.log("create", parentId, index, type, treeType);
-            const nodes = [];
-            const settings = [];
+            const trueParentId = parentId || treeType;
+            const treeNodes = [];
+            const flatNodes = [];
             for (let i = 0; i < type.times; i++) {
-                const { node, setting } = initDefaultDataByPath(
+                const { treeNode, flatNode } = initDefaultDataByPath(
                     type.path,
-                    parentId || treeType
+                    trueParentId
                 );
-                setting.rootId = treeType;
-                nodes.push(node);
-                settings.push(setting);
+                flatNode.rootId = treeType;
+                treeNodes.push(treeNode);
+                flatNodes.push(flatNode);
             }
-            console.log(nodes, settings);
-            addNode(treeType, parentId || treeType, nodes);
-            createSetting(settings);
+            addNode(treeType, trueParentId, treeNodes);
+            createSetting(flatNodes);
             //return node;
         },
         [addNode, createSetting, treeType /* , ref */]
@@ -87,15 +86,14 @@ export function useTreeViewHandlers(treeType, ref) {
             const selectedNodes = Array.from(ref?.current?.selectedIds).map(
                 (id) => ref?.current?.get(id)
             );
-            const firstType = selectedNodes[0].data.path;
-            const isSameType = selectedNodes.every(
-                (node) => node.data.path === firstType
+            const firstPath = selectedNodes[0].data.path;
+            const isSamePath = selectedNodes.every(
+                (node) => node.data.path === firstPath
             );
-            if (!isSameType) {
-                ref?.current?.select(
-                    selectedNodes[selectedNodes.length - 1].id
-                );
-                ref?.current?.focus();
+            if (!isSamePath) {
+                const lastNodeId = selectedNodes[selectedNodes.length - 1].id;
+                ref?.current?.select(lastNodeId);
+                ref?.current?.focus(lastNodeId);
             }
         }
 

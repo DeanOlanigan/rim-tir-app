@@ -3,28 +3,49 @@ import { LuBan, LuCheckCheck, LuChevronRight } from "react-icons/lu";
 import { iconsMap } from "@/config/icons";
 import { useVariablesStore } from "@/store/variables-store";
 import { getMeaningNode, getParentType } from "@/utils/utils";
+import { CONNECTIONS_TREES, NODE_TYPES, TREE_TYPES } from "@/config/constants";
+
+const sameMeaningPath = (apiPath, firstNodeId, settings) => {
+    const focusedNodePath =
+        apiPath.focusedNode?.data.type === NODE_TYPES.folder
+            ? getParentType({ checkNode: apiPath?.focusedNode })
+            : apiPath.focusedNode?.data?.path ?? "#";
+    const meaningNodePath = getMeaningNode(firstNodeId, settings)?.path ?? null;
+    return meaningNodePath && focusedNodePath === meaningNodePath;
+};
+
+const incompatibleDomains = (treeType, bufType) =>
+    (treeType === TREE_TYPES.variables && CONNECTIONS_TREES.has(bufType)) ||
+    (bufType === TREE_TYPES.variables && CONNECTIONS_TREES.has(treeType));
+
+const differentRootTypes = (focusedId, clipboard) =>
+    clipboard.cut && focusedId && (clipboard.ids ?? []).includes(focusedId);
 
 function getDisabledState(apiPath) {
-    const { copyBuffer, settings } = useVariablesStore.getState();
+    const { clipboard, settings } = useVariablesStore.getState();
     const treeType = apiPath.props.treeType;
 
-    if (copyBuffer.type !== treeType) return true;
+    if (!clipboard?.normalized || !clipboard.type) return true;
 
-    const sourceType = copyBuffer.tree[0].type;
+    if (incompatibleDomains(treeType, clipboard.type)) return true;
 
-    if (treeType === "send" || treeType === "receive") {
-        if (copyBuffer.tree.some((node) => node.type !== sourceType))
-            return true;
+    const focusedId = apiPath.focusedNode?.data?.id;
+    if (differentRootTypes(focusedId, clipboard)) return true;
 
-        const focusedNodePath =
-            apiPath.focusedNode?.data.type === "folder"
-                ? getParentType({ checkNode: apiPath?.focusedNode })
-                : apiPath.focusedNode?.data.path || "#";
-        const meaningNode = getMeaningNode(copyBuffer.tree[0].id, settings);
-        const meaningNodePath = meaningNode.path;
+    if (CONNECTIONS_TREES.has(treeType)) {
+        const rootNodesIds = clipboard.roots || [];
+        if (!rootNodesIds.length) return true;
 
-        console.log(focusedNodePath, meaningNodePath);
-        if (focusedNodePath !== meaningNodePath) return true;
+        const nodes = clipboard.normalized;
+        const firstNode = nodes[rootNodesIds[0]];
+        const sourceType = firstNode?.type;
+        if (!sourceType) return true;
+
+        for (const id of rootNodesIds) {
+            if (nodes[id].type !== sourceType) return true;
+        }
+
+        if (!sameMeaningPath(apiPath, rootNodesIds[0], settings)) return true;
     }
     return false;
 }
@@ -37,6 +58,9 @@ export const MenuItem = ({
     resetTreeFocus = false,
 }) => {
     if (!item) return null;
+    const focusedId = apiPath.focusedNode?.id;
+    const isIgnored =
+        useVariablesStore.getState().settings[focusedId]?.isIgnored;
 
     if (item.type === "separator") {
         return <Menu.Separator key={`sep_${index}`} />;
@@ -47,7 +71,7 @@ export const MenuItem = ({
         label;
 
     if (item.type === "ignore") {
-        if (apiPath.focusedNode?.data?.isIgnored) {
+        if (isIgnored) {
             label = "Разблокировать";
             ContextIcon = LuCheckCheck;
             iconColor = "fg.success";
@@ -109,12 +133,6 @@ export const MenuItem = ({
             {...item.style}
             onClick={() => {
                 if (!disabled) {
-                    /* dispatchAction[item.type]?.({
-                        node: item.node,
-                        count: item.count,
-                        path: item.path,
-                        treeApi: apiPath,
-                    }); */
                     resetTreeFocus && apiPath.deselectAll();
                     item.action?.(apiPath);
                     updateContext({ visible: false });

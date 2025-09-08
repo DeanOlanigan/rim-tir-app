@@ -63,7 +63,7 @@ function validateNamePattern(node, draft, map) {
         node.name &&
         node.rootId &&
         node.type !== NODE_TYPES.dataObject &&
-        NODE_UNIQUE_NAMES.includes(node.type)
+        NODE_UNIQUE_NAMES.has(node.type)
     ) {
         draft.set(
             node.id,

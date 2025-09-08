@@ -49,28 +49,26 @@ export function getMeaningNode(id, settings) {
 export function initDefaultDataByPath(path, parentId) {
     const nodePaths = configuratorConfig.nodePaths;
     const id = nanoid(12);
-    const node = {
+    const treeNode = {
         id: id,
         node: nodePaths[path].node,
         type: nodePaths[path].type,
         name: nodePaths[path].label,
         path: path,
-        isIgnored: false,
-        isCutted: false,
     };
     if (nodePaths[path].children || nodePaths[path].type === "folder") {
-        node.children = [];
+        treeNode.children = [];
     }
-    const setting = {
-        ...node,
+    const flatNode = {
+        ...treeNode,
         parentId,
     };
-    setting.setting = {};
+    flatNode.setting = {};
     if (nodePaths[path].settings)
         Object.entries(nodePaths[path].settings).map(
-            ([key, value]) => (setting.setting[key] = value.default)
+            ([key, value]) => (flatNode.setting[key] = value.default)
         );
-    return { node: node, setting, name: node.name };
+    return { treeNode, flatNode };
 }
 
 // MOSTLY DEPRECATED
@@ -154,4 +152,12 @@ export function combineRefs(...refs) {
             ref.current = node;
         }
     };
+}
+
+export function hasIgnoreAccessor(ctx, id) {
+    while (id && ctx[id]) {
+        if (ctx[id].isIgnored) return true;
+        id = ctx[id]?.parentId ?? null;
+    }
+    return false;
 }

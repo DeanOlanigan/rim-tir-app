@@ -1,13 +1,7 @@
 import { create } from "zustand";
-import {
-    ignoreNodeUtil,
-    copyTreeUtil,
-    copySettingsUtil,
-    generateNewIds,
-} from "@/utils/treeUtils/treeUtils";
 import { persist } from "zustand/middleware";
-import { useValidationStore } from "@/store/validation-store";
 import { configuratorConfig } from "@/utils/configurationParser";
+import { useValidationStore } from "@/store/validation-store";
 import { validateCyclicVariable } from "@/utils/validation";
 import { validateParameter } from "@/utils/validation";
 import { validateName } from "@/utils/validation";
@@ -22,14 +16,15 @@ import {
     addNodeUtil,
     createSettingUtil,
     getIdsSetNormalizedContext,
-    getIdsSetWithoutNested,
-    getIdsSetNormalized,
-    getParentId,
     moveNodesUtil,
     moveSettingUtil,
     renameNodeSettingUtil,
     editSettingUtil,
+    computeClipboard,
+    pasteNodeUtil,
 } from "@/utils/treeUtils/index";
+
+import { setIgnoreUtil } from "@/utils/treeUtils/edit/setIgnore";
 
 const baseNodeInit = (type, name) => ({
     id: type,
@@ -58,10 +53,12 @@ const initialState = {
         connections: new Set(),
         variables: new Set(),
     },
-    copyBuffer: {
+
+    clipboard: {
         type: "",
-        tree: [],
         normalized: {},
+        roots: [],
+        ids: [],
         cut: false,
     },
 };
@@ -85,6 +82,7 @@ export const useVariablesStore = create()(
                 set((state) => ({
                     settings: createSettingUtil(state.settings, settings),
                 }));
+
                 const state = get().settings;
                 const draft = validateAll(state, configuratorConfig);
                 useValidationStore.getState().applyDraft2(draft);
@@ -106,7 +104,6 @@ export const useVariablesStore = create()(
                             newSettings,
                             configuratorConfig
                         );
-                        console.log("Черновик:", draft);
                         useValidationStore.getState().applyDraft2(draft);
                     }
 
@@ -127,23 +124,14 @@ export const useVariablesStore = create()(
                     settings: unbindVariableUtil(state.settings, nodeId),
                 })),
 
-            addNode: (targetKey, parentId, newNodes) => {
-                if (parentId === null) {
-                    set((state) => {
-                        const newTargetNode = [...state[targetKey]];
-                        newTargetNode.splice(0, 0, ...newNodes);
-                        return { [targetKey]: newTargetNode };
-                    });
-                } else {
-                    set((state) => ({
-                        [targetKey]: addNodeUtil(
-                            state[targetKey],
-                            parentId,
-                            newNodes
-                        ),
-                    }));
-                }
-            },
+            addNode: (treeType, parentId, newNodes) =>
+                set((state) => ({
+                    [treeType]: addNodeUtil(
+                        state[treeType],
+                        parentId,
+                        newNodes
+                    ),
+                })),
 
             renameNode: (nodeId, name) =>
                 set((state) => {
@@ -155,7 +143,7 @@ export const useVariablesStore = create()(
 
                     const isVariables =
                         newSettings[nodeId].type === NODE_TYPES.variable;
-                    const isNeedValidate = NODE_UNIQUE_NAMES.includes(
+                    const isNeedValidate = NODE_UNIQUE_NAMES.has(
                         newSettings[nodeId].type
                     );
                     const draft = new ErrorDraft();
@@ -182,113 +170,70 @@ export const useVariablesStore = create()(
                     return { settings: newSettings };
                 }),
 
-            ignoreNode: (treeApi, ids, ignore) => {
-                const treeType = treeApi.props.treeType;
-                if (!ids.length) return;
-                set((state) => {
-                    const newSettings = { ...state.settings };
-                    for (const id of ids) {
-                        newSettings[id].isIgnored = ignore;
-                    }
-                    return {
-                        [treeType]: ignoreNodeUtil(
-                            state[treeType],
-                            ids,
-                            ignore,
-                            false,
-                            "isIgnored"
-                        ),
-                        settings: newSettings,
-                    };
-                });
-            },
-
-            copyNode: (treeApi, ids, isCut = false) => {
-                if (!ids.length) return;
-                const treeType = treeApi.props.treeType;
-                const settings = get().settings;
-                const idsSetNormalized = getIdsSetNormalized(treeApi, ids);
-                const idsSetWithoutNested = getIdsSetWithoutNested(
-                    treeApi,
-                    ids
-                );
-                const copyTree = copyTreeUtil(
-                    treeApi,
-                    idsSetWithoutNested,
-                    isCut
-                );
-                const copySettings = copySettingsUtil(
-                    settings,
-                    idsSetNormalized,
-                    isCut
-                );
-                set(() => ({
-                    copyBuffer: {
-                        type: treeType,
-                        tree: copyTree,
-                        normalized: copySettings,
-                        cut: isCut,
-                    },
-                }));
-            },
-
-            cutNode: (treeApi, ids, cut) => {
-                if (!ids.length) return;
-                const treeType = treeApi.props.treeType;
+            setIgnore: (ids, value) =>
                 set((state) => ({
-                    [treeType]: ignoreNodeUtil(
-                        state[treeType],
-                        ids,
-                        cut,
-                        false,
-                        "isCutted"
-                    ),
-                }));
+                    settings: setIgnoreUtil(state.settings, ids, value),
+                })),
+
+            toggleIgnore: (ids) => {
+                const { settings } = get();
+                const allIgnored = ids.every(
+                    (id) => settings[id]?.isIgnored === true
+                );
+                get().setIgnore(ids, !allIgnored);
             },
 
-            pasteNode: (treeApi) => {
-                const stateSettings = get().settings;
-                const parentId = getParentId(treeApi);
-                const { type, tree, normalized } = get().copyBuffer;
-                const { tree: newTree, settings: newSettings } = generateNewIds(
-                    tree,
-                    normalized,
-                    parentId,
-                    stateSettings
+            copyNode: (treeType, ids) =>
+                set((state) => {
+                    const payload = computeClipboard(
+                        treeType,
+                        state.settings,
+                        ids,
+                        false
+                    );
+                    if (!payload) return state;
+                    return { clipboard: payload };
+                }),
+
+            pasteNode: (treeType, parentId) => {
+                set((state) =>
+                    pasteNodeUtil(
+                        state,
+                        treeType,
+                        parentId,
+                        initialState.clipboard
+                    )
                 );
-                const settings = Object.values(newSettings);
-                get().addNode(type, parentId, newTree);
-                get().createSetting(settings);
-                set(() => ({
-                    copyBuffer: {
-                        type: "",
-                        tree: [],
-                        normalized: {},
-                        cut: false,
-                    },
-                }));
-                // TODO Реализовать более точечную валидацию
+
                 const state = get().settings;
                 const draft = validateAll(state, configuratorConfig);
                 useValidationStore.getState().applyDraft2(draft);
             },
+
+            cutNode: (treeType, ids) =>
+                set((state) => {
+                    const payload = computeClipboard(
+                        treeType,
+                        state.settings,
+                        ids,
+                        true
+                    );
+                    if (!payload) return state;
+                    return { clipboard: payload };
+                }),
 
             removeNode: (targetKey, nodeIds) => {
                 const { settings } = get();
                 const idsSet = getIdsSetNormalizedContext(settings, nodeIds);
                 useValidationStore.getState().clearErrors(idsSet);
 
-                set((state) => {
-                    const newSettings = removeAndUnbindSettingsUtil(
+                set((state) => ({
+                    [targetKey]: removeNodeUtil(state[targetKey], idsSet),
+                    settings: removeAndUnbindSettingsUtil(
                         state.settings,
                         idsSet
-                    );
-                    const newTree = removeNodeUtil(state[targetKey], idsSet);
-                    return {
-                        [targetKey]: newTree,
-                        settings: newSettings,
-                    };
-                });
+                    ),
+                }));
 
                 // TODO Реализовать более точечную валидацию
                 const state = get().settings;
@@ -311,6 +256,7 @@ export const useVariablesStore = create()(
                         index
                     ),
                 }));
+
                 // TODO Реализовать более точечную валидацию
                 const state = get().settings;
                 const draft = validateAll(state, configuratorConfig);

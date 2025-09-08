@@ -1,5 +1,5 @@
 import { useVariablesStore } from "@/store/variables-store";
-import { deleteNodeUtil, getIdsSetWithoutNested } from "../treeUtils";
+import { deleteNodeUtil, getParentId } from "../treeUtils";
 
 function getSelectedIds(treeApi) {
     if (treeApi.selectedIds.size > 1) return [...treeApi.selectedIds];
@@ -33,10 +33,8 @@ export const actions = {
     toggleIgnore: {
         type: "ignore",
         action: (treeApi) => {
-            const ignoreNodeFunc = useVariablesStore.getState().ignoreNode;
             const ids = getSelectedIds(treeApi);
-            const ignore = !treeApi.focusedNode.data.isIgnored;
-            ignoreNodeFunc(treeApi, ids, ignore);
+            useVariablesStore.getState().toggleIgnore(ids);
         },
     },
     copy: {
@@ -44,9 +42,9 @@ export const actions = {
         icon: { name: "copy" },
         label: "Копировать",
         action: (treeApi) => {
-            const copyNode = useVariablesStore.getState().copyNode;
             const ids = getSelectedIds(treeApi);
-            copyNode(treeApi, ids);
+            const treeType = treeApi.props.treeType;
+            useVariablesStore.getState().copyNode(treeType, ids);
         },
     },
     cut: {
@@ -54,13 +52,9 @@ export const actions = {
         icon: { name: "scissors" },
         label: "Вырезать",
         action: (treeApi) => {
-            const baseIds = treeApi.root.children.map((child) => child.id);
-            const cutNodeFunc = useVariablesStore.getState().cutNode;
-            const copyNode = useVariablesStore.getState().copyNode;
             const ids = getSelectedIds(treeApi);
-            cutNodeFunc(treeApi, baseIds, false);
-            copyNode(treeApi, ids, true);
-            cutNodeFunc(treeApi, ids, true);
+            const treeType = treeApi.props.treeType;
+            useVariablesStore.getState().cutNode(treeType, ids);
         },
     },
     paste: {
@@ -68,15 +62,9 @@ export const actions = {
         icon: { name: "paste" },
         label: "Вставить",
         action: (treeApi) => {
-            const pasteNode = useVariablesStore.getState().pasteNode;
-            const removeNode = useVariablesStore.getState().removeNode;
-            const { cut, normalized } = useVariablesStore.getState().copyBuffer;
-            const ids = Object.keys(normalized);
             const treeType = treeApi.props.treeType;
-            const [...clearIds] = getIdsSetWithoutNested(treeApi, ids);
-            console.log("isCut", cut, clearIds);
-            cut && removeNode(treeType, clearIds);
-            pasteNode(treeApi);
+            const parentId = getParentId(treeApi);
+            useVariablesStore.getState().pasteNode(treeType, parentId);
         },
     },
 };
@@ -161,48 +149,4 @@ export const variablesPathConfig = {
         ...menuConfigNodeDefault,
         actions.paste,
     ],
-};
-
-export const dispatchAction = {
-    create: (params) =>
-        params.treeApi.create({
-            type: {
-                nodeType: params.node,
-                times: params.count,
-                path: params.path,
-            },
-        }),
-    delete: (params) => deleteNodeUtil(params.treeApi),
-    ignore: (params) => {
-        const ignoreNodeFunc = useVariablesStore.getState().ignoreNode;
-        const ids = getSelectedIds(params.treeApi);
-        const ignore = !params.treeApi.focusedNode.data.isIgnored;
-        ignoreNodeFunc(params.treeApi, ids, ignore);
-    },
-    rename: (params) => params.treeApi.edit(params.treeApi.focusedNode),
-    copy: (params) => {
-        const copyNode = useVariablesStore.getState().copyNode;
-        const ids = getSelectedIds(params.treeApi);
-        copyNode(params.treeApi, ids);
-    },
-    cut: (params) => {
-        const baseIds = params.treeApi.root.children.map((child) => child.id);
-        const cutNodeFunc = useVariablesStore.getState().cutNode;
-        const copyNode = useVariablesStore.getState().copyNode;
-        const ids = getSelectedIds(params.treeApi);
-        cutNodeFunc(params.treeApi, baseIds, false);
-        copyNode(params.treeApi, ids, true);
-        cutNodeFunc(params.treeApi, ids, true);
-    },
-    paste: (params) => {
-        const pasteNode = useVariablesStore.getState().pasteNode;
-        const removeNode = useVariablesStore.getState().removeNode;
-        const { cut, normalized } = useVariablesStore.getState().copyBuffer;
-        const ids = Object.keys(normalized);
-        const treeType = params.treeApi.props.treeType;
-        const [...clearIds] = getIdsSetWithoutNested(params.treeApi, ids);
-        console.log("isCut", cut, clearIds);
-        cut && removeNode(treeType, clearIds);
-        pasteNode(params.treeApi);
-    },
 };

@@ -5,12 +5,11 @@ import { useState } from "react";
 import { LuHam, LuPiggyBank } from "react-icons/lu";
 
 export const IgnoreButton = ({ treeApi }) => {
-    const toggleIgnoreNode = useVariablesStore((state) => state.ignoreNode);
     const [ignoreMode, setIgnoreMode] = useState(false);
     const handleIgnore = (e) => {
         e.stopPropagation();
         const ids = treeApi?.root.children.map((child) => child.id);
-        toggleIgnoreNode(treeApi, ids, !ignoreMode);
+        useVariablesStore.getState().toggleIgnore(ids);
         setIgnoreMode(!ignoreMode);
     };
 
