@@ -16,16 +16,19 @@ import { VariableValueInput } from "./VariableValueInput";
 import { VariableValueSwitch } from "./VariableValueSwitch";
 
 export const dialog = createOverlay((props) => {
-    // TODO Решить проблему с перерисовкой
     const { title, icon, nodeId, mode, ...rest } = props;
-    const { data } = useQuery({
+    const { data: path } = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
-        select: ({ state }) => state.settings[nodeId],
+        select: ({ state }) => state.settings[nodeId]?.path,
     });
-    const path = data?.path;
-    const variableType = data?.setting?.type;
-    const nodeCfg = path && configuratorConfig.nodePaths?.[path];
+    const { data: variableType } = useQuery({
+        queryKey: QK.configuration,
+        queryFn: getConfiguration,
+        select: ({ state }) => state.settings[nodeId]?.setting?.type,
+    });
+
+    const nodeCfg = path ? configuratorConfig.nodePaths?.[path] : undefined;
     const dataTypeItems = nodeCfg?.settings?.type?.enumValues;
     const dataType = dataTypeItems.find(variableType);
 

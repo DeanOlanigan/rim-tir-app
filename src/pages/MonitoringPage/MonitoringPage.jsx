@@ -19,10 +19,11 @@ import { TREE_TYPES } from "@/config/constants";
 import { dialog } from "./setValue/dialog";
 import { useConfigWithMqtt } from "@/utils/mqtt/listener/useConfigWithMqtt";
 import { MqttTester } from "./MqttTester";
+import { ConfigInfo } from "./ConfigInfo";
 
 function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");
-    const { isLoading, isFetching, isError, error } = useConfigWithMqtt(true);
+    const { isLoading, isFetching, isError, error } = useConfigWithMqtt(true); // useQuery + mqtt sub; qc.setQueryData on mqtt msg
 
     if (isLoading) return <Loader text={"Загрузка данных"} />;
     if (isError) return <ErrorInformer error={error} />;
@@ -30,13 +31,14 @@ function MonitoringPage() {
     return (
         <Flex h={"100%"} direction={"column"} gap={"2"} position={"relative"}>
             {isFetching && <Loader text={"Обновление данных"} />}
-            <Flex direction={"row"} justifyContent={"center"} gap={"2"}>
+            <HStack justifyContent={"center"}>
+                <ConfigInfo />
                 <SearchBar
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
                 />
                 <MqttTester />
-            </Flex>
+            </HStack>
             <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
                     <TreeCard

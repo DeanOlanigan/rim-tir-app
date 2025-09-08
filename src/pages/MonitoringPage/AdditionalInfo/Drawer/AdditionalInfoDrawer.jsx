@@ -17,23 +17,25 @@ import { DescriptionField } from "./DescriptionField";
 import { InfoBlock } from "./InfoBlock";
 
 export const AdditionalInfoDrawer = ({ id }) => {
-    // TODO Решить проблему с перерисовкой
-    const {
-        data: { setting, path },
-    } = useQuery({
+    const { data: setting } = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
-        select: ({ state }) => state.settings[id],
+        select: ({ state }) => state.settings[id]?.setting,
+    });
+    const { data: path } = useQuery({
+        queryKey: QK.configuration,
+        queryFn: getConfiguration,
+        select: ({ state }) => state.settings[id]?.path,
     });
 
     if (!setting) return null;
-    const config = configuratorConfig.nodePaths[path];
+    const config = path ? configuratorConfig.nodePaths[path] : undefined;
 
     const drawerBodyHeight = "12rem";
     const blockHeight = "10rem";
 
     const renderDesc =
-        setting.description && config?.settings["description"] ? (
+        setting.description && config?.settings?.description ? (
             <DescriptionField
                 setting={setting}
                 config={config}
@@ -42,7 +44,7 @@ export const AdditionalInfoDrawer = ({ id }) => {
             />
         ) : null;
     const renderCode =
-        setting.luaExpression && config?.settings["luaExpression"] ? (
+        setting.luaExpression && config?.settings?.luaExpression ? (
             <CodeField
                 setting={setting}
                 config={config}
@@ -74,7 +76,6 @@ export const AdditionalInfoDrawer = ({ id }) => {
                         <Drawer.Body>
                             <HStack
                                 separator={<StackSeparator />}
-                                align={"start"}
                                 h={drawerBodyHeight}
                             >
                                 {renderInfoBlock}

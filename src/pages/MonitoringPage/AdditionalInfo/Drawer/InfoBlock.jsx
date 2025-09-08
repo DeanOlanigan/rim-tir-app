@@ -1,4 +1,4 @@
-import { ScrollArea, Stack, Text, Wrap } from "@chakra-ui/react";
+import { DataList, ScrollArea, Stack, Text } from "@chakra-ui/react";
 import { InfoField } from "./InfoField";
 
 export const InfoBlock = ({ setting, config, h }) => {
@@ -8,7 +8,11 @@ export const InfoBlock = ({ setting, config, h }) => {
             <ScrollArea.Root size={"xs"} height={h} variant={"hover"}>
                 <ScrollArea.Viewport>
                     <ScrollArea.Content pe={"3"}>
-                        <Wrap w={"100%"}>
+                        <DataList.Root
+                            orientation={"horizontal"}
+                            size={"sm"}
+                            variant={"bold"}
+                        >
                             {Object.entries(setting).map(([key, value]) => (
                                 <InfoField
                                     key={key}
@@ -17,7 +21,7 @@ export const InfoBlock = ({ setting, config, h }) => {
                                     config={config}
                                 />
                             ))}
-                        </Wrap>
+                        </DataList.Root>
                     </ScrollArea.Content>
                 </ScrollArea.Viewport>
                 <ScrollArea.Scrollbar />

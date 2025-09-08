@@ -19,10 +19,10 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { QK } from "@/api/queryKeys";
 import { getConfiguration } from "@/api/configuration";
-import { AdditionalInfoDrawer } from "./AdditionalInfo/Drawer/AdditionalInfoDrawer";
-import { dialog } from "../../setValue/dialog";
+import { AdditionalInfoDrawer } from "@/pages/MonitoringPage/AdditionalInfo/Drawer/AdditionalInfoDrawer";
+import { dialog } from "@/pages/MonitoringPage/setValue/dialog";
 import { TbHandStop } from "react-icons/tb";
-import { attributes } from "../../setValue/Attributes/attributes";
+import { attributes } from "@/pages/MonitoringPage/setValue/Attributes/attributes";
 
 export const NodeContent = memo(function NodeContent({ id, type, name }) {
     return (
@@ -34,11 +34,7 @@ export const NodeContent = memo(function NodeContent({ id, type, name }) {
                     <Text truncate>{name}</Text>
                 )}
                 {type !== NODE_TYPES.folder && (
-                    <>
-                        <AdditionalInfoDrawer id={id} height={"10rem"} />
-                        {/* <AdditionalInfoPopup id={id} height={"10rem"} />
-                        <ConnectionHeadderAdditionalInfo id={id} /> */}
-                    </>
+                    <AdditionalInfoDrawer id={id} height={"10rem"} />
                 )}
                 <NodeArrow type={type} />
             </HStack>

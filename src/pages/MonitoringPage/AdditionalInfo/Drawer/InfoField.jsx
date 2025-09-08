@@ -1,4 +1,4 @@
-import { Badge, Stack, Text } from "@chakra-ui/react";
+import { DataList } from "@chakra-ui/react";
 
 function valueResolver(context, value) {
     if (!context) return value;
@@ -23,22 +23,9 @@ export const InfoField = ({ param, value, config }) => {
     const resolvedValue = valueResolver(config.settings[param], value);
 
     return (
-        <Stack
-            minW={"75px"}
-            maxW={"150px"}
-            /* borderRadius={"md"}
-            border={"1px solid"}
-            borderColor={"border"}
-            p={"1"} */
-        >
-            <Text fontWeight={"medium"} truncate title={label}>
-                {label}
-            </Text>
-            <Badge size={"sm"} justifyContent={"center"} variant={"surface"}>
-                <Text truncate title={resolvedValue}>
-                    {resolvedValue}
-                </Text>
-            </Badge>
-        </Stack>
+        <DataList.Item>
+            <DataList.ItemLabel>{label}</DataList.ItemLabel>
+            <DataList.ItemValue>{resolvedValue}</DataList.ItemValue>
+        </DataList.Item>
     );
 };
