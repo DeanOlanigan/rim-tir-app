@@ -2,53 +2,7 @@ import { Icon, Menu, Portal } from "@chakra-ui/react";
 import { LuBan, LuCheckCheck, LuChevronRight } from "react-icons/lu";
 import { iconsMap } from "@/config/icons";
 import { useVariablesStore } from "@/store/variables-store";
-import { getMeaningNode, getParentType } from "@/utils/utils";
-import { CONNECTIONS_TREES, NODE_TYPES, TREE_TYPES } from "@/config/constants";
-
-const sameMeaningPath = (apiPath, firstNodeId, settings) => {
-    const focusedNodePath =
-        apiPath.focusedNode?.data.type === NODE_TYPES.folder
-            ? getParentType({ checkNode: apiPath?.focusedNode })
-            : apiPath.focusedNode?.data?.path ?? "#";
-    const meaningNodePath = getMeaningNode(firstNodeId, settings)?.path ?? null;
-    return meaningNodePath && focusedNodePath === meaningNodePath;
-};
-
-const incompatibleDomains = (treeType, bufType) =>
-    (treeType === TREE_TYPES.variables && CONNECTIONS_TREES.has(bufType)) ||
-    (bufType === TREE_TYPES.variables && CONNECTIONS_TREES.has(treeType));
-
-const differentRootTypes = (focusedId, clipboard) =>
-    clipboard.cut && focusedId && (clipboard.ids ?? []).includes(focusedId);
-
-function getDisabledState(apiPath) {
-    const { clipboard, settings } = useVariablesStore.getState();
-    const treeType = apiPath.props.treeType;
-
-    if (!clipboard?.normalized || !clipboard.type) return true;
-
-    if (incompatibleDomains(treeType, clipboard.type)) return true;
-
-    const focusedId = apiPath.focusedNode?.data?.id;
-    if (differentRootTypes(focusedId, clipboard)) return true;
-
-    if (CONNECTIONS_TREES.has(treeType)) {
-        const rootNodesIds = clipboard.roots || [];
-        if (!rootNodesIds.length) return true;
-
-        const nodes = clipboard.normalized;
-        const firstNode = nodes[rootNodesIds[0]];
-        const sourceType = firstNode?.type;
-        if (!sourceType) return true;
-
-        for (const id of rootNodesIds) {
-            if (nodes[id].type !== sourceType) return true;
-        }
-
-        if (!sameMeaningPath(apiPath, rootNodesIds[0], settings)) return true;
-    }
-    return false;
-}
+import { getDisabledState } from "./getDisabledState";
 
 export const MenuItem = ({
     item,
@@ -59,8 +13,9 @@ export const MenuItem = ({
 }) => {
     if (!item) return null;
     const focusedId = apiPath.focusedNode?.id;
-    const isIgnored =
-        useVariablesStore.getState().settings[focusedId]?.isIgnored;
+    const clipboard = useVariablesStore.getState().clipboard;
+    const settings = useVariablesStore.getState().settings;
+    const isIgnored = settings[focusedId]?.isIgnored;
 
     if (item.type === "separator") {
         return <Menu.Separator key={`sep_${index}`} />;
@@ -95,7 +50,7 @@ export const MenuItem = ({
     }
 
     if (item.type === "paste") {
-        disabled = getDisabledState(apiPath);
+        disabled = getDisabledState(apiPath, clipboard, settings);
     }
 
     if (item.children && Array.isArray(item.children)) {
