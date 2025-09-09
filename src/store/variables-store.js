@@ -111,18 +111,20 @@ export const useVariablesStore = create()(
                 }),
 
             bindVariable: (nodeId, variableId) =>
-                set((state) => ({
-                    settings: bindVariableUtil(
+                set((state) => {
+                    let newSettings = unbindVariableUtil(
                         state.settings,
-                        nodeId,
-                        variableId
-                    ),
-                })),
-
-            unbindVariable: (nodeId) =>
-                set((state) => ({
-                    settings: unbindVariableUtil(state.settings, nodeId),
-                })),
+                        nodeId
+                    );
+                    if (variableId) {
+                        newSettings = bindVariableUtil(
+                            newSettings,
+                            nodeId,
+                            variableId
+                        );
+                    }
+                    return { settings: newSettings };
+                }),
 
             addNode: (treeType, parentId, newNodes) =>
                 set((state) => ({

@@ -22,19 +22,26 @@ export function useVariablesCollection() {
 }
 
 // TODO Для ComboboxInput
-export function useVariablesCollectionMemo() {
+export function useVariablesCollectionMemo(rootId, currentOwnerId) {
     const settings = useVariablesStore((state) => state.settings);
 
     return useMemo(
         () =>
             Object.values(settings)
                 .filter((item) => item.type === "variable")
-                .map((item) => ({
-                    label: item.name,
-                    value: item.id,
-                    disabled: item.setting.usedIn ? true : false,
-                    usedIn: item.setting.usedIn,
-                })),
-        [settings]
+                .map((item) => {
+                    const map = item.setting?.usedIn ?? {};
+
+                    const disabled =
+                        map[rootId] != null && map[rootId] !== currentOwnerId;
+
+                    return {
+                        label: item.name,
+                        value: item.id,
+                        disabled,
+                        usedIn: map,
+                    };
+                }),
+        [settings, rootId, currentOwnerId]
     );
 }

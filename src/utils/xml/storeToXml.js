@@ -10,20 +10,25 @@ function buildNode(xmlParent, node, settingsMap) {
     const tag = toTagName(node.type);
 
     const attrs = {};
+    attrs.isIgnored = node.isIgnored;
+    if (node.type !== "dataObject") attrs.name = node.name;
     attrs.id = node.id;
-    attrs.name = node.name || "";
-    if (node.parentId) attrs.parentId = node.parentId;
     if (node.rootId) attrs.rootId = node.rootId;
+    if (node.parentId) attrs.parentId = node.parentId;
     if (node.path) attrs.path = node.path;
     if (node.node) attrs.node = node.node;
-    attrs.isIgnored = node.isIgnored;
 
     const el = xmlParent.ele(tag, attrs);
 
     if (node.setting) {
         const settingsAttrs = {};
         for (const [key, value] of Object.entries(node.setting)) {
+            if (key === "usedIn") continue;
             settingsAttrs[key] = value ?? "";
+        }
+        if (node.setting.usedIn) {
+            settingsAttrs.sendId = node.setting.usedIn.send;
+            settingsAttrs.receiveId = node.setting.usedIn.receive;
         }
         el.ele("Settings", settingsAttrs).up();
     }
@@ -40,13 +45,11 @@ function buildNode(xmlParent, node, settingsMap) {
     el.up();
 }
 
-function appendSection(parentEl, sectionName, nodes, settingsMap) {
-    const sectionEl = parentEl.ele(sectionName);
+function appendSection(parentEl, nodes, settingsMap) {
     nodes.forEach((node) => {
         const full = settingsMap[node.id];
-        if (full) buildNode(sectionEl, full, settingsMap);
+        if (full) buildNode(parentEl, full, settingsMap);
     });
-    sectionEl.up();
 }
 
 export function convertStateToXml(state, configInfo) {
@@ -62,11 +65,13 @@ export function convertStateToXml(state, configInfo) {
         .up();
 
     const comm = doc.ele("Communication");
-    appendSection(comm, "Receive", receive, settings);
-    appendSection(comm, "Send", send, settings);
+    appendSection(comm, receive, settings);
+    appendSection(comm, send, settings);
     comm.up();
 
-    appendSection(doc, "Variables", variables, settings);
+    const vars = doc.ele("Variables");
+    appendSection(vars, variables, settings);
+    vars.up();
 
     return doc.end({ pretty: true });
 }

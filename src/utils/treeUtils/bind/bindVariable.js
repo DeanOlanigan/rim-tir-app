@@ -1,13 +1,16 @@
 import { ensureNodeSettingCopy } from "../core/ensureNodeSettingCopy";
 
 /**
- * Bind variable to a node in the settings tree.
- * If the variable is already used by another node, unbind it from that node.
- * If the node is already bound to another variable, unbind it from that variable.
+ * Привязать variableId к dataObject (nodeId) с учётом корня nodeId (receive|send).
+ * Обновляет обе стороны:
+ *   - у DO: setting.variableId = variableId
+ *   - у Variable: setting.usedIn[rootId] = nodeId
+ * Если была предыдущая привязка в этом же root'е — корректно отвязывает её.
  *
- * @param {Object} settings - The settings flat tree.
- * @param {string} nodeId - The id of the node to which the variable should be bound.
- * @param {string} variableId - The id of the variable to bind.
+ * @param {Object} settings - плоская карта узлов
+ * @param {string} nodeId   - id dataObject из receive|send дерева
+ * @param {string} variableId - id переменной из variables дерева
+ * @returns {Object} обновлённая карта
  */
 export function bindVariableUtil(settings, nodeId, variableId) {
     const owner = settings[nodeId];
@@ -16,8 +19,13 @@ export function bindVariableUtil(settings, nodeId, variableId) {
     if (!owner || !variable) return settings;
     if (nodeId === variableId) return settings;
 
+    const ownerRoot = owner.rootId;
+    if (ownerRoot === "variables") return settings;
+
     const ownerSetting = owner.setting ?? {};
     const variableSetting = variable.setting ?? {};
+    const usedIn = variableSetting.usedIn ?? {};
+
     const already =
         ownerSetting.variableId === variableId &&
         variableSetting.usedIn === nodeId;
@@ -25,50 +33,44 @@ export function bindVariableUtil(settings, nodeId, variableId) {
 
     let next = { ...settings };
 
-    if (
-        ownerSetting.variableId != null &&
-        ownerSetting.variableId !== variableId
-    ) {
-        const oldVarId = ownerSetting.variableId;
-        const oldVar = settings[oldVarId];
-        if (oldVar) {
-            const node = ensureNodeSettingCopy(next, oldVarId);
-            node.setting.usedIn = null;
-        }
-    }
+    const prevVarId = ownerSetting.variableId;
+    ownerCheck(prevVarId, next, ownerRoot, nodeId, variableId);
 
-    if (variableSetting.usedIn != null && variableSetting.usedIn !== nodeId) {
-        const oldOwnerId = variableSetting.usedIn;
-        const oldOwner = settings[oldOwnerId];
-        if (oldOwner) {
-            const node = ensureNodeSettingCopy(next, oldOwnerId);
-            node.setting.variableId = null;
-        }
-    }
+    const prevOwnerIdInThisRoot = usedIn[ownerRoot];
+    variableCheck(prevOwnerIdInThisRoot, next, nodeId, variableId);
 
     const ownerNode = ensureNodeSettingCopy(next, nodeId);
     ownerNode.setting.variableId = variableId;
 
     const variableNode = ensureNodeSettingCopy(next, variableId);
-    variableNode.setting.usedIn = nodeId;
+    const newMap = { ...(variableNode.setting.usedIn ?? {}) };
+    newMap[ownerRoot] = nodeId;
+    variableNode.setting.usedIn = newMap;
 
     return next;
+}
 
-    /* return {
-        ...settings,
-        [nodeId]: {
-            ...settings[nodeId],
-            setting: {
-                ...settings[nodeId].setting,
-                variableId: variableId,
-            },
-        },
-        [variableId]: {
-            ...settings[variableId],
-            setting: {
-                ...settings[variableId].setting,
-                usedIn: nodeId,
-            },
-        },
-    }; */
+function ownerCheck(prevVarId, next, ownerRoot, nodeId, variableId) {
+    if (prevVarId != null && prevVarId !== variableId) {
+        const prevVar =
+            next[prevVarId] && ensureNodeSettingCopy(next, prevVarId);
+        if (prevVar) {
+            const map = { ...(prevVar.setting.usedIn ?? {}) };
+            if (map[ownerRoot] === nodeId) map[ownerRoot] = null;
+            prevVar.setting.usedIn = map;
+        }
+    }
+}
+
+function variableCheck(prevOwnerIdInThisRoot, next, nodeId, variableId) {
+    if (prevOwnerIdInThisRoot && prevOwnerIdInThisRoot !== nodeId) {
+        const prevOwner =
+            next[prevOwnerIdInThisRoot] &&
+            ensureNodeSettingCopy(next, prevOwnerIdInThisRoot);
+        if (prevOwner) {
+            if ((prevOwner.setting ?? {}).variableId === variableId) {
+                prevOwner.setting.variableId = null;
+            }
+        }
+    }
 }

@@ -1,3 +1,4 @@
+import { TREE_TYPES } from "@/config/constants";
 import { useVariablesCollectionMemo } from "@/hooks/useVariablesCollection";
 import { useVariablesStore } from "@/store/variables-store";
 import {
@@ -15,10 +16,13 @@ import { LuBan, LuCircleHelp } from "react-icons/lu";
 
 export const ComboboxInput = ({ id, reset = null }) => {
     console.log("Render ComboboxInput");
-    const variables = useVariablesCollectionMemo();
-    const val = variables.find((v) => v.usedIn === id)?.value;
-    /* const [innerValue, setInnerValue] = useState(val ? [val] : []);
-    console.log(innerValue); */
+
+    const rootId = useVariablesStore((state) => state.settings[id]?.rootId);
+    const selectedVarId = useVariablesStore(
+        (state) => state.settings[id]?.setting?.variableId ?? null
+    );
+
+    const variables = useVariablesCollectionMemo(rootId, id);
 
     const { contains } = useFilter({ sensitivity: "base" });
     const { collection, filter, set } = useListCollection({
@@ -31,8 +35,10 @@ export const ComboboxInput = ({ id, reset = null }) => {
         set(variables);
     }, [variables, set]);
 
-    const unbindVariable = useVariablesStore.getState().unbindVariable;
     const bindVariable = useVariablesStore.getState().bindVariable;
+
+    if (!rootId || rootId === TREE_TYPES.variables) return null;
+
     // TODO значение переменной в самом поле ввода не меняется динамически
     return (
         <Combobox.Root
@@ -41,12 +47,13 @@ export const ComboboxInput = ({ id, reset = null }) => {
             size={"xs"}
             openOnClick
             collection={collection}
-            defaultValue={val ? [val] : []}
+            defaultValue={selectedVarId ? [selectedVarId] : []}
             onInputValueChange={(e) => filter(e.inputValue)}
             onValueChange={(e) => {
-                //setInnerValue(e.value);
-                unbindVariable(id);
-                if (e.value[0]) bindVariable(id, e.value[0]);
+                const nextId = e.value[0];
+                if (nextId !== selectedVarId) {
+                    bindVariable(id, nextId);
+                }
                 reset && reset();
             }}
             open={reset ? true : null}
@@ -77,12 +84,12 @@ export const ComboboxInput = ({ id, reset = null }) => {
                         {collection.items.map((item) => (
                             <Combobox.Item item={item} key={item.value}>
                                 <Combobox.ItemIndicator />
-                                {item.label}
                                 {item.disabled && (
                                     <Badge colorPalette={"red"}>
                                         <LuBan />
                                     </Badge>
                                 )}
+                                {item.label}
                             </Combobox.Item>
                         ))}
                     </Combobox.Content>

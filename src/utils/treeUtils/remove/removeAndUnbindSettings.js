@@ -29,7 +29,7 @@ export function removeAndUnbindSettingsUtil(settings, idsToRemove) {
             removeChildFromParent(next, parentCopies, node.parentId, id);
         }
 
-        clearVariableId(setting, idsToRemove, next);
+        clearVariableId(setting, idsToRemove, next, node.rootId);
         clearUsedIn(setting, idsToRemove, next);
 
         delete next[id];
@@ -37,22 +37,33 @@ export function removeAndUnbindSettingsUtil(settings, idsToRemove) {
     return next;
 }
 
-function clearVariableId(setting, idsSet, next) {
+function clearVariableId(setting, idsSet, next, root) {
     if (setting.variableId != null) {
         const varId = setting.variableId;
         if (!idsSet.has(varId) && next[varId]) {
             const varNode = ensureNodeSettingCopy(next, varId);
-            if (varNode) varNode.setting.usedIn = null;
+            if (root === "receive" || root === "send") {
+                const map = { ...(varNode.setting.usedIn ?? {}) };
+                map[root] = null;
+                varNode.setting.usedIn = map;
+            }
         }
     }
 }
 
 function clearUsedIn(setting, idsSet, next) {
-    if (setting.usedIn != null) {
-        const ownerId = setting.usedIn;
-        if (!idsSet.has(ownerId) && next[ownerId]) {
-            const ownerNode = ensureNodeSettingCopy(next, ownerId);
-            if (ownerNode) ownerNode.setting.variableId = null;
-        }
+    const used = setting.usedIn;
+    if (!used) return;
+
+    const recvOwner = used.receive;
+    if (recvOwner && !idsSet.has(recvOwner) && next[recvOwner]) {
+        const ownerNode = ensureNodeSettingCopy(next, recvOwner);
+        if (ownerNode) ownerNode.setting.variableId = null;
+    }
+
+    const sendOwner = used.send;
+    if (sendOwner && !idsSet.has(sendOwner) && next[sendOwner]) {
+        const ownerNode = ensureNodeSettingCopy(next, sendOwner);
+        if (ownerNode) ownerNode.setting.variableId = null;
     }
 }

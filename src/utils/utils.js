@@ -34,7 +34,7 @@ export function getParentType({ id, treeApi, checkNode }) {
 
 export function getMeaningNode(id, settings) {
     function recursive(id) {
-        const node = settings[settings[id].parentId];
+        const node = settings[settings[id]?.parentId];
         if (!node) return undefined;
 
         if (node.type === "folder" || node.type === "dataObject") {

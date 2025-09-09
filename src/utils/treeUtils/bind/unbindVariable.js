@@ -1,13 +1,18 @@
 import { ensureNodeSettingCopy } from "../core/ensureNodeSettingCopy";
 
 /**
- * Unbind a variable from a node in the settings tree.
- * If the variable is bound to the node, unbind it.
- * If the node is used by another variable, unbind it from that variable.
+ * Универсальная отвязка.
+ * Если id — это DO (rootId = receive|send):
+ *   - обнуляем у DO: variableId
+ *   - на переменной чистим usedIn[DO.rootId], если указывает на этот DO
  *
- * @param {Object} settings - The settings flat tree.
- * @param {string} id - The id of the node to which the variable should be unbound.
- * @returns {Object} The updated settings tree.
+ * Если id — это Variable (rootId = variables):
+ *   - для всех корней (receive, send) находим связанные DO и обнуляем у них variableId
+ *   - у самой переменной чистим usedIn по всем корням
+ *
+ * @param {Object} settings
+ * @param {string} id - id dataObject ИЛИ id переменной
+ * @returns {Object}
  */
 export function unbindVariableUtil(settings, id) {
     let next = settings;
@@ -22,33 +27,58 @@ export function unbindVariableUtil(settings, id) {
 
     const node = settings[id];
     if (!node) return settings;
-    const setting = node.setting ?? {};
 
-    if (setting.variableId != null) {
-        const varId = setting.variableId;
+    if (node.rootId === "receive" || node.rootId === "send") {
+        const doSetting = node.setting ?? {};
+        const varId = doSetting.variableId;
+        if (!varId) return settings;
+
         ensureMapCopy();
-        const owner = ensureNodeSettingCopy(next, id);
-        owner.setting.variableId = null;
 
-        const variable = settings[varId];
-        if (variable) {
-            const node = ensureNodeSettingCopy(next, varId);
-            node.setting.usedIn = null;
+        const doCopy = ensureNodeSettingCopy(next, id);
+        doCopy.setting.variableId = null;
+
+        const varNode = settings[varId] && ensureNodeSettingCopy(next, varId);
+        if (varNode) {
+            const map = { ...(varNode.setting.usedIn ?? {}) };
+            if (map[node.rootId] === id) map[node.rootId] = null;
+            varNode.setting.usedIn = map;
         }
+
+        return mutated ? next : settings;
     }
 
-    if (setting.usedIn != null) {
-        const ownerId = setting.usedIn;
-        ensureMapCopy();
-        const variable = ensureNodeSettingCopy(next, id);
-        variable.setting.usedIn = null;
+    if (node.rootId === "variables") {
+        const varSetting = node.setting ?? {};
+        const map = varSetting.usedIn ?? {};
+        const roots = ["receive", "send"];
 
-        const owner = settings[ownerId];
-        if (owner) {
-            const node = ensureNodeSettingCopy(next, ownerId);
-            node.setting.variableId = null;
+        let touched = false;
+        for (const root of roots) {
+            const ownerId = map[root];
+            if (!ownerId) continue;
+
+            ensureMapCopy();
+            touched = true;
+
+            const owner =
+                settings[ownerId] && ensureNodeSettingCopy(next, ownerId);
+            if (owner && owner.setting.variableId === id) {
+                owner.setting.variableId = null;
+            }
         }
+
+        if (touched) {
+            const varCopy = ensureNodeSettingCopy(next, id);
+            const newMap = { ...(varCopy.setting.usedIn ?? {}) };
+            for (const root of roots) {
+                newMap[root] = null;
+            }
+            varCopy.setting.usedIn = newMap;
+        }
+
+        return mutated ? next : settings;
     }
 
-    return mutated ? next : settings;
+    return settings;
 }
