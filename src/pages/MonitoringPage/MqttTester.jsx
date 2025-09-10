@@ -7,18 +7,18 @@ export const MqttTester = () => {
 
     useMqttMock({
         enabled: on,
-        periodMs: 1500,
+        periodMs: 1000,
         topicBase: "test",
     });
 
     return (
         <HStack>
             <Switch.Root checked={on} onCheckedChange={(e) => setOn(e.checked)}>
+                <Switch.Label>MQTT Tester</Switch.Label>
                 <Switch.HiddenInput />
                 <Switch.Control>
                     <Switch.Thumb />
                 </Switch.Control>
-                <Switch.Label>MQTT Tester</Switch.Label>
             </Switch.Root>
             <Badge colorPalette={on ? "green" : "gray"}>
                 {on ? "ON" : "OFF"}

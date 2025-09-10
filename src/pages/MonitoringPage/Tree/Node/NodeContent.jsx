@@ -33,10 +33,8 @@ export const NodeContent = memo(function NodeContent({ id, type, name }) {
                 ) : (
                     <Text truncate>{name}</Text>
                 )}
-                {type !== NODE_TYPES.folder && (
-                    <AdditionalInfoDrawer id={id} height={"10rem"} />
-                )}
-                <NodeArrow type={type} />
+                {type !== NODE_TYPES.folder && <AdditionalInfoDrawer id={id} />}
+                {/* <NodeArrow type={type} /> */}
             </HStack>
             <HStack>
                 {(type === NODE_TYPES.dataObject ||
@@ -52,7 +50,7 @@ export const NodeContent = memo(function NodeContent({ id, type, name }) {
     );
 });
 
-const BindedVariable = ({ id }) => {
+const BindedVariable = memo(function BindedVariable({ id }) {
     const { data: name } = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
@@ -65,9 +63,9 @@ const BindedVariable = ({ id }) => {
             {name ? name : "Нет переменной"}
         </Code>
     );
-};
+});
 
-const VariableEditMenu = ({ id }) => {
+const VariableEditMenu = memo(function VariableEditMenu({ id }) {
     return (
         <Menu.Root size={"sm"}>
             <Menu.Trigger asChild>
@@ -111,9 +109,9 @@ const VariableEditMenu = ({ id }) => {
             </Portal>
         </Menu.Root>
     );
-};
+});
 
-const NodeAttributes = ({ id }) => {
+const NodeAttributes = memo(function NodeAttributes({ id }) {
     const { data: params } = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
@@ -140,7 +138,7 @@ const NodeAttributes = ({ id }) => {
             />
         </>
     );
-};
+});
 
 const NodeArrow = ({ type }) => {
     return (

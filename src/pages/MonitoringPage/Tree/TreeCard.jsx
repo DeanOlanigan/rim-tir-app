@@ -13,9 +13,12 @@ import { DropCursor } from "@/components/TreeView/DropCursor";
 import { Node } from "./Node/Node";
 import { LuFileQuestion } from "react-icons/lu";
 import { NODE_TYPES } from "@/config/constants";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { QK } from "@/api/queryKeys";
 import { getConfiguration } from "@/api/configuration";
+import { useCallback, useMemo } from "react";
+import { useSelectionSync } from "@/store/selection-sync-store";
+import { useTreeRegistry } from "@/store/tree-registry-store";
 
 // TODO может быть сравнить с TreeCard в configuration и сделать общую функциональность
 export const TreeCard = ({ type, searchTerm }) => {
@@ -45,18 +48,65 @@ export const TreeCard = ({ type, searchTerm }) => {
                 {isEmptyRoot ? (
                     <EmptyCard />
                 ) : (
-                    <Content data={data} searchTerm={searchTerm} />
+                    <Content
+                        data={data}
+                        searchTerm={searchTerm}
+                        treeType={type}
+                    />
                 )}
             </Card.Body>
         </Card.Root>
     );
 };
 
-const Content = ({ data, searchTerm }) => {
+const Content = ({ data, searchTerm, treeType }) => {
+    console.log("render content");
+    const qc = useQueryClient();
+    const { setApi } = useTreeRegistry.getState();
+
+    const aliasName = useMemo(() => {
+        const conf = qc.getQueryData(QK.configuration);
+        const settings = conf?.state?.settings ?? {};
+        const m = new Map();
+        for (const id in settings) {
+            const rec = settings[id];
+            if (rec?.type === NODE_TYPES.dataObject) {
+                const vid = rec.setting?.variableId;
+                const vname = vid ? settings[vid]?.name : undefined;
+                if (vname) m.set(id, vname);
+            }
+        }
+        return m;
+    }, [qc]);
+
+    const searchMarch = useCallback(
+        (node, term) => {
+            if (!term) return true;
+            const baseName =
+                node.data.type === NODE_TYPES.dataObject
+                    ? aliasName.get(node.data.id) ?? node.data.name
+                    : node.data.name;
+
+            return (
+                !!baseName &&
+                baseName.toLowerCase().includes(term.toLowerCase())
+            );
+        },
+        [aliasName]
+    );
+
+    const registerApi = useCallback(
+        (api) => {
+            setApi("monitoring", treeType, api);
+        },
+        [setApi, treeType]
+    );
+
     return (
         <AutoSizer>
             {({ height, width }) => (
                 <Tree
+                    ref={registerApi}
                     data={data}
                     height={height}
                     width={width}
@@ -66,18 +116,16 @@ const Content = ({ data, searchTerm }) => {
                     rowHeight={32}
                     indent={16}
                     searchTerm={searchTerm}
-                    searchMatch={(node, term) => {
-                        const name =
-                            node.data.name || node.data.setting?.variable;
-                        return (
-                            !!name &&
-                            name.toLowerCase().includes(term.toLowerCase())
-                        );
-                    }}
+                    searchMatch={searchMarch}
                     renderCursor={DropCursor}
                     disableDrag
                     disableDrop
                     disableEdit
+                    onSelect={() =>
+                        useSelectionSync
+                            .getState()
+                            .userSelect("monitoring", treeType)
+                    }
                 >
                     {Node}
                 </Tree>

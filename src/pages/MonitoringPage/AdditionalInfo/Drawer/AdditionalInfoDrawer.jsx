@@ -15,8 +15,9 @@ import { LuInfo } from "react-icons/lu";
 import { CodeField } from "./CodeField";
 import { DescriptionField } from "./DescriptionField";
 import { InfoBlock } from "./InfoBlock";
+import { memo } from "react";
 
-export const AdditionalInfoDrawer = ({ id }) => {
+export const AdditionalInfoDrawer = memo(function AdditionalInfoDrawer({ id }) {
     const { data: setting } = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
@@ -89,4 +90,4 @@ export const AdditionalInfoDrawer = ({ id }) => {
             </Portal>
         </Drawer.Root>
     );
-};
+});

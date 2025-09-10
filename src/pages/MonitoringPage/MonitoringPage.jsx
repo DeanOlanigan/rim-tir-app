@@ -14,7 +14,7 @@ import {
     Text,
     Icon,
 } from "@chakra-ui/react";
-import { LuX, LuSearch, LuTriangleAlert } from "react-icons/lu";
+import { LuX, LuSearch, LuTriangleAlert, LuArrowRight } from "react-icons/lu";
 import { TREE_TYPES } from "@/config/constants";
 import { dialog } from "./setValue/dialog";
 import { useConfigWithMqtt } from "@/utils/mqtt/listener/useConfigWithMqtt";
@@ -32,12 +32,12 @@ function MonitoringPage() {
         <Flex h={"100%"} direction={"column"} gap={"2"} position={"relative"}>
             {isFetching && <Loader text={"Обновление данных"} />}
             <HStack justifyContent={"center"}>
+                <MqttTester />
                 <ConfigInfo />
                 <SearchBar
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
                 />
-                <MqttTester />
             </HStack>
             <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
@@ -104,21 +104,39 @@ const ErrorInformer = ({ error }) => {
 };
 
 const SearchBar = ({ searchTerm, setSearchTerm }) => {
+    const [innerTerm, setInnerTerm] = useState(searchTerm);
+
     return (
         <InputGroup
-            maxW={"300px"}
+            px={"2"}
+            maxW={"10rem"}
             startElement={<LuSearch />}
             endElement={
-                <IconButton
-                    size={"4xs"}
-                    rounded={"full"}
-                    variant={"ghost"}
-                    onClick={() => {
-                        setSearchTerm("");
-                    }}
-                >
-                    <LuX />
-                </IconButton>
+                innerTerm && (
+                    <>
+                        <IconButton
+                            size={"2xs"}
+                            rounded={"full"}
+                            variant={"ghost"}
+                            onClick={() => {
+                                setInnerTerm("");
+                                setSearchTerm("");
+                            }}
+                        >
+                            <LuX />
+                        </IconButton>
+                        <IconButton
+                            size={"2xs"}
+                            rounded={"full"}
+                            variant={"surface"}
+                            onClick={() => {
+                                setSearchTerm(innerTerm);
+                            }}
+                        >
+                            <LuArrowRight />
+                        </IconButton>
+                    </>
+                )
             }
         >
             <Input
@@ -128,9 +146,9 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => {
                 bg={"bg"}
                 borderRadius={"full"}
                 shadow={"md"}
-                value={searchTerm}
+                value={innerTerm}
                 onChange={(e) => {
-                    setSearchTerm(e.currentTarget.value);
+                    setInnerTerm(e.target.value);
                 }}
             />
         </InputGroup>

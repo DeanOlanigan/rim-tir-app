@@ -7,8 +7,9 @@ import { iconsMap } from "@/config/icons";
 import { configuratorConfig } from "@/utils/configurationParser";
 import { ParamViewer } from "./ParamViewer";
 import { NODE_TYPES } from "@/config/constants";
+import { memo } from "react";
 
-export const NodeBase = ({
+export const NodeBase = memo(function NodeBase({
     paddingLeft,
     node,
     errors,
@@ -16,7 +17,7 @@ export const NodeBase = ({
     isIgnored,
     accessorIsIgnored,
     isCutted,
-}) => {
+}) {
     const icon = configuratorConfig.nodePaths[node.data.path]?.icon;
     const TypeIcon = iconsMap[icon?.name];
     const iconColor = icon?.color;
@@ -85,4 +86,4 @@ export const NodeBase = ({
             {errors}
         </HStack>
     );
-};
+});
