@@ -271,7 +271,7 @@ export const useVariablesStore = create()(
             partialize: (state) =>
                 Object.fromEntries(
                     Object.entries(state).filter(
-                        ([key]) => !["selectedIds"].includes(key)
+                        ([key]) => !["selectedIds", "clipboard"].includes(key)
                     )
                 ),
         }
