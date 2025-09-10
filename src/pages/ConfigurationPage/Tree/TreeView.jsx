@@ -1,21 +1,17 @@
 import { Tree } from "react-arborist";
 import styles from "@/components/TreeView/TreeView.module.css";
-import { memo, useRef } from "react";
+import { memo, useCallback } from "react";
 import { AutoSizer } from "react-virtualized";
 import { DropCursor } from "@/components/TreeView/DropCursor";
 import { Node } from "./Node";
 import { Box } from "@chakra-ui/react";
 import { useTreeViewHandlers } from "@/hooks/useTreeViewHandlers";
-import { useConfigTreeApiStore } from "@/store/config-tree-api-store";
 import { NODE_TYPES } from "@/config/constants";
+import { useTreeRegistry } from "@/store/tree-registry-store";
 
 export const TreeView = memo(function TreeView({ data, treeType }) {
     console.log("%cRender NEW TreeView", "color: white; background: red;");
-    const variableTreeRef = useRef(null);
-    useConfigTreeApiStore
-        .getState()
-        .setConfigTreeApi(treeType, variableTreeRef);
-
+    const { setApi } = useTreeRegistry.getState();
     const {
         handleRenameNode,
         handleCreateNode,
@@ -24,7 +20,14 @@ export const TreeView = memo(function TreeView({ data, treeType }) {
         handleContextMenu,
         handleSelect,
         handleDisableDrop,
-    } = useTreeViewHandlers(treeType, variableTreeRef);
+    } = useTreeViewHandlers(treeType);
+
+    const registerApi = useCallback(
+        (api) => {
+            setApi("config", treeType, api);
+        },
+        [setApi, treeType]
+    );
 
     // TODO Улучшать хоткеи, вынести в отдельный хук, ограничить вставку
     // react-hotkeys-hook
@@ -73,16 +76,11 @@ export const TreeView = memo(function TreeView({ data, treeType }) {
         }); */
 
     return (
-        <Box
-            //ref={combineRefs(cutRef, copyRef, pasteRef)}
-            w={"100%"}
-            h={"100%"}
-            position={"relative"}
-        >
+        <Box w={"100%"} h={"100%"} position={"relative"}>
             <AutoSizer>
                 {({ height, width }) => (
                     <Tree
-                        ref={variableTreeRef}
+                        ref={registerApi}
                         data={data}
                         treeType={treeType}
                         height={height}

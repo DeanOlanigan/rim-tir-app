@@ -3,17 +3,22 @@ import { useCallback } from "react";
 import { getParentType, initDefaultDataByPath } from "@/utils/utils";
 import { useContextMenuStore } from "@/store/contextMenu-store";
 import { TREE_TYPES } from "@/config/constants";
+import { useTreeRegistry } from "@/store/tree-registry-store";
 
-export function useTreeViewHandlers(treeType, ref) {
-    const addNode = useVariablesStore((state) => state.addNode);
-    const renameNode = useVariablesStore((state) => state.renameNode);
-    const removeNode = useVariablesStore((state) => state.removeNode);
-    const moveNode = useVariablesStore((state) => state.moveNode);
-    const createSetting = useVariablesStore((state) => state.createSetting);
-    const updateSelectedIds = useVariablesStore(
-        (state) => state.updateSelectedIds
+export function useTreeViewHandlers(treeType) {
+    const {
+        addNode,
+        renameNode,
+        removeNode,
+        moveNode,
+        createSetting,
+        updateSelectedIds,
+    } = useVariablesStore.getState();
+    const { updateContext } = useContextMenuStore.getState();
+    const api = useTreeRegistry(
+        useCallback((s) => s.apis["config"]?.[treeType] ?? null, [treeType]),
+        Object.is
     );
-    const updateContext = useContextMenuStore((state) => state.updateContext);
 
     const settingType =
         treeType === TREE_TYPES.send || treeType === TREE_TYPES.receive
@@ -45,7 +50,7 @@ export function useTreeViewHandlers(treeType, ref) {
             createSetting(flatNodes);
             //return node;
         },
-        [addNode, createSetting, treeType /* , ref */]
+        [addNode, createSetting, treeType]
     );
     const handleDeleteNode = useCallback(
         ({ ids }) => {
@@ -62,29 +67,32 @@ export function useTreeViewHandlers(treeType, ref) {
     );
     const handleContextMenu = useCallback(
         (e) => {
+            if (!api) return;
             e.preventDefault();
             e.stopPropagation();
-            ref?.current.root.focus();
-            ref?.current.root.select();
+            api.root.focus();
+            api.root.select();
             updateContext({
-                apiPath: ref?.current,
+                apiPath: api,
                 x: e.clientX,
                 y: e.clientY,
                 visible: true,
             });
         },
-        [ref, updateContext]
+        [api, updateContext]
     );
     const handleSelect = useCallback(() => {
-        if (ref?.current?.selectedIds?.size === 0) {
-            ref?.current?.root?.focus();
-            ref?.current?.root?.select();
+        if (!api) return;
+        if (api?.selectedIds?.size === 0) {
+            api?.root?.focus();
+            api?.root?.select();
         }
+
         // Проверка на разность типов узлов,
         // оставлять только один выбранный узел, если типы разные
-        if (ref?.current?.selectedIds?.size > 1) {
-            const selectedNodes = Array.from(ref?.current?.selectedIds).map(
-                (id) => ref?.current?.get(id)
+        if (api?.selectedIds?.size > 1) {
+            const selectedNodes = Array.from(api?.selectedIds).map((id) =>
+                api?.get(id)
             );
             const firstPath = selectedNodes[0].data.path;
             const isSamePath = selectedNodes.every(
@@ -92,13 +100,13 @@ export function useTreeViewHandlers(treeType, ref) {
             );
             if (!isSamePath) {
                 const lastNodeId = selectedNodes[selectedNodes.length - 1].id;
-                ref?.current?.select(lastNodeId);
-                ref?.current?.focus(lastNodeId);
+                api?.select(lastNodeId);
+                api?.focus(lastNodeId);
             }
         }
 
-        updateSelectedIds(settingType, ref?.current?.selectedIds);
-    }, [updateSelectedIds, ref, settingType]);
+        updateSelectedIds(settingType, api?.selectedIds);
+    }, [updateSelectedIds, api, settingType]);
 
     const handleDisableDrop = useCallback(({ parentNode, dragNodes }) => {
         if (!parentNode || dragNodes.length === 0) return true;

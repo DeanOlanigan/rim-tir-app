@@ -1,14 +1,14 @@
-import { useConfigTreeApiStore } from "@/store/config-tree-api-store";
 import { useVariablesStore } from "@/store/variables-store";
 import { Button, Icon } from "@chakra-ui/react";
 import { LuArrowRight } from "react-icons/lu";
 import { EditorBreadcrumb } from "../Breadcrumb/Breadcrumb";
 import { useBreadcrumb } from "@/hooks/useBreadcrumb";
+import { useTreeRegistry } from "@/store/tree-registry-store";
 
 export const RedirectButton = ({ id }) => {
     const settings = useVariablesStore.getState().settings;
     const updateSelectedIds = useVariablesStore.getState().updateSelectedIds;
-    const treeApis = useConfigTreeApiStore.getState().configTreeApi;
+    const treeApis = useTreeRegistry.getState().getScopeApis("config");
     const selectNodeHandler = (nodeId) => {
         const targetType =
             settings[nodeId]?.rootId === "variables"
@@ -16,8 +16,8 @@ export const RedirectButton = ({ id }) => {
                 : "connections";
         updateSelectedIds(targetType, new Set([nodeId]));
         const target = settings[nodeId]?.rootId;
-        treeApis[target].current.scrollTo(nodeId);
-        treeApis[target].current.select(nodeId);
+        treeApis[target].scrollTo(nodeId);
+        treeApis[target].select(nodeId);
     };
     const breadcrumbs = useBreadcrumb(id);
 
