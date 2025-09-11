@@ -43,14 +43,9 @@ export const RouterMenu = () => {
     };
 
     return (
-        <Menu.Root size={"md"} closeOnSelect={false}>
+        <Menu.Root size={"sm"} closeOnSelect={false}>
             <Menu.Trigger asChild>
-                <Button
-                    variant="subtle"
-                    size="2xs"
-                    rounded={"md"}
-                    shadow={"md"}
-                >
+                <Button variant="surface" size="2xs">
                     Роутер
                 </Button>
             </Menu.Trigger>

@@ -1,6 +1,6 @@
 import { useConfigTreeApiStore } from "@/store/config-tree-api-store";
 import { useVariablesStore } from "@/store/variables-store";
-import { Badge, Button, Icon } from "@chakra-ui/react";
+import { Button, Icon } from "@chakra-ui/react";
 import { LuArrowRight } from "react-icons/lu";
 import { EditorBreadcrumb } from "../Breadcrumb/Breadcrumb";
 import { useBreadcrumb } from "@/hooks/useBreadcrumb";
@@ -23,22 +23,15 @@ export const RedirectButton = ({ id }) => {
 
     return (
         <Button
-            asChild
-            size={"1.5xs"}
+            variant={"surface"}
+            rounded={"md"}
+            size={"2xs"}
+            justifyContent={"space-between"}
             w={"100%"}
             onClick={() => selectNodeHandler(id)}
         >
-            <Badge
-                variant={"solid"}
-                justifyContent={"space-between"}
-                overflowX={"auto"}
-            >
-                <EditorBreadcrumb
-                    breadcrumbs={breadcrumbs}
-                    color={"fg.inverted"}
-                />
-                <Icon as={LuArrowRight} />
-            </Badge>
+            <EditorBreadcrumb breadcrumbs={breadcrumbs} color={"red.fg"} />
+            <Icon as={LuArrowRight} colorPalette={"red"} />
         </Button>
     );
 };

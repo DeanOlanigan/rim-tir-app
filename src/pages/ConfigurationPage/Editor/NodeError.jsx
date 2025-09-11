@@ -8,10 +8,9 @@ export const NodeError = ({ validationErrors }) => {
                 <Popover.Trigger asChild>
                     <Button
                         colorPalette={"red"}
-                        variant={"subtle"}
+                        variant={"surface"}
                         size={"2xs"}
                         rounded={"md"}
-                        shadow={"md"}
                     >
                         <Icon as={LuTriangleAlert} />
                         Обнаружены ошибки узла
@@ -25,9 +24,9 @@ export const NodeError = ({ validationErrors }) => {
                             colorPalette={"red"}
                             bg={"bg.error/40"}
                             backdropFilter={"blur(4px)"}
-                            borderColor={"fg.error"}
-                            borderStartWidth={"3px"}
-                            borderEndWidth={"3px"}
+                            borderColor={"red.muted"}
+                            borderStartWidth={"2px"}
+                            borderEndWidth={"2px"}
                         >
                             <Popover.Body>
                                 <Flex

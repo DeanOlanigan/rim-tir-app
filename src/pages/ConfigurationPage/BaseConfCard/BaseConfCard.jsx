@@ -21,10 +21,8 @@ export const BaseConfCard = () => {
                     >
                         <Stack direction={"row"} gap={"2"}>
                             <IconButton
-                                variant="subtle"
+                                variant="surface"
                                 size="2xs"
-                                rounded={"md"}
-                                shadow={"md"}
                                 onClick={() => setFlip()}
                             >
                                 {flip === "vertical" ? (

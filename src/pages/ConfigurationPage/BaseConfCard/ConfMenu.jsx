@@ -25,14 +25,9 @@ export const ConfMenu = () => {
     };
 
     return (
-        <MenuRoot size={"md"}>
+        <MenuRoot size={"sm"}>
             <MenuTrigger asChild>
-                <Button
-                    variant="subtle"
-                    size="2xs"
-                    rounded={"md"}
-                    shadow={"md"}
-                >
+                <Button variant="surface" size="2xs">
                     Конфигурация
                 </Button>
             </MenuTrigger>

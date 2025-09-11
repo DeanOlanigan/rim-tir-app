@@ -7,7 +7,7 @@ export const ValidationContent = ({ errors }) => {
         <Flex
             direction={"column"}
             gap={"2"}
-            px={"4"}
+            p={"2"}
             maxH={"200px"}
             minW={"500px"}
             overflow={"auto"}
