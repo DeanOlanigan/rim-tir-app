@@ -19,6 +19,7 @@ export const TextInput = memo(function TextInput(props) {
             value={innerValue}
             onChange={(e) => setInnerValue(e.target.value)}
             onBlur={(e) => {
+                if (e.target.value === value) return;
                 setInnerValue(e.target.value);
                 setSettings(id, {
                     [targetKey]: e.target.value,

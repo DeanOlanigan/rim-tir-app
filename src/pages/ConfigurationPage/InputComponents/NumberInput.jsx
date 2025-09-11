@@ -14,6 +14,7 @@ export const NumberInput = memo(function NumberInput(props) {
 
     return (
         <ChakraNumberInput.Root
+            w={"100%"}
             size={"xs"}
             value={innerValue}
             // BUG Chakra update breaks NumberInput format options
@@ -26,10 +27,12 @@ export const NumberInput = memo(function NumberInput(props) {
                 setInnerValue(details.value);
             }}
             onBlur={() => {
+                const res = isF
+                    ? parseFloat(innerValue).toFixed(3)
+                    : parseInt(innerValue);
+                if (res === value) return;
                 setSettings(id, {
-                    [targetKey]: isF
-                        ? parseFloat(innerValue).toFixed(3)
-                        : parseInt(innerValue),
+                    [targetKey]: res,
                 });
             }}
             onKeyDown={(e) => {

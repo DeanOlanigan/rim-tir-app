@@ -16,6 +16,7 @@ export const NameInput = ({ id, value }) => {
             value={innerName}
             onChange={(e) => setInnerName(e.target.value)}
             onBlur={(e) => {
+                if (e.target.value.trim() === value) return;
                 setInnerName(e.target.value.trim());
                 renameNode(id, e.target.value.trim());
             }}
