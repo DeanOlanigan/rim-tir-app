@@ -59,12 +59,7 @@ function validateVariableCode(node, variables, asts, draft) {
 }
 
 function validateNamePattern(node, draft, map) {
-    if (
-        node.name &&
-        node.rootId &&
-        node.type !== NODE_TYPES.dataObject &&
-        NODE_UNIQUE_NAMES.has(node.type)
-    ) {
+    if (node.name && node.rootId && NODE_UNIQUE_NAMES.has(node.type)) {
         draft.set(
             node.id,
             "name",

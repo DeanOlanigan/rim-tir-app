@@ -5,6 +5,7 @@ export function mustBeValidator({ nodeId, param, rule, context, draft }) {
     const allowed = rule.params;
 
     const val = context[nodeId]?.setting?.[param];
+    if (val === "") return;
     const res = allowed.includes(val);
     draft.set(
         nodeId,

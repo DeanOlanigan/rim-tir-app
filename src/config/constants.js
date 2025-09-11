@@ -15,6 +15,12 @@ export const NODE_TYPES = {
     root: "root",
 };
 
+export const DO_NOT_VALIDATE = new Set([
+    NODE_TYPES.root,
+    NODE_TYPES.folder,
+    NODE_TYPES.dataObject,
+]);
+
 export const NODE_UNIQUE_NAMES = new Set([
     NODE_TYPES.interface,
     NODE_TYPES.protocol,

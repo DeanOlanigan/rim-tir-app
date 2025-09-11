@@ -1,8 +1,7 @@
-import { NODE_TYPES } from "../../utils/const";
 import { SCOPE, VALIDATOR } from "../../utils/const";
 import { getContextIds } from "../../utils/contextUtils";
 import { ErrorDraft } from "../../core/ErrorDraft";
-import { NODE_UNIQUE_NAMES } from "@/config/constants";
+import { DO_NOT_VALIDATE, NODE_UNIQUE_NAMES } from "@/config/constants";
 
 const LUA_KEYWORDS = [
     "and",
@@ -52,14 +51,11 @@ export function validateName({
     const error = validateNamePatternMatch({ name });
     draft.set(id, "name", VALIDATOR.REGEX, error);
 
-    const ids = getContextIds(settings, id, "name", scope);
+    const ids = getContextIds(settings, id, "name", scope, DO_NOT_VALIDATE);
     const map = new Map();
     for (const id of ids) {
         const node = settings[id] || {};
-        if (
-            node.type !== NODE_TYPES.dataObject &&
-            NODE_UNIQUE_NAMES.has(node.type)
-        ) {
+        if (NODE_UNIQUE_NAMES.has(node.type)) {
             const val = node?.name;
             if (val === undefined || val == "") continue;
             if (!map.has(val)) map.set(val, []);
