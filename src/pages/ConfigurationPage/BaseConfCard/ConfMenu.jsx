@@ -7,9 +7,9 @@ import {
 import { Button } from "@chakra-ui/react";
 import { downloadStateAsXml } from "@/utils/xml/storeToXml";
 import { useVariablesStore } from "@/store/variables-store";
-import { CreateConfigDialog } from "../CreateConfigDialog"; // ?
+import { CreateConfigDialog } from "../Dialogs/CreateConfigDialog"; // ?
 import { ConfigurationUploader } from "../ConfigurationUploader"; // ?
-import { ConfInfoEdit } from "./ConfInfoEdit";
+import { ConfInfoEdit } from "../Dialogs/ConfInfoEdit";
 import { useConfigInfoStore } from "@/store/config-info-store";
 import { useValidationStore } from "@/store/validation-store";
 
@@ -44,7 +44,7 @@ export const ConfMenu = () => {
                 </ConfigurationUploader>
                 <ConfInfoEdit>
                     <MenuItem value="rename" closeOnSelect={false}>
-                        Переименовать
+                        Редактировать
                     </MenuItem>
                 </ConfInfoEdit>
                 <MenuItem value="new-win" onClick={downloadStateAsXml}>

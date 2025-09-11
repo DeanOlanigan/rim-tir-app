@@ -2,16 +2,17 @@ import {
     Dialog,
     Portal,
     Button,
-    VStack,
-    Input,
     Textarea,
     CloseButton,
     Alert,
+    Flex,
+    Field,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useConfigInfoStore } from "@/store/config-info-store";
 import { useVariablesStore } from "@/store/variables-store";
 import { useValidationStore } from "@/store/validation-store";
+import { ConfigurationNameInput } from "./ConfigurationNameInput";
 
 export const CreateConfigDialog = ({ children }) => {
     const configInfo = useConfigInfoStore((state) => state.configInfo);
@@ -54,13 +55,17 @@ export const CreateConfigDialog = ({ children }) => {
         >
             <Dialog.Trigger asChild>{children}</Dialog.Trigger>
             <Portal>
+                <Dialog.Backdrop />
                 <Dialog.Positioner>
                     <Dialog.Content>
+                        <Dialog.CloseTrigger asChild>
+                            <CloseButton size={"xs"} />
+                        </Dialog.CloseTrigger>
                         <Dialog.Header>
                             <Dialog.Title>Новая конфигурация</Dialog.Title>
                         </Dialog.Header>
                         <Dialog.Body>
-                            <VStack spacing={4} align="stretch">
+                            <Flex gap={"2"} direction={"column"}>
                                 {hasPreviousConfig && (
                                     <Alert.Root status={"warning"}>
                                         <Alert.Indicator />
@@ -69,23 +74,27 @@ export const CreateConfigDialog = ({ children }) => {
                                         </Alert.Title>
                                     </Alert.Root>
                                 )}
-                                <Input
-                                    placeholder="Имя конфигурации"
-                                    value={name}
-                                    maxLength={20}
-                                    onChange={(e) => setName(e.target.value)}
-                                    size="xs"
-                                />
-                                <Textarea
-                                    resize={"none"}
-                                    placeholder="Описание"
-                                    value={description}
-                                    onChange={(e) =>
-                                        setDescription(e.target.value)
-                                    }
-                                    size="xs"
-                                />
-                            </VStack>
+                                <Field.Root>
+                                    <Field.Label>Имя конфигурации</Field.Label>
+                                    <ConfigurationNameInput
+                                        name={name}
+                                        setName={setName}
+                                    />
+                                </Field.Root>
+                                <Field.Root>
+                                    <Field.Label>Описание</Field.Label>
+                                    <Textarea
+                                        resize={"none"}
+                                        rows={5}
+                                        size={"xs"}
+                                        value={description}
+                                        placeholder="Описание"
+                                        onChange={(e) =>
+                                            setDescription(e.target.value)
+                                        }
+                                    />
+                                </Field.Root>
+                            </Flex>
                         </Dialog.Body>
                         <Dialog.Footer>
                             <Dialog.ActionTrigger asChild>
@@ -101,9 +110,6 @@ export const CreateConfigDialog = ({ children }) => {
                                 Создать
                             </Button>
                         </Dialog.Footer>
-                        <Dialog.CloseTrigger asChild>
-                            <CloseButton size={"xs"} />
-                        </Dialog.CloseTrigger>
                     </Dialog.Content>
                 </Dialog.Positioner>
             </Portal>

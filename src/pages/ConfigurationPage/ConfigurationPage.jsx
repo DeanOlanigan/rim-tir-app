@@ -13,7 +13,7 @@ import { TreeCard } from "./TreeCard";
 import { useVariablesStore } from "@/store/variables-store";
 import { EditorCard } from "./EditorCard";
 import { TREE_TYPES } from "@/config/constants";
-import { EmptyConfigDialog } from "./EmptyConfigDialog";
+import { EmptyConfigDialog } from "./Dialogs/EmptyConfigDialog";
 import { ContextMenu } from "./Tree/ContextMenu/ContextMenu";
 import { LuLock } from "react-icons/lu";
 

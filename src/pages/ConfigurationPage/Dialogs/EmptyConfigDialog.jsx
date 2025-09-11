@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { useRef } from "react";
 import { CreateConfigDialog } from "./CreateConfigDialog";
-import { ConfigurationUploader } from "./ConfigurationUploader";
+import { ConfigurationUploader } from "../ConfigurationUploader";
 import { useConfigInfoStore } from "@/store/config-info-store";
 
 export const EmptyConfigDialog = () => {

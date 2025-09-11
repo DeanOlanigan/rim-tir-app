@@ -30,3 +30,5 @@ export const NODE_UNIQUE_NAMES = new Set([
 ]);
 
 export const CONNECTIONS_TREES = new Set([TREE_TYPES.send, TREE_TYPES.receive]);
+
+export const MAX_NAME_LENGTH = 50;

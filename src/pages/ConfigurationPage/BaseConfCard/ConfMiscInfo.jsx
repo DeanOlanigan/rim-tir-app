@@ -10,7 +10,9 @@ export const ConfMiscInfo = () => {
     return (
         <Stack direction={"row"} gap={"2"} separator={<StackSeparator />}>
             {name ? (
-                <Text fontSize={"sm"}>{name}</Text>
+                <Text fontSize={"sm"} truncate maxW={"200px"}>
+                    {name}
+                </Text>
             ) : (
                 <Skeleton w={"200px"} h={"24px"} />
             )}

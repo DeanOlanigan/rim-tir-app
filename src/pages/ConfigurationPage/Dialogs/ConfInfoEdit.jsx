@@ -4,19 +4,21 @@ import {
     Flex,
     Box,
     Field,
-    Input,
     Textarea,
     Dialog,
     Portal,
+    CloseButton,
 } from "@chakra-ui/react";
 import { useConfigInfoStore } from "@/store/config-info-store";
 import { useState } from "react";
+import { ConfigurationNameInput } from "./ConfigurationNameInput";
 
 export const ConfInfoEdit = ({ children }) => {
     const { name, description, date, version } = useConfigInfoStore(
         (state) => state.configInfo
     );
 
+    const [isOpen, setIsOpen] = useState(false);
     const [initialName, setName] = useState(name ?? "");
     const [initialDescription, setDescription] = useState(description ?? "");
 
@@ -31,15 +33,23 @@ export const ConfInfoEdit = ({ children }) => {
                 version: "1.0.0",
             },
         });
+        setIsOpen(false);
     };
 
     return (
-        <Dialog.Root>
+        <Dialog.Root
+            open={isOpen}
+            onOpenChange={(e) => setIsOpen(e.open)}
+            placement={"center"}
+        >
             <Dialog.Trigger asChild>{children}</Dialog.Trigger>
             <Portal>
                 <Dialog.Backdrop />
                 <Dialog.Positioner>
                     <Dialog.Content>
+                        <Dialog.CloseTrigger asChild>
+                            <CloseButton size={"xs"} />
+                        </Dialog.CloseTrigger>
                         <Dialog.Header>
                             <Dialog.Title>
                                 Редактирование конфигурации
@@ -48,15 +58,10 @@ export const ConfInfoEdit = ({ children }) => {
                         <Dialog.Body>
                             <Flex gap={"2"} direction={"column"}>
                                 <Field.Root>
-                                    <Field.Label>Название</Field.Label>
-                                    <Input
-                                        size={"xs"}
-                                        value={initialName}
-                                        maxLength={20}
-                                        autoComplete={"off"}
-                                        onChange={(e) => {
-                                            setName(e.currentTarget.value);
-                                        }}
+                                    <Field.Label>Имя конфигурации</Field.Label>
+                                    <ConfigurationNameInput
+                                        name={initialName}
+                                        setName={setName}
                                     />
                                 </Field.Root>
                                 <Field.Root>
@@ -92,16 +97,18 @@ export const ConfInfoEdit = ({ children }) => {
                                         <Text fontSize={"md"}>{version}</Text>
                                     </Box>
                                 </Flex>
-                                <Button
-                                    w={"100%"}
-                                    size={"xs"}
-                                    disabled={!isNameValid}
-                                    onClick={saveHandler}
-                                >
-                                    Сохранить
-                                </Button>
                             </Flex>
                         </Dialog.Body>
+                        <Dialog.Footer>
+                            <Button
+                                w={"100%"}
+                                size={"xs"}
+                                disabled={!isNameValid}
+                                onClick={saveHandler}
+                            >
+                                Сохранить
+                            </Button>
+                        </Dialog.Footer>
                     </Dialog.Content>
                 </Dialog.Positioner>
             </Portal>
