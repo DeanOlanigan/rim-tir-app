@@ -8,8 +8,9 @@ import {
 } from "./index";
 import { useValidationStore } from "@/store/validation-store";
 import { memo } from "react";
-import { Field, Text } from "@chakra-ui/react";
+import { Field, Group, Icon, Text } from "@chakra-ui/react";
 import { configuratorConfig } from "@/utils/configurationParser";
+import { LuTriangleAlert } from "react-icons/lu";
 
 const inputRenderers = {
     drop: (props) => <ComboboxInput {...props} />,
@@ -64,15 +65,34 @@ export const InputFactory = memo(function InputFactory(props) {
                     <Text truncate>{label}</Text>
                 </Field.Label>
             )}
-            {renderer(inputProps)}
-            {errors &&
+            <Group w={"full"} maxW={"sm"}>
+                {renderer(inputProps)}
+                {errors && errors.size !== 0 && <ErrorSign errors={errors} />}
+            </Group>
+            {/* {errors &&
                 errors.size !== 0 &&
                 Array.from(errors)
                     .map(([, error]) => error.messages)
                     .flat()
                     .map((message, index) => (
                         <Field.ErrorText key={index}>{message}</Field.ErrorText>
-                    ))}
+                    ))} */}
         </Field.Root>
     );
 });
+
+const ErrorSign = ({ errors }) => {
+    if (!errors) return null;
+    const title = Array.from(errors)
+        .map(([, error]) => error.messages)
+        .flat()
+        .join("\n");
+    return (
+        <Icon
+            as={LuTriangleAlert}
+            size={"sm"}
+            color={"fg.error"}
+            title={title}
+        />
+    );
+};
