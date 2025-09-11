@@ -24,10 +24,12 @@ export const CodeCell = ({ id, code }) => {
                     <Popover.Content
                         w={"400px"}
                         h={"300px"}
-                        p={"1"}
+                        p={"0"}
                         bg={"transparent"}
-                        border={"none"}
+                        border={"1px solid"}
+                        borderColor={"border.info"}
                         shadow={"none"}
+                        overflow={"hidden"}
                     >
                         <DebouncedEditor id={id} luaExpression={code} />
                     </Popover.Content>
