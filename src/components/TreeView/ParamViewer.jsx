@@ -1,4 +1,3 @@
-import { useVariablesStore } from "@/store/variables-store";
 import { Badge, Icon } from "@chakra-ui/react";
 import { LuCheck, LuX } from "react-icons/lu";
 import { useGetParameters2 } from "../../pages/ConfigurationPage/Tree/NodeViews/getParameters";
@@ -13,8 +12,11 @@ function getColorPalette(value, settings) {
     return "gray";
 }
 
-export const ParamViewer = memo(function ParamViewer({ id, path, isVariable }) {
-    const settings = useVariablesStore((state) => state.settings[id]?.setting);
+export const ParamViewer = memo(function ParamViewer({
+    settings,
+    path,
+    isVariable,
+}) {
     const paramValues = useGetParameters2(path);
 
     return paramValues.map((value) =>
@@ -41,11 +43,7 @@ export const ParamViewer = memo(function ParamViewer({ id, path, isVariable }) {
 });
 
 const BoolParamViewer = ({ value, settings, isVariable }) => {
-    if (isVariable) {
-        if (value.icon) return <Icon as={value.icon} />;
-        if (value.shortname) return value.shortname;
-        return settings[value.param] ? <LuCheck /> : <LuX />;
-    }
+    if (isVariable && value.icon) return <Icon as={value.icon} />;
     if (value.shortname) return value.shortname;
     return settings[value.param] ? <LuCheck /> : <LuX />;
 };

@@ -9,6 +9,9 @@ import { hasIgnoreAccessor } from "@/utils/utils";
 
 export const Node = ({ node, style, dragHandle, tree }) => {
     const updateContext = useContextMenuStore((state) => state.updateContext);
+    const settings = useVariablesStore(
+        (state) => state.settings[node.id]?.setting
+    );
     const isIgnored = useVariablesStore(
         (state) => state.settings[node.id]?.isIgnored
     );
@@ -48,6 +51,7 @@ export const Node = ({ node, style, dragHandle, tree }) => {
                 isIgnored={isIgnored}
                 accessorIsIgnored={accessorIsIgnored}
                 isCutted={isCutted}
+                settings={settings}
             />
         </div>
     );

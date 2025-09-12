@@ -17,6 +17,7 @@ export const NodeBase = memo(function NodeBase({
     isIgnored,
     accessorIsIgnored,
     isCutted,
+    settings,
 }) {
     const icon = configuratorConfig.nodePaths[node.data.path]?.icon;
     const TypeIcon = iconsMap[icon?.name];
@@ -76,7 +77,7 @@ export const NodeBase = memo(function NodeBase({
                         />
                     )}
                     <ParamViewer
-                        id={node.id}
+                        settings={settings}
                         path={node.data.path}
                         isVariable={node.data.type === NODE_TYPES.variable}
                     />

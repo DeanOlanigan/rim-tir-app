@@ -11,12 +11,14 @@ import { useTreeRegistry } from "@/store/tree-registry-store";
 
 export const Node = memo(function Node({ node, style }) {
     const qc = useQueryClient();
+    const conf = qc.getQueryData(QK.configuration);
+    const settings = conf?.state?.settings ?? {};
 
     const onClick = async (e) => {
         node.handleClick(e);
         if (e.altKey)
             await crossSelect(
-                qc,
+                settings,
                 node.id,
                 "monitoring",
                 Object.values(TREE_TYPES)
@@ -31,6 +33,7 @@ export const Node = memo(function Node({ node, style }) {
         >
             <NodeBase
                 node={node}
+                settings={settings[node.id]?.setting}
                 paddingLeft={style.paddingLeft}
                 visual={
                     <NodeContent
@@ -79,9 +82,7 @@ async function pickInTree(api, id) {
     api.select(id);
 }
 
-async function crossSelect(qc, id, scope, roots) {
-    const conf = qc.getQueryData(QK.configuration);
-    const settings = conf?.state?.settings ?? {};
+async function crossSelect(settings, id, scope, roots) {
     const links = getCrossLinks(settings, id);
 
     const { runSilent } = useSelectionSync.getState();
