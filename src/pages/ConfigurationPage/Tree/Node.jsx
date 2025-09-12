@@ -22,11 +22,7 @@ export const Node = ({ node, style, dragHandle, tree }) => {
     const handleContextMenu = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        while (tree.isFocused(node.id) === false) {
-            // TODO : find a better way
-            node.focus();
-            node.select();
-        }
+        node.focus();
         node.open();
         updateContext({
             apiPath: tree,

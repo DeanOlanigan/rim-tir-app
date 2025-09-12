@@ -48,15 +48,20 @@ export function useTreeViewHandlers(treeType) {
             }
             addNode(treeType, trueParentId, treeNodes);
             createSetting(flatNodes);
-            //return node;
         },
         [addNode, createSetting, treeType]
     );
     const handleDeleteNode = useCallback(
         ({ ids }) => {
-            removeNode(treeType, ids);
+            const rootIds = new Set(Object.values(TREE_TYPES));
+            if (ids.some((id) => rootIds.has(id))) {
+                api.focus(ids[0]);
+            } else {
+                removeNode(treeType, ids);
+            }
+            api.deselectAll();
         },
-        [removeNode, treeType]
+        [removeNode, treeType, api]
     );
     const handleMoveNode = useCallback(
         ({ dragIds, parentId, index }) => {
@@ -83,9 +88,8 @@ export function useTreeViewHandlers(treeType) {
     );
     const handleSelect = useCallback(() => {
         if (!api) return;
-        if (api?.selectedIds?.size === 0) {
-            api?.root?.focus();
-            api?.root?.select();
+        if (api.hasNoSelection) {
+            api.root.children[0].focus();
         }
 
         // Проверка на разность типов узлов,

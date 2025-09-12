@@ -71,12 +71,21 @@ export const useVariablesStore = create()(
             resetState: () => set(initialState),
 
             updateSelectedIds: (targetKey, ids) =>
-                set((state) => ({
-                    selectedIds: {
-                        ...state.selectedIds,
-                        [targetKey]: ids,
-                    },
-                })),
+                set((state) => {
+                    const prev = state.selectedIds[targetKey];
+                    if (prev === ids) return state;
+                    if (
+                        prev.size === ids.size &&
+                        [...prev].every((id) => ids.has(id))
+                    )
+                        return state;
+                    return {
+                        selectedIds: {
+                            ...state.selectedIds,
+                            [targetKey]: ids,
+                        },
+                    };
+                }),
 
             createSetting: (settings) => {
                 set((state) => ({

@@ -8,5 +8,16 @@ export const useContextMenuStore = create()((set) => ({
         visible: false,
     },
     updateContext: (data) =>
-        set((state) => ({ context: { ...state.context, ...data } })),
+        set((state) => {
+            const next = { ...state.context, ...data };
+            const prev = state.context;
+            let changed = false;
+            for (const k in next) {
+                if (next[k] !== prev[k]) {
+                    changed = true;
+                    break;
+                }
+            }
+            return changed ? { context: next } : state;
+        }),
 }));
