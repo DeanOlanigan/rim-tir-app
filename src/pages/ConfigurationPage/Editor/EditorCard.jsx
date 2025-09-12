@@ -1,9 +1,9 @@
 import { Card, Flex, Box } from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { EditorWrapper } from "./Editor/EditorWrapper";
-import { BaseConfCard } from "./BaseConfCard/BaseConfCard";
+import { EditorWrapper } from "./EditorWrapper";
+import { BaseConfCard } from "../BaseConfCard/BaseConfCard";
 import { LuGripVertical } from "react-icons/lu";
-import { useConfigStore } from "./stores";
+import { useConfigStore } from "../stores";
 
 export const EditorCard = () => {
     const flip = useConfigStore((state) => state.flip);
