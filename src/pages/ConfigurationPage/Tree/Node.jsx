@@ -16,8 +16,7 @@ export const Node = ({ node, style, dragHandle, tree }) => {
         hasIgnoreAccessor(state.settings, node.id)
     );
     const isCutted = useVariablesStore(
-        (state) =>
-            new Set(state.clipboard.ids).has(node.id) && state.clipboard.cut
+        (state) => state.clipboard.cut && state.clipboard.ids.has(node.id)
     );
     const handleContextMenu = (e) => {
         e.preventDefault();

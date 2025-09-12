@@ -8,14 +8,13 @@ export function pasteNodeUtil(ctx, treeType, parentId, initialClipboard) {
     const { clipboard } = ctx;
     if (!clipboard?.normalized) return ctx;
 
-    if (clipboard.cut && parentId && (clipboard.ids ?? []).includes(parentId))
-        return ctx;
+    if (clipboard.cut && parentId && clipboard.ids.has(parentId)) return ctx;
 
     const gen = generateFromClipboard(clipboard, parentId, treeType);
     if (!gen) return ctx;
 
     const srcTreeType = clipboard.type;
-    const idsSet = new Set(clipboard.ids ?? []);
+    const idsSet = clipboard.ids;
 
     let baseTargetTree = ctx[treeType];
     if (clipboard.cut && srcTreeType === treeType) {

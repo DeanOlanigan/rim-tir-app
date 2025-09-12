@@ -26,7 +26,7 @@ const incompatibleDomains = (treeType, bufType) =>
     (bufType === TREE_TYPES.variables && CONNECTIONS_TREES.has(treeType));
 
 const differentRootTypes = (focusedId, clipboard) =>
-    clipboard.cut && focusedId && (clipboard.ids ?? []).includes(focusedId);
+    clipboard.cut && focusedId && clipboard.ids.has(focusedId);
 
 const sameRootType = (clipboard) => {
     const nodes = clipboard.normalized;

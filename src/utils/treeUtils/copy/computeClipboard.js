@@ -11,7 +11,7 @@ export const computeClipboard = (treeType, ctx, selectedIds, cut = false) => {
         type: treeType,
         normalized: sliceCtx(ctx, nodesIds),
         roots,
-        ids: Array.from(nodesIds),
+        ids: nodesIds,
         cut,
     };
 };

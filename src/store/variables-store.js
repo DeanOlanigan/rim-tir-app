@@ -58,7 +58,7 @@ const initialState = {
         type: "",
         normalized: {},
         roots: [],
-        ids: [],
+        ids: new Set(),
         cut: false,
     },
 };
