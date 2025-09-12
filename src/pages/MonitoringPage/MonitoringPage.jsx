@@ -1,6 +1,5 @@
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
-import { TreeCard } from "./Tree/TreeCard";
 import { useState } from "react";
 import {
     Flex,
@@ -14,19 +13,32 @@ import {
     Text,
     Icon,
 } from "@chakra-ui/react";
-import { LuX, LuSearch, LuTriangleAlert, LuArrowRight } from "react-icons/lu";
-import { TREE_TYPES } from "@/config/constants";
+import {
+    LuX,
+    LuSearch,
+    LuTriangleAlert,
+    LuArrowRight,
+    LuFileQuestion,
+} from "react-icons/lu";
 import { dialog } from "./setValue/dialog";
 import { useConfigWithMqtt } from "@/utils/mqtt/listener/useConfigWithMqtt";
 import { MqttTester } from "./MqttTester";
 import { ConfigInfo } from "./ConfigInfo";
+import { TreeCard } from "@/components/TreeView/TreeCard";
+import { TREE_TYPES } from "@/config/constants";
+import { TreeView } from "./Tree/TreeView";
 
 function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");
-    const { isLoading, isFetching, isError, error } = useConfigWithMqtt(true); // useQuery + mqtt sub; qc.setQueryData on mqtt msg
+    const { data, isLoading, isFetching, isError, error } =
+        useConfigWithMqtt(true);
 
     if (isLoading) return <Loader text={"Загрузка данных"} />;
     if (isError) return <ErrorInformer error={error} />;
+
+    const send = data.state[TREE_TYPES.send];
+    const receive = data.state[TREE_TYPES.receive];
+    const variables = data.state[TREE_TYPES.variables];
 
     return (
         <Flex h={"100%"} direction={"column"} gap={"2"} position={"relative"}>
@@ -41,21 +53,27 @@ function MonitoringPage() {
             </HStack>
             <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
-                    <TreeCard
-                        type={TREE_TYPES.receive}
+                    <TreeWrapper
+                        data={receive}
+                        treeType={TREE_TYPES.receive}
                         searchTerm={searchTerm}
                     />
                 </Panel>
                 <PanelResizeHandle className="PanelResizeHandle" />
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
-                    <TreeCard
-                        type={TREE_TYPES.variables}
+                    <TreeWrapper
+                        data={variables}
+                        treeType={TREE_TYPES.variables}
                         searchTerm={searchTerm}
                     />
                 </Panel>
                 <PanelResizeHandle className="PanelResizeHandle" />
                 <Panel collapsible={true} collapsedSize={0} minSize={25}>
-                    <TreeCard type={TREE_TYPES.send} searchTerm={searchTerm} />
+                    <TreeWrapper
+                        data={send}
+                        treeType={TREE_TYPES.send}
+                        searchTerm={searchTerm}
+                    />
                 </Panel>
             </PanelGroup>
             <dialog.Viewport />
@@ -64,16 +82,47 @@ function MonitoringPage() {
 }
 export default MonitoringPage;
 
+const TreeWrapper = ({ data, treeType, searchTerm }) => {
+    return (
+        <TreeCard
+            data={data}
+            tree={
+                <TreeView
+                    data={data}
+                    treeType={treeType}
+                    searchTerm={searchTerm}
+                />
+            }
+            empty={<NoData />}
+        />
+    );
+};
+
+const NoData = () => {
+    return (
+        <AbsoluteCenter>
+            <VStack textAlign={"center"}>
+                <Icon
+                    as={LuFileQuestion}
+                    fontSize={"164px"}
+                    color={"bg.muted"}
+                />
+                <Text color={"fg.subtle"} fontWeight={"medium"}>
+                    Нет данных
+                </Text>
+            </VStack>
+        </AbsoluteCenter>
+    );
+};
+
 const Loader = ({ text }) => {
     return (
         <AbsoluteCenter>
-            <VStack w={"100%"}>
+            <VStack textAlign={"center"}>
                 <Spinner size={"xl"} />
-                <HStack>
-                    <Text color={"fg.subtle"} fontWeight={"medium"}>
-                        {text}
-                    </Text>
-                </HStack>
+                <Text color={"fg.subtle"} fontWeight={"medium"}>
+                    {text}
+                </Text>
             </VStack>
         </AbsoluteCenter>
     );
@@ -82,21 +131,17 @@ const Loader = ({ text }) => {
 const ErrorInformer = ({ error }) => {
     return (
         <AbsoluteCenter>
-            <VStack w={"100%"}>
+            <VStack textAlign={"center"}>
                 <Icon
+                    as={LuTriangleAlert}
                     fontSize={"164px"}
                     color={"fg.error/30"}
-                    as={LuTriangleAlert}
                 />
-                <HStack>
-                    <Text color={"fg.error"} fontWeight={"medium"}>
-                        Ошибка загрузки
-                    </Text>
-                </HStack>
+                <Text color={"fg.error"} fontWeight={"medium"}>
+                    Ошибка загрузки
+                </Text>
                 {error?.message && (
-                    <Text color={"fg.error"} fontWeight={"medium"}>
-                        {error.message}
-                    </Text>
+                    <Text color={"fg.error"}>{error.message}</Text>
                 )}
             </VStack>
         </AbsoluteCenter>
@@ -149,6 +194,11 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => {
                 value={innerTerm}
                 onChange={(e) => {
                     setInnerTerm(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                        setSearchTerm(innerTerm);
+                    }
                 }}
             />
         </InputGroup>

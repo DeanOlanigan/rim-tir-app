@@ -1,21 +1,24 @@
 import {
+    AbsoluteCenter,
     Box,
     Center,
     HStack,
     Icon,
+    Kbd,
     Text,
     useMediaQuery,
     VStack,
 } from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
-import { TreeCard } from "./TreeCard";
 import { useVariablesStore } from "@/store/variables-store";
-import { EditorCard } from "./EditorCard";
+import { EditorCard } from "./Editor/EditorCard";
 import { TREE_TYPES } from "@/config/constants";
 import { EmptyConfigDialog } from "./Dialogs/EmptyConfigDialog";
 import { ContextMenu } from "./Tree/ContextMenu/ContextMenu";
-import { LuLock } from "react-icons/lu";
+import { LuBadgePlus, LuLock } from "react-icons/lu";
+import { TreeCard } from "@/components/TreeView/TreeCard";
+import { TreeView } from "./Tree/TreeView";
 
 function ConfigurationPage() {
     const [isLargerThan1000] = useMediaQuery("(min-width: 1000px)");
@@ -73,5 +76,25 @@ const MobileConfigurationPage = () => {
 
 const TreeWrapper = ({ treeType }) => {
     const data = useVariablesStore((state) => state[treeType]);
-    return <TreeCard data={data} treeType={treeType} />;
+    return (
+        <TreeCard
+            data={data}
+            tree={<TreeView data={data} treeType={treeType} />}
+            empty={<ContextMenuHint />}
+        />
+    );
+};
+
+const ContextMenuHint = () => {
+    return (
+        <AbsoluteCenter>
+            <VStack textAlign={"center"}>
+                <Icon as={LuBadgePlus} fontSize={"164px"} color={"bg.muted"} />
+                <Text color={"fg.subtle"} fontWeight={"medium"}>
+                    Открыть контекстное меню
+                </Text>
+                <Kbd>ПКМ</Kbd>
+            </VStack>
+        </AbsoluteCenter>
+    );
 };
