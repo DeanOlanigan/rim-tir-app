@@ -1,11 +1,19 @@
 import { memo } from "react";
-import { Box, VStack, Heading, Flex, HStack } from "@chakra-ui/react";
+import {
+    Box,
+    VStack,
+    Heading,
+    Flex,
+    HStack,
+    AbsoluteCenter,
+    Icon,
+    Text,
+} from "@chakra-ui/react";
 import { VariablesTable } from "./VariableEditor/Table/VariablesTable";
 import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { DataObjectsTable } from "./ConnectionEditor/Table/Table";
 import { ConnectionParamContainer } from "./ConnectionEditor/ConnectionParamContainer";
 import { EditorBreadcrumb } from "../Breadcrumb/Breadcrumb";
-import { EditorInformer } from "./EditorInformer";
 import { useSelectedData } from "@/hooks/useSelectedData";
 import { EditorLayout } from "./EditorLayout";
 import { InputFactory } from "../InputComponents/InputFactory";
@@ -13,16 +21,14 @@ import { configuratorConfig } from "@/utils/configurationParser";
 import { NodeError } from "./NodeError";
 import { useBreadcrumb } from "@/hooks/useBreadcrumb";
 import { useValidationStore } from "@/store/validation-store";
-//import { ContainerNodeEditor } from "./ConnectionEditor/ContainerNodeEditor";
+import { LuCog, LuVariable } from "react-icons/lu";
 
 // TODO Лишний ререндер, мб вынести логику с выбором данных в другое место?
 export const EditorWrapper = memo(function EditorWrapper({ type }) {
-    //console.log("Render EditorWrapper", type);
-
     const data = useSelectedData(type);
 
     if (data.length === 0) {
-        return <EditorInformer status={"info"} type={type} />;
+        return <EditorHint type={type} />;
     }
 
     if (data.length === 1) {
@@ -34,42 +40,9 @@ export const EditorWrapper = memo(function EditorWrapper({ type }) {
             (element) => element.node.type === data[0].node.type
         );
         if (sameLevelAndType) {
-            return (
-                <VStack gap={"4"} px={"1"} h={"100%"}>
-                    <Flex
-                        w={"100%"}
-                        border={"1px solid"}
-                        borderColor={"border"}
-                        borderRadius={"md"}
-                        shadow={"md"}
-                        p={"4"}
-                        justify={"space-between"}
-                    >
-                        <Heading textWrap={"nowrap"}>
-                            Множественный выбор
-                        </Heading>
-                        <Heading textWrap={"nowrap"}>
-                            Выбрано: {data.length}
-                        </Heading>
-                    </Flex>
-                    <Box w={"100%"} h={"100%"} overflow={"auto"}>
-                        {type === "connections" && (
-                            <DataObjectsTable
-                                data={data.map((element) => element.node)}
-                            />
-                        )}
-                        {type === "variables" && (
-                            <VariablesTable
-                                data={data.map((element) => element.node)}
-                            />
-                        )}
-                    </Box>
-                </VStack>
-            );
+            return <EditorWrapperMultiple data={data} type={type} />;
         }
     }
-
-    return <EditorInformer status={"error"} type={type} />;
 });
 
 const TITLE = {
@@ -79,45 +52,6 @@ const TITLE = {
 
 const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
     const [{ node, children }] = data;
-    /* let content;
-    switch (node.type) {
-        case "protocol":
-        case "interface": {
-            content = <ContainerNodeEditor data={node} />;
-            break;
-        }
-        case "functionGroup":
-        case "asdu":
-        case "folder": {
-            content = (
-                <>
-                    <ContainerNodeEditor data={node} />
-                    <Box w={"100%"} h={"100%"} overflow={"auto"} px={"2"}>
-                        {type === "connections" && (
-                            <DataObjectsTable data={children} />
-                        )}
-                        {type === "variables" && (
-                            <VariablesTable data={children} />
-                        )}
-                    </Box>
-                </>
-            );
-            break;
-        }
-        case "tcpBridge":
-        case "dataObject": {
-            content = <ConnectionParamContainer data={node} />;
-            break;
-        }
-        case "variable": {
-            content = <VariableEditor data={node} />;
-            break;
-        }
-        default: {
-            content = <div>Неизвестный узел</div>;
-        }
-    } */
-
     const Parameters =
         configuratorConfig.nodePaths[node.path] &&
         (node.path === "#/variable"
@@ -182,3 +116,58 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
         />
     );
 });
+
+const EditorWrapperMultiple = memo(function EditorWrapperMultiple({
+    data,
+    type,
+}) {
+    return (
+        <VStack gap={"4"} px={"1"} h={"100%"}>
+            <Flex
+                w={"100%"}
+                border={"1px solid"}
+                borderColor={"border"}
+                borderRadius={"md"}
+                shadow={"md"}
+                p={"4"}
+                justify={"space-between"}
+            >
+                <Heading textWrap={"nowrap"}>Множественный выбор</Heading>
+                <Heading textWrap={"nowrap"}>Выбрано: {data.length}</Heading>
+            </Flex>
+            <Box w={"100%"} h={"100%"} overflow={"auto"}>
+                {type === "connections" && (
+                    <DataObjectsTable
+                        data={data.map((element) => element.node)}
+                    />
+                )}
+                {type === "variables" && (
+                    <VariablesTable
+                        data={data.map((element) => element.node)}
+                    />
+                )}
+            </Box>
+        </VStack>
+    );
+});
+
+const EditorHint = ({ type }) => {
+    return (
+        <Box w={"100%"} h={"100%"} position={"relative"}>
+            <AbsoluteCenter>
+                <VStack textAlign={"center"}>
+                    <Icon
+                        as={type === "connections" ? LuCog : LuVariable}
+                        fontSize={"164px"}
+                        color={"bg.muted"}
+                    />
+                    <Text color={"fg.subtle"} fontWeight={"medium"}>
+                        {type === "connections"
+                            ? "Выберите узел в дереве приема или передачи"
+                            : "Выберите узел в дереве переменных"}
+                    </Text>
+                </VStack>
+            </AbsoluteCenter>
+        </Box>
+    );
+};
