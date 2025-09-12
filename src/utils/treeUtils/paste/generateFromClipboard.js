@@ -77,12 +77,12 @@ function applyCopyRules(copy) {
     if (copy.type === "variable") {
         if (copy.setting)
             copy.setting.usedIn = {
-                send: "",
-                receive: "",
+                send: null,
+                receive: null,
             };
     }
     if (copy.type === "dataObject") {
-        if (copy.setting) copy.setting.variableId = "";
+        if (copy.setting) copy.setting.variableId = null;
     }
 }
 

@@ -33,7 +33,7 @@ export function useVariablesCollectionMemo(rootId, currentOwnerId) {
                     const map = item.setting?.usedIn ?? {};
 
                     const disabled =
-                        map[rootId] != null && map[rootId] !== currentOwnerId;
+                        map[rootId] && map[rootId] !== currentOwnerId;
 
                     return {
                         label: item.name,
