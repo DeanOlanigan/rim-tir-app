@@ -6,6 +6,7 @@ export {
     validateCyclicVariable,
     setLuaCodeError,
     luaAstParse,
-    validateCode,
+    validateCodeNew,
 } from "./engines/luaValidationService";
+export { validateCode } from "./engines/luaValidationService/validateCodeOld";
 export { ErrorDraft } from "./core/ErrorDraft";

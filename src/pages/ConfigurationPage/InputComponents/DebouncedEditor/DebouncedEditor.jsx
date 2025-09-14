@@ -35,7 +35,7 @@ export const DebouncedEditor = memo(function DebouncedEditor({
             const model = editorRef.current?.getModel();
             const { ast, error } = luaAstParse(luaExpression);
             if (ast) highlight(ast, editor, variables);
-            diagnostics(ast, error, monacoRef.current, model);
+            diagnostics(ast, error, monacoRef.current, model, variables);
             const draft = validateCyclicVariable({ variables });
             useValidationStore.getState().applyDraft2(draft);
         }
@@ -64,7 +64,7 @@ export const DebouncedEditor = memo(function DebouncedEditor({
         const code = editor.getValue();
         const { ast, error } = luaAstParse(code);
         if (ast) highlight(ast, editor, variables);
-        diagnostics(ast, error, monaco, editor.getModel());
+        diagnostics(ast, error, monaco, editor.getModel(), variables);
     }
 
     const debounced = useRef(

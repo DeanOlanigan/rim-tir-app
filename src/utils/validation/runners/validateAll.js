@@ -7,7 +7,6 @@ import {
 import { luaAstParse } from "../engines/luaValidationService";
 import { validateNamePatternMatch } from "../rules/name/nameValidation";
 import { validateParameter } from "./validateParameter";
-import { NODE_TYPES } from "../utils/const";
 import { NODE_UNIQUE_NAMES } from "@/config/constants";
 
 export function validateAll(settings, configuratorConfig) {
