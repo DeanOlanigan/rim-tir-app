@@ -1,9 +1,15 @@
 import { tarjanCyclicDeps } from "./tarjan";
+import { CHILD_KEYS } from "./validateCode";
 
 export function findCyclic(variables) {
     const graph = buildDepGraph(variables);
     const tarjan = tarjanCyclicDeps(graph);
     return tarjan;
+}
+
+export function findCyclicFromAST(variables, asts) {
+    const graph = buildDepGraphFromAST(variables, asts);
+    return tarjanCyclicDeps(graph);
 }
 
 function buildDepGraph(variables) {
@@ -37,48 +43,80 @@ function buildDepGraph(variables) {
     return graph;
 }
 
-// TODO Доделать, если будут проблемы с оптимизацией
-function getIdentifiers(ast) {
-    const identifiers = [];
+function buildDepGraphFromAST(variables, asts) {
+    const graph = {};
 
-    function walk(node) {
-        if (!node) return;
-
-        if (node.type === "Identifier") {
-            identifiers.push(node.name);
-        }
-
-        for (const key in node) {
-            if (Array.isArray(node[key])) {
-                node[key].forEach((child) => {
-                    if (typeof child === "object" && child !== null) {
-                        walk(child);
-                    }
-                });
-            } else if (
-                typeof node[key] === "object" &&
-                node[key] !== null &&
-                node[key].type
-            ) {
-                walk(node[key]);
-            }
-        }
+    const nameToId = new Map();
+    for (const v of variables) {
+        if (v.name) nameToId.set(v.name, v.id);
+        graph[v.id] = [];
     }
 
-    walk(ast);
-    return identifiers;
+    for (const v of variables) {
+        const entry = asts.get(v.id);
+        if (!entry?.ast) continue;
+        const deps = collectWritesDeps(entry.ast, nameToId);
+        if (deps.size) graph[v.id] = Array.from(deps);
+    }
+
+    return graph;
 }
 
-function buildDepGraphAst(asts, variables) {
-    const graph = {};
-    for (const { id, ast } of asts) {
-        graph[id] = [];
-        const identifiers = getIdentifiers(ast);
-        for (const variable of variables) {
-            if (identifiers.includes(variable.name)) {
-                graph[id].push(variable.id);
+function collectWritesDeps(ast, nameToId) {
+    const out = new Set();
+
+    const stack = [ast];
+    while (stack.length) {
+        const node = stack.pop();
+        if (!node || typeof node !== "object") continue;
+
+        switch (node.type) {
+            case "AssignmentExpression": {
+                const vars = node.variables || [];
+                for (const lhs of vars) {
+                    if (lhs.type === "Identifier") {
+                        const name = lhs.name;
+                        if (nameToId.has(name)) out.add(nameToId.get(name));
+                    }
+                }
+                break;
+            }
+            case "CallExpression": {
+                const callee = node.base;
+                let fn = null;
+                if (callee.type === "Identifier") {
+                    fn = callee.name;
+                } else if (callee.type === "MemberExpression") {
+                    fn = callee.identifier?.name;
+                }
+
+                if (fn === "update") {
+                    const first = node.arguments?.[0];
+                    if (first?.type === "Identifier") {
+                        const name = first.name;
+                        if (nameToId.has(name)) out.add(nameToId.get(name));
+                    }
+                }
+                break;
+            }
+        }
+
+        const keys = CHILD_KEYS[node.type];
+
+        if (keys) {
+            for (let i = keys.length - 1; i >= 0; i--) {
+                const v = node[keys[i]];
+                if (Array.isArray(v)) {
+                    for (let j = v.length - 1; j >= 0; j--) {
+                        const c = v[j];
+                        if (c && typeof c === "object") stack.push(c);
+                    }
+                } else if (v && typeof v === "object") {
+                    stack.push(v);
+                }
             }
         }
     }
-    return graph;
+
+    return out;
 }
