@@ -21,7 +21,7 @@ export const ConfigInfo = () => {
 
     return (
         <Flex gap={"1"}>
-            <Text fontWeight={"medium"}>{config.name}</Text>
+            <Text fontWeight={"medium"}>{config?.name}</Text>
             <Popover.Root size={"sm"} lazyMount unmountOnExit>
                 <Popover.Trigger asChild>
                     <IconButton
@@ -43,14 +43,14 @@ export const ConfigInfo = () => {
                                             Описание
                                         </Text>
                                         <Text lineClamp={3}>
-                                            {config.description}
+                                            {config?.description}
                                         </Text>
                                     </Box>
                                     <Box>
                                         <Text fontWeight={"medium"}>
                                             Дата изменения
                                         </Text>
-                                        <Text>{config.date}</Text>
+                                        <Text>{config?.date}</Text>
                                     </Box>
                                 </Stack>
                             </Popover.Body>

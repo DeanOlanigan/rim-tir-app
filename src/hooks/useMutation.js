@@ -109,7 +109,7 @@ export function useRefreshConfigurationMutation() {
         onSuccess: ({ state, configInfo }) => {
             useConfigInfoStore.setState({ configInfo });
             useVariablesStore.setState(state);
-            qc.setQueryData(QK.configuration, { state });
+            qc.setQueryData(QK.configuration, { state, configInfo });
             const draft = validateAll(state.settings, configuratorConfig);
             useValidationStore.getState().applyDraft(draft);
             toaster.create({
