@@ -1,5 +1,94 @@
 const SEVERITY_ERROR = 8;
 
+const SIGNATURES = {
+    self: [{ arities: [0], args: [] }],
+    update: [{ arities: [1], args: [["varRef"]] }],
+    delay: [{ arities: [2], args: [["number"], ["function"]] }],
+    set: [{ arities: [1], args: [["number"]] }],
+    abs: [{ arities: [1], args: [["number"]], returns: "number" }],
+    acos: [{ arities: [1], args: [["number"]], returns: "number" }],
+    asin: [{ arities: [1], args: [["number"]], returns: "number" }],
+    atan: [
+        { arities: [1], args: [["number"]], returns: "number" },
+        { arities: [2], args: [["number"], ["number"]], returns: "number" },
+    ],
+    cos: [{ arities: [1], args: [["number"]], returns: "number" }],
+    deg: [{ arities: [1], args: [["number"]], returns: "number" }],
+    exp: [{ arities: [1], args: [["number"]], returns: "number" }],
+    log: [
+        { arities: [1], args: [["number"]], returns: "number" },
+        { arities: [2], args: [["number"], ["number"]], returns: "number" },
+    ],
+    max: [
+        {
+            minArgs: 1,
+            args: [["number"]],
+            varargs: ["number"],
+            returns: "number",
+        },
+    ],
+    min: [
+        {
+            minArgs: 1,
+            args: [["number"]],
+            varargs: ["number"],
+            returns: "number",
+        },
+    ],
+    rad: [{ arities: [1], args: [["number"]], returns: "number" }],
+    random: [
+        {
+            arities: [0],
+            args: [],
+            returns: "number",
+        },
+        {
+            arities: [1],
+            args: [["number"]],
+            returns: "number",
+        },
+        {
+            arities: [2],
+            args: [["number"], ["number"]],
+            returns: "number",
+        },
+    ],
+    randomseed: [{ arities: [1], args: [["number"]], returns: "number" }],
+    sin: [{ arities: [1], args: [["number"]], returns: "number" }],
+    sqrt: [{ arities: [1], args: [["number"]], returns: "number" }],
+    tan: [{ arities: [1], args: [["number"]], returns: "number" }],
+};
+
+const ALLOWED_FUNCTIONS_SET = new Set(Object.keys(SIGNATURES));
+
+const MESSAGES = {
+    LocalStatement: "Запрещено объявление переменных через local",
+    ForNumericStatement: "Запрещено использование цикла for",
+    ForGenericStatement: "Запрещено использование цикла for",
+    WhileStatement: "Запрещено использование цикла while",
+    RepeatStatement: "Запрещено использование цикла repeat",
+    GotoStatement: "Запрещено использование goto",
+    BreakStatement: "Запрещено использование break",
+    ReturnStatement: "Запрещено использование return",
+};
+
+const FORBIDDEN_STATEMENTS = new Set(Object.keys(MESSAGES));
+
+// Точечный обход ast
+export const CHILD_KEYS = {
+    Chunk: ["body"],
+    BlockStatement: ["body"],
+    CallStatement: ["expression"],
+    AssignmentStatement: ["variables", "init"],
+    CallExpression: ["base", "arguments"],
+    MemberExpression: ["base", "identifier"],
+    FunctionDeclaration: ["parameters", "body"],
+    IfStatement: ["clauses"],
+    IfClause: ["condition", "body"],
+    ElseifClause: ["condition", "body"],
+    ElseClause: ["body"],
+};
+
 function getRangeFromNode(node) {
     if (!node.loc)
         return {
@@ -51,17 +140,6 @@ function getCalleeInfo(call) {
     };
 }
 
-const ALLOWED_FUNCTIONS_SET = new Set([
-    "self",
-    "update",
-    "delay",
-    "set",
-    "abs",
-    "sin",
-    "cos",
-    "sqrt",
-]);
-
 function isVarRef(node, varSet) {
     return node.type === "Identifier" && varSet.has(node.name);
 }
@@ -73,21 +151,6 @@ function isNumberLike(node, varSet) {
 function isFunctionDecl(node) {
     return node.type === "FunctionDeclaration";
 }
-
-function isAny() {
-    return true;
-}
-
-const SIGNATURES = {
-    self: { arities: [0], args: [] },
-    update: { arities: [1], args: [["varRef"]] },
-    delay: { arities: [2], args: [["number"], ["function"]] },
-    set: { arities: [1], args: [["number"]] },
-    abs: { arities: [1], args: [["number"]], returns: "number" },
-    sin: { arities: [1], args: [["number"]], returns: "number" },
-    cos: { arities: [1], args: [["number"]], returns: "number" },
-    sqrt: { arities: [1], args: [["number"]], returns: "number" },
-};
 
 function inferType(node, varSet) {
     if (!node || typeof node !== "object") return "unknown";
@@ -127,8 +190,17 @@ function inferType(node, varSet) {
         case "CallExpression": {
             const callee = getCalleeInfo(node);
             if (!callee?.name) return "unknown";
-            const spec = SIGNATURES[callee.name];
-            return spec?.returns ?? "unknown";
+            const overloads = SIGNATURES[callee.name];
+            if (!overloads || overloads.length === 0) return "unknown";
+
+            const allReturns = new Set(
+                overloads.map((o) => o.returns ?? "unknown")
+            );
+            if (allReturns.size === 1) {
+                const only = [...allReturns][0];
+                return only;
+            }
+            return "unknown";
         }
         default:
             return "unknown";
@@ -144,33 +216,11 @@ function checkArgByType(node, typeTag, varSet) {
         case "function":
             return isFunctionDecl(node);
         case "any":
-            return isAny();
+            return true;
         default:
             return false;
     }
 }
-
-const FORBIDDEN_STATEMENTS = new Set([
-    "LocalStatement",
-    "ForNumericStatement",
-    "ForGenericStatement",
-    "WhileStatement",
-    "RepeatStatement",
-    "GotoStatement",
-    "BreakStatement",
-    "ReturnStatement",
-]);
-
-const MESSAGES = {
-    LocalStatement: "Запрещено объявление переменных через local",
-    ForNumericStatement: "Запрещено использование цикла for",
-    ForGenericStatement: "Запрещено использование цикла for",
-    WhileStatement: "Запрещено использование цикла while",
-    RepeatStatement: "Запрещено использование цикла repeat",
-    GotoStatement: "Запрещено использование goto",
-    BreakStatement: "Запрещено использование break",
-    ReturnStatement: "Запрещено использование return",
-};
 
 function isAllowedFunctionDecl(node, parent) {
     if (node.type !== "FunctionDeclaration") return false;
@@ -181,30 +231,76 @@ function isAllowedFunctionDecl(node, parent) {
     return idx === 1; */
 }
 
-function formatList(items, max = 5) {
-    const arr = Array.from(items);
-    return arr.length <= max
-        ? arr.join(", ")
-        : arr.slice(0, max).join(", ") + "…";
-}
-
 function humanTypeList(list) {
     return list.join("|"); // ["number","function"] -> "number|function"
 }
 
-function formatSignature(name, spec) {
-    // spec.args[i] — массив допустимых «типов» для i-го аргумента
-    const maxA = Math.max(...spec.arities);
-    return spec.arities
-        .map((a) => {
-            const parts = [];
-            for (let i = 0; i < a; i++) {
-                const alts = spec.args?.[i] ?? ["any"];
-                parts.push(humanTypeList(alts));
+function formatOverloadSignature(name, overload) {
+    const parts = [];
+    const fixedCount = Math.max(
+        overload.arities?.[0] ?? 0,
+        overload.minArgs ?? overload.args?.length ?? 0
+    );
+
+    for (let i = 0; i < fixedCount; i++) {
+        const alts = overload.args?.[i] ?? ["any"];
+        parts.push(humanTypeList(alts));
+    }
+
+    if (overload.varargs && overload.varargs.length > 0) {
+        parts.push(humanTypeList(overload.varargs), "...");
+    }
+
+    return `${name}(${parts.join(", ")})`;
+}
+
+function formatAllSignatures(name, overload) {
+    return overload.map((ov) => formatOverloadSignature(name, ov)).join(" / ");
+}
+
+function matchesArity(overload, argc) {
+    if (Array.isArray(overload.arities) && overload.arities.length > 0) {
+        return overload.arities.includes(argc);
+    }
+
+    const min = overload.minArgs ?? overload.args?.length ?? 0;
+    const hasVarargs =
+        Array.isArray(overload.varargs) && overload.varargs.length > 0;
+
+    if (argc < min) return false;
+    if (!hasVarargs) {
+        const max = overload.args?.length ?? 0;
+        return argc <= max;
+    }
+
+    return true;
+}
+
+function validateOverloadArgs(overload, args, varSet) {
+    const errors = [];
+
+    const fixedLen = Math.min(args.length, overload.args?.length ?? 0);
+    for (let i = 0; i < fixedLen; i++) {
+        const allowed = overload.args?.[i] ?? ["any"];
+        const ok = allowed.some((t) => checkArgByType(args[i], t, varSet));
+        if (!ok) {
+            errors.push({ index: i, node: args[i], expected: allowed });
+        }
+    }
+
+    const hasVarargs =
+        Array.isArray(overload.varargs) && overload.varargs.length > 0;
+    if (hasVarargs && args.length > (overload.args?.length ?? 0)) {
+        for (let i = overload.args?.length; i < args.length; i++) {
+            const allowed = overload.varargs;
+            const ok = allowed.some((t) => checkArgByType(args[i], t, varSet));
+            if (!ok) {
+                errors.push({ index: i, node: args[i], expected: allowed });
             }
-            return `${name}(${parts.join(", ")})`;
-        })
-        .join(" / ");
+        }
+    }
+
+    return errors;
 }
 
 function checkCallExpression(node, markers, varSet) {
@@ -218,7 +314,7 @@ function checkCallExpression(node, markers, varSet) {
         addMarker(
             markers,
             callee.target,
-            `Вызов запрещённой функции: ${callee.name}`
+            `Функцию ${callee.name} нужно вызывать как ${callee.name}(...), а не как метод объекта`
         );
         return;
     }
@@ -232,18 +328,16 @@ function checkCallExpression(node, markers, varSet) {
         return;
     }
 
-    const spec = SIGNATURES[callee.name];
-    if (!spec) return;
+    const overloads = SIGNATURES[callee.name];
+    if (!overloads || overloads.length === 0) return;
 
     const args = node.arguments ?? [];
-    if (!spec.arities.includes(args.length)) {
-        /* const variants = spec.arities
-            .map(
-                (arity) =>
-                    `${callee.name}(${new Array(arity).fill("…").join(", ")})`
-            )
-            .join(" / "); */
-        const variants = formatSignature(callee.name, spec);
+    const argc = args.length;
+
+    const candidates = overloads.filter((ov) => matchesArity(ov, argc));
+
+    if (candidates.length === 0) {
+        const variants = formatAllSignatures(callee.name, overloads);
         addMarker(
             markers,
             node,
@@ -252,46 +346,24 @@ function checkCallExpression(node, markers, varSet) {
         return;
     }
 
-    for (let i = 0; i < args.length; i++) {
-        const nodeArg = args[i];
-        const allowedTypes = spec.args[i] ?? ["any"];
-        const ok = allowedTypes.some((tag) =>
-            checkArgByType(nodeArg, tag, varSet)
-        );
-        if (!ok) {
-            const readable = allowedTypes.join("|");
-            addMarker(
-                markers,
-                nodeArg,
-                `Аргумент #${i + 1} функции ${
-                    callee.name
-                } имеет неверный тип. Ожидается: ${readable}`
-            );
-            if (allowedTypes.includes("varRef")) {
-                addMarker(
-                    markers,
-                    nodeArg,
-                    `Должен быть идентификатор существующей переменной (${formatList(
-                        varSet
-                    )})`
-                );
-            }
-            return;
+    let best = null;
+    for (const ov of candidates) {
+        const errs = validateOverloadArgs(ov, args, varSet);
+        if (!best || errs.length < best.errs.length) {
+            best = { ov, errs };
+            if (errs.length === 0) break;
         }
     }
 
-    if (callee.name === "delay") {
-        const args = node.arguments ?? [];
-        const ok =
-            args.length === 2 &&
-            args[0]?.type === "NumericLiteral" &&
-            args[1]?.type === "FunctionDeclaration";
-
-        if (!ok) {
+    if (best.errs.length > 0) {
+        for (const e of best.errs) {
+            const readable = humanTypeList(e.expected);
             addMarker(
                 markers,
-                callee.target,
-                "delay должен вызываться как delay(<секунды>, function() ... end)"
+                e.node,
+                `Аргумент #${e.index + 1} функции ${
+                    callee.name
+                } имеет неверный тип. Ожидается: ${readable}`
             );
         }
     }
@@ -316,20 +388,6 @@ function checkForbiddenConstructs(node, parent, markers) {
         );
     }
 }
-
-const CHILD_KEYS = {
-    Chunk: ["body"],
-    BlockStatement: ["body"],
-    CallStatement: ["expression"],
-    AssignmentStatement: ["variables", "init"],
-    CallExpression: ["base", "arguments"],
-    MemberExpression: ["base", "identifier"],
-    FunctionDeclaration: ["parameters", "body"],
-    IfStatement: ["clauses"],
-    IfClause: ["condition", "body"],
-    ElseifClause: ["condition", "body"],
-    ElseClause: ["body"],
-};
 
 function* iterateChildren(node) {
     const keys = CHILD_KEYS[node.type];
