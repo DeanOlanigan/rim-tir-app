@@ -1,3 +1,4 @@
+import { useValidationStore } from "@/store/validation-store";
 import { addNodeUtil } from "../add/addNode";
 import { createSettingUtil } from "../add/createSetting";
 import { removeAndUnbindSettingsUtil } from "../remove/removeAndUnbindSettings";
@@ -27,8 +28,10 @@ export function pasteNodeUtil(ctx, treeType, parentId, initialClipboard) {
         nextSourceTree = removeNodeUtil(nextSourceTree, idsSet);
     }
 
+    // TODO Нужно перебиндить при смене дерева
     let nextSettings = createSettingUtil(ctx.settings, gen.newSettings);
     if (clipboard.cut) {
+        useValidationStore.getState().clearErrors(idsSet);
         nextSettings = removeAndUnbindSettingsUtil(nextSettings, idsSet);
     }
 
