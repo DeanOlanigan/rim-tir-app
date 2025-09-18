@@ -155,9 +155,9 @@ function getVariableMaps(node, varIdsByName, varNameById) {
 
 function addToDepGraph(varsToCheckCycle, depGraphById, varIdsByName, id) {
     for (const rName of varsToCheckCycle) {
-        const targets = varIdsByName.get(rName) ?? [];
-        const n = targets.size;
-        if (n === 1) {
+        if (!rName) continue;
+        const targets = varIdsByName.get(rName) ?? new Set();
+        if (targets.size === 1) {
             const [targetId] = targets;
             if (!depGraphById[id]) depGraphById[id] = new Set();
             depGraphById[id].add(targetId);
@@ -165,7 +165,7 @@ function addToDepGraph(varsToCheckCycle, depGraphById, varIdsByName, id) {
     }
 }
 
-function validateVariableSpecific(
+export function validateVariableSpecific(
     varNameById,
     varIdsByName,
     depGraphById,
@@ -174,7 +174,7 @@ function validateVariableSpecific(
 ) {
     for (const id of varNameById.keys()) {
         const node = settings[id];
-        const expr = node.setting.luaExpression ?? "";
+        const expr = node.setting?.luaExpression;
         if (!expr) continue;
         const { markers, varsToCheckCycle } = luaAstParse(expr, varIdsByName);
         draft.set(

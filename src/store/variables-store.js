@@ -25,6 +25,8 @@ import {
 } from "@/utils/treeUtils/index";
 
 import { setIgnoreUtil } from "@/utils/treeUtils/edit/setIgnore";
+import { getVarDataStore } from "./selectors";
+import { validateVariableSpecific } from "@/utils/validation/runners/validateAll";
 
 const baseNodeInit = (type, name) => ({
     id: type,
@@ -159,12 +161,23 @@ export const useVariablesStore = create()(
                     );
                     const draft = new ErrorDraft();
 
-                    /* if (isVariables) {
-                        const variables = Object.values(newSettings).filter(
-                            (node) => node.type === NODE_TYPES.variable
+                    if (isVariables) {
+                        const t0 = performance.now();
+                        const depGraphById = {};
+                        const { varIdsByName, varNameById } =
+                            getVarDataStore(newSettings);
+                        validateVariableSpecific(
+                            varNameById,
+                            varIdsByName,
+                            depGraphById,
+                            newSettings,
+                            draft
                         );
-                        validateCyclicVariable({ variables, draft });
-                    } */
+                        console.log(
+                            "ON RENAME VAR CYCLE CHECK",
+                            performance.now() - t0
+                        );
+                    }
 
                     if (isNeedValidate) {
                         validateName({

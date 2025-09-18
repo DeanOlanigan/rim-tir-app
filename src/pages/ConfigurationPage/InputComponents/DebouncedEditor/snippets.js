@@ -17,12 +17,33 @@ export function getCompletionSnippets(monacoRef) {
                             "",
                         ].join("\n"),
                     },
-                    /* ...variables.map((v) => ({
-                                label: v.name,
-                                kind: monacoRef.current.languages
-                                    .CompletionItemKind.Variable,
-                                insertText: v.name,
-                            })), */
+                    {
+                        label: "Вызвать обновление переменной",
+                        kind: monacoRef.current.languages.CompletionItemKind
+                            .Function,
+                        insertTextRules:
+                            monacoRef.current.languages
+                                .CompletionItemInsertTextRule.InsertAsSnippet,
+                        insertText: "update(${1})",
+                    },
+                    {
+                        label: "Изменить значение текущей переменной",
+                        kind: monacoRef.current.languages.CompletionItemKind
+                            .Function,
+                        insertTextRules:
+                            monacoRef.current.languages
+                                .CompletionItemInsertTextRule.InsertAsSnippet,
+                        insertText: "set(${1})",
+                    },
+                    {
+                        label: "Получить значение текущей переменной",
+                        kind: monacoRef.current.languages.CompletionItemKind
+                            .Function,
+                        insertTextRules:
+                            monacoRef.current.languages
+                                .CompletionItemInsertTextRule.InsertAsSnippet,
+                        insertText: "self(${1})",
+                    },
                 ],
             };
         },

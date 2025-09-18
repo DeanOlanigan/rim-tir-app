@@ -4,7 +4,7 @@ import { Editor } from "@monaco-editor/react";
 import { useVariablesStore } from "@/store/variables-store";
 import debounce from "debounce";
 import { useVariableHighlightLuaParse } from "./hooks/useVariableHighlightLuaParse";
-import { getVarIdsByName, useVariablesNames } from "@/store/selectors";
+import { getVarData, useVariablesNames } from "@/store/selectors";
 import { ErrorDraft, setLuaCodeError } from "@/utils/validation";
 import { luaAstParse } from "@/utils/validation";
 import { getCompletionSnippets } from "./snippets";
@@ -28,46 +28,58 @@ export const DebouncedEditor = memo(function DebouncedEditor({
     const highlight = useVariableHighlightLuaParse(editorRef.current);
 
     useEffect(() => {
-        if (!luaExpression || !editorRef.current || !monacoRef.current) return;
+        const t0 = performance.now();
+        if (!editorRef.current || !monacoRef.current) return;
         const editor = editorRef.current;
         const model = editorRef.current?.getModel();
-        const variables = getVarIdsByName();
-        console.log("VARS IN USE EFFECT", variables, editor, model);
-
-        const { markers, varsToHighlight, varsToCheckCycle } = luaAstParse(
-            luaExpression,
-            variables
-        );
-        if (monacoRef.current?.editor && model) {
-            monacoRef.current.editor.setModelMarkers(model, "lua", markers);
-        }
-        highlight(varsToHighlight, editor);
-
+        const { varIdsByName, varNameById, variables } = getVarData();
         const depGraphById = {};
-        for (const rName of varsToCheckCycle) {
-            const targets = variables.get(rName) ?? [];
-            const n = targets.size;
-            if (n === 1) {
-                const [targetId] = targets;
-                if (!depGraphById[id]) depGraphById[id] = new Set();
-                depGraphById[id].add(targetId);
+
+        let nodeMarkers, nodeVarsToHighlight;
+        for (const node of variables.values()) {
+            const expr = node.setting?.luaExpression;
+            if (!expr) continue;
+            const nodeId = node.id;
+            const { markers, varsToHighlight, varsToCheckCycle } = luaAstParse(
+                expr,
+                varIdsByName
+            );
+            for (const rName of varsToCheckCycle) {
+                if (!rName) continue;
+                const targets = varIdsByName.get(rName) ?? new Set();
+                if (targets.size === 1) {
+                    const [targetId] = targets;
+                    if (!depGraphById[nodeId]) depGraphById[nodeId] = new Set();
+                    depGraphById[nodeId].add(targetId);
+                }
+            }
+            if (nodeId === id) {
+                nodeMarkers = markers;
+                nodeVarsToHighlight = varsToHighlight;
             }
         }
 
         const draft = new ErrorDraft();
         const tarjan = tarjanCyclicDeps(depGraphById);
-        console.log(depGraphById, varsToCheckCycle, tarjan);
         for (const [nodeId, scc] of Object.entries(tarjan)) {
             let msg = [];
             if (scc) {
-                const names = scc.map((v) => variables.get(v)).join("->");
+                const names = scc.map((v) => varNameById.get(v)).join("->");
                 msg = [`Обнаружена циклическая зависимость: ${names}`];
             }
             draft.set(nodeId, "name", "cyclic", msg);
         }
+        useValidationStore.getState().applyDraft2(draft);
 
-        /* const draft = validateCyclicVariable({ variables });
-        useValidationStore.getState().applyDraft2(draft); */
+        if (monacoRef.current?.editor && model) {
+            monacoRef.current.editor.setModelMarkers(
+                model,
+                "lua",
+                nodeMarkers ?? []
+            );
+        }
+        highlight(nodeVarsToHighlight ?? [], editor);
+        console.log("EFFECT PERF", performance.now() - t0);
     }, [luaExpression, varNames, id, highlight]);
 
     useEffect(() => {
@@ -90,10 +102,9 @@ export const DebouncedEditor = memo(function DebouncedEditor({
 
         providerRef.current = getCompletionSnippets(monacoRef);
 
-        const variables = getVarIdsByName();
-        console.log("VARS ON MOUNT", variables, editor, monaco);
+        const { varIdsByName } = getVarData();
         const code = editor.getValue();
-        const { markers, varsToHighlight } = luaAstParse(code, variables);
+        const { markers, varsToHighlight } = luaAstParse(code, varIdsByName);
         monaco.editor.setModelMarkers(editor.getModel(), "lua", markers);
         highlight(varsToHighlight, editor);
     }

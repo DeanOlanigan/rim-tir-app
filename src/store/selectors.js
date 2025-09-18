@@ -1,13 +1,7 @@
-export function selectSelectedData(settings, selectedIds) {
-    return Array.from(selectedIds)
-        .map((key) => settings[key])
-        .filter(Boolean);
-    //.reverse();
-}
-
 import { useShallow } from "zustand/shallow";
 import { useVariablesStore } from "./variables-store";
-import { useMemo } from "react";
+import { NODE_TYPES } from "@/config/constants";
+
 export function useVariablesList() {
     return useVariablesStore(
         useShallow((state) =>
@@ -28,40 +22,22 @@ export function useVariablesNames() {
     );
 }
 
-export function getVarIdsByName() {
+export function getVarData() {
     const { settings } = useVariablesStore.getState();
-    const variables = Object.values(settings).filter(
-        (node) => node.type === "variable"
-    );
-    const varIdsByName = new Map();
-    variables.forEach((node) => {
-        if (!varIdsByName.has(node.name))
-            varIdsByName.set(node.name, new Set());
-        varIdsByName.get(node.name).add(node.id);
-    });
-    return varIdsByName;
+    return getVarDataStore(settings);
 }
 
-export function useVarIdsByName() {
-    const varsLite = useVariablesStore(
-        useShallow((state) =>
-            Object.values(state.settings)
-                .filter((node) => node.type === "variable")
-                .map((node) => ({ id: node.id, name: node.name }))
-        )
-    );
-
-    return useMemo(() => {
-        const map = new Map();
-        for (const { id, name } of varsLite) {
-            if (!name) continue;
-            let set = map.get(name);
-            if (!set) {
-                set = new Set();
-                map.set(name, set);
-            }
-            set.add(id);
-        }
-        return map;
-    }, [varsLite]);
+export function getVarDataStore(settings) {
+    const varIdsByName = new Map();
+    const varNameById = new Map();
+    const variables = new Map();
+    Object.values(settings).forEach((node) => {
+        if (node.type !== NODE_TYPES.variable) return;
+        const name = node.name ?? "";
+        if (!varIdsByName.has(name)) varIdsByName.set(name, new Set());
+        varIdsByName.get(name).add(node.id);
+        varNameById.set(node.id, name);
+        variables.set(node.id, node);
+    });
+    return { varIdsByName, varNameById, variables };
 }
