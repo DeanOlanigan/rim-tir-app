@@ -3,14 +3,13 @@ import { useColorMode } from "@/components/ui/color-mode";
 import { Editor } from "@monaco-editor/react";
 import { useVariablesStore } from "@/store/variables-store";
 import debounce from "debounce";
-import { useLuaDiagnostics } from "./hooks/useLuaDiagnostics";
 import { useVariableHighlightLuaParse } from "./hooks/useVariableHighlightLuaParse";
-import { useVariablesList } from "@/store/selectors";
-import { setLuaCodeError } from "@/utils/validation";
-import { validateCyclicVariable } from "@/utils/validation";
+import { getVarIdsByName, useVariablesNames } from "@/store/selectors";
+import { ErrorDraft, setLuaCodeError } from "@/utils/validation";
 import { luaAstParse } from "@/utils/validation";
 import { getCompletionSnippets } from "./snippets";
 import { useValidationStore } from "@/store/validation-store";
+import { tarjanCyclicDeps } from "@/utils/validation/engines/luaValidationService/tarjan";
 
 export const DebouncedEditor = memo(function DebouncedEditor({
     luaExpression,
@@ -20,26 +19,56 @@ export const DebouncedEditor = memo(function DebouncedEditor({
 }) {
     const { colorMode } = useColorMode();
     const setSettings = useVariablesStore.getState().setSettings;
-    const variables = useVariablesList();
+    const varNames = useVariablesNames();
 
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
     const providerRef = useRef(null);
 
-    const diagnostics = useLuaDiagnostics();
     const highlight = useVariableHighlightLuaParse(editorRef.current);
 
     useEffect(() => {
-        if (luaExpression !== undefined) {
-            const editor = editorRef.current;
-            const model = editorRef.current?.getModel();
-            const { ast, error } = luaAstParse(luaExpression);
-            if (ast) highlight(ast, editor, variables);
-            diagnostics(ast, error, monacoRef.current, model, variables);
-            const draft = validateCyclicVariable({ variables });
-            useValidationStore.getState().applyDraft2(draft);
+        if (!luaExpression || !editorRef.current || !monacoRef.current) return;
+        const editor = editorRef.current;
+        const model = editorRef.current?.getModel();
+        const variables = getVarIdsByName();
+        console.log("VARS IN USE EFFECT", variables, editor, model);
+
+        const { markers, varsToHighlight, varsToCheckCycle } = luaAstParse(
+            luaExpression,
+            variables
+        );
+        if (monacoRef.current?.editor && model) {
+            monacoRef.current.editor.setModelMarkers(model, "lua", markers);
         }
-    }, [luaExpression, highlight, diagnostics, variables]);
+        highlight(varsToHighlight, editor);
+
+        const depGraphById = {};
+        for (const rName of varsToCheckCycle) {
+            const targets = variables.get(rName) ?? [];
+            const n = targets.size;
+            if (n === 1) {
+                const [targetId] = targets;
+                if (!depGraphById[id]) depGraphById[id] = new Set();
+                depGraphById[id].add(targetId);
+            }
+        }
+
+        const draft = new ErrorDraft();
+        const tarjan = tarjanCyclicDeps(depGraphById);
+        console.log(depGraphById, varsToCheckCycle, tarjan);
+        for (const [nodeId, scc] of Object.entries(tarjan)) {
+            let msg = [];
+            if (scc) {
+                const names = scc.map((v) => variables.get(v)).join("->");
+                msg = [`Обнаружена циклическая зависимость: ${names}`];
+            }
+            draft.set(nodeId, "name", "cyclic", msg);
+        }
+
+        /* const draft = validateCyclicVariable({ variables });
+        useValidationStore.getState().applyDraft2(draft); */
+    }, [luaExpression, varNames, id, highlight]);
 
     useEffect(() => {
         return () => {
@@ -61,10 +90,12 @@ export const DebouncedEditor = memo(function DebouncedEditor({
 
         providerRef.current = getCompletionSnippets(monacoRef);
 
+        const variables = getVarIdsByName();
+        console.log("VARS ON MOUNT", variables, editor, monaco);
         const code = editor.getValue();
-        const { ast, error } = luaAstParse(code);
-        if (ast) highlight(ast, editor, variables);
-        diagnostics(ast, error, monaco, editor.getModel(), variables);
+        const { markers, varsToHighlight } = luaAstParse(code, variables);
+        monaco.editor.setModelMarkers(editor.getModel(), "lua", markers);
+        highlight(varsToHighlight, editor);
     }
 
     const debounced = useRef(

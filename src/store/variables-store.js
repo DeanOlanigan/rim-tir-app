@@ -159,12 +159,12 @@ export const useVariablesStore = create()(
                     );
                     const draft = new ErrorDraft();
 
-                    if (isVariables) {
+                    /* if (isVariables) {
                         const variables = Object.values(newSettings).filter(
                             (node) => node.type === NODE_TYPES.variable
                         );
                         validateCyclicVariable({ variables, draft });
-                    }
+                    } */
 
                     if (isNeedValidate) {
                         validateName({

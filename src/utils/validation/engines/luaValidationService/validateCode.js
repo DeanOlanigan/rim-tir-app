@@ -1,4 +1,4 @@
-const SEVERITY_ERROR = 8;
+export const SEVERITY_ERROR = 8;
 
 const SIGNATURES = {
     self: [{ arities: [0], args: [] }],
@@ -61,7 +61,7 @@ const SIGNATURES = {
 
 const ALLOWED_FUNCTIONS_SET = new Set(Object.keys(SIGNATURES));
 
-const MESSAGES = {
+export const MESSAGES = {
     LocalStatement: "Запрещено объявление переменных через local",
     ForNumericStatement: "Запрещено использование цикла for",
     ForGenericStatement: "Запрещено использование цикла for",
@@ -72,7 +72,7 @@ const MESSAGES = {
     ReturnStatement: "Запрещено использование return",
 };
 
-const FORBIDDEN_STATEMENTS = new Set(Object.keys(MESSAGES));
+export const FORBIDDEN_STATEMENTS = new Set(Object.keys(MESSAGES));
 
 // Точечный обход ast
 export const CHILD_KEYS = {
@@ -88,6 +88,8 @@ export const CHILD_KEYS = {
     ElseifClause: ["condition", "body"],
     ElseClause: ["body"],
 };
+
+const BINARY_OPERATORS = new Set(["+", "-", "*", "/", "%", "^"]);
 
 function getRangeFromNode(node) {
     if (!node.loc)
@@ -105,7 +107,7 @@ function getRangeFromNode(node) {
     };
 }
 
-function addMarker(markers, node, message, severity = SEVERITY_ERROR) {
+export function addMarker(markers, node, message, severity = SEVERITY_ERROR) {
     markers.push({
         ...getRangeFromNode(node),
         message,
@@ -113,7 +115,7 @@ function addMarker(markers, node, message, severity = SEVERITY_ERROR) {
     });
 }
 
-function getCalleeInfo(call) {
+export function getCalleeInfo(call) {
     if (call.type !== "CallExpression") return null;
     const base = call.base;
     if (base.type === "Identifier") {
@@ -175,8 +177,7 @@ function inferType(node, varSet) {
             return "unknown";
         }
         case "BinaryExpression": {
-            const opsNumber = new Set(["+", "-", "*", "/", "%", "^"]);
-            if (opsNumber.has(node.operator)) {
+            if (BINARY_OPERATORS.has(node.operator)) {
                 const lt = inferType(node.left, varSet);
                 const rt = inferType(node.right, varSet);
                 return lt === "number" && rt === "number"
@@ -303,10 +304,9 @@ function validateOverloadArgs(overload, args, varSet) {
     return errors;
 }
 
-function checkCallExpression(node, markers, varSet) {
+export function checkCallExpression(node, markers, varSet) {
     const callee = getCalleeInfo(node);
-    if (!callee?.name) return;
-
+    if (!callee.name) return;
     if (
         callee.kind === "MemberExpression" &&
         ALLOWED_FUNCTIONS_SET.has(callee.name)

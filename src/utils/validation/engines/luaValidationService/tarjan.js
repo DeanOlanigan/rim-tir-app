@@ -50,7 +50,7 @@ export function tarjanCyclicDeps(graph) {
     for (const scc of sccs) {
         if (scc.length === 1) {
             const node = scc[0];
-            if (graph[node] && graph[node].includes(node)) {
+            if (graph[node] && graph[node].has(node)) {
                 result[node] = [node];
             } else {
                 result[node] = null;

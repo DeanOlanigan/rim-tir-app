@@ -3,13 +3,14 @@ import { useCallback, useEffect, useRef } from "react";
 export function useVariableHighlightLuaParse(editor) {
     const decorationIdRef = useRef([]);
 
-    const highlight = useCallback((ast, editor, variables) => {
-        if (!editor || !ast) return;
+    const highlight = useCallback((usages, editor) => {
+        if (!editor) return;
+        /* if (!editor || !ast) return;
         let usages;
         usages = getVariableUsages(
             ast,
             variables.map((v) => v.name)
-        );
+        ); */
         const decorations = createVariableDecorations(usages);
         decorationIdRef.current = editor.deltaDecorations(
             decorationIdRef.current,

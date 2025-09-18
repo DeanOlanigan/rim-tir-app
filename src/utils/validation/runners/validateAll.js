@@ -1,17 +1,16 @@
 import { NODE_TYPES, VALIDATOR } from "../utils/const";
 import { ErrorDraft } from "../core/ErrorDraft";
-import {
+/* import {
     validateCode,
-    validateCodeNew,
     validateCyclicVariable,
-} from "../engines/luaValidationService";
+} from "../engines/luaValidationService"; */
 import { luaAstParse } from "../engines/luaValidationService";
 import { validateNamePatternMatch } from "../rules/name/nameValidation";
 import { validateParameter } from "./validateParameter";
 import { NODE_UNIQUE_NAMES } from "@/config/constants";
-import { validateCyclicVariableAST } from "../engines/luaValidationService/validateCyclicVariable";
+import { tarjanCyclicDeps } from "../engines/luaValidationService/tarjan";
 
-export function validateAllOld(settings, configuratorConfig) {
+/* export function validateAllOld(settings, configuratorConfig) {
     const t0 = performance.now();
     const draft = new ErrorDraft();
     const map = {};
@@ -40,9 +39,9 @@ export function validateAllOld(settings, configuratorConfig) {
     validateCyclicVariable({ variables, draft });
     console.log("ALL VALIDATION DRAFT", draft, performance.now() - t0);
     return draft;
-}
+} */
 
-function validateVariableCode(node, variables, asts, draft) {
+/* function validateVariableCode(node, variables, asts, draft) {
     if (node.type === "variable") {
         variables.push(node);
         // TODO Подумать, как можно оптимизировать работу с ast (переиспользование)
@@ -57,9 +56,9 @@ function validateVariableCode(node, variables, asts, draft) {
             markers.map((m) => m.message)
         );
     }
-}
+} */
 
-function validateNamePattern(node, draft, map) {
+/* function validateNamePattern(node, draft, map) {
     if (node.name && node.rootId && NODE_UNIQUE_NAMES.has(node.type)) {
         draft.set(
             node.id,
@@ -73,9 +72,67 @@ function validateNamePattern(node, draft, map) {
             node.id,
         ]);
     }
+} */
+
+export function validateAll(settings, configuratorConfig) {
+    const t0 = performance.now();
+    const draft = new ErrorDraft();
+
+    const varIdsByName = new Map();
+    const varNameById = new Map();
+    const depGraphById = {};
+
+    const uniqueBuckets = new Map();
+
+    for (const node of Object.values(settings)) {
+        getVariableMaps(node, varIdsByName, varNameById);
+        validateNamePatternOnePass(node, uniqueBuckets, draft);
+        validateSettings(node, settings, configuratorConfig, draft);
+    }
+
+    validateVariableSpecific(
+        varNameById,
+        varIdsByName,
+        depGraphById,
+        settings,
+        draft
+    );
+
+    console.log("ALL VALIDATION DRAFT", draft, performance.now() - t0);
+    return draft;
 }
 
-function validateSettings(node, settings, draft, configuratorConfig) {
+function validateNamePatternOnePass(node, buckets, draft) {
+    if (node.name && node.rootId && NODE_UNIQUE_NAMES.has(node.type)) {
+        const regexErrors = validateNamePatternMatch(node.name);
+        draft.set(node.id, "name", VALIDATOR.REGEX, regexErrors);
+
+        let rootMap = buckets.get(node.rootId);
+        if (!rootMap) {
+            rootMap = new Map();
+            buckets.set(node.rootId, rootMap);
+        }
+
+        let entry = rootMap.get(node.name);
+        if (!entry) {
+            entry = { firstId: node.id, hasDup: false };
+            rootMap.set(node.name, entry);
+            draft.set(node.id, "name", VALIDATOR.UNIQUE, []);
+        } else {
+            if (!entry.hasDup) {
+                entry.hasDup = true;
+                draft.set(entry.firstId, "name", VALIDATOR.UNIQUE, [
+                    `Значение "${node.name}" уже существует`,
+                ]);
+            }
+            draft.set(node.id, "name", VALIDATOR.UNIQUE, [
+                `Значение "${node.name}" уже существует`,
+            ]);
+        }
+    }
+}
+
+function validateSettings(node, settings, configuratorConfig, draft) {
     if (!node.setting) return;
     for (const paramKey of Object.keys(node.setting)) {
         validateParameter(
@@ -88,68 +145,58 @@ function validateSettings(node, settings, draft, configuratorConfig) {
     }
 }
 
-export function validateAll(settings, configuratorConfig) {
-    const t0 = performance.now();
-    const draft = new ErrorDraft();
+function getVariableMaps(node, varIdsByName, varNameById) {
+    if (node.type !== NODE_TYPES.variable) return;
+    const name = node.name ?? "";
+    if (!varIdsByName.has(name)) varIdsByName.set(name, new Set());
+    varIdsByName.get(name).add(node.id);
+    varNameById.set(node.id, name);
+}
 
-    const variables = [];
-    const uniqueBuckets = new Map();
-
-    for (const node of Object.values(settings)) {
-        if (node.type === NODE_TYPES.variable) {
-            variables.push(node);
+function addToDepGraph(varsToCheckCycle, depGraphById, varIdsByName, id) {
+    for (const rName of varsToCheckCycle) {
+        const targets = varIdsByName.get(rName) ?? [];
+        const n = targets.size;
+        if (n === 1) {
+            const [targetId] = targets;
+            if (!depGraphById[id]) depGraphById[id] = new Set();
+            depGraphById[id].add(targetId);
         }
-        validateNamePatternOnePass(node, draft, uniqueBuckets);
-        validateSettings(node, settings, draft, configuratorConfig);
     }
+}
 
-    const asts = new Map();
-
-    for (const node of variables) {
+function validateVariableSpecific(
+    varNameById,
+    varIdsByName,
+    depGraphById,
+    settings,
+    draft
+) {
+    for (const id of varNameById.keys()) {
+        const node = settings[id];
         const expr = node.setting.luaExpression ?? "";
-
-        const { ast, error } = luaAstParse(expr);
-        if (ast) asts.set(node.id, { id: node.id, ast });
-
-        const markers = validateCodeNew(ast, error, variables);
+        if (!expr) continue;
+        const { markers, varsToCheckCycle } = luaAstParse(expr, varIdsByName);
         draft.set(
-            node.id,
+            id,
             "luaExpression",
             "code",
             markers.map((m) => m.message)
         );
+        addToDepGraph(varsToCheckCycle, depGraphById, varIdsByName, id);
     }
 
-    validateCyclicVariable({ variables, draft });
-
-    console.log("ALL VALIDATION DRAFT", draft, performance.now() - t0);
-    return draft;
+    validateVariableCyclic(depGraphById, varNameById, draft);
 }
 
-function validateNamePatternOnePass(node, draft, buckets) {
-    if (node.name && node.rootId && NODE_UNIQUE_NAMES.has(node.type)) {
-        const regexErrors = validateNamePatternMatch(node.name);
-        draft.set(node.id, "name", VALIDATOR.REGEX, regexErrors);
-
-        let rootMap = buckets.get(node.rootId);
-        if (!rootMap) {
-            rootMap = new Map();
-            buckets.set(node.rootId, rootMap);
+function validateVariableCyclic(depGraphById, varNameById, draft) {
+    const tarjan = tarjanCyclicDeps(depGraphById);
+    for (const [nodeId, scc] of Object.entries(tarjan)) {
+        let msg = [];
+        if (scc) {
+            const names = scc.map((v) => varNameById.get(v)).join("->");
+            msg = [`Обнаружена циклическая зависимость: ${names}`];
         }
-        const entry = rootMap.get(node.name);
-        if (!entry) {
-            rootMap.set(node.name, { firstId: node.id, dupCount: 0 });
-            draft.set(node.id, "name", VALIDATOR.UNIQUE, []);
-        } else {
-            if (entry.dupCount === 0) {
-                draft.set(node.id, "name", VALIDATOR.UNIQUE, [
-                    `Значение "${node.name}" уже существует`,
-                ]);
-            }
-            entry.dupCount++;
-            draft.set(node.id, "name", VALIDATOR.UNIQUE, [
-                `Значение "${node.name}" уже существует`,
-            ]);
-        }
+        draft.set(nodeId, "name", "cyclic", msg);
     }
 }

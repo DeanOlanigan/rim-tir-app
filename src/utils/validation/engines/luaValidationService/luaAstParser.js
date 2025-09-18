@@ -1,11 +1,55 @@
 import { parse } from "luaparse";
+import {
+    checkForbiddenConstructs,
+    collectFunctionDecls,
+    getVarsToCheckCycle,
+    getVarsToHighlight,
+    validateCallExpression,
+} from "./validateNode";
+import { addMarker, SEVERITY_ERROR } from "./validateCode";
 
-export function luaAstParse(code) {
-    let ast, error;
+export function luaAstParse(code, varIdsByName) {
+    const markers = [];
+    const varsToHighlight = [];
+    const varsToCheckCycle = new Set();
+
+    const allFn = [];
+    const allowedFn = new WeakSet();
+
     try {
-        ast = parse(code, { locations: true, ranges: true });
-    } catch (e) {
-        error = e;
+        parse(code, {
+            locations: true,
+            ranges: true,
+            onCreateNode: (node) => {
+                checkForbiddenConstructs(node, markers);
+                validateCallExpression(node, markers, varIdsByName);
+                collectFunctionDecls(node, allFn, allowedFn);
+                getVarsToCheckCycle(node, varIdsByName, varsToCheckCycle);
+                getVarsToHighlight(node, varIdsByName, varsToHighlight);
+            },
+        });
+
+        for (const fn of allFn) {
+            if (!allowedFn.has(fn)) {
+                addMarker(
+                    markers,
+                    fn,
+                    "Объявление функций разрешено только через delay"
+                );
+            }
+        }
+    } catch (error) {
+        markers.push({
+            startLineNumber: error.line || 1,
+            startColumn: error.column || 1,
+            endLineNumber: error.line || 1,
+            endColumn: (error.column || 1) + 1,
+            message: "Синтаксическая ошибка: " + error.message,
+            severity: SEVERITY_ERROR,
+        });
     }
-    return { ast, error };
+
+    //console.log("PARSE RESULT", markers, varsToHighlight, depGraph);
+
+    return { markers, varsToHighlight, varsToCheckCycle };
 }
