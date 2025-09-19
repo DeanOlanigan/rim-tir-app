@@ -103,6 +103,16 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
                     )}
                 </HStack>
             }
+            id={
+                <Text
+                    fontWeight={"medium"}
+                    fontFamily={"mono"}
+                    fontSize={"xs"}
+                    color={"fg.subtle"}
+                >
+                    {node.id}
+                </Text>
+            }
             errors={<NodeError validationErrors={validationErrors} />}
             counter={
                 children.length > 0 && (
