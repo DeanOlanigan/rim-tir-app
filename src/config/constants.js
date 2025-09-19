@@ -15,20 +15,6 @@ export const NODE_TYPES = {
     root: "root",
 };
 
-export const DO_NOT_VALIDATE = new Set([
-    NODE_TYPES.root,
-    NODE_TYPES.folder,
-    NODE_TYPES.dataObject,
-]);
-
-export const NODE_UNIQUE_NAMES = new Set([
-    NODE_TYPES.interface,
-    NODE_TYPES.protocol,
-    NODE_TYPES.variable,
-    NODE_TYPES.protocolSpecific,
-    NODE_TYPES.interfaceSpecific,
-]);
-
 export const CONNECTIONS_TREES = new Set([TREE_TYPES.send, TREE_TYPES.receive]);
 
 export const MAX_NAME_LENGTH = 50;

@@ -8,7 +8,8 @@ import {
 } from "./validateNode";
 import { addMarker, SEVERITY_ERROR } from "./validateCode";
 
-export function luaAstParse(code, varIdsByName) {
+export function luaAstParse(code, varIdsByName, id) {
+    const t0 = performance.now();
     const markers = [];
     const varsToHighlight = [];
     const varsToCheckCycle = new Set();
@@ -50,6 +51,6 @@ export function luaAstParse(code, varIdsByName) {
     }
 
     //console.log("PARSE RESULT", markers, varsToHighlight, depGraph);
-
+    console.log(`${id} AST PERF`, performance.now() - t0);
     return { markers, varsToHighlight, varsToCheckCycle };
 }

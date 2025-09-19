@@ -24,3 +24,19 @@ export const NODE_TYPES = {
     protocol: "protocol",
     interface: "interface",
 };
+
+export const DO_NOT_VALIDATE = new Set([
+    NODE_TYPES.root,
+    NODE_TYPES.folder,
+    NODE_TYPES.dataObject,
+]);
+
+export const NODE_UNIQUE_NAMES = new Set([
+    NODE_TYPES.interface,
+    NODE_TYPES.protocol,
+    NODE_TYPES.variable,
+    NODE_TYPES.protocolSpecific,
+    NODE_TYPES.interfaceSpecific,
+]);
+
+export const isNeedValidate = (nodeType) => NODE_UNIQUE_NAMES.has(nodeType);

@@ -1,13 +1,16 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { NODE_TYPES, TREE_TYPES } from "@/config/constants";
 import { useValidationStore } from "@/store/validation-store";
-import { validateCyclicVariable } from "@/utils/validation";
-import { validateParameter } from "@/utils/validation";
-import { validateName } from "@/utils/validation";
-import { validateAll } from "@/utils/validation";
-import { ErrorDraft } from "@/utils/validation";
-import { NODE_TYPES, NODE_UNIQUE_NAMES, TREE_TYPES } from "@/config/constants";
+import { configuratorConfig } from "@/utils/configurationParser";
+import {
+    isNeedValidate,
+    revalidateVars,
+    validateParameter,
+    validateName,
+    validateAll,
+    ErrorDraft,
+} from "@/utils/validation";
 import {
     removeNodeUtil,
     removeAndUnbindSettingsUtil,
@@ -22,11 +25,8 @@ import {
     editSettingUtil,
     computeClipboard,
     pasteNodeUtil,
+    setIgnoreUtil,
 } from "@/utils/treeUtils/index";
-
-import { setIgnoreUtil } from "@/utils/treeUtils/edit/setIgnore";
-import { getVarDataStore } from "./selectors";
-import { validateVariableSpecific } from "@/utils/validation/runners/validateAll";
 
 const baseNodeInit = (type, name) => ({
     id: type,
@@ -99,7 +99,7 @@ export const useVariablesStore = create()(
                 useValidationStore.getState().applyDraft2(draft);
             },
 
-            setSettings: (nodeId, updateData, shoudValidate = true) =>
+            setSettings: (nodeId, updateData) =>
                 set((state) => {
                     const newSettings = editSettingUtil(
                         state.settings,
@@ -107,16 +107,21 @@ export const useVariablesStore = create()(
                         updateData
                     );
 
-                    if (shoudValidate) {
-                        const param = Object.keys(updateData)[0];
-                        const draft = validateParameter(
-                            nodeId,
-                            param,
-                            newSettings,
-                            configuratorConfig
-                        );
-                        useValidationStore.getState().applyDraft2(draft);
+                    let draft = null;
+                    const params = Object.keys(updateData);
+                    for (const param of params) {
+                        if (param === "luaExpression") {
+                            draft = revalidateVars(newSettings);
+                        } else {
+                            draft = validateParameter(
+                                nodeId,
+                                param,
+                                newSettings,
+                                configuratorConfig
+                            );
+                        }
                     }
+                    useValidationStore.getState().applyDraft2(draft);
 
                     return { settings: newSettings };
                 }),
@@ -154,32 +159,16 @@ export const useVariablesStore = create()(
                         name
                     );
 
-                    const isVariables =
-                        newSettings[nodeId].type === NODE_TYPES.variable;
-                    const isNeedValidate = NODE_UNIQUE_NAMES.has(
-                        newSettings[nodeId].type
-                    );
+                    const nodeType = newSettings[nodeId].type;
+                    const isVariables = nodeType === NODE_TYPES.variable;
+                    const isNeedVal = isNeedValidate(nodeType);
                     const draft = new ErrorDraft();
 
                     if (isVariables) {
-                        const t0 = performance.now();
-                        const depGraphById = {};
-                        const { varIdsByName, varNameById } =
-                            getVarDataStore(newSettings);
-                        validateVariableSpecific(
-                            varNameById,
-                            varIdsByName,
-                            depGraphById,
-                            newSettings,
-                            draft
-                        );
-                        console.log(
-                            "ON RENAME VAR CYCLE CHECK",
-                            performance.now() - t0
-                        );
+                        revalidateVars(newSettings, draft);
                     }
 
-                    if (isNeedValidate) {
+                    if (isNeedVal) {
                         validateName({
                             id: nodeId,
                             settings: newSettings,
