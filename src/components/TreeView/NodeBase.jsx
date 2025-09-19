@@ -1,7 +1,7 @@
 import { NodeToggleBtn } from "./NodeToggleBtn";
 import { IndentLines } from "./IndentLines";
 import { Badge } from "./Badge";
-import { LuPiggyBank } from "react-icons/lu";
+import { LuBan } from "react-icons/lu";
 import { Icon, HStack } from "@chakra-ui/react";
 import { iconsMap } from "@/config/icons";
 import { configuratorConfig } from "@/utils/configurationParser";
@@ -42,26 +42,19 @@ export const NodeBase = memo(function NodeBase({
             {...accessorIsIgnoredStyle}
         >
             <IndentLines paddingLeft={paddingLeft} />
-            <HStack w={"100%"} minW={0} truncate>
+            <HStack w={"100%"}>
                 {!node.isLeaf && (
                     <NodeToggleBtn
                         toggle={() => node.toggle()}
                         isOpen={node.isOpen}
                     />
                 )}
-                <HStack
-                    w={"100%"}
-                    pl={"2"}
-                    {...isCuttedStyle}
-                    minW={0}
-                    truncate
-                >
+                <HStack w={"100%"} pl={"2"} {...isCuttedStyle} minW={0}>
                     {isIgnored && (
                         <Icon
                             color={"red.400"}
-                            strokeWidth={2}
-                            size={"lg"}
-                            as={LuPiggyBank}
+                            strokeWidth={3}
+                            as={LuBan}
                             title={"Заблокирован"}
                         />
                     )}
