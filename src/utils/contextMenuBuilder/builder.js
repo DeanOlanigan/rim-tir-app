@@ -36,7 +36,6 @@ function addMenuForFolder(
     nodeByPathEl,
     allowedContext
 ) {
-    // BUG Ломается проверка при перетаскивании узлов
     if (nodeByPathEl.parentPath === "#") {
         for (const node of baseNodes) {
             const path = `#/${node.node}`;

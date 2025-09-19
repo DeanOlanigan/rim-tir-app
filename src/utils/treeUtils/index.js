@@ -5,11 +5,7 @@ export { addNodeUtil } from "./add/addNode";
 export { removeNodeUtil, deleteNodeUtil } from "./remove/removeTreeNodes";
 export { removeAndUnbindSettingsUtil } from "./remove/removeAndUnbindSettings";
 export { removeSettingUtil } from "./remove/removeSettings";
-export {
-    getIdsSetNormalizedContext,
-    getIdsSetNormalized,
-    getIdsSetWithoutNested,
-} from "./core/ids";
+export { getIdsSetNormalizedContext } from "./core/ids";
 export { getParentId } from "./core/parentOps";
 export { moveNodesUtil } from "./move/moveNode";
 export { moveSettingUtil } from "./move/moveSetting";
