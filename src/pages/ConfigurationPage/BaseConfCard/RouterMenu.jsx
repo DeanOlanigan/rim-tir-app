@@ -1,5 +1,4 @@
 import { Button, Menu, Portal } from "@chakra-ui/react";
-import { toaster } from "@/components/ui/toaster";
 import { convertStateToXml } from "@/utils/xml/storeToXml";
 import { useVariablesStore } from "@/store/variables-store";
 import { useConfigInfoStore } from "@/store/config-info-store";
@@ -16,8 +15,8 @@ export const RouterMenu = () => {
     const currentState = useVariablesStore.getState();
     const currentConfigInfo = useConfigInfoStore.getState().configInfo;
 
-    const errorsTree = useValidationStore((state) => state.errorsTree);
-    const hasErrors = !!errorsTree && errorsTree.size !== 0;
+    const errorsTreeSize = useValidationStore((state) => state.errorsTree.size);
+    const hasErrors = errorsTreeSize > 0;
 
     const startM = useStartTirMutation();
     const stopM = useStopTirMutation();
@@ -26,14 +25,7 @@ export const RouterMenu = () => {
     const refreshM = useRefreshConfigurationMutation();
 
     const sendConfigHandler = () => {
-        if (hasErrors) {
-            toaster.create({
-                title: "Конфигурация не отправлена",
-                description: "Конфигурация не прошла валидацию",
-                type: "error",
-            });
-            return;
-        }
+        if (hasErrors) return;
         const xml = convertStateToXml(currentState, currentConfigInfo);
         uploadM.mutate(xml);
     };
@@ -55,7 +47,7 @@ export const RouterMenu = () => {
                         <Menu.Item
                             value="new-txt"
                             onClick={sendConfigHandler}
-                            disabled={uploadM.isPending}
+                            disabled={uploadM.isPending || hasErrors}
                         >
                             {uploadM.isPending
                                 ? "Отправка..."
