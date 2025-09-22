@@ -1,4 +1,4 @@
-import { useShallow } from "zustand/shallow";
+import { shallow, useShallow } from "zustand/shallow";
 import { useVariablesStore } from "./variables-store";
 export function useVariablesList() {
     return useVariablesStore(
@@ -9,3 +9,21 @@ export function useVariablesList() {
         )
     );
 }
+
+export function useSelectedIds(type) {
+    return useVariablesStore((state) => state.selectedIds[type]);
+}
+
+export const useNodesByIds = (ids) =>
+    useVariablesStore(useShallow((s) => ids.map((id) => s.settings[id])));
+
+export const useTypesByIds = (ids) =>
+    useVariablesStore((s) => ids.map((id) => s.settings[id]?.type), shallow);
+
+export const useChildrenIds = (id) =>
+    useVariablesStore(useShallow((s) => s.settings[id]?.children ?? []));
+
+export const useChildrenNodes = (id) => {
+    const childrenIds = useChildrenIds(id);
+    return useNodesByIds(childrenIds);
+};

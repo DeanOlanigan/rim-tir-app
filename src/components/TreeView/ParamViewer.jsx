@@ -18,6 +18,7 @@ export const ParamViewer = memo(function ParamViewer({
     isVariable,
 }) {
     const paramValues = useParameters(path);
+    console.log(paramValues);
 
     return paramValues.map((value) =>
         settings?.[value.param] ? (
