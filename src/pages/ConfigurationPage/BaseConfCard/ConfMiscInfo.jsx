@@ -1,5 +1,4 @@
-import { Text, Stack, StackSeparator } from "@chakra-ui/react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Text, Stack, StackSeparator, Skeleton } from "@chakra-ui/react";
 import { useConfigInfoStore } from "@/store/config-info-store";
 
 export const ConfMiscInfo = () => {
