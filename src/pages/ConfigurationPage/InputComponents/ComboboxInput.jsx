@@ -60,7 +60,11 @@ export const ComboboxInput = ({ id, reset = null }) => {
             onBlur={() => reset && reset()}
         >
             <Combobox.Control>
-                <Combobox.Input placeholder={"Введите название переменной"} />
+                <Combobox.Input
+                    pe={"6"}
+                    truncate
+                    placeholder={"Введите название переменной"}
+                />
                 <Combobox.IndicatorGroup>
                     <Combobox.ClearTrigger />
                     <Combobox.Trigger />

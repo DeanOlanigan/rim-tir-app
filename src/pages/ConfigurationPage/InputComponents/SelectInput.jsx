@@ -3,7 +3,6 @@ import { useVariablesStore } from "@/store/variables-store";
 import { createListCollection, Portal, Select } from "@chakra-ui/react";
 
 export const SelectInput = memo(function SelectInput(props) {
-    //console.log("Render SelectInput");
     const { id, targetKey, value, options, noPortal, ...rest } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
     const collection = createListCollection({

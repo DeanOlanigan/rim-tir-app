@@ -1,6 +1,7 @@
 import { useVariablesStore } from "@/store/variables-store";
 import { useMemo } from "react";
 
+// TODO Вынести в селекторы
 export function useVariablesCollectionMemo(rootId, currentOwnerId) {
     const settings = useVariablesStore((state) => state.settings);
 

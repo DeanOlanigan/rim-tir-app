@@ -1,6 +1,7 @@
 import { useVariablesStore } from "@/store/variables-store";
 import { useMemo } from "react";
 
+// TODO Вынести в селекторы?
 // TODO попытаться еще раз... useShallow
 export function useSelectedData(type) {
     const selectedIds = useVariablesStore((state) => state.selectedIds[type]);

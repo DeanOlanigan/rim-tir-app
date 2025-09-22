@@ -3,7 +3,6 @@ import { Input } from "@chakra-ui/react";
 import { useVariablesStore } from "@/store/variables-store";
 
 export const TextInput = memo(function TextInput(props) {
-    //console.log("Render TextInput");
     const { id, targetKey, value } = props;
     const [innerValue, setInnerValue] = useState(value);
     const setSettings = useVariablesStore((state) => state.setSettings);

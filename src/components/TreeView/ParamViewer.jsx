@@ -1,6 +1,6 @@
 import { Badge, Icon } from "@chakra-ui/react";
 import { LuCheck, LuX } from "react-icons/lu";
-import { useGetParameters2 } from "../../pages/ConfigurationPage/Tree/NodeViews/getParameters";
+import { useParameters } from "../../pages/ConfigurationPage/Tree/NodeViews/getParameters";
 import { memo } from "react";
 
 function getColorPalette(value, settings) {
@@ -17,7 +17,7 @@ export const ParamViewer = memo(function ParamViewer({
     path,
     isVariable,
 }) {
-    const paramValues = useGetParameters2(path);
+    const paramValues = useParameters(path);
 
     return paramValues.map((value) =>
         settings?.[value.param] ? (
