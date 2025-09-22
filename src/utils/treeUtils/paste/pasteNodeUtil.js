@@ -4,6 +4,7 @@ import { createSettingUtil } from "../add/createSetting";
 import { removeAndUnbindSettingsUtil } from "../remove/removeAndUnbindSettings";
 import { removeNodeUtil } from "../remove/removeTreeNodes";
 import { generateFromClipboard } from "./generateFromClipboard";
+import { adjustLinksAfterCut } from "./adjustLinksAfterCut";
 
 export function pasteNodeUtil(ctx, treeType, parentId, initialClipboard) {
     const { clipboard } = ctx;
@@ -28,9 +29,14 @@ export function pasteNodeUtil(ctx, treeType, parentId, initialClipboard) {
         nextSourceTree = removeNodeUtil(nextSourceTree, idsSet);
     }
 
-    // TODO Нужно перебиндить при смене дерева
     let nextSettings = createSettingUtil(ctx.settings, gen.newSettings);
     if (clipboard.cut) {
+        nextSettings = adjustLinksAfterCut(
+            clipboard,
+            treeType,
+            gen.newSettings,
+            nextSettings
+        );
         useValidationStore.getState().clearErrors(idsSet);
         nextSettings = removeAndUnbindSettingsUtil(nextSettings, idsSet);
     }
