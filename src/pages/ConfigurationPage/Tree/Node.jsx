@@ -8,7 +8,7 @@ import { useVariablesStore } from "@/store/variables-store";
 import { hasIgnoreAccessor } from "@/utils/utils";
 
 export const Node = ({ node, style, dragHandle, tree }) => {
-    const updateContext = useContextMenuStore((state) => state.updateContext);
+    const { updateContext } = useContextMenuStore.getState();
     const settings = useVariablesStore(
         (state) => state.settings[node.id]?.setting
     );

@@ -29,5 +29,3 @@ enableMocking().then(() => {
         </QueryClientProvider>
     );
 });
-
-//TODO Изучить react-hook-form

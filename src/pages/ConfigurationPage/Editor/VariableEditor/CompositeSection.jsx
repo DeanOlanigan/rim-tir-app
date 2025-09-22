@@ -13,7 +13,6 @@ import { useVariablesStore } from "@/store/variables-store";
 import { validateVisibility } from "@/utils/validation/runners/validateVisibility";
 import { configuratorConfig } from "@/utils/configurationParser";
 
-// TODO Развить идею
 /**
  * props:
  * - checkedParam: string — параметр, который включает секцию (булево значение)
@@ -30,9 +29,10 @@ export const CompositeSection = ({
     const { settings, setSettings } = useVariablesStore.getState();
     const dep = configuratorConfig.nodePaths[data.path]?.settings[checkedParam];
     if (!dep || dep.hidden) return null; // Если параметр не определен или скрыт, ничего не рендерим
-    // TODO Проверяем видимость секции
+
     const isVisible = validateVisibility(dep.visibleIf, data.id, settings);
     if (!isVisible) return null; // Если секция не видима, ничего не рендерим
+
     const isChecked = data.setting?.[checkedParam] ?? false;
 
     const ParamIcon = dep?.icon;
@@ -42,9 +42,8 @@ export const CompositeSection = ({
             size={"sm"}
             w={"100%"}
             h={"100%"}
-            border={"none"}
-            _hover={{ shadow: "lg" }}
-            variant="outline"
+            _hover={{ outline: "1px solid", outlineColor: "border.info" }}
+            variant="subtle"
             onClick={() =>
                 setSettings(data.id, {
                     [checkedParam]: !isChecked,
