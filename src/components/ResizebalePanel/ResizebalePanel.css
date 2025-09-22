@@ -47,6 +47,7 @@
 }
 
 .PanelResizeGrip svg {
+    transform: rotate(90deg);
     color: var(--chakra-colors-color-palette-solid);
 }
 

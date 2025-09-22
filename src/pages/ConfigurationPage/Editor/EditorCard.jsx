@@ -2,7 +2,7 @@ import { Card, Flex, Box } from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { EditorWrapper } from "./EditorWrapper";
 import { BaseConfCard } from "../BaseConfCard/BaseConfCard";
-import { LuGripVertical } from "react-icons/lu";
+import { FaGripLines } from "react-icons/fa";
 import { useConfigStore } from "../stores";
 
 export const EditorCard = () => {
@@ -35,7 +35,7 @@ export const EditorCard = () => {
                         </Panel>
                         <PanelResizeHandle className="PanelResizeHandle">
                             <div className="PanelResizeGrip">
-                                <LuGripVertical />
+                                <FaGripLines />
                             </div>
                         </PanelResizeHandle>
                         <Panel collapsible collapsedSize={0} minSize={30}>
