@@ -2,7 +2,7 @@ import { useVariablesStore } from "@/store/variables-store";
 import { Button, Icon } from "@chakra-ui/react";
 import { LuArrowRight } from "react-icons/lu";
 import { EditorBreadcrumb } from "../Breadcrumb/Breadcrumb";
-import { useBreadcrumb } from "@/hooks/useBreadcrumb";
+import { useBreadcrumbParts } from "@/hooks/useBreadcrumb";
 import { useTreeRegistry } from "@/store/tree-registry-store";
 
 export const RedirectButton = ({ id }) => {
@@ -19,7 +19,7 @@ export const RedirectButton = ({ id }) => {
         treeApis[target].scrollTo(nodeId);
         treeApis[target].select(nodeId);
     };
-    const breadcrumbs = useBreadcrumb(id);
+    const breadcrumbsParts = useBreadcrumbParts(id);
 
     return (
         <Button
@@ -30,7 +30,7 @@ export const RedirectButton = ({ id }) => {
             w={"100%"}
             onClick={() => selectNodeHandler(id)}
         >
-            <EditorBreadcrumb breadcrumbs={breadcrumbs} color={"red.fg"} />
+            <EditorBreadcrumb breadcrumbs={breadcrumbsParts} color={"red.fg"} />
             <Icon as={LuArrowRight} colorPalette={"red"} />
         </Button>
     );

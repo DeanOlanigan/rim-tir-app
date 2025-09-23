@@ -4,6 +4,7 @@ import { EditorWrapper } from "./EditorWrapper";
 import { BaseConfCard } from "../BaseConfCard/BaseConfCard";
 import { FaGripLines } from "react-icons/fa";
 import { useConfigStore } from "../stores";
+import { TREE_TYPES } from "@/config/constants";
 
 export const EditorCard = () => {
     const flip = useConfigStore((state) => state.flip);
@@ -30,7 +31,7 @@ export const EditorCard = () => {
                                 position={"relative"}
                                 p={"4"}
                             >
-                                <EditorWrapper type={"connections"} />
+                                <EditorWrapper type={TREE_TYPES.connections} />
                             </Box>
                         </Panel>
                         <PanelResizeHandle className="PanelResizeHandle">
@@ -40,7 +41,7 @@ export const EditorCard = () => {
                         </PanelResizeHandle>
                         <Panel collapsible collapsedSize={0} minSize={30}>
                             <Box w={"100%"} h={"100%"} p={"4"}>
-                                <EditorWrapper type={"variables"} />
+                                <EditorWrapper type={TREE_TYPES.variables} />
                             </Box>
                         </Panel>
                     </PanelGroup>

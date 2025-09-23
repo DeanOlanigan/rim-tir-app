@@ -1,15 +1,21 @@
 import { useVariablesStore } from "@/store/variables-store";
 import { truncateString } from "@/utils/truncateString";
+import { useShallow } from "zustand/shallow";
 
-export function useBreadcrumb(id) {
-    const settings = useVariablesStore((state) => state.settings);
-    const breadcrumbs = [];
-    let node = settings[id];
-    while (node) {
-        breadcrumbs.unshift(
-            node.type === "dataObject" ? node.id : truncateString(node.name, 15)
-        );
-        node = node.parentId ? settings[node.parentId] : null;
-    }
-    return breadcrumbs;
+export function useBreadcrumbParts(id) {
+    return useVariablesStore(
+        useShallow((s) => {
+            const out = [];
+            let cur = s.settings[id];
+            while (cur) {
+                out.unshift(
+                    cur.type === "dataObject"
+                        ? cur.id
+                        : truncateString(cur.name, 15)
+                );
+                cur = cur.parentId ? s.settings[cur.parentId] : null;
+            }
+            return out;
+        })
+    );
 }

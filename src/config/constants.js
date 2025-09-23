@@ -2,6 +2,7 @@ export const TREE_TYPES = {
     variables: "variables",
     send: "send",
     receive: "receive",
+    connections: "connections",
 };
 
 export const NODE_TYPES = {
