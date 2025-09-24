@@ -1,4 +1,4 @@
-import { Box, Float, HStack, VStack } from "@chakra-ui/react";
+import { Float, HStack, VStack } from "@chakra-ui/react";
 
 export const EditorLayout = ({
     title,

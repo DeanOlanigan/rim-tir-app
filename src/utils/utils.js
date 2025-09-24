@@ -53,7 +53,7 @@ export function initDefaultDataByPath(path, parentId) {
         id: id,
         node: nodePaths[path].node,
         type: nodePaths[path].type,
-        name: nodePaths[path].label,
+        name: nodePaths[path].node,
         path: path,
     };
     if (nodePaths[path].children || nodePaths[path].type === "folder") {

@@ -32,7 +32,8 @@ export const EditorWrapper = memo(function EditorWrapper({ type }) {
     const size = ids.size;
     const idsArr = Array.from(ids);
 
-    if (size === 0) return <EditorHint type={type} />;
+    if (size === 0 || ids.has("__REACT_ARBORIST_INTERNAL_ROOT__"))
+        return <EditorHint type={type} />;
     if (size === 1) {
         return <EditorWrapperSingle id={idsArr} type={type} />;
     }
