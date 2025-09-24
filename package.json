@@ -17,7 +17,7 @@
     "depgraph-v": "depcruise --include-only \"^src/utils/validation\" --output-type dot src | dot -T svg | depcruise-wrap-stream-in-html > depgraph_v.html"
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.5.1",
+    "@chakra-ui/react": "^3.27.0",
     "@emotion/react": "^11.14.0",
     "@monaco-editor/react": "^4.7.0",
     "@tanstack/react-query": "^5.85.3",
