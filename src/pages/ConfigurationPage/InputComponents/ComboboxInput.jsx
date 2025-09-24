@@ -13,14 +13,13 @@ import {
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { LuBan, LuCircleHelp } from "react-icons/lu";
+import { ErrorSign } from "./ErrorSign";
 
-export const ComboboxInput = ({ id, reset = null }) => {
+export const ComboboxInput = (props) => {
     console.log("Render ComboboxInput");
+    const { id, value, reset = null, errors, ...rest } = props;
 
     const rootId = useVariablesStore((state) => state.settings[id]?.rootId);
-    const selectedVarId = useVariablesStore(
-        (state) => state.settings[id]?.setting?.variableId ?? null
-    );
 
     const variables = useVariablesCollectionMemo(rootId, id);
 
@@ -35,7 +34,7 @@ export const ComboboxInput = ({ id, reset = null }) => {
         set(variables);
     }, [variables, set]);
 
-    const bindVariable = useVariablesStore.getState().bindVariable;
+    const { bindVariable } = useVariablesStore.getState();
 
     if (!rootId || rootId === TREE_TYPES.variables) return null;
 
@@ -47,11 +46,11 @@ export const ComboboxInput = ({ id, reset = null }) => {
             size={"xs"}
             openOnClick
             collection={collection}
-            defaultValue={selectedVarId ? [selectedVarId] : []}
+            defaultValue={value ? [value] : []}
             onInputValueChange={(e) => filter(e.inputValue)}
             onValueChange={(e) => {
                 const nextId = e.value[0];
-                if (nextId !== selectedVarId) {
+                if (nextId !== value) {
                     bindVariable(id, nextId);
                 }
                 reset && reset();
@@ -64,8 +63,12 @@ export const ComboboxInput = ({ id, reset = null }) => {
                     pe={"6"}
                     truncate
                     placeholder={"Введите название переменной"}
+                    {...rest}
                 />
                 <Combobox.IndicatorGroup>
+                    {errors && errors.size !== 0 && (
+                        <ErrorSign errors={errors} />
+                    )}
                     <Combobox.ClearTrigger />
                     <Combobox.Trigger />
                 </Combobox.IndicatorGroup>

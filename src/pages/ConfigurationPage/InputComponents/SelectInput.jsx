@@ -1,9 +1,15 @@
 import { memo } from "react";
 import { useVariablesStore } from "@/store/variables-store";
-import { createListCollection, Portal, Select } from "@chakra-ui/react";
+import {
+    createListCollection,
+    InputGroup,
+    Portal,
+    Select,
+} from "@chakra-ui/react";
+import { ErrorSign } from "./ErrorSign";
 
 export const SelectInput = memo(function SelectInput(props) {
-    const { id, targetKey, value, options, noPortal, ...rest } = props;
+    const { id, targetkey, value, errors, options, noPortal, ...rest } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
     const collection = createListCollection({
         items: [...options],
@@ -32,7 +38,7 @@ export const SelectInput = memo(function SelectInput(props) {
             value={[value]}
             onValueChange={(details) => {
                 setSettings(id, {
-                    [targetKey]: details.value[0],
+                    [targetkey]: details.value[0],
                 });
             }}
             onClick={(e) => e.stopPropagation()}
@@ -40,12 +46,24 @@ export const SelectInput = memo(function SelectInput(props) {
         >
             <Select.HiddenSelect />
             <Select.Control>
-                <Select.Trigger>
-                    <Select.ValueText placeholder={"Выберите параметр"} />
-                </Select.Trigger>
-                <Select.IndicatorGroup>
-                    <Select.Indicator />
-                </Select.IndicatorGroup>
+                <InputGroup
+                    endElement={
+                        errors &&
+                        errors.size !== 0 && <ErrorSign errors={errors} />
+                    }
+                    endElementProps={{ me: "4" }}
+                >
+                    <>
+                        <Select.Trigger>
+                            <Select.ValueText
+                                placeholder={"Выберите параметр"}
+                            />
+                        </Select.Trigger>
+                        <Select.IndicatorGroup>
+                            <Select.Indicator />
+                        </Select.IndicatorGroup>
+                    </>
+                </InputGroup>
             </Select.Control>
             {noPortal ? content : <Portal>{content}</Portal>}
         </Select.Root>
