@@ -11,6 +11,12 @@ function addSettings(node) {
         type: "drop",
         label: "Переменная",
         default: "",
+        rules: [
+            {
+                validator: "required",
+                message: "Это поле обязательно для заполнения",
+            },
+        ],
     };
 }
 

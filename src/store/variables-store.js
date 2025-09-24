@@ -132,6 +132,15 @@ export const useVariablesStore = create()(
                             variableId
                         );
                     }
+
+                    const draft = validateParameter(
+                        nodeId,
+                        "variableId",
+                        newSettings,
+                        configuratorConfig
+                    );
+                    useValidationStore.getState().applyDraft2(draft);
+
                     return { settings: newSettings };
                 }),
 
@@ -146,6 +155,7 @@ export const useVariablesStore = create()(
 
             renameNode: (nodeId, name) =>
                 set((state) => {
+                    if (state.settings[nodeId].name === name) return state;
                     const newSettings = renameNodeSettingUtil(
                         state.settings,
                         nodeId,
