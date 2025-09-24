@@ -2,7 +2,7 @@ import { useVariablesStore } from "@/store/variables-store";
 import { useCallback } from "react";
 import { getParentType, initDefaultDataByPath } from "@/utils/utils";
 import { useContextMenuStore } from "@/store/contextMenu-store";
-import { TREE_TYPES } from "@/config/constants";
+import { TREE_TYPES, TREE_TYPES_SET } from "@/config/constants";
 import { useTreeRegistry } from "@/store/tree-registry-store";
 
 export function useTreeViewHandlers(treeType) {
@@ -53,8 +53,7 @@ export function useTreeViewHandlers(treeType) {
     );
     const handleDeleteNode = useCallback(
         ({ ids }) => {
-            const rootIds = new Set(Object.values(TREE_TYPES));
-            if (ids.some((id) => rootIds.has(id))) {
+            if (ids.some((id) => TREE_TYPES_SET.has(id))) {
                 api.focus(ids[0]);
             } else {
                 removeNode(treeType, ids);
