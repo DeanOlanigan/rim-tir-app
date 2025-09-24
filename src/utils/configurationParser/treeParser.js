@@ -21,14 +21,15 @@ function addSettings(node) {
 }
 
 export function parseTree(data) {
-    const { nodePaths, settingPaths } = transformConfiguration(data);
+    const { nodePaths, settingPaths, visiblePaths } =
+        transformConfiguration(data);
     nodePaths["#/variable"] = variable;
     nodePaths["#"] = {
         node: "#",
         type: "root",
         icon: { name: "listTree" },
     };
-    return { nodePaths, settingPaths };
+    return { nodePaths, settingPaths, visiblePaths };
 }
 
 function transformConfiguration(
@@ -36,9 +37,10 @@ function transformConfiguration(
     parentPath = "#",
     nodePaths = {},
     settingPaths = {},
+    visiblePaths = {},
     parent = null
 ) {
-    if (!Array.isArray(data)) return { nodePaths, settingPaths };
+    if (!Array.isArray(data)) return { nodePaths, settingPaths, visiblePaths };
     data.forEach((element) => {
         const path = `${parentPath}/${element.node}`;
         element.parentPath = parentPath;
@@ -47,7 +49,7 @@ function transformConfiguration(
             addSettings(element);
         }
         if (element.settings) {
-            settingsTraverse(element, path, settingPaths);
+            settingsTraverse(element, path, settingPaths, visiblePaths);
         }
         nodePaths[path] = element;
         transformConfiguration(
@@ -55,10 +57,11 @@ function transformConfiguration(
             path,
             nodePaths,
             settingPaths,
+            visiblePaths,
             element
         );
     });
-    return { nodePaths, settingPaths };
+    return { nodePaths, settingPaths, visiblePaths };
 }
 
 export function buildDependenciesGraph(map) {
