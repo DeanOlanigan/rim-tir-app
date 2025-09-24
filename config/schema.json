@@ -253,11 +253,32 @@
                                         "type": "string",
                                         "enum": [
                                             "siblings",
-                                            "ignorefolder",
+                                            "ignoreFolder",
                                             "parent"
                                         ]
                                     }
                                 }
+                            },
+                            "message": { "type": "string" }
+                        }
+                    },
+                    {
+                        "required": ["validator", "params", "message"],
+                        "additionalProperties": false,
+                        "properties": {
+                            "validator": {
+                                "const": "mustBe"
+                            },
+                            "params": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "workIf": {
+                                "$ref": "#/$defs/WorkIf",
+                                "minProperties": 1,
+                                "maxProperties": 1
                             },
                             "message": { "type": "string" }
                         }
