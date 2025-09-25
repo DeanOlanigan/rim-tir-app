@@ -23,49 +23,6 @@
                         "folder"
                     ]
                 },
-                "label": { "type": "string" },
-                "settings": { "$ref": "#/$defs/Settings" },
-                "icon": {
-                    "type": "object",
-                    "required": ["name", "color"],
-                    "additionalProperties": false,
-                    "properties": {
-                        "name": {
-                            "enum": [
-                                "folder",
-                                "variable",
-                                "plug",
-                                "unplug",
-                                "cable",
-                                "fileDigit",
-                                "fileStack",
-                                "package",
-                                "anchor",
-                                "goose",
-                                "lrEllipsis"
-                            ]
-                        },
-                        "color": {
-                            "enum": [
-                                "gray",
-                                "red",
-                                "orange",
-                                "yellow",
-                                "green",
-                                "teal",
-                                "blue",
-                                "cyan",
-                                "purple",
-                                "pink",
-                                "black"
-                            ]
-                        }
-                    }
-                },
-                "children": {
-                    "type": "array",
-                    "items": { "$ref": "#/$defs/Node" }
-                },
                 "bulkCreation": {
                     "type": "object",
                     "properties": {
@@ -76,12 +33,51 @@
                         }
                     }
                 },
-                "validationRules": {
-                    "$ref": "#/$defs/NodeValidationRules"
+                "label": { "type": "string" },
+                "shortname": { "type": "string" },
+                "icon": {
+                    "type": "string",
+                    "enum": [
+                        "folder",
+                        "variable",
+                        "plug",
+                        "unplug",
+                        "cable",
+                        "fileDigit",
+                        "fileStack",
+                        "package",
+                        "anchor",
+                        "goose",
+                        "lrEllipsis"
+                    ]
+                },
+                "color": {
+                    "type": "string",
+                    "enum": [
+                        "gray",
+                        "red",
+                        "orange",
+                        "yellow",
+                        "green",
+                        "teal",
+                        "blue",
+                        "cyan",
+                        "purple",
+                        "pink",
+                        "black"
+                    ]
                 },
                 "usedIn": {
                     "type": "string",
                     "enum": ["send", "receive", "both"]
+                },
+                "settings": { "$ref": "#/$defs/Settings" },
+                "children": {
+                    "type": "array",
+                    "items": { "$ref": "#/$defs/Node" }
+                },
+                "validationRules": {
+                    "$ref": "#/$defs/NodeValidationRules"
                 }
             }
         },

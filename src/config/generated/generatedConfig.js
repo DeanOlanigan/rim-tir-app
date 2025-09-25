@@ -12,27 +12,17 @@ export const config = [
         node: "comport",
         type: "interface",
         label: "Comport",
-        icon: {
-            color: "blue",
-            name: "cable",
-        },
+        shortname: "com",
+        icon: "cable",
+        color: "blue",
         usedIn: "both",
         settings: {
             iface: {
-                type: "enum",
+                type: "string",
                 label: "Интерфейс",
+                info: "Интерфейс, к которому подключен последовательный порт",
                 default: "ttyS0",
                 showInTree: true,
-                enumValues: [
-                    {
-                        value: "ttyS0",
-                        label: "ttyS0",
-                    },
-                    {
-                        value: "ttyS1",
-                        label: "ttyS1",
-                    },
-                ],
             },
             baudRate: {
                 type: "enum",
@@ -101,10 +91,8 @@ export const config = [
                 node: "modbusRTU_master",
                 type: "protocol",
                 label: "Modbus-RTU Master",
-                icon: {
-                    name: "unplug",
-                    color: "purple",
-                },
+                icon: "unplug",
+                color: "purple",
                 usedIn: "receive",
                 settings: {
                     logging: {
@@ -182,14 +170,13 @@ export const config = [
                         node: "functionGroup",
                         type: "protocolSpecific",
                         label: "Функциональная группа",
-                        icon: {
-                            name: "unplug",
-                            color: "green",
-                        },
+                        icon: "unplug",
+                        color: "green",
                         settings: {
                             function: {
                                 type: "enum",
                                 label: "Функция",
+                                info: "Функция, которую нужно выполнить",
                                 showInTree: true,
                                 default: 1,
                                 enumValues: [
@@ -416,14 +403,11 @@ export const config = [
                                     enabled: true,
                                     presets: [1, 2, 3, 5, 10],
                                 },
-                                icon: {
-                                    name: "variable",
-                                },
+                                icon: "variable",
                                 settings: {
                                     address: {
                                         type: "string",
                                         label: "Адрес информационного объекта",
-                                        pref: "hex",
                                         showInTree: true,
                                         default: "",
                                         rules: [
@@ -433,14 +417,6 @@ export const config = [
                                                     "Это поле обязательно для заполнения",
                                             },
                                             {
-                                                validator: "regex",
-                                                params: {
-                                                    regex: "^0[xX][0-9a-fA-F]+$",
-                                                },
-                                                message:
-                                                    "Неверный формат адреса информационного объекта",
-                                            },
-                                            {
                                                 validator: "range",
                                                 params: {
                                                     min: 0x0,
@@ -448,6 +424,14 @@ export const config = [
                                                 },
                                                 message:
                                                     "Значение должно быть в диапазоне от 0x0 до 0xffff",
+                                            },
+                                            {
+                                                validator: "regex",
+                                                params: {
+                                                    regex: "^0[xX][0-9a-fA-F]+$",
+                                                },
+                                                message:
+                                                    "Неверный формат адреса информационного объекта",
                                             },
                                             {
                                                 validator: "unique",
@@ -485,10 +469,8 @@ export const config = [
                 node: "modbusRTU_slave",
                 type: "protocol",
                 label: "Modbus-RTU Slave",
-                icon: {
-                    name: "unplug",
-                    color: "purple",
-                },
+                icon: "unplug",
+                color: "purple",
                 usedIn: "send",
                 settings: {
                     logging: {
@@ -561,10 +543,8 @@ export const config = [
                         node: "functionGroup",
                         type: "protocolSpecific",
                         label: "Функциональная группа",
-                        icon: {
-                            name: "unplug",
-                            color: "green",
-                        },
+                        icon: "unplug",
+                        color: "green",
                         settings: {
                             function: {
                                 type: "enum",
@@ -795,14 +775,11 @@ export const config = [
                                     enabled: true,
                                     presets: [1, 2, 3, 5, 10],
                                 },
-                                icon: {
-                                    name: "variable",
-                                },
+                                icon: "variable",
                                 settings: {
                                     address: {
                                         type: "string",
                                         label: "Адрес информационного объекта",
-                                        pref: "hex",
                                         showInTree: true,
                                         default: "",
                                         rules: [
@@ -865,10 +842,7 @@ export const config = [
                 type: "interfaceSpecific",
                 label: "TCP-мост (сервер)",
                 usedIn: "receive",
-                icon: {
-                    name: "lrEllipsis",
-                    color: "black",
-                },
+                icon: "lrEllipsis",
                 settings: {
                     logging: {
                         type: "boolean",
@@ -960,10 +934,7 @@ export const config = [
                 type: "interfaceSpecific",
                 label: "TCP-мост (клиент)",
                 usedIn: "send",
-                icon: {
-                    name: "lrEllipsis",
-                    color: "black",
-                },
+                icon: "lrEllipsis",
                 settings: {
                     logging: {
                         type: "boolean",
@@ -1056,9 +1027,9 @@ export const config = [
         node: "gpio",
         type: "interface",
         label: "GPIO",
-        icon: {
-            name: "cable",
-        },
+        shortname: "gpio",
+        icon: "cable",
+        color: "blue",
         settings: {
             logging: {
                 type: "boolean",
@@ -1095,9 +1066,7 @@ export const config = [
                     enabled: true,
                     presets: [1, 2, 3, 5, 10],
                 },
-                icon: {
-                    name: "fileDigit",
-                },
+                icon: "fileDigit",
                 settings: {
                     port: {
                         type: "enum",
@@ -1491,10 +1460,7 @@ export const config = [
                             enabled: true,
                             presets: [1, 2, 3, 5, 10],
                         },
-                        icon: {
-                            name: "variable",
-                            color: "black",
-                        },
+                        icon: "variable",
                         settings: {
                             address: {
                                 type: "number",
@@ -1944,10 +1910,7 @@ export const config = [
                             enabled: true,
                             presets: [1, 2, 3, 5, 10],
                         },
-                        icon: {
-                            name: "variable",
-                            color: "black",
-                        },
+                        icon: "variable",
                         settings: {
                             address: {
                                 type: "number",
@@ -2194,9 +2157,7 @@ export const config = [
         type: "protocol",
         label: "Modbus-TCP Клиент",
         usedIn: "receive",
-        icon: {
-            name: "unplug",
-        },
+        icon: "unplug",
         settings: {
             logging: {
                 type: "boolean",
@@ -2542,14 +2503,11 @@ export const config = [
                             enabled: true,
                             presets: [1, 2, 3, 5, 10],
                         },
-                        icon: {
-                            name: "variable",
-                        },
+                        icon: "variable",
                         settings: {
                             address: {
                                 type: "string",
                                 label: "Адрес информационного объекта",
-                                pref: "hex",
                                 default: "",
                                 rules: [
                                     {
@@ -2608,9 +2566,7 @@ export const config = [
         type: "protocol",
         label: "Modbus-TCP Сервер",
         usedIn: "send",
-        icon: {
-            name: "unplug",
-        },
+        icon: "unplug",
         settings: {
             logging: {
                 type: "boolean",
@@ -2946,14 +2902,11 @@ export const config = [
                             enabled: true,
                             presets: [1, 2, 3, 5, 10],
                         },
-                        icon: {
-                            name: "variable",
-                        },
+                        icon: "variable",
                         settings: {
                             address: {
                                 type: "string",
                                 label: "Адрес информационного объекта",
-                                pref: "hex",
                                 default: "",
                                 rules: [
                                     {

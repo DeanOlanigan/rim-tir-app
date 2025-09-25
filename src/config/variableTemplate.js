@@ -12,9 +12,7 @@ export const variable = {
     node: "variable",
     type: "variable",
     label: "Переменная",
-    icon: {
-        name: "variable",
-    },
+    icon: "variable",
     settings: {
         type: {
             type: "enum",

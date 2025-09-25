@@ -81,8 +81,8 @@ function pushMenuElem(node, menu, path) {
                 : [1],
             basePath: path,
             icon: {
-                name: node?.icon?.name,
-                color: node?.icon?.color,
+                name: node?.icon,
+                color: node?.color,
             },
         })
     );

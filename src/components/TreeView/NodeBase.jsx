@@ -5,8 +5,6 @@ import { LuBan } from "react-icons/lu";
 import { Icon, HStack } from "@chakra-ui/react";
 import { iconsMap } from "@/config/icons";
 import { configuratorConfig } from "@/utils/configurationParser";
-import { ParamViewer } from "./ParamViewer";
-import { NODE_TYPES } from "@/config/constants";
 import { memo } from "react";
 
 export const NodeBase = memo(function NodeBase({
@@ -15,16 +13,15 @@ export const NodeBase = memo(function NodeBase({
     errors,
     visual,
     isIgnored,
-    accessorIsIgnored,
     isCutted,
-    settings,
+    params,
 }) {
     const icon = configuratorConfig.nodePaths[node.data.path]?.icon;
-    const TypeIcon = iconsMap[icon?.name];
-    const iconColor = icon?.color;
-    const shortName = configuratorConfig.nodePaths[node.data.path]?.shortName;
+    const color = configuratorConfig.nodePaths[node.data.path]?.color;
+    const TypeIcon = iconsMap[icon];
+    const shortname = configuratorConfig.nodePaths[node.data.path]?.shortname;
     const label = configuratorConfig.nodePaths[node.data.path]?.label;
-    const accessorIsIgnoredStyle = accessorIsIgnored && {
+    const accessorIsIgnoredStyle = isIgnored && {
         bg: "bg.muted",
         color: "fg.subtle",
         colorPalette: "gray",
@@ -38,6 +35,7 @@ export const NodeBase = memo(function NodeBase({
         <HStack
             w={"100%"}
             borderRadius={"md"}
+            h={"80%"}
             pe={"2"}
             {...accessorIsIgnoredStyle}
         >
@@ -59,21 +57,24 @@ export const NodeBase = memo(function NodeBase({
                         />
                     )}
                     {TypeIcon && (
-                        <Icon as={TypeIcon} color={`${iconColor}.500`} />
-                    )}
-                    {shortName && (
-                        <Badge
-                            isIgnored={isCutted || accessorIsIgnored}
-                            shortName={shortName}
-                            label={label}
-                            color={iconColor}
+                        <Icon
+                            as={TypeIcon}
+                            color={
+                                isCutted || isIgnored
+                                    ? "fg.subtle"
+                                    : `${color}.500`
+                            }
                         />
                     )}
-                    <ParamViewer
-                        settings={settings}
-                        path={node.data.path}
-                        isVariable={node.data.type === NODE_TYPES.variable}
-                    />
+                    {shortname && (
+                        <Badge
+                            isIgnored={isCutted || isIgnored}
+                            shortname={shortname}
+                            label={label}
+                            color={color}
+                        />
+                    )}
+                    {params}
                     {visual}
                 </HStack>
             </HStack>

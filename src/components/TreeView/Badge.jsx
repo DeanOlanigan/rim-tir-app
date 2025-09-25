@@ -1,6 +1,6 @@
 import { Badge as ChakraBadge } from "@chakra-ui/react";
 
-export const Badge = ({ isIgnored, shortName, label, color }) => {
+export const Badge = ({ isIgnored, shortname, label, color }) => {
     return (
         <ChakraBadge
             color={isIgnored ? "fg.subtle" : ""}
@@ -9,7 +9,7 @@ export const Badge = ({ isIgnored, shortName, label, color }) => {
             variant={"surface"}
             title={label}
         >
-            {shortName}
+            {shortname}
         </ChakraBadge>
     );
 };

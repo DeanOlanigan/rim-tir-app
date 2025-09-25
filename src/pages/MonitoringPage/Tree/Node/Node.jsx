@@ -8,6 +8,7 @@ import { NODE_TYPES, TREE_TYPES } from "@/config/constants";
 import { memo } from "react";
 import { useSelectionSync } from "@/store/selection-sync-store";
 import { useTreeRegistry } from "@/store/tree-registry-store";
+import { ParamViewer } from "@/components/TreeView/ParamViewer";
 
 export const Node = memo(function Node({ node, style }) {
     const qc = useQueryClient();
@@ -40,6 +41,14 @@ export const Node = memo(function Node({ node, style }) {
                         id={node.id}
                         type={node.data.type}
                         name={node.data.name}
+                    />
+                }
+                params={
+                    <ParamViewer
+                        settings={settings}
+                        path={node.data.path}
+                        id={node.data.id}
+                        isVariable={node.data.type === NODE_TYPES.variable}
                     />
                 }
             />
