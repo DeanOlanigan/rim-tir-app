@@ -25,7 +25,7 @@ import {
     useNodesByIds,
     useSelectedIds,
 } from "@/store/selectors";
-import { TREE_TYPES } from "@/config/constants";
+import { NODE_TYPES, TREE_TYPES } from "@/config/constants";
 
 export const EditorWrapper = memo(function EditorWrapper({ type }) {
     const ids = useSelectedIds(type);
@@ -102,9 +102,22 @@ const EditorWrapperSingle = memo(function EditorWrapperSingleTEST({
     );
 });
 
+function checkSameType(nodes) {
+    let isSameType = true;
+    let type = nodes[0].type;
+    for (const node of nodes) {
+        if (node.type === NODE_TYPES.folder) continue;
+        if (type !== node.type) {
+            isSameType = false;
+            break;
+        }
+    }
+    return isSameType;
+}
+
 const TableWrapper = memo(function TableWrapper({ nodes, type }) {
     if (nodes.length === 0) return null;
-    const isSameType = nodes.every((n) => n.type === nodes[0].type);
+    const isSameType = checkSameType(nodes);
     if (!isSameType) return null;
     const isVariableTable = type === TREE_TYPES.variables;
     const Table = isVariableTable ? VariablesTable : DataObjectsTable;
