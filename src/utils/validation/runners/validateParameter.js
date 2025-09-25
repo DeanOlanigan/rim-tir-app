@@ -1,6 +1,7 @@
 import { checkDependencies } from "../engines/jsonlogic/jsonLogic";
 import { ErrorDraft } from "../core/ErrorDraft";
 import { validatorRegistry } from "../core/validationRegistry";
+import { hasIgnoreAccessor } from "@/utils/utils";
 
 function validateRules(rules, context, nodeId, inputParam, draft) {
     if (!Array.isArray(rules) || rules.length === 0) return {};
@@ -124,7 +125,11 @@ export function validateParameter(
     const def = cfg.nodePaths[nodePath].settings[param];
 
     const isVisible = checkDependencies(def?.visibleIf, settings, id);
-    if (!isVisible && def?.rules?.length) {
+    const isIgnored = hasIgnoreAccessor(settings, id);
+    if (
+        (!isVisible && def?.rules?.length) ||
+        (isIgnored && def?.rules?.length)
+    ) {
         resetDraft(def?.rules, id, param, draft);
         return draft;
     }

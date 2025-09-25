@@ -25,6 +25,7 @@ import {
 } from "@/utils/treeUtils/index";
 
 import { setIgnoreUtil } from "@/utils/treeUtils/edit/setIgnore";
+import { validateNode } from "@/utils/validation/runners/validateNode";
 
 const baseNodeInit = (type, name) => ({
     id: type,
@@ -192,9 +193,28 @@ export const useVariablesStore = create()(
                 }),
 
             setIgnore: (ids, value) =>
-                set((state) => ({
-                    settings: setIgnoreUtil(state.settings, ids, value),
-                })),
+                set((state) => {
+                    const newSettings = setIgnoreUtil(
+                        state.settings,
+                        ids,
+                        value
+                    );
+                    const idsSet = getIdsSetNormalizedContext(newSettings, ids);
+
+                    let draft = new ErrorDraft();
+                    for (const id of idsSet) {
+                        const node = newSettings[id];
+                        validateNode(
+                            node,
+                            newSettings,
+                            configuratorConfig,
+                            draft
+                        );
+                    }
+                    useValidationStore.getState().applyDraft2(draft);
+
+                    return { settings: newSettings };
+                }),
 
             toggleIgnore: (ids) => {
                 const { settings } = get();
