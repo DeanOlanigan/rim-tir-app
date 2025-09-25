@@ -2,7 +2,7 @@ import { CONNECTIONS_TREES, NODE_TYPES, TREE_TYPES } from "@/config/constants";
 import { configuratorConfig } from "@/utils/configurationParser";
 import { getMeaningNode, getParentType } from "@/utils/utils";
 
-const nodesAllowedInTree = (treeType, nodes) =>
+export const nodesAllowedInTree = (treeType, nodes) =>
     Object.values(nodes).every((node) => {
         const path = node.path;
         const usedIn = configuratorConfig.nodePaths[path]?.usedIn;
@@ -12,7 +12,7 @@ const nodesAllowedInTree = (treeType, nodes) =>
             : usedIn === treeType;
     });
 
-const sameMeaningPath = (apiPath, firstNodeId, settings) => {
+export const sameMeaningPath = (apiPath, firstNodeId, settings) => {
     const focusedNodePath =
         apiPath.focusedNode?.data.type === NODE_TYPES.folder
             ? getParentType({ checkNode: apiPath?.focusedNode })
@@ -21,14 +21,14 @@ const sameMeaningPath = (apiPath, firstNodeId, settings) => {
     return meaningNodePath && focusedNodePath === meaningNodePath;
 };
 
-const incompatibleDomains = (treeType, bufType) =>
+export const incompatibleDomains = (treeType, bufType) =>
     (treeType === TREE_TYPES.variables && CONNECTIONS_TREES.has(bufType)) ||
     (bufType === TREE_TYPES.variables && CONNECTIONS_TREES.has(treeType));
 
-const differentRootTypes = (focusedId, clipboard) =>
+export const differentRootTypes = (focusedId, clipboard) =>
     clipboard.cut && focusedId && clipboard.ids.has(focusedId);
 
-const sameRootType = (clipboard) => {
+export const sameRootType = (clipboard) => {
     const nodes = clipboard.normalized;
     const firstNode = nodes[clipboard.roots[0]];
     const sourceType = firstNode?.type;

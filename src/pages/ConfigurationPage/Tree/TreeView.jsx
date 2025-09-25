@@ -1,13 +1,14 @@
 import { Tree } from "react-arborist";
 import styles from "@/components/TreeView/TreeView.module.css";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useRef } from "react";
 import { AutoSizer } from "react-virtualized";
 import { DropCursor } from "@/components/TreeView/DropCursor";
 import { Node } from "./Node";
-import { Box } from "@chakra-ui/react";
 import { useTreeViewHandlers } from "@/hooks/useTreeViewHandlers";
 import { NODE_TYPES } from "@/config/constants";
 import { useTreeRegistry } from "@/store/tree-registry-store";
+import { Box } from "@chakra-ui/react";
+import { useTreeHostkeys } from "./useTreeHostkeys";
 
 export const TreeView = memo(function TreeView({ data, treeType }) {
     console.log("%cRender NEW TreeView", "color: white; background: red;");
@@ -21,62 +22,18 @@ export const TreeView = memo(function TreeView({ data, treeType }) {
         handleSelect,
         handleDisableDrop,
     } = useTreeViewHandlers(treeType);
-
+    const apiRef = useRef(null);
     const registerApi = useCallback(
         (api) => {
             setApi("config", treeType, api);
+            apiRef.current = api;
         },
         [setApi, treeType]
     );
-
-    // TODO Улучшать хоткеи, вынести в отдельный хук, ограничить вставку
-    // react-hotkeys-hook
-    /* const cutRef = useHotkeys("ctrl+x", () => {
-            console.log("cut from hotkey", treeType);
-            const baseIds = ref.current.root.children.map((child) => child.id);
-            const cutNodeFunc = useVariablesStore.getState().cutNode;
-            const copyNode = useVariablesStore.getState().copyNode;
-            const ids =
-                ref.current.selectedIds.size > 1
-                    ? [...ref.current.selectedIds]
-                    : ref.current.focusedNode
-                    ? [ref.current.focusedNode.data.id]
-                    : [];
-            cutNodeFunc(ref.current, baseIds, false);
-            copyNode(ref.current, ids, true);
-            cutNodeFunc(ref.current, ids, true);
-        });
-
-        const copyRef = useHotkeys("ctrl+c", () => {
-            console.log("copy from hotkey", treeType);
-            const baseIds = ref.current.root.children.map((child) => child.id);
-            const cutNodeFunc = useVariablesStore.getState().cutNode;
-            const copyNode = useVariablesStore.getState().copyNode;
-            const ids =
-                ref.current.selectedIds.size > 1
-                    ? [...ref.current.selectedIds]
-                    : ref.current.focusedNode
-                    ? [ref.current.focusedNode.data.id]
-                    : [];
-            cutNodeFunc(ref.current, baseIds, false);
-            copyNode(ref.current, ids, true);
-            cutNodeFunc(ref.current, ids, true);
-        });
-
-        const pasteRef = useHotkeys("ctrl+v", () => {
-            console.log("paste from hotkey", treeType);
-            const pasteNode = useVariablesStore.getState().pasteNode;
-            const removeNode = useVariablesStore.getState().removeNode;
-            const { cut, normalized } = useVariablesStore.getState().copyBuffer;
-            const ids = Object.keys(normalized);
-            const [...clearIds] = getIdsSetWithoutNested(ref.current, ids);
-            console.log("isCut", cut, clearIds);
-            cut && removeNode(treeType, clearIds);
-            pasteNode(ref.current);
-        }); */
+    const hkref = useTreeHostkeys(apiRef?.current);
 
     return (
-        <Box w={"100%"} h={"100%"} position={"relative"}>
+        <Box w={"100%"} h={"100%"} ref={hkref} tabIndex={0}>
             <AutoSizer>
                 {({ height, width }) => (
                     <Tree

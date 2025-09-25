@@ -2,7 +2,7 @@ import { Icon, Menu, Portal } from "@chakra-ui/react";
 import { LuBan, LuCheckCheck, LuChevronRight } from "react-icons/lu";
 import { iconsMap } from "@/config/icons";
 import { useVariablesStore } from "@/store/variables-store";
-import { getDisabledState } from "./getDisabledState";
+import { getDisabledState } from "@/utils/getDisabledState";
 
 export const MenuItem = ({
     item,
