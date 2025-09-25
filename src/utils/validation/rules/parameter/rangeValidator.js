@@ -3,8 +3,8 @@ import { VALIDATOR } from "../../utils/const";
 export function rangeValidator({ nodeId, param, rule, context, draft }) {
     const { min, max } = rule.params || {};
     const val = context[nodeId]?.setting?.[param];
-    const res =
-        (min != null ? val >= min : true) && (max != null ? val <= max : true);
+    if (!isFinite(val) || (min == null && max == null)) return;
+    const res = val >= min && val <= max;
     draft.set(
         nodeId,
         param,
