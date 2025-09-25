@@ -16,11 +16,12 @@ export const NodeBase = memo(function NodeBase({
     isCutted,
     params,
 }) {
-    const icon = configuratorConfig.nodePaths[node.data.path]?.icon;
-    const color = configuratorConfig.nodePaths[node.data.path]?.color;
+    const icon = configuratorConfig?.nodePaths?.[node.data.path]?.icon;
+    const color = configuratorConfig?.nodePaths?.[node.data.path]?.color;
     const TypeIcon = iconsMap[icon];
-    const shortname = configuratorConfig.nodePaths[node.data.path]?.shortname;
-    const label = configuratorConfig.nodePaths[node.data.path]?.label;
+    const shortname =
+        configuratorConfig?.nodePaths?.[node.data.path]?.shortname;
+    const label = configuratorConfig?.nodePaths?.[node.data.path]?.label;
     const accessorIsIgnoredStyle = isIgnored && {
         bg: "bg.muted",
         color: "fg.subtle",

@@ -1,7 +1,7 @@
 import { configuratorConfig } from "@/utils/configurationParser";
 
 export function useParameters(path) {
-    const params = configuratorConfig.nodePaths[path]?.settings ?? {};
+    const params = configuratorConfig?.nodePaths?.[path]?.settings ?? {};
     const visibleSettingsKeys = Object.entries(params)
         .filter(([, value]) => value?.showInTree)
         .map(([key, value]) => ({ param: key, ...value }));

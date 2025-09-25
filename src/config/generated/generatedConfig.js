@@ -7,14 +7,14 @@ export const config = [
         node: "folder",
         type: "folder",
         label: "Папка",
+        icon: "folder",
     },
     {
         node: "comport",
         type: "interface",
         label: "Comport",
-        shortname: "com",
         icon: "cable",
-        color: "blue",
+        color: "cyan",
         usedIn: "both",
         settings: {
             iface: {
@@ -28,6 +28,7 @@ export const config = [
                 type: "enum",
                 label: "Скорость",
                 default: 115200,
+                showInTree: true,
                 enumValues: [
                     {
                         value: 19200,
@@ -91,20 +92,21 @@ export const config = [
                 node: "modbusRTU_master",
                 type: "protocol",
                 label: "Modbus-RTU Master",
-                icon: "unplug",
-                color: "purple",
+                shortname: "MB RTU",
+                color: "teal",
                 usedIn: "receive",
                 settings: {
                     logging: {
                         type: "boolean",
                         label: "Логирование",
-                        showInTree: true,
                         default: false,
+                        showInTree: true,
                     },
                     address: {
                         type: "number",
                         label: "Адрес устройства",
                         default: 1,
+                        showInTree: true,
                         rules: [
                             {
                                 validator: "required",
@@ -170,15 +172,15 @@ export const config = [
                         node: "functionGroup",
                         type: "protocolSpecific",
                         label: "Функциональная группа",
-                        icon: "unplug",
-                        color: "green",
+                        shortname: "fg",
+                        color: "orange",
                         settings: {
                             function: {
                                 type: "enum",
                                 label: "Функция",
                                 info: "Функция, которую нужно выполнить",
-                                showInTree: true,
                                 default: 1,
+                                showInTree: true,
                                 enumValues: [
                                     {
                                         label: "Чтение значений из нескольких регистров флагов (0x01)",
@@ -218,6 +220,7 @@ export const config = [
                                 type: "enum",
                                 label: "Тип данных",
                                 default: "bit",
+                                showInTree: true,
                                 enumValues: [
                                     {
                                         label: "1 бит - bool",
@@ -225,23 +228,23 @@ export const config = [
                                     },
                                     {
                                         label: "2 байта - целое без знака",
-                                        value: "twoByteUnsigned",
+                                        value: "ushort",
                                     },
                                     {
                                         label: "2 байта - целое",
-                                        value: "twoByteSigned",
+                                        value: "short",
                                     },
                                     {
                                         label: "4 байта - целое",
-                                        value: "fourByteSigned",
+                                        value: "int",
                                     },
                                     {
                                         label: "4 байта - целое без знака",
-                                        value: "fourByteUnsigned",
+                                        value: "uint",
                                     },
                                     {
                                         label: "4 байта - с плавающей точкой",
-                                        value: "fourByteFloat",
+                                        value: "float",
                                     },
                                 ],
                                 rules: [
@@ -303,11 +306,11 @@ export const config = [
                                         validator: "mustBe",
                                         params: [
                                             "bit",
-                                            "twoByteUnsigned",
-                                            "twoByteSigned",
-                                            "fourByteSigned",
-                                            "fourByteUnsigned",
-                                            "fourByteFloat",
+                                            "ushort",
+                                            "short",
+                                            "int",
+                                            "uint",
+                                            "float",
                                         ],
                                         workIf: {
                                             or: [
@@ -370,11 +373,7 @@ export const config = [
                                     },
                                     {
                                         validator: "mustBe",
-                                        params: [
-                                            "bit",
-                                            "twoByteUnsigned",
-                                            "twoByteSigned",
-                                        ],
+                                        params: ["bit", "ushort", "short"],
                                         workIf: {
                                             "==": [
                                                 {
@@ -403,13 +402,13 @@ export const config = [
                                     enabled: true,
                                     presets: [1, 2, 3, 5, 10],
                                 },
-                                icon: "variable",
+                                icon: "fileDigit",
                                 settings: {
                                     address: {
                                         type: "string",
                                         label: "Адрес информационного объекта",
-                                        showInTree: true,
                                         default: "",
+                                        showInTree: true,
                                         rules: [
                                             {
                                                 validator: "required",
@@ -449,6 +448,7 @@ export const config = [
                                 node: "folder",
                                 type: "folder",
                                 label: "Папка",
+                                icon: "folder",
                             },
                         ],
                         validationRules: [
@@ -469,20 +469,21 @@ export const config = [
                 node: "modbusRTU_slave",
                 type: "protocol",
                 label: "Modbus-RTU Slave",
-                icon: "unplug",
-                color: "purple",
+                shortname: "MB RTU",
+                color: "teal",
                 usedIn: "send",
                 settings: {
                     logging: {
                         type: "boolean",
                         label: "Логирование",
-                        showInTree: true,
                         default: false,
+                        showInTree: true,
                     },
                     address: {
                         type: "number",
                         label: "Адрес устройства",
                         default: 1,
+                        showInTree: true,
                         rules: [
                             {
                                 validator: "required",
@@ -543,14 +544,14 @@ export const config = [
                         node: "functionGroup",
                         type: "protocolSpecific",
                         label: "Функциональная группа",
-                        icon: "unplug",
-                        color: "green",
+                        shortname: "fg",
+                        color: "orange",
                         settings: {
                             function: {
                                 type: "enum",
                                 label: "Функция",
-                                showInTree: true,
                                 default: 1,
+                                showInTree: true,
                                 enumValues: [
                                     {
                                         label: "Чтение значений из нескольких регистров флагов (0x01)",
@@ -590,6 +591,7 @@ export const config = [
                                 type: "enum",
                                 label: "Тип данных",
                                 default: "bit",
+                                showInTree: true,
                                 enumValues: [
                                     {
                                         label: "1 бит - bool",
@@ -597,23 +599,23 @@ export const config = [
                                     },
                                     {
                                         label: "2 байта - целое без знака",
-                                        value: "twoByteUnsigned",
+                                        value: "ushort",
                                     },
                                     {
                                         label: "2 байта - целое",
-                                        value: "twoByteSigned",
+                                        value: "short",
                                     },
                                     {
                                         label: "4 байта - целое",
-                                        value: "fourByteSigned",
+                                        value: "int",
                                     },
                                     {
                                         label: "4 байта - целое без знака",
-                                        value: "fourByteUnsigned",
+                                        value: "uint",
                                     },
                                     {
                                         label: "4 байта - с плавающей точкой",
-                                        value: "fourByteFloat",
+                                        value: "float",
                                     },
                                 ],
                                 rules: [
@@ -675,11 +677,11 @@ export const config = [
                                         validator: "mustBe",
                                         params: [
                                             "bit",
-                                            "twoByteUnsigned",
-                                            "twoByteSigned",
-                                            "fourByteSigned",
-                                            "fourByteUnsigned",
-                                            "fourByteFloat",
+                                            "ushort",
+                                            "short",
+                                            "int",
+                                            "uint",
+                                            "float",
                                         ],
                                         workIf: {
                                             or: [
@@ -742,11 +744,7 @@ export const config = [
                                     },
                                     {
                                         validator: "mustBe",
-                                        params: [
-                                            "bit",
-                                            "twoByteUnsigned",
-                                            "twoByteSigned",
-                                        ],
+                                        params: ["bit", "ushort", "short"],
                                         workIf: {
                                             "==": [
                                                 {
@@ -775,13 +773,13 @@ export const config = [
                                     enabled: true,
                                     presets: [1, 2, 3, 5, 10],
                                 },
-                                icon: "variable",
+                                icon: "fileDigit",
                                 settings: {
                                     address: {
                                         type: "string",
                                         label: "Адрес информационного объекта",
-                                        showInTree: true,
                                         default: "",
+                                        showInTree: true,
                                         rules: [
                                             {
                                                 validator: "required",
@@ -821,6 +819,7 @@ export const config = [
                                 node: "folder",
                                 type: "folder",
                                 label: "Папка",
+                                icon: "folder",
                             },
                         ],
                         validationRules: [
@@ -843,16 +842,19 @@ export const config = [
                 label: "TCP-мост (сервер)",
                 usedIn: "receive",
                 icon: "lrEllipsis",
+                color: "purple",
                 settings: {
                     logging: {
                         type: "boolean",
                         label: "Логирование",
                         default: false,
+                        showInTree: true,
                     },
                     ip: {
                         type: "string",
                         label: "IP-адрес",
                         default: "127.0.0.1",
+                        showInTree: true,
                         rules: [
                             {
                                 validator: "required",
@@ -871,6 +873,7 @@ export const config = [
                         type: "number",
                         label: "Порт",
                         default: 502,
+                        showInTree: true,
                         rules: [
                             {
                                 validator: "required",
@@ -935,16 +938,19 @@ export const config = [
                 label: "TCP-мост (клиент)",
                 usedIn: "send",
                 icon: "lrEllipsis",
+                color: "purple",
                 settings: {
                     logging: {
                         type: "boolean",
                         label: "Логирование",
                         default: false,
+                        showInTree: true,
                     },
                     ip: {
                         type: "string",
                         label: "IP-адрес",
                         default: "127.0.0.1",
+                        showInTree: true,
                         rules: [
                             {
                                 validator: "required",
@@ -963,6 +969,7 @@ export const config = [
                         type: "number",
                         label: "Порт",
                         default: 502,
+                        showInTree: true,
                         rules: [
                             {
                                 validator: "required",
@@ -1028,18 +1035,19 @@ export const config = [
         type: "interface",
         label: "GPIO",
         shortname: "gpio",
-        icon: "cable",
-        color: "blue",
+        color: "cyan",
         settings: {
             logging: {
                 type: "boolean",
                 label: "Логирование",
                 default: false,
+                showInTree: true,
             },
             contactBounce: {
                 type: "number",
                 label: "Период дребезга",
                 default: 200,
+                showInTree: true,
                 rules: [
                     {
                         validator: "required",
@@ -1069,46 +1077,16 @@ export const config = [
                 icon: "fileDigit",
                 settings: {
                     port: {
-                        type: "enum",
+                        type: "string",
                         label: "Порт",
-                        showInTree: true,
                         default: 1,
-                        enumValues: [
-                            {
-                                label: "1",
-                                value: 1,
-                            },
-                            {
-                                label: "2",
-                                value: 2,
-                            },
-                            {
-                                label: "3",
-                                value: 3,
-                            },
-                            {
-                                label: "4",
-                                value: 4,
-                            },
-                            {
-                                label: "5",
-                                value: 5,
-                            },
-                            {
-                                label: "6",
-                                value: 6,
-                            },
-                            {
-                                label: "7",
-                                value: 7,
-                            },
-                        ],
+                        showInTree: true,
                     },
                     function: {
                         type: "enum",
                         label: "Функция",
-                        showInTree: true,
                         default: "input",
+                        showInTree: true,
                         enumValues: [
                             {
                                 label: "Вход",
@@ -1126,24 +1104,29 @@ export const config = [
                 node: "folder",
                 type: "folder",
                 label: "Папка",
+                icon: "folder",
             },
         ],
     },
     {
         node: "iec104_client",
-        type: "interface",
+        type: "protocol",
         label: "IEC-104 Клиент",
+        shortname: "iec104",
+        color: "teal",
         usedIn: "receive",
         settings: {
             logging: {
                 type: "boolean",
                 label: "Логирование",
                 default: false,
+                showInTree: true,
             },
             ip: {
                 type: "string",
                 label: "IP-адрес",
                 default: "127.0.0.1",
+                showInTree: true,
                 rules: [
                     {
                         validator: "required",
@@ -1162,6 +1145,7 @@ export const config = [
                 type: "number",
                 label: "Порт",
                 default: 102,
+                showInTree: true,
                 rules: [
                     {
                         validator: "required",
@@ -1347,11 +1331,14 @@ export const config = [
                 node: "asdu",
                 type: "protocolSpecific",
                 label: "ASDU",
+                shortname: "asdu",
+                color: "orange",
                 settings: {
                     address: {
                         type: "number",
                         label: "Адрес ASDU",
-                        default: 0,
+                        default: 1,
+                        showInTree: true,
                         rules: [
                             {
                                 validator: "required",
@@ -1460,12 +1447,13 @@ export const config = [
                             enabled: true,
                             presets: [1, 2, 3, 5, 10],
                         },
-                        icon: "variable",
+                        icon: "fileDigit",
                         settings: {
                             address: {
                                 type: "number",
                                 label: "Адрес информационного объекта",
                                 default: 0,
+                                showInTree: true,
                                 rules: [
                                     {
                                         validator: "required",
@@ -1538,35 +1526,36 @@ export const config = [
                             sigType: {
                                 type: "enum",
                                 label: "Тип сигнала",
-                                default: "ts_one_position",
+                                default: "ts1",
+                                showInTree: true,
                                 enumValues: [
                                     {
                                         label: "Однопозиционный ТС",
-                                        value: "ts_one_position",
+                                        value: "ts1",
                                     },
                                     {
                                         label: "Двухпозиционный ТС",
-                                        value: "ts_two_position",
+                                        value: "ts2",
                                     },
                                     {
                                         label: "ТИ масштабированное",
-                                        value: "ti_scaled",
+                                        value: "tis",
                                     },
                                     {
                                         label: "ТИ нормализованное",
-                                        value: "ti_normalized",
+                                        value: "tin",
                                     },
                                     {
                                         label: "ТИ с плавающей точкой ",
-                                        value: "ti_float",
+                                        value: "tif",
                                     },
                                     {
                                         label: "Однопозиционное ТУ",
-                                        value: "tu_one_position",
+                                        value: "tu1",
                                     },
                                     {
                                         label: "Двухпозиционное ТУ",
-                                        value: "tu_two_position",
+                                        value: "tu2",
                                     },
                                 ],
                             },
@@ -1596,7 +1585,7 @@ export const config = [
                                                         },
                                                     ],
                                                 },
-                                                "tu_one_position",
+                                                "tu1",
                                             ],
                                         },
                                         {
@@ -1609,7 +1598,7 @@ export const config = [
                                                         },
                                                     ],
                                                 },
-                                                "tu_two_position",
+                                                "tu2",
                                             ],
                                         },
                                     ],
@@ -1621,6 +1610,7 @@ export const config = [
                         node: "folder",
                         type: "folder",
                         label: "Папка",
+                        icon: "folder",
                     },
                 ],
             },
@@ -1628,19 +1618,23 @@ export const config = [
     },
     {
         node: "iec104_server",
-        type: "interface",
+        type: "protocol",
         label: "IEC-104 Сервер",
+        shortname: "iec104",
+        color: "teal",
         usedIn: "send",
         settings: {
             logging: {
                 type: "boolean",
                 label: "Логирование",
                 default: false,
+                showInTree: true,
             },
             ip: {
                 type: "string",
                 label: "IP-адрес",
                 default: "127.0.0.1",
+                showInTree: true,
                 rules: [
                     {
                         validator: "required",
@@ -1659,6 +1653,7 @@ export const config = [
                 type: "number",
                 label: "Порт",
                 default: 102,
+                showInTree: true,
                 rules: [
                     {
                         validator: "required",
@@ -1844,6 +1839,8 @@ export const config = [
                 node: "asdu",
                 type: "protocolSpecific",
                 label: "ASDU",
+                shortname: "asdu",
+                color: "orange",
                 settings: {
                     sporadical: {
                         type: "boolean",
@@ -1853,7 +1850,8 @@ export const config = [
                     address: {
                         type: "number",
                         label: "Адрес ASDU",
-                        default: 0,
+                        default: 1,
+                        showInTree: true,
                         rules: [
                             {
                                 validator: "required",
@@ -1910,12 +1908,13 @@ export const config = [
                             enabled: true,
                             presets: [1, 2, 3, 5, 10],
                         },
-                        icon: "variable",
+                        icon: "fileDigit",
                         settings: {
                             address: {
                                 type: "number",
                                 label: "Адрес информационного объекта",
                                 default: 0,
+                                showInTree: true,
                                 rules: [
                                     {
                                         validator: "required",
@@ -1988,35 +1987,36 @@ export const config = [
                             sigType: {
                                 type: "enum",
                                 label: "Тип сигнала",
-                                default: "ts_one_position",
+                                default: "ts1",
+                                showInTree: true,
                                 enumValues: [
                                     {
                                         label: "Однопозиционный ТС",
-                                        value: "ts_one_position",
+                                        value: "ts1",
                                     },
                                     {
                                         label: "Двухпозиционный ТС",
-                                        value: "ts_two_position",
+                                        value: "ts2",
                                     },
                                     {
                                         label: "ТИ масштабированное",
-                                        value: "ti_scaled",
+                                        value: "tis",
                                     },
                                     {
                                         label: "ТИ нормализованное",
-                                        value: "ti_normalized",
+                                        value: "tin",
                                     },
                                     {
                                         label: "ТИ с плавающей точкой ",
-                                        value: "ti_float",
+                                        value: "tif",
                                     },
                                     {
                                         label: "Однопозиционное ТУ",
-                                        value: "tu_one_position",
+                                        value: "tu1",
                                     },
                                     {
                                         label: "Двухпозиционное ТУ",
-                                        value: "tu_two_position",
+                                        value: "tu2",
                                     },
                                 ],
                             },
@@ -2051,7 +2051,7 @@ export const config = [
                                                                 },
                                                             ],
                                                         },
-                                                        "ti_scaled",
+                                                        "tis",
                                                     ],
                                                 },
                                                 {
@@ -2064,7 +2064,7 @@ export const config = [
                                                                 },
                                                             ],
                                                         },
-                                                        "ti_normalized",
+                                                        "tin",
                                                     ],
                                                 },
                                                 {
@@ -2077,7 +2077,7 @@ export const config = [
                                                                 },
                                                             ],
                                                         },
-                                                        "ti_float",
+                                                        "tif",
                                                     ],
                                                 },
                                             ],
@@ -2122,7 +2122,7 @@ export const config = [
                                                         },
                                                     ],
                                                 },
-                                                "tu_one_position",
+                                                "tu1",
                                             ],
                                         },
                                         {
@@ -2135,7 +2135,7 @@ export const config = [
                                                         },
                                                     ],
                                                 },
-                                                "tu_two_position",
+                                                "tu2",
                                             ],
                                         },
                                     ],
@@ -2147,6 +2147,7 @@ export const config = [
                         node: "folder",
                         type: "folder",
                         label: "Папка",
+                        icon: "folder",
                     },
                 ],
             },
@@ -2157,17 +2158,20 @@ export const config = [
         type: "protocol",
         label: "Modbus-TCP Клиент",
         usedIn: "receive",
-        icon: "unplug",
+        shortname: "MB TCP",
+        color: "teal",
         settings: {
             logging: {
                 type: "boolean",
                 label: "Логирование",
                 default: false,
+                showInTree: true,
             },
             ip: {
                 type: "string",
                 label: "IP-адрес",
                 default: "127.0.0.1",
+                showInTree: true,
                 rules: [
                     {
                         validator: "required",
@@ -2186,6 +2190,7 @@ export const config = [
                 type: "number",
                 label: "Порт",
                 default: 502,
+                showInTree: true,
                 rules: [
                     {
                         validator: "required",
@@ -2275,11 +2280,14 @@ export const config = [
                 node: "functionGroup",
                 type: "protocolSpecific",
                 label: "Функциональная группа",
+                shortname: "fg",
+                color: "orange",
                 settings: {
                     function: {
                         type: "enum",
                         label: "Функция",
                         default: 1,
+                        showInTree: true,
                         enumValues: [
                             {
                                 label: "Чтение значений из нескольких регистров флагов (0x01)",
@@ -2319,6 +2327,7 @@ export const config = [
                         type: "enum",
                         label: "Тип данных",
                         default: "",
+                        showInTree: true,
                         enumValues: [
                             {
                                 label: "1 бит - bool",
@@ -2326,23 +2335,23 @@ export const config = [
                             },
                             {
                                 label: "2 байта - целое без знака",
-                                value: "twoByteUnsigned",
+                                value: "ushort",
                             },
                             {
                                 label: "2 байта - целое",
-                                value: "twoByteSigned",
+                                value: "short",
                             },
                             {
                                 label: "4 байта - целое",
-                                value: "fourByteSigned",
+                                value: "int",
                             },
                             {
                                 label: "4 байта - целое без знака",
-                                value: "fourByteUnsigned",
+                                value: "uint",
                             },
                             {
                                 label: "4 байта - с плавающей точкой",
-                                value: "fourByteFloat",
+                                value: "float",
                             },
                         ],
                         rules: [
@@ -2403,11 +2412,11 @@ export const config = [
                                 validator: "mustBe",
                                 params: [
                                     "bit",
-                                    "twoByteUnsigned",
-                                    "twoByteSigned",
-                                    "fourByteSigned",
-                                    "fourByteUnsigned",
-                                    "fourByteFloat",
+                                    "ushort",
+                                    "short",
+                                    "int",
+                                    "uint",
+                                    "float",
                                 ],
                                 workIf: {
                                     or: [
@@ -2470,11 +2479,7 @@ export const config = [
                             },
                             {
                                 validator: "mustBe",
-                                params: [
-                                    "bit",
-                                    "twoByteUnsigned",
-                                    "twoByteSigned",
-                                ],
+                                params: ["bit", "ushort", "short"],
                                 workIf: {
                                     "==": [
                                         {
@@ -2503,12 +2508,13 @@ export const config = [
                             enabled: true,
                             presets: [1, 2, 3, 5, 10],
                         },
-                        icon: "variable",
+                        icon: "fileDigit",
                         settings: {
                             address: {
                                 type: "string",
                                 label: "Адрес информационного объекта",
                                 default: "",
+                                showInTree: true,
                                 rules: [
                                     {
                                         validator: "required",
@@ -2545,6 +2551,7 @@ export const config = [
                         node: "folder",
                         type: "folder",
                         label: "Папка",
+                        icon: "folder",
                     },
                 ],
                 validationRules: [
@@ -2566,17 +2573,20 @@ export const config = [
         type: "protocol",
         label: "Modbus-TCP Сервер",
         usedIn: "send",
-        icon: "unplug",
+        shortname: "MB TCP",
+        color: "teal",
         settings: {
             logging: {
                 type: "boolean",
                 label: "Логирование",
                 default: false,
+                showInTree: true,
             },
             ip: {
                 type: "string",
                 label: "IP-адрес",
                 default: "127.0.0.1",
+                showInTree: true,
                 rules: [
                     {
                         validator: "required",
@@ -2595,6 +2605,7 @@ export const config = [
                 type: "number",
                 label: "Порт",
                 default: 502,
+                showInTree: true,
                 rules: [
                     {
                         validator: "required",
@@ -2674,11 +2685,14 @@ export const config = [
                 node: "functionGroup",
                 type: "protocolSpecific",
                 label: "Функциональная группа",
+                shortname: "fg",
+                color: "orange",
                 settings: {
                     function: {
                         type: "enum",
                         label: "Функция",
                         default: 1,
+                        showInTree: true,
                         enumValues: [
                             {
                                 label: "Чтение значений из нескольких регистров флагов (0x01)",
@@ -2718,6 +2732,7 @@ export const config = [
                         type: "enum",
                         label: "Тип данных",
                         default: "",
+                        showInTree: true,
                         enumValues: [
                             {
                                 label: "1 бит - bool",
@@ -2725,23 +2740,23 @@ export const config = [
                             },
                             {
                                 label: "2 байта - целое без знака",
-                                value: "twoByteUnsigned",
+                                value: "ushort",
                             },
                             {
                                 label: "2 байта - целое",
-                                value: "twoByteSigned",
+                                value: "short",
                             },
                             {
                                 label: "4 байта - целое",
-                                value: "fourByteSigned",
+                                value: "int",
                             },
                             {
                                 label: "4 байта - целое без знака",
-                                value: "fourByteUnsigned",
+                                value: "uint",
                             },
                             {
                                 label: "4 байта - с плавающей точкой",
-                                value: "fourByteFloat",
+                                value: "float",
                             },
                         ],
                         rules: [
@@ -2802,11 +2817,11 @@ export const config = [
                                 validator: "mustBe",
                                 params: [
                                     "bit",
-                                    "twoByteUnsigned",
-                                    "twoByteSigned",
-                                    "fourByteSigned",
-                                    "fourByteUnsigned",
-                                    "fourByteFloat",
+                                    "ushort",
+                                    "short",
+                                    "int",
+                                    "uint",
+                                    "float",
                                 ],
                                 workIf: {
                                     or: [
@@ -2869,11 +2884,7 @@ export const config = [
                             },
                             {
                                 validator: "mustBe",
-                                params: [
-                                    "bit",
-                                    "twoByteUnsigned",
-                                    "twoByteSigned",
-                                ],
+                                params: ["bit", "ushort", "short"],
                                 workIf: {
                                     "==": [
                                         {
@@ -2902,12 +2913,13 @@ export const config = [
                             enabled: true,
                             presets: [1, 2, 3, 5, 10],
                         },
-                        icon: "variable",
+                        icon: "fileDigit",
                         settings: {
                             address: {
                                 type: "string",
                                 label: "Адрес информационного объекта",
                                 default: "",
+                                showInTree: true,
                                 rules: [
                                     {
                                         validator: "required",
@@ -2944,6 +2956,7 @@ export const config = [
                         node: "folder",
                         type: "folder",
                         label: "Папка",
+                        icon: "folder",
                     },
                 ],
                 validationRules: [
