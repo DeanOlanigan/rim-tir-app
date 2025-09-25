@@ -1,8 +1,10 @@
 import { useVariablesStore } from "@/store/variables-store";
 import { deleteNodeUtil, getParentId } from "../treeUtils";
+import { TREE_TYPES_SET } from "@/config/constants";
 
-function getSelectedIds(treeApi) {
+export function getSelectedIds(treeApi) {
     if (treeApi.selectedIds.size > 1) return [...treeApi.selectedIds];
+    if (TREE_TYPES_SET.has(treeApi.focusedNode.data.id)) return [];
     if (treeApi.focusedNode) return [treeApi.focusedNode.data.id];
     return [];
 }

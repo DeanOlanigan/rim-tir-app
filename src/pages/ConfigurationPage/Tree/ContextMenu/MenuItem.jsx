@@ -27,7 +27,7 @@ export const MenuItem = ({
 
     if (item.type === "ignore") {
         if (isIgnored) {
-            label = "Разблокировать";
+            label = "Использовать";
             ContextIcon = LuCheckCheck;
             iconColor = "fg.success";
             item.style = {
@@ -35,7 +35,7 @@ export const MenuItem = ({
                 _hover: { bg: "bg.success", color: "fg.success" },
             };
         } else {
-            label = "Заблокировать";
+            label = "Игнорировать";
             ContextIcon = LuBan;
             iconColor = "fg.error";
             item.style = {
