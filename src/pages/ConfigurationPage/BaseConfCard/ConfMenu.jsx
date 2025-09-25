@@ -12,6 +12,7 @@ import { ConfigurationUploader } from "../ConfigurationUploader"; // ?
 import { ConfInfoEdit } from "../Dialogs/ConfInfoEdit";
 import { useConfigInfoStore } from "@/store/config-info-store";
 import { useValidationStore } from "@/store/validation-store";
+import { LuSettings2 } from "react-icons/lu";
 
 export const ConfMenu = () => {
     const resetState = useVariablesStore((state) => state.resetState);
@@ -28,6 +29,7 @@ export const ConfMenu = () => {
         <MenuRoot size={"sm"}>
             <MenuTrigger asChild>
                 <Button variant="surface" size="2xs">
+                    <LuSettings2 />
                     Конфигурация
                 </Button>
             </MenuTrigger>

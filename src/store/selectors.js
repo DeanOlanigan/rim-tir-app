@@ -11,7 +11,7 @@ export function useVariablesList() {
 }
 
 export function useSelectedIds(type) {
-    return useVariablesStore((state) => state.selectedIds[type]);
+    return useVariablesStore((s) => s.selectedIds[type]);
 }
 
 export const useNodesByIds = (ids) =>

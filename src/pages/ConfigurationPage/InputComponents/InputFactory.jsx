@@ -8,8 +8,9 @@ import {
 } from "./index";
 import { useValidationStore } from "@/store/validation-store";
 import { memo } from "react";
-import { Badge, Field, Text } from "@chakra-ui/react";
+import { Field, Text } from "@chakra-ui/react";
 import { configuratorConfig } from "@/utils/configurationParser";
+import { InfoTip } from "@/components/ui/toggle-tip";
 
 const inputRenderers = {
     drop: (props) => <ComboboxInput {...props} />,
@@ -57,16 +58,16 @@ export const InputFactory = memo(function InputFactory(props) {
                 ?.enumValues;
         inputProps.options = enumValues;
     }
-    const pref = configuratorConfig.nodePaths[path]?.settings[inputParam]?.pref;
+    const info = configuratorConfig.nodePaths[path]?.settings[inputParam]?.info;
 
     return (
         <Field.Root maxW={"250px"} invalid={errors && errors.size !== 0}>
             {showLabel && (
                 <Field.Label w={"100%"}>
                     <Text truncate>{label}</Text>
-                    {pref && (
+                    {info && (
                         <Field.RequiredIndicator
-                            fallback={<Badge size={"xs"}>{pref}</Badge>}
+                            fallback={<InfoTip content={info} />}
                         />
                     )}
                 </Field.Label>

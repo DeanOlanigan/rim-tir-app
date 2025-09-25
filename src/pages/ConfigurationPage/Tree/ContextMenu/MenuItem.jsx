@@ -45,7 +45,7 @@ export const MenuItem = ({
         }
     } else {
         ContextIcon = iconsMap[item.icon.name];
-        iconColor = item.icon.color;
+        iconColor = `${item.icon.color}.500`;
         label = item.label;
     }
 

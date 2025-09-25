@@ -21,6 +21,7 @@ export const TextInput = memo(function TextInput(props) {
             <Input
                 size={"xs"}
                 maxW={"250px"}
+                autoComplete="off"
                 value={innerValue}
                 onChange={(e) => setInnerValue(e.target.value)}
                 onBlur={(e) => {
