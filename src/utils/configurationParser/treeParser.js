@@ -21,9 +21,9 @@ function addSettings(node) {
 }
 
 export function parseTree(data) {
+    data.push(variable);
     const { nodePaths, settingPaths, visiblePaths } =
         transformConfiguration(data);
-    nodePaths["#/variable"] = variable;
     nodePaths["#"] = {
         node: "#",
         type: "root",
