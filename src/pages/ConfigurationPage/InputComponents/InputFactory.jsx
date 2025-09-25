@@ -54,11 +54,12 @@ export const InputFactory = memo(function InputFactory(props) {
     };
     if (type === "enum") {
         const enumValues =
-            configuratorConfig.nodePaths[path]?.settings[inputParam]
+            configuratorConfig.nodePaths?.[path]?.settings?.[inputParam]
                 ?.enumValues;
         inputProps.options = enumValues;
     }
-    const info = configuratorConfig.nodePaths[path]?.settings[inputParam]?.info;
+    const info =
+        configuratorConfig.nodePaths?.[path]?.settings?.[inputParam]?.info;
 
     return (
         <Field.Root maxW={"250px"} invalid={errors && errors.size !== 0}>
