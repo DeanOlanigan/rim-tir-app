@@ -2,16 +2,15 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
 import { useState } from "react";
 import {
-    Flex,
     InputGroup,
     Input,
     IconButton,
     Spinner,
     AbsoluteCenter,
     VStack,
-    HStack,
     Text,
     Icon,
+    Box,
 } from "@chakra-ui/react";
 import {
     LuX,
@@ -23,10 +22,11 @@ import {
 import { dialog } from "./setValue/dialog";
 import { useConfigWithMqtt } from "@/utils/mqtt/listener/useConfigWithMqtt";
 import { MqttTester } from "./MqttTester";
-import { ConfigInfo } from "./ConfigInfo";
+import { ConfigInfoWrapper } from "./ConfigInfo";
 import { TreeCard } from "@/components/TreeView/TreeCard";
 import { TREE_TYPES } from "@/config/constants";
 import { TreeView } from "./Tree/TreeView";
+import { SubHeader } from "@/components/Header/SubHeader";
 
 function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -41,43 +41,46 @@ function MonitoringPage() {
     const variables = data.state[TREE_TYPES.variables];
 
     return (
-        <Flex h={"100%"} direction={"column"} gap={"2"} position={"relative"}>
-            {isFetching && <Loader text={"Обновление данных"} />}
-            <HStack justifyContent={"center"}>
+        <>
+            <SubHeader>
                 <MqttTester />
-                <ConfigInfo />
+                <ConfigInfoWrapper />
                 <SearchBar
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
                 />
-            </HStack>
-            <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
-                <Panel collapsible={true} collapsedSize={0} minSize={25}>
-                    <TreeWrapper
-                        data={receive}
-                        treeType={TREE_TYPES.receive}
-                        searchTerm={searchTerm}
-                    />
-                </Panel>
-                <PanelResizeHandle className="PanelResizeHandle" />
-                <Panel collapsible={true} collapsedSize={0} minSize={25}>
-                    <TreeWrapper
-                        data={variables}
-                        treeType={TREE_TYPES.variables}
-                        searchTerm={searchTerm}
-                    />
-                </Panel>
-                <PanelResizeHandle className="PanelResizeHandle" />
-                <Panel collapsible={true} collapsedSize={0} minSize={25}>
-                    <TreeWrapper
-                        data={send}
-                        treeType={TREE_TYPES.send}
-                        searchTerm={searchTerm}
-                    />
-                </Panel>
-            </PanelGroup>
-            <dialog.Viewport />
-        </Flex>
+            </SubHeader>
+            <Box h={"100%"}>
+                {isFetching && <Loader text={"Обновление данных"} />}
+
+                <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
+                    <Panel collapsible={true} collapsedSize={0} minSize={25}>
+                        <TreeWrapper
+                            data={receive}
+                            treeType={TREE_TYPES.receive}
+                            searchTerm={searchTerm}
+                        />
+                    </Panel>
+                    <PanelResizeHandle className="PanelResizeHandle" />
+                    <Panel collapsible={true} collapsedSize={0} minSize={25}>
+                        <TreeWrapper
+                            data={variables}
+                            treeType={TREE_TYPES.variables}
+                            searchTerm={searchTerm}
+                        />
+                    </Panel>
+                    <PanelResizeHandle className="PanelResizeHandle" />
+                    <Panel collapsible={true} collapsedSize={0} minSize={25}>
+                        <TreeWrapper
+                            data={send}
+                            treeType={TREE_TYPES.send}
+                            searchTerm={searchTerm}
+                        />
+                    </Panel>
+                </PanelGroup>
+                <dialog.Viewport />
+            </Box>
+        </>
     );
 }
 export default MonitoringPage;
@@ -117,10 +120,15 @@ const NoData = () => {
 
 const Loader = ({ text }) => {
     return (
-        <AbsoluteCenter>
+        <AbsoluteCenter
+            w={"full"}
+            h={"full"}
+            bg={"blackAlpha.500"}
+            zIndex={"modal"}
+        >
             <VStack textAlign={"center"}>
                 <Spinner size={"xl"} />
-                <Text color={"fg.subtle"} fontWeight={"medium"}>
+                <Text color={"fg.muted"} fontWeight={"medium"}>
                     {text}
                 </Text>
             </VStack>
@@ -186,11 +194,9 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => {
         >
             <Input
                 placeholder="Поиск"
-                size={"xs"}
-                ps={"2rem"}
-                bg={"bg"}
+                size={"2xs"}
+                bg={"bg.subtle"}
                 borderRadius={"full"}
-                shadow={"md"}
                 value={innerTerm}
                 onChange={(e) => {
                     setInnerTerm(e.target.value);

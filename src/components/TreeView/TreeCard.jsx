@@ -9,6 +9,7 @@ export const TreeCard = memo(function TreeCard({ data = [], tree, empty }) {
         <Flex
             w={"100%"}
             h={"100%"}
+            position={"relative"}
             py={"2"}
             className="group"
             data-state={"open"}

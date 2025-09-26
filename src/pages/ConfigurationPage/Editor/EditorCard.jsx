@@ -1,7 +1,6 @@
 import { Card, Flex, Box } from "@chakra-ui/react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import { EditorWrapper } from "./EditorWrapper";
-import { BaseConfCard } from "../BaseConfCard/BaseConfCard";
 import { FaGripLines } from "react-icons/fa";
 import { useConfigStore } from "../stores";
 import { TREE_TYPES } from "@/config/constants";
@@ -10,7 +9,6 @@ export const EditorCard = () => {
     const flip = useConfigStore((state) => state.flip);
     return (
         <Flex w={"100%"} h={"100%"} direction={"column"} gap={"1"}>
-            <BaseConfCard />
             <Card.Root
                 h={"100%"}
                 size={"sm"}

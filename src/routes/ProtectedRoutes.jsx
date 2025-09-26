@@ -120,7 +120,7 @@ function ProtectedRoutes() {
         <>
             <Toaster />
             <Header />
-            <main>
+            <main style={{ position: "relative" }}>
                 <Outlet />
             </main>
         </>

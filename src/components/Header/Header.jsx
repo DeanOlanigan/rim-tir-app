@@ -35,28 +35,16 @@ import { useTopic } from "@/utils/mqtt/listener/useTopic";
 
 function Header() {
     return (
-        <Center as={"header"} py={"2"}>
-            <Flex
-                border={"1px solid"}
-                bg={"bg.subtle"}
-                borderColor={"border"}
-                borderRadius={"md"}
-                shadow={"xl"}
-                p={"2"}
-                gap={"1"}
-            >
-                {/* <Logo /> */}
-                <Navigation />
-                <Flex align={"center"} gap={"1"}>
-                    {/* <ConnectionStatus /> */}
-                    <SoftwareVersion />
-                    {/* <TestWs /> */}
-                    <TestMqtt />
-                    <SettingsMenu />
-                    <LogoutBtn />
-                    <ColorModeButton size={"xs"} />
-                </Flex>
-            </Flex>
+        <Center as={"header"} gap={"2"} p={"2"}>
+            {/* <Logo /> */}
+            <Navigation />
+            {/* <ConnectionStatus /> */}
+            <SoftwareVersion />
+            {/* <TestWs /> */}
+            <TestMqtt />
+            <SettingsMenu />
+            <LogoutBtn />
+            <ColorModeButton size={"xs"} />
         </Center>
     );
 }
@@ -161,7 +149,7 @@ const SettingsMenu = () => {
 
 const TestMqtt = () => {
     return (
-        <Flex gap={"1"}>
+        <Flex gap={"2"}>
             <MqttTime />
             <MqttCpu />
             <MqttRam />
