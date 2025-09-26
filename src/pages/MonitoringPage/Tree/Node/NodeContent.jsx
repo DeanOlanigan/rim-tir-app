@@ -25,26 +25,22 @@ import { TbHandStop } from "react-icons/tb";
 import { attributes } from "@/pages/MonitoringPage/setValue/Attributes/attributes";
 
 export const NodeContent = memo(function NodeContent({ id, type, name }) {
+    const isFolder = type === NODE_TYPES.folder;
+    const isVariable = type === NODE_TYPES.variable;
+    const isDataObject = type === NODE_TYPES.dataObject;
+
     return (
         <HStack justifyContent={"space-between"} w={"100%"}>
             <HStack>
-                {type === NODE_TYPES.dataObject ? (
+                {isDataObject ? (
                     <BindedVariable id={id} />
                 ) : (
                     <Text truncate>{name}</Text>
                 )}
-                {type !== NODE_TYPES.folder && <AdditionalInfoDrawer id={id} />}
-                {/* <NodeArrow type={type} /> */}
-            </HStack>
-            <HStack>
-                {(type === NODE_TYPES.dataObject ||
-                    type === NODE_TYPES.variable) && (
-                    <>
-                        <NodeAttributes id={id} />
-                        <NodeValues id={id} />
-                    </>
-                )}
-                {type === NODE_TYPES.variable && <VariableEditMenu id={id} />}
+                {!isFolder && <AdditionalInfoDrawer id={id} />}
+                {(isDataObject || isVariable) && <NodeValues id={id} />}
+                {isVariable && <VariableEditMenu id={id} />}
+                {(isDataObject || isVariable) && <NodeAttributes id={id} />}
             </HStack>
         </HStack>
     );
