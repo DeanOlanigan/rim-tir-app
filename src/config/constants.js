@@ -35,3 +35,13 @@ export const CONNECTIONS_TREES = new Set([TREE_TYPES.send, TREE_TYPES.receive]);
 export const TREE_TYPES_SET = new Set(Object.values(TREE_TYPES));
 
 export const MAX_NAME_LENGTH = 50;
+
+export const HOSTKEYS = {
+    copy: "ctrl+c",
+    cut: "ctrl+x",
+    paste: "ctrl+v",
+    ignore: "ctrl+i",
+    delete: "backspace",
+    rename: "enter",
+    edit: "enter",
+};

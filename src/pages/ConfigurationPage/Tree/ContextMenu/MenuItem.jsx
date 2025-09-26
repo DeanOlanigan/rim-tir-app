@@ -3,6 +3,7 @@ import { LuBan, LuCheckCheck, LuChevronRight } from "react-icons/lu";
 import { iconsMap } from "@/config/icons";
 import { useVariablesStore } from "@/store/variables-store";
 import { getDisabledState } from "@/utils/getDisabledState";
+import { HOSTKEYS } from "@/config/constants";
 
 export const MenuItem = ({
     item,
@@ -96,6 +97,7 @@ export const MenuItem = ({
         >
             <Icon as={ContextIcon} color={iconColor} />
             {label}
+            <Menu.ItemCommand>{HOSTKEYS[item.type]}</Menu.ItemCommand>
         </Menu.Item>
     );
 };
