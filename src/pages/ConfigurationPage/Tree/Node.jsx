@@ -12,7 +12,10 @@ import { NODE_TYPES } from "@/config/constants";
 export const Node = ({ node, style, dragHandle, tree }) => {
     const { updateContext } = useContextMenuStore.getState();
 
-    const isIgnored = useVariablesStore((state) =>
+    const isIgnored = useVariablesStore(
+        (state) => state.settings[node.id]?.isIgnored
+    );
+    const isIgnoredAccessor = useVariablesStore((state) =>
         hasIgnoreAccessor(state.settings, node.id)
     );
     const isCutted = useVariablesStore(
@@ -55,6 +58,7 @@ export const Node = ({ node, style, dragHandle, tree }) => {
                 }
                 errors={<NodeError id={node.id} />}
                 isIgnored={isIgnored}
+                isIgnoredAccessor={isIgnoredAccessor}
                 isCutted={isCutted}
             />
         </div>

@@ -13,6 +13,7 @@ export const NodeBase = memo(function NodeBase({
     errors,
     visual,
     isIgnored,
+    isIgnoredAccessor,
     isCutted,
     params,
 }) {
@@ -22,7 +23,7 @@ export const NodeBase = memo(function NodeBase({
     const shortname =
         configuratorConfig?.nodePaths?.[node.data.path]?.shortname;
     const label = configuratorConfig?.nodePaths?.[node.data.path]?.label;
-    const accessorIsIgnoredStyle = isIgnored && {
+    const accessorIsIgnoredStyle = isIgnoredAccessor && {
         bg: "bg.muted",
         color: "fg.subtle",
         colorPalette: "gray",
@@ -61,7 +62,7 @@ export const NodeBase = memo(function NodeBase({
                         <Icon
                             as={TypeIcon}
                             color={
-                                isCutted || isIgnored
+                                isCutted || isIgnoredAccessor
                                     ? "fg.subtle"
                                     : `${color}.500`
                             }
@@ -69,7 +70,7 @@ export const NodeBase = memo(function NodeBase({
                     )}
                     {shortname && (
                         <Badge
-                            isIgnored={isCutted || isIgnored}
+                            isIgnored={isCutted || isIgnoredAccessor}
                             shortname={shortname}
                             label={label}
                             color={color}
