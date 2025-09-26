@@ -10,7 +10,6 @@ import {
     useStopTirMutation,
     useUploadConfigurationMutation,
 } from "@/hooks/useMutation";
-import { LuRouter } from "react-icons/lu";
 
 export const RouterMenu = () => {
     const currentState = useVariablesStore.getState();
@@ -39,7 +38,6 @@ export const RouterMenu = () => {
         <Menu.Root size={"sm"} closeOnSelect={false}>
             <Menu.Trigger asChild>
                 <Button variant="surface" size="2xs">
-                    <LuRouter />
                     Роутер
                 </Button>
             </Menu.Trigger>
