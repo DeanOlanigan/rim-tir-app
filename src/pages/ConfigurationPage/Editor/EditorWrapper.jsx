@@ -103,16 +103,16 @@ const EditorWrapperSingle = memo(function EditorWrapperSingleTEST({
 });
 
 function checkSameType(nodes) {
-    let isSameType = true;
-    let type = nodes[0].type;
+    let type = null;
     for (const node of nodes) {
         if (node.type === NODE_TYPES.folder) continue;
-        if (type !== node.type) {
-            isSameType = false;
-            break;
+        if (type === null) {
+            type = node.type;
+        } else if (type !== node.type) {
+            return false;
         }
     }
-    return isSameType;
+    return true;
 }
 
 const TableWrapper = memo(function TableWrapper({ nodes, type }) {
