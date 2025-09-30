@@ -25,12 +25,32 @@ import GraphViewer from "@/pages/GraphsPage/Viewer/GraphViewer";
 import { Suspense } from "react";
 import ConfigurationPageLazy from "@/pages/ConfigurationPage/ConfigurationPageLazy";
 import MonitoringPageLazy from "@/pages/MonitoringPage/MonitoringPageLazy";
+import { TirLoaderIcon } from "@/components/TirLoaderIcon";
+import { Flex, Text } from "@chakra-ui/react";
+
+const SuspenseLoader = () => {
+    return (
+        <Flex
+            w={"full"}
+            h={"full"}
+            align={"center"}
+            justify={"center"}
+            direction={"column"}
+            bg={"blackAlpha.500"}
+        >
+            <TirLoaderIcon height={"256px"} />
+            <Text color={"fg.muted"} fontWeight={"medium"}>
+                Загрузка...
+            </Text>
+        </Flex>
+    );
+};
 
 function AppRouter() {
     return (
         <AuthProvider>
             <BrowserRouter>
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense fallback={<SuspenseLoader />}>
                     <Routes>
                         <Route path="*" element={<Redirect />} />
                         <Route path="/" element={<Redirect />} />

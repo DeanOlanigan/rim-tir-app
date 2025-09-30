@@ -27,6 +27,7 @@ import { TreeCard } from "@/components/TreeView/TreeCard";
 import { TREE_TYPES } from "@/config/constants";
 import { TreeView } from "./Tree/TreeView";
 import { SubHeader } from "@/components/Header/SubHeader";
+import { TirLoaderIcon } from "@/components/TirLoaderIcon";
 
 function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -127,7 +128,8 @@ const Loader = ({ text }) => {
             zIndex={"modal"}
         >
             <VStack textAlign={"center"}>
-                <Spinner size={"xl"} />
+                {/* <Spinner size={"xl"} /> */}
+                <TirLoaderIcon height={"256px"} />
                 <Text color={"fg.muted"} fontWeight={"medium"}>
                     {text}
                 </Text>
