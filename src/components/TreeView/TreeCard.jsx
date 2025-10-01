@@ -10,13 +10,13 @@ export const TreeCard = memo(function TreeCard({ data = [], tree, empty }) {
             w={"100%"}
             h={"100%"}
             position={"relative"}
-            py={"2"}
             className="group"
             data-state={"open"}
             animationDuration={"slow"}
             animationStyle={{
                 _open: "scale-fade-in",
             }}
+            px={"2"}
         >
             {isEmpty && empty}
             {tree}

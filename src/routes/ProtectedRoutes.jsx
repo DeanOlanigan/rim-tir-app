@@ -3,6 +3,7 @@ import { useAuthContext } from "@/providers/AuthProvider/AuthContext";
 import { Toaster, toaster } from "@/components/ui/toaster";
 import Header from "@/components/Header/Header";
 import { Outlet, Navigate } from "react-router-dom";
+import { Theme } from "@chakra-ui/react";
 
 function ProtectedRoutes() {
     console.log("Render ProtectedRoutes");
@@ -117,13 +118,19 @@ function ProtectedRoutes() {
     }
 
     return (
-        <>
+        <Theme
+            colorPalette={"purple"}
+            flexGrow={1}
+            minH={0}
+            display={"flex"}
+            flexDirection={"column"}
+        >
             <Toaster />
             <Header />
             <main style={{ position: "relative" }}>
                 <Outlet />
             </main>
-        </>
+        </Theme>
     );
 }
 
