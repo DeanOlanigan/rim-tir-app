@@ -9,13 +9,7 @@ import {
     Icon,
 } from "@chakra-ui/react";
 import { NODE_TYPES } from "@/config/constants";
-import { NodeValues } from "./NodeValues";
-import {
-    LuArrowBigRight,
-    LuCircle,
-    LuPencil,
-    LuTextCursorInput,
-} from "react-icons/lu";
+import { LuCircle, LuPencil, LuTextCursorInput } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import { QK } from "@/api/queryKeys";
 import { getConfiguration } from "@/api/configuration";
@@ -23,6 +17,7 @@ import { AdditionalInfoDrawer } from "@/pages/MonitoringPage/AdditionalInfo/Draw
 import { dialog } from "@/pages/MonitoringPage/setValue/dialog";
 import { TbHandStop } from "react-icons/tb";
 import { attributes } from "@/pages/MonitoringPage/setValue/Attributes/attributes";
+import { useSettingsFromCache } from "../../useSettingsFromCache";
 
 export const NodeContent = memo(function NodeContent({ id, type, name }) {
     const isFolder = type === NODE_TYPES.folder;
@@ -38,21 +33,26 @@ export const NodeContent = memo(function NodeContent({ id, type, name }) {
                     <Text truncate>{name}</Text>
                 )}
                 {!isFolder && <AdditionalInfoDrawer id={id} />}
-                {(isDataObject || isVariable) && <NodeValues id={id} />}
+            </HStack>
+            <HStack>
+                {/* {(isDataObject || isVariable) && <NodeAttributes id={id} />} */}
+                {/* {(isDataObject || isVariable) && <NodeValues id={id} />} */}
                 {isVariable && <VariableEditMenu id={id} />}
-                {(isDataObject || isVariable) && <NodeAttributes id={id} />}
             </HStack>
         </HStack>
     );
 });
 
 const BindedVariable = memo(function BindedVariable({ id }) {
-    const { data: name } = useQuery({
+    /* const { data: name } = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
         select: ({ state }) =>
             state.settings[state.settings[id]?.setting?.variableId]?.name,
-    });
+    }); */
+
+    const settings = useSettingsFromCache();
+    const name = settings[settings[id]?.setting?.variableId]?.name;
 
     return (
         <Code variant={"subtle"} colorPalette={"blue"}>
@@ -63,7 +63,7 @@ const BindedVariable = memo(function BindedVariable({ id }) {
 
 const VariableEditMenu = memo(function VariableEditMenu({ id }) {
     return (
-        <Menu.Root size={"sm"}>
+        <Menu.Root size={"sm"} lazyMount unmountOnExit>
             <Menu.Trigger asChild>
                 <IconButton size={"2xs"} variant={"subtle"}>
                     <LuPencil />
@@ -113,6 +113,7 @@ const NodeAttributes = memo(function NodeAttributes({ id }) {
         queryFn: getConfiguration,
         select: ({ state }) => state.settings[id]?.mqttPacket?.q?.attrs,
     });
+
     return (
         <>
             {attributes.map(
@@ -135,11 +136,3 @@ const NodeAttributes = memo(function NodeAttributes({ id }) {
         </>
     );
 });
-
-const NodeArrow = ({ type }) => {
-    return (
-        (type === NODE_TYPES.variable || type === NODE_TYPES.dataObject) && (
-            <Icon color={"red.500"} fill={"red.500"} as={LuArrowBigRight} />
-        )
-    );
-};

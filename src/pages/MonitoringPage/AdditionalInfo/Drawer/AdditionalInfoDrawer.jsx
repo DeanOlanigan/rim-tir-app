@@ -16,9 +16,10 @@ import { CodeField } from "./CodeField";
 import { DescriptionField } from "./DescriptionField";
 import { InfoBlock } from "./InfoBlock";
 import { memo } from "react";
+import { useSettingsFromCache } from "../../useSettingsFromCache";
 
 export const AdditionalInfoDrawer = memo(function AdditionalInfoDrawer({ id }) {
-    const { data: setting } = useQuery({
+    /* const { data: setting } = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
         select: ({ state }) => state.settings[id]?.setting,
@@ -27,7 +28,11 @@ export const AdditionalInfoDrawer = memo(function AdditionalInfoDrawer({ id }) {
         queryKey: QK.configuration,
         queryFn: getConfiguration,
         select: ({ state }) => state.settings[id]?.path,
-    });
+    }); */
+
+    const settings = useSettingsFromCache();
+    const setting = settings[id]?.setting;
+    const path = settings[id]?.path;
 
     if (!setting) return null;
     const config = path ? configuratorConfig.nodePaths[path] : undefined;

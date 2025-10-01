@@ -1,38 +1,25 @@
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
 import { useState } from "react";
-import {
-    InputGroup,
-    Input,
-    IconButton,
-    Spinner,
-    AbsoluteCenter,
-    VStack,
-    Text,
-    Icon,
-    Box,
-} from "@chakra-ui/react";
-import {
-    LuX,
-    LuSearch,
-    LuTriangleAlert,
-    LuArrowRight,
-    LuFileQuestion,
-} from "react-icons/lu";
+import { AbsoluteCenter, VStack, Text, Icon, Box } from "@chakra-ui/react";
+import { LuTriangleAlert, LuFileQuestion } from "react-icons/lu";
 import { dialog } from "./setValue/dialog";
-import { useConfigWithMqtt } from "@/utils/mqtt/listener/useConfigWithMqtt";
-import { MqttTester } from "./MqttTester";
 import { ConfigInfoWrapper } from "./ConfigInfo";
 import { TreeCard } from "@/components/TreeView/TreeCard";
 import { TREE_TYPES } from "@/config/constants";
 import { TreeView } from "./Tree/TreeView";
 import { SubHeader } from "@/components/Header/SubHeader";
 import { TirLoaderIcon } from "@/components/TirLoaderIcon";
+import { SearchBar } from "./SearchBar";
+import { useQuery } from "@tanstack/react-query";
+import { getConfiguration, QK } from "@/api";
 
 function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");
-    const { data, isLoading, isFetching, isError, error } =
-        useConfigWithMqtt(true);
+    const { data, isLoading, isFetching, isError, error } = useQuery({
+        queryKey: QK.configuration,
+        queryFn: getConfiguration,
+    });
 
     if (isLoading) return <Loader text={"Загрузка данных"} />;
     if (isError) return <ErrorInformer error={error} />;
@@ -44,7 +31,6 @@ function MonitoringPage() {
     return (
         <>
             <SubHeader>
-                <MqttTester />
                 <ConfigInfoWrapper />
                 <SearchBar
                     searchTerm={searchTerm}
@@ -155,60 +141,5 @@ const ErrorInformer = ({ error }) => {
                 )}
             </VStack>
         </AbsoluteCenter>
-    );
-};
-
-const SearchBar = ({ searchTerm, setSearchTerm }) => {
-    const [innerTerm, setInnerTerm] = useState(searchTerm);
-
-    return (
-        <InputGroup
-            px={"2"}
-            maxW={"10rem"}
-            startElement={<LuSearch />}
-            endElement={
-                innerTerm && (
-                    <>
-                        <IconButton
-                            size={"2xs"}
-                            rounded={"full"}
-                            variant={"ghost"}
-                            onClick={() => {
-                                setInnerTerm("");
-                                setSearchTerm("");
-                            }}
-                        >
-                            <LuX />
-                        </IconButton>
-                        <IconButton
-                            size={"2xs"}
-                            rounded={"full"}
-                            variant={"surface"}
-                            onClick={() => {
-                                setSearchTerm(innerTerm);
-                            }}
-                        >
-                            <LuArrowRight />
-                        </IconButton>
-                    </>
-                )
-            }
-        >
-            <Input
-                placeholder="Поиск"
-                size={"2xs"}
-                bg={"bg.subtle"}
-                borderRadius={"full"}
-                value={innerTerm}
-                onChange={(e) => {
-                    setInnerTerm(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                        setSearchTerm(innerTerm);
-                    }
-                }}
-            />
-        </InputGroup>
     );
 };

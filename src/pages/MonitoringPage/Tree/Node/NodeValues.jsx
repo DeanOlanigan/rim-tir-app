@@ -11,7 +11,12 @@ export const NodeValues = memo(function NodeValues({ id }) {
         select: ({ state }) => state.settings[id]?.mqttPacket?.v,
     });
     return (
-        <Code w={"150px"} variant={"surface"} justifyContent={"center"}>
+        <Code
+            w={"100px"}
+            variant={"surface"}
+            justifyContent={"center"}
+            truncate
+        >
             {params?.toString()}
         </Code>
     );
