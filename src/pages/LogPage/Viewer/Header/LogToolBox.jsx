@@ -1,4 +1,4 @@
-import { Group, IconButton, CheckboxCard } from "@chakra-ui/react";
+import { Group, IconButton, CheckboxCard, Icon } from "@chakra-ui/react";
 import {
     LuCirclePlus,
     LuCircleMinus,
@@ -52,24 +52,32 @@ export const LogToolBox = () => {
                 variant={"surface"}
                 checked={isLogTextWrapped}
                 onCheckedChange={toggleLogTextWrapped}
+                borderColor={"colorPalette.muted"}
+                _hover={{ bg: "colorPalette.subtle" }}
             >
                 <CheckboxCard.HiddenInput />
                 <CheckboxCard.Control p={"0.45rem"}>
-                    <LuWrapText size={"16px"} />
+                    <Icon
+                        as={LuWrapText}
+                        size={"sm"}
+                        color={"colorPalette.fg"}
+                    />
                 </CheckboxCard.Control>
             </CheckboxCard.Root>
             <CheckboxCard.Root
                 variant={"surface"}
                 checked={isPaused}
                 onCheckedChange={togglePaused}
+                borderColor={"colorPalette.muted"}
+                _hover={{ bg: "colorPalette.subtle" }}
             >
                 <CheckboxCard.HiddenInput />
                 <CheckboxCard.Control p={"0.45rem"}>
-                    {isPaused ? (
-                        <LuCirclePlay size={"16px"} />
-                    ) : (
-                        <LuCirclePause size={"16px"} />
-                    )}
+                    <Icon
+                        as={isPaused ? LuCirclePause : LuCirclePlay}
+                        size={"sm"}
+                        color={"colorPalette.fg"}
+                    />
                 </CheckboxCard.Control>
             </CheckboxCard.Root>
             <IconButton

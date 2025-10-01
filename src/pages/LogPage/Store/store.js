@@ -1,3 +1,4 @@
+import { LOG_LEVELS } from "@/config/constants";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -5,9 +6,10 @@ const initialState = {
     isPaused: false,
     isLogTextWrapped: false,
     logTextSize: 14,
-    filter: ["WARNING", "ERROR", "INFO"],
+    filter: [LOG_LEVELS.error, LOG_LEVELS.warn, LOG_LEVELS.info],
     chosenLog: null,
     logRowsCount: 1000,
+    logsToDwnl: [],
 };
 
 export const useLogStore = create(
@@ -29,6 +31,7 @@ export const useLogStore = create(
             setFilter: (value) => set({ filter: value }),
             setChosenLog: (chosenLog) => set({ chosenLog }),
             setLogRowsCount: (logRowsCount) => set({ logRowsCount }),
+            setLogsToDwnl: (logsToDwnl) => set({ logsToDwnl }),
         }),
         {
             name: "log-store",

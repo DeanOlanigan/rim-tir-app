@@ -7,7 +7,7 @@ export const LogName = () => {
 
     return (
         <HStack gap={"0"}>
-            <Heading>{chosenLog.value}</Heading>
+            <Heading>{chosenLog.label}</Heading>
             <InfoTip>
                 <Text>
                     Дата создания: <Em>{chosenLog.mtime}</Em>

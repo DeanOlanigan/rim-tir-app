@@ -1,11 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { toaster } from "@/components/ui/toaster";
+import { Button } from "@chakra-ui/react";
 import { LuDownload } from "react-icons/lu";
+import { useLogStore } from "../Store/store";
 
-function DownloadAllLogsButton({ type, loading }) {
+export const DownloadAllLogsButton = () => {
     console.log("Render DownloadAllLogsButton");
 
-    const fetchDownload = async () => {
+    const logsToDwnl = useLogStore((state) => state.logsToDwnl);
+
+    /* const fetchDownload = async () => {
         try {
             const response = await fetch(
                 `/api/v1/getArchive?archive=logs&type=${type}`
@@ -23,9 +25,9 @@ function DownloadAllLogsButton({ type, loading }) {
         } catch (err) {
             throw new Error(`Ошибка: ${err.message}`);
         }
-    };
+    }; */
 
-    const checkStatus = async (taskId) => {
+    /* const checkStatus = async (taskId) => {
         try {
             const response = await fetch(
                 `api/v1/getArchiveStatus?task_id=${taskId}`
@@ -51,9 +53,9 @@ function DownloadAllLogsButton({ type, loading }) {
             localStorage.removeItem("logTaskId");
             throw new Error(`Ошибка: ${err.message}`);
         }
-    };
+    }; */
 
-    const downloadAllLogFiles = () => {
+    /* const downloadAllLogFiles = () => {
         //fetchDownload();
         toaster.promise(
             (async () => {
@@ -75,19 +77,11 @@ function DownloadAllLogsButton({ type, loading }) {
                 }),
             }
         );
-    };
+    }; */
 
     return (
-        <Button
-            loading={loading}
-            loadingText="Подождите..."
-            variant="solid"
-            style={{ width: "100%" }}
-            onClick={downloadAllLogFiles}
-        >
-            <LuDownload /> Скачать все логи из списка
+        <Button w={"full"} disabled={!logsToDwnl.length}>
+            <LuDownload /> Скачать выбранные логи
         </Button>
     );
-}
-
-export default DownloadAllLogsButton;
+};

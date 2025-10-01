@@ -11,6 +11,7 @@ import {
     Icon,
     IconButton,
     Listbox,
+    LocaleProvider,
     Stack,
     StackSeparator,
     Text,
@@ -24,6 +25,7 @@ import { getLoglist, QK } from "@/api";
 import { LuArrowRight, LuFileQuestion } from "react-icons/lu";
 import { useLogStore } from "../Store/store";
 import { useNavigate } from "react-router-dom";
+import { DownloadAllLogsButton } from "./DownloadAllLogsButton";
 
 const GROUPS = {
     internal: "Логи во внутренней памяти",
@@ -71,6 +73,9 @@ function LogSourceManager() {
                         <NoData />
                     )}
                 </Card.Body>
+                <Card.Footer>
+                    <DownloadAllLogsButton />
+                </Card.Footer>
             </Card.Root>
         </Stack>
     );
@@ -141,6 +146,8 @@ function LogSourceManager() {
 export default LogSourceManager;
 
 const LogListBox = ({ data }) => {
+    const logsToDwnl = useLogStore((state) => state.logsToDwnl);
+    const { setLogsToDwnl } = useLogStore.getState();
     const collection = createListCollection({
         items: data,
         groupBy: (item) => item.category,
@@ -151,9 +158,14 @@ const LogListBox = ({ data }) => {
             collection={collection}
             selectionMode={"multiple"}
             gap={"0"}
+            h={"full"}
+            value={logsToDwnl}
+            onValueChange={(details) => {
+                setLogsToDwnl(details.value);
+            }}
         >
             <ListboxHeader collection={collection} />
-            <Listbox.Content rounded={0}>
+            <Listbox.Content rounded={0} divideY="1px" h={"full"}>
                 {collection.group().map(([category, items]) => (
                     <Listbox.ItemGroup key={category}>
                         <Listbox.ItemGroupLabel asChild>
@@ -162,7 +174,10 @@ const LogListBox = ({ data }) => {
                             </Text>
                         </Listbox.ItemGroupLabel>
                         {items.map((item) => (
-                            <ListboxItem key={item.value} item={item} />
+                            <ListboxItem
+                                key={`${item.category}/${item.value}`}
+                                item={item}
+                            />
                         ))}
                     </Listbox.ItemGroup>
                 ))}
@@ -232,7 +247,7 @@ const ListboxItem = ({ item }) => {
     };
 
     return (
-        <Listbox.Item item={item}>
+        <Listbox.Item item={item} className="group">
             <ListboxItemCheckmark />
             <Box flex={"1"}>
                 <Listbox.ItemText fontWeight={"medium"}>
@@ -244,11 +259,18 @@ const ListboxItem = ({ item }) => {
                     color={"fg.muted"}
                     mt={"1"}
                 >
-                    <FormatByte value={item.size} />
+                    <LocaleProvider locale="ru-RU">
+                        <FormatByte value={item.size} />
+                    </LocaleProvider>
                     <Text>{new Date(item.mtime).toLocaleString()}</Text>
                 </HStack>
             </Box>
-            <IconButton size={"xs"} onClick={chooseHandle}>
+            <IconButton
+                size={"xs"}
+                onClick={chooseHandle}
+                opacity={0}
+                _groupHover={{ opacity: 1 }}
+            >
                 <LuArrowRight />
             </IconButton>
         </Listbox.Item>

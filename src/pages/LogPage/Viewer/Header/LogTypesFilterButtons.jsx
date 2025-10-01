@@ -1,6 +1,7 @@
 import { CheckboxCard, CheckboxGroup, Group } from "@chakra-ui/react";
 import { LuCircleAlert, LuInfo, LuTriangleAlert } from "react-icons/lu";
 import { useLogStore } from "../../Store/store";
+import { LOG_LEVELS } from "@/config/constants";
 
 export const LogTypesFilterButtons = () => {
     const filter = useLogStore((state) => state.filter);
@@ -15,7 +16,7 @@ export const LogTypesFilterButtons = () => {
                 <CheckboxCard.Root
                     variant={"surface"}
                     colorPalette={"yellow"}
-                    value={"WARNING"}
+                    value={LOG_LEVELS.warn}
                 >
                     <CheckboxCard.HiddenInput />
                     <CheckboxCard.Control p={"0.45rem"}>
@@ -25,7 +26,7 @@ export const LogTypesFilterButtons = () => {
                 <CheckboxCard.Root
                     variant={"surface"}
                     colorPalette={"red"}
-                    value={"ERROR"}
+                    value={LOG_LEVELS.error}
                 >
                     <CheckboxCard.HiddenInput />
                     <CheckboxCard.Control p={"0.45rem"}>
@@ -35,7 +36,7 @@ export const LogTypesFilterButtons = () => {
                 <CheckboxCard.Root
                     variant={"surface"}
                     colorPalette={"blue"}
-                    value={"INFO"}
+                    value={LOG_LEVELS.info}
                 >
                     <CheckboxCard.HiddenInput />
                     <CheckboxCard.Control p={"0.45rem"}>

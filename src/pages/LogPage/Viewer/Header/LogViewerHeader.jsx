@@ -13,7 +13,6 @@ export const LogViewerHeader = () => {
             <IconButton
                 size={"xs"}
                 shadow={"xs"}
-                variant={"outline"}
                 onClick={() => setChosenLog(null)}
             >
                 <LuArrowLeft />

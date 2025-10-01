@@ -45,3 +45,10 @@ export const HOSTKEYS = {
     rename: "enter",
     edit: "enter",
 };
+
+export const LOG_LEVELS = {
+    debug: "debug",
+    info: "info",
+    warn: "warn",
+    error: "error",
+};
