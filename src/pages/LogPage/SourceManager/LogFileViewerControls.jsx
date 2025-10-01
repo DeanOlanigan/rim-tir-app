@@ -1,92 +1,50 @@
-import { Box, Flex, IconButton, createListCollection } from "@chakra-ui/react";
-import { Button } from "@/components/ui/button";
-import { Tooltip } from "@/components/ui/tooltip";
-import { LuDownload, LuEye, LuEyeClosed } from "react-icons/lu";
-import {
-    SelectContent,
-    SelectItem,
-    SelectLabel,
-    SelectRoot,
-    SelectTrigger,
-    SelectValueText,
-} from "@/components/ui/select";
-import { useLogContext } from "@/providers/LogProvider/LogContext";
-import { useNavigate } from "react-router-dom";
+import { createListCollection, Portal, Select } from "@chakra-ui/react";
+import { useLogStore } from "../Store/store";
 
-function LogFileViewerControls({ isLoading }) {
-    const { logData, updateLogData } = useLogContext();
-    const navigate = useNavigate();
-    console.log("Render LogFileViewerControls");
+const rows = createListCollection({
+    items: [
+        { label: "100", value: 100 },
+        { label: "250", value: 250 },
+        { label: "500", value: 500 },
+        { label: "1000", value: 1000 },
+        { label: "2500", value: 2500 },
+        { label: "5000", value: 5000 },
+    ],
+});
 
-    const rows = createListCollection({
-        items: [
-            { label: "100", value: "100" },
-            { label: "250", value: "250" },
-            { label: "500", value: "500" },
-            { label: "1000", value: "1000" },
-            { label: "2500", value: "2500" },
-            { label: "5000", value: "5000" },
-        ],
-    });
+export const LogFileViewerControls = () => {
+    const value = useLogStore((state) => state.logRowsCount);
+    const { setLogRowsCount } = useLogStore.getState();
 
     return (
-        <Flex
-            direction={"row"}
-            align={"end"}
-            justify={"start"}
-            gap={"2"}
-            data-state={"open"}
-            animationDuration={"slow"}
-            animationStyle={{
-                _open: "scale-fade-in",
-            }}
+        <Select.Root
+            collection={rows}
+            defaultValue={[value]}
+            onValueChange={(e) => setLogRowsCount(e.value[0])}
+            size={"xs"}
         >
-            <Tooltip content={"Скачать все логи"}>
-                <Button
-                    hidden
-                    shadow={"xl"}
-                    size={"xs"}
-                    loading={isLoading}
-                    variant="outline"
-                >
-                    <LuDownload />
-                </Button>
-            </Tooltip>
-            <Box>
-                <SelectRoot
-                    collection={rows}
-                    value={[logData.rows]}
-                    size={"xs"}
-                    onValueChange={(e) => updateLogData({ rows: e.value[0] })}
-                >
-                    <SelectLabel>Количество отображаемых строк:</SelectLabel>
-                    <SelectTrigger shadow={"xl"}>
-                        <SelectValueText />
-                    </SelectTrigger>
-                    <SelectContent>
+            <Select.HiddenSelect />
+            <Select.Label>Количество отображаемых строк:</Select.Label>
+            <Select.Control>
+                <Select.Trigger>
+                    <Select.ValueText />
+                </Select.Trigger>
+                <Select.IndicatorGroup>
+                    <Select.Indicator />
+                </Select.IndicatorGroup>
+            </Select.Control>
+            <Portal>
+                <Select.Positioner>
+                    <Select.Content>
                         {rows.items.map((row) => (
-                            <SelectItem item={row} key={row.value}>
+                            <Select.Item item={row} key={row.value}>
                                 {row.label}
-                            </SelectItem>
+                                <Select.ItemIndicator />
+                            </Select.Item>
                         ))}
-                    </SelectContent>
-                </SelectRoot>
-            </Box>
-            <Tooltip content={"Просмотр выбранного файла"}>
-                <IconButton
-                    shadow={"xl"}
-                    size={"xs"}
-                    disabled={!logData.name}
-                    variant="outline"
-                    onClick={() => {
-                        navigate("/log/viewer");
-                    }}
-                >
-                    {logData.name ? <LuEye /> : <LuEyeClosed />}
-                </IconButton>
-            </Tooltip>
-        </Flex>
+                    </Select.Content>
+                </Select.Positioner>
+            </Portal>
+        </Select.Root>
     );
-}
-
-export default LogFileViewerControls;
+};

@@ -1,13 +1,13 @@
 import { HStack, IconButton } from "@chakra-ui/react";
 import { LuArrowLeft } from "react-icons/lu";
-import LogName from "./LogName";
+import { LogName } from "./LogName";
 import LogTypesFilterButtons from "./LogTypesFilterButtons";
 import LogToolBox from "./LogToolBox";
-import { useLogContext } from "@/providers/LogProvider/LogContext";
+import { useLogStore } from "../../Store/store";
 
 function LogViewerHeader() {
     console.log("Render LogViewerHeader");
-    const { removeChosenLogFromLocalStorage } = useLogContext();
+    const { setChosenLog } = useLogStore.getState();
 
     return (
         <HStack align={"center"} justify={"space-between"} gap={"4"}>
@@ -15,9 +15,7 @@ function LogViewerHeader() {
                 size={"xs"}
                 shadow={"xs"}
                 variant={"outline"}
-                onClick={() => {
-                    removeChosenLogFromLocalStorage();
-                }}
+                onClick={() => setChosenLog(null)}
             >
                 <LuArrowLeft />
             </IconButton>

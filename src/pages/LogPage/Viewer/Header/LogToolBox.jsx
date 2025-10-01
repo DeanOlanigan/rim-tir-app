@@ -10,51 +10,50 @@ import {
     LuWrapText,
     LuEraser,
 } from "react-icons/lu";
+import { useLogStore } from "../../Store/store";
 
 function LogToolBox() {
-    console.log("Render LogToolBox");
+    const isLogTextWrapped = useLogStore((state) => state.isLogTextWrapped);
+    const isPaused = useLogStore((state) => state.isPaused);
     const {
-        isPaused,
-        setIsPaused,
-        isLogTextWrapped,
-        toggleWrap,
-        logTextSize,
-        setLogTextSize,
+        incLogTextSize,
+        decLogTextSize,
+        togglePaused,
+        toggleLogTextWrapped,
         clearLogs,
-    } = useLogViewerContext();
-    const { logData } = useLogContext();
+    } = useLogStore.getState();
 
-    const handleDownload = async () => {
+    /* const handleDownload = async () => {
         window.location.href = `/api/v1/getLog?logfile=${logData.name}&type=${logData.type}`;
-    };
+    }; */
 
     return (
         <Group attached shadow={"xs"}>
             <IconButton
                 size={"xs"}
                 variant={"outline"}
-                onClick={handleDownload}
+                //onClick={handleDownload}
             >
                 <LuDownload />
             </IconButton>
             <IconButton
                 size={"xs"}
                 variant={"outline"}
-                onClick={() => setLogTextSize(logTextSize + 1)}
+                onClick={incLogTextSize}
             >
                 <LuCirclePlus />
             </IconButton>
             <IconButton
                 size={"xs"}
                 variant={"outline"}
-                onClick={() => setLogTextSize(logTextSize - 1)}
+                onClick={decLogTextSize}
             >
                 <LuCircleMinus />
             </IconButton>
             <CheckboxCard.Root
                 variant={"surface"}
                 checked={isLogTextWrapped}
-                onCheckedChange={() => toggleWrap()}
+                onCheckedChange={toggleLogTextWrapped}
             >
                 <CheckboxCard.HiddenInput />
                 <CheckboxCard.Control p={"0.45rem"}>
@@ -64,9 +63,7 @@ function LogToolBox() {
             <CheckboxCard.Root
                 variant={"surface"}
                 checked={isPaused}
-                onCheckedChange={() => {
-                    setIsPaused(!isPaused);
-                }}
+                onCheckedChange={togglePaused}
             >
                 <CheckboxCard.HiddenInput />
                 <CheckboxCard.Control p={"0.45rem"}>
@@ -80,9 +77,9 @@ function LogToolBox() {
             <IconButton
                 size={"xs"}
                 variant={"outline"}
-                onClick={() => {
+                /* onClick={() => {
                     clearLogs();
-                }}
+                }} */
             >
                 <LuEraser />
             </IconButton>

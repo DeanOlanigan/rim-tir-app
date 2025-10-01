@@ -1,34 +1,19 @@
-import { useEffect, useMemo, useRef } from "react";
-import { Text, Box, Badge, Flex } from "@chakra-ui/react";
-import { toaster } from "@/components/ui/toaster"; // Chakra UI toaster
-import { useLogContext } from "@/providers/LogProvider/LogContext";
-import { useLogViewerContext } from "@/providers/LogViewerProvider/LogViewerContext";
-import { WebSocketService } from "@/services/websocketService";
-
-const wsService = new WebSocketService("ws://192.168.1.1:8800");
+import { useRef } from "react";
+import { Box } from "@chakra-ui/react";
 
 function LogViewerBody() {
     console.log("Render LogViewerBody");
-    const { logData, isLoading } = useLogContext();
-    const {
-        isPaused,
-        isLogTextWrapped,
-        logTextSize,
-        currentFilter,
-        logs,
-        setLogs,
-    } = useLogViewerContext();
 
     const logsContainerRef = useRef(null);
     let logIndex = 1;
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (!isPaused) {
             scrollToBottom();
         }
-    }, [logs, isPaused]);
+    }, [logs, isPaused]); */
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (isLoading) {
             return;
         }
@@ -58,9 +43,9 @@ function LogViewerBody() {
         };
 
         fetchLogs();
-    }, [isLoading, logData.name, logData.rows, logData.type]);
+    }, [isLoading, logData.name, logData.rows, logData.type]); */
 
-    useEffect(() => {
+    /* useEffect(() => {
         wsService.connect();
 
         const messageHandler = (message) => {
@@ -78,12 +63,12 @@ function LogViewerBody() {
             wsService.removeMessageHandler(messageHandler);
             wsService.close();
         };
-    }, []);
+    }, []); */
 
     const appendLogs = (data) => {
         const logDataArr = data.split("\n").filter((line) => line);
         const newLogs = logDataArr.map((element) => extractLogPart(element));
-        setLogs(newLogs);
+        //setLogs(newLogs);
     };
 
     const extractLogPart = (line) => {
@@ -105,11 +90,11 @@ function LogViewerBody() {
         return color[severity] || "gray.500";
     };
 
-    const filteredLogs = useMemo(() => {
+    /* const filteredLogs = useMemo(() => {
         return logs.filter(
             (log) => log.severity === "STATUS" || currentFilter[log.severity]
         );
-    }, [logs, currentFilter]);
+    }, [logs, currentFilter]); */
 
     const scrollToBottom = () => {
         if (logsContainerRef.current) {
@@ -119,7 +104,7 @@ function LogViewerBody() {
     };
 
     // TODO Идея фильтровать колонки (убирать дату, тип лога и т.д.)
-    const renderLogPart = filteredLogs.map((log) => {
+    /* const renderLogPart = filteredLogs.map((log) => {
         if (log.severity === "STATUS") {
             return (
                 <Flex key={`pause-${logIndex++}`} justify={"center"}>
@@ -149,11 +134,12 @@ function LogViewerBody() {
                     .padStart(9)}\t${log.message}`}
             </Text>
         );
-    });
+    }); */
 
     return (
         <Box ref={logsContainerRef} flex={"1"} minH={"0"} overflow="auto">
-            {renderLogPart}
+            {null}
+            {/* {renderLogPart} */}
         </Box>
     );
 }
