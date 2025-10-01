@@ -1,7 +1,6 @@
 import { Card } from "@chakra-ui/react";
-import LogViewerHeader from "./Header/LogViewerHeader";
-import LogViewerBody from "./LogViewerBody";
-import LogViewerProvider from "@/providers/LogViewerProvider/LogViewerProvider";
+import { LogViewerHeader } from "./Header/LogViewerHeader";
+import { LogViewerBody } from "./LogViewerBody";
 
 function LogViewer() {
     console.log("Render LogViewer");

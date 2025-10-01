@@ -5,7 +5,7 @@ const initialState = {
     isPaused: false,
     isLogTextWrapped: false,
     logTextSize: 14,
-    filter: [],
+    filter: ["WARNING", "ERROR", "INFO"],
     chosenLog: null,
     logRowsCount: 1000,
 };

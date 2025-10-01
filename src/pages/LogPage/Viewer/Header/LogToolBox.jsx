@@ -1,6 +1,4 @@
 import { Group, IconButton, CheckboxCard } from "@chakra-ui/react";
-import { useLogViewerContext } from "@/providers/LogViewerProvider/LogViewerContext";
-import { useLogContext } from "@/providers/LogProvider/LogContext";
 import {
     LuCirclePlus,
     LuCircleMinus,
@@ -12,7 +10,7 @@ import {
 } from "react-icons/lu";
 import { useLogStore } from "../../Store/store";
 
-function LogToolBox() {
+export const LogToolBox = () => {
     const isLogTextWrapped = useLogStore((state) => state.isLogTextWrapped);
     const isPaused = useLogStore((state) => state.isPaused);
     const {
@@ -85,6 +83,4 @@ function LogToolBox() {
             </IconButton>
         </Group>
     );
-}
-
-export default LogToolBox;
+};

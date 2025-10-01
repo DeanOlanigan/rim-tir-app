@@ -1,9 +1,7 @@
 import { useRef } from "react";
 import { Box } from "@chakra-ui/react";
 
-function LogViewerBody() {
-    console.log("Render LogViewerBody");
-
+export const LogViewerBody = () => {
     const logsContainerRef = useRef(null);
     let logIndex = 1;
 
@@ -142,6 +140,4 @@ function LogViewerBody() {
             {/* {renderLogPart} */}
         </Box>
     );
-}
-
-export default LogViewerBody;
+};

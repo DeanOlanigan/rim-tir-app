@@ -1,12 +1,11 @@
 import { HStack, IconButton } from "@chakra-ui/react";
 import { LuArrowLeft } from "react-icons/lu";
 import { LogName } from "./LogName";
-import LogTypesFilterButtons from "./LogTypesFilterButtons";
-import LogToolBox from "./LogToolBox";
+import { LogTypesFilterButtons } from "./LogTypesFilterButtons";
+import { LogToolBox } from "./LogToolBox";
 import { useLogStore } from "../../Store/store";
 
-function LogViewerHeader() {
-    console.log("Render LogViewerHeader");
+export const LogViewerHeader = () => {
     const { setChosenLog } = useLogStore.getState();
 
     return (
@@ -24,6 +23,4 @@ function LogViewerHeader() {
             <LogToolBox />
         </HStack>
     );
-}
-
-export default LogViewerHeader;
+};

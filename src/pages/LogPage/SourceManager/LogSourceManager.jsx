@@ -65,7 +65,7 @@ function LogSourceManager() {
                 }}
             >
                 <Card.Body position={"relative"}>
-                    {data.data.length > 0 ? (
+                    {data?.data?.length > 0 ? (
                         <LogListBox data={data.data} />
                     ) : (
                         <NoData />

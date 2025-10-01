@@ -1,24 +1,21 @@
 import { CheckboxCard, CheckboxGroup, Group } from "@chakra-ui/react";
 import { LuCircleAlert, LuInfo, LuTriangleAlert } from "react-icons/lu";
+import { useLogStore } from "../../Store/store";
 
-function LogTypesFilterButtons() {
+export const LogTypesFilterButtons = () => {
+    const filter = useLogStore((state) => state.filter);
+    const { setFilter } = useLogStore.getState();
+
     return (
         <CheckboxGroup
-            onValueChange={(activeFilters) => {
-                const newFilterState = {
-                    WARNING: activeFilters.includes("WARNING"),
-                    ERROR: activeFilters.includes("ERROR"),
-                    INFO: activeFilters.includes("INFO"),
-                };
-            }}
-            defaultValue={["WARNING", "ERROR", "INFO"]}
+            onValueChange={(activeFilters) => setFilter(activeFilters)}
+            value={filter}
         >
             <Group attached shadow={"xs"}>
                 <CheckboxCard.Root
                     variant={"surface"}
                     colorPalette={"yellow"}
                     value={"WARNING"}
-                    key={"WARNING"}
                 >
                     <CheckboxCard.HiddenInput />
                     <CheckboxCard.Control p={"0.45rem"}>
@@ -29,7 +26,6 @@ function LogTypesFilterButtons() {
                     variant={"surface"}
                     colorPalette={"red"}
                     value={"ERROR"}
-                    key={"ERROR"}
                 >
                     <CheckboxCard.HiddenInput />
                     <CheckboxCard.Control p={"0.45rem"}>
@@ -40,7 +36,6 @@ function LogTypesFilterButtons() {
                     variant={"surface"}
                     colorPalette={"blue"}
                     value={"INFO"}
-                    key={"INFO"}
                 >
                     <CheckboxCard.HiddenInput />
                     <CheckboxCard.Control p={"0.45rem"}>
@@ -50,6 +45,4 @@ function LogTypesFilterButtons() {
             </Group>
         </CheckboxGroup>
     );
-}
-
-export default LogTypesFilterButtons;
+};
