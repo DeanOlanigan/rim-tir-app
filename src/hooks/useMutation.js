@@ -4,8 +4,8 @@ import {
     startTir,
     stopTir,
     uploadConfiguration,
-} from "@/api/configuration";
-import { QK } from "@/api/queryKeys";
+    QK,
+} from "@/api";
 import { toaster } from "@/components/ui/toaster";
 import { useConfigInfoStore } from "@/store/config-info-store";
 import { useValidationStore } from "@/store/validation-store";

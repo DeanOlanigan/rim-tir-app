@@ -3,7 +3,6 @@ import {
     IconButton,
     Text,
     Skeleton,
-    Box,
     Menu,
     Portal,
     Dialog,
@@ -51,7 +50,7 @@ function Header() {
 export default Header;
 
 const SoftwareVersion = () => {
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: QK.version,
         queryFn: getSoftwareVer,
     });
@@ -60,10 +59,15 @@ const SoftwareVersion = () => {
         <Skeleton loading={isLoading}>
             <Badge
                 variant={"subtle"}
-                colorPalette={"cyan"}
+                colorPalette={isError ? "red" : "cyan"}
                 textAlign={"center"}
+                title={
+                    isError
+                        ? "Ошибка считывания версии ПК"
+                        : `Текущая версия ПК: ${data?.data}`
+                }
             >
-                <Text minW={"10ch"}>V:{data?.data}</Text>
+                <Text minW={"10ch"}>{isError ? "Ошибка" : data?.data}</Text>
             </Badge>
         </Skeleton>
     );

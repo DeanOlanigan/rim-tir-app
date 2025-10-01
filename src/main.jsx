@@ -15,17 +15,17 @@ const queryClient = new QueryClient({
 // This code is for all users
 window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 
-async function enableMocking() {
+/* async function enableMocking() {
     const { worker } = await import("./mocks/browser.js");
     return worker.start({ quiet: true });
 }
 
 enableMocking().then(() => {
-    createRoot(document.getElementById("root")).render(
-        <QueryClientProvider client={queryClient}>
-            {/* <StrictMode> */}
-            <App />
-            {/* </StrictMode> */}
-        </QueryClientProvider>
-    );
-});
+}); */
+createRoot(document.getElementById("root")).render(
+    <QueryClientProvider client={queryClient}>
+        {/* <StrictMode> */}
+        <App />
+        {/* </StrictMode> */}
+    </QueryClientProvider>
+);
