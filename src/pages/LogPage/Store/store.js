@@ -3,10 +3,14 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 const initialState = {
-    isPaused: false,
     isLogTextWrapped: false,
     logTextSize: 14,
-    filter: [LOG_LEVELS.error, LOG_LEVELS.warn, LOG_LEVELS.info],
+    filter: [
+        LOG_LEVELS.error,
+        LOG_LEVELS.warn,
+        LOG_LEVELS.info,
+        LOG_LEVELS.status,
+    ],
     chosenLog: null,
     logRowsCount: 1000,
     logsToDwnl: [],
@@ -17,7 +21,6 @@ export const useLogStore = create(
         (set) => ({
             ...initialState,
 
-            togglePaused: () => set((state) => ({ isPaused: !state.isPaused })),
             toggleLogTextWrapped: () =>
                 set((state) => ({
                     isLogTextWrapped: !state.isLogTextWrapped,

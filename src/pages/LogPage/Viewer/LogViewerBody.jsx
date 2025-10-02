@@ -1,15 +1,23 @@
 import { Box, IconButton, ScrollArea, Text } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
-import { getLog } from "@/api/log";
 import { useLogStore } from "../Store/store";
 import { useStickToBottom } from "use-stick-to-bottom";
 import { LuArrowDown } from "react-icons/lu";
-import { useMemo } from "react";
+import { NoData } from "@/components/NoData";
+import { useLogStream } from "../Store/stream-store";
+import { useMqttLogs } from "./useMqttLogs";
+import { useQuery } from "@tanstack/react-query";
+import { getLog } from "@/api/log";
+import { useEffect, useMemo } from "react";
+import { Loader } from "@/components/Loader";
+import { ErrorInformer } from "@/components/ErrorInformer";
+import { LOG_LEVELS } from "@/config/constants";
 
 const LEVEL_COLOR = {
-    info: "blue.500",
-    error: "red.500",
-    warning: "yellow.500",
+    [LOG_LEVELS.info]: "blue.500",
+    [LOG_LEVELS.error]: "red.500",
+    [LOG_LEVELS.warn]: "yellow.500",
+    [LOG_LEVELS.status]: "green.500",
+    [LOG_LEVELS.debug]: "gray.500",
 };
 
 const shadowCss = {
@@ -34,21 +42,36 @@ export const LogViewerBody = () => {
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ["logs", chosenLog.label, chosenLog.category, logRowsCount],
-        queryFn: () =>
-            getLog(chosenLog.label, chosenLog.category, logRowsCount, "json"),
+        queryFn: async () => {
+            const res = await getLog(
+                chosenLog.label,
+                chosenLog.category,
+                logRowsCount,
+                "json"
+            );
+            return res?.data ?? [];
+        },
     });
 
+    const filename = chosenLog.label;
+    const type = chosenLog.category;
+    const topic = `log/${type}/${filename}`;
+    useEffect(() => {
+        useLogStream.getState().reset();
+    }, [filename, type]);
+
+    useMqttLogs(topic);
+    const live = useLogStream((state) => state.live);
+
     const rows = useMemo(() => {
-        if (!data?.data) return [];
-        const list = data.data;
-        if (filter.length === 0) return list;
-
+        const base = [...(data ?? []), ...live];
+        if (!filter?.length) return base;
         const allow = new Set(filter);
-        return list.filter((r) => allow.has(r.level));
-    }, [data, filter]);
+        return base.filter((r) => allow.has(r.level));
+    }, [data, filter, live]);
 
-    if (isLoading) return "Загрузка...";
-    if (isError) return `Ошибка: ${error.message}`;
+    if (isLoading) return <Loader text={"Загрузка данных"} />;
+    if (isError) return <ErrorInformer error={error} />;
 
     // TODO Идея фильтровать колонки (убирать дату, тип лога и т.д.)
 
@@ -56,16 +79,18 @@ export const LogViewerBody = () => {
         <ScrollArea.Root variant={"hover"}>
             <ScrollArea.Viewport ref={sticky.scrollRef} css={shadowCss}>
                 <ScrollArea.Content ref={sticky.contentRef}>
-                    {rows.length === 0
-                        ? "Ничего не найдено"
-                        : rows.map((row) => (
-                              <LogRow
-                                  key={row.epochMs}
-                                  row={row}
-                                  logTextSize={logTextSize}
-                                  isLogTextWrapped={isLogTextWrapped}
-                              />
-                          ))}
+                    {rows.length === 0 ? (
+                        <NoData />
+                    ) : (
+                        rows.map((row) => (
+                            <LogRow
+                                key={row.epochMs}
+                                row={row}
+                                logTextSize={logTextSize}
+                                isLogTextWrapped={isLogTextWrapped}
+                            />
+                        ))
+                    )}
                 </ScrollArea.Content>
             </ScrollArea.Viewport>
             {!sticky.isAtBottom && (

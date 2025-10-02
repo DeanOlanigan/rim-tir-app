@@ -1,5 +1,4 @@
 import {
-    AbsoluteCenter,
     Box,
     Card,
     Checkmark,
@@ -8,7 +7,6 @@ import {
     FormatByte,
     Heading,
     HStack,
-    Icon,
     IconButton,
     Listbox,
     LocaleProvider,
@@ -17,15 +15,17 @@ import {
     Text,
     useListboxContext,
     useListboxItemContext,
-    VStack,
 } from "@chakra-ui/react";
 import { LogFileViewerControls } from "./LogFileViewerControls";
 import { useQuery } from "@tanstack/react-query";
 import { getLoglist, QK } from "@/api";
-import { LuArrowRight, LuFileQuestion } from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
 import { useLogStore } from "../Store/store";
 import { useNavigate } from "react-router-dom";
 import { DownloadAllLogsButton } from "./DownloadAllLogsButton";
+import { NoData } from "@/components/NoData";
+import { ErrorInformer } from "@/components/ErrorInformer";
+import { Loader } from "@/components/Loader";
 
 const GROUPS = {
     internal: "Логи во внутренней памяти",
@@ -35,13 +35,13 @@ const GROUPS = {
 function LogSourceManager() {
     console.log("Render LogSourceManager");
 
-    const { data, isLoading, isError } = useQuery({
+    const { data, isLoading, isError, error } = useQuery({
         queryKey: QK.logs,
         queryFn: getLoglist,
     });
 
-    if (isLoading) return "Загрузка...";
-    if (isError) return "Ошибка загрузки";
+    if (isLoading) return <Loader text={"Загрузка данных"} />;
+    if (isError) return <ErrorInformer error={error} />;
 
     return (
         <Stack>
@@ -79,68 +79,6 @@ function LogSourceManager() {
             </Card.Root>
         </Stack>
     );
-
-    /* const [logs, setLogs] = useState({ internal: [], sd: [] });
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchLogs = async () => {
-            try {
-                const response = await fetch("/api/v1/getLogfilesList");
-                if (!response.ok) {
-                    throw new Error(`Ошибка загрузки: ${response.statusText}`);
-                }
-                const result = await response.json();
-                if (result.code === 200) {
-                    setLogs({
-                        internal: result.data.internal || [],
-                        sd: result.data.sd || [],
-                    });
-                } else {
-                    throw new Error(result.message || "Неизвестная ошибка");
-                }
-            } catch (error) {
-                toaster.create({
-                    title: "Error",
-                    description: error.message,
-                    type: "error",
-                });
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchLogs();
-    }, []); */
-
-    /* return (
-        <Stack>
-            <Heading
-                data-state={"open"}
-                animationDuration={"slow"}
-                animationStyle={{
-                    _open: "scale-fade-in",
-                }}
-            >
-                Выберите файл
-            </Heading>
-
-            <LogFileViewerControls loading={isLoading} />
-
-            <Flex gap={"4"} justify={"center"}>
-                <LogSelectionCard
-                    headingText={"Логи на SD карте роутера"}
-                    loading={isLoading}
-                    logList={data.data.sd}
-                />
-                <LogSelectionCard
-                    headingText={"Логи во внутренней памяти роутера"}
-                    loading={isLoading}
-                    logList={data.data.internal}
-                />
-            </Flex>
-        </Stack>
-    ); */
 }
 
 export default LogSourceManager;
@@ -274,22 +212,5 @@ const ListboxItem = ({ item }) => {
                 <LuArrowRight />
             </IconButton>
         </Listbox.Item>
-    );
-};
-
-const NoData = () => {
-    return (
-        <AbsoluteCenter>
-            <VStack textAlign={"center"}>
-                <Icon
-                    as={LuFileQuestion}
-                    fontSize={"164px"}
-                    color={"bg.muted"}
-                />
-                <Text color={"fg.subtle"} fontWeight={"medium"}>
-                    Нет данных
-                </Text>
-            </VStack>
-        </AbsoluteCenter>
     );
 };

@@ -51,4 +51,5 @@ export const LOG_LEVELS = {
     info: "info",
     warn: "warn",
     error: "error",
+    status: "status",
 };

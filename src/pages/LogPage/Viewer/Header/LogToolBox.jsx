@@ -1,4 +1,4 @@
-import { Group, IconButton, CheckboxCard, Icon } from "@chakra-ui/react";
+import { Group, IconButton, CheckboxCard, Icon, Text } from "@chakra-ui/react";
 import {
     LuCirclePlus,
     LuCircleMinus,
@@ -9,17 +9,14 @@ import {
     LuEraser,
 } from "react-icons/lu";
 import { useLogStore } from "../../Store/store";
+import { useLogStream } from "../../Store/stream-store";
 
 export const LogToolBox = () => {
     const isLogTextWrapped = useLogStore((state) => state.isLogTextWrapped);
-    const isPaused = useLogStore((state) => state.isPaused);
-    const {
-        incLogTextSize,
-        decLogTextSize,
-        togglePaused,
-        toggleLogTextWrapped,
-        clearLogs,
-    } = useLogStore.getState();
+    const isPaused = useLogStream((state) => state.isPaused);
+    const { pause, resume, reset } = useLogStream.getState();
+    const { incLogTextSize, decLogTextSize, toggleLogTextWrapped } =
+        useLogStore.getState();
 
     /* const handleDownload = async () => {
         window.location.href = `/api/v1/getLog?logfile=${logData.name}&type=${logData.type}`;
@@ -67,7 +64,7 @@ export const LogToolBox = () => {
             <CheckboxCard.Root
                 variant={"surface"}
                 checked={isPaused}
-                onCheckedChange={togglePaused}
+                onCheckedChange={(e) => (e.checked ? pause() : resume())}
                 borderColor={"colorPalette.muted"}
                 _hover={{ bg: "colorPalette.subtle" }}
             >
@@ -80,13 +77,7 @@ export const LogToolBox = () => {
                     />
                 </CheckboxCard.Control>
             </CheckboxCard.Root>
-            <IconButton
-                size={"xs"}
-                variant={"outline"}
-                /* onClick={() => {
-                    clearLogs();
-                }} */
-            >
+            <IconButton size={"xs"} variant={"outline"} onClick={reset}>
                 <LuEraser />
             </IconButton>
         </Group>
