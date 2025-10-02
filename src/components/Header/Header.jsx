@@ -29,7 +29,6 @@ import ConnectionStatus from "@/components/ConnectionStatus/ConnectionStatus";
 import { useQuery } from "@tanstack/react-query";
 import { getSoftwareVer } from "@/api/shared";
 import { QK } from "@/api/queryKeys";
-//import { useChannel } from "@/ws/useChannel";
 import { useTopic } from "@/utils/mqtt/listener/useTopic";
 
 function Header() {
@@ -162,39 +161,40 @@ const TestMqtt = () => {
 };
 
 const MqttRam = () => {
-    const value = useTopic("stats/ram");
+    const { data, connected } = useTopic("stats/ram");
+
     return (
-        <Skeleton loading={!value}>
+        <Skeleton loading={!connected}>
             <Badge variant={"subtle"} colorPalette={"orange"}>
                 <LuMemoryStick />
-                <Text minW={"4ch"}>{value}%</Text>
+                <Text minW={"4ch"}>{data}%</Text>
             </Badge>
         </Skeleton>
     );
 };
 
 const MqttCpu = () => {
-    const value = useTopic("stats/cpu");
+    const { data, connected } = useTopic("stats/cpu");
 
     return (
-        <Skeleton loading={!value}>
+        <Skeleton loading={!connected}>
             <Badge variant={"subtle"} colorPalette={"purple"}>
                 <LuCpu />
-                <Text minW={"4ch"}>{value}%</Text>
+                <Text minW={"4ch"}>{data}%</Text>
             </Badge>
         </Skeleton>
     );
 };
 
 const MqttTime = () => {
-    const value = useTopic("stats/time");
+    const { data, connected } = useTopic("stats/time");
 
     return (
-        <Skeleton loading={!value}>
+        <Skeleton loading={!connected}>
             <Badge variant={"subtle"} colorPalette={"green"}>
                 <LuClock />
                 <Text minW={"7ch"}>
-                    {value && new Date(value).toLocaleTimeString()}
+                    {data && new Date(data).toLocaleTimeString()}
                 </Text>
             </Badge>
         </Skeleton>

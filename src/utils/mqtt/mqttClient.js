@@ -12,7 +12,7 @@ const opts = {
     clientId: "mqtt_client" + Math.random().toString(16).slice(2),
 };
 
-export const mqttClient = mqtt.connect(MQTT_URL, opts);
+const mqttClient = mqtt.connect(MQTT_URL, opts);
 
 mqttClient.on("connect", () => {
     console.log("[MQTT] connected");
