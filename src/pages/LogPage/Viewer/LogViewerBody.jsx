@@ -1,16 +1,13 @@
 import { Box, IconButton, ScrollArea, Text } from "@chakra-ui/react";
-import { useLogStore } from "../Store/store";
 import { useStickToBottom } from "use-stick-to-bottom";
 import { LuArrowDown } from "react-icons/lu";
 import { NoData } from "@/components/NoData";
-import { useLogStream } from "../Store/stream-store";
-import { useMqttLogs } from "./useMqttLogs";
-import { useQuery } from "@tanstack/react-query";
-import { getLog } from "@/api/log";
-import { useEffect, useMemo } from "react";
 import { Loader } from "@/components/Loader";
 import { ErrorInformer } from "@/components/ErrorInformer";
 import { LOG_LEVELS } from "@/config/constants";
+import { useLogData } from "./useLogData";
+import { useCallback, useEffect, useMemo } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 const LEVEL_COLOR = {
     [LOG_LEVELS.info]: "blue.500",
@@ -35,40 +32,52 @@ const shadowCss = {
 };
 
 export const LogViewerBody = () => {
-    const { chosenLog, logRowsCount, logTextSize, isLogTextWrapped, filter } =
-        useLogStore();
-
+    const {
+        q: { isLoading, isError, error },
+        live,
+        logTextSize,
+        isLogTextWrapped,
+    } = useLogData();
     const sticky = useStickToBottom();
 
-    const { data, isLoading, isError, error } = useQuery({
-        queryKey: ["logs", chosenLog.label, chosenLog.category, logRowsCount],
-        queryFn: async () => {
-            const res = await getLog(
-                chosenLog.label,
-                chosenLog.category,
-                logRowsCount,
-                "json"
-            );
-            return res?.data ?? [];
-        },
+    const rowVirtualizer = useVirtualizer({
+        count: live.length,
+        getScrollElement: () => sticky.scrollRef.current,
+        estimateSize: () => 24,
+        overscan: 20,
     });
 
-    const filename = chosenLog.label;
-    const type = chosenLog.category;
-    const topic = `log/${type}/${filename}`;
     useEffect(() => {
-        useLogStream.getState().reset();
-    }, [filename, type]);
+        if (!live.length) return;
+        if (sticky.isAtBottom) {
+            rowVirtualizer.scrollToIndex(live.length - 1, { align: "end" });
+        }
+    }, [live.length, sticky.isAtBottom, rowVirtualizer]);
 
-    useMqttLogs(topic);
-    const live = useLogStream((state) => state.live);
+    const contentProps = useMemo(
+        () => ({
+            style: {
+                height: `${rowVirtualizer.getTotalSize()}px`,
+                width: "100%",
+                position: "relative",
+            },
+        }),
+        [rowVirtualizer]
+    );
 
-    const rows = useMemo(() => {
-        const base = [...(data ?? []), ...live];
-        if (!filter?.length) return base;
-        const allow = new Set(filter);
-        return base.filter((r) => allow.has(r.level));
-    }, [data, filter, live]);
+    const getItemProps = useCallback(
+        (item) => ({
+            style: {
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: `${item.size}px`,
+                transform: `translateY(${item.start}px)`,
+            },
+        }),
+        []
+    );
 
     if (isLoading) return <Loader text={"Загрузка данных"} />;
     if (isError) return <ErrorInformer error={error} />;
@@ -78,21 +87,24 @@ export const LogViewerBody = () => {
     return (
         <ScrollArea.Root variant={"hover"}>
             <ScrollArea.Viewport ref={sticky.scrollRef} css={shadowCss}>
-                <ScrollArea.Content ref={sticky.contentRef}>
-                    {rows.length === 0 ? (
+                <ScrollArea.Content ref={sticky.contentRef} {...contentProps}>
+                    {live.length === 0 ? (
                         <NoData />
                     ) : (
-                        rows.map((row) => (
-                            <LogRow
-                                key={row.epochMs}
-                                row={row}
-                                logTextSize={logTextSize}
-                                isLogTextWrapped={isLogTextWrapped}
-                            />
+                        rowVirtualizer.getVirtualItems().map((vi) => (
+                            <div key={vi.key} {...getItemProps(vi)}>
+                                <LogRow
+                                    row={live[vi.index]}
+                                    logTextSize={logTextSize}
+                                    isLogTextWrapped={isLogTextWrapped}
+                                />
+                            </div>
                         ))
                     )}
                 </ScrollArea.Content>
             </ScrollArea.Viewport>
+            <ScrollArea.Scrollbar bg="transparent" />
+
             {!sticky.isAtBottom && (
                 <Box position="absolute" bottom="4" right="4" zIndex="10">
                     <IconButton
