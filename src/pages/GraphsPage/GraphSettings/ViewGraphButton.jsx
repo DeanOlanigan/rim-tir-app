@@ -1,28 +1,16 @@
+import { Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { useSetAtom, useAtomValue, useAtom } from "jotai";
-import {
-    startDateAtom,
-    endDateAtom,
-    offsetAtom,
-    isWsActiveAtom,
-    getWsMessageAtom,
-    variablesAtom,
-} from "../atoms";
+import { useGraphStore } from "../store/store";
 
-function ViewGraphButton() {
-    console.log("Render ViewGraphButton");
+export const ViewGraphButton = () => {
     const navigate = useNavigate();
 
-    const isWsActive = useAtomValue(isWsActiveAtom);
-    const offset = useAtomValue(offsetAtom);
-    const setStartDate = useSetAtom(startDateAtom);
-    const setEndDate = useSetAtom(endDateAtom);
+    const offset = useGraphStore((state) => state.offset);
+    const isRealTime = useGraphStore((state) => state.isRealTime);
+    const setStartDate = useGraphStore.getState().setStartDate;
+    const setEndDate = useGraphStore.getState().setEndDate;
 
-    const [, getWsMessage] = useAtom(getWsMessageAtom);
-
-    const variables = useAtomValue(variablesAtom);
-    const isDisabled = !(
+    /* const isDisabled = !(
         variables.length > 0 &&
         variables.every(
             (variable) =>
@@ -30,31 +18,21 @@ function ViewGraphButton() {
                 variable.variableMeasurement &&
                 variable.variableName
         )
-    );
+    ); */
 
     const setOffset = () => {
-        const nowTime = new Date(Date.now()).getTime();
-        const offsetTime = new Date(Date.now() - offset * 1000).getTime();
-        setStartDate(offsetTime);
-        setEndDate(nowTime);
+        setStartDate(new Date(Date.now() - offset * 1000).getTime());
+        setEndDate(new Date(Date.now()).getTime());
+    };
+
+    const handleClick = () => {
+        if (isRealTime) setOffset();
+        navigate("/graph/viewer");
     };
 
     return (
-        <Button
-            disabled={isDisabled}
-            shadow={"xl"}
-            size={"xs"}
-            data-state={"open"}
-            animationDuration={"slow"}
-            animationStyle={{ _open: "scale-fade-in" }}
-            onClick={() => {
-                if (isWsActive) setOffset();
-                getWsMessage();
-                navigate("/graph/viewer");
-            }}
-        >
+        <Button disabled shadow={"xl"} size={"xs"} onClick={handleClick}>
             Применить настройки и открыть график
         </Button>
     );
-}
-export default ViewGraphButton;
+};

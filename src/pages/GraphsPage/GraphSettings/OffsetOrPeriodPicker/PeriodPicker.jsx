@@ -1,21 +1,19 @@
-import { Stack } from "@chakra-ui/react";
-import { Field } from "@/components/ui/field";
+import { Field, Stack } from "@chakra-ui/react";
 import { ru } from "date-fns/locale";
 import { DatePicker } from "@/components/DatePicker/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useAtom } from "jotai";
-import { startDateAtom, endDateAtom } from "../../atoms";
-//import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
+import { useGraphStore } from "../../store/store";
 
-function PeriodPicker() {
-    console.log("Render PeriodPicker");
-    //const { startDate, endDate, setStartDate, setEndDate} = useGraphContext();
-    const [startDate, setStartDate] = useAtom(startDateAtom);
-    const [endDate, setEndDate] = useAtom(endDateAtom);
+export const PeriodPicker = () => {
+    const startDate = useGraphStore((state) => state.startDate);
+    const endDate = useGraphStore((state) => state.endDate);
+    const setStartDate = useGraphStore.getState().setStartDate;
+    const setEndDate = useGraphStore.getState().setEndDate;
 
     return (
         <Stack>
-            <Field label="Дата начала">
+            <Field.Root>
+                <Field.Label>Дата начала</Field.Label>
                 <DatePicker
                     selected={new Date(startDate)}
                     onChange={(date) => {
@@ -39,8 +37,9 @@ function PeriodPicker() {
                     }}
                     placeholderText="Дата начала"
                 />
-            </Field>
-            <Field label="Дата окончания">
+            </Field.Root>
+            <Field.Root>
+                <Field.Label>Дата окончания</Field.Label>
                 <DatePicker
                     selected={new Date(endDate)}
                     onChange={(date) => {
@@ -64,9 +63,7 @@ function PeriodPicker() {
                     }}
                     placeholderText="Дата окончания"
                 />
-            </Field>
+            </Field.Root>
         </Stack>
     );
-}
-
-export default PeriodPicker;
+};

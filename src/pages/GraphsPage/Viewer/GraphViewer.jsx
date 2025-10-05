@@ -3,21 +3,11 @@ import { HStack, IconButton, Card } from "@chakra-ui/react";
 import { LuArrowLeft } from "react-icons/lu";
 import { Line } from "react-chartjs-2";
 import { useColorModeValue } from "@/components/ui/color-mode";
-import { WebSocketService } from "@/services/websocketService";
 import { createOptions } from "./chartOptions";
-import { useAtomValue, useAtom } from "jotai";
-import { wsMessageAtom, clearWsMessageAtom } from "../atoms";
-//import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
-
-const wsService = new WebSocketService("ws://192.168.1.1:8800");
 
 function GraphViewer() {
     console.log("Render GraphViewer");
-    //const { createMessageForWS } = useGraphContext();
     const chartRef = useRef(null);
-    const wsMessage = useAtomValue(wsMessageAtom);
-    const [, clearWsMessage] = useAtom(clearWsMessageAtom);
-
     const backgroundColor = useColorModeValue("#3f3f46", "#71717a");
     const options = createOptions(backgroundColor);
 
@@ -25,7 +15,7 @@ function GraphViewer() {
         datasets: [],
     });
 
-    useEffect(() => {
+    /* useEffect(() => {
         wsService.connect();
 
         const handleWebSocketMessage = (message) => {
@@ -95,7 +85,7 @@ function GraphViewer() {
             wsService.removeMessageHandler(handleWebSocketMessage);
             wsService.close();
         };
-    }, []);
+    }, []); */
 
     const resetZoom = () => {
         const chart = chartRef.current;
@@ -121,9 +111,6 @@ function GraphViewer() {
                             size={"xs"}
                             shadow={"xs"}
                             variant={"outline"}
-                            onClick={() => {
-                                clearWsMessage();
-                            }}
                         >
                             <LuArrowLeft />
                         </IconButton>

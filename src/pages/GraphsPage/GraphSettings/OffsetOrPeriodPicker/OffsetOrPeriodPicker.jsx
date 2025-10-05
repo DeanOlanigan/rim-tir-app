@@ -1,31 +1,32 @@
 import { Box, Tabs } from "@chakra-ui/react";
-import PeriodPicker from "./PeriodPicker";
-import OffsetPicker from "./OffsetPicker";
-import { useAtom } from "jotai";
-import { isWsActiveAtom } from "../../atoms";
-//import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
+import { PeriodPicker } from "./PeriodPicker";
+import { OffsetPicker } from "./OffsetPicker";
+import { useGraphStore } from "../../store/store";
 
-function OffsetOrPeriodPicker() {
-    console.log("Render OffsetOrPeriodPicker");
-    //const { isWsActive, setIsWsActive } = useGraphContext();
-    const [isWsActive, setIsWsActive] = useAtom(isWsActiveAtom);
+export const OffsetOrPeriodPicker = () => {
+    const isRealTime = useGraphStore((state) => state.isRealTime);
+    const setIsRealTime = useGraphStore.getState().setIsRealTime;
 
     return (
         <Tabs.Root
-            value={isWsActive ? "1" : "2"}
-            variant={"enclosed"}
+            lazyMount
+            unmountOnExit
             size={"sm"}
-            onValueChange={(e) => {
-                setIsWsActive(e.value === "1");
-            }}
+            value={isRealTime}
+            variant={"plain"}
+            fitted
+            onValueChange={(e) => setIsRealTime(e.value)}
+            w={"sm"}
+            h={"100%"}
         >
-            <Tabs.List w={"full"} justifyContent={"center"}>
-                <Tabs.Trigger value="1">Текущие</Tabs.Trigger>
-                <Tabs.Trigger value="2">Период</Tabs.Trigger>
+            <Tabs.List bg={"bg.muted"} rounded={"l3"} p={"1"}>
+                <Tabs.Trigger value="real">Текущие</Tabs.Trigger>
+                <Tabs.Trigger value="archive">Период</Tabs.Trigger>
+                <Tabs.Indicator rounded="l2" />
             </Tabs.List>
-            <Box pos="relative" width="full">
+            <Box pos={"relative"} width={"full"} p={"2"}>
                 <Tabs.Content
-                    value="1"
+                    value="real"
                     position="absolute"
                     inset="0"
                     _open={{
@@ -40,7 +41,7 @@ function OffsetOrPeriodPicker() {
                     <OffsetPicker />
                 </Tabs.Content>
                 <Tabs.Content
-                    value="2"
+                    value="archive"
                     position="absolute"
                     inset="0"
                     _open={{
@@ -57,6 +58,4 @@ function OffsetOrPeriodPicker() {
             </Box>
         </Tabs.Root>
     );
-}
-
-export default OffsetOrPeriodPicker;
+};
