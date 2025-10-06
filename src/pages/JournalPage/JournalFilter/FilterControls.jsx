@@ -1,14 +1,12 @@
 import { useEffect } from "react";
 import { Button } from "@chakra-ui/react";
 import { useJournalContext } from "@/providers/JournalProvider/JournalContext";
-import { WebSocketService } from "@/services/websocketService";
-
-const wsService = new WebSocketService("ws://192.168.1.1:8800");
 
 function FilterControls({ filters, setFilters }) {
     const { setJournalRows, clearJournalRows } = useJournalContext();
     console.log("Render FilterControls");
-    useEffect(() => {
+
+    /* useEffect(() => {
         wsService.connect();
         const messageHandler = (message) => {
             setJournalRows(message);
@@ -19,7 +17,7 @@ function FilterControls({ filters, setFilters }) {
             wsService.removeMessageHandler(messageHandler);
             wsService.close();
         };
-    }, []);
+    }, []); */
 
     const transferDate = (date) => {
         const newDate = new Date(date);
@@ -32,7 +30,7 @@ function FilterControls({ filters, setFilters }) {
 
     const handleApply = () => {
         clearJournalRows();
-        wsSend();
+        //wsSend();
     };
 
     const handleReset = () => {
@@ -40,7 +38,7 @@ function FilterControls({ filters, setFilters }) {
         setFilters([]);
     };
 
-    const wsSend = () => {
+    /* const wsSend = () => {
         const oldDates = transferDate(filters.archiveStartDatePick);
         const newDates = transferDate(filters.archiveEndDatePick);
         wsService.sendMessage({
@@ -50,7 +48,7 @@ function FilterControls({ filters, setFilters }) {
                 archiveEndDatePick: newDates,
             },
         });
-    };
+    }; */
 
     return (
         <>
