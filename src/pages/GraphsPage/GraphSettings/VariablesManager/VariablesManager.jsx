@@ -5,6 +5,8 @@ import { getRandomColor } from "@/utils/utils";
 import { LuPlus } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
 import { getConfiguration, QK } from "@/api";
+import { Loader } from "@/components/Loader";
+import { ErrorInformer } from "@/components/ErrorInformer";
 
 const shadowCss = {
     "--scroll-shadow-size": "4rem",
@@ -43,48 +45,75 @@ const MAX_VARIABLES = 10;
 
 export const VariablesManager = () => {
     const variables = useGraphStore((state) => state.variables);
-    const { data, isLoading, isError } = useVariables();
-    const { setVariable } = useGraphStore.getState();
-
-    const handleClick = () => {
-        if (Object.values(variables).length >= MAX_VARIABLES) return;
-        setVariable({
-            id: Date.now(),
-            color: getRandomColor(),
-            variableName: null,
-        });
-    };
+    const varLength = Object.values(variables).length;
+    const { data, isLoading, isError, error } = useVariables();
 
     return (
         <Stack w={"100%"}>
-            <Button
-                size={"xs"}
-                h={"44px"}
-                variant={"subtle"}
-                onClick={handleClick}
-                disabled={Object.values(variables).length >= MAX_VARIABLES}
-            >
-                <LuPlus />
-                Добавить переменную
-                <Badge variant={"solid"}>{`${
-                    Object.values(variables).length
-                }/${MAX_VARIABLES}`}</Badge>
-            </Button>
+            <AddVarButton
+                isLoading={isLoading}
+                isError={isError}
+                varLength={varLength}
+            />
             <ScrollArea.Root size={"xs"} borderWidth={"1px"} rounded={"l2"}>
                 <ScrollArea.Viewport css={shadowCss}>
                     <ScrollArea.Content spaceY={"2"} p={"2"}>
-                        {isLoading && <div>Загрузка...</div>}
-                        {Object.values(variables).map((variable) => (
-                            <GraphVariable
-                                key={variable.id}
-                                id={variable.id}
-                                data={data}
-                            />
-                        ))}
+                        <VariablesContent
+                            isLoading={isLoading}
+                            isError={isError}
+                            error={error}
+                            variables={variables}
+                            data={data}
+                        />
                     </ScrollArea.Content>
                     <ScrollArea.Scrollbar bg={"transparent"} />
                 </ScrollArea.Viewport>
             </ScrollArea.Root>
         </Stack>
     );
+};
+
+const AddVarButton = ({ isLoading, isError, varLength }) => {
+    const { addVariable } = useGraphStore.getState();
+    const handleClick = () => {
+        if (varLength >= MAX_VARIABLES) return;
+        addVariable({
+            id: Date.now(),
+            color: getRandomColor(),
+            name: null,
+        });
+    };
+
+    return (
+        <Button
+            size={"xs"}
+            h={"44px"}
+            variant={"subtle"}
+            loading={isLoading}
+            loadingText={"Загрузка..."}
+            onClick={handleClick}
+            disabled={varLength >= MAX_VARIABLES || isError}
+            colorPalette={isError && "red"}
+        >
+            {isError ? (
+                "Ошибка"
+            ) : (
+                <>
+                    <LuPlus />
+                    Добавить переменную
+                    <Badge
+                        variant={"solid"}
+                    >{`${varLength}/${MAX_VARIABLES}`}</Badge>
+                </>
+            )}
+        </Button>
+    );
+};
+
+const VariablesContent = ({ isLoading, isError, error, variables, data }) => {
+    if (isLoading) return <Loader text={"Загрузка..."} />;
+    if (isError) return <ErrorInformer error={error} />;
+    return Object.values(variables).map((variable) => (
+        <GraphVariable key={variable.id} id={variable.id} data={data} />
+    ));
 };

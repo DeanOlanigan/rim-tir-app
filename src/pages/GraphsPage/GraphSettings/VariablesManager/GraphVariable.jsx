@@ -10,17 +10,10 @@ import {
 import { LuCheck, LuTrash } from "react-icons/lu";
 import { swatches } from "../graphSettingsConstants";
 import { useColor, useGraphStore } from "../../store/store";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 export const GraphVariable = ({ id, data }) => {
     const { removeVariable } = useGraphStore.getState();
-    const color = useColor(id);
-
-    const collection = useMemo(() => {
-        return createListCollection({
-            items: data ?? [],
-        });
-    }, [data]);
 
     return (
         <Flex
@@ -32,35 +25,8 @@ export const GraphVariable = ({ id, data }) => {
             px={"2"}
             gap={"2"}
         >
-            <VarColorPicker color={color} />
-            <Select.Root
-                collection={collection}
-                size={"xs"}
-                lazyMount
-                unmountOnExit
-            >
-                <Select.HiddenSelect />
-                <Select.Control>
-                    <Select.Trigger>
-                        <Select.ValueText placeholder="Переменная" />
-                    </Select.Trigger>
-                    <Select.IndicatorGroup>
-                        <Select.Indicator />
-                    </Select.IndicatorGroup>
-                </Select.Control>
-                <Portal>
-                    <Select.Positioner>
-                        <Select.Content>
-                            {collection.items.map((row) => (
-                                <Select.Item item={row} key={row.value}>
-                                    {row.label}
-                                    <Select.ItemIndicator />
-                                </Select.Item>
-                            ))}
-                        </Select.Content>
-                    </Select.Positioner>
-                </Portal>
-            </Select.Root>
+            <VarColorPicker id={id} />
+            <VarNameSelect id={id} data={data} />
             <IconButton
                 size={"xs"}
                 variant={"ghost"}
@@ -73,11 +39,65 @@ export const GraphVariable = ({ id, data }) => {
     );
 };
 
-const VarColorPicker = ({ color }) => {
+const VarNameSelect = ({ id, data }) => {
+    const collection = useMemo(() => {
+        return createListCollection({
+            items: data ?? [],
+        });
+    }, [data]);
+    const varName = useGraphStore((state) => state.variables[id]?.name);
+    const { setVariableName } = useGraphStore.getState();
+
+    return (
+        <Select.Root
+            collection={collection}
+            value={[varName]}
+            size={"xs"}
+            lazyMount
+            unmountOnExit
+            onValueChange={(e) => {
+                setVariableName(id, e.value[0]);
+            }}
+        >
+            <Select.HiddenSelect />
+            <Select.Control>
+                <Select.Trigger>
+                    <Select.ValueText placeholder="Переменная" />
+                </Select.Trigger>
+                <Select.IndicatorGroup>
+                    <Select.Indicator />
+                </Select.IndicatorGroup>
+            </Select.Control>
+            <Portal>
+                <Select.Positioner>
+                    <Select.Content>
+                        {collection.items.map((row) => (
+                            <Select.Item item={row} key={row.value}>
+                                {row.label}
+                                <Select.ItemIndicator />
+                            </Select.Item>
+                        ))}
+                    </Select.Content>
+                </Select.Positioner>
+            </Portal>
+        </Select.Root>
+    );
+};
+
+const VarColorPicker = ({ id }) => {
+    const varColor = useColor(id);
+    const [color, setColor] = useState(parseColor(varColor));
+    const { setVariableColor } = useGraphStore.getState();
+
     return (
         <ColorPicker.Root
             size={"xs"}
-            defaultValue={parseColor(color)}
+            value={color}
+            onValueChangeEnd={(e) =>
+                setVariableColor(id, e.value.toString("hex"))
+            }
+            onValueChange={(e) => setColor(e.value)}
+            onExitComplete={() => setVariableColor(id, color.toString("hex"))}
             closeOnSelect
             lazyMount
             unmountOnExit
@@ -90,7 +110,7 @@ const VarColorPicker = ({ color }) => {
                 <ColorPicker.Positioner>
                     <ColorPicker.Content>
                         <ColorPicker.Area />
-                        <ColorPicker.ChannelSlider channel={"hue"} />
+                        <ColorPicker.Sliders />
                         <ColorPicker.SwatchGroup>
                             {swatches.map((swatch) => (
                                 <ColorPicker.SwatchTrigger
