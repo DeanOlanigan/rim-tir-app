@@ -1,4 +1,3 @@
-import { ru } from "date-fns/locale";
 import { createListCollection, Stack } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
@@ -56,7 +55,6 @@ function ArchiveFilter({ filters, setFilters }) {
                     onChange={(date) =>
                         setFilters({ ...filters, archiveStartDatePick: date })
                     }
-                    locale={ru}
                     timeFormat="HH:mm"
                     timeCaption="Время"
                     timeIntervals={15}
@@ -83,7 +81,6 @@ function ArchiveFilter({ filters, setFilters }) {
                     onChange={(date) =>
                         setFilters({ ...filters, archiveEndDatePick: date })
                     }
-                    locale={ru}
                     timeFormat="HH:mm"
                     timeCaption="Время"
                     timeIntervals={15}

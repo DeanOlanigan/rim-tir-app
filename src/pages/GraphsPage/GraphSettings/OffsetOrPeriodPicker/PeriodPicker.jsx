@@ -1,5 +1,4 @@
 import { Field, Stack } from "@chakra-ui/react";
-import { ru } from "date-fns/locale";
 import { DatePicker } from "@/components/DatePicker/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useGraphStore } from "../../store/store";
@@ -22,7 +21,6 @@ export const PeriodPicker = () => {
                     portalId="datepicker-portal"
                     popperPlacement="right-end"
                     showPopperArrow={false}
-                    locale={ru}
                     timeFormat="HH:mm"
                     timeCaption="Время"
                     timeIntervals={15}
@@ -48,7 +46,6 @@ export const PeriodPicker = () => {
                     portalId="datepicker-portal"
                     popperPlacement="right-end"
                     showPopperArrow={false}
-                    locale={ru}
                     timeFormat="HH:mm"
                     timeCaption="Время"
                     timeIntervals={15}
