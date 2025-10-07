@@ -18,8 +18,10 @@ export function generateChartData(state) {
             backgroundColor: v.color + "55",
             borderWidth: 2,
             tension: 0.3,
-            pointRadius: 0,
             stepped: true,
+            pointStyle: "circle",
+            pointRadius: 5,
+            pointHoverRadius: 10,
         });
     }
 
