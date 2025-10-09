@@ -1,15 +1,10 @@
 import { Code } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
-import { getConfiguration } from "@/api/configuration";
-import { QK } from "@/api/queryKeys";
 import { memo } from "react";
+import { useLiveValue } from "../../store/mqtt-stream-store";
 
 export const NodeValues = memo(function NodeValues({ id }) {
-    const { data: params } = useQuery({
-        queryKey: QK.configuration,
-        queryFn: getConfiguration,
-        select: ({ state }) => state.settings[id]?.mqttPacket?.v,
-    });
+    const live = useLiveValue(id);
+
     return (
         <Code
             w={"100px"}
@@ -17,7 +12,7 @@ export const NodeValues = memo(function NodeValues({ id }) {
             justifyContent={"center"}
             truncate
         >
-            {params?.toString()}
+            {live?.v?.toString()}
         </Code>
     );
 });

@@ -1,6 +1,6 @@
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box } from "@chakra-ui/react";
 import { dialog } from "./setValue/dialog";
 import { ConfigInfoWrapper } from "./ConfigInfo";
@@ -14,6 +14,8 @@ import { getConfiguration, QK } from "@/api";
 import { NoData } from "@/components/NoData";
 import { ErrorInformer } from "@/components/ErrorInformer";
 import { Loader } from "@/components/Loader";
+import { useMqttLive } from "./useMqttLive";
+import { useMonitoringLive } from "./store/mqtt-stream-store";
 
 function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -21,13 +23,15 @@ function MonitoringPage() {
         queryKey: QK.configuration,
         queryFn: getConfiguration,
     });
+    useEffect(() => {
+        if (!data) return;
+        useMonitoringLive.getState().clear();
+    }, [data]);
+
+    useMqttLive("monitoring/node/#");
 
     if (isLoading || !data) return <Loader text={"Загрузка данных"} />;
     if (isError) return <ErrorInformer error={error} />;
-
-    const send = data.state[TREE_TYPES.send];
-    const receive = data.state[TREE_TYPES.receive];
-    const variables = data.state[TREE_TYPES.variables];
 
     return (
         <>
@@ -44,7 +48,7 @@ function MonitoringPage() {
                 <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                     <Panel collapsible={true} collapsedSize={0} minSize={25}>
                         <TreeWrapper
-                            data={receive}
+                            data={data.state[TREE_TYPES.receive]}
                             treeType={TREE_TYPES.receive}
                             searchTerm={searchTerm}
                         />
@@ -52,7 +56,7 @@ function MonitoringPage() {
                     <PanelResizeHandle className="PanelResizeHandle" />
                     <Panel collapsible={true} collapsedSize={0} minSize={25}>
                         <TreeWrapper
-                            data={variables}
+                            data={data.state[TREE_TYPES.variables]}
                             treeType={TREE_TYPES.variables}
                             searchTerm={searchTerm}
                         />
@@ -60,7 +64,7 @@ function MonitoringPage() {
                     <PanelResizeHandle className="PanelResizeHandle" />
                     <Panel collapsible={true} collapsedSize={0} minSize={25}>
                         <TreeWrapper
-                            data={send}
+                            data={data.state[TREE_TYPES.send]}
                             treeType={TREE_TYPES.send}
                             searchTerm={searchTerm}
                         />

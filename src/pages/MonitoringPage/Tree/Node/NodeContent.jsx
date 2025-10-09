@@ -1,28 +1,24 @@
 import { memo } from "react";
-import {
-    Text,
-    IconButton,
-    HStack,
-    Code,
-    Menu,
-    Portal,
-    Icon,
-} from "@chakra-ui/react";
+import { Text, IconButton, HStack, Code, Menu, Portal } from "@chakra-ui/react";
 import { NODE_TYPES } from "@/config/constants";
-import { LuCircle, LuPencil, LuTextCursorInput } from "react-icons/lu";
-import { useQuery } from "@tanstack/react-query";
-import { QK } from "@/api/queryKeys";
-import { getConfiguration } from "@/api/configuration";
+import { LuPencil, LuTextCursorInput } from "react-icons/lu";
 import { AdditionalInfoDrawer } from "@/pages/MonitoringPage/AdditionalInfo/Drawer/AdditionalInfoDrawer";
 import { dialog } from "@/pages/MonitoringPage/setValue/dialog";
 import { TbHandStop } from "react-icons/tb";
-import { attributes } from "@/pages/MonitoringPage/setValue/Attributes/attributes";
 import { useSettingsFromCache } from "../../useSettingsFromCache";
+import { NodeValues } from "./NodeValues";
+import { NodeAttributes } from "./NodeAttributes";
+import { useSparklineDataset } from "../../useSparklineDataset";
+import { Sparkline } from "./Sparkline";
 
 export const NodeContent = memo(function NodeContent({ id, type, name }) {
     const isFolder = type === NODE_TYPES.folder;
     const isVariable = type === NODE_TYPES.variable;
     const isDataObject = type === NODE_TYPES.dataObject;
+
+    const settings = useSettingsFromCache();
+    const isGraph =
+        type === NODE_TYPES.variable && settings[id]?.setting?.graph;
 
     return (
         <HStack justifyContent={"space-between"} w={"100%"}>
@@ -35,22 +31,21 @@ export const NodeContent = memo(function NodeContent({ id, type, name }) {
                 {!isFolder && <AdditionalInfoDrawer id={id} />}
             </HStack>
             <HStack>
-                {/* {(isDataObject || isVariable) && <NodeAttributes id={id} />} */}
-                {/* {(isDataObject || isVariable) && <NodeValues id={id} />} */}
+                {(isDataObject || isVariable) && <NodeAttributes id={id} />}
+                {isGraph && <SparkLineWrapper id={id} />}
+                {(isDataObject || isVariable) && <NodeValues id={id} />}
                 {isVariable && <VariableEditMenu id={id} />}
             </HStack>
         </HStack>
     );
 });
 
-const BindedVariable = memo(function BindedVariable({ id }) {
-    /* const { data: name } = useQuery({
-        queryKey: QK.configuration,
-        queryFn: getConfiguration,
-        select: ({ state }) =>
-            state.settings[state.settings[id]?.setting?.variableId]?.name,
-    }); */
+const SparkLineWrapper = memo(function SparkLineWrapper({ id }) {
+    const points = useSparklineDataset(id, 24);
+    return <Sparkline data={points} />;
+});
 
+const BindedVariable = memo(function BindedVariable({ id }) {
     const settings = useSettingsFromCache();
     const name = settings[settings[id]?.setting?.variableId]?.name;
 
@@ -104,35 +99,5 @@ const VariableEditMenu = memo(function VariableEditMenu({ id }) {
                 </Menu.Positioner>
             </Portal>
         </Menu.Root>
-    );
-});
-
-const NodeAttributes = memo(function NodeAttributes({ id }) {
-    const { data: params } = useQuery({
-        queryKey: QK.configuration,
-        queryFn: getConfiguration,
-        select: ({ state }) => state.settings[id]?.mqttPacket?.q?.attrs,
-    });
-
-    return (
-        <>
-            {attributes.map(
-                (attr) =>
-                    attr?.icon?.as &&
-                    params?.includes(attr.name) && (
-                        <Icon
-                            key={attr.name}
-                            size={"md"}
-                            {...attr.icon}
-                            aria-hidden
-                            title={attr.label}
-                        />
-                    )
-            )}
-            <Icon
-                as={LuCircle}
-                fill={params?.includes("used") ? "fg.success" : "fg.error"}
-            />
-        </>
     );
 });
