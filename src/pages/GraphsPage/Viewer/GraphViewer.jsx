@@ -6,8 +6,7 @@ import { useRef, useState } from "react";
 import { TIME_TYPE } from "../GraphSettings/graphSettingsConstants";
 
 function GraphViewer() {
-    const state = useGraphStore((state) => state);
-
+    const type = useGraphStore((state) => state.type);
     const graphRef = useRef(null);
 
     const handleBack = () => {
@@ -34,17 +33,13 @@ function GraphViewer() {
                     >
                         <LuArrowLeft />
                     </IconButton>
-                    {state.type === TIME_TYPE.real && (
+                    {type === TIME_TYPE.real && (
                         <PauseButton graphRef={graphRef} />
                     )}
                 </HStack>
             </Card.Header>
             <Card.Body>
-                <ExampleChart
-                    state={state}
-                    graphRef={graphRef}
-                    type={state.type}
-                />
+                <ExampleChart graphRef={graphRef} />
             </Card.Body>
         </Card.Root>
     );

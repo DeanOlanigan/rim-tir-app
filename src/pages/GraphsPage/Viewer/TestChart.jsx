@@ -7,7 +7,6 @@ import {
     LinearScale,
     PointElement,
     LineElement,
-    //TimeScale,
     Title,
     Tooltip,
     Legend,
@@ -21,12 +20,12 @@ import {
 import { createOptions } from "./chartOptions";
 import { useQuery } from "@tanstack/react-query";
 import { getGraphPoints } from "@/api/graph";
+import { useGraphStore } from "../store/store";
 
 ChartJS.register(
     LinearScale,
     PointElement,
     LineElement,
-    //TimeScale,
     Title,
     Tooltip,
     Legend,
@@ -49,10 +48,12 @@ const useGraphHistory = (state) => {
     return q;
 };
 
-export const ExampleChart = ({ state, graphRef, type }) => {
-    useMqttChart(graphRef, type);
+export const ExampleChart = ({ graphRef }) => {
+    const state = useGraphStore((state) => state);
+    //const { data, isLoading, isError, error} = useGraphHistory(state);
     const data = generateChartData(state);
-    console.log(data);
+
+    useMqttChart(graphRef, state.type);
 
     const handleDBClick = () => {
         graphRef.current.resetZoom();
@@ -62,7 +63,7 @@ export const ExampleChart = ({ state, graphRef, type }) => {
         <Line
             ref={graphRef}
             data={data}
-            options={createOptions(type, state)}
+            options={createOptions(state)}
             onDoubleClick={handleDBClick}
         />
     );

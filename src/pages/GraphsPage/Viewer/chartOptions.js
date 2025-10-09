@@ -1,10 +1,10 @@
 import { TIME_TYPE } from "../GraphSettings/graphSettingsConstants";
 
-export const createOptions = (type, state) => ({
+export const createOptions = (state) => ({
     responsive: true,
     scales: {
         x: {
-            type: type === TIME_TYPE.real ? "realtime" : "time",
+            type: state.type === TIME_TYPE.real ? "realtime" : "time",
             grid: {
                 color: "#6666663f",
             },
@@ -17,12 +17,12 @@ export const createOptions = (type, state) => ({
         },
     },
     plugins: {
-        zoom: zoomOptions(type, state),
+        zoom: zoomOptions(state.type, state.start, state.end),
         streaming: streamingOptions,
     },
 });
 
-const zoomOptions = (type, state) => ({
+const zoomOptions = (type, start, end) => ({
     pan: {
         enabled: true,
         mode: "x",
@@ -37,7 +37,7 @@ const zoomOptions = (type, state) => ({
         mode: "x",
     },
     limits: {
-        x: type === TIME_TYPE.real ? realtimeLimits : archiveLimits(state),
+        x: type === TIME_TYPE.real ? realtimeLimits : archiveLimits(start, end),
     },
 });
 
@@ -54,9 +54,9 @@ const realtimeLimits = {
     maxDuration: 1000 * 60 * 5,
 };
 
-const archiveLimits = (state) => ({
-    min: state.startDate,
-    max: state.endDate,
+const archiveLimits = (start, end) => ({
+    min: start,
+    max: end,
     minRange: 1000 * 30,
 });
 
