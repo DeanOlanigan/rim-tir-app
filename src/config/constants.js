@@ -53,3 +53,9 @@ export const LOG_LEVELS = {
     error: "error",
     status: "status",
 };
+
+export const CONN_STATUS = {
+    DISCONNECTED: "disconnected",
+    STALED: "staled",
+    LIVE: "live",
+};

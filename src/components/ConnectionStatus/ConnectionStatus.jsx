@@ -2,6 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { LuTriangleAlert } from "react-icons/lu";
 import { useEffect, useState } from "react";
 
+// DEPRECATED
 function ConnectionStatus() {
     const [serverTime, setServerTime] = useState("");
     const [isConnected, setIsConnected] = useState(false);

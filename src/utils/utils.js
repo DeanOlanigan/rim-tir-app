@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { configuratorConfig } from "./configurationParser";
+import { CONN_STATUS } from "@/config/constants";
 
 export const getStartDate = () => {
     const startDate = new Date();
@@ -156,4 +157,15 @@ export function hasIgnoreAccessor(ctx, id) {
         id = ctx[id]?.parentId ?? null;
     }
     return false;
+}
+
+export function getMetricColor(status, baseColor) {
+    switch (status) {
+        case CONN_STATUS.DISCONNECTED:
+            return "red";
+        case CONN_STATUS.STALED:
+            return "yellow";
+        case CONN_STATUS.LIVE:
+            return baseColor;
+    }
 }
