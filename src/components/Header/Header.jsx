@@ -23,6 +23,7 @@ import { QK } from "@/api/queryKeys";
 import { MqttTime } from "./MqttMetrics/MqttTime";
 import { MqttCpu } from "./MqttMetrics/MqttCpu";
 import { MqttRam } from "./MqttMetrics/MqttRam";
+import { Connect } from "./MqttMetrics/Connect";
 
 function Header() {
     return (
@@ -114,6 +115,7 @@ const TestMqtt = () => {
             <MqttTime />
             <MqttCpu />
             <MqttRam />
+            <Connect />
         </Flex>
     );
 };
