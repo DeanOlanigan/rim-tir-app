@@ -1,9 +1,11 @@
 import { create } from "zustand";
 
+const MAX_CAPACITY = 32;
+
 export const useMonitoringLive = create((set) => ({
     latest: new Map(),
-    series: new Map(),
-    capacity: 64,
+    spark: new Map(),
+    capacity: MAX_CAPACITY,
 
     upsertMany: (batch) =>
         set((state) => {
@@ -20,37 +22,47 @@ export const useMonitoringLive = create((set) => ({
             return changed ? { latest: next } : state;
         }),
 
-    appendManyHistory: (batch) =>
+    appendManySpark: (batch) =>
         set((state) => {
             if (!batch.size) return state;
             let changed = false;
             const cap = state.capacity;
-            const next = new Map(state.series);
+            const next = new Map(state.spark);
 
             for (const [id, msg] of batch) {
-                const prev = next.get(id);
-                let s;
-                if (!prev)
-                    s = { buf: new Float64Array(cap), idx: 0, len: 0, ver: 0 };
-                else s = { ...prev };
+                const y = Number(msg.v);
+                if (!Number.isFinite(y)) continue;
 
-                s.buf[s.idx] = msg.v;
-                s.idx = (s.idx + 1) % cap;
-                s.len = Math.min(s.len + 1, cap);
-                s.ver++;
-                next.set(id, s);
+                const arr = next.get(id);
+
+                let out = [];
+                if (!arr) {
+                    out = [{ x: 0, y }];
+                } else if (arr.length < cap) {
+                    out = [...arr, { x: arr.length, y }];
+                } else {
+                    out = new Array(cap);
+                    for (let i = 0; i < cap - 1; i++) {
+                        out[i] = { x: i, y: arr[i + 1].y };
+                    }
+                    out[cap - 1] = { x: cap - 1, y };
+                }
+
+                next.set(id, out);
                 changed = true;
             }
-            return changed ? { series: next } : state;
+
+            return changed ? { spark: next } : state;
         }),
 
-    clear: () => set({ latest: new Map(), series: new Map() }),
+    clear: () =>
+        set({ latest: new Map(), series: new Map(), spark: new Map() }),
 }));
 
 export function useLiveValue(id) {
     return useMonitoringLive((s) => s.latest.get(id), Object.is);
 }
 
-export function useSeries(id) {
-    return useMonitoringLive((s) => s.series.get(id), Object.is);
+export function useSpark(id) {
+    return useMonitoringLive((s) => s.spark.get(id), Object.is);
 }

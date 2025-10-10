@@ -8,7 +8,6 @@ import { TbHandStop } from "react-icons/tb";
 import { useSettingsFromCache } from "../../useSettingsFromCache";
 import { NodeValues } from "./NodeValues";
 import { NodeAttributes } from "./NodeAttributes";
-import { useSparklineDataset } from "../../useSparklineDataset";
 import { Sparkline } from "./Sparkline";
 
 export const NodeContent = memo(function NodeContent({ id, type, name }) {
@@ -32,17 +31,12 @@ export const NodeContent = memo(function NodeContent({ id, type, name }) {
             </HStack>
             <HStack>
                 {(isDataObject || isVariable) && <NodeAttributes id={id} />}
-                {isGraph && <SparkLineWrapper id={id} />}
+                {isGraph && <Sparkline id={id} />}
                 {(isDataObject || isVariable) && <NodeValues id={id} />}
                 {isVariable && <VariableEditMenu id={id} />}
             </HStack>
         </HStack>
     );
-});
-
-const SparkLineWrapper = memo(function SparkLineWrapper({ id }) {
-    const points = useSparklineDataset(id, 24);
-    return <Sparkline data={points} />;
 });
 
 const BindedVariable = memo(function BindedVariable({ id }) {

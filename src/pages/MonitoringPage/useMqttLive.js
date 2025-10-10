@@ -13,10 +13,10 @@ export function useMqttLive(subTopic) {
 
         const flush = () => {
             if (!buf.size) return;
-            const { upsertMany, appendManyHistory } =
+            const { upsertMany, appendManySpark } =
                 useMonitoringLive.getState();
             upsertMany(buf);
-            appendManyHistory(buf);
+            appendManySpark(buf);
             buf.clear();
         };
 

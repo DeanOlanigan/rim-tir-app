@@ -9,6 +9,7 @@ import {
     CategoryScale,
     Filler,
 } from "chart.js";
+import { useSpark } from "../../store/mqtt-stream-store";
 
 ChartJS.register(
     LineController,
@@ -19,75 +20,94 @@ ChartJS.register(
     Filler
 );
 
+const chartAreaBorder = {
+    id: "chartAreaBorder",
+    beforeDraw(chart, args, options) {
+        const {
+            ctx,
+            chartArea: { left, top, width, height },
+        } = chart;
+        ctx.save();
+        ctx.strokeStyle = options.borderColor;
+        ctx.lineWidth = options.borderWidth;
+        ctx.setLineDash(options.borderDash || []);
+        ctx.lineDashOffset = options.borderDashOffset;
+        ctx.strokeRect(left, top, width, height);
+        ctx.restore();
+    },
+};
+
 export const Sparkline = memo(function Sparkline({
-    data,
+    id,
     width = 96,
     height = 24,
-    lineWidth = 1.5,
-    tension = 0,
 }) {
+    const data = useSpark(id);
     const chartRef = useRef(null);
+    const xMax = Math.max(0, data?.length - 1);
 
-    const labels = useMemo(() => {
-        const n = data.length;
-        const arr = new Array(n);
-        for (let i = 0; i < n; i++) arr[i] = i;
-        return arr;
-    }, [data.length]);
-
-    const datasetIdKey = "spark";
-    const chartData = useMemo(
+    const baseData = useMemo(
         () => ({
-            labels,
             datasets: [
                 {
-                    [datasetIdKey]: datasetIdKey,
+                    spark: "spark",
                     data,
-                    borderWidth: lineWidth,
+                    borderWidth: 1.5,
                     borderColor: "#0b8615ff",
-                    backgroundColor: "#084617ff",
+                    backgroundColor: "#0b861550",
                     pointRadius: 0,
                     fill: true,
-                    tension,
+                    tension: 0,
                 },
             ],
         }),
-        [labels, data, lineWidth, tension]
+        [data]
     );
 
-    const options = useMemo(
+    const baseOptions = useMemo(
         () => ({
-            responsive: false, // работаем фикс. размерами
+            responsive: false,
             maintainAspectRatio: false,
-            animation: false, // нет анимации
-            events: [], // без событий мыши
-            parsing: false, // подаём готовые числа
+            animation: false,
+            events: [],
+            parsing: false,
             normalized: true,
             plugins: {
                 title: { display: false },
                 legend: { display: false },
                 tooltip: { enabled: false },
-                filler: { propagate: false },
+                chartAreaBorder: {
+                    borderColor: "#0b8615ff",
+                    borderWidth: 0.2,
+                },
             },
             interaction: {
                 intersect: false,
             },
             scales: {
-                x: { display: false },
-                y: { display: false },
+                x: {
+                    type: "linear",
+                    display: false,
+                    min: 0,
+                    max: xMax,
+                },
+                y: { type: "linear", display: false },
             },
         }),
-        []
+        [xMax]
     );
+
+    const plugins = useMemo(() => [chartAreaBorder], []);
 
     return (
         <Line
             ref={chartRef}
-            data={chartData}
-            options={options}
+            data={baseData}
+            options={baseOptions}
+            plugins={plugins}
             width={width}
             height={height}
-            datasetIdKey={datasetIdKey}
+            datasetIdKey={"spark"}
         />
     );
 });
