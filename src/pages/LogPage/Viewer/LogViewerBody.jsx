@@ -43,7 +43,11 @@ export const LogViewerBody = () => {
     const rowVirtualizer = useVirtualizer({
         count: live.length,
         getScrollElement: () => sticky.scrollRef.current,
-        estimateSize: () => 24,
+        estimateSize: () => logTextSize * 1.5,
+        measureElement: (el) => {
+            if (!el) return logTextSize * 1.5;
+            return el.getBoundingClientRect().height;
+        },
         overscan: 20,
     });
 
@@ -62,17 +66,17 @@ export const LogViewerBody = () => {
                 position: "relative",
             },
         }),
-        [rowVirtualizer]
+        [rowVirtualizer.getTotalSize()]
     );
 
     const getItemProps = useCallback(
         (item) => ({
+            'data-index': item.index,
             style: {
                 position: "absolute",
                 top: 0,
                 left: 0,
                 width: "100%",
-                height: `${item.size}px`,
                 transform: `translateY(${item.start}px)`,
             },
         }),
@@ -92,7 +96,10 @@ export const LogViewerBody = () => {
                         <NoData />
                     ) : (
                         rowVirtualizer.getVirtualItems().map((vi) => (
-                            <div key={vi.key} {...getItemProps(vi)}>
+                            <div 
+                                key={vi.key}
+                                ref={rowVirtualizer.measureElement} 
+                                {...getItemProps(vi)} >
                                 <LogRow
                                     row={live[vi.index]}
                                     logTextSize={logTextSize}
@@ -111,6 +118,7 @@ export const LogViewerBody = () => {
                         size="sm"
                         onClick={() => {
                             sticky.scrollToBottom();
+                            rowVirtualizer.measure();
                         }}
                         colorScheme="blue"
                         variant="solid"
