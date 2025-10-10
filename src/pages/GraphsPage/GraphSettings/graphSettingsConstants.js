@@ -27,7 +27,7 @@ export const offsets = createListCollection({
         { label: "3 минуты", value: 180 },
         { label: "4 минуты", value: 240 },
         { label: "5 минут", value: 300 },
-        { label: "10 минут", value: 600 },
+        /* { label: "10 минут", value: 600 },
         { label: "15 минут", value: 900 },
         { label: "20 минут", value: 1200 },
         { label: "30 минут", value: 1800 },
@@ -36,7 +36,7 @@ export const offsets = createListCollection({
         { label: "4 часа", value: 14400 },
         { label: "6 часов", value: 21600 },
         { label: "12 часов", value: 43200 },
-        { label: "24 часа", value: 86400 },
+        { label: "24 часа", value: 86400 }, */
     ],
 });
 

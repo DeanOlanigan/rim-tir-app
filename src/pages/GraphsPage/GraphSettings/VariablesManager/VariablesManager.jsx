@@ -3,10 +3,9 @@ import { GraphVariable } from "./GraphVariable";
 import { useGraphStore } from "../../store/store";
 import { getRandomColor } from "@/utils/utils";
 import { LuPlus } from "react-icons/lu";
-import { useQuery } from "@tanstack/react-query";
-import { getConfiguration, QK } from "@/api";
 import { Loader } from "@/components/Loader";
 import { ErrorInformer } from "@/components/ErrorInformer";
+import { useVariables } from "../../useVariables";
 
 const shadowCss = {
     "--scroll-shadow-size": "4rem",
@@ -20,25 +19,6 @@ const shadowCss = {
         maskImage:
             "linear-gradient(0deg,#000 calc(100% - var(--scroll-shadow-size)),transparent)",
     },
-};
-
-const useVariables = () => {
-    const q = useQuery({
-        queryKey: QK.configuration,
-        queryFn: getConfiguration,
-        select: ({ state }) => {
-            const variables = Object.values(state.settings).filter(
-                (node) => node.type === "variable" && node.setting.graph
-            );
-            const items = variables.map((v) => ({
-                label: v.name,
-                value: v.name,
-            }));
-            return items;
-        },
-    });
-
-    return q;
 };
 
 const MAX_VARIABLES = 10;

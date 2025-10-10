@@ -4,10 +4,17 @@ import { useGraphStore } from "../store/store";
 import { ExampleChart } from "./TestChart";
 import { useRef, useState } from "react";
 import { TIME_TYPE } from "../GraphSettings/graphSettingsConstants";
+import { generateChartData } from "./useGeneratedChart";
+import { createOptions } from "./chartOptions";
 
 function GraphViewer() {
-    const type = useGraphStore((state) => state.type);
+    const state = useGraphStore((state) => state);
     const graphRef = useRef(null);
+    const data = generateChartData(state);
+    const options = createOptions(state.type, state.startDate, state.endDate);
+    const handleDBClick = () => {
+        graphRef.current.resetZoom();
+    };
 
     const handleBack = () => {
         useGraphStore.getState().setShowGraph(false);
@@ -33,13 +40,19 @@ function GraphViewer() {
                     >
                         <LuArrowLeft />
                     </IconButton>
-                    {type === TIME_TYPE.real && (
+                    {state.type === TIME_TYPE.real && (
                         <PauseButton graphRef={graphRef} />
                     )}
                 </HStack>
             </Card.Header>
             <Card.Body>
-                <ExampleChart graphRef={graphRef} />
+                <ExampleChart
+                    graphRef={graphRef}
+                    data={data}
+                    type={state.type}
+                    options={options}
+                    onDoubleClick={handleDBClick}
+                />
             </Card.Body>
         </Card.Root>
     );

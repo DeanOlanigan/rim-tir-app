@@ -3,9 +3,9 @@ import { useEffect } from "react";
 import { TIME_TYPE } from "../GraphSettings/graphSettingsConstants";
 
 export function useMqttChart(chart, type) {
-    const { subscribe } = useMqttCore();
+    const { subscribe, connected } = useMqttCore();
     useEffect(() => {
-        if (type === TIME_TYPE.archive) return;
+        if (type === TIME_TYPE.archive || !connected || !chart) return;
         const topic = "graph/#";
 
         const unsub = subscribe(topic, { qos: 0, retain: false }, ({ msg }) => {
@@ -13,16 +13,29 @@ export function useMqttChart(chart, type) {
             const chartData = chart.current.data.datasets.find(
                 (d) => d.label === name
             );
-            chartData.data.push({
+            if (!chartData) return;
+            chartData?.data?.push({
                 x: msg.ts,
                 y: msg.value,
             });
             chart.current.update("quiet");
         });
 
-        return () => {
-            unsub();
-            console.log("[MQTT CHART] unsubscribed");
-        };
-    }, [chart, type, subscribe]);
+        return () => unsub();
+    }, [chart, type, subscribe, connected]);
+
+    useEffect(() => {
+        if (type === TIME_TYPE.archive || !chart) return;
+        if (!connected) {
+            const now = Date.now();
+
+            for (const dataset of chart.current.data.datasets) {
+                dataset.data.push({
+                    x: now,
+                    y: Number(NaN),
+                });
+            }
+            chart.current.update("quiet");
+        }
+    }, [chart, type, subscribe, connected]);
 }

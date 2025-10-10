@@ -22,6 +22,7 @@ export function generateChartData(state) {
             pointStyle: "circle",
             pointRadius: 5,
             pointHoverRadius: 10,
+            spanGaps: false,
         });
     }
 

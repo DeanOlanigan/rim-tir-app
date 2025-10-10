@@ -1,10 +1,10 @@
 import { TIME_TYPE } from "../GraphSettings/graphSettingsConstants";
 
-export const createOptions = (state) => ({
+export const createOptions = (type, start, end) => ({
     responsive: true,
     scales: {
         x: {
-            type: state.type === TIME_TYPE.real ? "realtime" : "time",
+            type: type === TIME_TYPE.real ? "realtime" : "time",
             grid: {
                 color: "#6666663f",
             },
@@ -17,7 +17,7 @@ export const createOptions = (state) => ({
         },
     },
     plugins: {
-        zoom: zoomOptions(state.type, state.start, state.end),
+        zoom: zoomOptions(type, start, end),
         streaming: streamingOptions,
     },
 });
