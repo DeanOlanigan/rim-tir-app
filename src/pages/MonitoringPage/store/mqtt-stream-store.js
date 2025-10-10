@@ -6,6 +6,9 @@ export const useMonitoringLive = create((set) => ({
     latest: new Map(),
     spark: new Map(),
     capacity: MAX_CAPACITY,
+    nameSwitch: false,
+
+    switchName: (checked) => set({ nameSwitch: checked }),
 
     upsertMany: (batch) =>
         set((state) => {

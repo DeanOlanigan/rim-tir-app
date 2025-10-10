@@ -1,7 +1,7 @@
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
 import { useEffect, useState } from "react";
-import { Box } from "@chakra-ui/react";
+import { Box, Switch } from "@chakra-ui/react";
 import { dialog } from "./setValue/dialog";
 import { ConfigInfoWrapper } from "./ConfigInfo";
 import { TreeCard } from "@/components/TreeView/TreeCard";
@@ -41,6 +41,7 @@ function MonitoringPage() {
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
                 />
+                <NameSwitcher />
             </SubHeader>
             <Box h={"100%"}>
                 {isFetching && <Loader text={"Обновление данных"} />}
@@ -90,5 +91,21 @@ const TreeWrapper = ({ data, treeType, searchTerm }) => {
             }
             empty={<NoData />}
         />
+    );
+};
+
+const NameSwitcher = () => {
+    const nameSwitch = useMonitoringLive((state) => state.nameSwitch);
+    const switchName = useMonitoringLive.getState().switchName;
+
+    return (
+        <Switch.Root
+            checked={nameSwitch}
+            onCheckedChange={(e) => switchName(e.checked)}
+        >
+            <Switch.HiddenInput />
+            <Switch.Control />
+            <Switch.Label>Переключить отображение имени</Switch.Label>
+        </Switch.Root>
     );
 };
