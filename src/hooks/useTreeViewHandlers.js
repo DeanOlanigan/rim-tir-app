@@ -88,7 +88,7 @@ export function useTreeViewHandlers(treeType) {
     const handleSelect = useCallback(() => {
         if (!api) return;
         if (api.hasNoSelection) {
-            api.root.children[0].focus();
+            api.focus(api.root.children[0], { scroll: false });
         }
 
         // Проверка на разность типов узлов,
