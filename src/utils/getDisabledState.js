@@ -17,7 +17,7 @@ export const sameMeaningPath = (apiPath, firstNodeId, settings) => {
         apiPath.focusedNode?.data.type === NODE_TYPES.folder
             ? getParentType({ checkNode: apiPath?.focusedNode })
             : apiPath.focusedNode?.data?.path ?? "#";
-    const meaningNodePath = getMeaningNode(firstNodeId, settings)?.path ?? null;
+    const meaningNodePath = getMeaningNode(settings, firstNodeId)?.path ?? null;
     return meaningNodePath && focusedNodePath === meaningNodePath;
 };
 
