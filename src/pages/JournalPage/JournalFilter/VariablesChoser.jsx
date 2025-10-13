@@ -30,7 +30,7 @@ const useVariables = () => {
 };
 
 export const VariablesChoser = () => {
-    const { data, isLoading, isError } = useVariables();
+    const { data, isFetching, isError } = useVariables();
 
     const collection = useMemo(() => {
         return createListCollection({
@@ -38,24 +38,26 @@ export const VariablesChoser = () => {
         });
     }, [data]);
 
+    let placeholder = "Выберите переменные";
+    if (collection.items.length === 0) placeholder = "Нет переменных";
+    if (isFetching) placeholder = "Загрузка...";
+    if (isError) placeholder = "Ошибка";
+
     return (
         <Select.Root
             collection={collection}
             size={"xs"}
             multiple
-            onValueChange={(value) => console.log("onValueChange", value)}
-            disabled={isLoading || isError}
+            disabled={isFetching || isError || collection.items.length === 0}
         >
             <Select.HiddenSelect />
             <Select.Label>Переменные:</Select.Label>
             <Select.Control>
                 <Select.Trigger>
-                    <Select.ValueText
-                        placeholder={isError ? "Ошибка" : "Выберите переменные"}
-                    />
+                    <Select.ValueText placeholder={placeholder} />
                 </Select.Trigger>
                 <Select.IndicatorGroup>
-                    {isLoading && (
+                    {isFetching && (
                         <Spinner
                             size="xs"
                             borderWidth="1.5px"
@@ -75,6 +77,7 @@ export const VariablesChoser = () => {
                         {collection.items.map((row) => (
                             <Select.Item item={row} key={row.value}>
                                 {row.label}
+                                <Select.ItemIndicator />
                             </Select.Item>
                         ))}
                     </Select.Content>

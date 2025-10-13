@@ -7,14 +7,18 @@ import { useVariables } from "../useVariables";
 export const ViewGraphButton = () => {
     const navigate = useNavigate();
 
-    const { isLoading, isError } = useVariables();
+    const { isFetching, isError } = useVariables();
     const offset = useGraphStore((state) => state.offset);
     const variables = useGraphStore((state) => state.variables);
     const varArr = Object.values(variables);
     const type = useGraphStore((state) => state.type);
     const { setStartDate, setEndDate, setShowGraph } = useGraphStore.getState();
 
-    const isDisabled = varArr.some((v) => !v.name) || isLoading || isError;
+    const isDisabled =
+        varArr.length === 0 ||
+        varArr.some((v) => !v.name) ||
+        isFetching ||
+        isError;
 
     const setOffset = () => {
         setStartDate(new Date(Date.now() - offset * 1000).getTime());

@@ -61,6 +61,8 @@ export const useGraphStore = create(
                         variables: variables,
                     };
                 }),
+
+            resetVariables: () => set({ variables: {} }),
         }),
         {
             name: "graph-store",
