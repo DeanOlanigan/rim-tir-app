@@ -30,8 +30,9 @@ function MonitoringPage() {
 
     useMqttLive("monitoring/node/#");
 
-    if (isLoading || !data) return <Loader text={"Загрузка данных"} />;
+    if (isLoading) return <Loader text={"Загрузка данных"} />;
     if (isError) return <ErrorInformer error={error} />;
+    if (isFetching) return <Loader text={"Обновление данных"} />;
 
     return (
         <>
@@ -44,8 +45,6 @@ function MonitoringPage() {
                 <NameSwitcher />
             </SubHeader>
             <Box h={"100%"}>
-                {isFetching && <Loader text={"Обновление данных"} />}
-
                 <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                     <Panel collapsible={true} collapsedSize={0} minSize={25}>
                         <TreeWrapper

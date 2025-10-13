@@ -12,9 +12,6 @@ import {
 } from "@/hooks/useMutation";
 
 export const RouterMenu = () => {
-    const currentState = useVariablesStore.getState();
-    const currentConfigInfo = useConfigInfoStore.getState().configInfo;
-
     const errorsTreeSize = useValidationStore((state) => state.errorsTree.size);
     const hasErrors = errorsTreeSize > 0;
 
@@ -26,6 +23,8 @@ export const RouterMenu = () => {
 
     const sendConfigHandler = () => {
         if (hasErrors) return;
+        const currentState = useVariablesStore.getState();
+        const currentConfigInfo = useConfigInfoStore.getState().configInfo;
         const xml = convertStateToXml(currentState, currentConfigInfo);
         uploadM.mutate(xml);
     };
