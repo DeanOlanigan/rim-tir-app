@@ -1,62 +1,28 @@
-import { useEffect } from "react";
 import { Button } from "@chakra-ui/react";
-import { useJournalContext } from "@/providers/JournalProvider/JournalContext";
+import { useGroupStore } from "../JournalStores/GroupFilterStore";
+import { useMessageFilterStore } from "../JournalStores/MessageFilterStore";
+import { useJournalFiltersArchiveStore } from "../JournalStores/JournalFiltersArсhiveStore";
 
-function FilterControls({ filters, setFilters }) {
-    const { setJournalRows, clearJournalRows } = useJournalContext();
-    console.log("Render FilterControls");
+export const FilterControls = () => {
 
-    /* useEffect(() => {
-        wsService.connect();
-        const messageHandler = (message) => {
-            setJournalRows(message);
-        };
-        wsService.addMessageHandler(messageHandler);
-        wsSend();
-        return () => {
-            wsService.removeMessageHandler(messageHandler);
-            wsService.close();
-        };
-    }, []); */
-
-    const transferDate = (date) => {
-        const newDate = new Date(date);
-        const month = ("0" + (newDate.getMonth() + 1)).substr(-2);
-        const day = ("0" + (newDate.getDate() + 1)).substr(-2);
-        const hour = ("0" + newDate.getHours()).substr(-2);
-        const minute = ("0" + newDate.getMinutes()).substr(-2);
-        return `${newDate.getFullYear()}-${month}-${day} ${hour}:${minute}`;
-    };
+    const resetSelectedGroups = useGroupStore((state) => (state.setSelectedGroups))
+    const resetSelMessages = useMessageFilterStore(state => state.setSelectedMessages)
+    const resetArchive = useJournalFiltersArchiveStore(state => state.setInitial)
 
     const handleApply = () => {
-        clearJournalRows();
-        //wsSend();
+        console.log("handleApply");
     };
 
     const handleReset = () => {
-        clearJournalRows();
-        setFilters([]);
+        console.log("handleReset");
+        resetSelectedGroups(["state", "danger", "warn", "noGroup"]);
+        resetSelMessages(["eventTypeTSCheck", "eventTypeTUCheck"]);
+        resetArchive();
     };
-
-    /* const wsSend = () => {
-        const oldDates = transferDate(filters.archiveStartDatePick);
-        const newDates = transferDate(filters.archiveEndDatePick);
-        wsService.sendMessage({
-            journal: {
-                ...filters,
-                archiveStartDatePick: oldDates,
-                archiveEndDatePick: newDates,
-            },
-        });
-    }; */
 
     return (
         <>
-            <Button
-                size={"xs"}
-                disabled={!filters.columns.length}
-                onClick={handleApply}
-            >
+            <Button size={"xs"} onClick={handleApply}>
                 Применить
             </Button>
             <Button size={"xs"} onClick={handleReset}>
@@ -64,6 +30,4 @@ function FilterControls({ filters, setFilters }) {
             </Button>
         </>
     );
-}
-
-export default FilterControls;
+};

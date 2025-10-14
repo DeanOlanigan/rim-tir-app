@@ -1,25 +1,34 @@
-import { Stack, CheckboxGroup } from "@chakra-ui/react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { groups } from "./filterOptions";
+import { Stack, CheckboxGroup, Checkbox } from "@chakra-ui/react";
+import { useGroupStore } from "../JournalStores/GroupFilterStore";
 
-function GroupFilter({ filters, setFilters }) {
-    console.log("Render GroupFilter");
+const groups = [
+    { label: "Без группы", value: "noGroup" },
+    { label: "Аварийные", value: "danger" },
+    { label: "Предупредительные", value: "warn" },
+    { label: "Оперативного состояния", value: "state" },
+];
+
+export const GroupFilter = () => {
+
+    const {
+        selectedGroups,
+        setSelectedGroups,
+    } = useGroupStore();
+
     return (
         <Stack p={"1"}>
             <CheckboxGroup
-                value={filters.groups}
-                onValueChange={(value) =>
-                    setFilters({ ...filters, groups: value })
-                }
+                value={selectedGroups}
+                onValueChange={(value) => (setSelectedGroups(value))}
             >
                 {groups.map((group) => (
-                    <Checkbox key={group.value} value={group.value}>
-                        {group.label}
-                    </Checkbox>
+                    <Checkbox.Root key={group.value} value={group.value}>
+                        <Checkbox.HiddenInput />
+                        <Checkbox.Control />
+                        <Checkbox.Label>{group.label}</Checkbox.Label>
+                    </Checkbox.Root>
                 ))}
             </CheckboxGroup>
         </Stack>
     );
-}
-
-export default GroupFilter;
+};

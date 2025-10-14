@@ -1,25 +1,32 @@
-import { Stack, CheckboxGroup } from "@chakra-ui/react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { messageTypes } from "./filterOptions";
+import { Stack, CheckboxGroup, Checkbox } from "@chakra-ui/react";
+import { useMessageFilterStore } from "../JournalStores/MessageFilterStore";
 
-function MessageTypes({ filters, setFilters }) {
-    console.log("Render MessageTypes");
+const messageTypes = [
+    { label: "ТС", value: "ts" },
+    { label: "Пользовательские ТУ", value: "tu" },
+];
+
+export const MessageTypes = () => {
+    
+    const {
+    selectedMessages,
+    setSelectedMessages
+    } = useMessageFilterStore();
+
     return (
         <Stack p={"1"}>
             <CheckboxGroup
-                value={filters.events}
-                onValueChange={(types) =>
-                    setFilters({ ...filters, events: types })
-                }
+                value={selectedMessages}
+                onValueChange={(types) => setSelectedMessages(types)}
             >
                 {messageTypes.map((type) => (
-                    <Checkbox key={type.value} value={type.value}>
-                        {type.label}
-                    </Checkbox>
+                    <Checkbox.Root key={type.value} value={type.value}>
+                        <Checkbox.HiddenInput />
+                        <Checkbox.Control />
+                        <Checkbox.Label>{type.label}</Checkbox.Label>
+                    </Checkbox.Root>
                 ))}
             </CheckboxGroup>
         </Stack>
     );
-}
-
-export default MessageTypes;
+};
