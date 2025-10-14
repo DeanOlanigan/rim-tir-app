@@ -10,13 +10,9 @@ export const MqttCpu = () => {
         timeoutMs: 5000,
     });
 
-    let cpu;
-    if (status === CONN_STATUS.DISCONNECTED) {
-        cpu = "Ошбк";
-    } else if (value) {
+    let cpu = "----";
+    if (status === CONN_STATUS.LIVE) {
         cpu = `${value}%`;
-    } else {
-        cpu = "----";
     }
 
     return (

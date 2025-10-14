@@ -10,14 +10,9 @@ export const MqttTime = () => {
         timeoutMs: 5000,
     });
 
-    const date = new Date(value).toLocaleTimeString();
-    let time;
-    if (status === CONN_STATUS.DISCONNECTED) {
-        time = "Ошбк";
-    } else if (date) {
-        time = date;
-    } else {
-        time = "-------";
+    let time = "-------";
+    if (status === CONN_STATUS.LIVE) {
+        time = new Date(value).toLocaleTimeString();
     }
 
     return (

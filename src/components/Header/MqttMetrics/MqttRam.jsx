@@ -10,13 +10,9 @@ export const MqttRam = () => {
         timeoutMs: 5000,
     });
 
-    let ram;
-    if (status === CONN_STATUS.DISCONNECTED) {
-        ram = "Ошбк";
-    } else if (value) {
+    let ram = "----";
+    if (status === CONN_STATUS.LIVE) {
         ram = `${value}%`;
-    } else {
-        ram = "----";
     }
 
     return (
