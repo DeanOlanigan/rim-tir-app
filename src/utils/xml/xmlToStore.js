@@ -191,5 +191,6 @@ function computeImport(xml, filename) {
 export function applyImport({ state, configInfo, draft }) {
     useVariablesStore.setState(state);
     useConfigInfoStore.setState({ configInfo });
+    useValidationStore.getState().clearErrors();
     useValidationStore.getState().applyDraft(draft);
 }
