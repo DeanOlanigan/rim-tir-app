@@ -18,7 +18,6 @@ import { EditorLayout } from "./EditorLayout";
 import { InputFactory } from "../InputComponents/InputFactory";
 import { configuratorConfig } from "@/utils/configurationParser";
 import { NodeError } from "./NodeError";
-import { useBreadcrumbParts } from "@/hooks/useBreadcrumb";
 import { LuCog, LuVariable } from "react-icons/lu";
 import {
     useChildrenNodes,
@@ -50,7 +49,9 @@ const EditorWrapperSingle = memo(function EditorWrapperSingleTEST({
     type,
 }) {
     const [node] = useNodesByIds(id);
-    const children = useChildrenNodes(node.id);
+    const children = useChildrenNodes(node?.id);
+
+    if (!node) return <EditorHint type={type} />;
 
     const Parameters =
         configuratorConfig.nodePaths[node.path] &&
@@ -58,11 +59,9 @@ const EditorWrapperSingle = memo(function EditorWrapperSingleTEST({
             ? VariableEditor
             : ConnectionParamContainer);
 
-    const breadcrumbsParts = useBreadcrumbParts(node.id);
-
     return (
         <EditorLayout
-            breadcrumbs={<EditorBreadcrumb breadcrumbs={breadcrumbsParts} />}
+            breadcrumbs={<EditorBreadcrumb id={node.id} />}
             title={
                 <HStack>
                     {TITLE[node.type] || (
@@ -134,6 +133,8 @@ const EditorWrapperMultiple = memo(function EditorWrapperMultiple({
     type,
 }) {
     const nodes = useNodesByIds(ids);
+
+    if (nodes.length === 0) return <EditorHint type={type} />;
 
     return (
         <VStack gap={"4"} px={"1"} h={"100%"}>
