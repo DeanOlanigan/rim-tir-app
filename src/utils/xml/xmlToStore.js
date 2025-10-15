@@ -17,7 +17,7 @@ function parseValue(raw) {
     // число (int или float)
     if (!isNaN(text) && text !== "") {
         if (text.includes(".")) return parseFloat(text);
-        if (text.includes("x")) return parseInt(text, 16);
+        if (text.includes("x")) return text;
         return parseInt(text, 10);
     }
     // всё остальное — оставляем строкой
