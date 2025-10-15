@@ -38,6 +38,7 @@ export const AreYouShureDialog = ({ children }) => {
                         <Dialog.Header>
                             <Dialog.Title>Вы уверены?</Dialog.Title>
                         </Dialog.Header>
+                        <Dialog.Body>Все данные будут потеряны.</Dialog.Body>
                         <Dialog.Footer>
                             <Button size={"xs"} onClick={acceptHandler}>
                                 Применить
