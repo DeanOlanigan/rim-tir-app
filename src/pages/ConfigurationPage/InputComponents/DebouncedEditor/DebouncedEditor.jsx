@@ -30,51 +30,52 @@ export const DebouncedEditor = memo(function DebouncedEditor({
     const { colorMode } = useColorMode();
     const { setSettings, settings } = useVariablesStore.getState();
     const { varIdsByName } = getVarDataStore(settings);
-    const debounced = debounce((id, newCode) => {
-        setSettings(id, { luaExpression: newCode });
-    }, 500);
 
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
     const providerRef = useRef(null);
     const decorationIdRef = useRef([]);
 
+    const debounceRef = useRef();
+    if (!debounceRef.current) {
+        debounceRef.current = debounce((id, newCode) => {
+            setSettings(id, { luaExpression: newCode });
+        }, 500);
+    }
+    const debounced = debounceRef.current;
+
     useEffect(() => {
         if (!editorRef.current || !monacoRef.current) return;
+        const model = editorRef.current.getModel();
+        if (!model) return;
+
         const { markers, varsToHighlight } = luaAstParse(
             luaExpression,
             varIdsByName,
             id
         );
-        monacoRef.current.editor.setModelMarkers(
-            editorRef.current.getModel(),
-            "lua",
-            markers
-        );
+        monacoRef.current.editor.setModelMarkers(model, "lua", markers);
         decorationIdRef.current = editorRef.current.deltaDecorations(
             decorationIdRef.current,
             createVariableDecorations(varsToHighlight)
         );
     }, [luaExpression, varIdsByName, id]);
 
-    useEffect(() => {
-        return () => {
-            if (providerRef.current) {
-                providerRef.current.dispose();
-                providerRef.current = null;
-            }
-            if (editorRef.current && decorationIdRef.current.length > 0) {
-                editorRef.current.deltaDecorations(decorationIdRef.current, []);
-                decorationIdRef.current = [];
-            }
-            debounced.clear();
-        };
-    }, [debounced]);
-
     function handleEditorDidMount(editor, monaco) {
         editorRef.current = editor;
         monacoRef.current = monaco;
-        providerRef.current = getCompletionSnippets(monacoRef);
+
+        editor.onKeyDown((e) => {
+            const isF1 = e.keyCode === monaco.KeyCode.F1;
+
+            if (isF1) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+
+        providerRef.current?.dispose?.();
+        providerRef.current = getCompletionSnippets(monaco);
 
         const code = editor.getValue();
         const { markers, varsToHighlight } = luaAstParse(
@@ -89,6 +90,20 @@ export const DebouncedEditor = memo(function DebouncedEditor({
         );
     }
 
+    useEffect(() => {
+        return () => {
+            providerRef.current?.dispose?.();
+            providerRef.current = null;
+
+            if (editorRef.current && decorationIdRef.current.length > 0) {
+                editorRef.current.deltaDecorations(decorationIdRef.current, []);
+                decorationIdRef.current = [];
+            }
+
+            debounceRef.current?.clear?.();
+        };
+    }, []);
+
     const onChangeHandler = (value) => {
         debounced(id, value);
     };
@@ -96,6 +111,8 @@ export const DebouncedEditor = memo(function DebouncedEditor({
     return (
         <Editor
             defaultLanguage="lua"
+            path={`${id}.lua`}
+            keepCurrentModel={true}
             value={luaExpression}
             height={height}
             width={width}
@@ -112,6 +129,15 @@ export const DebouncedEditor = memo(function DebouncedEditor({
                     vertical: "hidden",
                     horizontal: "hidden",
                 },
+                quickSuggestions: {
+                    other: true,
+                    comments: false,
+                    strings: true,
+                },
+                suggestOnTriggerCharacters: true,
+                wordBasedSuggestions: true,
+                snippetSuggestions: "top",
+                suggest: { showSnippets: true },
             }}
         />
     );
