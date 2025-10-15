@@ -63,6 +63,9 @@ export const ConfInfoEdit = ({ children }) => {
                                         name={initialName}
                                         setName={setName}
                                     />
+                                    <Field.HelperText>
+                                        Минимум 4 символа
+                                    </Field.HelperText>
                                 </Field.Root>
                                 <Field.Root>
                                     <Field.Label>Описание</Field.Label>
