@@ -1,4 +1,4 @@
-export const SCOPE = {
+const SCOPE = {
     SELF: "self", // current node
     PARENT: "parent", // find param in parent recursively
     ROOT: "root", // root node only
@@ -6,7 +6,7 @@ export const SCOPE = {
     IGNOREFOLDER: "ignoreFolder", // find param in parent recursively without folders
 };
 
-export const VALIDATOR = {
+const VALIDATOR = {
     RANGE: "range",
     REGEX: "regex",
     UNIQUE: "unique",
@@ -17,7 +17,7 @@ export const VALIDATOR = {
     MUSTBE: "mustBe",
 };
 
-export const NODE_TYPES = {
+const NODE_TYPES = {
     folder: "folder",
     dataObject: "dataObject",
     variable: "variable",
@@ -25,13 +25,13 @@ export const NODE_TYPES = {
     interface: "interface",
 };
 
-export const DO_NOT_VALIDATE = new Set([
+const DO_NOT_VALIDATE = new Set([
     NODE_TYPES.root,
     NODE_TYPES.folder,
     NODE_TYPES.dataObject,
 ]);
 
-export const NODE_UNIQUE_NAMES = new Set([
+const NODE_UNIQUE_NAMES = new Set([
     NODE_TYPES.interface,
     NODE_TYPES.protocol,
     NODE_TYPES.variable,
@@ -39,4 +39,13 @@ export const NODE_UNIQUE_NAMES = new Set([
     NODE_TYPES.interfaceSpecific,
 ]);
 
-export const isNeedValidate = (nodeType) => NODE_UNIQUE_NAMES.has(nodeType);
+const isNeedValidate = (nodeType) => NODE_UNIQUE_NAMES.has(nodeType);
+
+export {
+    SCOPE,
+    VALIDATOR,
+    NODE_TYPES,
+    DO_NOT_VALIDATE,
+    NODE_UNIQUE_NAMES,
+    isNeedValidate,
+};

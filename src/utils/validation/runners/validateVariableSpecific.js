@@ -1,6 +1,6 @@
 import { ErrorDraft } from "../core/ErrorDraft";
 import { luaAstParse } from "../engines/luaValidationService";
-import { tarjanCyclicDeps } from "../engines/luaValidationService/tarjan";
+import { tarjanCyclicDeps } from "../utils/tarjan";
 import { getVarDataStore } from "../utils/get";
 
 export function revalidateVars(newSettings, draft = new ErrorDraft()) {

@@ -1,18 +1,25 @@
-import {
-    addMarker,
-    checkCallExpression,
-    FORBIDDEN_STATEMENTS,
-    getCalleeInfo,
-    MESSAGES,
-} from "./validateCode";
+import { FORBIDDEN_STATEMENTS, MESSAGES } from "./consts";
+import { getCalleeInfo } from "./getCalleInfo";
+import { addMarker } from "./utils";
+import { checkCallExpression } from "./validateCode";
 
-export function validateCallExpression(node, markers, varIdsByName) {
+function checkDivision(node, markers) {
+    if (
+        node.type === "BinaryExpression" &&
+        node.operator === "/" &&
+        node.right.value === 0
+    ) {
+        addMarker(markers, node, "Деление на ноль");
+    }
+}
+
+function validateCallExpression(node, markers, varIdsByName) {
     if (node.type === "CallExpression") {
         checkCallExpression(node, markers, varIdsByName);
     }
 }
 
-export function collectFunctionDecls(node, allFn, allowedFn) {
+function collectFunctionDecls(node, allFn, allowedFn) {
     if (node.type === "FunctionDeclaration") {
         allFn.push(node);
     }
@@ -28,7 +35,7 @@ export function collectFunctionDecls(node, allFn, allowedFn) {
     }
 }
 
-export function getVarsToCheckCycle(node, varIdsByName, varsToCheckCycle) {
+function getVarsToCheckCycle(node, varIdsByName, varsToCheckCycle) {
     if (node.type === "AssignmentStatement") {
         node.variables.map((v) => {
             if (varIdsByName.has(v.name)) varsToCheckCycle.add(v.name);
@@ -45,7 +52,7 @@ export function getVarsToCheckCycle(node, varIdsByName, varsToCheckCycle) {
     }
 }
 
-export function checkForbiddenConstructs(node, markers) {
+function checkForbiddenConstructs(node, markers) {
     if (FORBIDDEN_STATEMENTS.has(node.type)) {
         addMarker(
             markers,
@@ -55,8 +62,17 @@ export function checkForbiddenConstructs(node, markers) {
     }
 }
 
-export function getVarsToHighlight(node, varIdsByName, varsToHighlight) {
+function getVarsToHighlight(node, varIdsByName, varsToHighlight) {
     if (node.type === "Identifier" && varIdsByName.has(node.name)) {
         varsToHighlight.push(node);
     }
 }
+
+export {
+    checkDivision,
+    validateCallExpression,
+    collectFunctionDecls,
+    getVarsToCheckCycle,
+    checkForbiddenConstructs,
+    getVarsToHighlight,
+};

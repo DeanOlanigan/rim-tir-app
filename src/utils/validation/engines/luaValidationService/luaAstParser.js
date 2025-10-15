@@ -1,12 +1,14 @@
 import { parse } from "luaparse";
 import {
+    addMarker,
+    checkDivision,
     checkForbiddenConstructs,
     collectFunctionDecls,
     getVarsToCheckCycle,
     getVarsToHighlight,
+    SEVERITY_ERROR,
     validateCallExpression,
-} from "./validateNode";
-import { addMarker, SEVERITY_ERROR } from "./validateCode";
+} from "./validateCode";
 
 export function luaAstParse(code, varIdsByName, id) {
     const t0 = performance.now();
@@ -19,9 +21,11 @@ export function luaAstParse(code, varIdsByName, id) {
 
     try {
         parse(code, {
+            luaVersion: "5.3",
             locations: true,
             ranges: true,
             onCreateNode: (node) => {
+                checkDivision(node, markers);
                 checkForbiddenConstructs(node, markers);
                 validateCallExpression(node, markers, varIdsByName);
                 collectFunctionDecls(node, allFn, allowedFn);
