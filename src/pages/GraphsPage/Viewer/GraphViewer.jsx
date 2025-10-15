@@ -2,22 +2,22 @@ import { HStack, IconButton, Card, Icon } from "@chakra-ui/react";
 import { LuArrowLeft, LuPause, LuPlay } from "react-icons/lu";
 import { useGraphStore } from "../store/store";
 import { ExampleChart } from "./TestChart";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { TIME_TYPE } from "../GraphSettings/graphSettingsConstants";
 import { generateChartData } from "./useGeneratedChart";
 import { createOptions } from "./chartOptions";
+import { useChartController } from "../GraphSettings/hooks";
 
 function GraphViewer() {
     const state = useGraphStore((state) => state);
-    const graphRef = useRef(null);
     const data = generateChartData(state);
     const options = createOptions(state.type, state.startDate, state.endDate);
-    const handleDBClick = () => {
-        graphRef.current.resetZoom();
-    };
+
+    const graphRef = useRef(null);
+    const { resetZoom } = useChartController(graphRef);
 
     const handleBack = () => {
-        useGraphStore.getState().setShowGraph(false);
+        state.setShowGraph(false);
     };
 
     return (
@@ -51,7 +51,7 @@ function GraphViewer() {
                     data={data}
                     type={state.type}
                     options={options}
-                    onDoubleClick={handleDBClick}
+                    onDoubleClick={resetZoom}
                 />
             </Card.Body>
         </Card.Root>
@@ -61,17 +61,11 @@ function GraphViewer() {
 export default GraphViewer;
 
 const PauseButton = ({ graphRef }) => {
-    const [isPaused, setIsPaused] = useState(false);
-    const handlePause = () => {
-        const realtTimeOps = graphRef.current.options.scales.x.realtime;
-        realtTimeOps.pause = !realtTimeOps.pause;
-        graphRef.current.update("none");
-        setIsPaused((prev) => !prev);
-    };
+    const { togglePause, paused } = useChartController(graphRef);
 
     return (
-        <IconButton size={"xs"} onClick={handlePause}>
-            <Icon as={isPaused ? LuPlay : LuPause} />
+        <IconButton size={"xs"} onClick={togglePause}>
+            <Icon as={paused ? LuPlay : LuPause} />
         </IconButton>
     );
 };

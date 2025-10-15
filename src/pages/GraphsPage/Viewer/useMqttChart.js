@@ -5,7 +5,7 @@ import { TIME_TYPE } from "../GraphSettings/graphSettingsConstants";
 export function useMqttChart(chart, type) {
     const { subscribe, connected } = useMqttCore();
     useEffect(() => {
-        if (type === TIME_TYPE.archive || !connected || !chart) return;
+        if (type !== TIME_TYPE.real || !connected || !chart) return;
         const topic = "graph/#";
 
         const unsub = subscribe(topic, { qos: 0, retain: false }, ({ msg }) => {

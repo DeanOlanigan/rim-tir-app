@@ -1,4 +1,3 @@
-import { useMqttChart } from "@/pages/GraphsPage/Viewer/useMqttChart";
 import { Line } from "react-chartjs-2";
 
 import {
@@ -16,8 +15,7 @@ import {
     RealTimeScale,
     StreamingPlugin,
 } from "@robloche/chartjs-plugin-streaming";
-import { useQuery } from "@tanstack/react-query";
-import { getGraphPoints } from "@/api/graph";
+import { useChartDataSource } from "../GraphSettings/hooks";
 
 ChartJS.register(
     LinearScale,
@@ -31,20 +29,6 @@ ChartJS.register(
     StreamingPlugin
 );
 
-const useGraphHistory = (state) => {
-    const q = useQuery({
-        queryKey: ["graph", state],
-        queryFn: getGraphPoints(
-            state.start,
-            state.end,
-            state.points,
-            state.variables
-        ),
-    });
-
-    return q;
-};
-
 export const ExampleChart = ({
     graphRef,
     data,
@@ -52,8 +36,8 @@ export const ExampleChart = ({
     options,
     onDoubleClick,
 }) => {
-    //const { data, isLoading, isError, error} = useGraphHistory(state);
-    useMqttChart(graphRef, type);
+    useChartDataSource(graphRef, type);
+
     return (
         <Line
             ref={graphRef}

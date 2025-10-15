@@ -1,5 +1,8 @@
 export function generateChartData(state) {
     const { startDate, endDate, points, variables } = state;
+
+    if (!Object.values(variables).length) return { labels: [], datasets: [] };
+
     const datasets = [];
     const timeStep = (endDate - startDate) / points;
 

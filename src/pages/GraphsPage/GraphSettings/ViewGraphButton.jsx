@@ -37,6 +37,7 @@ export const ViewGraphButton = () => {
             shadow={"xl"}
             size={"xs"}
             onClick={handleClick}
+            w={"100%"}
         >
             Применить настройки и открыть график
         </Button>
