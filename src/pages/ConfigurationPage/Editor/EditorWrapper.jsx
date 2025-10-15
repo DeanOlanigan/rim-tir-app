@@ -106,8 +106,8 @@ function checkSameType(nodes) {
     for (const node of nodes) {
         if (node.type === NODE_TYPES.folder) continue;
         if (type === null) {
-            type = node.type;
-        } else if (type !== node.type) {
+            type = node.node;
+        } else if (type !== node.node) {
             return false;
         }
     }
