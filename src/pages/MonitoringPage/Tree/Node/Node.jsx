@@ -8,9 +8,13 @@ import { useSelectionSync } from "@/store/selection-sync-store";
 import { useTreeRegistry } from "@/store/tree-registry-store";
 import { ParamViewer } from "@/components/TreeView/ParamViewer";
 import { useSettingsFromCache } from "../../useSettingsFromCache";
+import { hasIgnoreAccessor } from "@/utils/utils";
 
 export const Node = memo(function Node({ node, style }) {
     const settings = useSettingsFromCache();
+
+    const isIgnored = settings[node.id]?.isIgnored;
+    const isIgnoredAccessor = hasIgnoreAccessor(settings, node.id);
 
     const onClick = async (e) => {
         node.handleClick(e);
@@ -47,6 +51,8 @@ export const Node = memo(function Node({ node, style }) {
                         isVariable={node.data.type === NODE_TYPES.variable}
                     />
                 }
+                isIgnored={isIgnored}
+                isIgnoredAccessor={isIgnoredAccessor}
             />
         </div>
     );
