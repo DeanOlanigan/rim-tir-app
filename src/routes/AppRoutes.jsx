@@ -91,11 +91,7 @@ function AppRouter() {
                             </Route>
                             <Route path="/journal" element={<JournalPage />} />
                             <Route path="/graph" element={<GraphLayout />}>
-                                <Route index element={<GraphRedirect />} />
-                                <Route
-                                    path="settings"
-                                    element={<GraphSettings />}
-                                />
+                                <Route index element={<GraphSettings />} />
                                 <Route
                                     path="viewer"
                                     element={<RequireGraphData />}
