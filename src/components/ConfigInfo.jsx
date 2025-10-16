@@ -11,7 +11,7 @@ export const ConfigInfo = ({ name, date, description }) => {
                     {description}
                 </Text>
                 <Text fontWeight={"medium"}>Дата изменения</Text>
-                {date}
+                {new Date(parseInt(date)).toLocaleString()}
             </InfoTip>
         </Flex>
     );

@@ -84,7 +84,11 @@ export const ConfInfoEdit = ({ children }) => {
                                         >
                                             Дата изменения:
                                         </Text>
-                                        <Text fontSize={"md"}>{info.ts}</Text>
+                                        <Text fontSize={"md"}>
+                                            {new Date(
+                                                parseInt(info.ts)
+                                            ).toLocaleString()}
+                                        </Text>
                                     </Box>
                                 </Flex>
                             </Flex>
