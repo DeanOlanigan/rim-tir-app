@@ -1,4 +1,5 @@
 import {
+    Box,
     Card,
     Flex,
     IconButton,
@@ -7,7 +8,8 @@ import {
     useCheckboxGroup,
 } from "@chakra-ui/react";
 import { LuPlay, LuDownload, LuColumns3 } from "react-icons/lu";
-import { TestTablesDeux } from "./JournalTable";
+//import { TestTablesDeux } from "./JournalTable";
+import { TestTablesDeux } from "./JournalTableDeux";
 import { useColumnsStore } from "../JournalStores/ColumnsStore";
 
 const tableColumns = [
@@ -34,7 +36,7 @@ export const JournalView = () => {
             <Card.Header>
                 <JournalHeader />
             </Card.Header>
-            <Card.Body h={"100%"} pt={"0"} mt={"1rem"}>
+            <Card.Body h={"100%"} pt={"0"} mt={"1rem"} overflow='auto'>
                 <TestTablesDeux />
             </Card.Body>
         </Card.Root>
@@ -67,7 +69,6 @@ const ColumnViewMenu = () => {
         tableColumnsZus,
         setColons
     } = useColumnsStore()
-    console.log("LOH", tableColumnsZus);
     const group = useCheckboxGroup({ defaultValue: tableColumnsZus });
 
     const handleCheckboxChange = (value, checked) => {

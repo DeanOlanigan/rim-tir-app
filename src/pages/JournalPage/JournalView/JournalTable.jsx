@@ -1,4 +1,5 @@
-import { Box, Text, Table, ScrollArea } from "@chakra-ui/react";
+import { Box, Text, Table, IconButton } from "@chakra-ui/react";
+import { LuArrowDown } from "react-icons/lu";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import { AutoSizer, Column } from "react-virtualized";
 import { useQuery } from "@tanstack/react-query";
@@ -7,119 +8,9 @@ import { useGraphStore } from "@/pages/GraphsPage/store/store";
 import { useGroupStore } from "../JournalStores/GroupFilterStore";
 import { useMessageFilterStore } from "../JournalStores/MessageFilterStore";
 import { useColumnsStore } from "../JournalStores/ColumnsStore";
-
-// export const JournalTable = ({ scrollRef, columns, rows }) => {
-//     const oddBackgroundColor = useColorModeValue("white", "#111111");
-//     const evenBackgroundColor = useColorModeValue("#e4e4e7", "#27272a");
-
-//     const rowGetter = ({ index }) => rows[index];
-
-//     const rowRenderer = (props) => {
-//         const { index, style, key, className, columns, rowData } = props;
-
-//         if (rowData.mark) {
-//             return (
-//                 <Box
-//                     key={key}
-//                     className={className}
-//                     style={style}
-//                     bg={"green.200"}
-//                     borderBottom={"1px solid #ccc"}
-//                     textAlign={"center"}
-//                     justifyContent={"center"}
-//                 >
-//                     {rowData.message}
-//                 </Box>
-//             );
-//         }
-
-//         //const rowData = rows[index];
-//         if (!rowData) return null;
-//         const backgroundColor =
-//             index % 2 === 0 ? oddBackgroundColor : evenBackgroundColor;
-
-//         return (
-//             <Box
-//                 key={key}
-//                 className={className}
-//                 style={style}
-//                 bg={backgroundColor}
-//                 borderBottom={"1px solid #ccc"}
-//                 fontSize={"sm"}
-//             >
-//                 {columns}
-//             </Box>
-//         );
-//     };
-//     const cellRenderer = (props) => {
-//         const {
-//             cellData,
-//             columnData,
-//             columnIndex,
-//             dataKey,
-//             rowData,
-//             rowIndex,
-//         } = props;
-
-//         if (dataKey === "date") {
-//             return <Text textWrap={"wrap"}>{cellData}</Text>;
-//         }
-
-//         return (
-//             <Text
-//                 textWrap={"wrap"}
-//                 textAlign={"start"}
-//                 textOverflow={"ellipsis"}
-//             >
-//                 {cellData}
-//             </Text>
-//         );
-//     };
-
-//     return (
-//         <Box w={"100%"} h={"100%"}>
-//             <AutoSizer>
-//                 {({ height, width }) => (
-//                     <Table
-//                         ref={scrollRef}
-//                         width={width}
-//                         height={height}
-//                         headerHeight={30}
-//                         rowHeight={45}
-//                         rowCount={rows.length}
-//                         rowGetter={rowGetter}
-//                         rowRenderer={rowRenderer}
-//                         headerStyle={{
-//                             fontSize: "14px",
-//                             textTransform: "math-auto",
-//                         }}
-//                         rowStyle={{
-//                             borderBottom: "1px solid #ccc",
-//                         }}
-//                     >
-//                         {columns.map((col) => (
-//                             <Column
-//                                 key={col.value}
-//                                 dataKey={col.value}
-//                                 label={col.label}
-//                                 width={80}
-//                                 flexGrow={1}
-//                                 flexShrink={1}
-//                                 style={{
-//                                     textAlign: "start",
-//                                     textOverflow: "ellipsis",
-//                                     textWrap: "wrap",
-//                                     hyphens: "auto",
-//                                     alignSelf: "start",
-//                                 }}
-//                             />
-//                         ))}
-//                     </Table>
-//                 )}
-//             </AutoSizer>
-//         </Box>
-//     );
-// };
+import { useEffect, useMemo, useRef } from "react";
+import { measureElement, useVirtualizer } from "@tanstack/react-virtual";
+import { useStickToBottom } from "use-stick-to-bottom";
 
 const tableColumns = [
     { label: "Дата и время", value: "date" },
@@ -137,7 +28,8 @@ const useJournalHistory = () => {
         queryFn: async () => {
             const out = [];
             // eslint-disable-next-line
-            const count = Math.floor(Math.random() * 30);
+            //const count = Math.floor(Math.random() * 30);
+            const count = 1000;
 
             for (let i = 0; i < count; i++) {
                 out.push({
@@ -169,24 +61,49 @@ export const TestTablesDeux = () => {
     const selectedMessages = useMessageFilterStore(state => state.selectedMessages) 
     const tableColumnsZus = useColumnsStore(state => state.tableColumnsZus)
 
+    const FilterData = (data, selectedGroups, selectedMessages) => {
+        if (!data) return [];
+        const filteredDataFunc = data.filter((item) => {
+        if (!selectedGroups || !selectedMessages) return false;
+        return selectedGroups.includes(item.group) && selectedMessages.includes(item.type)
+        })
+        console.log(filteredDataFunc);
+        return filteredDataFunc;
+    }
+
+    const FilterColumns = (tableColumns, tableColumnsZus) => {
+        const filteredColumnsFunc = tableColumns.filter((colon) => {
+        if (!tableColumnsZus) return false;
+        return tableColumnsZus.includes(colon.value); 
+        })
+        return filteredColumnsFunc;
+    }
+
+    const filtredData = useMemo(() => FilterData(data, selectedGroups, selectedMessages), [data, selectedGroups, selectedMessages])
+
+    const filtreColon = useMemo(() => FilterColumns(tableColumns, tableColumnsZus), [tableColumnsZus])
+
+    const sticky = useStickToBottom()
+
+    const tableVirualizer = useVirtualizer({
+        count: filtredData.length,
+        getScrollElement: () => sticky.scrollRef.current,
+        estimateSize: () => 20,
+        measureElement: (el) => {
+            if(!el) return 20;
+            return el.getBoundingClientRect().height;
+        },
+        overscan: 20,
+    })
+
+    const virtualRows = tableVirualizer.getVirtualItems();
+
     if (isLoading) return <Text>Loading...</Text>;
     if (isError) return <Text>Error: {error.message}</Text>
 
-    const filtredData = data.filter((item) => {
-        if (!selectedGroups || !selectedMessages) return false;
-        return selectedGroups.includes(item.group) && selectedMessages.includes(item.type)
-    })
-
-    const filtreColon = tableColumns.filter((colon) => {
-        if (!tableColumnsZus) return false;
-        return tableColumnsZus.includes(colon.value); 
-    })
-
-
-
-    return (
-        <Table.ScrollArea>
-            <Table.Root striped='true' size='sm' stickyHeader>
+    /*return (
+        <Table.ScrollArea ref={sticky.scrollRef}>
+            <Table.Root size='sm' stickyHeader>
                 <Table.Header>
                         <Table.Row >
                             {filtreColon.map((colon, index) => (
@@ -195,15 +112,103 @@ export const TestTablesDeux = () => {
                         </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {filtredData.map((item, index) => (
-                        <Table.Row key={index}>
-                            {filtreColon.map((colon, indexCol) => 
-                                <Table.Cell textAlign='center' key={indexCol}>{item[colon.value]}</Table.Cell>
-                            )}
-                        </Table.Row>
-                    ))}
+                    {(virtualRows.length > 0)
+                    ? (virtualRows.map((virtualItem) => {
+                        const item = filtredData[virtualItem.index];
+                        return (
+                            <Table.Row 
+                                style={{
+                                    //position: 'absolute',
+                                    //top: `${virtualItem.start}px`,
+                                    //left: '0',
+                                    //transform: `translateY(${virtualItem.start}px)`
+                                }}
+                                data-index={virtualItem.index}
+                                key={virtualItem.index}
+                                ref={tableVirualizer.measureElement}    
+                            >
+                                {filtreColon.map((colon, indexCol) => 
+                                    <Table.Cell textAlign='center' key={indexCol}>{item[colon.value]}</Table.Cell>
+                                )}
+                            </Table.Row>
+                        )
+                    }))
+                    : (
+                        <Table.Row>
+                            <Table.Cell 
+                                colSpan={filtreColon.length} 
+                                textAlign='center'
+                            >
+                                NO DATA
+                            </Table.Cell>
+                        </Table.Row>)}
                 </Table.Body>
             </Table.Root>
-        </Table.ScrollArea>    
+        </Table.ScrollArea>
+    )*/
+
+    return (
+        <Table.ScrollArea ref={sticky.scrollRef}>       
+            <Table.Root size='sm' stickyHeader tableLayout='fixed'>
+                <Table.Header position="sticky"  zIndex={1}>
+                    <Table.Row>
+                        {filtreColon.map((colon, index) => (
+                            <Table.ColumnHeader textAlign='center' width={`${100 / filtreColon.length}%`} key={index}>
+                                {colon.label}
+                            </Table.ColumnHeader>
+                        ))}
+                    </Table.Row>
+                </Table.Header>
+                
+                <Table.Body
+                    style={{
+                        height: `${tableVirualizer.getTotalSize()}px`,
+                        position: 'relative',
+                    }}
+                >
+                    {virtualRows.map((virtualItem) => {
+                        const item = filtredData[virtualItem.index];
+                        return (
+                            <Table.Row 
+                                key={virtualItem.index}
+                                colSpan={filtreColon.length}
+                                style={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    width: '100%',
+                                    transform: `translateY(${virtualItem.start}px)`,
+                                    display: 'table-row'
+                                }}
+                                ref={tableVirualizer.measureElement}
+                                data-index={virtualItem.index}
+                            >
+                                {filtreColon.map((colon, indexCol) => 
+                                    <Table.Cell
+                                        width={`${100 / filtreColon.length + 1.13}%`} 
+                                        tableLayout='fixed'
+                                        textAlign='center' 
+                                        key={indexCol}
+                                    >
+                                        {item[colon.value]}
+                                    </Table.Cell>
+                                )}
+                            </Table.Row>
+                        );
+                    })}
+                    
+                    {filtredData.length === 0 && (
+                        <Table.Row>
+                            <Table.Cell 
+                                colSpan={filtreColon.length} 
+                                textAlign='center'
+                            >
+                                NO DATA
+                            </Table.Cell>
+                        </Table.Row>
+                    )}
+                </Table.Body>
+            </Table.Root>
+        </Table.ScrollArea> 
     )
 }

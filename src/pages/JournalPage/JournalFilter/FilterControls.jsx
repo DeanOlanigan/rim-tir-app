@@ -16,7 +16,7 @@ export const FilterControls = () => {
     const handleReset = () => {
         console.log("handleReset");
         resetSelectedGroups(["state", "danger", "warn", "noGroup"]);
-        resetSelMessages(["eventTypeTSCheck", "eventTypeTUCheck"]);
+        resetSelMessages(["ts", "tu"]);
         resetArchive();
     };
 
