@@ -3,6 +3,7 @@ export { validateVisibility } from "./runners/validateVisibility";
 export { validateParameter } from "./runners/validateParameter";
 export { validateName } from "./runners/validateName";
 export { validateAll } from "./runners/validateAll";
+export { validateNode } from "./runners/validateNode";
 export { luaAstParse } from "./engines/luaValidationService";
 export { ErrorDraft } from "./core/ErrorDraft";
 export { getVarDataStore } from "./utils/get";

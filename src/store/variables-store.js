@@ -10,6 +10,7 @@ import {
     validateName,
     validateAll,
     ErrorDraft,
+    validateNode,
 } from "@/utils/validation";
 import {
     removeNodeUtil,
@@ -26,10 +27,7 @@ import {
     computeClipboard,
     pasteNodeUtil,
     setIgnoreUtil,
-} from "@/utils/treeUtils/index";
-
-import { setIgnoreUtil } from "@/utils/treeUtils/edit/setIgnore";
-import { validateNode } from "@/utils/validation/runners/validateNode";
+} from "@/utils/treeUtils";
 
 const baseNodeInit = (type, name) => ({
     id: type,
