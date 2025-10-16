@@ -2,7 +2,8 @@ import { Icon, Menu, Portal } from "@chakra-ui/react";
 import { LuBan, LuCheckCheck, LuChevronRight } from "react-icons/lu";
 import { iconsMap } from "@/config/icons";
 import { useVariablesStore } from "@/store/variables-store";
-import { getDisabledState } from "./getDisabledState";
+import { getDisabledState } from "@/utils/getDisabledState";
+import { HOSTKEYS } from "@/config/constants";
 
 export const MenuItem = ({
     item,
@@ -27,7 +28,7 @@ export const MenuItem = ({
 
     if (item.type === "ignore") {
         if (isIgnored) {
-            label = "Разблокировать";
+            label = "Использовать";
             ContextIcon = LuCheckCheck;
             iconColor = "fg.success";
             item.style = {
@@ -35,7 +36,7 @@ export const MenuItem = ({
                 _hover: { bg: "bg.success", color: "fg.success" },
             };
         } else {
-            label = "Заблокировать";
+            label = "Игнорировать";
             ContextIcon = LuBan;
             iconColor = "fg.error";
             item.style = {
@@ -45,7 +46,7 @@ export const MenuItem = ({
         }
     } else {
         ContextIcon = iconsMap[item.icon.name];
-        iconColor = item.icon.color;
+        iconColor = `${item.icon.color}.500`;
         label = item.label;
     }
 
@@ -96,6 +97,7 @@ export const MenuItem = ({
         >
             <Icon as={ContextIcon} color={iconColor} />
             {label}
+            <Menu.ItemCommand>{HOSTKEYS[item.type]}</Menu.ItemCommand>
         </Menu.Item>
     );
 };

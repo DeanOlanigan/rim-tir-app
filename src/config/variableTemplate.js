@@ -12,9 +12,7 @@ export const variable = {
     node: "variable",
     type: "variable",
     label: "Переменная",
-    icon: {
-        name: "variable",
-    },
+    icon: "variable",
     settings: {
         type: {
             type: "enum",
@@ -31,7 +29,7 @@ export const variable = {
                     },
                     {
                         label: "2 байта - целое без знака",
-                        value: "twoByteUnsigned",
+                        value: "ushort",
                         min: 0,
                         max: 65535,
                         step: 1,
@@ -39,7 +37,7 @@ export const variable = {
                     },
                     {
                         label: "2 байта - целое",
-                        value: "twoByteSigned",
+                        value: "short",
                         min: -32768,
                         max: 32767,
                         step: 1,
@@ -47,7 +45,7 @@ export const variable = {
                     },
                     {
                         label: "4 байта - целое",
-                        value: "fourByteSigned",
+                        value: "int",
                         min: -2147483648,
                         max: 2147483647,
                         step: 1,
@@ -55,7 +53,7 @@ export const variable = {
                     },
                     {
                         label: "4 байта - целое без знака",
-                        value: "fourByteUnsigned",
+                        value: "uint",
                         min: 0,
                         max: 4294967295,
                         step: 1,
@@ -63,7 +61,7 @@ export const variable = {
                     },
                     {
                         label: "4 байта - с плавающей точкой",
-                        value: "fourByteFloat",
+                        value: "float",
                         min: -3.402823466e38,
                         max: 3.402823466e38,
                         step: 0.1,
@@ -225,7 +223,7 @@ export const variable = {
                                     },
                                 ],
                             },
-                            "twoByteUnsigned",
+                            "ushort",
                         ],
                     },
                 ],
@@ -263,7 +261,7 @@ export const variable = {
                                     },
                                 ],
                             },
-                            "twoByteUnsigned",
+                            "ushort",
                         ],
                     },
                 ],
@@ -326,7 +324,7 @@ export const variable = {
                                     },
                                 ],
                             },
-                            "twoByteUnsigned",
+                            "ushort",
                         ],
                     },
                 ],

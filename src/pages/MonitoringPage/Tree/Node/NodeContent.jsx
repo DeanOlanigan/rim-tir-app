@@ -1,73 +1,80 @@
 import { memo } from "react";
-import {
-    Text,
-    IconButton,
-    HStack,
-    Code,
-    Menu,
-    Portal,
-    Icon,
-} from "@chakra-ui/react";
+import { Text, IconButton, HStack, Code, Menu, Portal } from "@chakra-ui/react";
 import { NODE_TYPES } from "@/config/constants";
-import { NodeValues } from "./NodeValues";
-import {
-    LuArrowBigRight,
-    LuCircle,
-    LuPencil,
-    LuTextCursorInput,
-} from "react-icons/lu";
-import { useQuery } from "@tanstack/react-query";
-import { QK } from "@/api/queryKeys";
-import { getConfiguration } from "@/api/configuration";
+import { LuPencil, LuTextCursorInput } from "react-icons/lu";
 import { AdditionalInfoDrawer } from "@/pages/MonitoringPage/AdditionalInfo/Drawer/AdditionalInfoDrawer";
 import { dialog } from "@/pages/MonitoringPage/setValue/dialog";
 import { TbHandStop } from "react-icons/tb";
-import { attributes } from "@/pages/MonitoringPage/setValue/Attributes/attributes";
+import { useSettingsFromCache } from "../../useSettingsFromCache";
+import { NodeValues } from "./NodeValues";
+import { NodeAttributes } from "./NodeAttributes";
+import { Sparkline } from "./Sparkline";
+import { useMonitoringLive } from "../../store/mqtt-stream-store";
 
-export const NodeContent = memo(function NodeContent({ id, type, name }) {
+export const NodeContent = memo(function NodeContent({ id }) {
+    const settings = useSettingsFromCache();
+    const nameSwitch = useMonitoringLive((s) => s.nameSwitch);
+    const type = settings[id]?.type;
+
+    const isFolder = type === NODE_TYPES.folder;
+    const isVariable = type === NODE_TYPES.variable;
+    const isDataObject = type === NODE_TYPES.dataObject;
+
+    const isGraph =
+        type === NODE_TYPES.variable && settings[id]?.setting?.graph;
+
+    const description = settings[id]?.setting?.description;
+    const name = settings[id]?.name;
+
+    let viewName = name;
+    if (nameSwitch) {
+        viewName = description ? description : name;
+    }
+
     return (
         <HStack justifyContent={"space-between"} w={"100%"}>
             <HStack>
-                {type === NODE_TYPES.dataObject ? (
+                {isDataObject ? (
                     <BindedVariable id={id} />
                 ) : (
-                    <Text truncate>{name}</Text>
+                    <Text truncate maxW={"20ch"}>
+                        {viewName}
+                    </Text>
                 )}
-                {type !== NODE_TYPES.folder && <AdditionalInfoDrawer id={id} />}
-                {/* <NodeArrow type={type} /> */}
+                {!isFolder && <AdditionalInfoDrawer id={id} />}
             </HStack>
             <HStack>
-                {(type === NODE_TYPES.dataObject ||
-                    type === NODE_TYPES.variable) && (
-                    <>
-                        <NodeAttributes id={id} />
-                        <NodeValues id={id} />
-                    </>
-                )}
-                {type === NODE_TYPES.variable && <VariableEditMenu id={id} />}
+                {(isDataObject || isVariable) && <NodeAttributes id={id} />}
+                {isGraph && <Sparkline id={id} />}
+                {(isDataObject || isVariable) && <NodeValues id={id} />}
+                {isVariable && <VariableEditMenu id={id} />}
             </HStack>
         </HStack>
     );
 });
 
 const BindedVariable = memo(function BindedVariable({ id }) {
-    const { data: name } = useQuery({
-        queryKey: QK.configuration,
-        queryFn: getConfiguration,
-        select: ({ state }) =>
-            state.settings[state.settings[id]?.setting?.variableId]?.name,
-    });
+    const settings = useSettingsFromCache();
+    const nameSwitch = useMonitoringLive((s) => s.nameSwitch);
+    const name = settings[settings[id]?.setting?.variableId]?.name;
+    const description =
+        settings[settings[id]?.setting?.variableId]?.setting?.description;
+
+    let viewName = name;
+    if (nameSwitch) {
+        viewName = description ? description : name;
+    }
 
     return (
-        <Code variant={"subtle"} colorPalette={"blue"}>
-            {name ? name : "Нет переменной"}
+        <Code variant={"subtle"} colorPalette={"blue"} maxW={"20ch"}>
+            <Text truncate>{viewName ? viewName : "Нет переменной"}</Text>
         </Code>
     );
 });
 
 const VariableEditMenu = memo(function VariableEditMenu({ id }) {
     return (
-        <Menu.Root size={"sm"}>
+        <Menu.Root size={"sm"} lazyMount unmountOnExit>
             <Menu.Trigger asChild>
                 <IconButton size={"2xs"} variant={"subtle"}>
                     <LuPencil />
@@ -110,40 +117,3 @@ const VariableEditMenu = memo(function VariableEditMenu({ id }) {
         </Menu.Root>
     );
 });
-
-const NodeAttributes = memo(function NodeAttributes({ id }) {
-    const { data: params } = useQuery({
-        queryKey: QK.configuration,
-        queryFn: getConfiguration,
-        select: ({ state }) => state.settings[id]?.mqttPacket?.q?.attrs,
-    });
-    return (
-        <>
-            {attributes.map(
-                (attr) =>
-                    attr?.icon?.as &&
-                    params?.includes(attr.name) && (
-                        <Icon
-                            key={attr.name}
-                            size={"md"}
-                            {...attr.icon}
-                            aria-hidden
-                            title={attr.label}
-                        />
-                    )
-            )}
-            <Icon
-                as={LuCircle}
-                fill={params?.includes("used") ? "fg.success" : "fg.error"}
-            />
-        </>
-    );
-});
-
-const NodeArrow = ({ type }) => {
-    return (
-        (type === NODE_TYPES.variable || type === NODE_TYPES.dataObject) && (
-            <Icon color={"red.500"} fill={"red.500"} as={LuArrowBigRight} />
-        )
-    );
-};

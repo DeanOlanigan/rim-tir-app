@@ -13,14 +13,12 @@ import {
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { LuBan, LuCircleHelp } from "react-icons/lu";
+import { ErrorSign } from "./ErrorSign";
 
-export const ComboboxInput = ({ id, reset = null }) => {
-    console.log("Render ComboboxInput");
+export const ComboboxInput = (props) => {
+    const { id, value, reset = null, errors, ...rest } = props;
 
     const rootId = useVariablesStore((state) => state.settings[id]?.rootId);
-    const selectedVarId = useVariablesStore(
-        (state) => state.settings[id]?.setting?.variableId ?? null
-    );
 
     const variables = useVariablesCollectionMemo(rootId, id);
 
@@ -28,18 +26,16 @@ export const ComboboxInput = ({ id, reset = null }) => {
     const { collection, filter, set } = useListCollection({
         initialItems: variables,
         filter: contains,
-        limit: 10,
     });
 
     useEffect(() => {
         set(variables);
     }, [variables, set]);
 
-    const bindVariable = useVariablesStore.getState().bindVariable;
-
     if (!rootId || rootId === TREE_TYPES.variables) return null;
 
-    // TODO значение переменной в самом поле ввода не меняется динамически
+    const inputValue = collection.find(value);
+
     return (
         <Combobox.Root
             lazyMount
@@ -47,12 +43,13 @@ export const ComboboxInput = ({ id, reset = null }) => {
             size={"xs"}
             openOnClick
             collection={collection}
-            defaultValue={selectedVarId ? [selectedVarId] : []}
+            value={[value]}
+            inputValue={inputValue?.label}
             onInputValueChange={(e) => filter(e.inputValue)}
             onValueChange={(e) => {
                 const nextId = e.value[0];
-                if (nextId !== selectedVarId) {
-                    bindVariable(id, nextId);
+                if (nextId !== value) {
+                    useVariablesStore.getState().bindVariable(id, nextId);
                 }
                 reset && reset();
             }}
@@ -60,8 +57,16 @@ export const ComboboxInput = ({ id, reset = null }) => {
             onBlur={() => reset && reset()}
         >
             <Combobox.Control>
-                <Combobox.Input placeholder={"Введите название переменной"} />
+                <Combobox.Input
+                    pe={"6"}
+                    truncate
+                    placeholder={"Введите название переменной"}
+                    {...rest}
+                />
                 <Combobox.IndicatorGroup>
+                    {errors && errors.size !== 0 && (
+                        <ErrorSign errors={errors} />
+                    )}
                     <Combobox.ClearTrigger />
                     <Combobox.Trigger />
                 </Combobox.IndicatorGroup>
@@ -82,7 +87,7 @@ export const ComboboxInput = ({ id, reset = null }) => {
                             </Flex>
                         </Combobox.Empty>
                         {collection.items.map((item) => (
-                            <Combobox.Item item={item} key={item.value}>
+                            <Combobox.Item key={item.value} item={item}>
                                 <Combobox.ItemIndicator />
                                 {item.disabled && (
                                     <Badge colorPalette={"red"}>

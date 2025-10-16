@@ -1,46 +1,42 @@
-import { Box } from "@chakra-ui/react";
-import {
-    SelectContent,
-    SelectItem,
-    SelectLabel,
-    SelectRoot,
-    SelectTrigger,
-    SelectValueText,
-} from "@/components/ui/select";
-import { points } from "./graphSettingsConstants";
-import { useAtom } from "jotai";
-import { maxPointsCountAtom } from "../atoms";
-//import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
+import { Portal, Select } from "@chakra-ui/react";
+import { useGraphStore } from "../store/store";
+import { points as pointsList } from "./graphSettingsConstants";
 
-function PointsCountChooser() {
-    console.log("Render PointsCountChooser");
-    //const { maxPointsCount, setMaxPointsCount } = useGraphContext();
-    const [maxPointsCount, setMaxPointsCount] = useAtom(maxPointsCountAtom);
+export const PointsCountChooser = () => {
+    const points = useGraphStore((state) => state.points);
+    const { setPoints } = useGraphStore.getState();
 
     return (
-        <Box>
-            <SelectRoot
-                collection={points}
-                size={"xs"}
-                value={[maxPointsCount.toString()]}
-                onValueChange={(e) => {
-                    setMaxPointsCount(parseInt(e.value[0]));
-                }}
-            >
-                <SelectLabel>Количество точек:</SelectLabel>
-                <SelectTrigger>
-                    <SelectValueText placeholder="Выберите количество точек" />
-                </SelectTrigger>
-                <SelectContent>
-                    {points.items.map((row) => (
-                        <SelectItem item={row} key={row.value}>
-                            {row.label}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </SelectRoot>
-        </Box>
+        <Select.Root
+            size={"xs"}
+            maxW={"2xs"}
+            collection={pointsList}
+            value={[points]}
+            onValueChange={(e) => {
+                setPoints(e.value[0]);
+            }}
+        >
+            <Select.HiddenSelect />
+            <Select.Label>Количество точек</Select.Label>
+            <Select.Control>
+                <Select.Trigger>
+                    <Select.ValueText placeholder="Выберите количество точек" />
+                </Select.Trigger>
+                <Select.IndicatorGroup>
+                    <Select.Indicator />
+                </Select.IndicatorGroup>
+            </Select.Control>
+            <Portal>
+                <Select.Positioner>
+                    <Select.Content>
+                        {pointsList.items.map((row) => (
+                            <Select.Item item={row} key={row.value}>
+                                {row.label}
+                            </Select.Item>
+                        ))}
+                    </Select.Content>
+                </Select.Positioner>
+            </Portal>
+        </Select.Root>
     );
-}
-
-export default PointsCountChooser;
+};

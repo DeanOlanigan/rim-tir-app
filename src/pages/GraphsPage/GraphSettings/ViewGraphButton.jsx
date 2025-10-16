@@ -1,42 +1,34 @@
+import { Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { useSetAtom, useAtomValue, useAtom } from "jotai";
-import {
-    startDateAtom,
-    endDateAtom,
-    offsetAtom,
-    isWsActiveAtom,
-    getWsMessageAtom,
-    variablesAtom,
-} from "../atoms";
+import { useGraphStore } from "../store/store";
+import { TIME_TYPE } from "./graphSettingsConstants";
+import { useVariables } from "../useVariables";
 
-function ViewGraphButton() {
-    console.log("Render ViewGraphButton");
+export const ViewGraphButton = () => {
     const navigate = useNavigate();
 
-    const isWsActive = useAtomValue(isWsActiveAtom);
-    const offset = useAtomValue(offsetAtom);
-    const setStartDate = useSetAtom(startDateAtom);
-    const setEndDate = useSetAtom(endDateAtom);
+    const { isFetching, isError } = useVariables();
+    const offset = useGraphStore((state) => state.offset);
+    const variables = useGraphStore((state) => state.variables);
+    const varArr = Object.values(variables);
+    const type = useGraphStore((state) => state.type);
+    const { setStartDate, setEndDate, setShowGraph } = useGraphStore.getState();
 
-    const [, getWsMessage] = useAtom(getWsMessageAtom);
-
-    const variables = useAtomValue(variablesAtom);
-    const isDisabled = !(
-        variables.length > 0 &&
-        variables.every(
-            (variable) =>
-                variable.color &&
-                variable.variableMeasurement &&
-                variable.variableName
-        )
-    );
+    const isDisabled =
+        varArr.length === 0 ||
+        varArr.some((v) => !v.name) ||
+        isFetching ||
+        isError;
 
     const setOffset = () => {
-        const nowTime = new Date(Date.now()).getTime();
-        const offsetTime = new Date(Date.now() - offset * 1000).getTime();
-        setStartDate(offsetTime);
-        setEndDate(nowTime);
+        setStartDate(new Date(Date.now() - offset * 1000).getTime());
+        setEndDate(new Date(Date.now()).getTime());
+    };
+
+    const handleClick = () => {
+        if (type === TIME_TYPE.real) setOffset();
+        setShowGraph(true);
+        navigate("/graph/viewer");
     };
 
     return (
@@ -44,17 +36,10 @@ function ViewGraphButton() {
             disabled={isDisabled}
             shadow={"xl"}
             size={"xs"}
-            data-state={"open"}
-            animationDuration={"slow"}
-            animationStyle={{ _open: "scale-fade-in" }}
-            onClick={() => {
-                if (isWsActive) setOffset();
-                getWsMessage();
-                navigate("/graph/viewer");
-            }}
+            onClick={handleClick}
+            w={"100%"}
         >
             Применить настройки и открыть график
         </Button>
     );
-}
-export default ViewGraphButton;
+};

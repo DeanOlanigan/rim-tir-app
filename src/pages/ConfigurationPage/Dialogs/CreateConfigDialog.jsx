@@ -80,6 +80,9 @@ export const CreateConfigDialog = ({ children }) => {
                                         name={name}
                                         setName={setName}
                                     />
+                                    <Field.HelperText>
+                                        Минимум 4 символа
+                                    </Field.HelperText>
                                 </Field.Root>
                                 <Field.Root>
                                     <Field.Label>Описание</Field.Label>

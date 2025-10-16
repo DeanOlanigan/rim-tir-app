@@ -1,29 +1,32 @@
 import { useVariablesStore } from "@/store/variables-store";
-import { Switch } from "@chakra-ui/react";
-import { memo /* useState */ } from "react";
+import { InputGroup, Switch } from "@chakra-ui/react";
+import { memo } from "react";
+import { ErrorSign } from "./ErrorSign";
 
 export const SwitchInput = memo(function SwitchInput(props) {
-    const { id, targetKey, value, ...rest } = props;
+    const { id, targetkey, value, errors, ...rest } = props;
     const setSettings = useVariablesStore((state) => state.setSettings);
-    //const [checked, setChecked] = useState(value);
     return (
-        <Switch.Root
-            size={"lg"}
-            checked={Boolean(value)}
-            onCheckedChange={(e) => {
-                setSettings(id, {
-                    [targetKey]: e.checked,
-                });
-                /* setChecked(e.checked);
-                setTimeout(() => {
-                }, 150); */
-            }}
-            {...rest}
+        <InputGroup
+            endElement={
+                errors && errors.size !== 0 && <ErrorSign errors={errors} />
+            }
         >
-            <Switch.HiddenInput />
-            <Switch.Control>
-                <Switch.Thumb />
-            </Switch.Control>
-        </Switch.Root>
+            <Switch.Root
+                size={"lg"}
+                checked={Boolean(value)}
+                onCheckedChange={(e) => {
+                    setSettings(id, {
+                        [targetkey]: e.checked,
+                    });
+                }}
+                {...rest}
+            >
+                <Switch.HiddenInput />
+                <Switch.Control>
+                    <Switch.Thumb />
+                </Switch.Control>
+            </Switch.Root>
+        </InputGroup>
     );
 });

@@ -1,5 +1,4 @@
 import { Button, Menu, Portal } from "@chakra-ui/react";
-import { toaster } from "@/components/ui/toaster";
 import { convertStateToXml } from "@/utils/xml/storeToXml";
 import { useVariablesStore } from "@/store/variables-store";
 import { useConfigInfoStore } from "@/store/config-info-store";
@@ -11,13 +10,12 @@ import {
     useStopTirMutation,
     useUploadConfigurationMutation,
 } from "@/hooks/useMutation";
+import { AreYouShureDialog } from "../Dialogs/AreYouShure";
 
 export const RouterMenu = () => {
-    const currentState = useVariablesStore.getState();
-    const currentConfigInfo = useConfigInfoStore.getState().configInfo;
-
-    const errorsTree = useValidationStore((state) => state.errorsTree);
-    const hasErrors = !!errorsTree && errorsTree.size !== 0;
+    const errorsTreeSize = useValidationStore((state) => state.errorsTree.size);
+    const sync = useVariablesStore((state) => state.sync);
+    const hasErrors = errorsTreeSize > 0;
 
     const startM = useStartTirMutation();
     const stopM = useStopTirMutation();
@@ -26,14 +24,9 @@ export const RouterMenu = () => {
     const refreshM = useRefreshConfigurationMutation();
 
     const sendConfigHandler = () => {
-        if (hasErrors) {
-            toaster.create({
-                title: "Конфигурация не отправлена",
-                description: "Конфигурация не прошла валидацию",
-                type: "error",
-            });
-            return;
-        }
+        if (hasErrors) return;
+        const currentState = useVariablesStore.getState();
+        const currentConfigInfo = useConfigInfoStore.getState().configInfo;
         const xml = convertStateToXml(currentState, currentConfigInfo);
         uploadM.mutate(xml);
     };
@@ -55,21 +48,34 @@ export const RouterMenu = () => {
                         <Menu.Item
                             value="new-txt"
                             onClick={sendConfigHandler}
-                            disabled={uploadM.isPending}
+                            disabled={uploadM.isPending || hasErrors}
                         >
                             {uploadM.isPending
                                 ? "Отправка..."
                                 : "Отправить конфигурацию"}
                         </Menu.Item>
-                        <Menu.Item
-                            value="new-file"
-                            onClick={getConfigHandler}
-                            disabled={refreshM.isPending}
+                        <AreYouShureDialog
+                            onAccept={getConfigHandler}
+                            header={"Получить конфигурацию?"}
+                            message={
+                                "Получение конфигурации с сервера приведет к потере данных на этой странице."
+                            }
                         >
-                            {refreshM.isPending
-                                ? "Обновление..."
-                                : "Обновить конфигурацию"}
-                        </Menu.Item>
+                            <Menu.Item
+                                value="new-file"
+                                disabled={refreshM.isPending || sync}
+                                onClick={(e) => {
+                                    if (sync) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                    }
+                                }}
+                            >
+                                {refreshM.isPending
+                                    ? "Обновление..."
+                                    : "Получить конфигурацию"}
+                            </Menu.Item>
+                        </AreYouShureDialog>
                         <Menu.Item
                             value="start"
                             onClick={() => startM.mutate()}

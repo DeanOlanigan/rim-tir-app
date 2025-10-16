@@ -1,10 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Container } from "@chakra-ui/react";
-import LogProvider from "@/providers/LogProvider/LogProvider";
 
 function LogLayout() {
-    console.log("Render LogLayout");
-
     return (
         <Container
             maxW={"6xl"}
@@ -12,14 +9,9 @@ function LogLayout() {
             display={"flex"}
             flexDirection={"column"}
             minH={"0"}
+            p={"4"}
         >
-            <LogProvider>
-                {/* 
-                    Outlet - "место" для вложенных маршрутов:
-                    settings, viewer, или RootRedirect
-                */}
-                <Outlet />
-            </LogProvider>
+            <Outlet />
         </Container>
     );
 }

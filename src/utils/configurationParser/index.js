@@ -70,12 +70,19 @@ export async function ensureConfiguratorConfig() {
             import("../contextMenuBuilder/builder"),
         ]);
 
-        const { nodePaths, settingPaths } = parseTree(config);
+        const { nodePaths, settingPaths, visiblePaths } = parseTree(config);
         resolveFind(nodePaths, settingPaths);
+        resolveFind(nodePaths, visiblePaths);
         const graph = buildDependenciesGraph(settingPaths);
+        const vgraph = buildDependenciesGraph(visiblePaths);
         const contextMenu = createContextMenu(config, nodePaths);
 
-        Object.assign(configuratorConfig, { nodePaths, contextMenu, graph });
+        Object.assign(configuratorConfig, {
+            nodePaths,
+            contextMenu,
+            graph,
+            vgraph,
+        });
         _built = true;
         return configuratorConfig;
     })();

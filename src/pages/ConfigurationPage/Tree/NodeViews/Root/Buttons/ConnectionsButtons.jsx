@@ -8,7 +8,7 @@ import { MenuItem } from "../../../ContextMenu/MenuItem";
 export const ConnectionsButtons = ({ treeApi, type }) => {
     const triggerId = useId();
 
-    const contextMenu = configuratorConfig.contextMenu[type]["#"];
+    const contextMenu = configuratorConfig?.contextMenu?.[type]?.["#"] ?? [];
     return (
         <Menu.Root
             ids={{ trigger: triggerId }}

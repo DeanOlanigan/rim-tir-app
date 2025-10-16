@@ -2,6 +2,7 @@ import { Float, HStack, VStack } from "@chakra-ui/react";
 
 export const EditorLayout = ({
     title,
+    id,
     counter,
     parameters,
     breadcrumbs,
@@ -24,6 +25,9 @@ export const EditorLayout = ({
             >
                 <Float placement={"top-center"} offset={"5"}>
                     {errors}
+                </Float>
+                <Float placement={"top-end"} offsetX={"14"} offsetY={"2"}>
+                    {id}
                 </Float>
                 <HStack w={"100%"} justify={"space-between"}>
                     {title}

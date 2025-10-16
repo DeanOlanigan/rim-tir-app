@@ -2,7 +2,7 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { useVariablesStore } from "@/store/variables-store";
 import { IconButton, Icon } from "@chakra-ui/react";
 import { useState } from "react";
-import { LuHam, LuPiggyBank } from "react-icons/lu";
+import { LuBan, LuCheckCheck } from "react-icons/lu";
 
 export const IgnoreButton = ({ treeApi }) => {
     const [ignoreMode, setIgnoreMode] = useState(false);
@@ -14,18 +14,12 @@ export const IgnoreButton = ({ treeApi }) => {
     };
 
     return (
-        <Tooltip
-            content={
-                ignoreMode
-                    ? "Разблокировать корневые узлы"
-                    : "Заблокировать корневые узлы"
-            }
-        >
+        <Tooltip content={ignoreMode ? "Использовать" : "Игнорировать"}>
             <IconButton size={"2xs"} variant={"subtle"} onClick={handleIgnore}>
                 {ignoreMode ? (
-                    <Icon as={LuHam} color={"red.400"} fill={"red.800"} />
+                    <Icon as={LuCheckCheck} color={"fg.success"} />
                 ) : (
-                    <Icon as={LuPiggyBank} color={"red.400"} />
+                    <Icon as={LuBan} color={"red.400"} />
                 )}
             </IconButton>
         </Tooltip>

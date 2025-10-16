@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { configuratorConfig } from "./configurationParser";
+import { CONN_STATUS } from "@/config/constants";
 
 export const getStartDate = () => {
     const startDate = new Date();
@@ -32,18 +33,14 @@ export function getParentType({ id, treeApi, checkNode }) {
     return recursive(checkNode);
 }
 
-export function getMeaningNode(id, settings) {
-    function recursive(id) {
-        const node = settings[settings[id]?.parentId];
-        if (!node) return undefined;
-
-        if (node.type === "folder" || node.type === "dataObject") {
-            return recursive(node.id);
-        } else {
-            return node;
-        }
+export function getMeaningNode(ctx, id) {
+    let cur = ctx[ctx[id]?.parentId];
+    while (cur) {
+        const t = cur.type;
+        if (t !== "folder" && t !== "dataObject") return cur;
+        cur = ctx[cur.parentId];
     }
-    return recursive(id);
+    return undefined;
 }
 
 export function initDefaultDataByPath(path, parentId) {
@@ -53,7 +50,7 @@ export function initDefaultDataByPath(path, parentId) {
         id: id,
         node: nodePaths[path].node,
         type: nodePaths[path].type,
-        name: nodePaths[path].label,
+        name: nodePaths[path].node,
         path: path,
     };
     if (nodePaths[path].children || nodePaths[path].type === "folder") {
@@ -160,4 +157,15 @@ export function hasIgnoreAccessor(ctx, id) {
         id = ctx[id]?.parentId ?? null;
     }
     return false;
+}
+
+export function getMetricColor(status, baseColor) {
+    switch (status) {
+        case CONN_STATUS.DISCONNECTED:
+            return "red";
+        case CONN_STATUS.STALED:
+            return "yellow";
+        case CONN_STATUS.LIVE:
+            return baseColor;
+    }
 }

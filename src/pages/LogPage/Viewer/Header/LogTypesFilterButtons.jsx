@@ -1,34 +1,22 @@
 import { CheckboxCard, CheckboxGroup, Group } from "@chakra-ui/react";
 import { LuCircleAlert, LuInfo, LuTriangleAlert } from "react-icons/lu";
-import { useLogViewerContext } from "@/providers/LogViewerProvider/LogViewerContext";
-import { useEffect } from "react";
+import { useLogStore } from "../../Store/store";
+import { LOG_LEVELS } from "@/config/constants";
 
-function LogTypesFilterButtons() {
-    const { setCurrentFilter } = useLogViewerContext();
-    console.log("Render LogTypesFilterButtons");
-
-    useEffect(() => {
-        console.log("LogTypesFilterButtons useEffect triggered");
-    });
+export const LogTypesFilterButtons = () => {
+    const filter = useLogStore((state) => state.filter);
+    const { setFilter } = useLogStore.getState();
 
     return (
         <CheckboxGroup
-            onValueChange={(activeFilters) => {
-                const newFilterState = {
-                    WARNING: activeFilters.includes("WARNING"),
-                    ERROR: activeFilters.includes("ERROR"),
-                    INFO: activeFilters.includes("INFO"),
-                };
-                setCurrentFilter(newFilterState);
-            }}
-            defaultValue={["WARNING", "ERROR", "INFO"]}
+            onValueChange={(activeFilters) => setFilter(activeFilters)}
+            value={filter}
         >
             <Group attached shadow={"xs"}>
                 <CheckboxCard.Root
                     variant={"surface"}
                     colorPalette={"yellow"}
-                    value={"WARNING"}
-                    key={"WARNING"}
+                    value={LOG_LEVELS.warn}
                 >
                     <CheckboxCard.HiddenInput />
                     <CheckboxCard.Control p={"0.45rem"}>
@@ -38,8 +26,7 @@ function LogTypesFilterButtons() {
                 <CheckboxCard.Root
                     variant={"surface"}
                     colorPalette={"red"}
-                    value={"ERROR"}
-                    key={"ERROR"}
+                    value={LOG_LEVELS.error}
                 >
                     <CheckboxCard.HiddenInput />
                     <CheckboxCard.Control p={"0.45rem"}>
@@ -49,8 +36,7 @@ function LogTypesFilterButtons() {
                 <CheckboxCard.Root
                     variant={"surface"}
                     colorPalette={"blue"}
-                    value={"INFO"}
-                    key={"INFO"}
+                    value={LOG_LEVELS.info}
                 >
                     <CheckboxCard.HiddenInput />
                     <CheckboxCard.Control p={"0.45rem"}>
@@ -60,6 +46,4 @@ function LogTypesFilterButtons() {
             </Group>
         </CheckboxGroup>
     );
-}
-
-export default LogTypesFilterButtons;
+};

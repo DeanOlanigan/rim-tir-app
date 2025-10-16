@@ -1,103 +1,68 @@
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    TimeScale,
-} from "chart.js";
-import "chartjs-adapter-date-fns";
-import zoomPlugin from "chartjs-plugin-zoom";
-import { ru } from "date-fns/locale";
+import { TIME_TYPE } from "../GraphSettings/graphSettingsConstants";
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    TimeScale,
-    zoomPlugin,
-    Title,
-    Tooltip,
-    Legend
-);
-
-const graphPointTooltip = (context) => {
-    return `
-Ед. Измерения: ${context[0].raw.measurementUnit}
-Описание: ${context[0].raw.variableDescription}
-`;
-};
-
-export const createOptions = (color) => ({
+export const createOptions = (type, start, end) => ({
     responsive: true,
     scales: {
         x: {
-            type: "time",
-            time: {
-                tooltipFormat: "Pp",   // см. форматы date-fns: https://date-fns.org/v2.29.3/docs/format
-                unit: "minute",
-                displayFormats: {
-                    minute: "HH:mm"
-                }
-            },
-            adapters: {
-                date: {
-                    locale: ru // или ru для русского
-                }
-            },
+            type: type === TIME_TYPE.real ? "realtime" : "time",
             grid: {
-                color: color
-            },
-            ticks: {
-                color: color
-            },
-            border: {
-                color: color
+                color: "#6666663f",
             },
         },
         y: {
             beginatAtZero: false,
             grid: {
-                color: color
+                color: "#6666663f",
             },
-            ticks: {
-                color: color
-            },
-            border: {
-                color: color
-            },
-        }
+        },
     },
     plugins: {
-        legend: {
-            position: "top",
-            labels: {
-                color: color
-            },
-        },
-        zoom: {
-            pan: {
-                enabled: true,
-                mode: "x",
-                modifierKey: "ctrl"
-            },
-            zoom: {
-                drag: {
-                    enabled: true
-                },
-                mode: "x"
-            }
-        },
-        tooltip: {
-            callbacks: {
-                footer: function(context) {
-                    return graphPointTooltip(context);
-                }
-            }
-        }
+        zoom: zoomOptions(type, start, end),
+        streaming: streamingOptions,
     },
 });
+
+const zoomOptions = (type, start, end) => ({
+    pan: {
+        enabled: true,
+        mode: "x",
+    },
+    zoom: {
+        pinch: {
+            enabled: true,
+        },
+        wheel: {
+            enabled: true,
+        },
+        mode: "x",
+    },
+    limits: {
+        x: type === TIME_TYPE.real ? realtimeLimits : archiveLimits(start, end),
+    },
+});
+
+const streamingOptions = {
+    delay: 1000,
+    duration: 1000 * 10,
+    ttl: 1000 * 60 * 5,
+};
+
+const realtimeLimits = {
+    minDelay: 1000,
+    maxDelay: 1000 * 60,
+    minDuration: 1000 * 10,
+    maxDuration: 1000 * 60 * 5,
+};
+
+const archiveLimits = (start, end) => ({
+    min: start,
+    max: end,
+    minRange: 1000 * 30,
+});
+
+/* const graphPointTooltip = (context) => {
+    return `
+Ед. Измерения: ${context[0].raw.measurementUnit}
+Описание: ${context[0].raw.variableDescription}
+`;
+}; */

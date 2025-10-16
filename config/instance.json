@@ -204,6 +204,150 @@
                                         "label": "4 байта - с плавающей точкой",
                                         "value": "fourByteFloat"
                                     }
+                                ],
+                                "rules": [
+                                    {
+                                        "validator": "required",
+                                        "message": "Это поле обязательно для заполнения"
+                                    },
+                                    {
+                                        "validator": "mustBe",
+                                        "params": ["bit"],
+                                        "workIf": {
+                                            "or": [
+                                                {
+                                                    "==": [
+                                                        {
+                                                            "find": [
+                                                                {
+                                                                    "what": "function",
+                                                                    "where": "self"
+                                                                }
+                                                            ]
+                                                        },
+                                                        1
+                                                    ]
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            "find": [
+                                                                {
+                                                                    "what": "function",
+                                                                    "where": "self"
+                                                                }
+                                                            ]
+                                                        },
+                                                        2
+                                                    ]
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            "find": [
+                                                                {
+                                                                    "what": "function",
+                                                                    "where": "self"
+                                                                }
+                                                            ]
+                                                        },
+                                                        15
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "message": "Данный тип данных не подходит для функций 1,2,15"
+                                    },
+                                    {
+                                        "validator": "mustBe",
+                                        "params": [
+                                            "bit",
+                                            "twoByteUnsigned",
+                                            "twoByteSigned",
+                                            "fourByteSigned",
+                                            "fourByteUnsigned",
+                                            "fourByteFloat"
+                                        ],
+                                        "workIf": {
+                                            "or": [
+                                                {
+                                                    "==": [
+                                                        {
+                                                            "find": [
+                                                                {
+                                                                    "what": "function",
+                                                                    "where": "self"
+                                                                }
+                                                            ]
+                                                        },
+                                                        3
+                                                    ]
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            "find": [
+                                                                {
+                                                                    "what": "function",
+                                                                    "where": "self"
+                                                                }
+                                                            ]
+                                                        },
+                                                        4
+                                                    ]
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            "find": [
+                                                                {
+                                                                    "what": "function",
+                                                                    "where": "self"
+                                                                }
+                                                            ]
+                                                        },
+                                                        5
+                                                    ]
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            "find": [
+                                                                {
+                                                                    "what": "function",
+                                                                    "where": "self"
+                                                                }
+                                                            ]
+                                                        },
+                                                        16
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "message": "Данный тип данных не подходит для функций 3,4,5,16"
+                                    },
+                                    {
+                                        "validator": "mustBe",
+                                        "params": [
+                                            "bit",
+                                            "twoByteUnsigned",
+                                            "twoByteSigned"
+                                        ],
+                                        "workIf": {
+                                            "==": [
+                                                {
+                                                    "find": [
+                                                        {
+                                                            "what": "function",
+                                                            "where": "self"
+                                                        }
+                                                    ]
+                                                },
+                                                6
+                                            ]
+                                        },
+                                        "message": "Данный тип данных не подходит для функций 6"
+                                    }
                                 ]
                             }
                         },
@@ -233,7 +377,7 @@
                                             {
                                                 "validator": "unique",
                                                 "params": {
-                                                    "within": "siblings"
+                                                    "within": "ignoreFolder"
                                                 },
                                                 "message": "Адрес должен быть уникальным внутри родительского элемента"
                                             }
@@ -291,6 +435,13 @@
                             {
                                 "validator": "required",
                                 "message": "Это поле обязательно для заполнения"
+                            },
+                            {
+                                "validator": "regex",
+                                "params": {
+                                    "regex": "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$"
+                                },
+                                "message": "Неверный формат IP-адреса"
                             }
                         ]
                     },
@@ -521,6 +672,150 @@
                                 "label": "4 байта - с плавающей точкой",
                                 "value": "fourByteFloat"
                             }
+                        ],
+                        "rules": [
+                            {
+                                "validator": "required",
+                                "message": "Это поле обязательно для заполнения"
+                            },
+                            {
+                                "validator": "mustBe",
+                                "params": ["bit"],
+                                "workIf": {
+                                    "or": [
+                                        {
+                                            "==": [
+                                                {
+                                                    "find": [
+                                                        {
+                                                            "what": "function",
+                                                            "where": "self"
+                                                        }
+                                                    ]
+                                                },
+                                                1
+                                            ]
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    "find": [
+                                                        {
+                                                            "what": "function",
+                                                            "where": "self"
+                                                        }
+                                                    ]
+                                                },
+                                                2
+                                            ]
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    "find": [
+                                                        {
+                                                            "what": "function",
+                                                            "where": "self"
+                                                        }
+                                                    ]
+                                                },
+                                                15
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "message": "Данный тип данных не подходит для функций 1,2,15"
+                            },
+                            {
+                                "validator": "mustBe",
+                                "params": [
+                                    "bit",
+                                    "twoByteUnsigned",
+                                    "twoByteSigned",
+                                    "fourByteSigned",
+                                    "fourByteUnsigned",
+                                    "fourByteFloat"
+                                ],
+                                "workIf": {
+                                    "or": [
+                                        {
+                                            "==": [
+                                                {
+                                                    "find": [
+                                                        {
+                                                            "what": "function",
+                                                            "where": "self"
+                                                        }
+                                                    ]
+                                                },
+                                                3
+                                            ]
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    "find": [
+                                                        {
+                                                            "what": "function",
+                                                            "where": "self"
+                                                        }
+                                                    ]
+                                                },
+                                                4
+                                            ]
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    "find": [
+                                                        {
+                                                            "what": "function",
+                                                            "where": "self"
+                                                        }
+                                                    ]
+                                                },
+                                                5
+                                            ]
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    "find": [
+                                                        {
+                                                            "what": "function",
+                                                            "where": "self"
+                                                        }
+                                                    ]
+                                                },
+                                                16
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "message": "Данный тип данных не подходит для функций 3,4,5,16"
+                            },
+                            {
+                                "validator": "mustBe",
+                                "params": [
+                                    "bit",
+                                    "twoByteUnsigned",
+                                    "twoByteSigned"
+                                ],
+                                "workIf": {
+                                    "==": [
+                                        {
+                                            "find": [
+                                                {
+                                                    "what": "function",
+                                                    "where": "self"
+                                                }
+                                            ]
+                                        },
+                                        6
+                                    ]
+                                },
+                                "message": "Данный тип данных не подходит для функций 6"
+                            }
                         ]
                     }
                 },
@@ -549,7 +844,7 @@
                                     },
                                     {
                                         "validator": "unique",
-                                        "params": { "within": "siblings" },
+                                        "params": { "within": "ignoreFolder" },
                                         "message": "Адрес должен быть уникальным внутри родительского элемента"
                                     }
                                 ]

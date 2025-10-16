@@ -28,6 +28,9 @@ import {
     setIgnoreUtil,
 } from "@/utils/treeUtils/index";
 
+import { setIgnoreUtil } from "@/utils/treeUtils/edit/setIgnore";
+import { validateNode } from "@/utils/validation/runners/validateNode";
+
 const baseNodeInit = (type, name) => ({
     id: type,
     type: NODE_TYPES.root,
@@ -63,6 +66,8 @@ const initialState = {
         ids: new Set(),
         cut: false,
     },
+
+    sync: false,
 };
 
 export const useVariablesStore = create()(
@@ -71,6 +76,8 @@ export const useVariablesStore = create()(
             ...initialState,
 
             resetState: () => set(initialState),
+
+            setSync: (value) => set({ sync: value }),
 
             updateSelectedIds: (targetKey, ids) =>
                 set((state) => {
@@ -139,6 +146,15 @@ export const useVariablesStore = create()(
                             variableId
                         );
                     }
+
+                    const draft = validateParameter(
+                        nodeId,
+                        "variableId",
+                        newSettings,
+                        configuratorConfig
+                    );
+                    useValidationStore.getState().applyDraft2(draft);
+
                     return { settings: newSettings };
                 }),
 
@@ -153,6 +169,7 @@ export const useVariablesStore = create()(
 
             renameNode: (nodeId, name) =>
                 set((state) => {
+                    if (state.settings[nodeId].name === name) return state;
                     const newSettings = renameNodeSettingUtil(
                         state.settings,
                         nodeId,
@@ -184,9 +201,28 @@ export const useVariablesStore = create()(
                 }),
 
             setIgnore: (ids, value) =>
-                set((state) => ({
-                    settings: setIgnoreUtil(state.settings, ids, value),
-                })),
+                set((state) => {
+                    const newSettings = setIgnoreUtil(
+                        state.settings,
+                        ids,
+                        value
+                    );
+                    const idsSet = getIdsSetNormalizedContext(newSettings, ids);
+
+                    let draft = new ErrorDraft();
+                    for (const id of idsSet) {
+                        const node = newSettings[id];
+                        validateNode(
+                            node,
+                            newSettings,
+                            configuratorConfig,
+                            draft
+                        );
+                    }
+                    useValidationStore.getState().applyDraft2(draft);
+
+                    return { settings: newSettings };
+                }),
 
             toggleIgnore: (ids) => {
                 const { settings } = get();

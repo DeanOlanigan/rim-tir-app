@@ -1,41 +1,49 @@
 import { memo, useEffect, useState } from "react";
-import { Input } from "@chakra-ui/react";
+import { Input, InputGroup } from "@chakra-ui/react";
 import { useVariablesStore } from "@/store/variables-store";
+import { ErrorSign } from "./ErrorSign";
 
 export const TextInput = memo(function TextInput(props) {
-    //console.log("Render TextInput");
-    const { id, targetKey, value } = props;
+    const { id, targetkey, value, errors, ...rest } = props;
     const [innerValue, setInnerValue] = useState(value);
-    const setSettings = useVariablesStore((state) => state.setSettings);
+    const { setSettings } = useVariablesStore.getState();
 
     useEffect(() => {
         setInnerValue(value);
     }, [value]);
 
     return (
-        <Input
-            size={"xs"}
-            maxW={"250px"}
-            value={innerValue}
-            onChange={(e) => setInnerValue(e.target.value)}
-            onBlur={(e) => {
-                if (e.target.value === value) return;
-                setInnerValue(e.target.value);
-                setSettings(id, {
-                    [targetKey]: e.target.value,
-                });
-            }}
-            onKeyDown={(e) => {
-                if (e.key === "Enter") {
+        <InputGroup
+            endElement={
+                errors && errors.size !== 0 && <ErrorSign errors={errors} />
+            }
+        >
+            <Input
+                size={"xs"}
+                maxW={"250px"}
+                autoComplete="off"
+                value={innerValue}
+                onChange={(e) => setInnerValue(e.target.value)}
+                onBlur={(e) => {
+                    if (e.target.value === value) return;
                     setInnerValue(e.target.value);
                     setSettings(id, {
-                        [targetKey]: e.target.value,
+                        [targetkey]: e.target.value,
                     });
-                }
-                if (e.key === "Escape") {
-                    setInnerValue(value);
-                }
-            }}
-        />
+                }}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                        setInnerValue(e.target.value);
+                        setSettings(id, {
+                            [targetkey]: e.target.value,
+                        });
+                    }
+                    if (e.key === "Escape") {
+                        setInnerValue(value);
+                    }
+                }}
+                {...rest}
+            />
+        </InputGroup>
     );
 });

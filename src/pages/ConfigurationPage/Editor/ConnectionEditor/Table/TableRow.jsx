@@ -4,11 +4,7 @@ import { Table } from "@chakra-ui/react";
 
 export const TableRow = ({ element }) => {
     return (
-        <Table.Row
-            background={"transparent"}
-            className="group"
-            _hover={{ bg: "bg.muted" }}
-        >
+        <Table.Row className="group">
             {Object.keys(element.setting).map((key) => {
                 return (
                     <Table.Cell

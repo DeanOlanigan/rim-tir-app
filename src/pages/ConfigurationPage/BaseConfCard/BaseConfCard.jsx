@@ -1,44 +1,39 @@
-import { Card, IconButton, Stack } from "@chakra-ui/react";
+import { IconButton } from "@chakra-ui/react";
 import { ConfMenu } from "./ConfMenu";
-import { ConfMiscInfo } from "./ConfMiscInfo";
 import { RouterMenu } from "./RouterMenu";
 import { ValidationErrorsContainer } from "../Validation/ValidationErrorsContainer";
 import { LuFlipHorizontal2, LuFlipVertical2 } from "react-icons/lu";
 import { useConfigStore } from "../stores";
+import { SubHeader } from "@/components/Header/SubHeader";
+import { ConfigInfo } from "@/components/ConfigInfo";
+import { useConfigInfoStore } from "@/store/config-info-store";
+import { ConfChecker } from "./ConfChecker";
 
 export const BaseConfCard = () => {
+    return (
+        <SubHeader>
+            <FlipButton />
+            <ConfMenu />
+            <RouterMenu />
+            <ConfigInfoWrapper />
+            <ValidationErrorsContainer />
+            <ConfChecker />
+        </SubHeader>
+    );
+};
+
+const ConfigInfoWrapper = () => {
+    const { name, date, description } = useConfigInfoStore(
+        (state) => state.configInfo
+    );
+    return <ConfigInfo name={name} date={date} description={description} />;
+};
+
+const FlipButton = () => {
     const { flip, setFlip } = useConfigStore((state) => state);
     return (
-        <Card.Root border={"none"} bg={"transparent"}>
-            <Card.Body p={"2"}>
-                <Card.Title>
-                    <Stack
-                        direction={"row"}
-                        gap={"2"}
-                        justify={"space-between"}
-                        align={"center"}
-                        position={"relative"}
-                    >
-                        <Stack direction={"row"} gap={"2"}>
-                            <IconButton
-                                variant="surface"
-                                size="2xs"
-                                onClick={() => setFlip()}
-                            >
-                                {flip === "vertical" ? (
-                                    <LuFlipHorizontal2 />
-                                ) : (
-                                    <LuFlipVertical2 />
-                                )}
-                            </IconButton>
-                            <ConfMenu />
-                            <RouterMenu />
-                            <ValidationErrorsContainer />
-                        </Stack>
-                        <ConfMiscInfo />
-                    </Stack>
-                </Card.Title>
-            </Card.Body>
-        </Card.Root>
+        <IconButton variant="surface" size="2xs" onClick={() => setFlip()}>
+            {flip === "vertical" ? <LuFlipHorizontal2 /> : <LuFlipVertical2 />}
+        </IconButton>
     );
 };

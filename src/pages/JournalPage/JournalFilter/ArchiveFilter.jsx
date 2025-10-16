@@ -1,17 +1,12 @@
-import { ru } from "date-fns/locale";
-import { createListCollection, Stack } from "@chakra-ui/react";
-import { Field } from "@/components/ui/field";
-import { Switch } from "@/components/ui/switch";
 import {
-    SelectContent,
-    SelectItem,
-    SelectLabel,
-    SelectRoot,
-    SelectTrigger,
-    SelectValueText,
-} from "@/components/ui/select";
+    createListCollection,
+    Field,
+    Portal,
+    Select,
+    Stack,
+    Switch,
+} from "@chakra-ui/react";
 import { DatePicker } from "@/components/DatePicker/DatePicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 const rows = createListCollection({
     items: [
@@ -33,30 +28,26 @@ const mountType = createListCollection({
     ],
 });
 
-function ArchiveFilter({ filters, setFilters }) {
-    console.log("Render ArchiveFilter");
+export const ArchiveFilter = () => {
     return (
         <Stack p={"1"}>
-            <Field orientation="horizontal" label="Архив">
-                <Switch
-                    size={"sm"}
-                    checked={filters.archiveToggle}
-                    onCheckedChange={(e) =>
-                        setFilters({ ...filters, archiveToggle: e.checked })
-                    }
-                />
-            </Field>
-            <Field label="Дата начала" disabled={!filters.archiveToggle}>
+            <Switch.Root
+                size={"sm"}
+                onCheckedChange={(e) => console.log("onCheckedChange", e)}
+            >
+                <Switch.Label>Архив</Switch.Label>
+                <Switch.HiddenInput />
+                <Switch.Control />
+            </Switch.Root>
+
+            <Field.Root>
+                <Field.Label>Дата начала</Field.Label>
                 <DatePicker
-                    selected={filters.archiveStartDatePick}
+                    selected={null}
                     portalId="datepicker-portal"
                     popperPlacement="right-start"
                     showPopperArrow={false}
-                    disabled={!filters.archiveToggle}
-                    onChange={(date) =>
-                        setFilters({ ...filters, archiveStartDatePick: date })
-                    }
-                    locale={ru}
+                    onChange={(date) => console.log("onChange", date)}
                     timeFormat="HH:mm"
                     timeCaption="Время"
                     timeIntervals={15}
@@ -72,18 +63,16 @@ function ArchiveFilter({ filters, setFilters }) {
                     isClearable
                     placeholderText="Дата начала"
                 />
-            </Field>
-            <Field label="Дата окончания" disabled={!filters.archiveToggle}>
+            </Field.Root>
+
+            <Field.Root>
+                <Field.Label>Дата окончания</Field.Label>
                 <DatePicker
-                    selected={filters.archiveEndDatePick}
+                    selected={null}
                     portalId="datepicker-portal"
                     popperPlacement="right-start"
                     showPopperArrow={false}
-                    disabled={!filters.archiveToggle}
-                    onChange={(date) =>
-                        setFilters({ ...filters, archiveEndDatePick: date })
-                    }
-                    locale={ru}
+                    onChange={(date) => console.log("onChange", date)}
                     timeFormat="HH:mm"
                     timeCaption="Время"
                     timeIntervals={15}
@@ -99,54 +88,65 @@ function ArchiveFilter({ filters, setFilters }) {
                     isClearable
                     placeholderText="Дата окончания"
                 />
-            </Field>
-            <SelectRoot
-                disabled={!filters.archiveToggle}
+            </Field.Root>
+
+            <Select.Root
                 collection={rows}
                 size={"xs"}
-                value={[filters.rowsCount.toString()]}
-                onValueChange={(value) =>
-                    setFilters({
-                        ...filters,
-                        rowsCount: parseInt(value.value[0]),
-                    })
-                }
+                onValueChange={(value) => console.log("onValueChange", value)}
             >
-                <SelectLabel>Количество строк:</SelectLabel>
-                <SelectTrigger>
-                    <SelectValueText />
-                </SelectTrigger>
-                <SelectContent>
-                    {rows.items.map((row) => (
-                        <SelectItem item={row} key={row.value}>
-                            {row.label}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </SelectRoot>
-            <SelectRoot
-                disabled={!filters.archiveToggle}
+                <Select.HiddenSelect />
+                <Select.Label>Количество строк:</Select.Label>
+                <Select.Control>
+                    <Select.Trigger>
+                        <Select.ValueText />
+                    </Select.Trigger>
+                    <Select.IndicatorGroup>
+                        <Select.Indicator />
+                    </Select.IndicatorGroup>
+                </Select.Control>
+                <Portal>
+                    <Select.Positioner>
+                        <Select.Content>
+                            {rows.items.map((row) => (
+                                <Select.Item item={row} key={row.value}>
+                                    {row.label}
+                                    <Select.ItemIndicator />
+                                </Select.Item>
+                            ))}
+                        </Select.Content>
+                    </Select.Positioner>
+                </Portal>
+            </Select.Root>
+
+            <Select.Root
                 collection={mountType}
                 size={"xs"}
-                value={[filters.mountType]}
-                onValueChange={(value) =>
-                    setFilters({ ...filters, mountType: value.value[0] })
-                }
+                onValueChange={(value) => console.log("onValueChange", value)}
             >
-                <SelectLabel>Расположение:</SelectLabel>
-                <SelectTrigger>
-                    <SelectValueText />
-                </SelectTrigger>
-                <SelectContent>
-                    {mountType.items.map((type) => (
-                        <SelectItem item={type} key={type.value}>
-                            {type.label}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </SelectRoot>
+                <Select.HiddenSelect />
+                <Select.Label>Расположение:</Select.Label>
+                <Select.Control>
+                    <Select.Trigger>
+                        <Select.ValueText />
+                    </Select.Trigger>
+                    <Select.IndicatorGroup>
+                        <Select.Indicator />
+                    </Select.IndicatorGroup>
+                </Select.Control>
+                <Portal>
+                    <Select.Positioner>
+                        <Select.Content>
+                            {mountType.items.map((type) => (
+                                <Select.Item item={type} key={type.value}>
+                                    {type.label}
+                                    <Select.ItemIndicator />
+                                </Select.Item>
+                            ))}
+                        </Select.Content>
+                    </Select.Positioner>
+                </Portal>
+            </Select.Root>
         </Stack>
     );
-}
-
-export default ArchiveFilter;
+};

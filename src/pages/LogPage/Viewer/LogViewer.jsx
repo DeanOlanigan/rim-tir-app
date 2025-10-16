@@ -1,17 +1,13 @@
-import { Card } from "@chakra-ui/react";
-import LogViewerHeader from "./Header/LogViewerHeader";
-import LogViewerBody from "./LogViewerBody";
-import LogViewerProvider from "@/providers/LogViewerProvider/LogViewerProvider";
+import { Card, Flex } from "@chakra-ui/react";
+import { LogViewerHeader } from "./Header/LogViewerHeader";
+import { LogViewerBody } from "./LogViewerBody";
 
 function LogViewer() {
     console.log("Render LogViewer");
     return (
-        <LogViewerProvider>
+        <Flex flex={1} minH={0} direction={"column"}>
             <Card.Root
-                flex={"1"}
-                display={"flex"}
-                flexDirection={"column"}
-                minH={"0"}
+                size={"sm"}
                 shadow={"xl"}
                 data-state={"open"}
                 animationDuration={"slow"}
@@ -19,20 +15,12 @@ function LogViewer() {
                     _open: "scale-fade-in",
                 }}
             >
-                <Card.Header>
+                <Card.Body>
                     <LogViewerHeader />
-                </Card.Header>
-
-                <Card.Body
-                    flex={"1"}
-                    display={"flex"}
-                    flexDirection={"column"}
-                    minH={"0"}
-                >
-                    <LogViewerBody />
                 </Card.Body>
             </Card.Root>
-        </LogViewerProvider>
+            <LogViewerBody />
+        </Flex>
     );
 }
 

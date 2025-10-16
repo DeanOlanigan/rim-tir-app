@@ -71,18 +71,17 @@ function inferRootsFromNormalized(norm) {
 }
 
 function applyCopyRules(copy) {
-    if (copy.type !== "dataObject" && typeof copy.name === "string") {
-        copy.name = copy.name + "_copy";
+    if (copy.type !== "dataObject") {
+        copy.name = copy.name ? `${copy.name}_copy` : "unnamed_copy";
     }
-    if (copy.type === "variable") {
-        if (copy.setting)
-            copy.setting.usedIn = {
-                send: null,
-                receive: null,
-            };
+    if (copy.type === "variable" && copy.setting) {
+        copy.setting.usedIn = {
+            send: null,
+            receive: null,
+        };
     }
-    if (copy.type === "dataObject") {
-        if (copy.setting) copy.setting.variableId = null;
+    if (copy.type === "dataObject" && copy.setting) {
+        copy.setting.variableId = null;
     }
 }
 

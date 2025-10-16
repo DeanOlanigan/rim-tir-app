@@ -1,161 +1,140 @@
-import { useEffect, useMemo, useRef } from "react";
-import { Text, Box, Badge, Flex } from "@chakra-ui/react";
-import { toaster } from "@/components/ui/toaster"; // Chakra UI toaster
-import { useLogContext } from "@/providers/LogProvider/LogContext";
-import { useLogViewerContext } from "@/providers/LogViewerProvider/LogViewerContext";
-import { WebSocketService } from "@/services/websocketService";
+import { Box, IconButton, ScrollArea, Text } from "@chakra-ui/react";
+import { useStickToBottom } from "use-stick-to-bottom";
+import { LuArrowDown } from "react-icons/lu";
+import { NoData } from "@/components/NoData";
+import { Loader } from "@/components/Loader";
+import { ErrorInformer } from "@/components/ErrorInformer";
+import { LOG_LEVELS } from "@/config/constants";
+import { useLogData } from "./useLogData";
+import { useCallback, useEffect, useMemo } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
-const wsService = new WebSocketService("ws://192.168.1.1:8800");
+const LEVEL_COLOR = {
+    [LOG_LEVELS.info]: "blue.500",
+    [LOG_LEVELS.error]: "red.500",
+    [LOG_LEVELS.warn]: "yellow.500",
+    [LOG_LEVELS.status]: "green.500",
+    [LOG_LEVELS.debug]: "gray.500",
+};
 
-function LogViewerBody() {
-    console.log("Render LogViewerBody");
-    const { logData, isLoading } = useLogContext();
+const shadowCss = {
+    "--scroll-shadow-size": "4rem",
+    maskImage:
+        "linear-gradient(#000,#000,transparent 0,#000 var(--scroll-shadow-size),#000 calc(100% - var(--scroll-shadow-size)),transparent)",
+    "&[data-at-top]": {
+        maskImage:
+            "linear-gradient(180deg,#000 calc(100% - var(--scroll-shadow-size)),transparent)",
+    },
+    "&[data-at-bottom]": {
+        maskImage:
+            "linear-gradient(0deg,#000 calc(100% - var(--scroll-shadow-size)),transparent)",
+    },
+};
+
+export const LogViewerBody = () => {
     const {
-        isPaused,
-        isLogTextWrapped,
+        q: { isLoading, isError, error },
+        live,
         logTextSize,
-        currentFilter,
-        logs,
-        setLogs,
-    } = useLogViewerContext();
+        isLogTextWrapped,
+    } = useLogData();
+    const sticky = useStickToBottom();
 
-    const logsContainerRef = useRef(null);
-    let logIndex = 1;
-
-    useEffect(() => {
-        if (!isPaused) {
-            scrollToBottom();
-        }
-    }, [logs, isPaused]);
-
-    useEffect(() => {
-        if (isLoading) {
-            return;
-        }
-        const fetchLogs = async () => {
-            try {
-                const response = await fetch(
-                    `/api/v1/getLog?logfile=${logData.name}&limit=${logData.rows}&type=${logData.type}`
-                );
-                if (!response.ok) {
-                    throw new Error(
-                        `Ошибка получения логов: ${response.statusText}`
-                    );
-                }
-                const result = await response.json();
-                if (result.code === 200) {
-                    appendLogs(result.data);
-                } else {
-                    throw new Error(result.message || "Неизвестная ошибка");
-                }
-            } catch (error) {
-                toaster.create({
-                    title: "Error",
-                    description: error.message,
-                    type: "error",
-                });
-            }
-        };
-
-        fetchLogs();
-    }, [isLoading, logData.name, logData.rows, logData.type]);
-
-    useEffect(() => {
-        wsService.connect();
-
-        const messageHandler = (message) => {
-            //console.log(message);
-            appendLogs(message);
-        };
-
-        wsService.addMessageHandler(messageHandler);
-
-        wsService.sendMessage({
-            log: { fileName: logData.name, type: logData.type },
-        });
-
-        return () => {
-            wsService.removeMessageHandler(messageHandler);
-            wsService.close();
-        };
-    }, []);
-
-    const appendLogs = (data) => {
-        const logDataArr = data.split("\n").filter((line) => line);
-        const newLogs = logDataArr.map((element) => extractLogPart(element));
-        setLogs(newLogs);
-    };
-
-    const extractLogPart = (line) => {
-        const splitData = line.split("\t");
-        return {
-            id: logIndex++,
-            dateTime: splitData[0]?.slice(1, -1),
-            severity: splitData[1]?.slice(1, -1), // Убираем квадратные скобки
-            message: splitData[2],
-        };
-    };
-
-    const getColor = (severity) => {
-        let color = {
-            INFO: "blue.500",
-            ERROR: "red.500",
-            WARNING: "yellow.500",
-        };
-        return color[severity] || "gray.500";
-    };
-
-    const filteredLogs = useMemo(() => {
-        return logs.filter(
-            (log) => log.severity === "STATUS" || currentFilter[log.severity]
-        );
-    }, [logs, currentFilter]);
-
-    const scrollToBottom = () => {
-        if (logsContainerRef.current) {
-            logsContainerRef.current.scrollTop =
-                logsContainerRef.current.scrollHeight;
-        }
-    };
-
-    // TODO Идея фильтровать колонки (убирать дату, тип лога и т.д.)
-    const renderLogPart = filteredLogs.map((log) => {
-        if (log.severity === "STATUS") {
-            return (
-                <Flex key={`pause-${logIndex++}`} justify={"center"}>
-                    <Badge
-                        colorPalette="green"
-                        variant={"surface"}
-                        size={"md"}
-                        w={"100%"}
-                        mx={"2"}
-                    >
-                        {log.message}
-                    </Badge>
-                </Flex>
-            );
-        }
-
-        return (
-            <Text
-                key={log.id}
-                whiteSpace={isLogTextWrapped ? "pre-wrap" : "pre"}
-                fontFamily={"monospace"}
-                fontSize={logTextSize}
-                color={getColor(log.severity)}
-            >
-                {`[${log.dateTime}]\t${("[" + log.severity + "]")
-                    .toString()
-                    .padStart(9)}\t${log.message}`}
-            </Text>
-        );
+    const rowVirtualizer = useVirtualizer({
+        count: live.length,
+        getScrollElement: () => sticky.scrollRef.current,
+        estimateSize: () => 24,
+        overscan: 20,
     });
 
-    return (
-        <Box ref={logsContainerRef} flex={"1"} minH={"0"} overflow="auto">
-            {renderLogPart}
-        </Box>
-    );
-}
+    useEffect(() => {
+        if (!live.length) return;
+        if (sticky.isAtBottom) {
+            rowVirtualizer.scrollToIndex(live.length - 1, { align: "end" });
+        }
+    }, [live.length, sticky.isAtBottom, rowVirtualizer]);
 
-export default LogViewerBody;
+    const contentProps = useMemo(
+        () => ({
+            style: {
+                height: `${rowVirtualizer.getTotalSize()}px`,
+                width: "100%",
+                position: "relative",
+            },
+        }),
+        [rowVirtualizer]
+    );
+
+    const getItemProps = useCallback(
+        (item) => ({
+            style: {
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: `${item.size}px`,
+                transform: `translateY(${item.start}px)`,
+            },
+        }),
+        []
+    );
+
+    if (isLoading) return <Loader text={"Загрузка данных"} />;
+    if (isError) return <ErrorInformer error={error} />;
+
+    // TODO Идея фильтровать колонки (убирать дату, тип лога и т.д.)
+
+    return (
+        <ScrollArea.Root variant={"hover"}>
+            <ScrollArea.Viewport ref={sticky.scrollRef} css={shadowCss}>
+                <ScrollArea.Content ref={sticky.contentRef} {...contentProps}>
+                    {live.length === 0 ? (
+                        <NoData />
+                    ) : (
+                        rowVirtualizer.getVirtualItems().map((vi) => (
+                            <div key={vi.key} {...getItemProps(vi)}>
+                                <LogRow
+                                    row={live[vi.index]}
+                                    logTextSize={logTextSize}
+                                    isLogTextWrapped={isLogTextWrapped}
+                                />
+                            </div>
+                        ))
+                    )}
+                </ScrollArea.Content>
+            </ScrollArea.Viewport>
+            <ScrollArea.Scrollbar bg="transparent" />
+
+            {!sticky.isAtBottom && (
+                <Box position="absolute" bottom="4" right="4" zIndex="10">
+                    <IconButton
+                        size="sm"
+                        onClick={() => {
+                            sticky.scrollToBottom();
+                        }}
+                        colorScheme="blue"
+                        variant="solid"
+                    >
+                        <LuArrowDown />
+                    </IconButton>
+                </Box>
+            )}
+            <ScrollArea.Corner />
+        </ScrollArea.Root>
+    );
+};
+
+const LogRow = ({ row, logTextSize, isLogTextWrapped }) => {
+    return (
+        <Text
+            whiteSpace={isLogTextWrapped ? "pre-wrap" : "pre"}
+            fontFamily={"monospace"}
+            fontSize={logTextSize}
+            color={LEVEL_COLOR[row.level]}
+        >
+            {`[${row.ts}]\t${("[" + row.level.toUpperCase() + "]")
+                .toString()
+                .padStart(9)}\t${row.message}`}
+        </Text>
+    );
+};

@@ -1,27 +1,31 @@
 import { Table } from "@chakra-ui/react";
 import { TableRow } from "./TableRow";
 import { configuratorConfig } from "@/utils/configurationParser";
+import { InfoTip } from "@/components/ui/toggle-tip";
 
 export const DataObjectsTable = ({ data }) => {
     const node = data?.find((node) => node.type !== "folder");
     if (!node) return null;
     const settings = configuratorConfig.nodePaths[node.path]?.settings;
     if (!settings) return null;
-    const labels = Object.values(settings).map((setting) => setting.label);
 
     return (
-        <Table.Root size={"sm"} stickyHeader>
+        <Table.Root size={"sm"} stickyHeader interactive>
             <Table.Header>
                 <Table.Row>
-                    {labels.map((label, index) => {
+                    {Object.entries(settings).map(([key, setting]) => {
+                        const info =
+                            configuratorConfig.nodePaths[node.path]?.settings[
+                                key
+                            ]?.info;
                         return (
                             <Table.ColumnHeader
-                                key={index}
+                                key={key}
                                 minW={"150px"}
                                 maxW={"150px"}
-                                p={"0.5"}
                             >
-                                {label}
+                                {setting.label}
+                                {info && <InfoTip content={info} />}
                             </Table.ColumnHeader>
                         );
                     })}

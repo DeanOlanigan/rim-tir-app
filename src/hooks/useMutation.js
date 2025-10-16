@@ -4,8 +4,8 @@ import {
     startTir,
     stopTir,
     uploadConfiguration,
-} from "@/api/configuration";
-import { QK } from "@/api/queryKeys";
+    QK,
+} from "@/api";
 import { toaster } from "@/components/ui/toaster";
 import { useConfigInfoStore } from "@/store/config-info-store";
 import { useValidationStore } from "@/store/validation-store";
@@ -111,6 +111,7 @@ export function useRefreshConfigurationMutation() {
             useVariablesStore.setState(state);
             qc.setQueryData(QK.configuration, { state, configInfo });
             const draft = validateAll(state.settings, configuratorConfig);
+            useValidationStore.getState().clearErrors();
             useValidationStore.getState().applyDraft(draft);
             toaster.create({
                 title: "Конфигурация обновлена",

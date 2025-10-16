@@ -1,8 +1,9 @@
 import { Breadcrumb } from "@chakra-ui/react";
 import React from "react";
 import { collapseBreadcrumbs } from "./collapseBreadcrumbs";
+import { useBreadcrumbParts } from "@/hooks/useBreadcrumb";
 
-export const EditorBreadcrumb = ({ breadcrumbs, color, maxLength = 8 }) => {
+export const EditorBreadcrumb = ({ id, color, maxLength = 8 }) => {
     /* let items = breadcrumbs;
 
     if (maxLength && breadcrumbs.length > maxLength) {
@@ -13,6 +14,8 @@ export const EditorBreadcrumb = ({ breadcrumbs, color, maxLength = 8 }) => {
             ...breadcrumbs.slice(-maxLength + 1),
         ];
     } */
+
+    const breadcrumbs = useBreadcrumbParts(id);
 
     const items = collapseBreadcrumbs(
         breadcrumbs,

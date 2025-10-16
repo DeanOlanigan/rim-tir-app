@@ -1,12 +1,10 @@
 import { NodeToggleBtn } from "./NodeToggleBtn";
 import { IndentLines } from "./IndentLines";
 import { Badge } from "./Badge";
-import { LuPiggyBank } from "react-icons/lu";
+import { LuBan } from "react-icons/lu";
 import { Icon, HStack } from "@chakra-ui/react";
 import { iconsMap } from "@/config/icons";
 import { configuratorConfig } from "@/utils/configurationParser";
-import { ParamViewer } from "./ParamViewer";
-import { NODE_TYPES } from "@/config/constants";
 import { memo } from "react";
 
 export const NodeBase = memo(function NodeBase({
@@ -15,16 +13,17 @@ export const NodeBase = memo(function NodeBase({
     errors,
     visual,
     isIgnored,
-    accessorIsIgnored,
+    isIgnoredAccessor,
     isCutted,
-    settings,
+    params,
 }) {
-    const icon = configuratorConfig.nodePaths[node.data.path]?.icon;
-    const TypeIcon = iconsMap[icon?.name];
-    const iconColor = icon?.color;
-    const shortName = configuratorConfig.nodePaths[node.data.path]?.shortName;
-    const label = configuratorConfig.nodePaths[node.data.path]?.label;
-    const accessorIsIgnoredStyle = accessorIsIgnored && {
+    const icon = configuratorConfig?.nodePaths?.[node.data.path]?.icon;
+    const color = configuratorConfig?.nodePaths?.[node.data.path]?.color;
+    const TypeIcon = iconsMap[icon];
+    const shortname =
+        configuratorConfig?.nodePaths?.[node.data.path]?.shortname;
+    const label = configuratorConfig?.nodePaths?.[node.data.path]?.label;
+    const accessorIsIgnoredStyle = isIgnoredAccessor && {
         bg: "bg.muted",
         color: "fg.subtle",
         colorPalette: "gray",
@@ -38,49 +37,46 @@ export const NodeBase = memo(function NodeBase({
         <HStack
             w={"100%"}
             borderRadius={"md"}
+            h={"80%"}
             pe={"2"}
             {...accessorIsIgnoredStyle}
         >
             <IndentLines paddingLeft={paddingLeft} />
-            <HStack w={"100%"} minW={0} truncate>
+            <HStack w={"100%"}>
                 {!node.isLeaf && (
                     <NodeToggleBtn
                         toggle={() => node.toggle()}
                         isOpen={node.isOpen}
                     />
                 )}
-                <HStack
-                    w={"100%"}
-                    pl={"2"}
-                    {...isCuttedStyle}
-                    minW={0}
-                    truncate
-                >
+                <HStack w={"100%"} pl={"2"} {...isCuttedStyle} minW={0}>
                     {isIgnored && (
                         <Icon
                             color={"red.400"}
-                            strokeWidth={2}
-                            size={"lg"}
-                            as={LuPiggyBank}
+                            strokeWidth={3}
+                            as={LuBan}
                             title={"Заблокирован"}
                         />
                     )}
                     {TypeIcon && (
-                        <Icon as={TypeIcon} color={`${iconColor}.500`} />
-                    )}
-                    {shortName && (
-                        <Badge
-                            isIgnored={isCutted || accessorIsIgnored}
-                            shortName={shortName}
-                            label={label}
-                            color={iconColor}
+                        <Icon
+                            as={TypeIcon}
+                            color={
+                                isCutted || isIgnoredAccessor
+                                    ? "fg.subtle"
+                                    : `${color}.500`
+                            }
                         />
                     )}
-                    <ParamViewer
-                        settings={settings}
-                        path={node.data.path}
-                        isVariable={node.data.type === NODE_TYPES.variable}
-                    />
+                    {shortname && (
+                        <Badge
+                            isIgnored={isCutted || isIgnoredAccessor}
+                            shortname={shortname}
+                            label={label}
+                            color={color}
+                        />
+                    )}
+                    {params}
                     {visual}
                 </HStack>
             </HStack>

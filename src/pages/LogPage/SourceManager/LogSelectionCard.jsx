@@ -9,12 +9,12 @@ import {
     Spinner,
 } from "@chakra-ui/react";
 import { RadioCardItem, RadioCardRoot } from "@/components/ui/radio-card";
-import { useLogContext } from "@/providers/LogProvider/LogContext";
-import DownloadAllLogsButton from "./DownloadAllLogsButton";
+import { DownloadAllLogsButton } from "./DownloadAllLogsButton";
 
-function LogSelectionCard({ headingText, logList, loading }) {
-    const { logData, updateLogData, saveChosenLogToLocalStorage } =
-        useLogContext();
+export const LogSelectionCard = ({ headingText, logList, loading }) => {
+    const logData = null;
+    const updateLogData = null;
+    const saveChosenLogToLocalStorage = null;
     const navigate = useNavigate();
     const [scrollShadow, setScrollShadow] = useState("none");
     const scrollRef = useRef(null);
@@ -145,6 +145,4 @@ function LogSelectionCard({ headingText, logList, loading }) {
             </Card.Footer>
         </Card.Root>
     );
-}
-
-export default LogSelectionCard;
+};

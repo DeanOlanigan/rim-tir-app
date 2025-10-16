@@ -1,6 +1,5 @@
 import { useVariablesStore } from "@/store/variables-store";
-import { Code } from "@chakra-ui/react";
-import { BaseVisual } from "./BaseVisual";
+import { Code, Text } from "@chakra-ui/react";
 import { ComboboxInput } from "../../InputComponents";
 
 export const DataObjectVisual = ({ node }) => {
@@ -9,18 +8,13 @@ export const DataObjectVisual = ({ node }) => {
         return state.settings[variableId]?.name || "";
     });
 
-    return (
-        <BaseVisual
-            name={name}
-            isEditing={node.isEditing}
-            editor={<ComboboxInput id={node.id} reset={() => node.reset()} />}
-            nameRenderer={(name) =>
-                name && (
-                    <Code variant={"subtle"} colorPalette={"blue"}>
-                        {name}
-                    </Code>
-                )
-            }
-        />
+    return node.isEditing ? (
+        <ComboboxInput id={node.id} reset={() => node.reset()} />
+    ) : (
+        name && (
+            <Code variant={"subtle"} colorPalette={"blue"} truncate>
+                <Text truncate>{name}</Text>
+            </Code>
+        )
     );
 };

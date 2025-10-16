@@ -1,43 +1,43 @@
-import {
-    SelectContent,
-    SelectItem,
-    SelectLabel,
-    SelectRoot,
-    SelectTrigger,
-    SelectValueText,
-} from "@/components/ui/select";
+import { Portal, Select } from "@chakra-ui/react";
 import { offsets } from "../graphSettingsConstants";
-import { useAtom } from "jotai";
-import { offsetAtom } from "../../atoms";
-//import { useGraphContext } from "@/providers/GraphProvider/GraphContext";
+import { useGraphStore } from "../../store/store";
 
-function OffsetPicker() {
-    console.log("Render OffsetPicker");
-    //const { setOffset } = useGraphContext();
-    const [offset, setOffset] = useAtom(offsetAtom);
+export const OffsetPicker = () => {
+    const offset = useGraphStore((state) => state.offset);
+    const setOffset = useGraphStore.getState().setOffset;
 
     return (
-        <SelectRoot
-            collection={offsets}
+        <Select.Root
             size={"xs"}
-            value={[offset.toString()]}
+            maxW={"2xs"}
+            collection={offsets}
+            value={[offset]}
             onValueChange={(e) => {
-                setOffset(parseInt(e.value[0]));
+                setOffset(e.value[0]);
             }}
         >
-            <SelectLabel>Оффсет:</SelectLabel>
-            <SelectTrigger>
-                <SelectValueText placeholder="Выберите оффсет" />
-            </SelectTrigger>
-            <SelectContent>
-                {offsets.items.map((row) => (
-                    <SelectItem item={row} key={row.value}>
-                        {row.label}
-                    </SelectItem>
-                ))}
-            </SelectContent>
-        </SelectRoot>
+            <Select.HiddenSelect />
+            <Select.Label>Оффсет</Select.Label>
+            <Select.Control>
+                <Select.Trigger>
+                    <Select.ValueText placeholder="Выберите оффсет" />
+                </Select.Trigger>
+                <Select.IndicatorGroup>
+                    <Select.Indicator />
+                </Select.IndicatorGroup>
+            </Select.Control>
+            <Portal>
+                <Select.Positioner>
+                    <Select.Content>
+                        {offsets.items.map((row) => (
+                            <Select.Item item={row} key={row.value}>
+                                {row.label}
+                                <Select.ItemIndicator />
+                            </Select.Item>
+                        ))}
+                    </Select.Content>
+                </Select.Positioner>
+            </Portal>
+        </Select.Root>
     );
-}
-
-export default OffsetPicker;
+};

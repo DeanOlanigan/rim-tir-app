@@ -1,39 +1,20 @@
-import { memo, useState } from "react";
-import { Flex, IconButton, parseColor } from "@chakra-ui/react";
-import { LuTrash } from "react-icons/lu";
 import {
-    ColorPickerArea,
-    ColorPickerContent,
-    ColorPickerControl,
-    ColorPickerRoot,
-    ColorPickerSliders,
-    ColorPickerSwatchGroup,
-    ColorPickerSwatchTrigger,
-    ColorPickerTrigger,
-} from "@/components/ui/color-picker";
-import {
-    SelectContent,
-    SelectItem,
-    SelectRoot,
-    SelectTrigger,
-    SelectValueText,
-} from "@/components/ui/select";
-import { swatches, measurements } from "../graphSettingsConstants";
-import { useAtom } from "jotai";
-import { removeVariableAtom, updateVariableAtom } from "../../atoms";
-import { useVariablesOptions } from "@/hooks/useVariablesOptions";
+    ColorPicker,
+    createListCollection,
+    Flex,
+    IconButton,
+    parseColor,
+    Portal,
+    Select,
+} from "@chakra-ui/react";
+import { LuCheck, LuTrash } from "react-icons/lu";
+import { swatches } from "../graphSettingsConstants";
+import { useColor, useGraphStore } from "../../store/store";
+import { useMemo, useState } from "react";
 
-function GraphVariable({
-    variable,
-    index /* updateVariable, removeVariable */,
-}) {
-    const variables = useVariablesOptions();
-    const [color, setColor] = useState(parseColor(variable.color));
+export const GraphVariable = ({ id, data }) => {
+    const { removeVariable } = useGraphStore.getState();
 
-    const [, removeVariable] = useAtom(removeVariableAtom);
-    const [, updateVariable] = useAtom(updateVariableAtom);
-
-    console.log(`Render GraphVariable, index: ${index}`);
     return (
         <Flex
             minH={"40px"}
@@ -44,109 +25,109 @@ function GraphVariable({
             px={"2"}
             gap={"2"}
         >
-            <ColorPickerRoot
-                size={"xs"}
-                defaultValue={parseColor(variable.color)}
-                onValueChange={(e) => {
-                    setColor(e.value);
-                }}
-                onExitComplete={() => {
-                    updateVariable({
-                        index,
-                        updatedVariable: {
-                            ...variable,
-                            color: color.toString("hex"),
-                        },
-                    });
-                }}
-                onValueChangeEnd={(e) => {
-                    updateVariable({
-                        index,
-                        updatedVariable: {
-                            ...variable,
-                            color: e.value.toString("hex"),
-                        },
-                    });
-                }}
-                closeOnSelect
-            >
-                <ColorPickerControl>
-                    <ColorPickerTrigger border={"none"} />
-                </ColorPickerControl>
-                <ColorPickerContent>
-                    <ColorPickerArea />
-                    <ColorPickerSliders />
-                    <ColorPickerSwatchGroup>
-                        {swatches.map((swatch) => (
-                            <ColorPickerSwatchTrigger
-                                swatchSize={"4.5"}
-                                key={swatch}
-                                value={swatch}
-                            />
-                        ))}
-                    </ColorPickerSwatchGroup>
-                </ColorPickerContent>
-            </ColorPickerRoot>
-            <SelectRoot
-                collection={variables}
-                size={"xs"}
-                value={[variable.variableName]}
-                onValueChange={(e) => {
-                    updateVariable({
-                        index,
-                        updatedVariable: {
-                            ...variable,
-                            variableName: e.value[0],
-                        },
-                    });
-                }}
-            >
-                <SelectTrigger>
-                    <SelectValueText placeholder="Переменная" />
-                </SelectTrigger>
-                <SelectContent portalled={false}>
-                    {variables.items.map((row) => (
-                        <SelectItem item={row} key={row.value}>
-                            {row.label}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </SelectRoot>
-            <SelectRoot
-                collection={measurements}
-                size={"xs"}
-                value={[variable.variableMeasurement]}
-                onValueChange={(e) => {
-                    updateVariable({
-                        index,
-                        updatedVariable: {
-                            ...variable,
-                            variableMeasurement: e.value[0],
-                        },
-                    });
-                }}
-            >
-                <SelectTrigger>
-                    <SelectValueText placeholder="Ед. измерения" />
-                </SelectTrigger>
-                <SelectContent>
-                    {measurements.items.map((row) => (
-                        <SelectItem item={row} key={row.value}>
-                            {row.label}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </SelectRoot>
+            <VarColorPicker id={id} />
+            <VarNameSelect id={id} data={data} />
             <IconButton
                 size={"xs"}
                 variant={"ghost"}
                 colorPalette={"red"}
-                onClick={() => removeVariable(index)}
+                onClick={() => removeVariable(id)}
             >
                 <LuTrash />
             </IconButton>
         </Flex>
     );
-}
+};
 
-export default memo(GraphVariable);
+const VarNameSelect = ({ id, data }) => {
+    const collection = useMemo(() => {
+        return createListCollection({
+            items: data ?? [],
+        });
+    }, [data]);
+    const varName = useGraphStore((state) => state.variables[id]?.name);
+    const { setVariableName } = useGraphStore.getState();
+
+    return (
+        <Select.Root
+            collection={collection}
+            value={[varName]}
+            size={"xs"}
+            lazyMount
+            unmountOnExit
+            onValueChange={(e) => {
+                setVariableName(id, e.value[0]);
+            }}
+        >
+            <Select.HiddenSelect />
+            <Select.Control>
+                <Select.Trigger>
+                    <Select.ValueText placeholder="Переменная" />
+                </Select.Trigger>
+                <Select.IndicatorGroup>
+                    <Select.Indicator />
+                </Select.IndicatorGroup>
+            </Select.Control>
+            <Portal>
+                <Select.Positioner>
+                    <Select.Content>
+                        {collection.items.map((row) => (
+                            <Select.Item item={row} key={row.value}>
+                                {row.label}
+                                <Select.ItemIndicator />
+                            </Select.Item>
+                        ))}
+                    </Select.Content>
+                </Select.Positioner>
+            </Portal>
+        </Select.Root>
+    );
+};
+
+const VarColorPicker = ({ id }) => {
+    const varColor = useColor(id);
+    const [color, setColor] = useState(parseColor(varColor));
+    const { setVariableColor } = useGraphStore.getState();
+
+    return (
+        <ColorPicker.Root
+            size={"xs"}
+            value={color}
+            onValueChangeEnd={(e) =>
+                setVariableColor(id, e.value.toString("hex"))
+            }
+            onValueChange={(e) => setColor(e.value)}
+            onExitComplete={() => setVariableColor(id, color.toString("hex"))}
+            closeOnSelect
+            lazyMount
+            unmountOnExit
+        >
+            <ColorPicker.HiddenInput />
+            <ColorPicker.Control>
+                <ColorPicker.Trigger border={"none"} />
+            </ColorPicker.Control>
+            <Portal>
+                <ColorPicker.Positioner>
+                    <ColorPicker.Content>
+                        <ColorPicker.Area />
+                        <ColorPicker.Sliders />
+                        <ColorPicker.SwatchGroup>
+                            {swatches.map((swatch) => (
+                                <ColorPicker.SwatchTrigger
+                                    key={swatch}
+                                    value={swatch}
+                                >
+                                    <ColorPicker.Swatch value={swatch}>
+                                        <ColorPicker.SwatchIndicator>
+                                            <LuCheck />
+                                        </ColorPicker.SwatchIndicator>
+                                    </ColorPicker.Swatch>
+                                </ColorPicker.SwatchTrigger>
+                            ))}
+                        </ColorPicker.SwatchGroup>
+                    </ColorPicker.Content>
+                </ColorPicker.Positioner>
+            </Portal>
+        </ColorPicker.Root>
+    );
+};

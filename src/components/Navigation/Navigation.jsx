@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { HStack, Button } from "@chakra-ui/react";
+import { Button, Flex } from "@chakra-ui/react";
 
 const navItems = [
     { name: "Конфигурация", path: "/configuration" },
@@ -11,22 +11,22 @@ const navItems = [
 
 function Navigation() {
     return (
-        <HStack as="nav" gap={"2"}>
+        <Flex as="nav" gap={"2"}>
             {navItems.map((item) => (
                 <NavLink key={item.name} to={item.path} tabIndex={-1}>
                     {({ isActive }) => (
                         <Button
-                            shadow={isActive ? "md" : ""}
                             size={"xs"}
-                            variant={isActive ? "solid" : "ghost"}
                             fontSize={"sm"}
+                            variant={isActive ? "solid" : "ghost"}
+                            shadow={isActive ? "md" : ""}
                         >
                             {item.name}
                         </Button>
                     )}
                 </NavLink>
             ))}
-        </HStack>
+        </Flex>
     );
 }
 

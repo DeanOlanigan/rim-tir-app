@@ -6,6 +6,7 @@ import {
 } from "./templates";
 
 function isNodeAllowed(node, context) {
+    if (node.type === "variable") return false;
     const ctx = node.usedIn;
     if (!ctx) return true;
     return Array.isArray(ctx)
@@ -36,7 +37,6 @@ function addMenuForFolder(
     nodeByPathEl,
     allowedContext
 ) {
-    // BUG Ломается проверка при перетаскивании узлов
     if (nodeByPathEl.parentPath === "#") {
         for (const node of baseNodes) {
             const path = `#/${node.node}`;
@@ -82,8 +82,8 @@ function pushMenuElem(node, menu, path) {
                 : [1],
             basePath: path,
             icon: {
-                name: node?.icon?.name,
-                color: node?.icon?.color,
+                name: node?.icon,
+                color: node?.color,
             },
         })
     );

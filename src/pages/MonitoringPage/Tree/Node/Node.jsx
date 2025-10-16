@@ -2,17 +2,19 @@ import { NodeBase } from "@/components/TreeView/NodeBase";
 import clsx from "clsx";
 import styles from "@/components/TreeView/TreeView.module.css";
 import { NodeContent } from "./NodeContent";
-import { useQueryClient } from "@tanstack/react-query";
-import { QK } from "@/api/queryKeys";
 import { NODE_TYPES, TREE_TYPES } from "@/config/constants";
 import { memo } from "react";
 import { useSelectionSync } from "@/store/selection-sync-store";
 import { useTreeRegistry } from "@/store/tree-registry-store";
+import { ParamViewer } from "@/components/TreeView/ParamViewer";
+import { useSettingsFromCache } from "../../useSettingsFromCache";
+import { hasIgnoreAccessor } from "@/utils/utils";
 
 export const Node = memo(function Node({ node, style }) {
-    const qc = useQueryClient();
-    const conf = qc.getQueryData(QK.configuration);
-    const settings = conf?.state?.settings ?? {};
+    const settings = useSettingsFromCache();
+
+    const isIgnored = settings[node.id]?.isIgnored;
+    const isIgnoredAccessor = hasIgnoreAccessor(settings, node.id);
 
     const onClick = async (e) => {
         node.handleClick(e);
@@ -33,7 +35,6 @@ export const Node = memo(function Node({ node, style }) {
         >
             <NodeBase
                 node={node}
-                settings={settings[node.id]?.setting}
                 paddingLeft={style.paddingLeft}
                 visual={
                     <NodeContent
@@ -42,6 +43,16 @@ export const Node = memo(function Node({ node, style }) {
                         name={node.data.name}
                     />
                 }
+                params={
+                    <ParamViewer
+                        settings={settings}
+                        path={node.data.path}
+                        id={node.data.id}
+                        isVariable={node.data.type === NODE_TYPES.variable}
+                    />
+                }
+                isIgnored={isIgnored}
+                isIgnoredAccessor={isIgnoredAccessor}
             />
         </div>
     );

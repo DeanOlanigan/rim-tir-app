@@ -1,6 +1,7 @@
 import { checkDependencies } from "../engines/jsonlogic/jsonLogic";
 import { ErrorDraft } from "../core/ErrorDraft";
 import { validatorRegistry } from "../core/validationRegistry";
+import { hasIgnoreAccessor } from "@/utils/utils";
 
 function validateRules(rules, context, nodeId, inputParam, draft) {
     if (!Array.isArray(rules) || rules.length === 0) return {};
@@ -32,6 +33,13 @@ function validateRules(rules, context, nodeId, inputParam, draft) {
                 context,
                 draft,
             });
+    }
+}
+
+function resetDraft(rules, nodeId, inputParam, draft) {
+    for (const rule of rules) {
+        if (!rule || !rule.validator) continue;
+        draft.set(nodeId, inputParam, rule.validator, []);
     }
 }
 
@@ -116,6 +124,16 @@ export function validateParameter(
 
     const def = cfg.nodePaths[nodePath].settings[param];
 
+    const isVisible = checkDependencies(def?.visibleIf, settings, id);
+    const isIgnored = hasIgnoreAccessor(settings, id);
+    if (
+        (!isVisible && def?.rules?.length) ||
+        (isIgnored && def?.rules?.length)
+    ) {
+        resetDraft(def?.rules, id, param, draft);
+        return draft;
+    }
+
     if (def?.rules?.length) {
         validateRules(def.rules, settings, id, param, draft);
     }
@@ -123,9 +141,13 @@ export function validateParameter(
     const nodeRules = cfg.nodePaths[nodePath].validationRules;
     if (nodeRules) validateNode(nodeRules, settings, id, draft);
 
+    const vdeps = cfg.vgraph[settingPath];
     const deps = cfg.graph[settingPath]; // #/iec104/asdu/dataObject:address
-    if (deps) {
-        const depIds = findDepIds(settings, settings[id], deps);
+
+    const gigaDeps = new Set([...(vdeps ?? []), ...(deps ?? [])]);
+
+    if (gigaDeps.size) {
+        const depIds = findDepIds(settings, settings[id], gigaDeps);
 
         for (const { id, param } of depIds) {
             validateParameter(id, param, settings, cfg, draft, visited);

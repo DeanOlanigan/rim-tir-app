@@ -7,37 +7,28 @@ export const config = [
         node: "folder",
         type: "folder",
         label: "Папка",
+        icon: "folder",
     },
     {
         node: "comport",
         type: "interface",
         label: "Comport",
-        icon: {
-            color: "blue",
-            name: "cable",
-        },
+        icon: "cable",
+        color: "cyan",
         usedIn: "both",
         settings: {
             iface: {
-                type: "enum",
+                type: "string",
                 label: "Интерфейс",
+                info: "Интерфейс, к которому подключен последовательный порт",
                 default: "ttyS0",
                 showInTree: true,
-                enumValues: [
-                    {
-                        value: "ttyS0",
-                        label: "ttyS0",
-                    },
-                    {
-                        value: "ttyS1",
-                        label: "ttyS1",
-                    },
-                ],
             },
             baudRate: {
                 type: "enum",
                 label: "Скорость",
                 default: 115200,
+                showInTree: true,
                 enumValues: [
                     {
                         value: 19200,
@@ -98,41 +89,24 @@ export const config = [
         },
         children: [
             {
-                node: "modbusRTU",
+                node: "modbusRTU_master",
                 type: "protocol",
-                label: "Modbus-RTU",
-                icon: {
-                    name: "unplug",
-                    color: "purple",
-                },
+                label: "Modbus-RTU Master",
+                shortname: "MB RTU",
+                color: "teal",
                 usedIn: "receive",
                 settings: {
                     logging: {
                         type: "boolean",
                         label: "Логирование",
-                        showInTree: true,
                         default: false,
-                    },
-                    role: {
-                        type: "enum",
-                        label: "Роль",
                         showInTree: true,
-                        default: "master",
-                        enumValues: [
-                            {
-                                value: "master",
-                                label: "Master",
-                            },
-                            {
-                                value: "slave",
-                                label: "Slave",
-                            },
-                        ],
                     },
                     address: {
                         type: "number",
                         label: "Адрес устройства",
                         default: 1,
+                        showInTree: true,
                         rules: [
                             {
                                 validator: "required",
@@ -198,16 +172,15 @@ export const config = [
                         node: "functionGroup",
                         type: "protocolSpecific",
                         label: "Функциональная группа",
-                        icon: {
-                            name: "unplug",
-                            color: "green",
-                        },
+                        shortname: "fg",
+                        color: "orange",
                         settings: {
                             function: {
                                 type: "enum",
                                 label: "Функция",
-                                showInTree: true,
+                                info: "Функция, которую нужно выполнить",
                                 default: 1,
+                                showInTree: true,
                                 enumValues: [
                                     {
                                         label: "Чтение значений из нескольких регистров флагов (0x01)",
@@ -247,6 +220,7 @@ export const config = [
                                 type: "enum",
                                 label: "Тип данных",
                                 default: "bit",
+                                showInTree: true,
                                 enumValues: [
                                     {
                                         label: "1 бит - bool",
@@ -254,23 +228,167 @@ export const config = [
                                     },
                                     {
                                         label: "2 байта - целое без знака",
-                                        value: "twoByteUnsigned",
+                                        value: "ushort",
                                     },
                                     {
                                         label: "2 байта - целое",
-                                        value: "twoByteSigned",
+                                        value: "short",
                                     },
                                     {
                                         label: "4 байта - целое",
-                                        value: "fourByteSigned",
+                                        value: "int",
                                     },
                                     {
                                         label: "4 байта - целое без знака",
-                                        value: "fourByteUnsigned",
+                                        value: "uint",
                                     },
                                     {
                                         label: "4 байта - с плавающей точкой",
-                                        value: "fourByteFloat",
+                                        value: "float",
+                                    },
+                                ],
+                                rules: [
+                                    {
+                                        validator: "required",
+                                        message:
+                                            "Это поле обязательно для заполнения",
+                                    },
+                                    {
+                                        validator: "mustBe",
+                                        params: ["bit"],
+                                        workIf: {
+                                            or: [
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        1,
+                                                    ],
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        2,
+                                                    ],
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        15,
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                        message:
+                                            "Данный тип данных не подходит для функций 1,2,15",
+                                    },
+                                    {
+                                        validator: "mustBe",
+                                        params: [
+                                            "bit",
+                                            "ushort",
+                                            "short",
+                                            "int",
+                                            "uint",
+                                            "float",
+                                        ],
+                                        workIf: {
+                                            or: [
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        3,
+                                                    ],
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        4,
+                                                    ],
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        5,
+                                                    ],
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        16,
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                        message:
+                                            "Данный тип данных не подходит для функций 3,4,5,16",
+                                    },
+                                    {
+                                        validator: "mustBe",
+                                        params: ["bit", "ushort", "short"],
+                                        workIf: {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                6,
+                                            ],
+                                        },
+                                        message:
+                                            "Данный тип данных не подходит для функций 6",
                                     },
                                 ],
                             },
@@ -284,15 +402,12 @@ export const config = [
                                     enabled: true,
                                     presets: [1, 2, 3, 5, 10],
                                 },
-                                icon: {
-                                    name: "variable",
-                                },
+                                icon: "fileDigit",
                                 settings: {
                                     address: {
                                         type: "string",
                                         label: "Адрес информационного объекта",
                                         showInTree: true,
-                                        default: "",
                                         rules: [
                                             {
                                                 validator: "required",
@@ -300,9 +415,26 @@ export const config = [
                                                     "Это поле обязательно для заполнения",
                                             },
                                             {
+                                                validator: "range",
+                                                params: {
+                                                    min: 0x0,
+                                                    max: 0xffff,
+                                                },
+                                                message:
+                                                    "Значение должно быть в диапазоне от 0x0 до 0xffff",
+                                            },
+                                            {
+                                                validator: "regex",
+                                                params: {
+                                                    regex: "^0[xX][0-9a-fA-F]+$",
+                                                },
+                                                message:
+                                                    "Неверный формат адреса информационного объекта",
+                                            },
+                                            {
                                                 validator: "unique",
                                                 params: {
-                                                    within: "siblings",
+                                                    within: "ignoreFolder",
                                                 },
                                                 message:
                                                     "Адрес должен быть уникальным внутри родительского элемента",
@@ -315,6 +447,7 @@ export const config = [
                                 node: "folder",
                                 type: "folder",
                                 label: "Папка",
+                                icon: "folder",
                             },
                         ],
                         validationRules: [
@@ -332,42 +465,405 @@ export const config = [
                 ],
             },
             {
-                node: "tcpBridge",
-                type: "interfaceSpecific",
-                label: "TCP-мост",
-                icon: {
-                    name: "lrEllipsis",
-                    color: "black",
-                },
+                node: "modbusRTU_slave",
+                type: "protocol",
+                label: "Modbus-RTU Slave",
+                shortname: "MB RTU",
+                color: "teal",
+                usedIn: "send",
                 settings: {
                     logging: {
                         type: "boolean",
                         label: "Логирование",
                         default: false,
+                        showInTree: true,
                     },
-                    side: {
-                        type: "enum",
-                        label: "Тип",
-                        default: "client",
-                        enumValues: [
+                    address: {
+                        type: "number",
+                        label: "Адрес устройства",
+                        default: 1,
+                        showInTree: true,
+                        rules: [
                             {
-                                label: "Клиент",
-                                value: "client",
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
                             },
                             {
-                                label: "Сервер",
-                                value: "server",
+                                validator: "range",
+                                params: {
+                                    min: 1,
+                                    max: 255,
+                                },
+                                message:
+                                    "Значение должно быть в диапазоне от 1 до 255",
                             },
                         ],
+                    },
+                    order2: {
+                        type: "enum",
+                        label: "Порядок 2-х байт",
+                        default: "little",
+                        enumValues: [
+                            {
+                                value: "little",
+                                label: "Младший вперед",
+                            },
+                            {
+                                value: "big",
+                                label: "Старший вперед",
+                            },
+                        ],
+                    },
+                    order4: {
+                        type: "enum",
+                        label: "Порядок 4-х байт",
+                        default: "1-0 3-2",
+                        enumValues: [
+                            {
+                                value: "1-0 3-2",
+                                label: "1-0 3-2",
+                            },
+                            {
+                                value: "3-2 1-0",
+                                label: "3-2 1-0",
+                            },
+                            {
+                                value: "2-3 0-1",
+                                label: "2-3 0-1",
+                            },
+                            {
+                                value: "0-1 2-3",
+                                label: "0-1 2-3",
+                            },
+                        ],
+                    },
+                },
+                children: [
+                    {
+                        node: "functionGroup",
+                        type: "protocolSpecific",
+                        label: "Функциональная группа",
+                        shortname: "fg",
+                        color: "orange",
+                        settings: {
+                            function: {
+                                type: "enum",
+                                label: "Функция",
+                                default: 1,
+                                showInTree: true,
+                                enumValues: [
+                                    {
+                                        label: "Чтение значений из нескольких регистров флагов (0x01)",
+                                        value: 1,
+                                    },
+                                    {
+                                        label: "Чтение значений из нескольких дискретных входов (0x02)",
+                                        value: 2,
+                                    },
+                                    {
+                                        label: "Чтение значений из нескольких регистров хранения (0x03)",
+                                        value: 3,
+                                    },
+                                    {
+                                        label: "Чтение значений из нескольких регистров ввода (0x04)",
+                                        value: 4,
+                                    },
+                                    {
+                                        label: "Запись значения одного флага (0x05)",
+                                        value: 5,
+                                    },
+                                    {
+                                        label: "Запись значения в один регистр хранения (0x06)",
+                                        value: 6,
+                                    },
+                                    {
+                                        label: "Запись значений в несколько регистров флагов (0x15)",
+                                        value: 15,
+                                    },
+                                    {
+                                        label: "Запись значений в несколько регистров хранения (0x16)",
+                                        value: 16,
+                                    },
+                                ],
+                            },
+                            dataType: {
+                                type: "enum",
+                                label: "Тип данных",
+                                default: "bit",
+                                showInTree: true,
+                                enumValues: [
+                                    {
+                                        label: "1 бит - bool",
+                                        value: "bit",
+                                    },
+                                    {
+                                        label: "2 байта - целое без знака",
+                                        value: "ushort",
+                                    },
+                                    {
+                                        label: "2 байта - целое",
+                                        value: "short",
+                                    },
+                                    {
+                                        label: "4 байта - целое",
+                                        value: "int",
+                                    },
+                                    {
+                                        label: "4 байта - целое без знака",
+                                        value: "uint",
+                                    },
+                                    {
+                                        label: "4 байта - с плавающей точкой",
+                                        value: "float",
+                                    },
+                                ],
+                                rules: [
+                                    {
+                                        validator: "required",
+                                        message:
+                                            "Это поле обязательно для заполнения",
+                                    },
+                                    {
+                                        validator: "mustBe",
+                                        params: ["bit"],
+                                        workIf: {
+                                            or: [
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        1,
+                                                    ],
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        2,
+                                                    ],
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        15,
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                        message:
+                                            "Данный тип данных не подходит для функций 1,2,15",
+                                    },
+                                    {
+                                        validator: "mustBe",
+                                        params: [
+                                            "bit",
+                                            "ushort",
+                                            "short",
+                                            "int",
+                                            "uint",
+                                            "float",
+                                        ],
+                                        workIf: {
+                                            or: [
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        3,
+                                                    ],
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        4,
+                                                    ],
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        5,
+                                                    ],
+                                                },
+                                                {
+                                                    "==": [
+                                                        {
+                                                            find: [
+                                                                {
+                                                                    what: "function",
+                                                                    where: "self",
+                                                                },
+                                                            ],
+                                                        },
+                                                        16,
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                        message:
+                                            "Данный тип данных не подходит для функций 3,4,5,16",
+                                    },
+                                    {
+                                        validator: "mustBe",
+                                        params: ["bit", "ushort", "short"],
+                                        workIf: {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                6,
+                                            ],
+                                        },
+                                        message:
+                                            "Данный тип данных не подходит для функций 6",
+                                    },
+                                ],
+                            },
+                        },
+                        children: [
+                            {
+                                node: "dataObject",
+                                type: "dataObject",
+                                label: "Объект данных",
+                                bulkCreation: {
+                                    enabled: true,
+                                    presets: [1, 2, 3, 5, 10],
+                                },
+                                icon: "fileDigit",
+                                settings: {
+                                    address: {
+                                        type: "string",
+                                        label: "Адрес информационного объекта",
+                                        showInTree: true,
+                                        rules: [
+                                            {
+                                                validator: "required",
+                                                message:
+                                                    "Это поле обязательно для заполнения",
+                                            },
+                                            {
+                                                validator: "regex",
+                                                params: {
+                                                    regex: "^0[xX][0-9a-fA-F]+$",
+                                                },
+                                                message:
+                                                    "Неверный формат адреса информационного объекта",
+                                            },
+                                            {
+                                                validator: "range",
+                                                params: {
+                                                    min: 0x0,
+                                                    max: 0xffff,
+                                                },
+                                                message:
+                                                    "Значение должно быть в диапазоне от 0x0 до 0xffff",
+                                            },
+                                            {
+                                                validator: "unique",
+                                                params: {
+                                                    within: "ignoreFolder",
+                                                },
+                                                message:
+                                                    "Адрес должен быть уникальным внутри родительского элемента",
+                                            },
+                                        ],
+                                    },
+                                },
+                            },
+                            {
+                                node: "folder",
+                                type: "folder",
+                                label: "Папка",
+                                icon: "folder",
+                            },
+                        ],
+                        validationRules: [
+                            {
+                                validator: "uniqueComposite",
+                                params: {
+                                    fields: ["function", "dataType"],
+                                    within: "siblings",
+                                },
+                                message:
+                                    "Функция и тип данных должны быть уникальными внутри родительского элемента",
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                node: "tcpBridge_server",
+                type: "interfaceSpecific",
+                label: "TCP-мост (сервер)",
+                usedIn: "receive",
+                icon: "lrEllipsis",
+                color: "purple",
+                settings: {
+                    logging: {
+                        type: "boolean",
+                        label: "Логирование",
+                        default: false,
+                        showInTree: true,
                     },
                     ip: {
                         type: "string",
                         label: "IP-адрес",
                         default: "127.0.0.1",
+                        showInTree: true,
                         rules: [
                             {
                                 validator: "required",
                                 message: "Это поле обязательно для заполнения",
+                            },
+                            {
+                                validator: "regex",
+                                params: {
+                                    regex: "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$",
+                                },
+                                message: "Неверный формат IP-адреса",
                             },
                         ],
                     },
@@ -375,6 +871,103 @@ export const config = [
                         type: "number",
                         label: "Порт",
                         default: 502,
+                        showInTree: true,
+                        rules: [
+                            {
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
+                            },
+                            {
+                                validator: "range",
+                                params: {
+                                    min: 1,
+                                    max: 65535,
+                                },
+                                message:
+                                    "Значение должно быть в диапазоне от 1 до 65535",
+                            },
+                        ],
+                    },
+                    sendTimeout: {
+                        type: "number",
+                        label: "Таймаут приема, сек.",
+                        default: 1,
+                        rules: [
+                            {
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
+                            },
+                            {
+                                validator: "range",
+                                params: {
+                                    min: 0,
+                                    max: 255,
+                                },
+                                message:
+                                    "Значение должно быть в диапазоне от 0 до 255",
+                            },
+                        ],
+                    },
+                    connectionTimeout: {
+                        type: "number",
+                        label: "Таймаут соединения, сек.",
+                        default: 1,
+                        rules: [
+                            {
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
+                            },
+                            {
+                                validator: "range",
+                                params: {
+                                    min: 0,
+                                    max: 255,
+                                },
+                                message:
+                                    "Значение должно быть в диапазоне от 0 до 255",
+                            },
+                        ],
+                    },
+                },
+            },
+            {
+                node: "tcpBridge_client",
+                type: "interfaceSpecific",
+                label: "TCP-мост (клиент)",
+                usedIn: "send",
+                icon: "lrEllipsis",
+                color: "purple",
+                settings: {
+                    logging: {
+                        type: "boolean",
+                        label: "Логирование",
+                        default: false,
+                        showInTree: true,
+                    },
+                    ip: {
+                        type: "string",
+                        label: "IP-адрес",
+                        default: "127.0.0.1",
+                        showInTree: true,
+                        rules: [
+                            {
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
+                            },
+                            {
+                                validator: "regex",
+                                params: {
+                                    regex: "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$",
+                                },
+                                message: "Неверный формат IP-адреса",
+                            },
+                        ],
+                    },
+                    port: {
+                        type: "number",
+                        label: "Порт",
+                        default: 502,
+                        showInTree: true,
                         rules: [
                             {
                                 validator: "required",
@@ -436,435 +1029,23 @@ export const config = [
         ],
     },
     {
-        node: "modbusTCP",
-        type: "protocol",
-        label: "Modbus-TCP",
-        icon: {
-            name: "unplug",
-        },
-        settings: {
-            logging: {
-                type: "boolean",
-                label: "Логирование",
-                default: false,
-            },
-            side: {
-                type: "enum",
-                label: "Сторона",
-                default: "client",
-                enumValues: [
-                    {
-                        value: "client",
-                        label: "Клиент",
-                    },
-                    {
-                        value: "server",
-                        label: "Сервер",
-                    },
-                ],
-            },
-            ip: {
-                type: "string",
-                label: "IP-адрес",
-                default: "127.0.0.1",
-                rules: [
-                    {
-                        validator: "required",
-                        message: "Это поле обязательно для заполнения",
-                    },
-                    {
-                        validator: "regex",
-                        params: {
-                            regex: "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$",
-                        },
-                        message: "Неверный формат IP-адреса",
-                    },
-                ],
-            },
-            port: {
-                type: "number",
-                label: "Порт",
-                default: 502,
-                rules: [
-                    {
-                        validator: "required",
-                        message: "Это поле обязательно для заполнения",
-                    },
-                    {
-                        validator: "range",
-                        params: {
-                            min: 1,
-                            max: 65535,
-                        },
-                        message:
-                            "Значение должно быть в диапазоне от 1 до 65535",
-                    },
-                ],
-            },
-            address: {
-                type: "number",
-                label: "Адрес устройства",
-                default: 1,
-                rules: [
-                    {
-                        validator: "required",
-                        message: "Это поле обязательно для заполнения",
-                    },
-                    {
-                        validator: "range",
-                        params: {
-                            min: 1,
-                            max: 255,
-                        },
-                        message: "Значение должно быть в диапазоне от 1 до 255",
-                    },
-                ],
-            },
-            order2: {
-                type: "enum",
-                label: "Порядок 2-х байт",
-                default: "little",
-                enumValues: [
-                    {
-                        value: "little",
-                        label: "Младший вперед",
-                    },
-                    {
-                        value: "big",
-                        label: "Старший вперед",
-                    },
-                ],
-            },
-            order4: {
-                type: "enum",
-                label: "Порядок 4-х байт",
-                default: "1-0 3-2",
-                enumValues: [
-                    {
-                        value: "1-0 3-2",
-                        label: "1-0 3-2",
-                    },
-                    {
-                        value: "3-2 1-0",
-                        label: "3-2 1-0",
-                    },
-                    {
-                        value: "2-3 0-1",
-                        label: "2-3 0-1",
-                    },
-                    {
-                        value: "0-1 2-3",
-                        label: "0-1 2-3",
-                    },
-                ],
-            },
-            pollPeriod: {
-                type: "number",
-                label: "Период опроса, мс",
-                default: 70,
-            },
-            waitResponse: {
-                type: "boolean",
-                label: "Ожидание ответа",
-                default: true,
-            },
-        },
-        children: [
-            {
-                node: "functionGroup",
-                type: "protocolSpecific",
-                label: "Функциональная группа",
-                settings: {
-                    function: {
-                        type: "enum",
-                        label: "Функция",
-                        default: 1,
-                        enumValues: [
-                            {
-                                label: "Чтение значений из нескольких регистров флагов (0x01)",
-                                value: 1,
-                            },
-                            {
-                                label: "Чтение значений из нескольких дискретных входов (0x02)",
-                                value: 2,
-                            },
-                            {
-                                label: "Чтение значений из нескольких регистров хранения (0x03)",
-                                value: 3,
-                            },
-                            {
-                                label: "Чтение значений из нескольких регистров ввода (0x04)",
-                                value: 4,
-                            },
-                            {
-                                label: "Запись значения одного флага (0x05)",
-                                value: 5,
-                            },
-                            {
-                                label: "Запись значения в один регистр хранения (0x06)",
-                                value: 6,
-                            },
-                            {
-                                label: "Запись значений в несколько регистров флагов (0x15)",
-                                value: 15,
-                            },
-                            {
-                                label: "Запись значений в несколько регистров хранения (0x16)",
-                                value: 16,
-                            },
-                        ],
-                    },
-                    dataType: {
-                        type: "enum",
-                        label: "Тип данных",
-                        default: "",
-                        enumValues: [
-                            {
-                                label: "1 бит - bool",
-                                value: "bit",
-                            },
-                            {
-                                label: "2 байта - целое без знака",
-                                value: "twoByteUnsigned",
-                            },
-                            {
-                                label: "2 байта - целое",
-                                value: "twoByteSigned",
-                            },
-                            {
-                                label: "4 байта - целое",
-                                value: "fourByteSigned",
-                            },
-                            {
-                                label: "4 байта - целое без знака",
-                                value: "fourByteUnsigned",
-                            },
-                            {
-                                label: "4 байта - с плавающей точкой",
-                                value: "fourByteFloat",
-                            },
-                        ],
-                        rules: [
-                            {
-                                validator: "required",
-                                message: "Это поле обязательно для заполнения",
-                            },
-                            {
-                                validator: "mustBe",
-                                params: ["bit"],
-                                workIf: {
-                                    or: [
-                                        {
-                                            "==": [
-                                                {
-                                                    find: [
-                                                        {
-                                                            what: "function",
-                                                            where: "self",
-                                                        },
-                                                    ],
-                                                },
-                                                1,
-                                            ],
-                                        },
-                                        {
-                                            "==": [
-                                                {
-                                                    find: [
-                                                        {
-                                                            what: "function",
-                                                            where: "self",
-                                                        },
-                                                    ],
-                                                },
-                                                2,
-                                            ],
-                                        },
-                                        {
-                                            "==": [
-                                                {
-                                                    find: [
-                                                        {
-                                                            what: "function",
-                                                            where: "self",
-                                                        },
-                                                    ],
-                                                },
-                                                15,
-                                            ],
-                                        },
-                                    ],
-                                },
-                                message:
-                                    "Данный тип данных не подходит для функций 1,2,15",
-                            },
-                            {
-                                validator: "mustBe",
-                                params: [
-                                    "bit",
-                                    "twoByteUnsigned",
-                                    "twoByteSigned",
-                                    "fourByteSigned",
-                                    "fourByteUnsigned",
-                                    "fourByteFloat",
-                                ],
-                                workIf: {
-                                    or: [
-                                        {
-                                            "==": [
-                                                {
-                                                    find: [
-                                                        {
-                                                            what: "function",
-                                                            where: "self",
-                                                        },
-                                                    ],
-                                                },
-                                                3,
-                                            ],
-                                        },
-                                        {
-                                            "==": [
-                                                {
-                                                    find: [
-                                                        {
-                                                            what: "function",
-                                                            where: "self",
-                                                        },
-                                                    ],
-                                                },
-                                                4,
-                                            ],
-                                        },
-                                        {
-                                            "==": [
-                                                {
-                                                    find: [
-                                                        {
-                                                            what: "function",
-                                                            where: "self",
-                                                        },
-                                                    ],
-                                                },
-                                                5,
-                                            ],
-                                        },
-                                        {
-                                            "==": [
-                                                {
-                                                    find: [
-                                                        {
-                                                            what: "function",
-                                                            where: "self",
-                                                        },
-                                                    ],
-                                                },
-                                                16,
-                                            ],
-                                        },
-                                    ],
-                                },
-                                message:
-                                    "Данный тип данных не подходит для функций 3,4,5,16",
-                            },
-                            {
-                                validator: "mustBe",
-                                params: [
-                                    "bit",
-                                    "twoByteUnsigned",
-                                    "twoByteSigned",
-                                ],
-                                workIf: {
-                                    "==": [
-                                        {
-                                            find: [
-                                                {
-                                                    what: "function",
-                                                    where: "self",
-                                                },
-                                            ],
-                                        },
-                                        6,
-                                    ],
-                                },
-                                message:
-                                    "Данный тип данных не подходит для функций 6",
-                            },
-                        ],
-                    },
-                },
-                children: [
-                    {
-                        node: "dataObject",
-                        type: "dataObject",
-                        label: "Объект данных",
-                        bulkCreation: {
-                            enabled: true,
-                            presets: [1, 2, 3, 5, 10],
-                        },
-                        icon: {
-                            name: "variable",
-                        },
-                        settings: {
-                            address: {
-                                type: "string",
-                                label: "Адрес информационного объекта",
-                                default: "",
-                                rules: [
-                                    {
-                                        validator: "required",
-                                        message:
-                                            "Это поле обязательно для заполнения",
-                                    },
-                                    {
-                                        validator: "unique",
-                                        params: {
-                                            within: "siblings",
-                                        },
-                                        message:
-                                            "Адрес должен быть уникальным внутри родительского элемента",
-                                    },
-                                ],
-                            },
-                        },
-                    },
-                    {
-                        node: "folder",
-                        type: "folder",
-                        label: "Папка",
-                    },
-                ],
-                validationRules: [
-                    {
-                        validator: "uniqueComposite",
-                        params: {
-                            within: "siblings",
-                            fields: ["function", "dataType"],
-                        },
-                        message:
-                            "Функция и тип данных должны быть уникальными внутри родительского элемента",
-                    },
-                ],
-            },
-        ],
-    },
-    {
         node: "gpio",
         type: "interface",
         label: "GPIO",
-        icon: {
-            name: "cable",
-        },
+        shortname: "gpio",
+        color: "cyan",
         settings: {
             logging: {
                 type: "boolean",
                 label: "Логирование",
                 default: false,
+                showInTree: true,
             },
             contactBounce: {
                 type: "number",
                 label: "Период дребезга",
                 default: 200,
+                showInTree: true,
                 rules: [
                     {
                         validator: "required",
@@ -891,51 +1072,19 @@ export const config = [
                     enabled: true,
                     presets: [1, 2, 3, 5, 10],
                 },
-                icon: {
-                    name: "fileDigit",
-                },
+                icon: "fileDigit",
                 settings: {
                     port: {
-                        type: "enum",
+                        type: "string",
                         label: "Порт",
-                        showInTree: true,
                         default: 1,
-                        enumValues: [
-                            {
-                                label: "1",
-                                value: 1,
-                            },
-                            {
-                                label: "2",
-                                value: 2,
-                            },
-                            {
-                                label: "3",
-                                value: 3,
-                            },
-                            {
-                                label: "4",
-                                value: 4,
-                            },
-                            {
-                                label: "5",
-                                value: 5,
-                            },
-                            {
-                                label: "6",
-                                value: 6,
-                            },
-                            {
-                                label: "7",
-                                value: 7,
-                            },
-                        ],
+                        showInTree: true,
                     },
                     function: {
                         type: "enum",
                         label: "Функция",
-                        showInTree: true,
                         default: "input",
+                        showInTree: true,
                         enumValues: [
                             {
                                 label: "Вход",
@@ -953,38 +1102,29 @@ export const config = [
                 node: "folder",
                 type: "folder",
                 label: "Папка",
+                icon: "folder",
             },
         ],
     },
     {
-        node: "iec104",
-        type: "interface",
-        label: "IEC 104",
+        node: "iec104_client",
+        type: "protocol",
+        label: "IEC-104 Клиент",
+        shortname: "iec104",
+        color: "teal",
+        usedIn: "receive",
         settings: {
             logging: {
                 type: "boolean",
                 label: "Логирование",
                 default: false,
-            },
-            side: {
-                type: "enum",
-                label: "Тип",
-                default: "client",
-                enumValues: [
-                    {
-                        label: "Клиент",
-                        value: "client",
-                    },
-                    {
-                        label: "Сервер",
-                        value: "server",
-                    },
-                ],
+                showInTree: true,
             },
             ip: {
                 type: "string",
                 label: "IP-адрес",
                 default: "127.0.0.1",
+                showInTree: true,
                 rules: [
                     {
                         validator: "required",
@@ -1003,6 +1143,7 @@ export const config = [
                 type: "number",
                 label: "Порт",
                 default: 102,
+                showInTree: true,
                 rules: [
                     {
                         validator: "required",
@@ -1188,11 +1329,14 @@ export const config = [
                 node: "asdu",
                 type: "protocolSpecific",
                 label: "ASDU",
+                shortname: "asdu",
+                color: "orange",
                 settings: {
                     address: {
                         type: "number",
                         label: "Адрес ASDU",
-                        default: 0,
+                        default: 1,
+                        showInTree: true,
                         rules: [
                             {
                                 validator: "required",
@@ -1239,24 +1383,6 @@ export const config = [
                             },
                         ],
                     },
-                    sporadical: {
-                        type: "boolean",
-                        label: "Спорадический",
-                        default: false,
-                        visibleIf: {
-                            "==": [
-                                {
-                                    find: [
-                                        {
-                                            what: "side",
-                                            where: "parent",
-                                        },
-                                    ],
-                                },
-                                "server",
-                            ],
-                        },
-                    },
                     pollMode: {
                         label: "Режим опроса",
                         type: "enum",
@@ -1279,52 +1405,22 @@ export const config = [
                                 value: "noPoll",
                             },
                         ],
-                        visibleIf: {
-                            "==": [
-                                {
-                                    find: [
-                                        {
-                                            what: "side",
-                                            where: "parent",
-                                        },
-                                    ],
-                                },
-                                "client",
-                            ],
-                        },
                     },
                     pollPeriod: {
                         type: "number",
                         label: "Период опроса, мин.",
                         default: 1,
                         visibleIf: {
-                            and: [
+                            "==": [
                                 {
-                                    "==": [
+                                    find: [
                                         {
-                                            find: [
-                                                {
-                                                    what: "side",
-                                                    where: "parent",
-                                                },
-                                            ],
+                                            what: "pollMode",
+                                            where: "self",
                                         },
-                                        "client",
                                     ],
                                 },
-                                {
-                                    "==": [
-                                        {
-                                            find: [
-                                                {
-                                                    what: "pollMode",
-                                                    where: "self",
-                                                },
-                                            ],
-                                        },
-                                        "manual",
-                                    ],
-                                },
+                                "manual",
                             ],
                         },
                         rules: [
@@ -1349,15 +1445,12 @@ export const config = [
                             enabled: true,
                             presets: [1, 2, 3, 5, 10],
                         },
-                        icon: {
-                            name: "variable",
-                            color: "black",
-                        },
+                        icon: "fileDigit",
                         settings: {
                             address: {
                                 type: "number",
                                 label: "Адрес информационного объекта",
-                                default: 0,
+                                showInTree: true,
                                 rules: [
                                     {
                                         validator: "required",
@@ -1430,35 +1523,496 @@ export const config = [
                             sigType: {
                                 type: "enum",
                                 label: "Тип сигнала",
-                                default: "ts_one_position",
+                                default: "ts1",
+                                showInTree: true,
                                 enumValues: [
                                     {
                                         label: "Однопозиционный ТС",
-                                        value: "ts_one_position",
+                                        value: "ts1",
                                     },
                                     {
                                         label: "Двухпозиционный ТС",
-                                        value: "ts_two_position",
+                                        value: "ts2",
                                     },
                                     {
                                         label: "ТИ масштабированное",
-                                        value: "ti_scaled",
+                                        value: "tis",
                                     },
                                     {
                                         label: "ТИ нормализованное",
-                                        value: "ti_normalized",
+                                        value: "tin",
                                     },
                                     {
                                         label: "ТИ с плавающей точкой ",
-                                        value: "ti_float",
+                                        value: "tif",
                                     },
                                     {
                                         label: "Однопозиционное ТУ",
-                                        value: "tu_one_position",
+                                        value: "tu1",
                                     },
                                     {
                                         label: "Двухпозиционное ТУ",
-                                        value: "tu_two_position",
+                                        value: "tu2",
+                                    },
+                                ],
+                            },
+                            exec: {
+                                type: "enum",
+                                label: "Команда",
+                                default: "direct",
+                                enumValues: [
+                                    {
+                                        label: "Прямое",
+                                        value: "direct",
+                                    },
+                                    {
+                                        label: "Выбор/исполнить",
+                                        value: "select",
+                                    },
+                                ],
+                                visibleIf: {
+                                    or: [
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "sigType",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "tu1",
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "sigType",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "tu2",
+                                            ],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                    {
+                        node: "folder",
+                        type: "folder",
+                        label: "Папка",
+                        icon: "folder",
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        node: "iec104_server",
+        type: "protocol",
+        label: "IEC-104 Сервер",
+        shortname: "iec104",
+        color: "teal",
+        usedIn: "send",
+        settings: {
+            logging: {
+                type: "boolean",
+                label: "Логирование",
+                default: false,
+                showInTree: true,
+            },
+            ip: {
+                type: "string",
+                label: "IP-адрес",
+                default: "127.0.0.1",
+                showInTree: true,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "regex",
+                        params: {
+                            regex: "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$",
+                        },
+                        message: "Неверный формат IP-адреса",
+                    },
+                ],
+            },
+            port: {
+                type: "number",
+                label: "Порт",
+                default: 102,
+                showInTree: true,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 1,
+                            max: 65535,
+                        },
+                        message:
+                            "Значение должно быть в диапазоне от 1 до 65535",
+                    },
+                ],
+            },
+            lengthOfASDU: {
+                type: "enum",
+                label: "Длина адреса ASDU",
+                default: 1,
+                enumValues: [
+                    {
+                        label: "1 байт",
+                        value: 1,
+                    },
+                    {
+                        label: "2 байта",
+                        value: 2,
+                    },
+                ],
+            },
+            lengthOfCause: {
+                type: "enum",
+                label: "Длина причины передачи",
+                default: 1,
+                enumValues: [
+                    {
+                        label: "1 байт",
+                        value: 1,
+                    },
+                    {
+                        label: "2 байта",
+                        value: 2,
+                    },
+                ],
+            },
+            lengthOfAdr: {
+                type: "enum",
+                label: "Длина адреса объекта",
+                default: 1,
+                enumValues: [
+                    {
+                        label: "1 байт",
+                        value: 1,
+                    },
+                    {
+                        label: "2 байта",
+                        value: 2,
+                    },
+                    {
+                        label: "3 байта",
+                        value: 3,
+                    },
+                ],
+            },
+            k: {
+                type: "number",
+                label: "k",
+                default: 1,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 1,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 1 до 255",
+                    },
+                ],
+            },
+            w: {
+                type: "number",
+                label: "w",
+                default: 1,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 1,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 1 до 255",
+                    },
+                ],
+            },
+            t0: {
+                type: "number",
+                label: "t0",
+                default: 1,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 1,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 1 до 255",
+                    },
+                ],
+            },
+            t1: {
+                type: "number",
+                label: "t1",
+                default: 1,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 1,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 1 до 255",
+                    },
+                ],
+            },
+            t2: {
+                type: "number",
+                label: "t2",
+                default: 1,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 1,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 1 до 255",
+                    },
+                ],
+            },
+            t3: {
+                type: "number",
+                label: "t3",
+                default: 1,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 1,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 1 до 255",
+                    },
+                ],
+            },
+        },
+        children: [
+            {
+                node: "asdu",
+                type: "protocolSpecific",
+                label: "ASDU",
+                shortname: "asdu",
+                color: "orange",
+                settings: {
+                    sporadical: {
+                        type: "boolean",
+                        label: "Спорадика",
+                        default: false,
+                    },
+                    address: {
+                        type: "number",
+                        label: "Адрес ASDU",
+                        default: 1,
+                        showInTree: true,
+                        rules: [
+                            {
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
+                            },
+                            {
+                                validator: "range",
+                                params: {
+                                    min: 1,
+                                    max: 65535,
+                                },
+                                workIf: {
+                                    "==": [
+                                        {
+                                            find: [
+                                                {
+                                                    what: "lengthOfASDU",
+                                                    where: "parent",
+                                                },
+                                            ],
+                                        },
+                                        2,
+                                    ],
+                                },
+                                message:
+                                    "Значение должно быть в диапазоне от 1 до 65535",
+                            },
+                            {
+                                validator: "range",
+                                params: {
+                                    min: 1,
+                                    max: 255,
+                                },
+                                message:
+                                    "Значение должно быть в диапазоне от 1 до 255",
+                            },
+                            {
+                                validator: "unique",
+                                params: {
+                                    within: "siblings",
+                                },
+                                message:
+                                    "Адрес должен быть уникальным внутри родительского элемента",
+                            },
+                        ],
+                    },
+                },
+                children: [
+                    {
+                        node: "dataObject",
+                        type: "dataObject",
+                        label: "Объект данных",
+                        bulkCreation: {
+                            enabled: true,
+                            presets: [1, 2, 3, 5, 10],
+                        },
+                        icon: "fileDigit",
+                        settings: {
+                            address: {
+                                type: "number",
+                                label: "Адрес информационного объекта",
+                                showInTree: true,
+                                rules: [
+                                    {
+                                        validator: "required",
+                                        message:
+                                            "Это поле обязательно для заполнения",
+                                    },
+                                    {
+                                        validator: "range",
+                                        params: {
+                                            min: 0,
+                                            max: 255,
+                                        },
+                                        workIf: {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "lengthOfAdr",
+                                                            where: "parent",
+                                                        },
+                                                    ],
+                                                },
+                                                1,
+                                            ],
+                                        },
+                                        message:
+                                            "Значение должно быть в диапазоне от 0 до 255",
+                                    },
+                                    {
+                                        validator: "range",
+                                        params: {
+                                            min: 0,
+                                            max: 16777215,
+                                        },
+                                        workIf: {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "lengthOfAdr",
+                                                            where: "parent",
+                                                        },
+                                                    ],
+                                                },
+                                                3,
+                                            ],
+                                        },
+                                        message:
+                                            "Значение должно быть в диапазоне от 0 до 16777215",
+                                    },
+                                    {
+                                        validator: "range",
+                                        params: {
+                                            min: 0,
+                                            max: 65535,
+                                        },
+                                        message:
+                                            "Значение должно быть в диапазоне от 0 до 65535",
+                                    },
+                                    {
+                                        validator: "unique",
+                                        params: {
+                                            within: "siblings",
+                                        },
+                                        message:
+                                            "Адрес должен быть уникальным внутри родительского элемента",
+                                    },
+                                ],
+                            },
+                            sigType: {
+                                type: "enum",
+                                label: "Тип сигнала",
+                                default: "ts1",
+                                showInTree: true,
+                                enumValues: [
+                                    {
+                                        label: "Однопозиционный ТС",
+                                        value: "ts1",
+                                    },
+                                    {
+                                        label: "Двухпозиционный ТС",
+                                        value: "ts2",
+                                    },
+                                    {
+                                        label: "ТИ масштабированное",
+                                        value: "tis",
+                                    },
+                                    {
+                                        label: "ТИ нормализованное",
+                                        value: "tin",
+                                    },
+                                    {
+                                        label: "ТИ с плавающей точкой ",
+                                        value: "tif",
+                                    },
+                                    {
+                                        label: "Однопозиционное ТУ",
+                                        value: "tu1",
+                                    },
+                                    {
+                                        label: "Двухпозиционное ТУ",
+                                        value: "tu2",
                                     },
                                 ],
                             },
@@ -1493,7 +2047,7 @@ export const config = [
                                                                 },
                                                             ],
                                                         },
-                                                        "ti_scaled",
+                                                        "tis",
                                                     ],
                                                 },
                                                 {
@@ -1506,7 +2060,7 @@ export const config = [
                                                                 },
                                                             ],
                                                         },
-                                                        "ti_normalized",
+                                                        "tin",
                                                     ],
                                                 },
                                                 {
@@ -1519,13 +2073,24 @@ export const config = [
                                                                 },
                                                             ],
                                                         },
-                                                        "ti_float",
+                                                        "tif",
                                                     ],
                                                 },
                                             ],
                                         },
                                     ],
                                 },
+                                rules: [
+                                    {
+                                        validator: "range",
+                                        params: {
+                                            min: 0,
+                                            max: 10000,
+                                        },
+                                        message:
+                                            "Значение должно быть в диапазоне от 0 до 10000",
+                                    },
+                                ],
                             },
                             exec: {
                                 type: "enum",
@@ -1549,11 +2114,11 @@ export const config = [
                                                     find: [
                                                         {
                                                             what: "sigType",
-                                                            where: "parent",
+                                                            where: "self",
                                                         },
                                                     ],
                                                 },
-                                                "tu_one_position",
+                                                "tu1",
                                             ],
                                         },
                                         {
@@ -1562,11 +2127,11 @@ export const config = [
                                                     find: [
                                                         {
                                                             what: "sigType",
-                                                            where: "parent",
+                                                            where: "self",
                                                         },
                                                     ],
                                                 },
-                                                "tu_two_position",
+                                                "tu2",
                                             ],
                                         },
                                     ],
@@ -1578,6 +2143,825 @@ export const config = [
                         node: "folder",
                         type: "folder",
                         label: "Папка",
+                        icon: "folder",
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        node: "modbusTCP_client",
+        type: "protocol",
+        label: "Modbus-TCP Клиент",
+        usedIn: "receive",
+        shortname: "MB TCP",
+        color: "teal",
+        settings: {
+            logging: {
+                type: "boolean",
+                label: "Логирование",
+                default: false,
+                showInTree: true,
+            },
+            ip: {
+                type: "string",
+                label: "IP-адрес",
+                default: "127.0.0.1",
+                showInTree: true,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "regex",
+                        params: {
+                            regex: "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$",
+                        },
+                        message: "Неверный формат IP-адреса",
+                    },
+                ],
+            },
+            port: {
+                type: "number",
+                label: "Порт",
+                default: 502,
+                showInTree: true,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 1,
+                            max: 65535,
+                        },
+                        message:
+                            "Значение должно быть в диапазоне от 1 до 65535",
+                    },
+                ],
+            },
+            address: {
+                type: "number",
+                label: "Адрес устройства",
+                default: 1,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 1,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 1 до 255",
+                    },
+                ],
+            },
+            order2: {
+                type: "enum",
+                label: "Порядок 2-х байт",
+                default: "little",
+                enumValues: [
+                    {
+                        value: "little",
+                        label: "Младший вперед",
+                    },
+                    {
+                        value: "big",
+                        label: "Старший вперед",
+                    },
+                ],
+            },
+            order4: {
+                type: "enum",
+                label: "Порядок 4-х байт",
+                default: "1-0 3-2",
+                enumValues: [
+                    {
+                        value: "1-0 3-2",
+                        label: "1-0 3-2",
+                    },
+                    {
+                        value: "3-2 1-0",
+                        label: "3-2 1-0",
+                    },
+                    {
+                        value: "2-3 0-1",
+                        label: "2-3 0-1",
+                    },
+                    {
+                        value: "0-1 2-3",
+                        label: "0-1 2-3",
+                    },
+                ],
+            },
+            pollPeriod: {
+                type: "number",
+                label: "Пауза между опросами, мс",
+                default: 70,
+            },
+            waitResponse: {
+                type: "boolean",
+                label: "Ожидание ответа",
+                default: true,
+            },
+        },
+        children: [
+            {
+                node: "functionGroup",
+                type: "protocolSpecific",
+                label: "Функциональная группа",
+                shortname: "fg",
+                color: "orange",
+                settings: {
+                    function: {
+                        type: "enum",
+                        label: "Функция",
+                        default: 1,
+                        showInTree: true,
+                        enumValues: [
+                            {
+                                label: "Чтение значений из нескольких регистров флагов (0x01)",
+                                value: 1,
+                            },
+                            {
+                                label: "Чтение значений из нескольких дискретных входов (0x02)",
+                                value: 2,
+                            },
+                            {
+                                label: "Чтение значений из нескольких регистров хранения (0x03)",
+                                value: 3,
+                            },
+                            {
+                                label: "Чтение значений из нескольких регистров ввода (0x04)",
+                                value: 4,
+                            },
+                            {
+                                label: "Запись значения одного флага (0x05)",
+                                value: 5,
+                            },
+                            {
+                                label: "Запись значения в один регистр хранения (0x06)",
+                                value: 6,
+                            },
+                            {
+                                label: "Запись значений в несколько регистров флагов (0x15)",
+                                value: 15,
+                            },
+                            {
+                                label: "Запись значений в несколько регистров хранения (0x16)",
+                                value: 16,
+                            },
+                        ],
+                    },
+                    dataType: {
+                        type: "enum",
+                        label: "Тип данных",
+                        default: "",
+                        showInTree: true,
+                        enumValues: [
+                            {
+                                label: "1 бит - bool",
+                                value: "bit",
+                            },
+                            {
+                                label: "2 байта - целое без знака",
+                                value: "ushort",
+                            },
+                            {
+                                label: "2 байта - целое",
+                                value: "short",
+                            },
+                            {
+                                label: "4 байта - целое",
+                                value: "int",
+                            },
+                            {
+                                label: "4 байта - целое без знака",
+                                value: "uint",
+                            },
+                            {
+                                label: "4 байта - с плавающей точкой",
+                                value: "float",
+                            },
+                        ],
+                        rules: [
+                            {
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
+                            },
+                            {
+                                validator: "mustBe",
+                                params: ["bit"],
+                                workIf: {
+                                    or: [
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                1,
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                2,
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                15,
+                                            ],
+                                        },
+                                    ],
+                                },
+                                message:
+                                    "Данный тип данных не подходит для функций 1,2,15",
+                            },
+                            {
+                                validator: "mustBe",
+                                params: [
+                                    "bit",
+                                    "ushort",
+                                    "short",
+                                    "int",
+                                    "uint",
+                                    "float",
+                                ],
+                                workIf: {
+                                    or: [
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                3,
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                4,
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                5,
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                16,
+                                            ],
+                                        },
+                                    ],
+                                },
+                                message:
+                                    "Данный тип данных не подходит для функций 3,4,5,16",
+                            },
+                            {
+                                validator: "mustBe",
+                                params: ["bit", "ushort", "short"],
+                                workIf: {
+                                    "==": [
+                                        {
+                                            find: [
+                                                {
+                                                    what: "function",
+                                                    where: "self",
+                                                },
+                                            ],
+                                        },
+                                        6,
+                                    ],
+                                },
+                                message:
+                                    "Данный тип данных не подходит для функций 6",
+                            },
+                        ],
+                    },
+                },
+                children: [
+                    {
+                        node: "dataObject",
+                        type: "dataObject",
+                        label: "Объект данных",
+                        bulkCreation: {
+                            enabled: true,
+                            presets: [1, 2, 3, 5, 10],
+                        },
+                        icon: "fileDigit",
+                        settings: {
+                            address: {
+                                type: "string",
+                                label: "Адрес информационного объекта",
+                                showInTree: true,
+                                rules: [
+                                    {
+                                        validator: "required",
+                                        message:
+                                            "Это поле обязательно для заполнения",
+                                    },
+                                    {
+                                        validator: "regex",
+                                        params: {
+                                            regex: "^0[xX][0-9a-fA-F]+$",
+                                        },
+                                        message:
+                                            "Неверный формат адреса информационного объекта",
+                                    },
+                                    {
+                                        validator: "range",
+                                        params: { min: 0x0, max: 0xffff },
+                                        message:
+                                            "Значение должно быть в диапазоне от 0x0 до 0xffff",
+                                    },
+                                    {
+                                        validator: "unique",
+                                        params: {
+                                            within: "ignoreFolder",
+                                        },
+                                        message:
+                                            "Адрес должен быть уникальным внутри родительского элемента",
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                    {
+                        node: "folder",
+                        type: "folder",
+                        label: "Папка",
+                        icon: "folder",
+                    },
+                ],
+                validationRules: [
+                    {
+                        validator: "uniqueComposite",
+                        params: {
+                            within: "siblings",
+                            fields: ["function", "dataType"],
+                        },
+                        message:
+                            "Функция и тип данных должны быть уникальными внутри родительского элемента",
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        node: "modbusTCP_server",
+        type: "protocol",
+        label: "Modbus-TCP Сервер",
+        usedIn: "send",
+        shortname: "MB TCP",
+        color: "teal",
+        settings: {
+            logging: {
+                type: "boolean",
+                label: "Логирование",
+                default: false,
+                showInTree: true,
+            },
+            ip: {
+                type: "string",
+                label: "IP-адрес",
+                default: "127.0.0.1",
+                showInTree: true,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "regex",
+                        params: {
+                            regex: "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$",
+                        },
+                        message: "Неверный формат IP-адреса",
+                    },
+                ],
+            },
+            port: {
+                type: "number",
+                label: "Порт",
+                default: 502,
+                showInTree: true,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 1,
+                            max: 65535,
+                        },
+                        message:
+                            "Значение должно быть в диапазоне от 1 до 65535",
+                    },
+                ],
+            },
+            address: {
+                type: "number",
+                label: "Адрес устройства",
+                default: 1,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 1,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 1 до 255",
+                    },
+                ],
+            },
+            order2: {
+                type: "enum",
+                label: "Порядок 2-х байт",
+                default: "little",
+                enumValues: [
+                    {
+                        value: "little",
+                        label: "Младший вперед",
+                    },
+                    {
+                        value: "big",
+                        label: "Старший вперед",
+                    },
+                ],
+            },
+            order4: {
+                type: "enum",
+                label: "Порядок 4-х байт",
+                default: "1-0 3-2",
+                enumValues: [
+                    {
+                        value: "1-0 3-2",
+                        label: "1-0 3-2",
+                    },
+                    {
+                        value: "3-2 1-0",
+                        label: "3-2 1-0",
+                    },
+                    {
+                        value: "2-3 0-1",
+                        label: "2-3 0-1",
+                    },
+                    {
+                        value: "0-1 2-3",
+                        label: "0-1 2-3",
+                    },
+                ],
+            },
+        },
+        children: [
+            {
+                node: "functionGroup",
+                type: "protocolSpecific",
+                label: "Функциональная группа",
+                shortname: "fg",
+                color: "orange",
+                settings: {
+                    function: {
+                        type: "enum",
+                        label: "Функция",
+                        default: 1,
+                        showInTree: true,
+                        enumValues: [
+                            {
+                                label: "Чтение значений из нескольких регистров флагов (0x01)",
+                                value: 1,
+                            },
+                            {
+                                label: "Чтение значений из нескольких дискретных входов (0x02)",
+                                value: 2,
+                            },
+                            {
+                                label: "Чтение значений из нескольких регистров хранения (0x03)",
+                                value: 3,
+                            },
+                            {
+                                label: "Чтение значений из нескольких регистров ввода (0x04)",
+                                value: 4,
+                            },
+                            {
+                                label: "Запись значения одного флага (0x05)",
+                                value: 5,
+                            },
+                            {
+                                label: "Запись значения в один регистр хранения (0x06)",
+                                value: 6,
+                            },
+                            {
+                                label: "Запись значений в несколько регистров флагов (0x15)",
+                                value: 15,
+                            },
+                            {
+                                label: "Запись значений в несколько регистров хранения (0x16)",
+                                value: 16,
+                            },
+                        ],
+                    },
+                    dataType: {
+                        type: "enum",
+                        label: "Тип данных",
+                        default: "",
+                        showInTree: true,
+                        enumValues: [
+                            {
+                                label: "1 бит - bool",
+                                value: "bit",
+                            },
+                            {
+                                label: "2 байта - целое без знака",
+                                value: "ushort",
+                            },
+                            {
+                                label: "2 байта - целое",
+                                value: "short",
+                            },
+                            {
+                                label: "4 байта - целое",
+                                value: "int",
+                            },
+                            {
+                                label: "4 байта - целое без знака",
+                                value: "uint",
+                            },
+                            {
+                                label: "4 байта - с плавающей точкой",
+                                value: "float",
+                            },
+                        ],
+                        rules: [
+                            {
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
+                            },
+                            {
+                                validator: "mustBe",
+                                params: ["bit"],
+                                workIf: {
+                                    or: [
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                1,
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                2,
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                15,
+                                            ],
+                                        },
+                                    ],
+                                },
+                                message:
+                                    "Данный тип данных не подходит для функций 1,2,15",
+                            },
+                            {
+                                validator: "mustBe",
+                                params: [
+                                    "bit",
+                                    "ushort",
+                                    "short",
+                                    "int",
+                                    "uint",
+                                    "float",
+                                ],
+                                workIf: {
+                                    or: [
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                3,
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                4,
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                5,
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "function",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                16,
+                                            ],
+                                        },
+                                    ],
+                                },
+                                message:
+                                    "Данный тип данных не подходит для функций 3,4,5,16",
+                            },
+                            {
+                                validator: "mustBe",
+                                params: ["bit", "ushort", "short"],
+                                workIf: {
+                                    "==": [
+                                        {
+                                            find: [
+                                                {
+                                                    what: "function",
+                                                    where: "self",
+                                                },
+                                            ],
+                                        },
+                                        6,
+                                    ],
+                                },
+                                message:
+                                    "Данный тип данных не подходит для функций 6",
+                            },
+                        ],
+                    },
+                },
+                children: [
+                    {
+                        node: "dataObject",
+                        type: "dataObject",
+                        label: "Объект данных",
+                        bulkCreation: {
+                            enabled: true,
+                            presets: [1, 2, 3, 5, 10],
+                        },
+                        icon: "fileDigit",
+                        settings: {
+                            address: {
+                                type: "string",
+                                label: "Адрес информационного объекта",
+                                showInTree: true,
+                                rules: [
+                                    {
+                                        validator: "required",
+                                        message:
+                                            "Это поле обязательно для заполнения",
+                                    },
+                                    {
+                                        validator: "regex",
+                                        params: {
+                                            regex: "^0[xX][0-9a-fA-F]+$",
+                                        },
+                                        message:
+                                            "Неверный формат адреса информационного объекта",
+                                    },
+                                    {
+                                        validator: "range",
+                                        params: { min: 0x0, max: 0xffff },
+                                        message:
+                                            "Значение должно быть в диапазоне от 0x0 до 0xffff",
+                                    },
+                                    {
+                                        validator: "unique",
+                                        params: {
+                                            within: "ignoreFolder",
+                                        },
+                                        message:
+                                            "Адрес должен быть уникальным внутри родительского элемента",
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                    {
+                        node: "folder",
+                        type: "folder",
+                        label: "Папка",
+                        icon: "folder",
+                    },
+                ],
+                validationRules: [
+                    {
+                        validator: "uniqueComposite",
+                        params: {
+                            within: "siblings",
+                            fields: ["function", "dataType"],
+                        },
+                        message:
+                            "Функция и тип данных должны быть уникальными внутри родительского элемента",
                     },
                 ],
             },

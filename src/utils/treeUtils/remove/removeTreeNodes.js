@@ -1,5 +1,3 @@
-import { getIdsSetWithoutNested } from "../core/ids";
-
 /**
  * Removes nodes from a tree structure, given a set of node ids to remove.
  *
@@ -50,8 +48,7 @@ export function deleteNodeUtil(treeApi) {
         }
         if (!nextFocus) nextFocus = treeApi.lastNode;
         treeApi.focus(nextFocus, { scroll: false });
-        const idsSet = getIdsSetWithoutNested(treeApi, ids);
-        treeApi.delete(Array.from(idsSet));
+        treeApi.delete(ids);
     } else {
         const node = treeApi.focusedNode;
         if (node) {

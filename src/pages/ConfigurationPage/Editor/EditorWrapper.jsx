@@ -14,35 +14,29 @@ import { VariableEditor } from "./VariableEditor/VariableEditor";
 import { DataObjectsTable } from "./ConnectionEditor/Table/Table";
 import { ConnectionParamContainer } from "./ConnectionEditor/ConnectionParamContainer";
 import { EditorBreadcrumb } from "../Breadcrumb/Breadcrumb";
-import { useSelectedData } from "@/hooks/useSelectedData";
 import { EditorLayout } from "./EditorLayout";
 import { InputFactory } from "../InputComponents/InputFactory";
 import { configuratorConfig } from "@/utils/configurationParser";
 import { NodeError } from "./NodeError";
-import { useBreadcrumb } from "@/hooks/useBreadcrumb";
-import { useValidationStore } from "@/store/validation-store";
 import { LuCog, LuVariable } from "react-icons/lu";
+import {
+    useChildrenNodes,
+    useNodesByIds,
+    useSelectedIds,
+} from "@/store/selectors";
+import { NODE_TYPES, TREE_TYPES } from "@/config/constants";
 
-// TODO Лишний ререндер, мб вынести логику с выбором данных в другое место?
 export const EditorWrapper = memo(function EditorWrapper({ type }) {
-    const data = useSelectedData(type);
+    const ids = useSelectedIds(type);
+    const size = ids.size;
+    const idsArr = Array.from(ids);
 
-    if (data.length === 0) {
+    if (size === 0 || ids.has("__REACT_ARBORIST_INTERNAL_ROOT__"))
         return <EditorHint type={type} />;
+    if (size === 1) {
+        return <EditorWrapperSingle id={idsArr} type={type} />;
     }
-
-    if (data.length === 1) {
-        return <EditorWrapperSingle data={data} type={type} />;
-    }
-
-    if (data.length > 1) {
-        const sameLevelAndType = data.every(
-            (element) => element.node.type === data[0].node.type
-        );
-        if (sameLevelAndType) {
-            return <EditorWrapperMultiple data={data} type={type} />;
-        }
-    }
+    if (size > 1) return <EditorWrapperMultiple ids={idsArr} type={type} />;
 });
 
 const TITLE = {
@@ -50,44 +44,24 @@ const TITLE = {
     dataObject: <Heading>Объект данных</Heading>,
 };
 
-const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
-    const [{ node, children }] = data;
+const EditorWrapperSingle = memo(function EditorWrapperSingleTEST({
+    id,
+    type,
+}) {
+    const [node] = useNodesByIds(id);
+    const children = useChildrenNodes(node?.id);
+
+    if (!node) return <EditorHint type={type} />;
+
     const Parameters =
         configuratorConfig.nodePaths[node.path] &&
         (node.path === "#/variable"
             ? VariableEditor
             : ConnectionParamContainer);
 
-    const isVariable = children.every((node) => node.type === "variable");
-    const Table = isVariable ? VariablesTable : DataObjectsTable;
-    const breadcrumbs = useBreadcrumb(node.id);
-
-    const validationErrors = useValidationStore((state) =>
-        state.errorsTree.get(node.id)?.get("node")
-    );
-
-    const renderTable = () => {
-        if (
-            children.length > 0 &&
-            ["folder", "protocolSpecific", "protocol"].includes(node.type)
-        ) {
-            if (
-                node.type === "folder" &&
-                node.path === "#/folder" &&
-                type === "connections"
-            )
-                return null;
-            return (
-                <Box w={"100%"} h={"100%"} overflow={"auto"}>
-                    <Table data={children} />
-                </Box>
-            );
-        }
-    };
-
     return (
         <EditorLayout
-            breadcrumbs={<EditorBreadcrumb breadcrumbs={breadcrumbs} />}
+            breadcrumbs={<EditorBreadcrumb id={node.id} />}
             title={
                 <HStack>
                     {TITLE[node.type] || (
@@ -103,7 +77,17 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
                     )}
                 </HStack>
             }
-            errors={<NodeError validationErrors={validationErrors} />}
+            id={
+                <Text
+                    fontWeight={"medium"}
+                    fontFamily={"mono"}
+                    fontSize={"xs"}
+                    color={"fg.subtle"}
+                >
+                    {node.id}
+                </Text>
+            }
+            errors={<NodeError id={node.id} />}
             counter={
                 children.length > 0 && (
                     <Heading textWrap={"nowrap"}>
@@ -112,15 +96,46 @@ const EditorWrapperSingle = memo(function EditorWrapperSingle({ data, type }) {
                 )
             }
             parameters={<Parameters data={node} />}
-            table={renderTable()}
+            table={<TableWrapper nodes={children} type={type} />}
         />
     );
 });
 
+function checkSameType(nodes) {
+    let type = null;
+    for (const node of nodes) {
+        if (node.type === NODE_TYPES.folder) continue;
+        if (type === null) {
+            type = node.node;
+        } else if (type !== node.node) {
+            return false;
+        }
+    }
+    return true;
+}
+
+const TableWrapper = memo(function TableWrapper({ nodes, type }) {
+    if (nodes.length === 0) return null;
+    const isSameType = checkSameType(nodes);
+    if (!isSameType) return null;
+    const isVariableTable = type === TREE_TYPES.variables;
+    const Table = isVariableTable ? VariablesTable : DataObjectsTable;
+
+    return (
+        <Box w={"100%"} h={"100%"} overflow={"auto"}>
+            <Table data={nodes} />
+        </Box>
+    );
+});
+
 const EditorWrapperMultiple = memo(function EditorWrapperMultiple({
-    data,
+    ids,
     type,
 }) {
+    const nodes = useNodesByIds(ids);
+
+    if (nodes.length === 0) return <EditorHint type={type} />;
+
     return (
         <VStack gap={"4"} px={"1"} h={"100%"}>
             <Flex
@@ -133,38 +148,28 @@ const EditorWrapperMultiple = memo(function EditorWrapperMultiple({
                 justify={"space-between"}
             >
                 <Heading textWrap={"nowrap"}>Множественный выбор</Heading>
-                <Heading textWrap={"nowrap"}>Выбрано: {data.length}</Heading>
+                <Heading textWrap={"nowrap"}>Выбрано: {nodes.length}</Heading>
             </Flex>
             <Box w={"100%"} h={"100%"} overflow={"auto"}>
-                {type === "connections" && (
-                    <DataObjectsTable
-                        data={data.map((element) => element.node)}
-                    />
-                )}
-                {type === "variables" && (
-                    <VariablesTable
-                        data={data.map((element) => element.node)}
-                    />
-                )}
+                <TableWrapper nodes={nodes} type={type} />
             </Box>
         </VStack>
     );
 });
 
 const EditorHint = ({ type }) => {
+    const hintText =
+        type === "connections"
+            ? "Выберите узел в дереве приема или передачи"
+            : "Выберите узел в дереве переменных";
+    const HintIcon = type === "connections" ? LuCog : LuVariable;
     return (
         <Box w={"100%"} h={"100%"} position={"relative"}>
             <AbsoluteCenter>
                 <VStack textAlign={"center"}>
-                    <Icon
-                        as={type === "connections" ? LuCog : LuVariable}
-                        fontSize={"164px"}
-                        color={"bg.muted"}
-                    />
+                    <Icon as={HintIcon} fontSize={"164px"} color={"bg.muted"} />
                     <Text color={"fg.subtle"} fontWeight={"medium"}>
-                        {type === "connections"
-                            ? "Выберите узел в дереве приема или передачи"
-                            : "Выберите узел в дереве переменных"}
+                        {hintText}
                     </Text>
                 </VStack>
             </AbsoluteCenter>

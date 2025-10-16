@@ -1,6 +1,4 @@
-import { Group, IconButton, CheckboxCard } from "@chakra-ui/react";
-import { useLogViewerContext } from "@/providers/LogViewerProvider/LogViewerContext";
-import { useLogContext } from "@/providers/LogProvider/LogContext";
+import { Group, IconButton, CheckboxCard, Icon, Text } from "@chakra-ui/react";
 import {
     LuCirclePlus,
     LuCircleMinus,
@@ -10,84 +8,78 @@ import {
     LuWrapText,
     LuEraser,
 } from "react-icons/lu";
+import { useLogStore } from "../../Store/store";
+import { useLogStream } from "../../Store/stream-store";
 
-function LogToolBox() {
-    console.log("Render LogToolBox");
-    const {
-        isPaused,
-        setIsPaused,
-        isLogTextWrapped,
-        toggleWrap,
-        logTextSize,
-        setLogTextSize,
-        clearLogs,
-    } = useLogViewerContext();
-    const { logData } = useLogContext();
+export const LogToolBox = () => {
+    const isLogTextWrapped = useLogStore((state) => state.isLogTextWrapped);
+    const isPaused = useLogStream((state) => state.isPaused);
+    const { pause, resume, reset } = useLogStream.getState();
+    const { incLogTextSize, decLogTextSize, toggleLogTextWrapped } =
+        useLogStore.getState();
 
-    const handleDownload = async () => {
+    /* const handleDownload = async () => {
         window.location.href = `/api/v1/getLog?logfile=${logData.name}&type=${logData.type}`;
-    };
+    }; */
 
     return (
         <Group attached shadow={"xs"}>
             <IconButton
                 size={"xs"}
                 variant={"outline"}
-                onClick={handleDownload}
+                //onClick={handleDownload}
             >
                 <LuDownload />
             </IconButton>
             <IconButton
                 size={"xs"}
                 variant={"outline"}
-                onClick={() => setLogTextSize(logTextSize + 1)}
+                onClick={incLogTextSize}
             >
                 <LuCirclePlus />
             </IconButton>
             <IconButton
                 size={"xs"}
                 variant={"outline"}
-                onClick={() => setLogTextSize(logTextSize - 1)}
+                onClick={decLogTextSize}
             >
                 <LuCircleMinus />
             </IconButton>
             <CheckboxCard.Root
                 variant={"surface"}
                 checked={isLogTextWrapped}
-                onCheckedChange={() => toggleWrap()}
+                onCheckedChange={toggleLogTextWrapped}
+                borderColor={"colorPalette.muted"}
+                _hover={{ bg: "colorPalette.subtle" }}
             >
                 <CheckboxCard.HiddenInput />
                 <CheckboxCard.Control p={"0.45rem"}>
-                    <LuWrapText size={"16px"} />
+                    <Icon
+                        as={LuWrapText}
+                        size={"sm"}
+                        color={"colorPalette.fg"}
+                    />
                 </CheckboxCard.Control>
             </CheckboxCard.Root>
             <CheckboxCard.Root
                 variant={"surface"}
                 checked={isPaused}
-                onCheckedChange={() => {
-                    setIsPaused(!isPaused);
-                }}
+                onCheckedChange={(e) => (e.checked ? pause() : resume())}
+                borderColor={"colorPalette.muted"}
+                _hover={{ bg: "colorPalette.subtle" }}
             >
                 <CheckboxCard.HiddenInput />
                 <CheckboxCard.Control p={"0.45rem"}>
-                    {isPaused ? (
-                        <LuCirclePlay size={"16px"} />
-                    ) : (
-                        <LuCirclePause size={"16px"} />
-                    )}
+                    <Icon
+                        as={isPaused ? LuCirclePause : LuCirclePlay}
+                        size={"sm"}
+                        color={"colorPalette.fg"}
+                    />
                 </CheckboxCard.Control>
             </CheckboxCard.Root>
-            <IconButton
-                size={"xs"}
-                variant={"outline"}
-                onClick={() => {
-                    clearLogs();
-                }}
-            >
+            <IconButton size={"xs"} variant={"outline"} onClick={reset}>
                 <LuEraser />
             </IconButton>
         </Group>
     );
-}
-
-export default LogToolBox;
+};

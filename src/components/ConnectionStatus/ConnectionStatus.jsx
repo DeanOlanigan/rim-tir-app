@@ -1,10 +1,8 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { LuTriangleAlert } from "react-icons/lu";
-import { WebSocketService } from "@/services/websocketService";
 import { useEffect, useState } from "react";
 
-//const wsService = new WebSocketService("ws://192.168.1.1:8800");
-
+// DEPRECATED
 function ConnectionStatus() {
     const [serverTime, setServerTime] = useState("");
     const [isConnected, setIsConnected] = useState(false);

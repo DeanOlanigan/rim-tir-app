@@ -1,10 +1,11 @@
 import { memo, useEffect, useState } from "react";
 import { useVariablesStore } from "@/store/variables-store";
-import { NumberInput as ChakraNumberInput } from "@chakra-ui/react";
+import { NumberInput as ChakraNumberInput, InputGroup } from "@chakra-ui/react";
+import { ErrorSign } from "./ErrorSign";
 
 export const NumberInput = memo(function NumberInput(props) {
     console.log("Render NumberInput");
-    const { id, targetKey, value, isF } = props;
+    const { id, targetkey, value, errors, isF, ...rest } = props;
     const [innerValue, setInnerValue] = useState(value);
     const setSettings = useVariablesStore((state) => state.setSettings);
 
@@ -32,13 +33,13 @@ export const NumberInput = memo(function NumberInput(props) {
                     : parseInt(innerValue);
                 if (res === value) return;
                 setSettings(id, {
-                    [targetKey]: res,
+                    [targetkey]: res,
                 });
             }}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
                     setSettings(id, {
-                        [targetKey]: isF
+                        [targetkey]: isF
                             ? parseFloat(innerValue)
                             : parseInt(innerValue),
                     });
@@ -48,9 +49,17 @@ export const NumberInput = memo(function NumberInput(props) {
                 }
             }}
             onClick={(e) => e.stopPropagation()}
+            {...rest}
         >
             <ChakraNumberInput.Control />
-            <ChakraNumberInput.Input />
+            <InputGroup
+                endElement={
+                    errors && errors.size !== 0 && <ErrorSign errors={errors} />
+                }
+                endElementProps={{ me: "4" }}
+            >
+                <ChakraNumberInput.Input />
+            </InputGroup>
         </ChakraNumberInput.Root>
     );
 });
