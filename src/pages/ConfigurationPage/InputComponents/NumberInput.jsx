@@ -7,7 +7,6 @@ export const NumberInput = memo(function NumberInput(props) {
     console.log("Render NumberInput");
     const { id, targetkey, value, errors, isF, ...rest } = props;
     const [innerValue, setInnerValue] = useState(value);
-    const setSettings = useVariablesStore((state) => state.setSettings);
 
     useEffect(() => {
         setInnerValue(value);
@@ -17,13 +16,12 @@ export const NumberInput = memo(function NumberInput(props) {
         <ChakraNumberInput.Root
             w={"100%"}
             size={"xs"}
-            value={innerValue}
-            // BUG Chakra update breaks NumberInput format options
-            /* formatOptions={{
+            value={String(innerValue)}
+            formatOptions={{
                 style: "decimal",
                 maximumFractionDigits: isF ? 3 : 0,
                 useGrouping: false,
-            }} */
+            }}
             onValueChange={(details) => {
                 setInnerValue(details.value);
             }}
@@ -32,13 +30,13 @@ export const NumberInput = memo(function NumberInput(props) {
                     ? parseFloat(innerValue).toFixed(3)
                     : parseInt(innerValue);
                 if (res === value) return;
-                setSettings(id, {
+                useVariablesStore.getState().setSettings(id, {
                     [targetkey]: res,
                 });
             }}
             onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                    setSettings(id, {
+                    useVariablesStore.getState().setSettings(id, {
                         [targetkey]: isF
                             ? parseFloat(innerValue)
                             : parseInt(innerValue),
