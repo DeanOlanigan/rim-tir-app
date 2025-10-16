@@ -7,6 +7,7 @@ import { useConfigStore } from "../stores";
 import { SubHeader } from "@/components/Header/SubHeader";
 import { ConfigInfo } from "@/components/ConfigInfo";
 import { useConfigInfoStore } from "@/store/config-info-store";
+import { ConfChecker } from "./ConfChecker";
 
 export const BaseConfCard = () => {
     return (
@@ -16,6 +17,7 @@ export const BaseConfCard = () => {
             <RouterMenu />
             <ConfigInfoWrapper />
             <ValidationErrorsContainer />
+            <ConfChecker />
         </SubHeader>
     );
 };

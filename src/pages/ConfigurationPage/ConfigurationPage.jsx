@@ -19,6 +19,7 @@ import { LuBadgePlus, LuLock } from "react-icons/lu";
 import { TreeCard } from "@/components/TreeView/TreeCard";
 import { TreeView } from "./Tree/TreeView";
 import { BaseConfCard } from "./BaseConfCard/BaseConfCard";
+import { ConfSyncManager } from "./ConfSyncManager";
 
 function ConfigurationPage() {
     return (
@@ -56,6 +57,7 @@ function ConfigurationPage() {
                     </Panel>
                 </PanelGroup>
                 <ContextMenu />
+                <ConfSyncManager />
             </Box>
         </>
     );

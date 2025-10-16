@@ -10,9 +10,11 @@ import {
     useStopTirMutation,
     useUploadConfigurationMutation,
 } from "@/hooks/useMutation";
+import { AreYouShureDialog } from "../Dialogs/AreYouShure";
 
 export const RouterMenu = () => {
     const errorsTreeSize = useValidationStore((state) => state.errorsTree.size);
+    const sync = useVariablesStore((state) => state.sync);
     const hasErrors = errorsTreeSize > 0;
 
     const startM = useStartTirMutation();
@@ -52,15 +54,28 @@ export const RouterMenu = () => {
                                 ? "Отправка..."
                                 : "Отправить конфигурацию"}
                         </Menu.Item>
-                        <Menu.Item
-                            value="new-file"
-                            onClick={getConfigHandler}
-                            disabled={refreshM.isPending}
+                        <AreYouShureDialog
+                            onAccept={getConfigHandler}
+                            header={"Получить конфигурацию?"}
+                            message={
+                                "Получение конфигурации с сервера приведет к потере данных на этой странице."
+                            }
                         >
-                            {refreshM.isPending
-                                ? "Обновление..."
-                                : "Обновить конфигурацию"}
-                        </Menu.Item>
+                            <Menu.Item
+                                value="new-file"
+                                disabled={refreshM.isPending || sync}
+                                onClick={(e) => {
+                                    if (sync) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                    }
+                                }}
+                            >
+                                {refreshM.isPending
+                                    ? "Обновление..."
+                                    : "Получить конфигурацию"}
+                            </Menu.Item>
+                        </AreYouShureDialog>
                         <Menu.Item
                             value="start"
                             onClick={() => startM.mutate()}

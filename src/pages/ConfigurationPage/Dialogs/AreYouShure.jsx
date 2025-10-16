@@ -1,21 +1,23 @@
-import { useConfigInfoStore } from "@/store/config-info-store";
-import { useValidationStore } from "@/store/validation-store";
-import { useVariablesStore } from "@/store/variables-store";
 import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react";
 import { useState } from "react";
 
-export const AreYouShureDialog = ({ children }) => {
+export const AreYouShureDialog = ({
+    children,
+    onAccept = () => {},
+    onReject = () => {},
+    header,
+    message,
+}) => {
     const [open, setOpen] = useState(false);
     const acceptHandler = () => {
-        useVariablesStore.getState().resetState();
-        useConfigInfoStore.setState({
-            configInfo: {},
-        });
-        useValidationStore.getState().clearErrors();
+        onAccept();
         setOpen(false);
     };
 
-    const rejectHandler = () => setOpen(false);
+    const rejectHandler = () => {
+        onReject();
+        setOpen(false);
+    };
 
     return (
         <Dialog.Root
@@ -36,9 +38,9 @@ export const AreYouShureDialog = ({ children }) => {
                             <CloseButton size={"sm"} />
                         </Dialog.CloseTrigger>
                         <Dialog.Header>
-                            <Dialog.Title>Вы уверены?</Dialog.Title>
+                            <Dialog.Title>{header}</Dialog.Title>
                         </Dialog.Header>
-                        <Dialog.Body>Все данные будут потеряны.</Dialog.Body>
+                        <Dialog.Body>{message}</Dialog.Body>
                         <Dialog.Footer>
                             <Button size={"xs"} onClick={acceptHandler}>
                                 Применить

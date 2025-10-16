@@ -62,6 +62,8 @@ const initialState = {
         ids: new Set(),
         cut: false,
     },
+
+    sync: false,
 };
 
 export const useVariablesStore = create()(
@@ -70,6 +72,8 @@ export const useVariablesStore = create()(
             ...initialState,
 
             resetState: () => set(initialState),
+
+            setSync: (value) => set({ sync: value }),
 
             updateSelectedIds: (targetKey, ids) =>
                 set((state) => {
