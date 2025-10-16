@@ -27,10 +27,13 @@ function ConfigurationPage() {
             <BaseConfCard />
             <Box h={"100%"} position={"relative"}>
                 <EmptyConfigDialog />
-                <PanelGroup autoSaveId="persistence" direction="horizontal">
+                <PanelGroup
+                    autoSaveId="configuration-main-panel"
+                    direction="horizontal"
+                >
                     <Panel collapsible collapsedSize={0} minSize={15}>
                         <PanelGroup
-                            autoSaveId="persistence1"
+                            autoSaveId="configuration-connections-panel"
                             direction="vertical"
                         >
                             <Panel collapsible collapsedSize={0} minSize={10}>
