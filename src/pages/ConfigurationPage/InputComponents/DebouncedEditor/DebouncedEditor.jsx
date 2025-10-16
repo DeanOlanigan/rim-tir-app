@@ -3,14 +3,23 @@ import { useColorMode } from "@/components/ui/color-mode";
 import { Editor } from "@monaco-editor/react";
 import { useVariablesStore } from "@/store/variables-store";
 import debounce from "debounce";
-import { useLuaDiagnostics } from "./hooks/useLuaDiagnostics";
-import { useVariableHighlightLuaParse } from "./hooks/useVariableHighlightLuaParse";
-import { useVariablesList } from "@/store/selectors";
-import { setLuaCodeError } from "@/utils/validation";
-import { validateCyclicVariable } from "@/utils/validation";
+import { getVarDataStore } from "@/utils/validation";
 import { luaAstParse } from "@/utils/validation";
 import { getCompletionSnippets } from "./snippets";
-import { useValidationStore } from "@/store/validation-store";
+
+function createVariableDecorations(usages) {
+    return usages.map((usage) => ({
+        range: {
+            startLineNumber: usage.loc.start.line,
+            startColumn: usage.loc.start.column + 1,
+            endLineNumber: usage.loc.end.line,
+            endColumn: usage.loc.end.column + 1,
+        },
+        options: {
+            inlineClassName: "highlight-variable",
+        },
+    }));
+}
 
 export const DebouncedEditor = memo(function DebouncedEditor({
     luaExpression,
@@ -19,88 +28,97 @@ export const DebouncedEditor = memo(function DebouncedEditor({
     width,
 }) {
     const { colorMode } = useColorMode();
-    const setSettings = useVariablesStore.getState().setSettings;
-    const variables = useVariablesList();
+    const { setSettings, settings } = useVariablesStore.getState();
+    const { varIdsByName } = getVarDataStore(settings);
 
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
     const providerRef = useRef(null);
+    const decorationIdRef = useRef([]);
 
-    const diagnostics = useLuaDiagnostics();
-    const highlight = useVariableHighlightLuaParse(editorRef.current);
-
-    useEffect(() => {
-        if (luaExpression !== undefined) {
-            const editor = editorRef.current;
-            const model = editorRef.current?.getModel();
-            const { ast, error } = luaAstParse(luaExpression);
-            if (ast) highlight(ast, editor, variables);
-            diagnostics(ast, error, monacoRef.current, model, variables);
-            const draft = validateCyclicVariable({ variables });
-            useValidationStore.getState().applyDraft2(draft);
-        }
-    }, [luaExpression, highlight, diagnostics, variables]);
+    const debounceRef = useRef();
+    if (!debounceRef.current) {
+        debounceRef.current = debounce((id, newCode) => {
+            setSettings(id, { luaExpression: newCode });
+        }, 500);
+    }
+    const debounced = debounceRef.current;
 
     useEffect(() => {
-        return () => {
-            if (providerRef.current) {
-                providerRef.current.dispose();
-                providerRef.current = null;
-            }
-        };
-    }, []);
+        if (!editorRef.current || !monacoRef.current) return;
+        const model = editorRef.current.getModel();
+        if (!model) return;
+
+        const { markers, varsToHighlight } = luaAstParse(
+            luaExpression,
+            varIdsByName,
+            id
+        );
+        monacoRef.current.editor.setModelMarkers(model, "lua", markers);
+        decorationIdRef.current = editorRef.current.deltaDecorations(
+            decorationIdRef.current,
+            createVariableDecorations(varsToHighlight)
+        );
+    }, [luaExpression, varIdsByName, id]);
 
     function handleEditorDidMount(editor, monaco) {
         editorRef.current = editor;
         monacoRef.current = monaco;
 
-        if (providerRef.current) {
-            providerRef.current.dispose();
-            providerRef.current = null;
-        }
+        editor.onKeyDown((e) => {
+            const isF1 = e.keyCode === monaco.KeyCode.F1;
 
-        providerRef.current = getCompletionSnippets(monacoRef);
+            if (isF1) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+
+        providerRef.current?.dispose?.();
+        providerRef.current = getCompletionSnippets(monaco);
 
         const code = editor.getValue();
-        const { ast, error } = luaAstParse(code);
-        if (ast) highlight(ast, editor, variables);
-        diagnostics(ast, error, monaco, editor.getModel(), variables);
+        const { markers, varsToHighlight } = luaAstParse(
+            code,
+            varIdsByName,
+            id
+        );
+        monaco.editor.setModelMarkers(editor.getModel(), "lua", markers);
+        decorationIdRef.current = editor.deltaDecorations(
+            decorationIdRef.current,
+            createVariableDecorations(varsToHighlight)
+        );
     }
 
-    const debounced = useRef(
-        debounce((id, newCode) => {
-            setSettings(
-                id,
-                {
-                    luaExpression: newCode,
-                },
-                false
-            );
-        }, 500)
-    ).current;
+    useEffect(() => {
+        return () => {
+            providerRef.current?.dispose?.();
+            providerRef.current = null;
+
+            if (editorRef.current && decorationIdRef.current.length > 0) {
+                editorRef.current.deltaDecorations(decorationIdRef.current, []);
+                decorationIdRef.current = [];
+            }
+
+            debounceRef.current?.clear?.();
+        };
+    }, []);
 
     const onChangeHandler = (value) => {
         debounced(id, value);
     };
 
-    const handleValidate = (markers) => {
-        const draft = setLuaCodeError(
-            id,
-            markers.map((m) => m.message)
-        );
-        useValidationStore.getState().applyDraft2(draft);
-    };
-
     return (
         <Editor
             defaultLanguage="lua"
+            path={`${id}.lua`}
+            keepCurrentModel={true}
             value={luaExpression}
             height={height}
             width={width}
             theme={colorMode === "light" ? "vs" : "vs-dark"}
             onChange={onChangeHandler}
             onMount={handleEditorDidMount}
-            onValidate={handleValidate}
             options={{
                 minimap: { enabled: false },
                 lineNumbers: "on",
@@ -111,6 +129,15 @@ export const DebouncedEditor = memo(function DebouncedEditor({
                     vertical: "hidden",
                     horizontal: "hidden",
                 },
+                quickSuggestions: {
+                    other: true,
+                    comments: false,
+                    strings: true,
+                },
+                suggestOnTriggerCharacters: true,
+                wordBasedSuggestions: true,
+                snippetSuggestions: "top",
+                suggest: { showSnippets: true },
             }}
         />
     );

@@ -1,5 +1,6 @@
 import { shallow, useShallow } from "zustand/shallow";
 import { useVariablesStore } from "./variables-store";
+
 export function useVariablesList() {
     return useVariablesStore(
         useShallow((state) =>

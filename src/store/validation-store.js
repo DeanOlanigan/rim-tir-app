@@ -55,10 +55,10 @@ export const useValidationStore = create(
                 //const byId = rebuildById(next);
                 //const byIdParam = rebuildByIdParam(next);
                 const tree = rebuildTree(next);
-                console.log("STORE:", next);
+                //console.log("STORE:", next);
                 //console.log("byId", byId);
                 //console.log("byIdParam", byIdParam);
-                console.log("tree", tree);
+                //console.log("tree", tree);
                 return {
                     errorsMap: next,
                     //errorsById: byId,
