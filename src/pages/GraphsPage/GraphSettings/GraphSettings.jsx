@@ -5,7 +5,6 @@ import { VariablesManager } from "./VariablesManager/VariablesManager";
 import { ViewGraphButton } from "./ViewGraphButton";
 import { LuApple } from "react-icons/lu";
 import { useGraphStore } from "../store/store";
-import { useNavigate } from "react-router-dom";
 
 function GraphSettings() {
     return (
@@ -40,12 +39,10 @@ function GraphSettings() {
 
 const BadApple = () => {
     const { setType, setShowGraph } = useGraphStore.getState();
-    const navigate = useNavigate();
 
     const handleClick = () => {
         setType("badapple");
         setShowGraph(true);
-        navigate("/graph/viewer");
     };
 
     return (

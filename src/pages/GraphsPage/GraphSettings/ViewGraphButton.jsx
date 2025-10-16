@@ -1,12 +1,9 @@
 import { Button } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 import { useGraphStore } from "../store/store";
 import { TIME_TYPE } from "./graphSettingsConstants";
 import { useVariables } from "../useVariables";
 
 export const ViewGraphButton = () => {
-    const navigate = useNavigate();
-
     const { isFetching, isError } = useVariables();
     const offset = useGraphStore((state) => state.offset);
     const variables = useGraphStore((state) => state.variables);
@@ -28,7 +25,6 @@ export const ViewGraphButton = () => {
     const handleClick = () => {
         if (type === TIME_TYPE.real) setOffset();
         setShowGraph(true);
-        navigate("/graph/viewer");
     };
 
     return (

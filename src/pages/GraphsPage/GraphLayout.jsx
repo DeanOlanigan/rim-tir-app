@@ -1,7 +1,11 @@
-import { Outlet } from "react-router-dom";
 import { Container } from "@chakra-ui/react";
+import { useGraphStore } from "./store/store";
+import GraphViewer from "./Viewer/GraphViewer";
+import GraphSettings from "./GraphSettings/GraphSettings";
 
-function GraphLayout() {
+function GraphPage() {
+    const showGraph = useGraphStore((state) => state.showGraph);
+
     return (
         <Container
             maxW={"6xl"}
@@ -10,9 +14,9 @@ function GraphLayout() {
             flexDirection={"column"}
             minH={"0"}
         >
-            <Outlet />
+            {showGraph ? <GraphViewer /> : <GraphSettings />}
         </Container>
     );
 }
 
-export default GraphLayout;
+export default GraphPage;

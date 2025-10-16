@@ -10,8 +10,12 @@ import { useChartController } from "../GraphSettings/hooks";
 
 function GraphViewer() {
     const state = useGraphStore((state) => state);
-    const data = generateChartData(state);
-    const options = createOptions(state.type, state.startDate, state.endDate);
+    let data = { labels: [], datasets: [] };
+    let options = {};
+    if (state.type !== "badapple") {
+        data = generateChartData(state);
+        options = createOptions(state.type, state.startDate, state.endDate);
+    }
 
     const graphRef = useRef(null);
     const { resetZoom } = useChartController(graphRef);

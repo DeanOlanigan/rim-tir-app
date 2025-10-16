@@ -17,11 +17,7 @@ import LogSourceManager from "@/pages/LogPage/SourceManager/LogSourceManager";
 import RequireLogData from "@/pages/LogPage/RequireLogData";
 import LogViewer from "@/pages/LogPage/Viewer/LogViewer";
 
-import GraphLayout from "@/pages/GraphsPage/GraphLayout";
-import GraphRedirect from "@/pages/GraphsPage/GraphRedirect";
-import GraphSettings from "@/pages/GraphsPage/GraphSettings/GraphSettings";
-import RequireGraphData from "@/pages/GraphsPage/RequireGraphData";
-import GraphViewer from "@/pages/GraphsPage/Viewer/GraphViewer";
+import GraphPage from "@/pages/GraphsPage/GraphLayout";
 import { Suspense } from "react";
 import ConfigurationPageLazy from "@/pages/ConfigurationPage/ConfigurationPageLazy";
 import MonitoringPageLazy from "@/pages/MonitoringPage/MonitoringPageLazy";
@@ -90,15 +86,7 @@ function AppRouter() {
                                 </Route>
                             </Route>
                             <Route path="/journal" element={<JournalPage />} />
-                            <Route path="/graph" element={<GraphLayout />}>
-                                <Route index element={<GraphSettings />} />
-                                <Route
-                                    path="viewer"
-                                    element={<RequireGraphData />}
-                                >
-                                    <Route index element={<GraphViewer />} />
-                                </Route>
-                            </Route>
+                            <Route path="/graph" element={<GraphPage />} />
                         </Route>
                     </Routes>
                 </Suspense>

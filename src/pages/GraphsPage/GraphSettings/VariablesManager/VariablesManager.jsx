@@ -7,21 +7,7 @@ import { Loader } from "@/components/Loader";
 import { ErrorInformer } from "@/components/ErrorInformer";
 import { useVariables } from "../../useVariables";
 
-const shadowCss = {
-    "--scroll-shadow-size": "4rem",
-    maskImage:
-        "linear-gradient(#000,#000,transparent 0,#000 var(--scroll-shadow-size),#000 calc(100% - var(--scroll-shadow-size)),transparent)",
-    "&[data-at-top]": {
-        maskImage:
-            "linear-gradient(180deg,#000 calc(100% - var(--scroll-shadow-size)),transparent)",
-    },
-    "&[data-at-bottom]": {
-        maskImage:
-            "linear-gradient(0deg,#000 calc(100% - var(--scroll-shadow-size)),transparent)",
-    },
-};
-
-const MAX_VARIABLES = 10;
+const MAX_VARIABLES = 5;
 
 export const VariablesManager = () => {
     const { data, isError, error, isFetching } = useVariables();
@@ -38,7 +24,7 @@ export const VariablesManager = () => {
                 data={data}
             />
             <ScrollArea.Root size={"xs"} borderWidth={"1px"} rounded={"l2"}>
-                <ScrollArea.Viewport css={shadowCss}>
+                <ScrollArea.Viewport>
                     <ScrollArea.Content spaceY={"2"} p={"2"}>
                         <VariablesContent
                             isFetching={isFetching}
