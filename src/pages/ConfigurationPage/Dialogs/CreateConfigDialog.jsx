@@ -9,32 +9,24 @@ import {
     Field,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useConfigInfoStore } from "@/store/config-info-store";
 import { useVariablesStore } from "@/store/variables-store";
 import { useValidationStore } from "@/store/validation-store";
 import { ConfigurationNameInput } from "./ConfigurationNameInput";
 
+// TODO Использовать человеческие способы обработки форм: zod, react-hook-form
 export const CreateConfigDialog = ({ children }) => {
-    const configInfo = useConfigInfoStore((state) => state.configInfo);
-    const resetState = useVariablesStore((state) => state.resetState);
+    const info = useVariablesStore((state) => state.info);
+
     const [isOpen, setIsOpen] = useState(false);
-    const [hasPreviousConfig, setHasPreviousConfig] = useState(false);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
 
     const isNameValid = name?.trim().length > 3;
 
     const submitCreateConfig = () => {
-        resetState();
-        useConfigInfoStore.setState({
-            configInfo: {
-                name,
-                description,
-                date: new Date().toLocaleString("ru-RU", {}),
-                version: "1.0",
-            },
-        });
+        useVariablesStore.getState().resetState();
         useValidationStore.getState().clearErrors();
+        useVariablesStore.getState().updateInfo(Date.now(), name, description);
         setIsOpen(false);
     };
 
@@ -44,12 +36,9 @@ export const CreateConfigDialog = ({ children }) => {
             open={isOpen}
             onOpenChange={(e) => {
                 setIsOpen(e.open);
-                if (e.open) {
-                    setHasPreviousConfig(Boolean(configInfo?.name));
-                } else {
+                if (!e.open) {
                     setName("");
                     setDescription("");
-                    setHasPreviousConfig(false);
                 }
             }}
         >
@@ -66,7 +55,7 @@ export const CreateConfigDialog = ({ children }) => {
                         </Dialog.Header>
                         <Dialog.Body>
                             <Flex gap={"2"} direction={"column"}>
-                                {hasPreviousConfig && (
+                                {info.name && (
                                     <Alert.Root status={"warning"}>
                                         <Alert.Indicator />
                                         <Alert.Title>

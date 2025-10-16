@@ -7,7 +7,6 @@ import {
     QK,
 } from "@/api";
 import { toaster } from "@/components/ui/toaster";
-import { useConfigInfoStore } from "@/store/config-info-store";
 import { useValidationStore } from "@/store/validation-store";
 import { useVariablesStore } from "@/store/variables-store";
 import { configuratorConfig } from "@/utils/configurationParser";
@@ -106,10 +105,9 @@ export function useRefreshConfigurationMutation() {
     const qc = useQueryClient();
     return useMutation({
         mutationFn: getConfiguration,
-        onSuccess: ({ state, configInfo }) => {
-            useConfigInfoStore.setState({ configInfo });
+        onSuccess: (state) => {
             useVariablesStore.setState(state);
-            qc.setQueryData(QK.configuration, { state, configInfo });
+            qc.setQueryData(QK.configuration, state);
             const draft = validateAll(state.settings, configuratorConfig);
             useValidationStore.getState().clearErrors();
             useValidationStore.getState().applyDraft(draft);

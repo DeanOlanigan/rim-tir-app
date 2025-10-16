@@ -3,14 +3,23 @@ import { useVariablesStore } from "@/store/variables-store";
 import { useQuery } from "@tanstack/react-query";
 import { canonicalize } from "json-canonicalize";
 import { useEffect } from "react";
+import { useShallow } from "zustand/shallow";
 
 export const ConfSyncManager = () => {
-    const settings = useVariablesStore((state) => state.settings);
+    const settings = useVariablesStore(
+        useShallow((state) => ({
+            settings: state.settings,
+            info: state.info,
+        }))
+    );
     const { setSync } = useVariablesStore.getState();
     const { data } = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
-        select: ({ state }) => state.settings,
+        select: (state) => ({
+            settings: state.settings,
+            info: state.info,
+        }),
     });
 
     useEffect(() => {

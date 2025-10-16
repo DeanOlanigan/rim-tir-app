@@ -5,7 +5,6 @@ import { ConfigurationUploader } from "../ConfigurationUploader"; // ?
 import { ConfInfoEdit } from "../Dialogs/ConfInfoEdit";
 import { AreYouShureDialog } from "../Dialogs/AreYouShure";
 import { useVariablesStore } from "@/store/variables-store";
-import { useConfigInfoStore } from "@/store/config-info-store";
 import { useValidationStore } from "@/store/validation-store";
 
 export const ConfMenu = () => {
@@ -40,9 +39,6 @@ export const ConfMenu = () => {
                         <AreYouShureDialog
                             onAccept={() => {
                                 useVariablesStore.getState().resetState();
-                                useConfigInfoStore.setState({
-                                    configInfo: {},
-                                });
                                 useValidationStore.getState().clearErrors();
                             }}
                             header={"Закрыть конфигурацию?"}

@@ -1,7 +1,6 @@
 import { Button, Menu, Portal } from "@chakra-ui/react";
 import { convertStateToXml } from "@/utils/xml/storeToXml";
 import { useVariablesStore } from "@/store/variables-store";
-import { useConfigInfoStore } from "@/store/config-info-store";
 import { useValidationStore } from "@/store/validation-store";
 import {
     useRefreshConfigurationMutation,
@@ -26,8 +25,7 @@ export const RouterMenu = () => {
     const sendConfigHandler = () => {
         if (hasErrors) return;
         const currentState = useVariablesStore.getState();
-        const currentConfigInfo = useConfigInfoStore.getState().configInfo;
-        const xml = convertStateToXml(currentState, currentConfigInfo);
+        const xml = convertStateToXml(currentState);
         uploadM.mutate(xml);
     };
 

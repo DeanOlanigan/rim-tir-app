@@ -1,5 +1,4 @@
 import { useVariablesStore } from "@/store/variables-store";
-import { useConfigInfoStore } from "@/store/config-info-store";
 import { validateAll } from "@/utils/validation";
 import { configuratorConfig } from "@/utils/configurationParser";
 import { useValidationStore } from "@/store/validation-store";
@@ -130,18 +129,16 @@ export function parseXmlToState(xmlString) {
     const cfg = xml.querySelector("ConfigInfo");
     if (!cfg) throw new Error("В файле отсутствует информация о конфигурации");
 
-    const configInfo = {
-        name: cfg?.getAttribute("name") || "",
-        description: cfg?.getAttribute("description") || "",
-        date: cfg?.getAttribute("date") || "",
-        version: cfg?.getAttribute("version") || "",
-    };
-
     const state = {
         send: [],
         receive: [],
         variables: [],
         settings: {},
+        info: {
+            ts: cfg?.getAttribute("date") || "",
+            name: cfg?.getAttribute("name") ?? "",
+            description: cfg?.getAttribute("description") ?? "",
+        },
     };
 
     const recv = xml.querySelector("#receive");
@@ -156,7 +153,7 @@ export function parseXmlToState(xmlString) {
     if (!vars) throw new Error("В файле отсутствуют переменные");
     readNode(vars, null, state.variables, state.settings, "variables");
 
-    return { state, configInfo };
+    return state;
 }
 
 export async function uploadXmlFile(file) {
@@ -176,21 +173,16 @@ function readFileAsText(file) {
 }
 
 function computeImport(xml, filename) {
-    const res = parseXmlToState(xml);
-    const state = res.state;
-    const configInfo = res.configInfo;
-    if (!configInfo.name) {
-        configInfo.name = filename.replace(/\.[^.]+$/i, "");
+    const state = parseXmlToState(xml);
+    if (!state.info.name) {
+        state.info.name = filename.replace(/\.[^.]+$/i, "");
     }
-
     const draft = validateAll(state.settings, configuratorConfig);
-
-    return { state, configInfo, draft };
+    return { state, draft };
 }
 
-export function applyImport({ state, configInfo, draft }) {
+export function applyImport({ state, draft }) {
     useVariablesStore.setState(state);
-    useConfigInfoStore.setState({ configInfo });
     useValidationStore.getState().clearErrors();
     useValidationStore.getState().applyDraft(draft);
 }

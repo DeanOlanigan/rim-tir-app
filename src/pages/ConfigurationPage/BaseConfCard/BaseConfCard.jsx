@@ -6,8 +6,8 @@ import { LuFlipHorizontal2, LuFlipVertical2 } from "react-icons/lu";
 import { useConfigStore } from "../stores";
 import { SubHeader } from "@/components/Header/SubHeader";
 import { ConfigInfo } from "@/components/ConfigInfo";
-import { useConfigInfoStore } from "@/store/config-info-store";
 import { ConfChecker } from "./ConfChecker";
+import { useVariablesStore } from "@/store/variables-store";
 
 export const BaseConfCard = () => {
     return (
@@ -23,10 +23,17 @@ export const BaseConfCard = () => {
 };
 
 const ConfigInfoWrapper = () => {
-    const { name, date, description } = useConfigInfoStore(
-        (state) => state.configInfo
+    const info = useVariablesStore((state) => state.info);
+
+    if (!info.name) return null;
+
+    return (
+        <ConfigInfo
+            name={info.name}
+            date={info.ts}
+            description={info.description}
+        />
     );
-    return <ConfigInfo name={name} date={date} description={description} />;
 };
 
 const FlipButton = () => {

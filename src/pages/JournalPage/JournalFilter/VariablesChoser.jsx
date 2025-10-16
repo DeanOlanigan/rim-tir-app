@@ -14,7 +14,7 @@ const useVariables = () => {
     const q = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
-        select: ({ state }) => {
+        select: (state) => {
             const variables = Object.values(state.settings).filter(
                 (node) => node.type === "variable" && node.setting.archive
             );

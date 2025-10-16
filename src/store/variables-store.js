@@ -66,6 +66,12 @@ const initialState = {
     },
 
     sync: false,
+
+    info: {
+        ts: null,
+        name: null,
+        description: null,
+    },
 };
 
 export const useVariablesStore = create()(
@@ -76,6 +82,19 @@ export const useVariablesStore = create()(
             resetState: () => set(initialState),
 
             setSync: (value) => set({ sync: value }),
+
+            updateEditTs: () =>
+                set({ info: { ...get().info, ts: Date.now() } }),
+
+            updateInfo: (ts, name, description) =>
+                set((state) => ({
+                    info: {
+                        ...state.info,
+                        ts: ts ?? state.info.ts,
+                        name: name ?? state.info.name,
+                        description: description ?? state.info.description,
+                    },
+                })),
 
             updateSelectedIds: (targetKey, ids) =>
                 set((state) => {

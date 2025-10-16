@@ -13,6 +13,5 @@ export async function uploadConfiguration(xml) {
 
 export async function getConfiguration() {
     const { data } = await apiv2.get("/configuration");
-    const { state, configInfo } = parseXmlToState(data?.data);
-    return { state, configInfo };
+    return parseXmlToState(data?.data);
 }

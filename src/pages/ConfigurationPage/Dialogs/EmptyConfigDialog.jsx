@@ -9,27 +9,25 @@ import {
 import { useRef } from "react";
 import { CreateConfigDialog } from "./CreateConfigDialog";
 import { ConfigurationUploader } from "../ConfigurationUploader";
-import { useConfigInfoStore } from "@/store/config-info-store";
+import { useVariablesStore } from "@/store/variables-store";
 
 export const EmptyConfigDialog = () => {
-    const configInfo = useConfigInfoStore((state) => state.configInfo);
+    const info = useVariablesStore((state) => state.info);
     const ref = useRef(null);
-    const open = Object.keys(configInfo).length === 0;
 
     return (
         <Dialog.Root
             role="alertdialog"
-            open={open}
+            open={!info.name}
             onOpenChange={(e) => {
                 if (!e.open) {
-                    useConfigInfoStore.setState({
-                        configInfo: {
-                            name: "Конфигурация без названия",
-                            description: "",
-                            date: new Date().toLocaleString("ru-RU", {}),
-                            version: "1.0",
-                        },
-                    });
+                    useVariablesStore
+                        .getState()
+                        .updateInfo(
+                            Date.now(),
+                            "Конфигурация без названия",
+                            "Конфигурация без описания"
+                        );
                 }
             }}
             placement={"center"}

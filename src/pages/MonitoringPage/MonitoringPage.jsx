@@ -48,7 +48,7 @@ function MonitoringPage() {
                 <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                     <Panel collapsible={true} collapsedSize={0} minSize={25}>
                         <TreeWrapper
-                            data={data.state[TREE_TYPES.receive]}
+                            data={data[TREE_TYPES.receive]}
                             treeType={TREE_TYPES.receive}
                             searchTerm={searchTerm}
                         />
@@ -56,7 +56,7 @@ function MonitoringPage() {
                     <PanelResizeHandle className="PanelResizeHandle" />
                     <Panel collapsible={true} collapsedSize={0} minSize={25}>
                         <TreeWrapper
-                            data={data.state[TREE_TYPES.variables]}
+                            data={data[TREE_TYPES.variables]}
                             treeType={TREE_TYPES.variables}
                             searchTerm={searchTerm}
                         />
@@ -64,7 +64,7 @@ function MonitoringPage() {
                     <PanelResizeHandle className="PanelResizeHandle" />
                     <Panel collapsible={true} collapsedSize={0} minSize={25}>
                         <TreeWrapper
-                            data={data.state[TREE_TYPES.send]}
+                            data={data[TREE_TYPES.send]}
                             treeType={TREE_TYPES.send}
                             searchTerm={searchTerm}
                         />

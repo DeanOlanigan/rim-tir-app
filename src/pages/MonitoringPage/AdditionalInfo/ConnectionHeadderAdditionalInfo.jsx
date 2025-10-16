@@ -20,7 +20,7 @@ export const ConnectionHeadderAdditionalInfo = ({ id }) => {
     } = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
-        select: ({ state }) => state.settings[id],
+        select: (state) => state.settings[id],
     });
 
     if (!setting) return null;

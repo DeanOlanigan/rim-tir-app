@@ -20,12 +20,12 @@ export const dialog = createOverlay((props) => {
     const { data: path } = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
-        select: ({ state }) => state.settings[nodeId]?.path,
+        select: (state) => state.settings[nodeId]?.path,
     });
     const { data: variableType } = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
-        select: ({ state }) => state.settings[nodeId]?.setting?.type,
+        select: (state) => state.settings[nodeId]?.setting?.type,
     });
 
     const nodeCfg = path ? configuratorConfig.nodePaths?.[path] : undefined;
