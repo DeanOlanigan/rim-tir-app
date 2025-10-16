@@ -4,15 +4,19 @@ import {
     Button,
     CloseButton,
     Text,
-    Box,
+    Group,
+    Highlight,
 } from "@chakra-ui/react";
 import { useRef } from "react";
 import { CreateConfigDialog } from "./CreateConfigDialog";
 import { ConfigurationUploader } from "../ConfigurationUploader";
 import { useVariablesStore } from "@/store/variables-store";
+import { useRefreshConfigurationMutation } from "@/hooks/useMutation";
 
 export const EmptyConfigDialog = () => {
     const info = useVariablesStore((state) => state.info);
+
+    const refreshM = useRefreshConfigurationMutation();
     const ref = useRef(null);
 
     return (
@@ -38,29 +42,48 @@ export const EmptyConfigDialog = () => {
                 <Dialog.Positioner>
                     <Dialog.Content>
                         <Dialog.Header>
-                            <Dialog.Title>Пусто</Dialog.Title>
+                            <Dialog.Title>
+                                Похоже, что конфигурация отсутствует
+                            </Dialog.Title>
                         </Dialog.Header>
                         <Dialog.Body>
+                            <Text></Text>
                             <Text>
-                                Похоже, что в данный момент отсутствует
-                                конфигурация
+                                <Highlight
+                                    query={[
+                                        "загрузить",
+                                        "синхронизирацию",
+                                        "создать",
+                                    ]}
+                                    styles={{ fontWeight: "bold" }}
+                                >
+                                    Для работы с конфигурацией вы можете
+                                    загрузить её с вашего устройства, выполнить
+                                    синхронизирацию с сервером или создать
+                                    новую.
+                                </Highlight>
                             </Text>
                         </Dialog.Body>
                         <Dialog.Footer>
-                            <Box w={"100%"}>
+                            <Group grow>
                                 <ConfigurationUploader>
-                                    <Button w={"100%"} size={"xs"}>
+                                    <Button size={"xs"}>
                                         Загрузить конфигурацию
                                     </Button>
                                 </ConfigurationUploader>
-                            </Box>
-                            <Box w={"100%"}>
+
+                                <Button
+                                    size={"xs"}
+                                    onClick={() => refreshM.mutate()}
+                                >
+                                    Синхронизировать
+                                </Button>
                                 <CreateConfigDialog>
-                                    <Button w={"100%"} size={"xs"} ref={ref}>
+                                    <Button size={"xs"} ref={ref}>
                                         Создать конфигурацию
                                     </Button>
                                 </CreateConfigDialog>
-                            </Box>
+                            </Group>
                         </Dialog.Footer>
                         <Dialog.CloseTrigger asChild>
                             <CloseButton size={"xs"} />

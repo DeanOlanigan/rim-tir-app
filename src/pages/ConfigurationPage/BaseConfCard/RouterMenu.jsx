@@ -29,10 +29,6 @@ export const RouterMenu = () => {
         uploadM.mutate(xml);
     };
 
-    const getConfigHandler = () => {
-        refreshM.mutate();
-    };
-
     return (
         <Menu.Root size={"sm"} closeOnSelect={false}>
             <Menu.Trigger asChild>
@@ -53,7 +49,7 @@ export const RouterMenu = () => {
                                 : "Отправить конфигурацию"}
                         </Menu.Item>
                         <AreYouShureDialog
-                            onAccept={getConfigHandler}
+                            onAccept={() => refreshM.mutate()}
                             header={"Получить конфигурацию?"}
                             message={
                                 "Получение конфигурации с сервера приведет к потере данных на этой странице."
