@@ -110,7 +110,7 @@ export function useRefreshConfigurationMutation() {
             qc.setQueryData(QK.configuration, state);
             const draft = validateAll(state.settings, configuratorConfig);
             useValidationStore.getState().clearErrors();
-            useValidationStore.getState().applyDraft(draft);
+            useValidationStore.getState().applyDraft2(draft);
             toaster.create({
                 title: "Конфигурация обновлена",
                 description: "Конфигурация успешно обновлена",
