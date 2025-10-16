@@ -407,7 +407,6 @@ export const config = [
                                     address: {
                                         type: "string",
                                         label: "Адрес информационного объекта",
-                                        default: "",
                                         showInTree: true,
                                         rules: [
                                             {
@@ -778,7 +777,6 @@ export const config = [
                                     address: {
                                         type: "string",
                                         label: "Адрес информационного объекта",
-                                        default: "",
                                         showInTree: true,
                                         rules: [
                                             {
@@ -1452,7 +1450,6 @@ export const config = [
                             address: {
                                 type: "number",
                                 label: "Адрес информационного объекта",
-                                default: 0,
                                 showInTree: true,
                                 rules: [
                                     {
@@ -1913,7 +1910,6 @@ export const config = [
                             address: {
                                 type: "number",
                                 label: "Адрес информационного объекта",
-                                default: 0,
                                 showInTree: true,
                                 rules: [
                                     {
@@ -2513,7 +2509,6 @@ export const config = [
                             address: {
                                 type: "string",
                                 label: "Адрес информационного объекта",
-                                default: "",
                                 showInTree: true,
                                 rules: [
                                     {
@@ -2918,7 +2913,6 @@ export const config = [
                             address: {
                                 type: "string",
                                 label: "Адрес информационного объекта",
-                                default: "",
                                 showInTree: true,
                                 rules: [
                                     {
