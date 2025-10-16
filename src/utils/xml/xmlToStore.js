@@ -30,8 +30,14 @@ function getSettings(nodeElem, type) {
     if (!settingElem) return null;
 
     for (const attr of settingElem.attributes) {
-        if (attr.name === "sendId") setting.usedIn.send = attr.value;
-        if (attr.name === "receiveId") setting.usedIn.receive = attr.value;
+        if (attr.name === "sendId") {
+            setting.usedIn.send = attr.value;
+            continue;
+        }
+        if (attr.name === "receiveId") {
+            setting.usedIn.receive = attr.value;
+            continue;
+        }
         setting[toCamelCase(attr.name)] = parseValue(attr.value || "");
     }
 
