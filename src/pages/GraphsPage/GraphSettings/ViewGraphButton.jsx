@@ -1,13 +1,12 @@
 import { Button } from "@chakra-ui/react";
-import { useGraphStore } from "../store/store";
+import { useGraphStore, useVariablesList } from "../store/store";
 import { TIME_TYPE } from "./graphSettingsConstants";
 import { useVariables } from "../useVariables";
 
 export const ViewGraphButton = () => {
     const { isFetching, isError } = useVariables();
     const offset = useGraphStore((state) => state.offset);
-    const variables = useGraphStore((state) => state.variables);
-    const varArr = Object.values(variables);
+    const varArr = useVariablesList();
     const type = useGraphStore((state) => state.type);
     const { setStartDate, setEndDate, setShowGraph } = useGraphStore.getState();
 
@@ -17,13 +16,12 @@ export const ViewGraphButton = () => {
         isFetching ||
         isError;
 
-    const setOffset = () => {
-        setStartDate(new Date(Date.now() - offset * 1000).getTime());
-        setEndDate(new Date(Date.now()).getTime());
-    };
-
     const handleClick = () => {
-        if (type === TIME_TYPE.real) setOffset();
+        if (type === TIME_TYPE.real) {
+            const now = Date.now();
+            setStartDate(now - offset * 1000);
+            setEndDate(now);
+        }
         setShowGraph(true);
     };
 
@@ -33,7 +31,7 @@ export const ViewGraphButton = () => {
             shadow={"xl"}
             size={"xs"}
             onClick={handleClick}
-            w={"100%"}
+            flex={1}
         >
             Применить настройки и открыть график
         </Button>

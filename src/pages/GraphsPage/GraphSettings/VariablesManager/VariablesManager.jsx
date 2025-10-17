@@ -1,11 +1,13 @@
 import { Button, Stack, ScrollArea, Badge } from "@chakra-ui/react";
 import { GraphVariable } from "./GraphVariable";
-import { useGraphStore } from "../../store/store";
+import { useGraphStore, useVariablesList } from "../../store/store";
 import { getRandomColor } from "@/utils/utils";
 import { LuPlus } from "react-icons/lu";
 import { Loader } from "@/components/Loader";
 import { ErrorInformer } from "@/components/ErrorInformer";
 import { useVariables } from "../../useVariables";
+import { nanoid } from "nanoid";
+import { NoData } from "@/components/NoData";
 
 const MAX_VARIABLES = 5;
 
@@ -48,7 +50,7 @@ const AddVarButton = ({ isFetching, isError, data }) => {
     const handleClick = () => {
         if (varLength >= MAX_VARIABLES) return;
         addVariable({
-            id: Date.now(),
+            id: nanoid(),
             color: getRandomColor(),
             name: null,
         });
@@ -89,10 +91,14 @@ const AddVarButtonContent = ({ isError, data, varLength }) => {
 };
 
 const VariablesContent = ({ isFetching, isError, error, data }) => {
-    const variables = useGraphStore((state) => state.variables);
+    const variables = useVariablesList();
     if (isFetching) return <Loader text={"Загрузка..."} />;
     if (isError) return <ErrorInformer error={error} />;
-    return Object.values(variables).map((variable) => (
+
+    if (variables.length === 0)
+        return <NoData message={"Добавьте переменные"} />;
+
+    return variables.map((variable) => (
         <GraphVariable key={variable.id} id={variable.id} data={data} />
     ));
 };

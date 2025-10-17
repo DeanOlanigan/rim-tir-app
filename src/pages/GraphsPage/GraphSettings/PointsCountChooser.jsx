@@ -15,6 +15,8 @@ export const PointsCountChooser = () => {
             onValueChange={(e) => {
                 setPoints(e.value[0]);
             }}
+            lazyMount
+            unmountOnExit
         >
             <Select.HiddenSelect />
             <Select.Label>Количество точек</Select.Label>
