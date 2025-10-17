@@ -131,18 +131,19 @@ export const useVariablesStore = create()(
                         updateData
                     );
 
-                    let draft = null;
+                    let draft = new ErrorDraft();
                     const params = Object.keys(updateData);
                     for (const param of params) {
                         if (param === "luaExpression") {
-                            draft = revalidateVars(newSettings);
+                            revalidateVars(newSettings, draft);
                         } else {
-                            draft = validateParameter(
-                                nodeId,
+                            validateParameter({
+                                id: nodeId,
                                 param,
-                                newSettings,
-                                configuratorConfig
-                            );
+                                settings: newSettings,
+                                cfg: configuratorConfig,
+                                draft,
+                            });
                         }
                     }
                     useValidationStore.getState().applyDraft2(draft);
@@ -164,12 +165,12 @@ export const useVariablesStore = create()(
                         );
                     }
 
-                    const draft = validateParameter(
-                        nodeId,
-                        "variableId",
-                        newSettings,
-                        configuratorConfig
-                    );
+                    const draft = validateParameter({
+                        id: nodeId,
+                        param: "variableId",
+                        settings: newSettings,
+                        cfg: configuratorConfig,
+                    });
                     useValidationStore.getState().applyDraft2(draft);
 
                     return { settings: newSettings };
@@ -229,12 +230,15 @@ export const useVariablesStore = create()(
                     let draft = new ErrorDraft();
                     for (const id of idsSet) {
                         const node = newSettings[id];
-                        validateNode(
+                        validateNode({
                             node,
-                            newSettings,
+                            settings: newSettings,
                             configuratorConfig,
-                            draft
-                        );
+                            draft,
+                        });
+                        if (newSettings[id].type === NODE_TYPES.variable) {
+                            revalidateVars(newSettings, draft);
+                        }
                     }
                     useValidationStore.getState().applyDraft2(draft);
 

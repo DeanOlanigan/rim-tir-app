@@ -75,10 +75,10 @@ function getSiblingsIds(context, id, includeSelf = true) {
     const parent = context[parentId];
     if (!parent) return [];
     const children = parent.children ?? [];
-    if (includeSelf) return children.slice();
     const out = [];
     for (const childId of children) {
-        if (childId !== id) out.push(childId);
+        if (!includeSelf && childId === id) continue;
+        out.push(childId);
     }
     return out;
 }

@@ -4,6 +4,7 @@ import { validateNamePatternMatch } from "../rules/name/nameValidation";
 import { validateParameter } from "./validateParameter";
 import { validateVariableSpecific } from "./validateVariableSpecific";
 import { getVariableMaps } from "../utils/get";
+import { hasIgnoreAccessor } from "@/utils/utils";
 
 export function validateAll(settings, configuratorConfig) {
     const t0 = performance.now();
@@ -17,7 +18,7 @@ export function validateAll(settings, configuratorConfig) {
 
     for (const node of Object.values(settings)) {
         getVariableMaps(node, varIdsByName, varNameById);
-        validateNamePatternOnePass(node, uniqueBuckets, draft);
+        validateNamePatternOnePass(settings, node, uniqueBuckets, draft);
         validateSettings(node, settings, configuratorConfig, draft);
     }
 
@@ -33,10 +34,12 @@ export function validateAll(settings, configuratorConfig) {
     return draft;
 }
 
-function validateNamePatternOnePass(node, buckets, draft) {
+function validateNamePatternOnePass(settings, node, buckets, draft) {
     if (node.name && node.rootId && NODE_UNIQUE_NAMES.has(node.type)) {
         const regexErrors = validateNamePatternMatch(node.name);
         draft.set(node.id, "name", VALIDATOR.REGEX, regexErrors);
+
+        if (hasIgnoreAccessor(settings, node.id)) return;
 
         let rootMap = buckets.get(node.rootId);
         if (!rootMap) {
@@ -66,12 +69,12 @@ function validateNamePatternOnePass(node, buckets, draft) {
 function validateSettings(node, settings, configuratorConfig, draft) {
     if (!node.setting) return;
     for (const paramKey of Object.keys(node.setting)) {
-        validateParameter(
-            node.id,
-            paramKey,
+        validateParameter({
+            id: node.id,
+            param: paramKey,
             settings,
-            configuratorConfig,
-            draft
-        );
+            cfg: configuratorConfig,
+            draft,
+        });
     }
 }

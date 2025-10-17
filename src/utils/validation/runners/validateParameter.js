@@ -1,10 +1,9 @@
 import { checkDependencies } from "../engines/jsonlogic/jsonLogic";
 import { ErrorDraft } from "../core/ErrorDraft";
 import { validatorRegistry } from "../core/validationRegistry";
-import { hasIgnoreAccessor } from "@/utils/utils";
 
 function validateRules(rules, context, nodeId, inputParam, draft) {
-    if (!Array.isArray(rules) || rules.length === 0) return {};
+    if (!Array.isArray(rules) || rules.length === 0) return;
 
     const byValidatorType = new Map();
     for (const rule of rules) {
@@ -37,6 +36,7 @@ function validateRules(rules, context, nodeId, inputParam, draft) {
 }
 
 function resetDraft(rules, nodeId, inputParam, draft) {
+    if (!Array.isArray(rules) || rules.length === 0) return;
     for (const rule of rules) {
         if (!rule || !rule.validator) continue;
         draft.set(nodeId, inputParam, rule.validator, []);
@@ -108,14 +108,14 @@ function validateNode(rules, settings, nodeId, draft) {
     validateRules(rules, settings, nodeId, null, draft);
 }
 
-export function validateParameter(
+export function validateParameter({
     id,
     param,
     settings,
     cfg,
     draft = new ErrorDraft(),
-    visited = new Set()
-) {
+    visited = new Set(),
+}) {
     const key = `${id}:${param}`;
     if (visited.has(key)) return draft;
     visited.add(key);
@@ -125,18 +125,12 @@ export function validateParameter(
     const def = cfg.nodePaths[nodePath].settings[param];
 
     const isVisible = checkDependencies(def?.visibleIf, settings, id);
-    const isIgnored = hasIgnoreAccessor(settings, id);
-    if (
-        (!isVisible && def?.rules?.length) ||
-        (isIgnored && def?.rules?.length)
-    ) {
+    if (!isVisible) {
         resetDraft(def?.rules, id, param, draft);
         return draft;
     }
 
-    if (def?.rules?.length) {
-        validateRules(def.rules, settings, id, param, draft);
-    }
+    validateRules(def?.rules, settings, id, param, draft);
 
     const nodeRules = cfg.nodePaths[nodePath].validationRules;
     if (nodeRules) validateNode(nodeRules, settings, id, draft);
@@ -150,7 +144,14 @@ export function validateParameter(
         const depIds = findDepIds(settings, settings[id], gigaDeps);
 
         for (const { id, param } of depIds) {
-            validateParameter(id, param, settings, cfg, draft, visited);
+            validateParameter({
+                id,
+                param,
+                settings,
+                cfg,
+                draft,
+                visited,
+            });
         }
     }
     return draft;

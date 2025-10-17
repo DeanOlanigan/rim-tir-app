@@ -7,6 +7,7 @@ import {
     DO_NOT_VALIDATE,
     NODE_UNIQUE_NAMES,
 } from "../utils/const";
+import { hasIgnoreAccessor } from "@/utils/utils";
 
 export function validateName({
     id,
@@ -22,6 +23,7 @@ export function validateName({
     const ids = getContextIds(settings, id, "name", scope, DO_NOT_VALIDATE);
     const map = new Map();
     for (const id of ids) {
+        if (hasIgnoreAccessor(settings, id)) continue;
         const node = settings[id] || {};
         if (!NODE_UNIQUE_NAMES.has(node.type)) continue;
         const val = node?.name;

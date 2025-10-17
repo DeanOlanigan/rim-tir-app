@@ -2,6 +2,7 @@ import { ErrorDraft } from "../core/ErrorDraft";
 import { luaAstParse } from "../engines/luaValidationService";
 import { tarjanCyclicDeps } from "../utils/tarjan";
 import { getVarDataStore } from "../utils/get";
+import { hasIgnoreAccessor } from "@/utils/utils";
 
 export function revalidateVars(newSettings, draft = new ErrorDraft()) {
     const depGraphById = {};
@@ -26,7 +27,10 @@ export function validateVariableSpecific(
     for (const id of varNameById.keys()) {
         const node = settings[id];
         const expr = node.setting?.luaExpression;
-        if (!expr) continue;
+        if (hasIgnoreAccessor(settings, id) || !expr) {
+            draft.set(id, "luaExpression", "code", []);
+            continue;
+        }
         const { markers, varsToCheckCycle } = luaAstParse(
             expr,
             varIdsByName,
