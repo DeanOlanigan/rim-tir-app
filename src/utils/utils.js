@@ -169,3 +169,11 @@ export function getMetricColor(status, baseColor) {
             return baseColor;
     }
 }
+
+export function isEmpty(v) {
+    if (v === undefined) return true;
+    if (v === null) return true;
+    if (typeof v === "string" && v.trim() === "") return true;
+    if (typeof v === "number" && Number.isNaN(v)) return true;
+    return !!(typeof v === "boolean" && v === false);
+}

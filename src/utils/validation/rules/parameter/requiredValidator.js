@@ -1,4 +1,4 @@
-import { hasIgnoreAccessor } from "@/utils/utils";
+import { hasIgnoreAccessor, isEmpty } from "@/utils/utils";
 import { VALIDATOR } from "../../utils/const";
 
 export function requiredValidator({ nodeId, param, rule, context, draft }) {
@@ -7,8 +7,7 @@ export function requiredValidator({ nodeId, param, rule, context, draft }) {
         return;
     }
     const val = context[nodeId]?.setting?.[param];
-    const res =
-        val !== undefined && val !== null && val !== "" && val !== false;
+    const res = !isEmpty(val);
     draft.set(
         nodeId,
         param,
