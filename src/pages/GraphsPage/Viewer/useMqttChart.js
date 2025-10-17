@@ -6,13 +6,18 @@ export function useMqttChart(chart, type) {
     const { subscribe, connected } = useMqttCore();
     useEffect(() => {
         if (type !== TIME_TYPE.real || !connected || !chart) return;
+
+        const datasetIndex = new Map();
+        chart.current.data.datasets.forEach((dataset, index) => {
+            datasetIndex.set(dataset.label, index);
+        });
+
         const topic = "graph/#";
 
         const unsub = subscribe(topic, { qos: 0, retain: false }, ({ msg }) => {
             const name = msg.name;
-            const chartData = chart.current.data.datasets.find(
-                (d) => d.label === name
-            );
+            const chartData =
+                chart.current.data.datasets[datasetIndex.get(name)];
             if (!chartData) return;
             chartData?.data?.push({
                 x: msg.ts,
