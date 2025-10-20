@@ -13,8 +13,6 @@ import {
 import { Tooltip } from "@/components/ui/tooltip";
 import { ColorModeButton } from "@/components/ui/color-mode";
 import { LuSettings, LuLogOut } from "react-icons/lu";
-import { useContext } from "react";
-import { AuthContext } from "@/providers/AuthProvider/AuthContext";
 
 import Navigation from "@/components/Navigation/Navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -121,13 +119,11 @@ const TestMqtt = () => {
 };
 
 const LogoutBtn = () => {
-    const { logout } = useContext(AuthContext);
     return (
         <Tooltip content="Выйти" disabled>
             <IconButton
                 size={"xs"}
                 variant={"ghost"}
-                onClick={logout}
                 css={{
                     _icon: {
                         width: "5",

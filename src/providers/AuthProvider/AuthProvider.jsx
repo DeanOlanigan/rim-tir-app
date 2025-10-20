@@ -12,7 +12,7 @@ const checkAuth = () => {
 };
 
 function AuthProvider({ children }) {
-    const [isAuthenticated, setIsAuthenticated] = useState(checkAuth());
+    const [isAuthenticated, setIsAuthenticated] = useState(true);
     const [sessionExpirationTime, setSessionExpirationTime] = useState(
         localStorage.getItem("session_expiration_time")
     );

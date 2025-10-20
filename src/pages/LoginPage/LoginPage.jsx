@@ -15,11 +15,10 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { LuLogIn } from "react-icons/lu";
 import { Navigate } from "react-router-dom";
-import { useAuthContext } from "@/providers/AuthProvider/AuthContext";
 import Lightning from "@/components/Lightning/Lightning";
 
 function LoginForm() {
-    const { isAuthenticated } = useAuthContext();
+    const isAuthenticated = true;
 
     console.log("Render LoginForm; isAuthenticated:", isAuthenticated);
 
@@ -61,7 +60,6 @@ function LoginForm() {
 export default LoginForm;
 
 const LoginCard = () => {
-    const { login } = useAuthContext();
     const [loading, setLoading] = useState(false);
     const [sharedMessage, setSharedMessage] = useState({
         type: null,
@@ -97,13 +95,13 @@ const LoginCard = () => {
 
                 setSharedMessage({ type: "success", message: data.message });
                 setLoading(false);
-                setTimeout(() => {
+                /* setTimeout(() => {
                     login({
                         serverTime: data.data.server_time,
                         sessionTimeLeft: data.data.session_time_left,
                         csrfToken: data.data.csrf_token,
                     });
-                }, 500);
+                }, 500); */
             } else {
                 const errorData = await response.json();
                 setLoading(false);
