@@ -22,6 +22,9 @@ export const LogFileViewerControls = () => {
             defaultValue={[value]}
             onValueChange={(e) => setLogRowsCount(e.value[0])}
             size={"xs"}
+            maxW={"xs"}
+            unmountOnExit
+            lazyMount
         >
             <Select.HiddenSelect />
             <Select.Label>Количество отображаемых строк:</Select.Label>

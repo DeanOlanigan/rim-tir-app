@@ -5,12 +5,10 @@ import {
     createListCollection,
     Flex,
     FormatByte,
-    Heading,
     HStack,
     IconButton,
     Listbox,
     LocaleProvider,
-    Stack,
     StackSeparator,
     Text,
     useListboxContext,
@@ -21,7 +19,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getLoglist, QK } from "@/api";
 import { LuArrowRight } from "react-icons/lu";
 import { useLogStore } from "../Store/store";
-import { useNavigate } from "react-router-dom";
 import { DownloadAllLogsButton } from "./DownloadAllLogsButton";
 import { NoData } from "@/components/NoData";
 import { ErrorInformer } from "@/components/ErrorInformer";
@@ -44,40 +41,24 @@ function LogSourceManager() {
     if (isError) return <ErrorInformer error={error} />;
 
     return (
-        <Stack>
-            <Heading>Выберите файл</Heading>
-            <Box
-                maxW={"xs"}
-                data-state={"open"}
-                animationDuration={"slow"}
-                animationStyle={{
-                    _open: "scale-fade-in",
-                }}
-            >
+        <Card.Root size={"sm"} shadow={"xl"}>
+            <Card.Header>
+                <Card.Title>Выберите файл</Card.Title>
+            </Card.Header>
+            <Card.Body gap={"2"}>
                 <LogFileViewerControls />
-            </Box>
-            <Card.Root
-                h={"lg"}
-                size={"sm"}
-                shadow={"xl"}
-                data-state={"open"}
-                animationDuration={"slow"}
-                animationStyle={{
-                    _open: "scale-fade-in",
-                }}
-            >
-                <Card.Body position={"relative"}>
+                <Box h={"500px"}>
                     {data?.data?.length > 0 ? (
                         <LogListBox data={data.data} />
                     ) : (
                         <NoData />
                     )}
-                </Card.Body>
-                <Card.Footer>
-                    <DownloadAllLogsButton />
-                </Card.Footer>
-            </Card.Root>
-        </Stack>
+                </Box>
+            </Card.Body>
+            <Card.Footer>
+                <DownloadAllLogsButton />
+            </Card.Footer>
+        </Card.Root>
     );
 }
 
@@ -103,7 +84,7 @@ const LogListBox = ({ data }) => {
             }}
         >
             <ListboxHeader collection={collection} />
-            <Listbox.Content rounded={0} divideY="1px" h={"full"}>
+            <Listbox.Content rounded={0} divideY="1px" maxH={"500px"}>
                 {collection.group().map(([category, items]) => (
                     <Listbox.ItemGroup key={category}>
                         <Listbox.ItemGroupLabel asChild>
@@ -176,12 +157,10 @@ const ListboxItemCheckmark = () => {
 
 const ListboxItem = ({ item }) => {
     const { setChosenLog } = useLogStore.getState();
-    const navigate = useNavigate();
 
     const chooseHandle = (e) => {
         e.stopPropagation();
         setChosenLog(item);
-        navigate("/log/viewer");
     };
 
     return (

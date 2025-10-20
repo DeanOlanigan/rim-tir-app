@@ -1,7 +1,7 @@
 import { AbsoluteCenter, Icon, Text, VStack } from "@chakra-ui/react";
 import { LuFileQuestion } from "react-icons/lu";
 
-export const NoData = () => {
+export const NoData = ({ message = "Нет данных" }) => {
     return (
         <AbsoluteCenter>
             <VStack textAlign={"center"}>
@@ -11,7 +11,7 @@ export const NoData = () => {
                     color={"bg.muted"}
                 />
                 <Text color={"fg.subtle"} fontWeight={"medium"}>
-                    Нет данных
+                    {message}
                 </Text>
             </VStack>
         </AbsoluteCenter>

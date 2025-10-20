@@ -1,6 +1,4 @@
-import { lazy } from "react";
-
-const ConfigurationPageLazy = lazy(async () => {
+const ConfigurationPageLazy = async () => {
     const [
         { ensureConfiguratorConfig },
         { useVariablesStore, rehydrateSettings },
@@ -25,6 +23,6 @@ const ConfigurationPageLazy = lazy(async () => {
 
     const { default: ConfigurationPage } = await import("./ConfigurationPage");
     return { default: ConfigurationPage };
-});
+};
 
 export default ConfigurationPageLazy;

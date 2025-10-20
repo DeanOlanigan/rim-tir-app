@@ -1,6 +1,4 @@
-import { lazy } from "react";
-
-const MonitoringPageLazy = lazy(async () => {
+const MonitoringPageLazy = async () => {
     const [{ ensureConfiguratorConfig }] = await Promise.all([
         import("@/utils/configurationParser"),
     ]);
@@ -9,6 +7,6 @@ const MonitoringPageLazy = lazy(async () => {
 
     const { default: MonitoringPage } = await import("./MonitoringPage");
     return { default: MonitoringPage };
-});
+};
 
 export default MonitoringPageLazy;

@@ -8,32 +8,27 @@ import { useGraphStore } from "../store/store";
 
 function GraphSettings() {
     return (
-        <Flex
-            direction={"column"}
-            gap={"2"}
+        <Card.Root
+            shadow={"xl"}
             data-state={"open"}
             animationDuration={"slow"}
             animationStyle={{ _open: "scale-fade-in" }}
         >
-            <Card.Root shadow={"xl"}>
-                <Card.Header>
-                    <Card.Title>Настройки отображения</Card.Title>
-                </Card.Header>
-                <Card.Body gap={"2"}>
-                    <PointsCountChooser />
-                    <Stack gap={"2"} direction={"row"} h={"xs"}>
-                        <OffsetOrPeriodPicker />
-                        <VariablesManager />
-                    </Stack>
-                </Card.Body>
-            </Card.Root>
-            <Stack w={"100%"} direction={"row"}>
-                <Box w={"100%"}>
-                    <ViewGraphButton />
-                </Box>
+            <Card.Header>
+                <Card.Title>Настройки отображения</Card.Title>
+            </Card.Header>
+            <Card.Body gap={"2"}>
+                <PointsCountChooser />
+                <Stack gap={"2"} direction={"row"} h={"xs"}>
+                    <OffsetOrPeriodPicker />
+                    <VariablesManager />
+                </Stack>
+            </Card.Body>
+            <Card.Footer>
+                <ViewGraphButton />
                 <BadApple />
-            </Stack>
-        </Flex>
+            </Card.Footer>
+        </Card.Root>
     );
 }
 

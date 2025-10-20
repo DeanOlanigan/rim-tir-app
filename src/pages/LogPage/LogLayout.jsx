@@ -1,19 +1,11 @@
-import { Outlet } from "react-router-dom";
-import { Container } from "@chakra-ui/react";
+import { useHasChosenLog } from "./Store/store";
+import LogSourceManager from "./SourceManager/LogSourceManager";
+import LogViewer from "./Viewer/LogViewer";
 
-function LogLayout() {
-    return (
-        <Container
-            maxW={"6xl"}
-            flex={"1"}
-            display={"flex"}
-            flexDirection={"column"}
-            minH={"0"}
-            p={"4"}
-        >
-            <Outlet />
-        </Container>
-    );
+function LogPage() {
+    const hasChosenLog = useHasChosenLog();
+
+    return hasChosenLog ? <LogViewer /> : <LogSourceManager />;
 }
 
-export default LogLayout;
+export default LogPage;
