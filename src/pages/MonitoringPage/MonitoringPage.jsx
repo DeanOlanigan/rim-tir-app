@@ -81,13 +81,15 @@ const TreeWrapper = ({ data, treeType, searchTerm }) => {
     return (
         <TreeCard
             data={data}
-            tree={
+            tree={({ width, height }) => (
                 <TreeView
                     data={data}
                     treeType={treeType}
                     searchTerm={searchTerm}
+                    width={width}
+                    height={height}
                 />
-            }
+            )}
             empty={<NoData />}
         />
     );

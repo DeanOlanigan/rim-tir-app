@@ -46,7 +46,8 @@
     "react-icons": "^5.4.0",
     "react-resizable-panels": "^2.1.7",
     "react-router-dom": "^7.0.2",
-    "react-virtualized": "^9.22.6",
+    "throttleit": "^2.1.0",
+    "use-resize-observer": "^9.1.0",
     "use-stick-to-bottom": "^1.1.1",
     "xmlbuilder": "^15.1.1",
     "zustand": "^5.0.3"
@@ -68,7 +69,6 @@
     "globals": "^15.12.0",
     "msw": "^2.10.5",
     "rollup-plugin-visualizer": "^6.0.3",
-    "use-resize-observer": "^9.1.0",
     "vite": "^6.0.1"
   },
   "msw": {

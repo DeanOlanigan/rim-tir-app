@@ -87,7 +87,14 @@ const TreeWrapper = ({ treeType }) => {
     return (
         <TreeCard
             data={data}
-            tree={<TreeView data={data} treeType={treeType} />}
+            tree={({ width, height }) => (
+                <TreeView
+                    data={data}
+                    treeType={treeType}
+                    width={width}
+                    height={height}
+                />
+            )}
             empty={<ContextMenuHint />}
         />
     );
