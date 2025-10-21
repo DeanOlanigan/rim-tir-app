@@ -20,20 +20,11 @@ const tableColumns = [
 
 export const JournalView = () => {
     return (
-        <Card.Root
-            w={"100%"}
-            h={"100%"}
-            shadow={"xl"}
-            data-state={"open"}
-            animationDuration={"slow"}
-            animationStyle={{
-                _open: "scale-fade-in",
-            }}
-        >
+        <Card.Root shadow={"md"} flex={1}>
             <Card.Header>
                 <JournalHeader />
             </Card.Header>
-            <Card.Body h={"100%"} pt={"0"} mt={"1rem"}>
+            <Card.Body>
                 <TestTable />
             </Card.Body>
         </Card.Root>

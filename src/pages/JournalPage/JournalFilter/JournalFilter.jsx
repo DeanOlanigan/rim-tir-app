@@ -7,32 +7,11 @@ import { FilterControls } from "./FilterControls";
 
 export const JournalFilter = () => {
     return (
-        <Card.Root
-            w={"30%"}
-            maxH={"100%"}
-            flexShrink={"1"}
-            flexGrow={"1"}
-            shadow={"xl"}
-            data-state={"open"}
-            overflow={"hidden"}
-            animationDuration={"slow"}
-            animationStyle={{
-                _open: "scale-fade-in",
-            }}
-        >
+        <Card.Root shadow={"md"} w={"2xs"}>
             <Card.Header>
                 <Card.Title>Фильтры</Card.Title>
             </Card.Header>
-            <Card.Body
-                gap={"2"}
-                flex={"1"}
-                display={"flex"}
-                py={"1"}
-                my={"1.5rem"}
-                overflow={"auto"}
-                flexDirection={"column"}
-                minH={"0"}
-            >
+            <Card.Body>
                 <Accordion.Root multiple size={"sm"}>
                     <Accordion.Item value="1">
                         <Accordion.ItemTrigger>

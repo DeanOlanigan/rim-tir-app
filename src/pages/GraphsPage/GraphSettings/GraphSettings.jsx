@@ -9,7 +9,8 @@ import { useGraphStore } from "../store/store";
 function GraphSettings() {
     return (
         <Card.Root
-            shadow={"xl"}
+            h={"100%"}
+            shadow={"md"}
             data-state={"open"}
             animationDuration={"slow"}
             animationStyle={{ _open: "scale-fade-in" }}

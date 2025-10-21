@@ -7,6 +7,7 @@ import {
 } from "./layouts";
 import { AuthGate } from "./guards";
 import { configurationLoader, monitoringLoader } from "./loaders";
+import { createBrowserRouter } from "react-router-dom";
 
 const LoginPage =           lazy(() => import("@/pages/LoginPage/LoginPage")); // prettier-ignore
 const ConfigurationPage =   lazy(() => import("@/pages/ConfigurationPage/ConfigurationPage")); // prettier-ignore
@@ -61,3 +62,5 @@ export const routes = [
         element: "404",
     },
 ];
+
+export const router = createBrowserRouter(routes, { basename: "/" });

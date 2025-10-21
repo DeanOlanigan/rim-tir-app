@@ -41,13 +41,20 @@ function LogSourceManager() {
     if (isError) return <ErrorInformer error={error} />;
 
     return (
-        <Card.Root size={"sm"} shadow={"xl"}>
+        <Card.Root
+            size={"sm"}
+            shadow={"xl"}
+            h={"100%"}
+            data-state={"open"}
+            animationDuration={"slow"}
+            animationStyle={{ _open: "scale-fade-in" }}
+        >
             <Card.Header>
                 <Card.Title>Выберите файл</Card.Title>
             </Card.Header>
-            <Card.Body gap={"2"}>
+            <Card.Body gap={"2"} minH={0}>
                 <LogFileViewerControls />
-                <Box h={"500px"}>
+                <Box flex={1} minH={0}>
                     {data?.data?.length > 0 ? (
                         <LogListBox data={data.data} />
                     ) : (
@@ -84,7 +91,13 @@ const LogListBox = ({ data }) => {
             }}
         >
             <ListboxHeader collection={collection} />
-            <Listbox.Content rounded={0} divideY="1px" maxH={"500px"}>
+            <Listbox.Content
+                rounded={0}
+                divideY="1px"
+                flex={1}
+                minH={0}
+                maxH={"none"}
+            >
                 {collection.group().map(([category, items]) => (
                     <Listbox.ItemGroup key={category}>
                         <Listbox.ItemGroupLabel asChild>

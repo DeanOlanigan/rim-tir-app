@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { routes } from "./routes";
+import { RouterProvider } from "react-router-dom";
 import { Flex, Heading } from "@chakra-ui/react";
+import { router } from "./routes";
 
 const SuspenseLoader = () => {
     return (
@@ -12,8 +12,6 @@ const SuspenseLoader = () => {
 };
 
 export const AppRouter = () => {
-    const router = createBrowserRouter(routes, { basename: "/" });
-
     return (
         <Suspense fallback={<SuspenseLoader />}>
             <RouterProvider router={router} />
