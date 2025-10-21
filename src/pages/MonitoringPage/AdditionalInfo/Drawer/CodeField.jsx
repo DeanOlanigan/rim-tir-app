@@ -1,6 +1,8 @@
 import { useColorMode } from "@/components/ui/color-mode";
 import { Stack, Text } from "@chakra-ui/react";
-import { Editor } from "@monaco-editor/react";
+import { Editor, loader } from "@monaco-editor/react";
+import * as monaco from "monaco-editor";
+loader.config({ monaco });
 
 export const CodeField = ({ setting, config, w, h }) => {
     const { colorMode } = useColorMode();

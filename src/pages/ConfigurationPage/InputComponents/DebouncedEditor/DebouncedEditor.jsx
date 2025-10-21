@@ -1,11 +1,13 @@
 import { useEffect, memo, useRef } from "react";
 import { useColorMode } from "@/components/ui/color-mode";
-import { Editor } from "@monaco-editor/react";
+import { Editor, loader } from "@monaco-editor/react";
 import { useVariablesStore } from "@/store/variables-store";
 import debounce from "debounce";
 import { getVarDataStore } from "@/utils/validation";
 import { luaAstParse } from "@/utils/validation";
 import { getCompletionSnippets } from "./snippets";
+import * as monaco from "monaco-editor";
+loader.config({ monaco });
 
 function createVariableDecorations(usages) {
     return usages.map((usage) => ({
