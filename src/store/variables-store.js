@@ -89,7 +89,6 @@ export const useVariablesStore = create()(
             updateInfo: (ts, name, description) =>
                 set((state) => ({
                     info: {
-                        ...state.info,
                         ts: ts ?? state.info.ts,
                         name: name ?? state.info.name,
                         description: description ?? state.info.description,
@@ -116,6 +115,7 @@ export const useVariablesStore = create()(
             createSetting: (settings) => {
                 set((state) => ({
                     settings: createSettingUtil(state.settings, settings),
+                    info: { ...state.info, ts: Date.now() },
                 }));
 
                 const state = get().settings;
@@ -148,7 +148,10 @@ export const useVariablesStore = create()(
                     }
                     useValidationStore.getState().applyDraft2(draft);
 
-                    return { settings: newSettings };
+                    return {
+                        settings: newSettings,
+                        info: { ...state.info, ts: Date.now() },
+                    };
                 }),
 
             bindVariable: (nodeId, variableId) =>
@@ -173,7 +176,10 @@ export const useVariablesStore = create()(
                     });
                     useValidationStore.getState().applyDraft2(draft);
 
-                    return { settings: newSettings };
+                    return {
+                        settings: newSettings,
+                        info: { ...state.info, ts: Date.now() },
+                    };
                 }),
 
             addNode: (treeType, parentId, newNodes) =>
@@ -215,7 +221,10 @@ export const useVariablesStore = create()(
                         useValidationStore.getState().applyDraft2(draft);
                     }
 
-                    return { settings: newSettings };
+                    return {
+                        settings: newSettings,
+                        info: { ...state.info, ts: Date.now() },
+                    };
                 }),
 
             setIgnore: (ids, value) =>
@@ -242,7 +251,10 @@ export const useVariablesStore = create()(
                     }
                     useValidationStore.getState().applyDraft2(draft);
 
-                    return { settings: newSettings };
+                    return {
+                        settings: newSettings,
+                        info: { ...state.info, ts: Date.now() },
+                    };
                 }),
 
             toggleIgnore: (ids) => {
@@ -303,6 +315,7 @@ export const useVariablesStore = create()(
                         state.settings,
                         idsSet
                     ),
+                    info: { ...state.info, ts: Date.now() },
                 }));
 
                 // TODO Реализовать более точечную валидацию
@@ -325,6 +338,7 @@ export const useVariablesStore = create()(
                         parentId,
                         index
                     ),
+                    info: { ...state.info, ts: Date.now() },
                 }));
 
                 // TODO Реализовать более точечную валидацию

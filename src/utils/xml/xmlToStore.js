@@ -141,7 +141,7 @@ export function parseXmlToState(xmlString) {
         variables: [],
         settings: {},
         info: {
-            ts: cfg?.getAttribute("date") || "",
+            ts: Number.parseInt(cfg?.getAttribute("date") || 0),
             name: cfg?.getAttribute("name") ?? "",
             description: cfg?.getAttribute("description") ?? "",
         },

@@ -83,6 +83,7 @@ export function pasteNodeUtil(ctx, treeType, parentId, initialClipboard) {
         [treeType]: nextTargetTree,
         settings: nextSettings,
         clipboard: { ...initialClipboard },
+        info: { ...ctx.info, ts: Date.now() },
     };
     if (clipboard.cut && srcTreeType !== treeType) {
         nextState[srcTreeType] = nextSourceTree;
