@@ -15,7 +15,7 @@ import {
     RealTimeScale,
     StreamingPlugin,
 } from "@robloche/chartjs-plugin-streaming";
-import { useChartDataSource } from "../GraphSettings/hooks";
+import { useChartDataSource } from "../hooks";
 
 ChartJS.register(
     LinearScale,

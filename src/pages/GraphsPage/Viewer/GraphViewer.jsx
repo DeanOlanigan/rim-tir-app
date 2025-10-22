@@ -6,7 +6,7 @@ import { useRef } from "react";
 import { TIME_TYPE } from "../GraphSettings/graphSettingsConstants";
 import { generateChartData } from "./useGeneratedChart";
 import { createOptions } from "./chartOptions";
-import { useChartController } from "../GraphSettings/hooks";
+import { useChartController } from "../hooks";
 
 function GraphViewer() {
     const state = useGraphStore((state) => state);

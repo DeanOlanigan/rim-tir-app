@@ -13,20 +13,39 @@ export function useMqttChart(chart, type) {
         });
 
         const topic = "graph/#";
+        const buf = [];
+        let t = null;
+
+        const flush = () => {
+            if (!buf.length) return;
+            for (const msg of buf) {
+                const name = msg.name;
+                const chartData =
+                    chart.current.data.datasets[datasetIndex.get(name)];
+                if (!chartData) continue;
+                chartData?.data?.push({
+                    x: msg.ts,
+                    y: msg.value,
+                });
+            }
+            chart.current.update("quiet");
+            buf.splice(0, buf.length);
+        };
 
         const unsub = subscribe(topic, { qos: 0, retain: false }, ({ msg }) => {
-            const name = msg.name;
-            const chartData =
-                chart.current.data.datasets[datasetIndex.get(name)];
-            if (!chartData) return;
-            chartData?.data?.push({
-                x: msg.ts,
-                y: msg.value,
-            });
-            chart.current.update("quiet");
+            buf.push(msg);
+            if (!t)
+                t = setTimeout(() => {
+                    t = null;
+                    flush();
+                }, 100);
         });
 
-        return () => unsub();
+        return () => {
+            unsub();
+            if (t) clearTimeout(t);
+            flush();
+        };
     }, [chart, type, subscribe, connected]);
 
     useEffect(() => {

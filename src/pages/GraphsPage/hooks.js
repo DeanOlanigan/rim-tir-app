@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { useMqttChart } from "../Viewer/useMqttChart";
-import { useBadApple } from "../Viewer/fun";
+import { useMqttChart } from "./Viewer/useMqttChart";
+import { useBadApple } from "./Viewer/fun";
 
 export function useChartController(grafRef) {
     const [paused, setPaused] = useState(false);
