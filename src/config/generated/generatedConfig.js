@@ -13,8 +13,8 @@ export const config = [
         node: "comport",
         type: "interface",
         label: "Comport",
-        icon: "cable",
-        color: "cyan",
+        shortname: "COM",
+        color: "purple",
         usedIn: "both",
         settings: {
             iface: {
@@ -93,7 +93,7 @@ export const config = [
                 type: "protocol",
                 label: "Modbus-RTU Master",
                 shortname: "MB RTU",
-                color: "teal",
+                color: "red",
                 usedIn: "receive",
                 settings: {
                     logging: {
@@ -469,7 +469,7 @@ export const config = [
                 type: "protocol",
                 label: "Modbus-RTU Slave",
                 shortname: "MB RTU",
-                color: "teal",
+                color: "red",
                 usedIn: "send",
                 settings: {
                     logging: {
@@ -838,9 +838,9 @@ export const config = [
                 node: "tcpBridge_server",
                 type: "interfaceSpecific",
                 label: "TCP-мост (сервер)",
+                shortname: "TCP",
                 usedIn: "receive",
-                icon: "lrEllipsis",
-                color: "purple",
+                color: "green",
                 settings: {
                     logging: {
                         type: "boolean",
@@ -935,9 +935,9 @@ export const config = [
                 node: "tcpBridge_client",
                 type: "interfaceSpecific",
                 label: "TCP-мост (клиент)",
+                shortname: "TCP",
                 usedIn: "send",
-                icon: "lrEllipsis",
-                color: "purple",
+                color: "green",
                 settings: {
                     logging: {
                         type: "boolean",
@@ -1035,7 +1035,7 @@ export const config = [
         type: "interface",
         label: "GPIO",
         shortname: "gpio",
-        color: "cyan",
+        color: "purple",
         settings: {
             logging: {
                 type: "boolean",
@@ -1091,11 +1091,11 @@ export const config = [
                         enumValues: [
                             {
                                 label: "Вход",
-                                value: "input",
+                                value: "in",
                             },
                             {
                                 label: "Выход",
-                                value: "output",
+                                value: "out",
                             },
                         ],
                     },
@@ -1114,7 +1114,7 @@ export const config = [
         type: "protocol",
         label: "IEC-104 Клиент",
         shortname: "iec104",
-        color: "teal",
+        color: "red",
         usedIn: "receive",
         settings: {
             logging: {
@@ -1622,7 +1622,7 @@ export const config = [
         type: "protocol",
         label: "IEC-104 Сервер",
         shortname: "iec104",
-        color: "teal",
+        color: "red",
         usedIn: "send",
         settings: {
             logging: {
@@ -2160,7 +2160,7 @@ export const config = [
         label: "Modbus-TCP Клиент",
         usedIn: "receive",
         shortname: "MB TCP",
-        color: "teal",
+        color: "red",
         settings: {
             logging: {
                 type: "boolean",
@@ -2574,7 +2574,7 @@ export const config = [
         label: "Modbus-TCP Сервер",
         usedIn: "send",
         shortname: "MB TCP",
-        color: "teal",
+        color: "red",
         settings: {
             logging: {
                 type: "boolean",
