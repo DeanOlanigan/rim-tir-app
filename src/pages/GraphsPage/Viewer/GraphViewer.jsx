@@ -27,7 +27,7 @@ function GraphViewer() {
     return (
         <Card.Root
             w={"100%"}
-            shadow={"xl"}
+            shadow={"md"}
             data-state={"open"}
             animationDuration={"slow"}
             animationStyle={{

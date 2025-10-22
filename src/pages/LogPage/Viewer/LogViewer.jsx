@@ -4,7 +4,14 @@ import { LogViewerBody } from "./LogViewerBody";
 
 function LogViewer() {
     return (
-        <Card.Root size={"sm"} shadow={"xl"} h={"100%"}>
+        <Card.Root
+            size={"sm"}
+            shadow={"md"}
+            h={"100%"}
+            data-state={"open"}
+            animationDuration={"slow"}
+            animationStyle={{ _open: "scale-fade-in" }}
+        >
             <Card.Header>
                 <LogViewerHeader />
             </Card.Header>

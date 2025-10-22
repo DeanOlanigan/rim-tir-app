@@ -43,7 +43,7 @@ function LogSourceManager() {
     return (
         <Card.Root
             size={"sm"}
-            shadow={"xl"}
+            shadow={"md"}
             h={"100%"}
             data-state={"open"}
             animationDuration={"slow"}

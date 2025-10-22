@@ -44,7 +44,7 @@ function MonitoringPage() {
                 />
                 <NameSwitcher />
             </SubHeader>
-            <Box h={"100%"}>
+            <Box h={"100%"} minH={0}>
                 <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                     <Panel collapsible={true} collapsedSize={0} minSize={25}>
                         <TreeWrapper

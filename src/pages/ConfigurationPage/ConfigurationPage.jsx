@@ -25,8 +25,7 @@ function ConfigurationPage() {
     return (
         <>
             <BaseConfCard />
-            <Box h={"100%"} position={"relative"}>
-                <EmptyConfigDialog />
+            <Box minH={0} h={"100%"}>
                 <PanelGroup
                     autoSaveId="configuration-main-panel"
                     direction="horizontal"
@@ -59,9 +58,10 @@ function ConfigurationPage() {
                         <TreeWrapper treeType={TREE_TYPES.variables} />
                     </Panel>
                 </PanelGroup>
-                <ContextMenu />
-                <ConfSyncManager />
             </Box>
+            <EmptyConfigDialog />
+            <ContextMenu />
+            <ConfSyncManager />
         </>
     );
 }
