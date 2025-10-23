@@ -3,14 +3,15 @@ import { Menu, Portal } from "@chakra-ui/react";
 import { ContextMenuList } from "./ContextMenuList";
 
 export const ContextMenu = () => {
-    console.log("%cRender ContextMenu", "color: white; background: purple;");
-    const { context, updateContext } = useContextMenuStore((state) => state);
-    const { apiPath, x, y, visible } = context;
+    const { updateContext } = useContextMenuStore.getState();
+    const { apiPath, x, y, visible } = useContextMenuStore(
+        (state) => state.cfg
+    );
 
     return (
         <Menu.Root
             open={visible}
-            onOpenChange={(e) => updateContext({ visible: e.open })}
+            onOpenChange={(e) => updateContext("cfg", { visible: e.open })}
             anchorPoint={{ x, y }}
             positioning={{
                 getAnchorRect: () =>

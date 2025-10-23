@@ -91,7 +91,7 @@ export const MenuItem = ({
                 if (!disabled) {
                     resetTreeFocus && apiPath.deselectAll();
                     item.action?.(apiPath);
-                    updateContext({ visible: false });
+                    updateContext("cfg", { visible: false });
                 }
             }}
         >

@@ -1,9 +1,9 @@
 import { Tooltip } from "@/components/ui/tooltip";
+import { MenuItem } from "@/pages/ConfigurationPage/ContextMenu/MenuItem";
 import { configuratorConfig } from "@/utils/configurationParser";
 import { IconButton, Menu } from "@chakra-ui/react";
 import { useId } from "react";
 import { LuPlus } from "react-icons/lu";
-import { MenuItem } from "../../../ContextMenu/MenuItem";
 
 export const ConnectionsButtons = ({ treeApi, type }) => {
     const triggerId = useId();

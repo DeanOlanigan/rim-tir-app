@@ -27,7 +27,7 @@ export const Node = ({ node, style, dragHandle, tree }) => {
         e.stopPropagation();
         node.focus();
         node.open();
-        updateContext({
+        updateContext("cfg", {
             apiPath: tree,
             x: e.clientX,
             y: e.clientY,

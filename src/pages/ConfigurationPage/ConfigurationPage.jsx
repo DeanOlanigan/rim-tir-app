@@ -14,7 +14,7 @@ import { useVariablesStore } from "@/store/variables-store";
 import { EditorCard } from "./Editor/EditorCard";
 import { TREE_TYPES } from "@/config/constants";
 import { EmptyConfigDialog } from "./Dialogs/EmptyConfigDialog";
-import { ContextMenu } from "./Tree/ContextMenu/ContextMenu";
+import { ContextMenu } from "./ContextMenu/ContextMenu";
 import { LuBadgePlus, LuLock } from "react-icons/lu";
 import { TreeCard } from "@/components/TreeView/TreeCard";
 import { TreeView } from "./Tree/TreeView";

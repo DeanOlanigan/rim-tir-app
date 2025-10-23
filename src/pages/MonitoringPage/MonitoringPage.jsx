@@ -2,7 +2,7 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
 import { useEffect, useState } from "react";
 import { Box, Switch } from "@chakra-ui/react";
-import { dialog } from "./setValue/dialog";
+import { signalEditDialog, infoDialog } from "./setValue/dialog";
 import { ConfigInfoWrapper } from "./ConfigInfo";
 import { TreeCard } from "@/components/TreeView/TreeCard";
 import { TREE_TYPES } from "@/config/constants";
@@ -16,6 +16,7 @@ import { ErrorInformer } from "@/components/ErrorInformer";
 import { Loader } from "@/components/Loader";
 import { useMqttLive } from "./useMqttLive";
 import { useMonitoringLive } from "./store/mqtt-stream-store";
+import { ContextMenu } from "./ContextMenu/ContextMenu";
 
 function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -70,7 +71,9 @@ function MonitoringPage() {
                         />
                     </Panel>
                 </PanelGroup>
-                <dialog.Viewport />
+                <signalEditDialog.Viewport />
+                <infoDialog.Viewport />
+                <ContextMenu />
             </Box>
         </>
     );

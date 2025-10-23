@@ -76,7 +76,7 @@ export function useTreeViewHandlers(treeType) {
             e.stopPropagation();
             api.root.focus();
             api.root.select();
-            updateContext({
+            updateContext("cfg", {
                 apiPath: api,
                 x: e.clientX,
                 y: e.clientY,
