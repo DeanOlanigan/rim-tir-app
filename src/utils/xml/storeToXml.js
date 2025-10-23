@@ -9,7 +9,7 @@ function buildNode(xmlParent, node, settingsMap) {
     const tag = toTagName(node.type);
 
     const attrs = {};
-    attrs.isIgnored = node.isIgnored;
+    attrs.isIgnored = node.isIgnored ?? false;
     if (node.type !== "dataObject") attrs.name = node.name;
     attrs.id = node.id;
     if (node.rootId) attrs.rootId = node.rootId;

@@ -198,6 +198,7 @@ export const variable = {
             icon: LuSquareTerminal,
             color: "blue",
             showInTree: true,
+            default: false,
             visibleIf: {
                 or: [
                     {
@@ -236,6 +237,7 @@ export const variable = {
             icon: LuArchive,
             color: "teal",
             showInTree: true,
+            default: false,
             visibleIf: {
                 or: [
                     {

@@ -23,7 +23,9 @@ export const ConfSyncManager = () => {
 
     useEffect(() => {
         if (!data || !local) return;
-        const isEq = canonicalize(data) === canonicalize(local);
+        const dataCanonical = canonicalize(data);
+        const localCanonical = canonicalize(local);
+        const isEq = dataCanonical === localCanonical;
         setSync(isEq);
     }, [local, data, setSync]);
 

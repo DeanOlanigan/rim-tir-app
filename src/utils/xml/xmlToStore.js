@@ -77,12 +77,12 @@ function readNode(
     treeType
 ) {
     const id = nodeElem.getAttribute("id");
-    const name = nodeElem.getAttribute("name") || "";
+    const name = nodeElem.getAttribute("name") || undefined;
     const type = toCamelCase(nodeElem.tagName);
     const path = nodeElem.getAttribute("path") || undefined;
     const node = nodeElem.getAttribute("node") || undefined;
     const rootId = nodeElem.getAttribute("rootId") || undefined;
-    const isIgnored = nodeElem.getAttribute("isIgnored");
+    const isIgnored = nodeElem.getAttribute("isIgnored") === "true";
 
     checkNode({ id, type, path, node, rootId, treeType });
 
@@ -95,7 +95,7 @@ function readNode(
         id,
         type,
         name,
-        isIgnored: isIgnored === "true",
+        isIgnored,
         children,
     };
     if (parentId) settings[id].parentId = parentId;
@@ -108,7 +108,7 @@ function readNode(
         id,
         type,
         name,
-        isIgnored: isIgnored === "true",
+        isIgnored,
         children: [],
     };
     if (path) treeNode.path = path;

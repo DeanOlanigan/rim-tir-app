@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { configuratorConfig } from "./configurationParser";
-import { CONN_STATUS } from "@/config/constants";
+import { CONN_STATUS, NODE_TYPES } from "@/config/constants";
 
 export const getStartDate = () => {
     const startDate = new Date();
@@ -50,9 +50,11 @@ export function initDefaultDataByPath(path, parentId) {
         id: id,
         node: nodePaths[path].node,
         type: nodePaths[path].type,
-        name: nodePaths[path].node,
         path: path,
+        isIgnored: false,
     };
+    if (nodePaths[path].type !== NODE_TYPES.dataObject)
+        treeNode.name = nodePaths[path].node;
     if (nodePaths[path].children || nodePaths[path].type === "folder") {
         treeNode.children = [];
     }
