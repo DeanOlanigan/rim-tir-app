@@ -4,6 +4,7 @@ import { useParameters } from "../../pages/ConfigurationPage/Tree/NodeViews/getP
 import { memo } from "react";
 import { validateVisibility } from "@/utils/validation";
 import { isEmpty } from "@/utils/checkers";
+import { iconsMap } from "@/config/icons";
 
 function getColorPalette(value, settings) {
     const isBool = typeof settings[value.param] === "boolean";
@@ -59,7 +60,7 @@ const Param = ({ settings, nodeId, value, isVariable }) => {
 };
 
 const BoolParamViewer = ({ value, param, isVariable }) => {
-    if (isVariable && value.icon) return <Icon as={value.icon} />;
+    if (isVariable && value.icon) return <Icon as={iconsMap[value.icon]} />;
     if (value.shortname) return value.shortname;
     return param ? <LuCheck /> : <LuX />;
 };

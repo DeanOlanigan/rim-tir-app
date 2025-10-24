@@ -10,6 +10,7 @@ import {
 import { InputController } from "../../InputComponents/InputController";
 import { InputFactory } from "../../InputComponents/InputFactory";
 import { useVariablesStore } from "@/store/variables-store";
+import { iconsMap } from "@/config/icons";
 import { validateVisibility } from "@/utils/validation/runners/validateVisibility";
 import { configuratorConfig } from "@/store/configurator-config";
 
@@ -36,7 +37,7 @@ export const CompositeSection = ({
 
     const isChecked = data.setting?.[checkedParam] ?? false;
 
-    const ParamIcon = dep?.icon;
+    const ParamIcon = iconsMap[dep?.icon];
     return (
         <Card.Root
             colorPalette={dep.color}

@@ -1,13 +1,3 @@
-import { createListCollection } from "@chakra-ui/react";
-import {
-    LuArchive,
-    LuChartSpline,
-    LuInfo,
-    LuRefreshCcwDot,
-    LuSquareTerminal,
-    LuTriangleAlert,
-} from "react-icons/lu";
-
 export const variable = {
     node: "variable",
     type: "variable",
@@ -17,59 +7,57 @@ export const variable = {
         type: {
             type: "enum",
             label: "Тип данных",
-            enumValues: createListCollection({
-                items: [
-                    {
-                        label: "1 бит - bool",
-                        value: "bit",
-                        min: 0,
-                        max: 1,
-                        step: 1,
-                        integer: true,
-                    },
-                    {
-                        label: "2 байта - целое без знака",
-                        value: "ushort",
-                        min: 0,
-                        max: 65535,
-                        step: 1,
-                        integer: true,
-                    },
-                    {
-                        label: "2 байта - целое",
-                        value: "short",
-                        min: -32768,
-                        max: 32767,
-                        step: 1,
-                        integer: true,
-                    },
-                    {
-                        label: "4 байта - целое",
-                        value: "int",
-                        min: -2147483648,
-                        max: 2147483647,
-                        step: 1,
-                        integer: true,
-                    },
-                    {
-                        label: "4 байта - целое без знака",
-                        value: "uint",
-                        min: 0,
-                        max: 4294967295,
-                        step: 1,
-                        integer: true,
-                    },
-                    {
-                        label: "4 байта - с плавающей точкой",
-                        value: "float",
-                        min: -3.402823466e38,
-                        max: 3.402823466e38,
-                        step: 0.1,
-                        integer: false,
-                        precision: 6,
-                    },
-                ],
-            }),
+            enumValues: [
+                {
+                    label: "1 бит - bool",
+                    value: "bit",
+                    min: 0,
+                    max: 1,
+                    step: 1,
+                    integer: true,
+                },
+                {
+                    label: "2 байта - целое без знака",
+                    value: "ushort",
+                    min: 0,
+                    max: 65535,
+                    step: 1,
+                    integer: true,
+                },
+                {
+                    label: "2 байта - целое",
+                    value: "short",
+                    min: -32768,
+                    max: 32767,
+                    step: 1,
+                    integer: true,
+                },
+                {
+                    label: "4 байта - целое",
+                    value: "int",
+                    min: -2147483648,
+                    max: 2147483647,
+                    step: 1,
+                    integer: true,
+                },
+                {
+                    label: "4 байта - целое без знака",
+                    value: "uint",
+                    min: 0,
+                    max: 4294967295,
+                    step: 1,
+                    integer: true,
+                },
+                {
+                    label: "4 байта - с плавающей точкой",
+                    value: "float",
+                    min: -3.402823466e38,
+                    max: 3.402823466e38,
+                    step: 0.1,
+                    integer: false,
+                    precision: 6,
+                },
+            ],
             default: "bit",
         },
         description: {
@@ -81,7 +69,7 @@ export const variable = {
             type: "boolean",
             label: "Цикличная",
             shortname: "Ц",
-            icon: LuRefreshCcwDot,
+            icon: "refresh",
             color: "purple",
             showInTree: true,
             default: false,
@@ -149,7 +137,7 @@ export const variable = {
             type: "boolean",
             label: "В архив ТИ",
             shortname: "ТИ",
-            icon: LuChartSpline,
+            icon: "chart",
             color: "red",
             showInTree: true,
             default: false,
@@ -174,16 +162,14 @@ export const variable = {
         measurement: {
             type: "enum",
             label: "Единица измерения",
-            enumValues: createListCollection({
-                items: [
-                    { label: "В", value: "V" },
-                    { label: "кВ", value: "kV" },
-                    { label: "мВ", value: "mV" },
-                    { label: "А", value: "A" },
-                    { label: "кА", value: "kA" },
-                    { label: "мА", value: "mA" },
-                ],
-            }),
+            enumValues: [
+                { label: "В", value: "V" },
+                { label: "кВ", value: "kV" },
+                { label: "мВ", value: "mV" },
+                { label: "А", value: "A" },
+                { label: "кА", value: "kA" },
+                { label: "мА", value: "mA" },
+            ],
             default: "V",
         },
         aperture: {
@@ -195,7 +181,7 @@ export const variable = {
             type: "boolean",
             label: "ТУ",
             shortname: "ТУ",
-            icon: LuSquareTerminal,
+            icon: "terminal",
             color: "blue",
             showInTree: true,
             default: false,
@@ -234,7 +220,7 @@ export const variable = {
             type: "boolean",
             label: "В архив ТС",
             shortname: "ТС",
-            icon: LuArchive,
+            icon: "archive",
             color: "teal",
             showInTree: true,
             default: false,
@@ -272,34 +258,32 @@ export const variable = {
         group: {
             type: "enum",
             label: "Группа",
-            enumValues: createListCollection({
-                items: [
-                    {
-                        label: "Предупредительные",
-                        value: "warn",
-                        color: "orange",
-                        icon: LuTriangleAlert,
-                    },
-                    {
-                        label: "Аварийные",
-                        value: "danger",
-                        color: "red",
-                        icon: LuTriangleAlert,
-                    },
-                    {
-                        label: "Оперативного состояния",
-                        value: "state",
-                        color: "teal",
-                        icon: LuInfo,
-                    },
-                    {
-                        label: "Без группы",
-                        value: "noGroup",
-                        color: "green",
-                        icon: null,
-                    },
-                ],
-            }),
+            enumValues: [
+                {
+                    label: "Предупредительные",
+                    value: "warn",
+                    color: "orange",
+                    icon: "error",
+                },
+                {
+                    label: "Аварийные",
+                    value: "danger",
+                    color: "red",
+                    icon: "error",
+                },
+                {
+                    label: "Оперативного состояния",
+                    value: "state",
+                    color: "teal",
+                    icon: "info",
+                },
+                {
+                    label: "Без группы",
+                    value: "noGroup",
+                    color: "green",
+                    icon: null,
+                },
+            ],
             default: "noGroup",
             visibleIf: {
                 or: [
