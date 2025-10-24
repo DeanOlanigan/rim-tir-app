@@ -16,8 +16,8 @@ export const MenuItem = ({
     if (!item) return null;
     const treeType = apiPath.props.treeType;
     const focusedId = apiPath.focusedNode?.id;
-    const settings = useVariablesStore.getState().settings;
-    const isIgnored = settings[focusedId]?.isIgnored;
+    const ctx = useVariablesStore.getState();
+    const isIgnored = ctx.settings[focusedId]?.isIgnored;
 
     if (item.type === "separator") {
         return <Menu.Separator key={`sep_${index}`} />;
@@ -52,7 +52,7 @@ export const MenuItem = ({
     }
 
     if (item.type === "paste") {
-        disabled = getDisabledState(settings, focusedId, treeType);
+        disabled = getDisabledState(ctx, focusedId, treeType);
     }
 
     if (item.children && Array.isArray(item.children)) {
@@ -91,11 +91,16 @@ export const MenuItem = ({
             onClick={() => {
                 if (!disabled) {
                     resetTreeFocus && apiPath.deselectAll();
-                    actionsMap?.[item.action](apiPath, {
-                        node: item.node,
-                        times: item.count,
-                        path: item.path,
-                    });
+                    const fn = actionsMap[item.action];
+                    if (!fn) {
+                        console.warn(
+                            "[context menu] unknown action:",
+                            item.action,
+                            item
+                        );
+                        return;
+                    }
+                    fn(apiPath, item);
                     updateContext("cfg", { visible: false });
                 }
             }}

@@ -1,6 +1,7 @@
 import { configuratorConfig } from "@/store/configurator-config";
 import { buildDependenciesGraph, parseTree } from "./treeParser";
 import { resolveFind } from "./logicDependency";
+import { createContextMenu } from "../contextMenuBuilder";
 
 let _built = false;
 let _promise = null;
@@ -10,10 +11,7 @@ export async function ensureConfiguratorConfig() {
     if (_promise) return _promise;
 
     _promise = (async () => {
-        const [{ config }, { createContextMenu }] = await Promise.all([
-            import("@/config/generated/generatedConfig"),
-            import("../contextMenuBuilder/builder"),
-        ]);
+        const { config } = await import("@/config/generated/generatedConfig");
 
         const { nodePaths, settingPaths, visiblePaths } = parseTree(config);
         resolveFind(nodePaths, settingPaths);

@@ -31,6 +31,8 @@ export const actionsMap = {
         const parentId = getParentId(api);
         useVariablesStore.getState().pasteNode(treeType, parentId);
     },
-    create: (api, { node, times, path }) =>
-        api.create({ type: { node, times, path } }),
+    create: (api, item) =>
+        api.create({
+            type: { node: item?.node, times: item?.count, path: item?.path },
+        }),
 };
