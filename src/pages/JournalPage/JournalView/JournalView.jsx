@@ -1,5 +1,4 @@
 import {
-    Box,
     Card,
     Flex,
     IconButton,
@@ -8,9 +7,10 @@ import {
     useCheckboxGroup,
 } from "@chakra-ui/react";
 import { LuPlay, LuDownload, LuColumns3 } from "react-icons/lu";
-//import { TestTablesDeux } from "./JournalTable";
+import { TestTables } from "./JournalTable";
 import { TestTablesDeux } from "./JournalTableDeux";
 import { useColumnsStore } from "../JournalStores/ColumnsStore";
+import { JournalFilter } from "../JournalFilter/JournalFilter";
 
 const tableColumns = [
     { label: "Дата и время", value: "date" },
@@ -24,8 +24,9 @@ const tableColumns = [
 export const JournalView = () => {
     return (
         <Card.Root
-            w={"100%"}
+            width={"100%"}
             h={"100%"}
+            transition={"width 3s ease"}
             shadow={"xl"}
             data-state={"open"}
             animationDuration={"slow"}
@@ -58,7 +59,10 @@ const JournalHeader = () => {
                     <LuPlay />
                 </IconButton>
             </Flex>
-            <ColumnViewMenu />
+            <Flex gap={"1"}>
+                <JournalFilter />
+                <ColumnViewMenu />
+            </Flex>
         </Flex>
     );
 };
@@ -68,16 +72,16 @@ const ColumnViewMenu = () => {
     const {
         tableColumnsZus,
         setColons
-    } = useColumnsStore()
+    } = useColumnsStore();
     const group = useCheckboxGroup({ defaultValue: tableColumnsZus });
 
     const handleCheckboxChange = (value, checked) => {
-    const newColumns = checked 
-        ? [...tableColumnsZus, value]
-        : tableColumnsZus.filter(col => col !== value);
+        const newColumns = checked 
+            ? [...tableColumnsZus, value]
+            : tableColumnsZus.filter(col => col !== value);
     
-    setColons(newColumns);
-};
+        setColons(newColumns);
+    };
 
     return (
         <Menu.Root closeOnSelect={false}>
@@ -97,7 +101,7 @@ const ColumnViewMenu = () => {
                                     checked={group.isChecked(value)}
                                     onCheckedChange={(checked) =>{
                                         handleCheckboxChange(value, checked);
-                                        group.toggleValue(value)
+                                        group.toggleValue(value);
                                     }}
                                 >
                                     {label}

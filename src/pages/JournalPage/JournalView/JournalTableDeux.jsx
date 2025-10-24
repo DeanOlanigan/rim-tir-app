@@ -1,13 +1,15 @@
-import { Box, Text, IconButton } from "@chakra-ui/react";
+import { Box, Text, IconButton, ColorPicker, Badge } from "@chakra-ui/react";
 import { LuArrowDown } from "react-icons/lu";
 import { useQuery } from "@tanstack/react-query";
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { useReactTable, getCoreRowModel, flexRender } from '@tanstack/react-table';
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useReactTable, getCoreRowModel, flexRender } from "@tanstack/react-table";
 import { useGroupStore } from "../JournalStores/GroupFilterStore";
 import { useMessageFilterStore } from "../JournalStores/MessageFilterStore";
 import { useColumnsStore } from "../JournalStores/ColumnsStore";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { useStickToBottom } from "use-stick-to-bottom";
+import { NoData } from "@/components/NoData";
+import { Loader } from "@/components/Loader";
 
 const tableColumns = [
     { label: "Дата и время", value: "date", size: 200 },
@@ -18,9 +20,16 @@ const tableColumns = [
     { label: "Описание", value: "desc", size: 200 },
 ];
 
+const colors = {
+    danger: "#E53E3E",     // red.600
+    warn: "#DD6B20",       // orange.600 
+    state: "#3182CE",      // blue.600
+    noGroup: undefined     
+};
+
 const useJournalHistory = () => {
     const q = useQuery({
-        queryKey: ['journal'],
+        queryKey: ["journal"],
         queryFn: async () => {
             const out = [];
             const count = 1000;
@@ -59,7 +68,7 @@ export const TestTablesDeux = () => {
             return selectedGroups.includes(item.group) && selectedMessages.includes(item.type);
         });
         return filteredDataFunc;
-    }
+    };
 
     const FilterColumns = (tableColumns, tableColumnsZus) => {
         const filteredColumnsFunc = tableColumns.filter((colon) => {
@@ -67,7 +76,7 @@ export const TestTablesDeux = () => {
             return tableColumnsZus.includes(colon.value);
         });
         return filteredColumnsFunc;
-    }
+    };
 
     const filtredData = useMemo(() => FilterData(data, selectedGroups, selectedMessages), [data, selectedGroups, selectedMessages]);
     const filtreColon = useMemo(() => FilterColumns(tableColumns, tableColumnsZus), [tableColumnsZus]);
@@ -78,11 +87,32 @@ export const TestTablesDeux = () => {
             accessorKey: column.value,
             header: column.label,
             size: column.size,
-            cell: ({ getValue }) => (
-                <Text fontSize="sm">{getValue()}</Text>
-            ),
+            cell: ({ getValue }) => {
+                const value = getValue();
+                
+                if (column.value === "group") {
+                    const colorScheme = {
+                        danger: "red",
+                        warn: "orange",
+                        state: "blue",
+                        noGroup: "purple"
+                    }[value];
+                
+
+                    return (
+                        <Badge
+                            colorPalette={colorScheme}
+                            variant={"subtle"}
+                            fontSize={"500"}
+                        >
+                            {value}
+                        </Badge>
+                    );
+                }
+                return <Text>{value}</Text>;
+            },
         })),
-        [filtreColon]
+    [filtreColon]
     );
 
     const table = useReactTable({
@@ -97,100 +127,92 @@ export const TestTablesDeux = () => {
         count: rows.length,
         getScrollElement: () => sticky.scrollRef.current,
         estimateSize: () => 34,
-        measureElement: (el) => {
-            if (!el) return 34;
-            return el.getBoundingClientRect().height
-        },
-        overscan: 20,
+
+        overscan: 5,
     });
 
-    const virtualRows = virtualizer.getVirtualItems();
+    const virtualRows = virtualizer.getVirtualItems();;
 
-    if (isLoading) return <Text>Loading...</Text>;
+    if (isLoading) return (
+        <Loader />
+    );
     if (isError) return <Text>Error: {error.message}</Text>;
 
     return (
-        <Box 
-            ref={sticky.scrollRef} 
+        <Box
             height="100%" 
             overflow="auto"
-            className="container"
+            borderRadius={"sm"}
+            ref={sticky.scrollRef}
         >
             {(filtredData.length === 0 || filtreColon.length === 0) && (
-                <Box 
-                    style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        textAlign: 'center',
-                        padding: '20px'
-                    }}
-                >
-                    <Text color="gray.500">NO DATA</Text>
-                </Box>
+                <NoData />
             )}
-            <table style={{ width: '100%', tableLayout: 'fixed' }}>
-                <thead style={{ position: 'sticky', top: 0, zIndex: 1 }}>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                return (
-                                    <th
-                                        key={header.id}
-                                        colSpan={header.colSpan}
-                                        style={{ 
-                                            width: header.getSize(),
-                                            textAlign: 'center',
-                                            padding: '8px',
-                                            borderBottom: '2px solid #e2e8f0',
-                                            fontWeight: 'semibold',
-                                            fontSize: 'sm',
-                                            backgroundColor: 'ButtonShadow',
-                                        }}
-                                    >
-                                        {header.isPlaceholder ? null : (
-                                            <Box>
-                                                {flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext(),
-                                                )}
-                                            </Box>
-                                        )}
-                                    </th>
-                                )
-                            })}
-                        </tr>
-                    ))}
-                </thead>
-            </table>
-            
+            <Box style={{ position: "sticky", top: "0", zIndex: 1, }}>
+                <table style={{ width: "100%", tableLayout: "fixed" }}>
+                    <thead>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <tr key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => {
+                                    return (
+                                        <Box as={"th"}
+                                            key={header.id}
+                                            colSpan={header.colSpan}
+                                            bg={"colorPalette.solid"}
+                                            style={{ 
+                                                width: header.getSize(),
+                                                textAlign: "center",
+                                                padding: "8px",                       
+                                                fontWeight: "bold",
+                                                fontSize: "sm",
+                                                color: "white",
+                                            }}
+                                        >
+                                            {header.isPlaceholder ? null : (
+                                                <Box>
+                                                    {flexRender(
+                                                        header.column.columnDef.header,
+                                                        header.getContext(),
+                                                    )}
+                                                </Box>
+                                            )}
+                                        </Box>
+                                    );
+                                })}
+                            </tr>
+                        ))}
+                    </thead>
+                </table>
+            </Box>
             <Box 
                 style={{ 
                     height: `${virtualizer.getTotalSize()}px`, 
-                    position: 'relative',
-                    width: '100%'
+                    position: "relative",
+                    width: "100%"
                 }}
+
             >
                 {virtualRows.map((virtualRow) => {
                     const row = rows[virtualRow.index];
+                    const rowData = row.original;
                     return (
                         <Box
                             data-index={row.id}
-                            ref={virtualizer.measureElement}
+                            
                             key={row.id}
                             style={{
-                                position: 'absolute',
+                                position: "absolute",
                                 top: 0,
                                 left: 0,
-                                width: '100%',
+                                width: "100%",
                                 height: `${virtualRow.size}px`,
                                 transform: `translateY(${virtualRow.start}px)`,
-                                display: 'table',
-                                tableLayout: 'fixed'
+                                display: "table",
+                                tableLayout: "fixed",
+                                fontWeight: "normal"
                             }}
                         >
-                            <table style={{ width: '100%', tableLayout: 'fixed' }}>
+                            <table style={{ width: "100%", tableLayout: "fixed" }}>
                                 <tbody>
                                     <tr>
                                         {row.getVisibleCells().map((cell) => {
@@ -199,10 +221,11 @@ export const TestTablesDeux = () => {
                                                     key={cell.id}
                                                     style={{
                                                         width: cell.column.getSize(),
-                                                        textAlign: 'center',
-                                                        padding: '8px',
-                                                        borderBottom: '1px solid #f1f5f9',
-                                                        fontSize: 'sm'
+                                                        textAlign: "center",
+                                                        padding: "8px",
+                                                        borderBottom: "2px solid #f1f5f9",
+                                                        fontSize: "sm",
+                                                        fontWeight: "500",                                 
                                                     }}
                                                 >
                                                     {flexRender(
@@ -210,15 +233,30 @@ export const TestTablesDeux = () => {
                                                         cell.getContext(),
                                                     )}
                                                 </td>
-                                            )
+                                            );
                                         })}
                                     </tr>
                                 </tbody>
                             </table>
                         </Box>
-                    )
+                    );
                 })}
             </Box>
+            {!sticky.isAtBottom && (
+                <Box position="absolute" bottom="6" right="8" zIndex="10">
+                    <IconButton
+                        size="sm"
+                        onClick={() => {
+                            sticky.scrollToBottom();
+                            virtualizer.measure();
+                        }}
+                        colorScheme="blue"
+                        variant="solid"
+                    >
+                        <LuArrowDown />
+                    </IconButton>
+                </Box>
+            )}
         </Box>
     );
 };

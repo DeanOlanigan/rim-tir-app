@@ -12,4 +12,4 @@ export const useGroupStore = create(
             name: "group-store"
         }
     )
-)
+);

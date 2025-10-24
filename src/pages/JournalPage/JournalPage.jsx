@@ -1,6 +1,6 @@
 import { Container, HStack } from "@chakra-ui/react";
-import { JournalFilter } from "./JournalFilter/JournalFilter";
 import { JournalView } from "./JournalView/JournalView";
+import { JournalFilterDeux } from "./JournalFilter/JournalFilterDeux"
 
 function JournalPage() {
     console.log("Render JournalPage");
@@ -22,7 +22,7 @@ function JournalPage() {
                 minH={"0"}
                 position={"relative"}
             >
-                <JournalFilter />
+                <JournalFilterDeux />
                 <JournalView />
             </HStack>
         </Container>
