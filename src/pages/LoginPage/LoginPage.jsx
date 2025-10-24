@@ -8,8 +8,8 @@ import {
     Heading,
     Fieldset,
     Field,
+    Button,
 } from "@chakra-ui/react";
-import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useForm } from "react-hook-form";
 import { useState } from "react";

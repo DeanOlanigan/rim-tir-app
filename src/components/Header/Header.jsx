@@ -10,7 +10,6 @@ import {
     Badge,
     Center,
 } from "@chakra-ui/react";
-import { Tooltip } from "@/components/ui/tooltip";
 import { ColorModeButton } from "@/components/ui/color-mode";
 import { LuSettings, LuLogOut } from "react-icons/lu";
 
@@ -68,6 +67,7 @@ const SettingsMenu = () => {
                 <IconButton
                     size={"xs"}
                     variant="ghost"
+                    aria-label="Settings"
                     css={{
                         _icon: {
                             width: "5",
@@ -120,19 +120,18 @@ const TestMqtt = () => {
 
 const LogoutBtn = () => {
     return (
-        <Tooltip content="Выйти" disabled>
-            <IconButton
-                size={"xs"}
-                variant={"ghost"}
-                css={{
-                    _icon: {
-                        width: "5",
-                        height: "5",
-                    },
-                }}
-            >
-                <LuLogOut />
-            </IconButton>
-        </Tooltip>
+        <IconButton
+            size={"xs"}
+            variant={"ghost"}
+            aria-label="Logout"
+            css={{
+                _icon: {
+                    width: "5",
+                    height: "5",
+                },
+            }}
+        >
+            <LuLogOut />
+        </IconButton>
     );
 };
