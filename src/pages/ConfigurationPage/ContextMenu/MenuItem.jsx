@@ -4,6 +4,7 @@ import { iconsMap } from "@/config/icons";
 import { useVariablesStore } from "@/store/variables-store";
 import { getDisabledState } from "@/utils/getDisabledState";
 import { HOSTKEYS } from "@/config/constants";
+import { actionsMap } from "./actions";
 
 export const MenuItem = ({
     item,
@@ -90,7 +91,11 @@ export const MenuItem = ({
             onClick={() => {
                 if (!disabled) {
                     resetTreeFocus && apiPath.deselectAll();
-                    item.action?.(apiPath);
+                    actionsMap?.[item.action](apiPath, {
+                        node: item.node,
+                        times: item.count,
+                        path: item.path,
+                    });
                     updateContext("cfg", { visible: false });
                 }
             }}

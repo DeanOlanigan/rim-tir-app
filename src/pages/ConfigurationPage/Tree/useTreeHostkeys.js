@@ -1,7 +1,7 @@
 import { useVariablesStore } from "@/store/variables-store";
-import { getSelectedIds } from "@/utils/contextMenuBuilder";
 import { getParentId } from "@/utils/treeUtils";
 import { useHotkeys } from "react-hotkeys-hook";
+import { getSelectedIds } from "../ContextMenu/actions";
 
 export function useTreeHostkeys(api) {
     // TODO: Унифицировать передачу хоткеев, в массиве не то, что в switch case
