@@ -9,7 +9,7 @@ import {
 import { toaster } from "@/components/ui/toaster";
 import { useValidationStore } from "@/store/validation-store";
 import { useVariablesStore } from "@/store/variables-store";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import { validateAll } from "@/utils/validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";

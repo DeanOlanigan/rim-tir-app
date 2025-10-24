@@ -11,7 +11,7 @@ import {
     StackSeparator,
 } from "@chakra-ui/react";
 import { AttributeChooser } from "./Attributes/AttributeChooser";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import { VariableValueInput } from "./VariableValueInput";
 import { VariableValueSwitch } from "./VariableValueSwitch";
 import { useSettingsFromCache } from "../useSettingsFromCache";
@@ -90,7 +90,7 @@ export const infoDialog = createOverlay((props) => {
     const path = settings[id]?.path;
 
     if (!setting) return null;
-    const config = path ? configuratorConfig.nodePaths[path] : undefined;
+    const config = path ? configuratorConfig.nodePaths?.[path] : undefined;
 
     const setdesc = setting.description;
     const confdesc = config?.settings?.description;

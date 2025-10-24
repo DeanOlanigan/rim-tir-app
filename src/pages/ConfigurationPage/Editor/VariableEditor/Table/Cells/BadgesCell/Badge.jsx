@@ -1,4 +1,4 @@
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import {
     HStack,
     Badge as ChakraBadge,
@@ -19,7 +19,7 @@ import { validateVisibility } from "@/utils/validation/runners/validateVisibilit
 export const Badge = ({ id, param, childrenParams, isEditing }) => {
     const settings = useVariablesStore.getState().settings;
     const paramData =
-        configuratorConfig.nodePaths["#/variable"].settings[param];
+        configuratorConfig.nodePaths?.["#/variable"].settings[param];
     const isVisible = validateVisibility(paramData.visibleIf, id, settings);
     if (!isVisible) return null;
     const value = settings[id].setting[param];
@@ -52,9 +52,8 @@ export const Badge = ({ id, param, childrenParams, isEditing }) => {
                 <ChildParamViewer
                     params={Object.values(childrenParams).map((param) => ({
                         value: settings[id].setting[param],
-                        ...configuratorConfig.nodePaths["#/variable"].settings[
-                            param
-                        ],
+                        ...configuratorConfig.nodePaths?.["#/variable"]
+                            .settings[param],
                     }))}
                 />
             )}

@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { NODE_TYPES, TREE_TYPES } from "@/config/constants";
 import { useValidationStore } from "@/store/validation-store";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "./configurator-config";
 import {
     isNeedValidate,
     revalidateVars,

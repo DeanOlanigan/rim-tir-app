@@ -1,5 +1,5 @@
 import { CONNECTIONS_TREES, NODE_TYPES, TREE_TYPES } from "@/config/constants";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import { getMeaningNode, getParentPath } from "./utils";
 
 export const nodesAllowedInTree = (treeType, nodes) =>

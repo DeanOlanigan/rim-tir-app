@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { configuratorConfig } from "./configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import { CONN_STATUS, NODE_TYPES } from "@/config/constants";
 
 export const getStartDate = () => {

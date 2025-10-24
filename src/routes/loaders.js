@@ -1,3 +1,5 @@
+import { configuratorConfig } from "@/store/configurator-config";
+
 export async function monitoringLoader() {
     const { ensureConfiguratorConfig } = await import(
         "@/utils/configurationParser"
@@ -19,8 +21,7 @@ export async function configurationLoader() {
         import("@/store/validation-store"),
     ]);
 
-    const { ensureConfiguratorConfig, configuratorConfig } =
-        configurationParser;
+    const { ensureConfiguratorConfig } = configurationParser;
     const { useVariablesStore, rehydrateSettings } = variablesStoreMod;
     const { validateAll } = validationMod;
     const { useValidationStore } = validationStoreMod;

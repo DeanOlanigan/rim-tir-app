@@ -9,7 +9,7 @@ import {
 import { useValidationStore } from "@/store/validation-store";
 import { memo } from "react";
 import { Field, Text } from "@chakra-ui/react";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import { InfoTip } from "@/components/ui/toggle-tip";
 
 const inputRenderers = {

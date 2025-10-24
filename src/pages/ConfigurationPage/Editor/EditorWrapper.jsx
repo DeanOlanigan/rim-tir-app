@@ -16,7 +16,7 @@ import { ConnectionParamContainer } from "./ConnectionEditor/ConnectionParamCont
 import { EditorBreadcrumb } from "../Breadcrumb/Breadcrumb";
 import { EditorLayout } from "./EditorLayout";
 import { InputFactory } from "../InputComponents/InputFactory";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import { NodeError } from "./NodeError";
 import { LuCog, LuVariable } from "react-icons/lu";
 import {
@@ -54,7 +54,7 @@ const EditorWrapperSingle = memo(function EditorWrapperSingleTEST({
     if (!node) return <EditorHint type={type} />;
 
     const Parameters =
-        configuratorConfig.nodePaths[node.path] &&
+        configuratorConfig.nodePaths?.[node.path] &&
         (node.path === "#/variable"
             ? VariableEditor
             : ConnectionParamContainer);

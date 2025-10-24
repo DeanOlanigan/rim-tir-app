@@ -11,7 +11,7 @@ import { InputController } from "../../InputComponents/InputController";
 import { InputFactory } from "../../InputComponents/InputFactory";
 import { useVariablesStore } from "@/store/variables-store";
 import { validateVisibility } from "@/utils/validation/runners/validateVisibility";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 
 /**
  * props:
@@ -27,7 +27,8 @@ export const CompositeSection = ({
     label,
 }) => {
     const { settings, setSettings } = useVariablesStore.getState();
-    const dep = configuratorConfig.nodePaths[data.path]?.settings[checkedParam];
+    const dep =
+        configuratorConfig.nodePaths?.[data.path]?.settings[checkedParam];
     if (!dep || dep.hidden) return null; // Если параметр не определен или скрыт, ничего не рендерим
 
     const isVisible = validateVisibility(dep.visibleIf, data.id, settings);

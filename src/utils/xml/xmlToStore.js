@@ -1,6 +1,6 @@
 import { useVariablesStore } from "@/store/variables-store";
 import { validateAll } from "@/utils/validation";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import { useValidationStore } from "@/store/validation-store";
 
 function toCamelCase(str) {

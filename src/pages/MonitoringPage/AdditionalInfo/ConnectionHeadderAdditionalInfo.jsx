@@ -9,7 +9,7 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { LuInfo } from "react-icons/lu";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import { useQuery } from "@tanstack/react-query";
 import { QK } from "@/api/queryKeys";
 import { getConfiguration } from "@/api/configuration";
@@ -24,7 +24,7 @@ export const ConnectionHeadderAdditionalInfo = ({ id }) => {
     });
 
     if (!setting) return null;
-    const config = configuratorConfig.nodePaths[path];
+    const config = configuratorConfig.nodePaths?.[path];
 
     return (
         <Popover.Root lazyMount unmountOnExit>

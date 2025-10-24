@@ -1,6 +1,6 @@
 import { Tooltip } from "@/components/ui/tooltip";
 import { MenuItem } from "@/pages/ConfigurationPage/ContextMenu/MenuItem";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import { IconButton, Menu } from "@chakra-ui/react";
 import { useId } from "react";
 import { LuPlus } from "react-icons/lu";

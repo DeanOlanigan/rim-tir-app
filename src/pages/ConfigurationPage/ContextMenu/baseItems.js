@@ -1,4 +1,4 @@
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 
 function getMeaningPath(api) {
     const { focusedNode } = api;
