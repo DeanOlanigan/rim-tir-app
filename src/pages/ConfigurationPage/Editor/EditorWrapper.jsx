@@ -168,7 +168,7 @@ const EditorHint = ({ type }) => {
             <AbsoluteCenter>
                 <VStack textAlign={"center"}>
                     <Icon as={HintIcon} fontSize={"164px"} color={"bg.muted"} />
-                    <Text color={"fg.subtle"} fontWeight={"medium"}>
+                    <Text color={"fg.muted"} fontWeight={"medium"}>
                         {hintText}
                     </Text>
                 </VStack>

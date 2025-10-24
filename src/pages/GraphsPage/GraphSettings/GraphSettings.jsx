@@ -1,4 +1,4 @@
-import { Box, Card, Flex, Icon, IconButton, Stack } from "@chakra-ui/react";
+import { Card, Icon, IconButton, Stack } from "@chakra-ui/react";
 import { OffsetOrPeriodPicker } from "./OffsetOrPeriodPicker/OffsetOrPeriodPicker";
 import { PointsCountChooser } from "./PointsCountChooser";
 import { VariablesManager } from "./VariablesManager/VariablesManager";
@@ -42,7 +42,12 @@ const BadApple = () => {
     };
 
     return (
-        <IconButton size={"xs"} variant={"ghost"} onClick={handleClick}>
+        <IconButton
+            size={"xs"}
+            variant={"ghost"}
+            onClick={handleClick}
+            aria-label="Bad Apple"
+        >
             <Icon as={LuApple} fill={"colorPalette.fg"} />
         </IconButton>
     );

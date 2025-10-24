@@ -10,7 +10,7 @@ export const NoData = ({ message = "Нет данных" }) => {
                     fontSize={"164px"}
                     color={"bg.muted"}
                 />
-                <Text color={"fg.subtle"} fontWeight={"medium"}>
+                <Text color={"fg.muted"} fontWeight={"medium"}>
                     {message}
                 </Text>
             </VStack>

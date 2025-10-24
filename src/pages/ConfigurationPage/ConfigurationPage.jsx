@@ -105,7 +105,7 @@ const ContextMenuHint = () => {
         <AbsoluteCenter>
             <VStack textAlign={"center"}>
                 <Icon as={LuBadgePlus} fontSize={"164px"} color={"bg.muted"} />
-                <Text color={"fg.subtle"} fontWeight={"medium"}>
+                <Text color={"fg.muted"} fontWeight={"medium"}>
                     Открыть контекстное меню
                 </Text>
                 <Kbd>ПКМ</Kbd>

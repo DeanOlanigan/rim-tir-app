@@ -38,12 +38,12 @@ function MonitoringPage() {
     return (
         <>
             <SubHeader>
-                <ConfigInfoWrapper />
+                <NameSwitcher />
                 <SearchBar
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
                 />
-                <NameSwitcher />
+                <ConfigInfoWrapper />
             </SubHeader>
             <Box h={"100%"} minH={0}>
                 <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
