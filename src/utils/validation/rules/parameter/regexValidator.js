@@ -1,4 +1,4 @@
-import { hasIgnoreAccessor } from "@/utils/utils";
+import { hasIgnoreAccessor } from "@/utils/checkers";
 import { VALIDATOR } from "../../utils/const";
 
 export function regexValidator({ nodeId, param, rule, context, draft }) {

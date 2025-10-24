@@ -2,7 +2,7 @@ import { ErrorDraft } from "../core/ErrorDraft";
 import { luaAstParse } from "../engines/luaValidationService";
 import { tarjanCyclicDeps } from "../utils/tarjan";
 import { getVarDataStore } from "../utils/get";
-import { hasIgnoreAccessor } from "@/utils/utils";
+import { hasIgnoreAccessor } from "@/utils/checkers";
 
 export function revalidateVars(newSettings, draft = new ErrorDraft()) {
     const depGraphById = {};

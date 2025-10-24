@@ -1,4 +1,4 @@
-import { hasIgnoreAccessor } from "@/utils/utils";
+import { hasIgnoreAccessor } from "@/utils/checkers";
 import { SCOPE, VALIDATOR } from "../../utils/const";
 import { getContextIds } from "../../utils/contextUtils";
 

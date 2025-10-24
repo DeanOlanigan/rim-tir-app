@@ -7,7 +7,7 @@ import {
     DO_NOT_VALIDATE,
     NODE_UNIQUE_NAMES,
 } from "../utils/const";
-import { hasIgnoreAccessor } from "@/utils/utils";
+import { hasIgnoreAccessor } from "@/utils/checkers";
 
 export function validateName({
     id,

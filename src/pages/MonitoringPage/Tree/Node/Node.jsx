@@ -6,7 +6,7 @@ import { NODE_TYPES, TREE_TYPES } from "@/config/constants";
 import { memo } from "react";
 import { ParamViewer } from "@/components/TreeView/ParamViewer";
 import { useSettingsFromCache } from "../../useSettingsFromCache";
-import { hasIgnoreAccessor } from "@/utils/utils";
+import { hasIgnoreAccessor } from "@/utils/checkers";
 import { useContextMenuStore } from "@/store/contextMenu-store";
 import { crossSelect } from "../crossSelect";
 

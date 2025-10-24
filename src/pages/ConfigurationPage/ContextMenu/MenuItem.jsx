@@ -13,8 +13,8 @@ export const MenuItem = ({
     resetTreeFocus = false,
 }) => {
     if (!item) return null;
+    const treeType = apiPath.props.treeType;
     const focusedId = apiPath.focusedNode?.id;
-    const clipboard = useVariablesStore.getState().clipboard;
     const settings = useVariablesStore.getState().settings;
     const isIgnored = settings[focusedId]?.isIgnored;
 
@@ -51,7 +51,7 @@ export const MenuItem = ({
     }
 
     if (item.type === "paste") {
-        disabled = getDisabledState(apiPath, clipboard, settings);
+        disabled = getDisabledState(settings, focusedId, treeType);
     }
 
     if (item.children && Array.isArray(item.children)) {

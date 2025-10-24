@@ -1,4 +1,4 @@
-import { hasIgnoreAccessor, isEmpty } from "@/utils/utils";
+import { isEmpty, hasIgnoreAccessor } from "@/utils/checkers";
 import { VALIDATOR } from "../../utils/const";
 
 export function requiredValidator({ nodeId, param, rule, context, draft }) {

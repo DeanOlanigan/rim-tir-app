@@ -33,16 +33,6 @@ export function getParentType({ id, treeApi, checkNode }) {
     return recursive(checkNode);
 }
 
-export function getMeaningNode(ctx, id) {
-    let cur = ctx[ctx[id]?.parentId];
-    while (cur) {
-        const t = cur.type;
-        if (t !== "folder" && t !== "dataObject") return cur;
-        cur = ctx[cur.parentId];
-    }
-    return undefined;
-}
-
 export function initDefaultDataByPath(path, parentId) {
     const nodePaths = configuratorConfig.nodePaths;
     const id = nanoid(12);
@@ -153,14 +143,6 @@ export function combineRefs(...refs) {
     };
 }
 
-export function hasIgnoreAccessor(ctx, id) {
-    while (id && ctx[id]) {
-        if (ctx[id].isIgnored) return true;
-        id = ctx[id]?.parentId ?? null;
-    }
-    return false;
-}
-
 export function getMetricColor(status, baseColor) {
     switch (status) {
         case CONN_STATUS.DISCONNECTED:
@@ -170,12 +152,4 @@ export function getMetricColor(status, baseColor) {
         case CONN_STATUS.LIVE:
             return baseColor;
     }
-}
-
-export function isEmpty(v) {
-    if (v === undefined) return true;
-    if (v === null) return true;
-    if (typeof v === "string" && v.trim() === "") return true;
-    if (typeof v === "number" && Number.isNaN(v)) return true;
-    return !!(typeof v === "boolean" && v === false);
 }

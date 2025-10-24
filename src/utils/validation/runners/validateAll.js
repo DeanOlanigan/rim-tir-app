@@ -4,7 +4,7 @@ import { validateNamePatternMatch } from "../rules/name/nameValidation";
 import { validateParameter } from "./validateParameter";
 import { validateVariableSpecific } from "./validateVariableSpecific";
 import { getVariableMaps } from "../utils/get";
-import { hasIgnoreAccessor } from "@/utils/utils";
+import { hasIgnoreAccessor } from "@/utils/checkers";
 
 export function validateAll(settings, configuratorConfig) {
     const t0 = performance.now();

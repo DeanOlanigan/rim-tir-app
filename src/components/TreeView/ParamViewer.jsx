@@ -3,7 +3,7 @@ import { LuCheck, LuX } from "react-icons/lu";
 import { useParameters } from "../../pages/ConfigurationPage/Tree/NodeViews/getParameters";
 import { memo } from "react";
 import { validateVisibility } from "@/utils/validation";
-import { isEmpty } from "@/utils/utils";
+import { isEmpty } from "@/utils/checkers";
 
 function getColorPalette(value, settings) {
     const isBool = typeof settings[value.param] === "boolean";
