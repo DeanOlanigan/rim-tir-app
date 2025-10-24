@@ -14,7 +14,7 @@ export default defineConfig({
             },
         },
     },
-    plugins: [react(), visualizer({ template: "network" })],
+    plugins: [react(), visualizer({ template: "sunburst" })],
     resolve: {
         alias: {
             // eslint-disable-next-line no-undef

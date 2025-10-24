@@ -1088,7 +1088,7 @@ export const config = [
                     function: {
                         type: "enum",
                         label: "Функция",
-                        default: "input",
+                        default: "in",
                         showInTree: true,
                         enumValues: [
                             {
