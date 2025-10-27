@@ -1,4 +1,4 @@
-import { Accordion, Span, Drawer, Button } from "@chakra-ui/react";
+import { Accordion, Span, Drawer, Button, CloseButton } from "@chakra-ui/react";
 import { ArchiveFilter } from "./ArchiveFilter";
 import { VariablesChoser } from "./VariablesChoser";
 import { MessageTypes } from "./MessageTypes";
@@ -19,6 +19,9 @@ export const JournalFilter = () => {
                 <Drawer.Content rounded="md">
                     <Drawer.Header borderBottom={"2px solid #e2e8f0"}>
                         <Drawer.Title>Фильтры</Drawer.Title>
+                        <Drawer.CloseTrigger top="5">
+                            <CloseButton size="sm" />
+                        </Drawer.CloseTrigger>
                     </Drawer.Header>
                     <Drawer.Body
                         gap={"1"}
