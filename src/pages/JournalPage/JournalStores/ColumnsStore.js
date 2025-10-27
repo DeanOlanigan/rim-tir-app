@@ -11,4 +11,4 @@ export const useColumnsStore = create(
             name: "columns-store"
         }
     )
-)
+);

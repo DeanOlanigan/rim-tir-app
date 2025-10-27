@@ -7,7 +7,7 @@ const initialState = {
     endDate: Date.now(),
     stringsQuantity:{ value: ["50"]},
     Location: { value: ["sd"] }
-}
+};
 
 export const useJournalFiltersArchiveStore = create(
     persist(
@@ -19,9 +19,9 @@ export const useJournalFiltersArchiveStore = create(
             chooseStartDate: (newDate) => set({ startDate: newDate }),
             chooseEndDate: (newDate) => set({ endDate: newDate }),
 
-            setStringQuantity: (newQuantity) => set((state) => ({ stringsQuantity: { value: newQuantity} })),
+            setStringQuantity: (newQuantity) => set(() => ({ stringsQuantity: { value: newQuantity} })),
 
-            chooseLocation: (newLocation) => set((state) => ({ Location: { value: newLocation } })),
+            chooseLocation: (newLocation) => set(() => ({ Location: { value: newLocation } })),
 
             setInitial: () => set({...initialState, initialState: { startDate: (Date.now() - 86400000), endDate: Date.now() }})
         }),
@@ -29,4 +29,4 @@ export const useJournalFiltersArchiveStore = create(
             name: "archive-store",
         }
     )
-)
+);

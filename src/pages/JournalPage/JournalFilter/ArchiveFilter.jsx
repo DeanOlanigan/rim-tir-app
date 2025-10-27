@@ -7,7 +7,7 @@ import {
     Switch,
 } from "@chakra-ui/react";
 import { DatePicker } from "@/components/DatePicker/DatePicker";
-import { useJournalFiltersArchiveStore } from "../JournalStores/JournalFiltersArсhiveStore"
+import { useJournalFiltersArchiveStore } from "../JournalStores/JournalFiltersArсhiveStore";
 
 const rows = createListCollection({
     items: [
