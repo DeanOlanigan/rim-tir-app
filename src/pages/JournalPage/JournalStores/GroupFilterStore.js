@@ -5,7 +5,7 @@ import { persist } from "zustand/middleware";
 export const useGroupStore = create(
     persist(
         (set) => ({
-            selectedGroups: ["state", "danger", "warn", "noGroup"],
+            selectedGroups: ["Состояние", "Аварийная", "Предупредительная", "Без Группы", "Пауза", "Возобновлен"],
             setSelectedGroups: (newGroups) => set(({selectedGroups: newGroups})),
         }),
         {

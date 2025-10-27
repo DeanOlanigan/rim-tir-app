@@ -2,15 +2,15 @@ import { Stack, CheckboxGroup, Checkbox } from "@chakra-ui/react";
 import { useMessageFilterStore } from "../JournalStores/MessageFilterStore";
 
 const messageTypes = [
-    { label: "ТС", value: "ts" },
-    { label: "Пользовательские ТУ", value: "tu" },
+    { label: "ТС", value: "ТС" },
+    { label: "Пользовательские ТУ", value: "ТУ" },
 ];
 
 export const MessageTypes = () => {
     
     const {
-    selectedMessages,
-    setSelectedMessages
+        selectedMessages,
+        setSelectedMessages
     } = useMessageFilterStore();
 
     return (

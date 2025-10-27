@@ -2,10 +2,10 @@ import { Stack, CheckboxGroup, Checkbox } from "@chakra-ui/react";
 import { useGroupStore } from "../JournalStores/GroupFilterStore";
 
 const groups = [
-    { label: "Без группы", value: "noGroup" },
-    { label: "Аварийные", value: "danger" },
-    { label: "Предупредительные", value: "warn" },
-    { label: "Оперативного состояния", value: "state" },
+    { label: "Без группы", value: "Без Группы" },
+    { label: "Аварийные", value: "Аварийная" },
+    { label: "Предупредительные", value: "Предупредительная" },
+    { label: "Оперативного состояния", value: "Состояние" },
 ];
 
 export const GroupFilter = () => {

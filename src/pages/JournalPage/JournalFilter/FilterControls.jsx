@@ -5,9 +5,9 @@ import { useJournalFiltersArchiveStore } from "../JournalStores/JournalFiltersAr
 
 export const FilterControls = () => {
 
-    const resetSelectedGroups = useGroupStore((state) => (state.setSelectedGroups))
-    const resetSelMessages = useMessageFilterStore(state => state.setSelectedMessages)
-    const resetArchive = useJournalFiltersArchiveStore(state => state.setInitial)
+    const resetSelectedGroups = useGroupStore((state) => (state.setSelectedGroups));
+    const resetSelMessages = useMessageFilterStore(state => state.setSelectedMessages);
+    const resetArchive = useJournalFiltersArchiveStore(state => state.setInitial);
 
     const handleApply = () => {
         console.log("handleApply");
@@ -15,8 +15,8 @@ export const FilterControls = () => {
 
     const handleReset = () => {
         console.log("handleReset");
-        resetSelectedGroups(["state", "danger", "warn", "noGroup"]);
-        resetSelMessages(["ts", "tu"]);
+        resetSelectedGroups(["Оперативное Состояние", "Аварийная", "Предупредительная", "Без Группы", "Пауза", "Возобновлен"]);
+        resetSelMessages(["ТС", "ТУ", "Пауза", "Старт"]);
         resetArchive();
     };
 
