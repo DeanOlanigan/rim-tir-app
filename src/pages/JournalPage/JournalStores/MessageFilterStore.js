@@ -1,14 +1,14 @@
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export const useMessageFilterStore = create(
     persist(
         (set) => ({
-            selectedMessages: ["ts", "tu"],
+            selectedMessages: ["ТС", "ТУ", "Пауза", "Старт"],
             setSelectedMessages: (newMessages) => set(({ selectedMessages: newMessages }))
         }),
         {
             name: "message-store"
         }
     )
-)
+);

@@ -6,11 +6,11 @@ import {
     Portal,
     useCheckboxGroup,
 } from "@chakra-ui/react";
-import { LuPlay, LuDownload, LuColumns3 } from "react-icons/lu";
-import { TestTables } from "./JournalTable";
+import { LuPlay, LuDownload, LuColumns3, LuPause } from "react-icons/lu";
 import { TestTablesDeux } from "./JournalTableDeux";
 import { useColumnsStore } from "../JournalStores/ColumnsStore";
 import { JournalFilter } from "../JournalFilter/JournalFilter";
+import { usePauseStore } from "../JournalStores/pause-store";
 
 const tableColumns = [
     { label: "Дата и время", value: "date" },
@@ -45,6 +45,12 @@ export const JournalView = () => {
 };
 
 const JournalHeader = () => {
+    const {
+        isPaused,
+        pause,
+        resume 
+    } = usePauseStore();
+
     return (
         <Flex justifyContent={"space-between"}>
             <Flex gap={"1"}>
@@ -54,9 +60,12 @@ const JournalHeader = () => {
                 <IconButton
                     variant={"outline"}
                     size={"xs"}
-                    onClick={() => console.log("handlePause")}
-                >
-                    <LuPlay />
+                    onClick={() => isPaused ? resume() : pause()}
+                >   
+                    {!isPaused 
+                        ? <LuPlay />
+                        : <LuPause />
+                    } 
                 </IconButton>
             </Flex>
             <Flex gap={"1"}>
