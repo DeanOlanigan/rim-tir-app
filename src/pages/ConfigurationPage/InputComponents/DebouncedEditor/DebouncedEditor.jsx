@@ -1,4 +1,4 @@
-import { useEffect, memo, useRef } from "react";
+import { useEffect, memo, useRef, useState } from "react";
 import { useColorMode } from "@/components/ui/color-mode";
 import { Editor, loader } from "@monaco-editor/react";
 import { useVariablesStore } from "@/store/variables-store";
@@ -6,8 +6,8 @@ import debounce from "debounce";
 import { getVarDataStore } from "@/utils/validation";
 import { luaAstParse } from "@/utils/validation";
 import { getCompletionSnippets } from "./snippets";
-import * as monaco from "monaco-editor";
-loader.config({ monaco });
+
+import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 
 function createVariableDecorations(usages) {
     return usages.map((usage) => ({
@@ -29,6 +29,46 @@ export const DebouncedEditor = memo(function DebouncedEditor({
     height,
     width,
 }) {
+    const [ready, setReady] = useState(false);
+
+    useEffect(() => {
+        let alive = true;
+
+        if (typeof window !== "undefined") {
+            self.MonacoEnvironment = {
+                getWorker() {
+                    return new EditorWorker();
+                },
+            };
+        }
+
+        (async () => {
+            const monaco = await import(
+                "monaco-editor/esm/vs/editor/editor.api"
+            );
+            await Promise.all([
+                import(
+                    "monaco-editor/esm/vs/editor/contrib/suggest/browser/suggestController"
+                ),
+                import(
+                    "monaco-editor/esm/vs/editor/contrib/snippet/browser/snippetController2"
+                ),
+                import(
+                    "monaco-editor/esm/vs/editor/contrib/suggest/browser/suggest"
+                ),
+                import(
+                    "monaco-editor/esm/vs/basic-languages/lua/lua.contribution"
+                ),
+            ]);
+            loader.config({ monaco });
+            await loader.init();
+            if (alive) setReady(true);
+        })();
+        return () => {
+            alive = false;
+        };
+    }, []);
+
     const { colorMode } = useColorMode();
     const { setSettings, settings } = useVariablesStore.getState();
     const { varIdsByName } = getVarDataStore(settings);
@@ -67,15 +107,6 @@ export const DebouncedEditor = memo(function DebouncedEditor({
         editorRef.current = editor;
         monacoRef.current = monaco;
 
-        editor.onKeyDown((e) => {
-            const isF1 = e.keyCode === monaco.KeyCode.F1;
-
-            if (isF1) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        });
-
         providerRef.current?.dispose?.();
         providerRef.current = getCompletionSnippets(monaco);
 
@@ -105,6 +136,7 @@ export const DebouncedEditor = memo(function DebouncedEditor({
             debounceRef.current?.clear?.();
         };
     }, []);
+    if (!ready) return null;
 
     const onChangeHandler = (value) => {
         debounced(id, value);
