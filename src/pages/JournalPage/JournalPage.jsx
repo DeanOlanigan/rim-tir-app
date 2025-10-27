@@ -1,6 +1,6 @@
 import { Container, HStack } from "@chakra-ui/react";
 import { JournalView } from "./JournalView/JournalView";
-import { JournalFilterDeux } from "./JournalFilter/JournalFilterDeux"
+import { JournalFilterDeux } from "./JournalFilter/JournalFilterDeux";
 
 function JournalPage() {
     console.log("Render JournalPage");
