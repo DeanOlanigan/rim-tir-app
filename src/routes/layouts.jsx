@@ -1,3 +1,4 @@
+import { Footer } from "@/components/Footer/Footer";
 import Header from "@/components/Header/Header";
 import { Toaster } from "@/components/ui/toaster";
 import { Box, Container, Flex, Heading } from "@chakra-ui/react";
@@ -16,6 +17,7 @@ export const PrivateLayout = () => {
             <Box as={"main"} flex={1} minH={0}>
                 <Outlet />
             </Box>
+            <Footer />
         </>
     );
 };
@@ -30,7 +32,13 @@ export const PageSuspesnse = () => {
 
 export const WideLayout = () => {
     return (
-        <Flex as={"section"} direction={"column"} h={"100%"} minH={0}>
+        <Flex
+            as={"section"}
+            direction={"column"}
+            h={"100%"}
+            minH={0}
+            position={"relative"}
+        >
             <Suspense fallback={<PageSuspesnse />}>
                 <Outlet />
             </Suspense>
