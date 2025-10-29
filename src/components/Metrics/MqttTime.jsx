@@ -19,6 +19,7 @@ export const MqttTime = () => {
         <Badge
             variant={"subtle"}
             colorPalette={getMetricColor(status, "green")}
+            size={"xs"}
         >
             <LuClock />
             <Text minW={"7ch"}>{time}</Text>

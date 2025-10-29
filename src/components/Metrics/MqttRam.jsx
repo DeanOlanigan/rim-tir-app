@@ -19,6 +19,7 @@ export const MqttRam = () => {
         <Badge
             variant={"subtle"}
             colorPalette={getMetricColor(status, "orange")}
+            size={"xs"}
         >
             <LuMemoryStick />
             <Text minW={"4ch"}>{ram}</Text>

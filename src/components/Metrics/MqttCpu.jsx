@@ -19,6 +19,7 @@ export const MqttCpu = () => {
         <Badge
             variant={"subtle"}
             colorPalette={getMetricColor(status, "purple")}
+            size={"xs"}
         >
             <LuCpu />
             <Text minW={"4ch"}>{cpu}</Text>

@@ -9,7 +9,7 @@ export const Connect = () => {
         <Icon
             as={connected ? LuWifi : LuWifiOff}
             color={connected ? "green.600" : "red.500"}
-            size={"md"}
+            size={"xs"}
             title={
                 connected
                     ? "Соединение установлено"
