@@ -15,6 +15,7 @@ const MonitoringPage =      lazy(() => import("@/pages/MonitoringPage/Monitoring
 const LogPage =             lazy(() => import("@/pages/LogPage/LogLayout")); // prettier-ignore
 const JournalPage =         lazy(() => import("@/pages/JournalPage/JournalPage")); // prettier-ignore
 const GraphPage =           lazy(() => import("@/pages/GraphsPage/GraphPage")); // prettier-ignore
+const TestPage =            lazy(() => import("@/pages/TestPage/TestPage")); // prettier-ignore
 
 export const routes = [
     {
@@ -42,6 +43,10 @@ export const routes = [
                                 path: "monitoring",
                                 loader: monitoringLoader,
                                 element: <MonitoringPage />,
+                            },
+                            {
+                                path: "test",
+                                element: <TestPage />,
                             },
                         ],
                     },

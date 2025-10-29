@@ -2,11 +2,12 @@ import { NavLink } from "react-router-dom";
 import { Button, Flex } from "@chakra-ui/react";
 
 const navItems = [
-    { name: "Конфигурация", path: "/configuration" },
-    { name: "Мониторинг", path: "/monitoring" },
-    { name: "Логирование", path: "/log" },
-    { name: "Журналирование", path: "/journal" },
-    { name: "Графики", path: "/graph" },
+    { name: "Конфигурация", path: "configuration" },
+    { name: "Мониторинг", path: "monitoring" },
+    { name: "Логирование", path: "log" },
+    { name: "Журналирование", path: "journal" },
+    { name: "Графики", path: "graph" },
+    { name: "Тест", path: "test" },
 ];
 
 function Navigation() {
