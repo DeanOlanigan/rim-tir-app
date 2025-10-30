@@ -7,10 +7,10 @@ import {
     useCheckboxGroup,
 } from "@chakra-ui/react";
 import { LuPlay, LuDownload, LuColumns3, LuPause } from "react-icons/lu";
-import { TestTablesDeux } from "./JournalTableDeux";
+import { TestTable } from "./JournalTable";
 import { useColumnsStore } from "../JournalStores/ColumnsStore";
 import { JournalFilter } from "../JournalFilter/JournalFilter";
-import { usePauseStore } from "../JournalStores/pause-store";
+import { useJournalStream } from "../JournalStores/journal-stream-store";
 
 const tableColumns = [
     { label: "Дата и время", value: "date" },
@@ -26,7 +26,6 @@ export const JournalView = () => {
         <Card.Root
             width={"100%"}
             h={"100%"}
-            transition={"width 3s ease"}
             shadow={"xl"}
             data-state={"open"}
             animationDuration={"slow"}
@@ -38,7 +37,7 @@ export const JournalView = () => {
                 <JournalHeader />
             </Card.Header>
             <Card.Body h={"100%"} pt={"0"} mt={"1rem"} overflow='auto'>
-                <TestTablesDeux />
+                <TestTable />
             </Card.Body>
         </Card.Root>
     );
@@ -49,7 +48,7 @@ const JournalHeader = () => {
         isPaused,
         pause,
         resume 
-    } = usePauseStore();
+    } = useJournalStream();
 
     return (
         <Flex justifyContent={"space-between"}>
@@ -82,7 +81,7 @@ const ColumnViewMenu = () => {
         tableColumnsZus,
         setColons
     } = useColumnsStore();
-    const group = useCheckboxGroup({ defaultValue: tableColumnsZus });
+    const group = useCheckboxGroup({ value: tableColumnsZus });
 
     const handleCheckboxChange = (value, checked) => {
         const newColumns = checked 

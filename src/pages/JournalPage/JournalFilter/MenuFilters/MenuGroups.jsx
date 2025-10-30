@@ -15,7 +15,7 @@ export const MenuGroups = ({header}) => {
         selectedGroups,
         setSelectedGroups
     } = useGroupStore();
-    const group = useCheckboxGroup({ defaultValue: selectedGroups });
+    const group = useCheckboxGroup({ value: selectedGroups });
     
     const handleCheckboxChange = (value, checked) => {
         const newColumns = checked 

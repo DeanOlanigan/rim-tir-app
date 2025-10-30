@@ -15,7 +15,7 @@ export const FilterControls = () => {
 
     const handleReset = () => {
         console.log("handleReset");
-        resetSelectedGroups(["Оперативное Состояние", "Аварийная", "Предупредительная", "Без Группы", "Пауза", "Возобновлен"]);
+        resetSelectedGroups(["Состояние", "Аварийная", "Предупредительная", "Без Группы", "Пауза", "Возобновлен"]);
         resetSelMessages(["ТС", "ТУ", "Пауза", "Старт"]);
         resetArchive();
     };

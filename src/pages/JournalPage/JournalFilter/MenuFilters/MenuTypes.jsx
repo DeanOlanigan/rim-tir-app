@@ -13,7 +13,7 @@ export const MenuTypes = ({ header }) => {
         selectedMessages,
         setSelectedMessages
     } = useMessageFilterStore();
-    const group = useCheckboxGroup({ defaultValue: selectedMessages });
+    const group = useCheckboxGroup({ value: selectedMessages });
 
     const handleCheckboxChange = (value, checked) => {
         const newColumns = checked 
