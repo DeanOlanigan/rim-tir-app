@@ -61,7 +61,7 @@ export const JournalFilter = () => {
                                 </Accordion.ItemContent>
                             </Accordion.Item>
                         </Accordion.Root>
-                        <VariablesChoser />
+                        <VariablesChoser noPortal/>
                     </Drawer.Body>
                     <Drawer.Footer justifyContent={"space-between"}>
                         <FilterControls />

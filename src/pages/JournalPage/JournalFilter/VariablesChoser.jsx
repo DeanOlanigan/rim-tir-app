@@ -29,7 +29,7 @@ const useVariables = () => {
     return q;
 };
 
-export const VariablesChoser = () => {
+export const VariablesChoser = ({ noPortal= false }) => {
     const { data, isLoading, isError } = useVariables();
 
     const collection = useMemo(() => {
@@ -37,6 +37,18 @@ export const VariablesChoser = () => {
             items: data ?? [],
         });
     }, [data]);
+
+    const content = (
+        <Select.Positioner>
+            <Select.Content>
+                {collection.items.map((row) => (
+                    <Select.Item item={row} key={row.value}>
+                        {row.label}
+                    </Select.Item>
+                ))}
+            </Select.Content>
+        </Select.Positioner>
+    );
 
     return (
         <Select.Root
@@ -69,17 +81,7 @@ export const VariablesChoser = () => {
                     <Select.Indicator />
                 </Select.IndicatorGroup>
             </Select.Control>
-            <Portal>
-                <Select.Positioner>
-                    <Select.Content>
-                        {collection.items.map((row) => (
-                            <Select.Item item={row} key={row.value}>
-                                {row.label}
-                            </Select.Item>
-                        ))}
-                    </Select.Content>
-                </Select.Positioner>
-            </Portal>
+            {noPortal ?  content: <Portal>{content}</Portal>}
         </Select.Root>
     );
 };
