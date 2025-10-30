@@ -32,6 +32,9 @@ export function MqttProvider({ url, opt, children }) {
 
         mqttClient.on("connect", () => {
             console.log("[MQTT] connected");
+            for (const topic of registryRef.current.keys()) {
+                mqttClient.subscribe(topic);
+            }
         });
         mqttClient.on("close", () => {
             console.log("[MQTT] closed");
@@ -61,7 +64,6 @@ export function MqttProvider({ url, opt, children }) {
         return () => {
             mqttClient.end(true);
             clientRef.current = null;
-            registryRef.current.clear();
         };
     }, [url, opt]);
 
