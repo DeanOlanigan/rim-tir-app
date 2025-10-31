@@ -7,7 +7,6 @@ export const SubHeader = ({ children }) => {
             borderColor={"colorPalette.subtle"}
             p={"2"}
             h={"3rem"}
-            flexShrink={0}
         >
             <Flex gap={"2"} w={"4xl"} justify={"start"} align={"center"}>
                 {children}

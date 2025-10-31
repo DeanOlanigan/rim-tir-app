@@ -1,7 +1,7 @@
 import { Footer } from "@/components/Footer/Footer";
 import Header from "@/components/Header/Header";
 import { Toaster } from "@/components/ui/toaster";
-import { Box, Container, Flex, Heading } from "@chakra-ui/react";
+import { Container, Flex, Heading } from "@chakra-ui/react";
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 
@@ -14,9 +14,7 @@ export const PrivateLayout = () => {
         <>
             <Toaster />
             <Header />
-            <Box as={"main"} flex={1} minH={0}>
-                <Outlet />
-            </Box>
+            <Outlet />
             <Footer />
         </>
     );
@@ -24,7 +22,12 @@ export const PrivateLayout = () => {
 
 export const PageSuspesnse = () => {
     return (
-        <Flex w="100%" h="100%" justifyContent="center" alignItems="center">
+        <Flex
+            w={"100%"}
+            h={"100%"}
+            justifyContent={"center"}
+            alignItems={"center"}
+        >
             <Heading>Загрузка...</Heading>
         </Flex>
     );
@@ -32,13 +35,7 @@ export const PageSuspesnse = () => {
 
 export const WideLayout = () => {
     return (
-        <Flex
-            as={"section"}
-            direction={"column"}
-            h={"100%"}
-            minH={0}
-            position={"relative"}
-        >
+        <Flex as={"section"} flex={1} minH={0} h={"100%"} direction={"column"}>
             <Suspense fallback={<PageSuspesnse />}>
                 <Outlet />
             </Suspense>
@@ -50,13 +47,9 @@ export const CenteredLayout = () => {
     return (
         <Container
             as={"section"}
-            display={"flex"}
-            h={"100%"}
             minH={0}
+            h={"100%"}
             maxW={"6xl"}
-            flex={1}
-            flexDirection={"column"}
-            overflow={"hidden"}
             px={{ base: 4, md: 6 }}
             py={{ base: 4, md: 6 }}
         >

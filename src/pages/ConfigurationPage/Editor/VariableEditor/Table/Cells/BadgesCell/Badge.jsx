@@ -15,6 +15,7 @@ import { LuChevronDown } from "react-icons/lu";
 import { InputController } from "@/pages/ConfigurationPage/InputComponents/InputController";
 import { InputFactory } from "@/pages/ConfigurationPage/InputComponents/InputFactory";
 import { validateVisibility } from "@/utils/validation/runners/validateVisibility";
+import { iconsMap } from "@/config/icons";
 
 export const Badge = ({ id, param, childrenParams, isEditing }) => {
     const settings = useVariablesStore.getState().settings;
@@ -44,7 +45,7 @@ export const Badge = ({ id, param, childrenParams, isEditing }) => {
                     value={value}
                 />
             )}
-            {paramData.icon && <Icon as={paramData.icon} />}
+            {paramData.icon && <Icon as={iconsMap[paramData.icon]} />}
             {/* {paramData.shortname && (
                         <Text fontSize={"2xs"}>{paramData.shortname}</Text>
                     )} */}
@@ -154,9 +155,9 @@ const ChildParamViewer = ({ params }) => {
 };
 
 const ChildEnumViewer = ({ param }) => {
-    const choosen = param.enumValues.find(param.value);
+    const choosen = param.enumValues.find((val) => val.value === param.value);
     return choosen?.icon ? (
-        <Icon as={choosen.icon} color={choosen.color} />
+        <Icon as={iconsMap[choosen.icon]} color={choosen.color} />
     ) : (
         <Text>{choosen?.label}</Text>
     );

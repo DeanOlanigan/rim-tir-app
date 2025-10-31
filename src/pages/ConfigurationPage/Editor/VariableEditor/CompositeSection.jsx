@@ -40,11 +40,15 @@ export const CompositeSection = ({
     const ParamIcon = iconsMap[dep?.icon];
     return (
         <Card.Root
-            colorPalette={dep.color}
+            //colorPalette={dep.color}
             size={"sm"}
             w={"100%"}
             h={"100%"}
-            _hover={{ outline: "1px solid", outlineColor: "border.info" }}
+            _hover={{
+                outline: "1px solid",
+                outlineColor: "colorPalette.focusRing",
+                bg: "colorPalette.subtle",
+            }}
             variant="subtle"
             onClick={() =>
                 setSettings(data.id, {

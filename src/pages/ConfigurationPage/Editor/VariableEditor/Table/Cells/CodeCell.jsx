@@ -27,7 +27,7 @@ export const CodeCell = ({ id, code }) => {
                         p={"0"}
                         bg={"transparent"}
                         border={"1px solid"}
-                        borderColor={"border.info"}
+                        borderColor={"colorPalette.focusRing"}
                         shadow={"none"}
                         overflow={"hidden"}
                     >
