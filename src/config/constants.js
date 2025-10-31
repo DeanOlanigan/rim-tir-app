@@ -23,13 +23,13 @@ const TREE_TYPES_SET = new Set(Object.values(TREE_TYPES));
 const MAX_NAME_LENGTH = 50;
 
 const HOSTKEYS = {
-    copy: "ctrl+c",
-    cut: "ctrl+x",
-    paste: "ctrl+v",
-    ignore: "ctrl+i",
-    delete: "backspace",
-    rename: "enter",
-    edit: "enter",
+    copy: "Ctrl+C",
+    cut: "Ctrl+X",
+    paste: "Ctrl+V",
+    ignore: "Ctrl+I",
+    delete: "Backspace",
+    rename: "Enter",
+    edit: "Enter",
 };
 
 const LOG_LEVELS = {
