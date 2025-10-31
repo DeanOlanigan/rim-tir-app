@@ -16,8 +16,8 @@ export const ContextMenu = () => {
     const nodeId = apiPath?.focusedNode?.id;
     const type = settings[nodeId]?.type;
 
-    const isFolder = type === NODE_TYPES.folder;
-    if (isFolder) return null;
+    const isHasCtxMenu = type === NODE_TYPES.folder || type === NODE_TYPES.root;
+    if (isHasCtxMenu) return null;
 
     const isVariable = type === NODE_TYPES.variable;
     const isDataObject = type === NODE_TYPES.dataObject;
