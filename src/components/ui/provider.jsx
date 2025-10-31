@@ -11,7 +11,7 @@ import { ColorModeProvider } from "./color-mode";
 const config = defineConfig({
     globalCss: {
         html: {
-            colorPalette: "purple",
+            colorPalette: "orange",
         },
     },
 });

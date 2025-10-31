@@ -5,19 +5,30 @@ import {
     Dialog,
     CloseButton,
     Center,
+    Flex,
+    Icon,
 } from "@chakra-ui/react";
 import { ColorModeButton } from "@/components/ui/color-mode";
 import { LuSettings, LuLogOut } from "react-icons/lu";
+import {
+    GiChewedSkull,
+    GiGhost,
+    GiPumpkin,
+    GiPumpkinLantern,
+    GiPumpkinMask,
+} from "react-icons/gi";
 
 import Navigation from "@/components/Navigation/Navigation";
 
 function Header() {
     return (
         <Center as={"header"} gap={"2"} p={"2"}>
+            <Pumpkins />
             <Navigation />
             <SettingsMenu />
             <LogoutBtn />
             <ColorModeButton size={"xs"} />
+            <Pumpkins />
         </Center>
     );
 }
@@ -85,5 +96,37 @@ const LogoutBtn = () => {
         >
             <LuLogOut />
         </IconButton>
+    );
+};
+
+const Pumpkins = () => {
+    return (
+        <Flex gap={"6"}>
+            <Icon
+                as={GiPumpkinLantern}
+                size={"xl"}
+                color={"orange.700"}
+                rotate={"-10"}
+            />
+            <Icon as={GiPumpkinMask} size={"xl"} color={"orange.600"} />
+            <Icon
+                as={GiPumpkin}
+                size={"xl"}
+                color={"orange.700"}
+                rotate={"10"}
+            />
+            <Icon
+                as={GiGhost}
+                size={"xl"}
+                color={"orange.600"}
+                rotate={"-10"}
+            />
+            <Icon
+                as={GiChewedSkull}
+                size={"xl"}
+                color={"orange.700"}
+                rotate={"10"}
+            />
+        </Flex>
     );
 };
