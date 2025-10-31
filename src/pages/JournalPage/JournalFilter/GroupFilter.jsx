@@ -9,17 +9,13 @@ const groups = [
 ];
 
 export const GroupFilter = () => {
-
-    const {
-        selectedGroups,
-        setSelectedGroups,
-    } = useGroupStore();
+    const { selectedGroups, setSelectedGroups } = useGroupStore();
 
     return (
         <Stack p={"1"}>
             <CheckboxGroup
                 value={selectedGroups}
-                onValueChange={(value) => (setSelectedGroups(value))}
+                onValueChange={(value) => setSelectedGroups(value)}
             >
                 {groups.map((group) => (
                     <Checkbox.Root key={group.value} value={group.value}>

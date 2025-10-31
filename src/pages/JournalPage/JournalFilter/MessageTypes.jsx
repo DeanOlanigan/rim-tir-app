@@ -7,11 +7,7 @@ const messageTypes = [
 ];
 
 export const MessageTypes = () => {
-    
-    const {
-        selectedMessages,
-        setSelectedMessages
-    } = useMessageFilterStore();
+    const { selectedMessages, setSelectedMessages } = useMessageFilterStore();
 
     return (
         <Stack p={"1"}>

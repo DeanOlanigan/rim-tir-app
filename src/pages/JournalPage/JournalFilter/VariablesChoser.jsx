@@ -29,7 +29,7 @@ const useVariables = () => {
     return q;
 };
 
-export const VariablesChoser = ({ noPortal= false }) => {
+export const VariablesChoser = ({ noPortal = false }) => {
     const { data, isFetching, isError } = useVariables();
 
     const collection = useMemo(() => {
@@ -82,7 +82,7 @@ export const VariablesChoser = ({ noPortal= false }) => {
                     <Select.Indicator />
                 </Select.IndicatorGroup>
             </Select.Control>
-            {noPortal ?  content: <Portal>{content}</Portal>}
+            {noPortal ? content : <Portal>{content}</Portal>}
         </Select.Root>
     );
 };

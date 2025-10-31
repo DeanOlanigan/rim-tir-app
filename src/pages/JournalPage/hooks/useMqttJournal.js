@@ -4,7 +4,7 @@ import { useJournalStream } from "../JournalStores/journal-stream-store";
 
 export function useMqttJournal() {
     const { subscribe } = useMqttCore();
-    const push = useJournalStream(state => state.push);
+    const push = useJournalStream((state) => state.push);
     useEffect(() => {
         const topic = "journal";
         const buf = [];

@@ -9,6 +9,9 @@ const FilterColumns = (tableColumns, tableColumnsZus) => {
 };
 
 export const useFilterColumns = (tableColumns, tableColumnsZus) => {
-    const filteredColumns = useMemo(() => FilterColumns(tableColumns, tableColumnsZus), [tableColumns, tableColumnsZus]);
+    const filteredColumns = useMemo(
+        () => FilterColumns(tableColumns, tableColumnsZus),
+        [tableColumns, tableColumnsZus]
+    );
     return filteredColumns;
 };

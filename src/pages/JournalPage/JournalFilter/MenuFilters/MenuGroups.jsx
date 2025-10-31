@@ -1,5 +1,4 @@
 import { Box, Menu, Portal, useCheckboxGroup } from "@chakra-ui/react";
-import { flexRender } from "@tanstack/react-table";
 import { useGroupStore } from "../../JournalStores/GroupFilterStore";
 import { LuArrowBigDown } from "react-icons/lu";
 
@@ -10,18 +9,15 @@ const groups = [
     { label: "Оперативного состояния", value: "Состояние" },
 ];
 
-export const MenuGroups = ({header}) => {
-    const {
-        selectedGroups,
-        setSelectedGroups
-    } = useGroupStore();
+export const MenuGroups = ({ name }) => {
+    const { selectedGroups, setSelectedGroups } = useGroupStore();
     const group = useCheckboxGroup({ value: selectedGroups });
-    
+
     const handleCheckboxChange = (value, checked) => {
-        const newColumns = checked 
+        const newColumns = checked
             ? [...selectedGroups, value]
-            : selectedGroups.filter(col => col !== value);
-    
+            : selectedGroups.filter((col) => col !== value);
+
         setSelectedGroups(newColumns);
     };
 
@@ -29,10 +25,7 @@ export const MenuGroups = ({header}) => {
         <Menu.Root closeOnSelect={false}>
             <Menu.Trigger asChild>
                 <Box cursor="pointer" display="inline-flex" alignItems="center">
-                    {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                    )}
+                    {name}
                     <LuArrowBigDown />
                 </Box>
             </Menu.Trigger>

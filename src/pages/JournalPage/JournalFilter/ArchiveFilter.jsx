@@ -30,7 +30,6 @@ const mountType = createListCollection({
 });
 
 export const ArchiveFilter = () => {
-
     const {
         setArchive,
         chooseStartDate,
@@ -41,7 +40,7 @@ export const ArchiveFilter = () => {
         isArchive,
         endDate,
         stringsQuantity,
-        Location
+        Location,
     } = useJournalFiltersArchiveStore();
 
     return (
@@ -50,7 +49,7 @@ export const ArchiveFilter = () => {
                 defaultChecked={isArchive}
                 checked={isArchive}
                 size={"sm"}
-                onCheckedChange={(data) => (setArchive(data.checked))}
+                onCheckedChange={(data) => setArchive(data.checked)}
             >
                 <Switch.Label>Архив</Switch.Label>
                 <Switch.HiddenInput />

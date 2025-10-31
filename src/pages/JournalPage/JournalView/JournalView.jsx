@@ -7,9 +7,10 @@ import {
     useCheckboxGroup,
 } from "@chakra-ui/react";
 import { LuPlay, LuDownload, LuColumns3, LuPause } from "react-icons/lu";
-import { TestTable } from "./JournalTable";
-import { useColumnsStore } from "../JournalStores/ColumnsStore";
+
+import { JournalTable } from "./JournalTable";
 import { JournalFilter } from "../JournalFilter/JournalFilter";
+import { useColumnsStore } from "../JournalStores/ColumnsStore";
 import { useJournalStream } from "../JournalStores/journal-stream-store";
 
 const tableColumns = [
@@ -36,19 +37,15 @@ export const JournalView = () => {
             <Card.Header>
                 <JournalHeader />
             </Card.Header>
-            <Card.Body h={"100%"} pt={"0"} mt={"1rem"} overflow='auto'>
-                <TestTable />
+            <Card.Body h={"100%"} pt={"0"} mt={"1rem"} overflow="auto">
+                <JournalTable />
             </Card.Body>
         </Card.Root>
     );
 };
 
 const JournalHeader = () => {
-    const {
-        isPaused,
-        pause,
-        resume 
-    } = useJournalStream();
+    const { isPaused, pause, resume } = useJournalStream();
 
     return (
         <Flex justifyContent={"space-between"}>
@@ -59,12 +56,9 @@ const JournalHeader = () => {
                 <IconButton
                     variant={"outline"}
                     size={"xs"}
-                    onClick={() => isPaused ? resume() : pause()}
-                >   
-                    {!isPaused 
-                        ? <LuPlay />
-                        : <LuPause />
-                    } 
+                    onClick={() => (isPaused ? resume() : pause())}
+                >
+                    {!isPaused ? <LuPlay /> : <LuPause />}
                 </IconButton>
             </Flex>
             <Flex gap={"1"}>
@@ -77,17 +71,14 @@ const JournalHeader = () => {
 
 // TODO Встроить в таблицу
 const ColumnViewMenu = () => {
-    const {
-        tableColumnsZus,
-        setColons
-    } = useColumnsStore();
+    const { tableColumnsZus, setColons } = useColumnsStore();
     const group = useCheckboxGroup({ value: tableColumnsZus });
 
     const handleCheckboxChange = (value, checked) => {
-        const newColumns = checked 
+        const newColumns = checked
             ? [...tableColumnsZus, value]
-            : tableColumnsZus.filter(col => col !== value);
-    
+            : tableColumnsZus.filter((col) => col !== value);
+
         setColons(newColumns);
     };
 
@@ -107,7 +98,7 @@ const ColumnViewMenu = () => {
                                     key={value}
                                     value={value}
                                     checked={group.isChecked(value)}
-                                    onCheckedChange={(checked) =>{
+                                    onCheckedChange={(checked) => {
                                         handleCheckboxChange(value, checked);
                                         group.toggleValue(value);
                                     }}

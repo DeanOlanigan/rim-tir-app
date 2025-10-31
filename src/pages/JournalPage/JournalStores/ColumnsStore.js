@@ -5,10 +5,10 @@ export const useColumnsStore = create(
     persist(
         (set) => ({
             tableColumnsZus: ["date", "type", "group", "var", "val", "desc"],
-            setColons: (newColumns) => set({ tableColumnsZus: newColumns })
+            setColons: (newColumns) => set({ tableColumnsZus: newColumns }),
         }),
         {
-            name: "columns-store"
+            name: "columns-store",
         }
     )
 );

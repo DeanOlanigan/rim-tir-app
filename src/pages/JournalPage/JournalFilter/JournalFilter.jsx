@@ -1,23 +1,29 @@
-import { Accordion, Span, Drawer, Button, CloseButton } from "@chakra-ui/react";
+import {
+    Accordion,
+    Span,
+    Drawer,
+    CloseButton,
+    IconButton,
+} from "@chakra-ui/react";
 import { ArchiveFilter } from "./ArchiveFilter";
 import { VariablesChoser } from "./VariablesChoser";
 import { MessageTypes } from "./MessageTypes";
 import { GroupFilter } from "./GroupFilter";
 import { FilterControls } from "./FilterControls";
+import { LuListFilter } from "react-icons/lu";
 
 export const JournalFilter = () => {
-    
     return (
         <Drawer.Root>
             <Drawer.Trigger asChild>
-                <Button size={"xs"} variant={"solid"}>
-                    Фильтрация
-                </Button>
+                <IconButton size={"xs"} variant={"solid"}>
+                    <LuListFilter />
+                </IconButton>
             </Drawer.Trigger>
             <Drawer.Backdrop bg="blackAlpha.600" />
-            <Drawer.Positioner padding="4">
+            <Drawer.Positioner pe={"4"} py={"12"}>
                 <Drawer.Content rounded="md">
-                    <Drawer.Header borderBottom={"2px solid #e2e8f0"}>
+                    <Drawer.Header>
                         <Drawer.Title>Фильтры</Drawer.Title>
                         <Drawer.CloseTrigger top="5">
                             <CloseButton size="sm" />
@@ -61,7 +67,7 @@ export const JournalFilter = () => {
                                 </Accordion.ItemContent>
                             </Accordion.Item>
                         </Accordion.Root>
-                        <VariablesChoser noPortal/>
+                        <VariablesChoser noPortal />
                     </Drawer.Body>
                     <Drawer.Footer justifyContent={"space-between"}>
                         <FilterControls />

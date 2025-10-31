@@ -1,5 +1,4 @@
 import { Flex } from "@chakra-ui/react";
-import { JournalFilter } from "./JournalFilter/JournalFilter";
 import { JournalView } from "./JournalView/JournalView";
 
 function JournalPage() {
@@ -14,7 +13,6 @@ function JournalPage() {
                 _open: "scale-fade-in",
             }}
         >
-            <JournalFilter />
             <JournalView />
         </Flex>
     );

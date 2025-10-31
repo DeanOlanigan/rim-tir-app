@@ -5,10 +5,11 @@ export const useMessageFilterStore = create(
     persist(
         (set) => ({
             selectedMessages: ["ТС", "ТУ", "Пауза", "Старт"],
-            setSelectedMessages: (newMessages) => set(({ selectedMessages: newMessages }))
+            setSelectedMessages: (newMessages) =>
+                set({ selectedMessages: newMessages }),
         }),
         {
-            name: "message-store"
+            name: "message-store",
         }
     )
 );

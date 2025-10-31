@@ -1,5 +1,4 @@
 import { Box, Menu, Portal, useCheckboxGroup } from "@chakra-ui/react";
-import { flexRender } from "@tanstack/react-table";
 import { useMessageFilterStore } from "../../JournalStores/MessageFilterStore";
 import { LuArrowBigDown } from "react-icons/lu";
 
@@ -8,17 +7,14 @@ const messageTypes = [
     { label: "Пользовательские ТУ", value: "ТУ" },
 ];
 
-export const MenuTypes = ({ header }) => {
-    const {
-        selectedMessages,
-        setSelectedMessages
-    } = useMessageFilterStore();
+export const MenuTypes = ({ name }) => {
+    const { selectedMessages, setSelectedMessages } = useMessageFilterStore();
     const group = useCheckboxGroup({ value: selectedMessages });
 
     const handleCheckboxChange = (value, checked) => {
-        const newColumns = checked 
+        const newColumns = checked
             ? [...selectedMessages, value]
-            : selectedMessages.filter(col => col !== value);
+            : selectedMessages.filter((col) => col !== value);
         setSelectedMessages(newColumns);
     };
 
@@ -26,10 +22,7 @@ export const MenuTypes = ({ header }) => {
         <Menu.Root closeOnSelect={false}>
             <Menu.Trigger asChild>
                 <Box cursor="pointer" display="inline-flex" alignItems="center">
-                    {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                    )}
+                    {name}
                     <LuArrowBigDown />
                 </Box>
             </Menu.Trigger>
