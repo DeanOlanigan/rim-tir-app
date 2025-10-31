@@ -1,11 +1,4 @@
-import {
-    Checkbox,
-    HStack,
-    Icon,
-    IconButton,
-    Popover,
-    Portal,
-} from "@chakra-ui/react";
+import { Checkbox, HStack, Icon, IconButton, Popover } from "@chakra-ui/react";
 import { LuInfo } from "react-icons/lu";
 
 export const AttributeCheckbox = ({ attr, mode }) => {
@@ -26,7 +19,7 @@ export const AttributeCheckbox = ({ attr, mode }) => {
                     {attr.label} {attr.short && `(${attr.short})`}
                 </Checkbox.Label>
             </Checkbox.Root>
-            <Popover.Root size={"xs"}>
+            <Popover.Root size={"xs"} lazyMount unmountOnExit>
                 <Popover.Trigger asChild>
                     <IconButton
                         size={"3xs"}
@@ -37,13 +30,11 @@ export const AttributeCheckbox = ({ attr, mode }) => {
                         <LuInfo />
                     </IconButton>
                 </Popover.Trigger>
-                <Portal>
-                    <Popover.Positioner>
-                        <Popover.Content>
-                            <Popover.Body>{attr.description}</Popover.Body>
-                        </Popover.Content>
-                    </Popover.Positioner>
-                </Portal>
+                <Popover.Positioner>
+                    <Popover.Content>
+                        <Popover.Body>{attr.description}</Popover.Body>
+                    </Popover.Content>
+                </Popover.Positioner>
             </Popover.Root>
         </HStack>
     );

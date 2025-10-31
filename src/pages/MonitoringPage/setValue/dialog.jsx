@@ -27,7 +27,7 @@ export const signalEditDialog = createOverlay((props) => {
 
     const nodeCfg = path ? configuratorConfig.nodePaths?.[path] : undefined;
     const dataTypeItems = nodeCfg?.settings?.type?.enumValues;
-    const dataType = dataTypeItems.find(variableType);
+    const dataType = dataTypeItems.find((item) => item.value === variableType);
 
     return (
         <Dialog.Root
