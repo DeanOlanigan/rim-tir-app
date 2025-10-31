@@ -56,8 +56,12 @@ export const LogViewerBody = () => {
 
     const rowVirtualizer = useVirtualizer({
         count: live.length,
-        getScrollElement: () => viewportRef.current,
-        estimateSize: () => 26,
+        getScrollElement: () => sticky.scrollRef.current,
+        estimateSize: () => logTextSize * 1.5,
+        measureElement: (el) => {
+            if (!el) return logTextSize * 1.5;
+            return el.getBoundingClientRect().height;
+        },
         overscan: 20,
         shouldAdjustScrollPositionOnItemSizeChange: true,
     });
@@ -69,35 +73,25 @@ export const LogViewerBody = () => {
         }
     }, [live.length, sticky.isAtBottom, rowVirtualizer]); */
 
-    const totalSize = rowVirtualizer.getTotalSize();
-
-    useLayoutEffect(() => {
-        if (!viewportRef.current) return;
-
-        const calc = () => {
-            const vpH = viewportRef.current.clientHeight || 1;
-            const ratio = vpH / Math.max(1, totalSize);
-            const trackH = vpH; // у вертикального скролла трек = высоте viewport
-            const h = Math.max(MIN_THUMB, Math.floor(trackH * ratio));
-            setThumbH(h);
-        };
-
-        const ro = new ResizeObserver(calc);
-        ro.observe(viewportRef.current);
-
-        calc(); // первичный расчёт
-
-        return () => ro.disconnect();
-    }, [totalSize]);
+    const contentProps = useMemo(
+        () => ({
+            style: {
+                height: `${rowVirtualizer.getTotalSize()}px`,
+                width: "100%",
+                position: "relative",
+            },
+        }),
+        [rowVirtualizer.getTotalSize()]
+    );
 
     const getItemProps = useCallback(
         (item) => ({
+            'data-index': item.index,
             style: {
                 position: "absolute",
                 top: 0,
                 left: 0,
                 width: "100%",
-                height: `${item.size}px`,
                 transform: `translateY(${item.start}px)`,
             },
         }),
@@ -126,7 +120,10 @@ export const LogViewerBody = () => {
                         <NoData />
                     ) : (
                         rowVirtualizer.getVirtualItems().map((vi) => (
-                            <Box key={vi.key} {...getItemProps(vi)}>
+                            <div 
+                                key={vi.key}
+                                ref={rowVirtualizer.measureElement} 
+                                {...getItemProps(vi)} >
                                 <LogRow
                                     row={live[vi.index]}
                                     logTextSize={logTextSize}
@@ -144,6 +141,7 @@ export const LogViewerBody = () => {
                         size="sm"
                         onClick={() => {
                             sticky.scrollToBottom();
+                            rowVirtualizer.measure();
                         }}
                         colorScheme="blue"
                         variant="solid"

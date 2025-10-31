@@ -6,25 +6,37 @@ import {
     Portal,
     useCheckboxGroup,
 } from "@chakra-ui/react";
-import { LuPlay, LuDownload, LuColumns3 } from "react-icons/lu";
+import { LuPlay, LuDownload, LuColumns3, LuPause } from "react-icons/lu";
 import { TestTable } from "./JournalTable";
+import { useColumnsStore } from "../JournalStores/ColumnsStore";
+import { JournalFilter } from "../JournalFilter/JournalFilter";
+import { useJournalStream } from "../JournalStores/journal-stream-store";
 
 const tableColumns = [
     { label: "Дата и время", value: "date" },
     { label: "Тип", value: "type" },
-    { label: "Переменная", value: "var" },
-    { label: "Описание", value: "desc" },
-    { label: "Значение", value: "val" },
     { label: "Группа", value: "group" },
+    { label: "Переменная", value: "var" },
+    { label: "Значение", value: "val" },
+    { label: "Описание", value: "desc" },
 ];
 
 export const JournalView = () => {
     return (
-        <Card.Root shadow={"md"} flex={1}>
+        <Card.Root
+            width={"100%"}
+            h={"100%"}
+            shadow={"xl"}
+            data-state={"open"}
+            animationDuration={"slow"}
+            animationStyle={{
+                _open: "scale-fade-in",
+            }}
+        >
             <Card.Header>
                 <JournalHeader />
             </Card.Header>
-            <Card.Body>
+            <Card.Body h={"100%"} pt={"0"} mt={"1rem"} overflow='auto'>
                 <TestTable />
             </Card.Body>
         </Card.Root>
@@ -32,6 +44,12 @@ export const JournalView = () => {
 };
 
 const JournalHeader = () => {
+    const {
+        isPaused,
+        pause,
+        resume 
+    } = useJournalStream();
+
     return (
         <Flex justifyContent={"space-between"}>
             <Flex gap={"1"}>
@@ -41,19 +59,37 @@ const JournalHeader = () => {
                 <IconButton
                     variant={"outline"}
                     size={"xs"}
-                    onClick={() => console.log("handlePause")}
-                >
-                    <LuPlay />
+                    onClick={() => isPaused ? resume() : pause()}
+                >   
+                    {!isPaused 
+                        ? <LuPlay />
+                        : <LuPause />
+                    } 
                 </IconButton>
             </Flex>
-            <ColumnViewMenu />
+            <Flex gap={"1"}>
+                <JournalFilter />
+                <ColumnViewMenu />
+            </Flex>
         </Flex>
     );
 };
 
 // TODO Встроить в таблицу
 const ColumnViewMenu = () => {
-    const group = useCheckboxGroup({ defaultValue: ["date", "type", "var"] });
+    const {
+        tableColumnsZus,
+        setColons
+    } = useColumnsStore();
+    const group = useCheckboxGroup({ value: tableColumnsZus });
+
+    const handleCheckboxChange = (value, checked) => {
+        const newColumns = checked 
+            ? [...tableColumnsZus, value]
+            : tableColumnsZus.filter(col => col !== value);
+    
+        setColons(newColumns);
+    };
 
     return (
         <Menu.Root closeOnSelect={false}>
@@ -71,9 +107,10 @@ const ColumnViewMenu = () => {
                                     key={value}
                                     value={value}
                                     checked={group.isChecked(value)}
-                                    onCheckedChange={() =>
-                                        group.toggleValue(value)
-                                    }
+                                    onCheckedChange={(checked) =>{
+                                        handleCheckboxChange(value, checked);
+                                        group.toggleValue(value);
+                                    }}
                                 >
                                     {label}
                                     <Menu.ItemIndicator />

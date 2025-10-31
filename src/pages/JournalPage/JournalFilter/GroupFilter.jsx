@@ -1,17 +1,25 @@
 import { Stack, CheckboxGroup, Checkbox } from "@chakra-ui/react";
+import { useGroupStore } from "../JournalStores/GroupFilterStore";
 
 const groups = [
-    { label: "Без группы", value: "groupEmptyCheck" },
-    { label: "Аварийные", value: "groupDangerCheck" },
-    { label: "Предупредительные", value: "groupWarnCheck" },
-    { label: "Оперативного состояния", value: "groupStateCheck" },
+    { label: "Без группы", value: "Без Группы" },
+    { label: "Аварийные", value: "Аварийная" },
+    { label: "Предупредительные", value: "Предупредительная" },
+    { label: "Оперативного состояния", value: "Состояние" },
 ];
 
 export const GroupFilter = () => {
+
+    const {
+        selectedGroups,
+        setSelectedGroups,
+    } = useGroupStore();
+
     return (
         <Stack p={"1"}>
             <CheckboxGroup
-                onValueChange={(value) => console.log("onValueChange", value)}
+                value={selectedGroups}
+                onValueChange={(value) => (setSelectedGroups(value))}
             >
                 {groups.map((group) => (
                     <Checkbox.Root key={group.value} value={group.value}>

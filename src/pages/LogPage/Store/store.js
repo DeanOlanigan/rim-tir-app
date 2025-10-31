@@ -27,9 +27,9 @@ export const useLogStore = create(
                 })),
 
             incLogTextSize: () =>
-                set((state) => ({ logTextSize: state.logTextSize + 1 })),
+                set((state) => ({ logTextSize: state.logTextSize < 72 ? state.logTextSize + 1 : state.logTextSize})),
             decLogTextSize: () =>
-                set((state) => ({ logTextSize: state.logTextSize - 1 })),
+                set((state) => ({ logTextSize: state.logTextSize - 1 > 12 ? state.logTextSize - 1 : state.logTextSize})),
 
             setFilter: (value) => set({ filter: value }),
             setChosenLog: (chosenLog) => set({ chosenLog }),

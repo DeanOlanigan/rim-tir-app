@@ -1,15 +1,23 @@
 import { Stack, CheckboxGroup, Checkbox } from "@chakra-ui/react";
+import { useMessageFilterStore } from "../JournalStores/MessageFilterStore";
 
 const messageTypes = [
-    { label: "ТС", value: "eventTypeTSCheck" },
-    { label: "Пользовательские ТУ", value: "eventTypeTUCheck" },
+    { label: "ТС", value: "ТС" },
+    { label: "Пользовательские ТУ", value: "ТУ" },
 ];
 
 export const MessageTypes = () => {
+    
+    const {
+        selectedMessages,
+        setSelectedMessages
+    } = useMessageFilterStore();
+
     return (
         <Stack p={"1"}>
             <CheckboxGroup
-                onValueChange={(types) => console.log("Message types: ", types)}
+                value={selectedMessages}
+                onValueChange={(types) => setSelectedMessages(types)}
             >
                 {messageTypes.map((type) => (
                     <Checkbox.Root key={type.value} value={type.value}>

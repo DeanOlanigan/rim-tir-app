@@ -7,6 +7,7 @@ import {
     Switch,
 } from "@chakra-ui/react";
 import { DatePicker } from "@/components/DatePicker/DatePicker";
+import { useJournalFiltersArchiveStore } from "../JournalStores/JournalFiltersArсhiveStore";
 
 const rows = createListCollection({
     items: [
@@ -29,11 +30,27 @@ const mountType = createListCollection({
 });
 
 export const ArchiveFilter = () => {
+
+    const {
+        setArchive,
+        chooseStartDate,
+        chooseEndDate,
+        setStringQuantity,
+        chooseLocation,
+        startDate,
+        isArchive,
+        endDate,
+        stringsQuantity,
+        Location
+    } = useJournalFiltersArchiveStore();
+
     return (
         <Stack p={"1"}>
             <Switch.Root
+                defaultChecked={isArchive}
+                checked={isArchive}
                 size={"sm"}
-                onCheckedChange={(e) => console.log("onCheckedChange", e)}
+                onCheckedChange={(data) => (setArchive(data.checked))}
             >
                 <Switch.Label>Архив</Switch.Label>
                 <Switch.HiddenInput />
@@ -43,11 +60,11 @@ export const ArchiveFilter = () => {
             <Field.Root>
                 <Field.Label>Дата начала</Field.Label>
                 <DatePicker
-                    selected={null}
+                    selected={new Date(startDate)}
                     portalId="datepicker-portal"
                     popperPlacement="right-start"
                     showPopperArrow={false}
-                    onChange={(date) => console.log("onChange", date)}
+                    onChange={(date) => chooseStartDate(date)}
                     timeFormat="HH:mm"
                     timeCaption="Время"
                     timeIntervals={15}
@@ -68,11 +85,11 @@ export const ArchiveFilter = () => {
             <Field.Root>
                 <Field.Label>Дата окончания</Field.Label>
                 <DatePicker
-                    selected={null}
+                    selected={new Date(endDate)}
                     portalId="datepicker-portal"
                     popperPlacement="right-start"
                     showPopperArrow={false}
-                    onChange={(date) => console.log("onChange", date)}
+                    onChange={(date) => chooseEndDate(date)}
                     timeFormat="HH:mm"
                     timeCaption="Время"
                     timeIntervals={15}
@@ -91,9 +108,10 @@ export const ArchiveFilter = () => {
             </Field.Root>
 
             <Select.Root
+                value={stringsQuantity.value}
                 collection={rows}
                 size={"xs"}
-                onValueChange={(value) => console.log("onValueChange", value)}
+                onValueChange={(value) => setStringQuantity(value.value)}
             >
                 <Select.HiddenSelect />
                 <Select.Label>Количество строк:</Select.Label>
@@ -120,9 +138,10 @@ export const ArchiveFilter = () => {
             </Select.Root>
 
             <Select.Root
+                value={Location.value}
                 collection={mountType}
                 size={"xs"}
-                onValueChange={(value) => console.log("onValueChange", value)}
+                onValueChange={(value) => chooseLocation(value.value)}
             >
                 <Select.HiddenSelect />
                 <Select.Label>Расположение:</Select.Label>
