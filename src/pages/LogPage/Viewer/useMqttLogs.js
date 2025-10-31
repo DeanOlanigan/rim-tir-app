@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLogStream } from "../Store/stream-store";
+import { useLogStream } from "../store/stream-store";
 import { useMqttCore } from "@/utils/mqtt/mqtt-provider";
 
 export function useMqttLogs(type, name) {

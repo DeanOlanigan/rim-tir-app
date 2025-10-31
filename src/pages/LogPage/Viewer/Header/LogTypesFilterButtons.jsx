@@ -1,6 +1,6 @@
 import { CheckboxCard, CheckboxGroup, Group } from "@chakra-ui/react";
 import { LuCircleAlert, LuInfo, LuTriangleAlert } from "react-icons/lu";
-import { useLogStore } from "../../Store/store";
+import { useLogStore } from "../../store/store";
 import { LOG_LEVELS } from "@/config/constants";
 
 export const LogTypesFilterButtons = () => {

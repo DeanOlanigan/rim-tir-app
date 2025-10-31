@@ -1,4 +1,4 @@
-import { useHasChosenLog } from "./Store/store";
+import { useHasChosenLog } from "./store/store";
 import LogSourceManager from "./SourceManager/LogSourceManager";
 import LogViewer from "./Viewer/LogViewer";
 

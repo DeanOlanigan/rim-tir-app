@@ -1,5 +1,5 @@
 import { createListCollection, Portal, Select } from "@chakra-ui/react";
-import { useLogStore } from "../Store/store";
+import { useLogStore } from "../store/store";
 
 const rows = createListCollection({
     items: [

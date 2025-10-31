@@ -1,4 +1,4 @@
-import { Group, IconButton, CheckboxCard, Icon, Text } from "@chakra-ui/react";
+import { Group, IconButton, CheckboxCard, Icon } from "@chakra-ui/react";
 import {
     LuCirclePlus,
     LuCircleMinus,
@@ -8,8 +8,8 @@ import {
     LuWrapText,
     LuEraser,
 } from "react-icons/lu";
-import { useLogStore } from "../../Store/store";
-import { useLogStream } from "../../Store/stream-store";
+import { useLogStore } from "../../store/store";
+import { useLogStream } from "../../store/stream-store";
 
 export const LogToolBox = () => {
     const isLogTextWrapped = useLogStore((state) => state.isLogTextWrapped);

@@ -1,6 +1,6 @@
 import { Button } from "@chakra-ui/react";
 import { LuDownload } from "react-icons/lu";
-import { useLogStore } from "../Store/store";
+import { useLogStore } from "../store/store";
 
 export const DownloadAllLogsButton = () => {
     console.log("Render DownloadAllLogsButton");

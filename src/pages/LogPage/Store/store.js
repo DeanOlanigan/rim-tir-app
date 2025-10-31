@@ -18,7 +18,7 @@ const initialState = {
 
 export const useLogStore = create(
     persist(
-        (set) => ({
+        (set, get) => ({
             ...initialState,
 
             toggleLogTextWrapped: () =>
@@ -26,10 +26,19 @@ export const useLogStore = create(
                     isLogTextWrapped: !state.isLogTextWrapped,
                 })),
 
-            incLogTextSize: () =>
-                set((state) => ({ logTextSize: state.logTextSize < 72 ? state.logTextSize + 1 : state.logTextSize})),
-            decLogTextSize: () =>
-                set((state) => ({ logTextSize: state.logTextSize - 1 > 12 ? state.logTextSize - 1 : state.logTextSize})),
+            incLogTextSize: () => {
+                if (get().logTextSize >= 24) return;
+                set((state) => ({
+                    logTextSize: state.logTextSize + 1,
+                }));
+            },
+
+            decLogTextSize: () => {
+                if (get().logTextSize <= 12) return;
+                set((state) => ({
+                    logTextSize: state.logTextSize - 1,
+                }));
+            },
 
             setFilter: (value) => set({ filter: value }),
             setChosenLog: (chosenLog) => set({ chosenLog }),

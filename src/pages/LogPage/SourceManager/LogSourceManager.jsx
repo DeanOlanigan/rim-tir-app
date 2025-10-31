@@ -18,7 +18,7 @@ import { LogFileViewerControls } from "./LogFileViewerControls";
 import { useQuery } from "@tanstack/react-query";
 import { getLoglist, QK } from "@/api";
 import { LuArrowRight } from "react-icons/lu";
-import { useLogStore } from "../Store/store";
+import { useLogStore } from "../store/store";
 import { DownloadAllLogsButton } from "./DownloadAllLogsButton";
 import { NoData } from "@/components/NoData";
 import { ErrorInformer } from "@/components/ErrorInformer";

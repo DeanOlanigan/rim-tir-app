@@ -1,7 +1,7 @@
 import { getLog } from "@/api/log";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useLogStream } from "../Store/stream-store";
+import { useLogStream } from "../store/stream-store";
 
 export function useLogHistory(type, name, limit) {
     const { hydrate } = useLogStream.getState();

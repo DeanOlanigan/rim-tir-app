@@ -1,6 +1,6 @@
 import { HStack, Heading, Text, Em } from "@chakra-ui/react";
 import { InfoTip } from "@/components/ui/toggle-tip";
-import { useLogStore } from "../../Store/store";
+import { useLogStore } from "../../store/store";
 
 export const LogName = () => {
     const chosenLog = useLogStore((state) => state.chosenLog);

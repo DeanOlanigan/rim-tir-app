@@ -1,5 +1,5 @@
-import { useLogStore } from "../Store/store";
-import { useFilteredLogs } from "../Store/stream-store";
+import { useLogStore } from "../store/store";
+import { useFilteredLogs } from "../store/stream-store";
 import { useLogHistory } from "./useLogHistory";
 import { useMqttLogs } from "./useMqttLogs";
 
