@@ -27,6 +27,8 @@ function GraphViewer() {
     return (
         <Card.Root
             w={"100%"}
+            h={"100%"}
+            size={"sm"}
             shadow={"md"}
             data-state={"open"}
             animationDuration={"slow"}
@@ -49,7 +51,7 @@ function GraphViewer() {
                     )}
                 </HStack>
             </Card.Header>
-            <Card.Body>
+            <Card.Body position={"relative"} justifyContent={"center"}>
                 <ExampleChart
                     graphRef={graphRef}
                     data={data}

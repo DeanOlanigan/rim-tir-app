@@ -64,7 +64,7 @@ export const JournalTable = () => {
     if (isError) return <Text>Error: {error.message}</Text>;
 
     return (
-        <Box h={"100%"}>
+        <>
             {(filtredData.length === 0 || filtreColon.length === 0) && (
                 <NoData />
             )}
@@ -154,7 +154,7 @@ export const JournalTable = () => {
                     </IconButton>
                 </Box>
             )}
-        </Box>
+        </>
     );
 };
 

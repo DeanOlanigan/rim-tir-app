@@ -25,6 +25,7 @@ const tableColumns = [
 export const JournalView = () => {
     return (
         <Card.Root
+            size={"sm"}
             width={"100%"}
             h={"100%"}
             shadow={"xl"}
