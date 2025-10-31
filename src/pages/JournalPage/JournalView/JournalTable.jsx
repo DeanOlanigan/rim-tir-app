@@ -1,5 +1,4 @@
-import { Box, Text, IconButton } from "@chakra-ui/react";
-import { LuArrowDown } from "react-icons/lu";
+import { Box, IconButton, Text } from "@chakra-ui/react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { flexRender } from "@tanstack/react-table";
 import { useGroupStore } from "../JournalStores/GroupFilterStore";
@@ -15,14 +14,15 @@ import { useJournalData } from "../hooks/useJournalData";
 import { useFilterData } from "../hooks/useFilterData";
 import { useFilterColumns } from "../hooks/useFilterColumns";
 import { useCreateTable } from "../hooks/useCreateTable";
+import { LuArrowDown } from "react-icons/lu";
 
 const tableColumns = [
-    { label: "Дата и время", value: "date", size: 200 },
-    { label: "Тип", value: "type", size: 80 },
-    { label: "Группа", value: "group", size: 120 },
-    { label: "Переменная", value: "var", size: 120 },
-    { label: "Значение", value: "val", size: 100 },
-    { label: "Описание", value: "desc", size: 200 },
+    { label: "Дата и время", value: "date", size: 250 },
+    { label: "Тип", value: "type", size: 145 },
+    { label: "Группа", value: "group", size: 140 },
+    { label: "Переменная", value: "var", size: 140 },
+    { label: "Значение", value: "val", size: 140 },
+    { label: "Описание", value: "desc", size: 240 },
 ];
 
 const cellType = {
@@ -64,84 +64,103 @@ export const JournalTable = () => {
     if (isError) return <Text>Error: {error.message}</Text>;
 
     return (
-        <>
+        <div
+            ref={sticky.scrollRef}
+            style={{
+                overflow: "auto",
+                position: "relative",
+                width: "100%",
+                height: "1000px",
+            }}
+        >
             {(filtredData.length === 0 || filtreColon.length === 0) && (
                 <NoData />
             )}
-            <table style={{ top: 0, left: 0, width: "100%" }}>
-                <thead>
+            <table
+                style={{
+                    display: "grid",
+                    width: "100%",
+                }}
+            >
+                <thead
+                    style={{
+                        display: "grid",
+                        position: "sticky",
+                        top: 0,
+                        zIndex: 1,
+                        width: "100%",
+                    }}
+                >
                     {table.getHeaderGroups().map((headerGroup) => (
-                        <tr key={headerGroup.id}>
+                        <tr
+                            key={headerGroup.id}
+                            style={{
+                                display: "flex",
+                                width: "100%",
+                            }}
+                        >
                             {headerGroup.headers.map((header) => (
                                 <HeaderCell key={header.id} header={header} />
                             ))}
                         </tr>
                     ))}
                 </thead>
-            </table>
-            <Box ref={sticky.scrollRef} height="95%" overflow={"auto"}>
-                <div
+                <tbody
                     style={{
+                        display: "grid",
                         height: `${virtualizer.getTotalSize()}px`,
                         position: "relative",
+                        width: "100%",
                     }}
                     ref={sticky.contentRef}
                 >
                     {virtualRows.map((virtualRow) => {
                         const row = rows[virtualRow.index];
                         return (
-                            <div
+                            <tr
                                 key={row.id}
                                 style={{
                                     position: "absolute",
-                                    top: 0,
-                                    left: 0,
                                     height: `${virtualRow.size}px`,
                                     transform: `translateY(${virtualRow.start}px)`,
+                                    display: "flex",
+                                    width: "100%",
                                 }}
                             >
-                                <table
-                                    style={{
-                                        width: "100%",
-                                        tableLayout: "fixed",
-                                    }}
-                                >
-                                    <tbody>
-                                        <tr>
-                                            {row
-                                                .getVisibleCells()
-                                                .map((cell) => {
-                                                    return (
-                                                        <td
-                                                            key={cell.id}
-                                                            style={{
-                                                                width: cell.column.getSize(),
-                                                                textAlign:
-                                                                    "center",
-                                                                fontSize: "sm",
-                                                                fontWeight:
-                                                                    "500",
-                                                            }}
-                                                        >
-                                                            {flexRender(
-                                                                cell.column
-                                                                    .columnDef
-                                                                    .cell,
-                                                                cell.getContext()
-                                                            )}
-                                                        </td>
-                                                    );
-                                                })}
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                                {row.getVisibleCells().map((cell) => (
+                                    <td
+                                        key={cell.id}
+                                        style={{
+                                            width: `${cell.column.getSize()}px`,
+                                            textAlign: "center",
+                                            fontSize: "sm",
+                                            fontWeight: "500",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            flexShrink: 0,
+                                            padding: "4px",
+                                        }}
+                                    >
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext()
+                                        )}
+                                    </td>
+                                ))}
+                            </tr>
                         );
                     })}
-                </div>
-            </Box>
+                </tbody>
+            </table>
             {!sticky.isAtBottom && (
-                <Box position="absolute" bottom="8" right="8" zIndex="10">
+                <Box
+                    position="sticky"
+                    float="right"
+                    bottom="2"
+                    right="2"
+                    zIndex="10"
+                >
                     <IconButton
                         size={"sm"}
                         onClick={() => {
@@ -154,7 +173,7 @@ export const JournalTable = () => {
                     </IconButton>
                 </Box>
             )}
-        </>
+        </div>
     );
 };
 
@@ -168,14 +187,18 @@ const HeaderCell = ({ header }) => {
 
     return (
         <Box
-            as={"th"}
+            as="th"
             key={header.id}
             colSpan={header.colSpan}
-            bg={"colorPalette.solid"}
-            color={"fg.inverted"}
+            bg="colorPalette.solid"
+            color="fg.inverted"
             w={`${header.getSize()}px`}
-            py={"1"}
-            fontWeight={"medium"}
+            py="1"
+            fontWeight="medium"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            flexShrink={0}
         >
             {cellType[header.id] ? cellType[header.id](content) : content}
         </Box>
