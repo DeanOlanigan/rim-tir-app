@@ -3,6 +3,8 @@ import { LuCheck, LuX } from "react-icons/lu";
 import { useParameters } from "../../pages/ConfigurationPage/Tree/NodeViews/getParameters";
 import { memo } from "react";
 import { validateVisibility } from "@/utils/validation";
+import { isEmpty } from "@/utils/checkers";
+import { iconsMap } from "@/config/icons";
 
 function getColorPalette(value, settings) {
     const isBool = typeof settings[value.param] === "boolean";
@@ -35,7 +37,7 @@ export const ParamViewer = memo(function ParamViewer({
 const Param = ({ settings, nodeId, value, isVariable }) => {
     const isVisible = validateVisibility(value.visibleIf, nodeId, settings);
     const setting = settings[nodeId]?.setting;
-    if (!isVisible || !setting?.[value.param]) return null;
+    if (!isVisible || isEmpty(setting?.[value.param])) return null;
     return (
         <Badge
             key={value.param}
@@ -58,7 +60,7 @@ const Param = ({ settings, nodeId, value, isVariable }) => {
 };
 
 const BoolParamViewer = ({ value, param, isVariable }) => {
-    if (isVariable && value.icon) return <Icon as={value.icon} />;
+    if (isVariable && value.icon) return <Icon as={iconsMap[value.icon]} />;
     if (value.shortname) return value.shortname;
     return param ? <LuCheck /> : <LuX />;
 };

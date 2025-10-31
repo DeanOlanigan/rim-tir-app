@@ -1,13 +1,17 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { NODE_TYPES, TREE_TYPES } from "@/config/constants";
 import { useValidationStore } from "@/store/validation-store";
-import { validateCyclicVariable } from "@/utils/validation";
-import { validateParameter } from "@/utils/validation";
-import { validateName } from "@/utils/validation";
-import { validateAll } from "@/utils/validation";
-import { ErrorDraft } from "@/utils/validation";
-import { NODE_TYPES, NODE_UNIQUE_NAMES, TREE_TYPES } from "@/config/constants";
+import { configuratorConfig } from "./configurator-config";
+import {
+    isNeedValidate,
+    revalidateVars,
+    validateParameter,
+    validateName,
+    validateAll,
+    ErrorDraft,
+    validateNode,
+} from "@/utils/validation";
 import {
     removeNodeUtil,
     removeAndUnbindSettingsUtil,
@@ -22,10 +26,8 @@ import {
     editSettingUtil,
     computeClipboard,
     pasteNodeUtil,
-} from "@/utils/treeUtils/index";
-
-import { setIgnoreUtil } from "@/utils/treeUtils/edit/setIgnore";
-import { validateNode } from "@/utils/validation/runners/validateNode";
+    setIgnoreUtil,
+} from "@/utils/treeUtils";
 
 const baseNodeInit = (type, name) => ({
     id: type,
@@ -62,6 +64,14 @@ const initialState = {
         ids: new Set(),
         cut: false,
     },
+
+    sync: false,
+
+    info: {
+        ts: null,
+        name: null,
+        description: null,
+    },
 };
 
 export const useVariablesStore = create()(
@@ -70,6 +80,20 @@ export const useVariablesStore = create()(
             ...initialState,
 
             resetState: () => set(initialState),
+
+            setSync: (value) => set({ sync: value }),
+
+            updateEditTs: () =>
+                set({ info: { ...get().info, ts: Date.now() } }),
+
+            updateInfo: (ts, name, description) =>
+                set((state) => ({
+                    info: {
+                        ts: ts ?? state.info.ts,
+                        name: name ?? state.info.name,
+                        description: description ?? state.info.description,
+                    },
+                })),
 
             updateSelectedIds: (targetKey, ids) =>
                 set((state) => {
@@ -91,6 +115,7 @@ export const useVariablesStore = create()(
             createSetting: (settings) => {
                 set((state) => ({
                     settings: createSettingUtil(state.settings, settings),
+                    info: { ...state.info, ts: Date.now() },
                 }));
 
                 const state = get().settings;
@@ -98,7 +123,7 @@ export const useVariablesStore = create()(
                 useValidationStore.getState().applyDraft2(draft);
             },
 
-            setSettings: (nodeId, updateData, shoudValidate = true) =>
+            setSettings: (nodeId, updateData) =>
                 set((state) => {
                     const newSettings = editSettingUtil(
                         state.settings,
@@ -106,18 +131,27 @@ export const useVariablesStore = create()(
                         updateData
                     );
 
-                    if (shoudValidate) {
-                        const param = Object.keys(updateData)[0];
-                        const draft = validateParameter(
-                            nodeId,
-                            param,
-                            newSettings,
-                            configuratorConfig
-                        );
-                        useValidationStore.getState().applyDraft2(draft);
+                    let draft = new ErrorDraft();
+                    const params = Object.keys(updateData);
+                    for (const param of params) {
+                        if (param === "luaExpression") {
+                            revalidateVars(newSettings, draft);
+                        } else {
+                            validateParameter({
+                                id: nodeId,
+                                param,
+                                settings: newSettings,
+                                cfg: configuratorConfig,
+                                draft,
+                            });
+                        }
                     }
+                    useValidationStore.getState().applyDraft2(draft);
 
-                    return { settings: newSettings };
+                    return {
+                        settings: newSettings,
+                        info: { ...state.info, ts: Date.now() },
+                    };
                 }),
 
             bindVariable: (nodeId, variableId) =>
@@ -134,15 +168,18 @@ export const useVariablesStore = create()(
                         );
                     }
 
-                    const draft = validateParameter(
-                        nodeId,
-                        "variableId",
-                        newSettings,
-                        configuratorConfig
-                    );
+                    const draft = validateParameter({
+                        id: nodeId,
+                        param: "variableId",
+                        settings: newSettings,
+                        cfg: configuratorConfig,
+                    });
                     useValidationStore.getState().applyDraft2(draft);
 
-                    return { settings: newSettings };
+                    return {
+                        settings: newSettings,
+                        info: { ...state.info, ts: Date.now() },
+                    };
                 }),
 
             addNode: (treeType, parentId, newNodes) =>
@@ -163,21 +200,16 @@ export const useVariablesStore = create()(
                         name
                     );
 
-                    const isVariables =
-                        newSettings[nodeId].type === NODE_TYPES.variable;
-                    const isNeedValidate = NODE_UNIQUE_NAMES.has(
-                        newSettings[nodeId].type
-                    );
+                    const nodeType = newSettings[nodeId].type;
+                    const isVariables = nodeType === NODE_TYPES.variable;
+                    const isNeedVal = isNeedValidate(nodeType);
                     const draft = new ErrorDraft();
 
                     if (isVariables) {
-                        const variables = Object.values(newSettings).filter(
-                            (node) => node.type === NODE_TYPES.variable
-                        );
-                        validateCyclicVariable({ variables, draft });
+                        revalidateVars(newSettings, draft);
                     }
 
-                    if (isNeedValidate) {
+                    if (isNeedVal) {
                         validateName({
                             id: nodeId,
                             settings: newSettings,
@@ -189,7 +221,10 @@ export const useVariablesStore = create()(
                         useValidationStore.getState().applyDraft2(draft);
                     }
 
-                    return { settings: newSettings };
+                    return {
+                        settings: newSettings,
+                        info: { ...state.info, ts: Date.now() },
+                    };
                 }),
 
             setIgnore: (ids, value) =>
@@ -204,16 +239,22 @@ export const useVariablesStore = create()(
                     let draft = new ErrorDraft();
                     for (const id of idsSet) {
                         const node = newSettings[id];
-                        validateNode(
+                        validateNode({
                             node,
-                            newSettings,
+                            settings: newSettings,
                             configuratorConfig,
-                            draft
-                        );
+                            draft,
+                        });
+                        if (newSettings[id].type === NODE_TYPES.variable) {
+                            revalidateVars(newSettings, draft);
+                        }
                     }
                     useValidationStore.getState().applyDraft2(draft);
 
-                    return { settings: newSettings };
+                    return {
+                        settings: newSettings,
+                        info: { ...state.info, ts: Date.now() },
+                    };
                 }),
 
             toggleIgnore: (ids) => {
@@ -274,6 +315,7 @@ export const useVariablesStore = create()(
                         state.settings,
                         idsSet
                     ),
+                    info: { ...state.info, ts: Date.now() },
                 }));
 
                 // TODO Реализовать более точечную валидацию
@@ -296,6 +338,7 @@ export const useVariablesStore = create()(
                         parentId,
                         index
                     ),
+                    info: { ...state.info, ts: Date.now() },
                 }));
 
                 // TODO Реализовать более точечную валидацию

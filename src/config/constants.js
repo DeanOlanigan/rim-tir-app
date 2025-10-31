@@ -1,11 +1,11 @@
-export const TREE_TYPES = {
+const TREE_TYPES = {
     variables: "variables",
     send: "send",
     receive: "receive",
     connections: "connections",
 };
 
-export const NODE_TYPES = {
+const NODE_TYPES = {
     interface: "interface",
     protocol: "protocol",
     protocolSpecific: "protocolSpecific",
@@ -16,27 +16,13 @@ export const NODE_TYPES = {
     root: "root",
 };
 
-export const DO_NOT_VALIDATE = new Set([
-    NODE_TYPES.root,
-    NODE_TYPES.folder,
-    NODE_TYPES.dataObject,
-]);
+const CONNECTIONS_TREES = new Set([TREE_TYPES.send, TREE_TYPES.receive]);
 
-export const NODE_UNIQUE_NAMES = new Set([
-    NODE_TYPES.interface,
-    NODE_TYPES.protocol,
-    NODE_TYPES.variable,
-    NODE_TYPES.protocolSpecific,
-    NODE_TYPES.interfaceSpecific,
-]);
+const TREE_TYPES_SET = new Set(Object.values(TREE_TYPES));
 
-export const CONNECTIONS_TREES = new Set([TREE_TYPES.send, TREE_TYPES.receive]);
+const MAX_NAME_LENGTH = 50;
 
-export const TREE_TYPES_SET = new Set(Object.values(TREE_TYPES));
-
-export const MAX_NAME_LENGTH = 50;
-
-export const HOSTKEYS = {
+const HOSTKEYS = {
     copy: "ctrl+c",
     cut: "ctrl+x",
     paste: "ctrl+v",
@@ -46,10 +32,27 @@ export const HOSTKEYS = {
     edit: "enter",
 };
 
-export const LOG_LEVELS = {
+const LOG_LEVELS = {
     debug: "debug",
     info: "info",
     warn: "warn",
     error: "error",
     status: "status",
+};
+
+const CONN_STATUS = {
+    DISCONNECTED: "disconnected",
+    STALED: "staled",
+    LIVE: "live",
+};
+
+export {
+    TREE_TYPES,
+    NODE_TYPES,
+    CONNECTIONS_TREES,
+    TREE_TYPES_SET,
+    MAX_NAME_LENGTH,
+    HOSTKEYS,
+    LOG_LEVELS,
+    CONN_STATUS,
 };

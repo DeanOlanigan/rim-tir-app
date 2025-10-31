@@ -6,7 +6,14 @@ import { Loader } from "@/components/Loader";
 import { ErrorInformer } from "@/components/ErrorInformer";
 import { LOG_LEVELS } from "@/config/constants";
 import { useLogData } from "./useLogData";
-import { useCallback, useEffect, useMemo } from "react";
+import {
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
 const LEVEL_COLOR = {
@@ -16,6 +23,8 @@ const LEVEL_COLOR = {
     [LOG_LEVELS.status]: "green.500",
     [LOG_LEVELS.debug]: "gray.500",
 };
+
+const MIN_THUMB = 20;
 
 const shadowCss = {
     "--scroll-shadow-size": "4rem",
@@ -29,6 +38,8 @@ const shadowCss = {
         maskImage:
             "linear-gradient(0deg,#000 calc(100% - var(--scroll-shadow-size)),transparent)",
     },
+    scrollbarGutter: "stable both-edges",
+    overflow: "auto",
 };
 
 export const LogViewerBody = () => {
@@ -38,7 +49,10 @@ export const LogViewerBody = () => {
         logTextSize,
         isLogTextWrapped,
     } = useLogData();
-    const sticky = useStickToBottom();
+    //const sticky = useStickToBottom();
+    const viewportRef = useRef(null);
+
+    const [thumbH, setThumbH] = useState(null);
 
     const rowVirtualizer = useVirtualizer({
         count: live.length,
@@ -49,14 +63,15 @@ export const LogViewerBody = () => {
             return el.getBoundingClientRect().height;
         },
         overscan: 20,
+        shouldAdjustScrollPositionOnItemSizeChange: true,
     });
 
-    useEffect(() => {
+    /* useEffect(() => {
         if (!live.length) return;
         if (sticky.isAtBottom) {
             rowVirtualizer.scrollToIndex(live.length - 1, { align: "end" });
         }
-    }, [live.length, sticky.isAtBottom, rowVirtualizer]);
+    }, [live.length, sticky.isAtBottom, rowVirtualizer]); */
 
     const contentProps = useMemo(
         () => ({
@@ -86,12 +101,21 @@ export const LogViewerBody = () => {
     if (isLoading) return <Loader text={"Загрузка данных"} />;
     if (isError) return <ErrorInformer error={error} />;
 
-    // TODO Идея фильтровать колонки (убирать дату, тип лога и т.д.)
-
     return (
-        <ScrollArea.Root variant={"hover"}>
-            <ScrollArea.Viewport ref={sticky.scrollRef} css={shadowCss}>
-                <ScrollArea.Content ref={sticky.contentRef} {...contentProps}>
+        <ScrollArea.Root
+            variant={"always"}
+            css={{ "--thumb-height": "initial !important" }}
+        >
+            <ScrollArea.Viewport ref={viewportRef} css={shadowCss}>
+                <ScrollArea.Content
+                    style={{
+                        height: `${totalSize}px`,
+                        width: "100%",
+                        position: "relative",
+                        minWidth: "100%",
+                        boxSizing: "border-box",
+                    }}
+                >
                     {live.length === 0 ? (
                         <NoData />
                     ) : (
@@ -105,14 +129,13 @@ export const LogViewerBody = () => {
                                     logTextSize={logTextSize}
                                     isLogTextWrapped={isLogTextWrapped}
                                 />
-                            </div>
+                            </Box>
                         ))
                     )}
                 </ScrollArea.Content>
             </ScrollArea.Viewport>
-            <ScrollArea.Scrollbar bg="transparent" />
 
-            {!sticky.isAtBottom && (
+            {/* {!sticky.isAtBottom && (
                 <Box position="absolute" bottom="4" right="4" zIndex="10">
                     <IconButton
                         size="sm"
@@ -126,7 +149,7 @@ export const LogViewerBody = () => {
                         <LuArrowDown />
                     </IconButton>
                 </Box>
-            )}
+            )} */}
             <ScrollArea.Corner />
         </ScrollArea.Root>
     );
@@ -135,6 +158,8 @@ export const LogViewerBody = () => {
 const LogRow = ({ row, logTextSize, isLogTextWrapped }) => {
     return (
         <Text
+            as={"div"}
+            display={"block"}
             whiteSpace={isLogTextWrapped ? "pre-wrap" : "pre"}
             fontFamily={"monospace"}
             fontSize={logTextSize}

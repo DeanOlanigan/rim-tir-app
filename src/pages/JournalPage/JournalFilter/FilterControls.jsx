@@ -8,7 +8,7 @@ export const FilterControls = () => {
     const resetSelectedGroups = useGroupStore((state) => (state.setSelectedGroups));
     const resetSelMessages = useMessageFilterStore(state => state.setSelectedMessages);
     const resetArchive = useJournalFiltersArchiveStore(state => state.setInitial);
-
+  
     const handleApply = () => {
         console.log("handleApply");
     };

@@ -1,7 +1,6 @@
 import { Button, Menu, Portal } from "@chakra-ui/react";
 import { convertStateToXml } from "@/utils/xml/storeToXml";
 import { useVariablesStore } from "@/store/variables-store";
-import { useConfigInfoStore } from "@/store/config-info-store";
 import { useValidationStore } from "@/store/validation-store";
 import {
     useRefreshConfigurationMutation,
@@ -10,12 +9,11 @@ import {
     useStopTirMutation,
     useUploadConfigurationMutation,
 } from "@/hooks/useMutation";
+import { AreYouShureDialog } from "../Dialogs/AreYouShure";
 
 export const RouterMenu = () => {
-    const currentState = useVariablesStore.getState();
-    const currentConfigInfo = useConfigInfoStore.getState().configInfo;
-
     const errorsTreeSize = useValidationStore((state) => state.errorsTree.size);
+    const sync = useVariablesStore((state) => state.sync);
     const hasErrors = errorsTreeSize > 0;
 
     const startM = useStartTirMutation();
@@ -26,12 +24,9 @@ export const RouterMenu = () => {
 
     const sendConfigHandler = () => {
         if (hasErrors) return;
-        const xml = convertStateToXml(currentState, currentConfigInfo);
+        const currentState = useVariablesStore.getState();
+        const xml = convertStateToXml(currentState);
         uploadM.mutate(xml);
-    };
-
-    const getConfigHandler = () => {
-        refreshM.mutate();
     };
 
     return (
@@ -53,15 +48,28 @@ export const RouterMenu = () => {
                                 ? "Отправка..."
                                 : "Отправить конфигурацию"}
                         </Menu.Item>
-                        <Menu.Item
-                            value="new-file"
-                            onClick={getConfigHandler}
-                            disabled={refreshM.isPending}
+                        <AreYouShureDialog
+                            onAccept={() => refreshM.mutate()}
+                            header={"Получить конфигурацию?"}
+                            message={
+                                "Получение конфигурации с сервера приведет к потере данных на этой странице."
+                            }
                         >
-                            {refreshM.isPending
-                                ? "Обновление..."
-                                : "Обновить конфигурацию"}
-                        </Menu.Item>
+                            <Menu.Item
+                                value="new-file"
+                                disabled={refreshM.isPending || sync}
+                                onClick={(e) => {
+                                    if (sync) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                    }
+                                }}
+                            >
+                                {refreshM.isPending
+                                    ? "Обновление..."
+                                    : "Получить конфигурацию"}
+                            </Menu.Item>
+                        </AreYouShureDialog>
                         <Menu.Item
                             value="start"
                             onClick={() => startM.mutate()}

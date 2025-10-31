@@ -15,20 +15,19 @@ export function adjustLinksAfterCut(
         if (rec.type !== "dataObject") continue;
 
         const varId = rec.setting?.variableId;
-        if (!varId) continue;
-
-        const varRec = ensureNodeSettingCopy(ns, varId);
-        if (!varRec) continue;
-
-        const usedIn = {
-            send: null,
-            receive: null,
-            ...(varRec.setting?.usedIn ?? {}),
-        };
-        usedIn[src] = null;
-        usedIn[dst] = rec.id;
-
-        varRec.setting.usedIn = usedIn;
+        if (varId) {
+            const varRec = ensureNodeSettingCopy(ns, varId);
+            if (varRec) {
+                varRec.setting.usedIn = {
+                    send: null,
+                    receive: null,
+                };
+            }
+        }
+        const doRec = ensureNodeSettingCopy(ns, rec.id);
+        if (doRec) {
+            doRec.setting.variableId = null;
+        }
     }
 
     return ns;

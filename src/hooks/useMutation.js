@@ -7,10 +7,9 @@ import {
     QK,
 } from "@/api";
 import { toaster } from "@/components/ui/toaster";
-import { useConfigInfoStore } from "@/store/config-info-store";
 import { useValidationStore } from "@/store/validation-store";
 import { useVariablesStore } from "@/store/variables-store";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import { validateAll } from "@/utils/validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
@@ -106,12 +105,12 @@ export function useRefreshConfigurationMutation() {
     const qc = useQueryClient();
     return useMutation({
         mutationFn: getConfiguration,
-        onSuccess: ({ state, configInfo }) => {
-            useConfigInfoStore.setState({ configInfo });
+        onSuccess: (state) => {
             useVariablesStore.setState(state);
-            qc.setQueryData(QK.configuration, { state, configInfo });
+            qc.setQueryData(QK.configuration, state);
             const draft = validateAll(state.settings, configuratorConfig);
-            useValidationStore.getState().applyDraft(draft);
+            useValidationStore.getState().clearErrors();
+            useValidationStore.getState().applyDraft2(draft);
             toaster.create({
                 title: "Конфигурация обновлена",
                 description: "Конфигурация успешно обновлена",

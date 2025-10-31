@@ -14,22 +14,25 @@ import { useVariablesStore } from "@/store/variables-store";
 import { EditorCard } from "./Editor/EditorCard";
 import { TREE_TYPES } from "@/config/constants";
 import { EmptyConfigDialog } from "./Dialogs/EmptyConfigDialog";
-import { ContextMenu } from "./Tree/ContextMenu/ContextMenu";
+import { ContextMenu } from "./ContextMenu/ContextMenu";
 import { LuBadgePlus, LuLock } from "react-icons/lu";
 import { TreeCard } from "@/components/TreeView/TreeCard";
 import { TreeView } from "./Tree/TreeView";
 import { BaseConfCard } from "./BaseConfCard/BaseConfCard";
+import { ConfSyncManager } from "./ConfSyncManager";
 
 function ConfigurationPage() {
     return (
         <>
             <BaseConfCard />
-            <Box h={"100%"} position={"relative"}>
-                <EmptyConfigDialog />
-                <PanelGroup autoSaveId="persistence" direction="horizontal">
+            <Box minH={0} h={"100%"}>
+                <PanelGroup
+                    autoSaveId="configuration-main-panel"
+                    direction="horizontal"
+                >
                     <Panel collapsible collapsedSize={0} minSize={15}>
                         <PanelGroup
-                            autoSaveId="persistence1"
+                            autoSaveId="configuration-connections-panel"
                             direction="vertical"
                         >
                             <Panel collapsible collapsedSize={0} minSize={10}>
@@ -55,8 +58,10 @@ function ConfigurationPage() {
                         <TreeWrapper treeType={TREE_TYPES.variables} />
                     </Panel>
                 </PanelGroup>
-                <ContextMenu />
             </Box>
+            <EmptyConfigDialog />
+            <ContextMenu />
+            <ConfSyncManager />
         </>
     );
 }
@@ -82,7 +87,14 @@ const TreeWrapper = ({ treeType }) => {
     return (
         <TreeCard
             data={data}
-            tree={<TreeView data={data} treeType={treeType} />}
+            tree={({ width, height }) => (
+                <TreeView
+                    data={data}
+                    treeType={treeType}
+                    width={width}
+                    height={height}
+                />
+            )}
             empty={<ContextMenuHint />}
         />
     );
@@ -93,7 +105,7 @@ const ContextMenuHint = () => {
         <AbsoluteCenter>
             <VStack textAlign={"center"}>
                 <Icon as={LuBadgePlus} fontSize={"164px"} color={"bg.muted"} />
-                <Text color={"fg.subtle"} fontWeight={"medium"}>
+                <Text color={"fg.muted"} fontWeight={"medium"}>
                     Открыть контекстное меню
                 </Text>
                 <Kbd>ПКМ</Kbd>

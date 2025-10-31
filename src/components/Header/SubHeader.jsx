@@ -5,15 +5,10 @@ export const SubHeader = ({ children }) => {
         <Center
             borderBottom={"0.25rem solid"}
             borderColor={"colorPalette.subtle"}
+            p={"2"}
+            h={"3rem"}
         >
-            <Flex
-                p={"2"}
-                w={"100%"}
-                maxW={"4xl"}
-                gap={"2"}
-                h={"3rem"}
-                align={"center"}
-            >
+            <Flex gap={"2"} w={"4xl"} justify={"start"} align={"center"}>
                 {children}
             </Flex>
         </Center>

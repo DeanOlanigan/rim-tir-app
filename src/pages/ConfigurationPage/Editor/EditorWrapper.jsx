@@ -16,9 +16,8 @@ import { ConnectionParamContainer } from "./ConnectionEditor/ConnectionParamCont
 import { EditorBreadcrumb } from "../Breadcrumb/Breadcrumb";
 import { EditorLayout } from "./EditorLayout";
 import { InputFactory } from "../InputComponents/InputFactory";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import { NodeError } from "./NodeError";
-import { useBreadcrumbParts } from "@/hooks/useBreadcrumb";
 import { LuCog, LuVariable } from "react-icons/lu";
 import {
     useChildrenNodes,
@@ -50,19 +49,19 @@ const EditorWrapperSingle = memo(function EditorWrapperSingleTEST({
     type,
 }) {
     const [node] = useNodesByIds(id);
-    const children = useChildrenNodes(node.id);
+    const children = useChildrenNodes(node?.id);
+
+    if (!node) return <EditorHint type={type} />;
 
     const Parameters =
-        configuratorConfig.nodePaths[node.path] &&
+        configuratorConfig.nodePaths?.[node.path] &&
         (node.path === "#/variable"
             ? VariableEditor
             : ConnectionParamContainer);
 
-    const breadcrumbsParts = useBreadcrumbParts(node.id);
-
     return (
         <EditorLayout
-            breadcrumbs={<EditorBreadcrumb breadcrumbs={breadcrumbsParts} />}
+            breadcrumbs={<EditorBreadcrumb id={node.id} />}
             title={
                 <HStack>
                     {TITLE[node.type] || (
@@ -107,8 +106,8 @@ function checkSameType(nodes) {
     for (const node of nodes) {
         if (node.type === NODE_TYPES.folder) continue;
         if (type === null) {
-            type = node.type;
-        } else if (type !== node.type) {
+            type = node.node;
+        } else if (type !== node.node) {
             return false;
         }
     }
@@ -134,6 +133,8 @@ const EditorWrapperMultiple = memo(function EditorWrapperMultiple({
     type,
 }) {
     const nodes = useNodesByIds(ids);
+
+    if (nodes.length === 0) return <EditorHint type={type} />;
 
     return (
         <VStack gap={"4"} px={"1"} h={"100%"}>
@@ -167,7 +168,7 @@ const EditorHint = ({ type }) => {
             <AbsoluteCenter>
                 <VStack textAlign={"center"}>
                     <Icon as={HintIcon} fontSize={"164px"} color={"bg.muted"} />
-                    <Text color={"fg.subtle"} fontWeight={"medium"}>
+                    <Text color={"fg.muted"} fontWeight={"medium"}>
                         {hintText}
                     </Text>
                 </VStack>

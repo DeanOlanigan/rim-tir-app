@@ -1,12 +1,12 @@
 import { Table } from "@chakra-ui/react";
 import { TableRow } from "./TableRow";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import { InfoTip } from "@/components/ui/toggle-tip";
 
 export const DataObjectsTable = ({ data }) => {
     const node = data?.find((node) => node.type !== "folder");
     if (!node) return null;
-    const settings = configuratorConfig.nodePaths[node.path]?.settings;
+    const settings = configuratorConfig.nodePaths?.[node.path]?.settings;
     if (!settings) return null;
 
     return (
@@ -15,7 +15,7 @@ export const DataObjectsTable = ({ data }) => {
                 <Table.Row>
                     {Object.entries(settings).map(([key, setting]) => {
                         const info =
-                            configuratorConfig.nodePaths[node.path]?.settings[
+                            configuratorConfig.nodePaths?.[node.path]?.settings[
                                 key
                             ]?.info;
                         return (

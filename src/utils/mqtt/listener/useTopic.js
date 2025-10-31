@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useMqttCore } from "../mqtt-provider";
 
 export const useTopic = (topic) => {
-    const { subscribe } = useMqttCore();
+    const { subscribe, connected } = useMqttCore();
     const [data, setData] = useState(null);
 
     useEffect(() => {
@@ -13,5 +13,5 @@ export const useTopic = (topic) => {
         return () => unsub();
     }, [topic, subscribe]);
 
-    return { data, connected: true };
+    return { data, connected };
 };

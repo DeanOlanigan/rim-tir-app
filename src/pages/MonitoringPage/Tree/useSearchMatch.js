@@ -23,7 +23,7 @@ export const useSearchMatch = () => {
     const { data: settings } = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
-        select: ({ state }) => state.settings,
+        select: (state) => state.settings,
     });
 
     const aliasIndex = useMemo(() => buildAliasIndex(settings), [settings]);

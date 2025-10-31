@@ -1,31 +1,22 @@
-import { Container, HStack } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
+import { JournalFilter } from "./JournalFilter/JournalFilter";
 import { JournalView } from "./JournalView/JournalView";
-import { JournalFilterDeux } from "./JournalFilter/JournalFilterDeux";
 
 function JournalPage() {
-    console.log("Render JournalPage");
     return (
-        <Container
-            maxW={"6xl"}
-            flex={"1"}
-            display={"flex"}
-            flexDirection={"column"}
-            minH={"0"}
+        <Flex
             gap={"2"}
+            h={"100%"}
+            w={"100%"}
+            data-state={"open"}
+            animationDuration={"slow"}
+            animationStyle={{
+                _open: "scale-fade-in",
+            }}
         >
-            <HStack
-                w={"100%"}
-                flex={"1"}
-                display={"flex"}
-                flexDirection={"row"}
-                align={"flex-start"}
-                minH={"0"}
-                position={"relative"}
-            >
-                <JournalFilterDeux />
-                <JournalView />
-            </HStack>
-        </Container>
+            <JournalFilter />
+            <JournalView />
+        </Flex>
     );
 }
 

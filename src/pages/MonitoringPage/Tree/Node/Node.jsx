@@ -4,13 +4,18 @@ import styles from "@/components/TreeView/TreeView.module.css";
 import { NodeContent } from "./NodeContent";
 import { NODE_TYPES, TREE_TYPES } from "@/config/constants";
 import { memo } from "react";
-import { useSelectionSync } from "@/store/selection-sync-store";
-import { useTreeRegistry } from "@/store/tree-registry-store";
 import { ParamViewer } from "@/components/TreeView/ParamViewer";
 import { useSettingsFromCache } from "../../useSettingsFromCache";
+import { hasIgnoreAccessor } from "@/utils/checkers";
+import { useContextMenuStore } from "@/store/contextMenu-store";
+import { crossSelect } from "../crossSelect";
 
-export const Node = memo(function Node({ node, style }) {
+export const Node = memo(function Node({ node, style, tree }) {
+    const { updateContext } = useContextMenuStore.getState();
     const settings = useSettingsFromCache();
+
+    const isIgnored = settings[node.id]?.isIgnored;
+    const isIgnoredAccessor = hasIgnoreAccessor(settings, node.id);
 
     const onClick = async (e) => {
         node.handleClick(e);
@@ -23,10 +28,24 @@ export const Node = memo(function Node({ node, style }) {
             );
     };
 
+    const handleContextMenu = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        node.focus();
+        node.open();
+        updateContext("mnt", {
+            apiPath: tree,
+            x: e.clientX,
+            y: e.clientY,
+            visible: true,
+        });
+    };
+
     return (
         <div
             style={style}
             className={clsx(styles.node, node.state)}
+            onContextMenu={handleContextMenu}
             onClick={onClick}
         >
             <NodeBase
@@ -47,58 +66,9 @@ export const Node = memo(function Node({ node, style }) {
                         isVariable={node.data.type === NODE_TYPES.variable}
                     />
                 }
+                isIgnored={isIgnored}
+                isIgnoredAccessor={isIgnoredAccessor}
             />
         </div>
     );
 });
-
-function getCrossLinks(settings, id) {
-    const node = settings[id];
-    if (!node) return {};
-
-    if (node.type === NODE_TYPES.variable) {
-        const usedIn = node?.setting?.usedIn ?? {};
-        const out = { variables: id };
-        if (typeof usedIn.receive === "string") out.receive = usedIn.receive;
-        if (typeof usedIn.send === "string") out.send = usedIn.send;
-        return out;
-    }
-
-    if (node.type === NODE_TYPES.dataObject) {
-        const variableId = node?.setting?.variableId;
-        const out = { [node.rootId]: node.id };
-        if (typeof variableId === "string") {
-            out.variables = variableId;
-            const v = settings[variableId];
-            const usedIn = v?.setting?.usedIn ?? {};
-            if (typeof usedIn.receive === "string")
-                out.receive = usedIn.receive;
-            if (typeof usedIn.send === "string") out.send = usedIn.send;
-        }
-        return out;
-    }
-
-    return {};
-}
-
-async function pickInTree(api, id) {
-    api.scrollTo(id);
-    api.focus(id);
-    api.select(id);
-}
-
-async function crossSelect(settings, id, scope, roots) {
-    const links = getCrossLinks(settings, id);
-
-    const { runSilent } = useSelectionSync.getState();
-    const { getApi } = useTreeRegistry.getState();
-
-    await runSilent(scope, async () => {
-        for (const root of roots) {
-            const targetId = links[root];
-            if (!targetId) continue;
-            const api = getApi(scope, root);
-            if (api) await pickInTree(api, targetId);
-        }
-    });
-}

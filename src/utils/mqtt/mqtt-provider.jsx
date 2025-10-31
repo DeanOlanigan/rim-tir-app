@@ -1,5 +1,13 @@
 import mqtt from "mqtt";
-import { createContext, useContext, useEffect, useMemo, useRef } from "react";
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import { matchTopic } from "./matchTopic";
 
 const MqttCtx = createContext();
@@ -25,24 +33,40 @@ function safeJSON(text) {
 export function MqttProvider({ url, opt, children }) {
     const clientRef = useRef(null);
     const registryRef = useRef(new Map());
+    const [connected, setConnected] = useState(false);
 
     useEffect(() => {
         const mqttClient = mqtt.connect(url, opt);
         clientRef.current = mqttClient;
 
-        mqttClient.on("connect", () => {
-            console.log("[MQTT] connected");
-            for (const topic of registryRef.current.keys()) {
-                mqttClient.subscribe(topic);
-            }
-        });
         mqttClient.on("close", () => {
             console.log("[MQTT] closed");
+            setConnected(false);
+        });
+        mqttClient.on("connect", () => {
+            console.log("[MQTT] connected");
+            setConnected(true);
+        });
+        mqttClient.on("disconnect", () => {
+            console.log("[MQTT] disconnect");
+            setConnected(false);
+        });
+        mqttClient.on("end", () => {
+            console.log("[MQTT] end");
+            setConnected(false);
+        });
+        mqttClient.on("error", (error) => {
+            console.log("[MQTT] error", error);
+            setConnected(false);
+        });
+        mqttClient.on("offline", () => {
+            console.log("[MQTT] offline");
+            setConnected(false);
         });
         mqttClient.on("reconnect", () => {
             console.log("[MQTT] reconnect");
+            setConnected(false);
         });
-        mqttClient.on("error", (error) => console.log("[MQTT] error", error));
 
         mqttClient.on("message", (topic, payload) => {
             const txt = safeDecode(payload);
@@ -62,36 +86,46 @@ export function MqttProvider({ url, opt, children }) {
         });
 
         return () => {
-            mqttClient.end(true);
-            clientRef.current = null;
+            try {
+                mqttClient.end(true);
+            } finally {
+                clientRef.current = null;
+                registryRef.current.clear();
+                setConnected(false);
+            }
         };
     }, [url, opt]);
 
+    const publish = useCallback((topic, message, opts, cb) => {
+        clientRef.current?.publish(topic, message, opts, cb);
+    }, []);
+
+    const subscribe = useCallback((topic, opts, fn) => {
+        let set = registryRef.current.get(topic);
+        if (!set) {
+            set = new Set();
+            registryRef.current.set(topic, set);
+            clientRef.current?.subscribe(topic, opts);
+        }
+        set.add(fn);
+        return () => {
+            const set = registryRef.current.get(topic);
+            if (!set) return;
+            set.delete(fn);
+            if (!set.size) {
+                registryRef.current.delete(topic);
+                clientRef.current?.unsubscribe(topic);
+            }
+        };
+    }, []);
+
     const api = useMemo(
         () => ({
-            publish: (topic, message, opts, cb) => {
-                clientRef.current?.publish(topic, message, opts, cb);
-            },
-            subscribe: (topic, opts, fn) => {
-                let set = registryRef.current.get(topic);
-                if (!set) {
-                    set = new Set();
-                    registryRef.current.set(topic, set);
-                    clientRef.current?.subscribe(topic, opts);
-                }
-                set.add(fn);
-                return () => {
-                    const set = registryRef.current.get(topic);
-                    if (!set) return;
-                    set.delete(fn);
-                    if (!set.size) {
-                        registryRef.current.delete(topic);
-                        clientRef.current?.unsubscribe(topic);
-                    }
-                };
-            },
+            publish,
+            subscribe,
+            connected,
         }),
-        []
+        [publish, subscribe, connected]
     );
 
     return <MqttCtx.Provider value={api}>{children}</MqttCtx.Provider>;

@@ -1,16 +1,22 @@
 import { create } from "zustand";
 
 export const useContextMenuStore = create()((set) => ({
-    context: {
+    cfg: {
         apiPath: null,
         x: 0,
         y: 0,
         visible: false,
     },
-    updateContext: (data) =>
+    mnt: {
+        apiPath: null,
+        x: 0,
+        y: 0,
+        visible: false,
+    },
+    updateContext: (type, data) =>
         set((state) => {
-            const next = { ...state.context, ...data };
-            const prev = state.context;
+            const next = { ...state[type], ...data };
+            const prev = state[type];
             let changed = false;
             for (const k in next) {
                 if (next[k] !== prev[k]) {
@@ -18,6 +24,6 @@ export const useContextMenuStore = create()((set) => ({
                     break;
                 }
             }
-            return changed ? { context: next } : state;
+            return changed ? { [type]: next } : state;
         }),
 }));

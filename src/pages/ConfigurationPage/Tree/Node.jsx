@@ -5,7 +5,7 @@ import { NodeBase } from "@/components/TreeView/NodeBase";
 import { nodeTypeVisualMap } from "./NodeViews/nodeTypeVisualMap";
 import { NodeError } from "./NodeError";
 import { useVariablesStore } from "@/store/variables-store";
-import { hasIgnoreAccessor } from "@/utils/utils";
+import { hasIgnoreAccessor } from "@/utils/checkers";
 import { ParamViewer } from "@/components/TreeView/ParamViewer";
 import { NODE_TYPES } from "@/config/constants";
 
@@ -27,7 +27,7 @@ export const Node = ({ node, style, dragHandle, tree }) => {
         e.stopPropagation();
         node.focus();
         node.open();
-        updateContext({
+        updateContext("cfg", {
             apiPath: tree,
             x: e.clientX,
             y: e.clientY,

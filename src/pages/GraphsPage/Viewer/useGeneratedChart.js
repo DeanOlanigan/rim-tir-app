@@ -1,5 +1,8 @@
 export function generateChartData(state) {
     const { startDate, endDate, points, variables } = state;
+
+    if (!Object.values(variables).length) return { labels: [], datasets: [] };
+
     const datasets = [];
     const timeStep = (endDate - startDate) / points;
 
@@ -18,8 +21,11 @@ export function generateChartData(state) {
             backgroundColor: v.color + "55",
             borderWidth: 2,
             tension: 0.3,
-            pointRadius: 0,
             stepped: true,
+            pointStyle: "circle",
+            pointRadius: 5,
+            pointHoverRadius: 10,
+            spanGaps: false,
         });
     }
 

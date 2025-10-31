@@ -14,7 +14,7 @@ const useVariables = () => {
     const q = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
-        select: ({ state }) => {
+        select: (state) => {
             const variables = Object.values(state.settings).filter(
                 (node) => node.type === "variable" && node.setting.archive
             );
@@ -30,7 +30,7 @@ const useVariables = () => {
 };
 
 export const VariablesChoser = ({ noPortal= false }) => {
-    const { data, isLoading, isError } = useVariables();
+    const { data, isFetching, isError } = useVariables();
 
     const collection = useMemo(() => {
         return createListCollection({
@@ -49,25 +49,26 @@ export const VariablesChoser = ({ noPortal= false }) => {
             </Select.Content>
         </Select.Positioner>
     );
+    let placeholder = "Выберите переменные";
+    if (collection.items.length === 0) placeholder = "Нет переменных";
+    if (isFetching) placeholder = "Загрузка...";
+    if (isError) placeholder = "Ошибка";
 
     return (
         <Select.Root
             collection={collection}
             size={"xs"}
             multiple
-            onValueChange={(value) => console.log("onValueChange", value)}
-            disabled={isLoading || isError}
+            disabled={isFetching || isError || collection.items.length === 0}
         >
             <Select.HiddenSelect />
             <Select.Label>Переменные:</Select.Label>
             <Select.Control>
                 <Select.Trigger>
-                    <Select.ValueText
-                        placeholder={isError ? "Ошибка" : "Выберите переменные"}
-                    />
+                    <Select.ValueText placeholder={placeholder} />
                 </Select.Trigger>
                 <Select.IndicatorGroup>
-                    {isLoading && (
+                    {isFetching && (
                         <Spinner
                             size="xs"
                             borderWidth="1.5px"

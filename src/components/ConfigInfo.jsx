@@ -5,13 +5,13 @@ export const ConfigInfo = ({ name, date, description }) => {
     return (
         <Flex gap={"2"}>
             <Text fontWeight={"medium"}>{name}</Text>
-            <InfoTip>
+            <InfoTip lazyMount unmountOnExit>
                 <Text fontWeight={"medium"}>Описание</Text>
                 <Text maxW={"xs"} lineClamp={3}>
                     {description}
                 </Text>
                 <Text fontWeight={"medium"}>Дата изменения</Text>
-                {date}
+                {new Date(parseInt(date)).toLocaleString()}
             </InfoTip>
         </Flex>
     );

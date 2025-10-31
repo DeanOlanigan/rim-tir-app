@@ -10,8 +10,9 @@ import {
 import { InputController } from "../../InputComponents/InputController";
 import { InputFactory } from "../../InputComponents/InputFactory";
 import { useVariablesStore } from "@/store/variables-store";
+import { iconsMap } from "@/config/icons";
 import { validateVisibility } from "@/utils/validation/runners/validateVisibility";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 
 /**
  * props:
@@ -27,7 +28,8 @@ export const CompositeSection = ({
     label,
 }) => {
     const { settings, setSettings } = useVariablesStore.getState();
-    const dep = configuratorConfig.nodePaths[data.path]?.settings[checkedParam];
+    const dep =
+        configuratorConfig.nodePaths?.[data.path]?.settings[checkedParam];
     if (!dep || dep.hidden) return null; // Если параметр не определен или скрыт, ничего не рендерим
 
     const isVisible = validateVisibility(dep.visibleIf, data.id, settings);
@@ -35,14 +37,18 @@ export const CompositeSection = ({
 
     const isChecked = data.setting?.[checkedParam] ?? false;
 
-    const ParamIcon = dep?.icon;
+    const ParamIcon = iconsMap[dep?.icon];
     return (
         <Card.Root
-            colorPalette={dep.color}
+            //colorPalette={dep.color}
             size={"sm"}
             w={"100%"}
             h={"100%"}
-            _hover={{ outline: "1px solid", outlineColor: "border.info" }}
+            _hover={{
+                outline: "1px solid",
+                outlineColor: "colorPalette.focusRing",
+                bg: "colorPalette.subtle",
+            }}
             variant="subtle"
             onClick={() =>
                 setSettings(data.id, {

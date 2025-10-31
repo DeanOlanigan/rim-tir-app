@@ -1,17 +1,7 @@
-import { TextInput } from "./TextInput";
-import { NumberInput } from "./NumberInput";
-import { SelectInput } from "./SelectInput";
-import { SwitchInput } from "./SwitchInput";
-import { DebouncedEditor } from "./DebouncedEditor/DebouncedEditor";
-import { ComboboxInput } from "./ComboboxInput";
-import { NameInput } from "./NameInput";
-
-export {
-    DebouncedEditor,
-    ComboboxInput,
-    NameInput,
-    NumberInput,
-    SelectInput,
-    SwitchInput,
-    TextInput,
-};
+export { TextInput } from "./TextInput";
+export { NumberInput } from "./NumberInput";
+export { SelectInput } from "./SelectInput";
+export { SwitchInput } from "./SwitchInput";
+export { ComboboxInput } from "./ComboboxInput";
+export { NameInput } from "./NameInput";
+export { DebouncedEditor } from "./DebouncedEditor/DebouncedEditor";

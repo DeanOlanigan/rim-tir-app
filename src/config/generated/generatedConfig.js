@@ -2,6 +2,8 @@
  * Сгенерировано build-test-config.js
  * НЕ редактируй вручную!
  */
+// TODO Подумать над улучшением функционала контекстного меню
+// TODO Подумать над необходимостью изменить описание параметров не мапой, а массивом объектов (чтобы был reorder)
 export const config = [
     {
         node: "folder",
@@ -13,8 +15,8 @@ export const config = [
         node: "comport",
         type: "interface",
         label: "Comport",
-        icon: "cable",
-        color: "cyan",
+        shortname: "COM",
+        color: "purple",
         usedIn: "both",
         settings: {
             iface: {
@@ -93,12 +95,13 @@ export const config = [
                 type: "protocol",
                 label: "Modbus-RTU Master",
                 shortname: "MB RTU",
-                color: "teal",
+                color: "red",
                 usedIn: "receive",
                 settings: {
                     logging: {
                         type: "boolean",
                         label: "Логирование",
+                        shortname: "log",
                         default: false,
                         showInTree: true,
                     },
@@ -183,35 +186,35 @@ export const config = [
                                 showInTree: true,
                                 enumValues: [
                                     {
-                                        label: "Чтение значений из нескольких регистров флагов (0x01)",
+                                        label: "(0x01) Чтение значений из нескольких регистров флагов",
                                         value: 1,
                                     },
                                     {
-                                        label: "Чтение значений из нескольких дискретных входов (0x02)",
+                                        label: "(0x02) Чтение значений из нескольких дискретных входов",
                                         value: 2,
                                     },
                                     {
-                                        label: "Чтение значений из нескольких регистров хранения (0x03)",
+                                        label: "(0x03) Чтение значений из нескольких регистров хранения",
                                         value: 3,
                                     },
                                     {
-                                        label: "Чтение значений из нескольких регистров ввода (0x04)",
+                                        label: "(0x04) Чтение значений из нескольких регистров ввода",
                                         value: 4,
                                     },
                                     {
-                                        label: "Запись значения одного флага (0x05)",
+                                        label: "(0x05) Запись значения одного флага",
                                         value: 5,
                                     },
                                     {
-                                        label: "Запись значения в один регистр хранения (0x06)",
+                                        label: "(0x06) Запись значения в один регистр хранения",
                                         value: 6,
                                     },
                                     {
-                                        label: "Запись значений в несколько регистров флагов (0x15)",
+                                        label: "(0x15) Запись значений в несколько регистров флагов",
                                         value: 15,
                                     },
                                     {
-                                        label: "Запись значений в несколько регистров хранения (0x16)",
+                                        label: "(0x16) Запись значений в несколько регистров хранения",
                                         value: 16,
                                     },
                                 ],
@@ -219,7 +222,6 @@ export const config = [
                             dataType: {
                                 type: "enum",
                                 label: "Тип данных",
-                                default: "bit",
                                 showInTree: true,
                                 enumValues: [
                                     {
@@ -407,7 +409,6 @@ export const config = [
                                     address: {
                                         type: "string",
                                         label: "Адрес информационного объекта",
-                                        default: "",
                                         showInTree: true,
                                         rules: [
                                             {
@@ -470,12 +471,13 @@ export const config = [
                 type: "protocol",
                 label: "Modbus-RTU Slave",
                 shortname: "MB RTU",
-                color: "teal",
+                color: "red",
                 usedIn: "send",
                 settings: {
                     logging: {
                         type: "boolean",
                         label: "Логирование",
+                        shortname: "log",
                         default: false,
                         showInTree: true,
                     },
@@ -554,35 +556,35 @@ export const config = [
                                 showInTree: true,
                                 enumValues: [
                                     {
-                                        label: "Чтение значений из нескольких регистров флагов (0x01)",
+                                        label: "(0x01) Чтение значений из нескольких регистров флагов",
                                         value: 1,
                                     },
                                     {
-                                        label: "Чтение значений из нескольких дискретных входов (0x02)",
+                                        label: "(0x02) Чтение значений из нескольких дискретных входов",
                                         value: 2,
                                     },
                                     {
-                                        label: "Чтение значений из нескольких регистров хранения (0x03)",
+                                        label: "(0x03) Чтение значений из нескольких регистров хранения",
                                         value: 3,
                                     },
                                     {
-                                        label: "Чтение значений из нескольких регистров ввода (0x04)",
+                                        label: "(0x04) Чтение значений из нескольких регистров ввода",
                                         value: 4,
                                     },
                                     {
-                                        label: "Запись значения одного флага (0x05)",
+                                        label: "(0x05) Запись значения одного флага",
                                         value: 5,
                                     },
                                     {
-                                        label: "Запись значения в один регистр хранения (0x06)",
+                                        label: "(0x06) Запись значения в один регистр хранения",
                                         value: 6,
                                     },
                                     {
-                                        label: "Запись значений в несколько регистров флагов (0x15)",
+                                        label: "(0x15) Запись значений в несколько регистров флагов",
                                         value: 15,
                                     },
                                     {
-                                        label: "Запись значений в несколько регистров хранения (0x16)",
+                                        label: "(0x16) Запись значений в несколько регистров хранения",
                                         value: 16,
                                     },
                                 ],
@@ -590,7 +592,6 @@ export const config = [
                             dataType: {
                                 type: "enum",
                                 label: "Тип данных",
-                                default: "bit",
                                 showInTree: true,
                                 enumValues: [
                                     {
@@ -778,7 +779,6 @@ export const config = [
                                     address: {
                                         type: "string",
                                         label: "Адрес информационного объекта",
-                                        default: "",
                                         showInTree: true,
                                         rules: [
                                             {
@@ -840,13 +840,14 @@ export const config = [
                 node: "tcpBridge_server",
                 type: "interfaceSpecific",
                 label: "TCP-мост (сервер)",
+                shortname: "TCP",
                 usedIn: "receive",
-                icon: "lrEllipsis",
-                color: "purple",
+                color: "green",
                 settings: {
                     logging: {
                         type: "boolean",
                         label: "Логирование",
+                        shortname: "log",
                         default: false,
                         showInTree: true,
                     },
@@ -936,13 +937,14 @@ export const config = [
                 node: "tcpBridge_client",
                 type: "interfaceSpecific",
                 label: "TCP-мост (клиент)",
+                shortname: "TCP",
                 usedIn: "send",
-                icon: "lrEllipsis",
-                color: "purple",
+                color: "green",
                 settings: {
                     logging: {
                         type: "boolean",
                         label: "Логирование",
+                        shortname: "log",
                         default: false,
                         showInTree: true,
                     },
@@ -1035,11 +1037,12 @@ export const config = [
         type: "interface",
         label: "GPIO",
         shortname: "gpio",
-        color: "cyan",
+        color: "purple",
         settings: {
             logging: {
                 type: "boolean",
                 label: "Логирование",
+                shortname: "log",
                 default: false,
                 showInTree: true,
             },
@@ -1085,16 +1088,16 @@ export const config = [
                     function: {
                         type: "enum",
                         label: "Функция",
-                        default: "input",
+                        default: "in",
                         showInTree: true,
                         enumValues: [
                             {
                                 label: "Вход",
-                                value: "input",
+                                value: "in",
                             },
                             {
                                 label: "Выход",
-                                value: "output",
+                                value: "out",
                             },
                         ],
                     },
@@ -1113,12 +1116,13 @@ export const config = [
         type: "protocol",
         label: "IEC-104 Клиент",
         shortname: "iec104",
-        color: "teal",
+        color: "red",
         usedIn: "receive",
         settings: {
             logging: {
                 type: "boolean",
                 label: "Логирование",
+                shortname: "log",
                 default: false,
                 showInTree: true,
             },
@@ -1452,7 +1456,6 @@ export const config = [
                             address: {
                                 type: "number",
                                 label: "Адрес информационного объекта",
-                                default: 0,
                                 showInTree: true,
                                 rules: [
                                     {
@@ -1621,12 +1624,13 @@ export const config = [
         type: "protocol",
         label: "IEC-104 Сервер",
         shortname: "iec104",
-        color: "teal",
+        color: "red",
         usedIn: "send",
         settings: {
             logging: {
                 type: "boolean",
                 label: "Логирование",
+                shortname: "log",
                 default: false,
                 showInTree: true,
             },
@@ -1913,7 +1917,6 @@ export const config = [
                             address: {
                                 type: "number",
                                 label: "Адрес информационного объекта",
-                                default: 0,
                                 showInTree: true,
                                 rules: [
                                     {
@@ -2159,11 +2162,12 @@ export const config = [
         label: "Modbus-TCP Клиент",
         usedIn: "receive",
         shortname: "MB TCP",
-        color: "teal",
+        color: "red",
         settings: {
             logging: {
                 type: "boolean",
                 label: "Логирование",
+                shortname: "log",
                 default: false,
                 showInTree: true,
             },
@@ -2290,35 +2294,35 @@ export const config = [
                         showInTree: true,
                         enumValues: [
                             {
-                                label: "Чтение значений из нескольких регистров флагов (0x01)",
+                                label: "(0x01) Чтение значений из нескольких регистров флагов",
                                 value: 1,
                             },
                             {
-                                label: "Чтение значений из нескольких дискретных входов (0x02)",
+                                label: "(0x02) Чтение значений из нескольких дискретных входов",
                                 value: 2,
                             },
                             {
-                                label: "Чтение значений из нескольких регистров хранения (0x03)",
+                                label: "(0x03) Чтение значений из нескольких регистров хранения",
                                 value: 3,
                             },
                             {
-                                label: "Чтение значений из нескольких регистров ввода (0x04)",
+                                label: "(0x04) Чтение значений из нескольких регистров ввода",
                                 value: 4,
                             },
                             {
-                                label: "Запись значения одного флага (0x05)",
+                                label: "(0x05) Запись значения одного флага",
                                 value: 5,
                             },
                             {
-                                label: "Запись значения в один регистр хранения (0x06)",
+                                label: "(0x06) Запись значения в один регистр хранения",
                                 value: 6,
                             },
                             {
-                                label: "Запись значений в несколько регистров флагов (0x15)",
+                                label: "(0x15) Запись значений в несколько регистров флагов",
                                 value: 15,
                             },
                             {
-                                label: "Запись значений в несколько регистров хранения (0x16)",
+                                label: "(0x16) Запись значений в несколько регистров хранения",
                                 value: 16,
                             },
                         ],
@@ -2326,7 +2330,6 @@ export const config = [
                     dataType: {
                         type: "enum",
                         label: "Тип данных",
-                        default: "",
                         showInTree: true,
                         enumValues: [
                             {
@@ -2513,7 +2516,6 @@ export const config = [
                             address: {
                                 type: "string",
                                 label: "Адрес информационного объекта",
-                                default: "",
                                 showInTree: true,
                                 rules: [
                                     {
@@ -2574,11 +2576,12 @@ export const config = [
         label: "Modbus-TCP Сервер",
         usedIn: "send",
         shortname: "MB TCP",
-        color: "teal",
+        color: "red",
         settings: {
             logging: {
                 type: "boolean",
                 label: "Логирование",
+                shortname: "log",
                 default: false,
                 showInTree: true,
             },
@@ -2695,35 +2698,35 @@ export const config = [
                         showInTree: true,
                         enumValues: [
                             {
-                                label: "Чтение значений из нескольких регистров флагов (0x01)",
+                                label: "(0x01) Чтение значений из нескольких регистров флагов",
                                 value: 1,
                             },
                             {
-                                label: "Чтение значений из нескольких дискретных входов (0x02)",
+                                label: "(0x02) Чтение значений из нескольких дискретных входов",
                                 value: 2,
                             },
                             {
-                                label: "Чтение значений из нескольких регистров хранения (0x03)",
+                                label: "(0x03) Чтение значений из нескольких регистров хранения",
                                 value: 3,
                             },
                             {
-                                label: "Чтение значений из нескольких регистров ввода (0x04)",
+                                label: "(0x04) Чтение значений из нескольких регистров ввода",
                                 value: 4,
                             },
                             {
-                                label: "Запись значения одного флага (0x05)",
+                                label: "(0x05) Запись значения одного флага",
                                 value: 5,
                             },
                             {
-                                label: "Запись значения в один регистр хранения (0x06)",
+                                label: "(0x06) Запись значения в один регистр хранения",
                                 value: 6,
                             },
                             {
-                                label: "Запись значений в несколько регистров флагов (0x15)",
+                                label: "(0x15) Запись значений в несколько регистров флагов",
                                 value: 15,
                             },
                             {
-                                label: "Запись значений в несколько регистров хранения (0x16)",
+                                label: "(0x16) Запись значений в несколько регистров хранения",
                                 value: 16,
                             },
                         ],
@@ -2731,7 +2734,6 @@ export const config = [
                     dataType: {
                         type: "enum",
                         label: "Тип данных",
-                        default: "",
                         showInTree: true,
                         enumValues: [
                             {
@@ -2918,7 +2920,6 @@ export const config = [
                             address: {
                                 type: "string",
                                 label: "Адрес информационного объекта",
-                                default: "",
                                 showInTree: true,
                                 rules: [
                                     {

@@ -9,30 +9,26 @@ import {
     Portal,
     CloseButton,
 } from "@chakra-ui/react";
-import { useConfigInfoStore } from "@/store/config-info-store";
 import { useState } from "react";
 import { ConfigurationNameInput } from "./ConfigurationNameInput";
+import { useVariablesStore } from "@/store/variables-store";
 
+// TODO Использовать человеческие способы обработки форм: zod, react-hook-form
 export const ConfInfoEdit = ({ children }) => {
-    const { name, description, date, version } = useConfigInfoStore(
-        (state) => state.configInfo
-    );
+    const info = useVariablesStore((state) => state.info);
 
     const [isOpen, setIsOpen] = useState(false);
-    const [initialName, setName] = useState(name ?? "");
-    const [initialDescription, setDescription] = useState(description ?? "");
+    const [initialName, setName] = useState(info.name ?? "");
+    const [initialDescription, setDescription] = useState(
+        info.description ?? ""
+    );
 
     const isNameValid = initialName?.trim().length > 3;
 
     const saveHandler = () => {
-        useConfigInfoStore.setState({
-            configInfo: {
-                name: initialName,
-                description: initialDescription,
-                date: new Date().toLocaleString("ru-RU", {}),
-                version: "1.0.0",
-            },
-        });
+        useVariablesStore
+            .getState()
+            .updateInfo(Date.now(), initialName, initialDescription);
         setIsOpen(false);
     };
 
@@ -63,6 +59,9 @@ export const ConfInfoEdit = ({ children }) => {
                                         name={initialName}
                                         setName={setName}
                                     />
+                                    <Field.HelperText>
+                                        Минимум 4 символа
+                                    </Field.HelperText>
                                 </Field.Root>
                                 <Field.Root>
                                     <Field.Label>Описание</Field.Label>
@@ -85,16 +84,11 @@ export const ConfInfoEdit = ({ children }) => {
                                         >
                                             Дата изменения:
                                         </Text>
-                                        <Text fontSize={"md"}>{date}</Text>
-                                    </Box>
-                                    <Box>
-                                        <Text
-                                            fontSize={"sm"}
-                                            color={"fg.muted"}
-                                        >
-                                            Версия:
+                                        <Text fontSize={"md"}>
+                                            {new Date(
+                                                parseInt(info.ts)
+                                            ).toLocaleString()}
                                         </Text>
-                                        <Text fontSize={"md"}>{version}</Text>
                                     </Box>
                                 </Flex>
                             </Flex>

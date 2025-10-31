@@ -1,11 +1,11 @@
 import { Provider } from "@/components/ui/provider";
-import AppRoutes from "@/routes/AppRoutes";
+import { AppRouter } from "./routes";
 import "./App.css";
 
 function App() {
     return (
         <Provider>
-            <AppRoutes />
+            <AppRouter />
         </Provider>
     );
 }

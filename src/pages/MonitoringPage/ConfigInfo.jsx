@@ -7,13 +7,13 @@ export const ConfigInfoWrapper = () => {
     const { data: config } = useQuery({
         queryKey: QK.configuration,
         queryFn: getConfiguration,
-        select: ({ configInfo }) => configInfo,
+        select: (state) => state.info,
     });
 
     return (
         <ConfigInfo
+            date={config?.ts}
             name={config?.name}
-            date={config?.date}
             description={config?.description}
         />
     );

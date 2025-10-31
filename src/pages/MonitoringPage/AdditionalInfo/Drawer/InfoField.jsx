@@ -4,7 +4,10 @@ function valueResolver(context, value) {
     if (!context) return value;
     switch (context.type) {
         case "enum": {
-            return context.enumValues.find(value).label;
+            const enumVal = context.enumValues.find(
+                (val) => val.value === value
+            );
+            return enumVal.value;
         }
         case "boolean":
             return value ? "Да" : "Нет";

@@ -1,7 +1,6 @@
 import { useVariablesStore } from "@/store/variables-store";
-import { useConfigInfoStore } from "@/store/config-info-store";
 import { validateAll } from "@/utils/validation";
-import { configuratorConfig } from "@/utils/configurationParser";
+import { configuratorConfig } from "@/store/configurator-config";
 import { useValidationStore } from "@/store/validation-store";
 
 function toCamelCase(str) {
@@ -17,7 +16,7 @@ function parseValue(raw) {
     // число (int или float)
     if (!isNaN(text) && text !== "") {
         if (text.includes(".")) return parseFloat(text);
-        if (text.includes("x")) return parseInt(text, 16);
+        if (text.includes("x")) return text;
         return parseInt(text, 10);
     }
     // всё остальное — оставляем строкой
@@ -31,8 +30,14 @@ function getSettings(nodeElem, type) {
     if (!settingElem) return null;
 
     for (const attr of settingElem.attributes) {
-        if (attr.name === "sendId") setting.usedIn.send = attr.value;
-        if (attr.name === "receiveId") setting.usedIn.receive = attr.value;
+        if (attr.name === "sendId") {
+            setting.usedIn.send = attr.value;
+            continue;
+        }
+        if (attr.name === "receiveId") {
+            setting.usedIn.receive = attr.value;
+            continue;
+        }
         setting[toCamelCase(attr.name)] = parseValue(attr.value || "");
     }
 
@@ -72,12 +77,12 @@ function readNode(
     treeType
 ) {
     const id = nodeElem.getAttribute("id");
-    const name = nodeElem.getAttribute("name") || "";
+    const name = nodeElem.getAttribute("name") || undefined;
     const type = toCamelCase(nodeElem.tagName);
     const path = nodeElem.getAttribute("path") || undefined;
     const node = nodeElem.getAttribute("node") || undefined;
     const rootId = nodeElem.getAttribute("rootId") || undefined;
-    const isIgnored = nodeElem.getAttribute("isIgnored");
+    const isIgnored = nodeElem.getAttribute("isIgnored") === "true";
 
     checkNode({ id, type, path, node, rootId, treeType });
 
@@ -90,7 +95,7 @@ function readNode(
         id,
         type,
         name,
-        isIgnored: isIgnored === "true",
+        isIgnored,
         children,
     };
     if (parentId) settings[id].parentId = parentId;
@@ -103,7 +108,7 @@ function readNode(
         id,
         type,
         name,
-        isIgnored: isIgnored === "true",
+        isIgnored,
         children: [],
     };
     if (path) treeNode.path = path;
@@ -130,18 +135,16 @@ export function parseXmlToState(xmlString) {
     const cfg = xml.querySelector("ConfigInfo");
     if (!cfg) throw new Error("В файле отсутствует информация о конфигурации");
 
-    const configInfo = {
-        name: cfg?.getAttribute("name") || "",
-        description: cfg?.getAttribute("description") || "",
-        date: cfg?.getAttribute("date") || "",
-        version: cfg?.getAttribute("version") || "",
-    };
-
     const state = {
         send: [],
         receive: [],
         variables: [],
         settings: {},
+        info: {
+            ts: Number.parseInt(cfg?.getAttribute("date") || 0),
+            name: cfg?.getAttribute("name") ?? "",
+            description: cfg?.getAttribute("description") ?? "",
+        },
     };
 
     const recv = xml.querySelector("#receive");
@@ -156,7 +159,7 @@ export function parseXmlToState(xmlString) {
     if (!vars) throw new Error("В файле отсутствуют переменные");
     readNode(vars, null, state.variables, state.settings, "variables");
 
-    return { state, configInfo };
+    return state;
 }
 
 export async function uploadXmlFile(file) {
@@ -176,20 +179,16 @@ function readFileAsText(file) {
 }
 
 function computeImport(xml, filename) {
-    const res = parseXmlToState(xml);
-    const state = res.state;
-    const configInfo = res.configInfo;
-    if (!configInfo.name) {
-        configInfo.name = filename.replace(/\.[^.]+$/i, "");
+    const state = parseXmlToState(xml);
+    if (!state.info.name) {
+        state.info.name = filename.replace(/\.[^.]+$/i, "");
     }
-
     const draft = validateAll(state.settings, configuratorConfig);
-
-    return { state, configInfo, draft };
+    return { state, draft };
 }
 
-export function applyImport({ state, configInfo, draft }) {
+export function applyImport({ state, draft }) {
     useVariablesStore.setState(state);
-    useConfigInfoStore.setState({ configInfo });
-    useValidationStore.getState().applyDraft(draft);
+    useValidationStore.getState().clearErrors();
+    useValidationStore.getState().applyDraft2(draft);
 }

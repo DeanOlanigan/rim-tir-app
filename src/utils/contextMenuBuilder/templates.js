@@ -1,26 +1,15 @@
-import { useVariablesStore } from "@/store/variables-store";
-import { deleteNodeUtil, getParentId } from "../treeUtils";
-import { TREE_TYPES_SET } from "@/config/constants";
-
-export function getSelectedIds(treeApi) {
-    if (treeApi.selectedIds.size > 1) return [...treeApi.selectedIds];
-    if (TREE_TYPES_SET.has(treeApi.focusedNode.data.id)) return [];
-    if (treeApi.focusedNode) return [treeApi.focusedNode.data.id];
-    return [];
-}
-
 export const actions = {
     rename: {
         type: "rename",
         icon: { name: "pencil" },
         label: "Переименовать",
-        action: (treeApi) => treeApi.edit(treeApi.focusedNode),
+        action: "edit",
     },
     edit: {
         type: "edit",
         icon: { name: "pencil" },
         label: "Редактировать",
-        action: (treeApi) => treeApi.edit(treeApi.focusedNode),
+        action: "edit",
     },
     delete: {
         type: "delete",
@@ -30,44 +19,29 @@ export const actions = {
             color: "fg.error",
             _hover: { bg: "bg.error", color: "fg.error" },
         },
-        action: (treeApi) => deleteNodeUtil(treeApi),
+        action: "delete",
     },
     toggleIgnore: {
         type: "ignore",
-        action: (treeApi) => {
-            const ids = getSelectedIds(treeApi);
-            useVariablesStore.getState().toggleIgnore(ids);
-        },
+        action: "toggleIgnore",
     },
     copy: {
         type: "copy",
         icon: { name: "copy" },
         label: "Копировать",
-        action: (treeApi) => {
-            const ids = getSelectedIds(treeApi);
-            const treeType = treeApi.props.treeType;
-            useVariablesStore.getState().copyNode(treeType, ids);
-        },
+        action: "copy",
     },
     cut: {
         type: "cut",
         icon: { name: "scissors" },
         label: "Вырезать",
-        action: (treeApi) => {
-            const ids = getSelectedIds(treeApi);
-            const treeType = treeApi.props.treeType;
-            useVariablesStore.getState().cutNode(treeType, ids);
-        },
+        action: "cut",
     },
     paste: {
         type: "paste",
         icon: { name: "paste" },
         label: "Вставить",
-        action: (treeApi) => {
-            const treeType = treeApi.props.treeType;
-            const parentId = getParentId(treeApi);
-            useVariablesStore.getState().pasteNode(treeType, parentId);
-        },
+        action: "paste",
     },
 };
 
@@ -91,10 +65,7 @@ export function makeCreateMenu({
                 path: basePath,
                 label: `${label} (${count})`,
                 icon: iconDef,
-                action: (treeApi) =>
-                    treeApi.create({
-                        type: { nodeType, times: count, path: basePath },
-                    }),
+                action: "create",
             })),
         };
     }
@@ -105,8 +76,7 @@ export function makeCreateMenu({
         path: basePath,
         label,
         icon: iconDef,
-        action: (treeApi) =>
-            treeApi.create({ type: { nodeType, times: 1, path: basePath } }),
+        action: "create",
     };
 }
 

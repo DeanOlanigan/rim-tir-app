@@ -6,6 +6,7 @@ import {
 } from "./templates";
 
 function isNodeAllowed(node, context) {
+    if (node.type === "variable") return false;
     const ctx = node.usedIn;
     if (!ctx) return true;
     return Array.isArray(ctx)

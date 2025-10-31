@@ -15,6 +15,12 @@ import {
     LuScissors,
     LuClipboardCopy,
     LuListTree,
+    LuArchive,
+    LuChartSpline,
+    LuInfo,
+    LuRefreshCcwDot,
+    LuSquareTerminal,
+    LuTriangleAlert,
 } from "react-icons/lu";
 import { GiGoose } from "react-icons/gi";
 
@@ -36,4 +42,10 @@ export const iconsMap = {
     scissors: LuScissors,
     copy: LuClipboardCopy,
     listTree: LuListTree,
+    archive: LuArchive,
+    chart: LuChartSpline,
+    info: LuInfo,
+    refresh: LuRefreshCcwDot,
+    terminal: LuSquareTerminal,
+    error: LuTriangleAlert,
 };

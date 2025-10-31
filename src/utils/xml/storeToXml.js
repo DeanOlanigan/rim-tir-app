@@ -1,6 +1,5 @@
 import { create } from "xmlbuilder";
 import { useVariablesStore } from "@/store/variables-store";
-import { useConfigInfoStore } from "@/store/config-info-store";
 
 function toTagName(key) {
     return key[0].toUpperCase() + key.slice(1);
@@ -10,7 +9,7 @@ function buildNode(xmlParent, node, settingsMap) {
     const tag = toTagName(node.type);
 
     const attrs = {};
-    attrs.isIgnored = node.isIgnored;
+    attrs.isIgnored = node.isIgnored ?? false;
     if (node.type !== "dataObject") attrs.name = node.name;
     attrs.id = node.id;
     if (node.rootId) attrs.rootId = node.rootId;
@@ -52,16 +51,15 @@ function appendSection(parentEl, nodes, settingsMap) {
     });
 }
 
-export function convertStateToXml(state, configInfo) {
+export function convertStateToXml(state) {
     const { send = [], receive = [], variables = [], settings = {} } = state;
 
     const doc = create("Root", { version: "1.0", encoding: "UTF-8" });
 
     doc.ele("ConfigInfo")
-        .att("name", configInfo.name)
-        .att("description", configInfo.description)
-        .att("date", configInfo.date)
-        .att("version", configInfo.version)
+        .att("name", state.info.name)
+        .att("description", state.info.description)
+        .att("date", state.info.ts)
         .up();
 
     const comm = doc.ele("Communication");
@@ -78,13 +76,12 @@ export function convertStateToXml(state, configInfo) {
 
 export function downloadStateAsXml() {
     const state = useVariablesStore.getState();
-    const configInfo = useConfigInfoStore.getState().configInfo;
-    const xmlString = convertStateToXml(state, configInfo);
+    const xmlString = convertStateToXml(state);
     const blob = new Blob([xmlString], { type: "application/xml" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = configInfo.name + ".xml";
+    a.download = state.info.name + ".xml";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

@@ -15,6 +15,8 @@ export const OffsetPicker = () => {
             onValueChange={(e) => {
                 setOffset(e.value[0]);
             }}
+            lazyMount
+            unmountOnExit
         >
             <Select.HiddenSelect />
             <Select.Label>Оффсет</Select.Label>
