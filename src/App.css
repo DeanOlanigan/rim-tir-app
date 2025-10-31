@@ -11,17 +11,17 @@
 ::-webkit-scrollbar-track {
     -webkit-border-radius: 10px;
     border-radius: 10px;
-    background: var(--chakra-colors-bg-muted);
+    background: var(--chakra-colors-color-palette-subtle);
 }
 
 ::-webkit-scrollbar-thumb {
     -webkit-border-radius: 10px;
     border-radius: 10px;
-    background: var(--chakra-colors-bg-inverted);
+    background: var(--chakra-colors-color-palette-solid);
 }
 
 ::-webkit-scrollbar-thumb:window-inactive {
-    background: var(--chakra-colors-bg-emphasized);
+    background: var(--chakra-colors-color-palette-emphasized);
 }
 
 ::-webkit-scrollbar-corner {
