@@ -122,20 +122,17 @@ export const ArchiveFilter = () => {
                         <Select.Indicator />
                     </Select.IndicatorGroup>
                 </Select.Control>
-                <Portal>
-                    <Select.Positioner>
-                        <Select.Content>
-                            {rows.items.map((row) => (
-                                <Select.Item item={row} key={row.value}>
-                                    {row.label}
-                                    <Select.ItemIndicator />
-                                </Select.Item>
-                            ))}
-                        </Select.Content>
-                    </Select.Positioner>
-                </Portal>
+                <Select.Positioner>
+                    <Select.Content>
+                        {rows.items.map((row) => (
+                            <Select.Item item={row} key={row.value}>
+                                {row.label}
+                                <Select.ItemIndicator />
+                            </Select.Item>
+                        ))}
+                    </Select.Content>
+                </Select.Positioner>
             </Select.Root>
-
             <Select.Root
                 value={Location.value}
                 collection={mountType}
@@ -152,18 +149,16 @@ export const ArchiveFilter = () => {
                         <Select.Indicator />
                     </Select.IndicatorGroup>
                 </Select.Control>
-                <Portal>
-                    <Select.Positioner>
-                        <Select.Content>
-                            {mountType.items.map((type) => (
-                                <Select.Item item={type} key={type.value}>
-                                    {type.label}
-                                    <Select.ItemIndicator />
-                                </Select.Item>
-                            ))}
-                        </Select.Content>
-                    </Select.Positioner>
-                </Portal>
+                <Select.Positioner>
+                    <Select.Content>
+                        {mountType.items.map((type) => (
+                            <Select.Item item={type} key={type.value}>
+                                {type.label}
+                                <Select.ItemIndicator />
+                            </Select.Item>
+                        ))}
+                    </Select.Content>
+                </Select.Positioner>
             </Select.Root>
         </Stack>
     );

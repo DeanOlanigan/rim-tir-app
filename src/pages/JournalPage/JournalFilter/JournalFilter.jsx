@@ -25,7 +25,7 @@ export const JournalFilter = () => {
                 <Drawer.Content rounded="md">
                     <Drawer.Header>
                         <Drawer.Title>Фильтры</Drawer.Title>
-                        <Drawer.CloseTrigger top="5">
+                        <Drawer.CloseTrigger top="5" asChild>
                             <CloseButton size="sm" />
                         </Drawer.CloseTrigger>
                     </Drawer.Header>

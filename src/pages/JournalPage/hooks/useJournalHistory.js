@@ -9,7 +9,7 @@ export const useJournalHistory = () => {
         queryKey: ["journal"],
         queryFn: async () => {
             const out = [];
-            const count = 1000;
+            const count = 300;
 
             for (let i = 0; i < count; i++) {
                 out.push({
