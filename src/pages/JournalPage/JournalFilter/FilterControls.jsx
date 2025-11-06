@@ -1,18 +1,9 @@
 import { Button } from "@chakra-ui/react";
-import { useGroupStore } from "../JournalStores/GroupFilterStore";
-import { useMessageFilterStore } from "../JournalStores/MessageFilterStore";
-import { useJournalFiltersArchiveStore } from "../JournalStores/JournalFiltersArсhiveStore";
+import { useFilterStore } from "../JournalStores/FilterStore";
 
 export const FilterControls = () => {
-    const resetSelectedGroups = useGroupStore(
-        (state) => state.setSelectedGroups
-    );
-    const resetSelMessages = useMessageFilterStore(
-        (state) => state.setSelectedMessages
-    );
-    const resetArchive = useJournalFiltersArchiveStore(
-        (state) => state.setInitial
-    );
+    const { setSelectedGroups, setSelectedMessages, setArchiveInitial } =
+        useFilterStore();
 
     const handleApply = () => {
         console.log("handleApply");
@@ -20,7 +11,7 @@ export const FilterControls = () => {
 
     const handleReset = () => {
         console.log("handleReset");
-        resetSelectedGroups([
+        setSelectedGroups([
             "Состояние",
             "Аварийная",
             "Предупредительная",
@@ -28,8 +19,8 @@ export const FilterControls = () => {
             "Пауза",
             "Возобновлен",
         ]);
-        resetSelMessages(["ТС", "ТУ", "Пауза", "Старт"]);
-        resetArchive();
+        setSelectedMessages(["ТС", "ТУ", "Пауза", "Старт"]);
+        setArchiveInitial();
     };
 
     return (

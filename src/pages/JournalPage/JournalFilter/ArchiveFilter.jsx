@@ -1,13 +1,12 @@
 import {
     createListCollection,
     Field,
-    Portal,
     Select,
     Stack,
     Switch,
 } from "@chakra-ui/react";
 import { DatePicker } from "@/components/DatePicker/DatePicker";
-import { useJournalFiltersArchiveStore } from "../JournalStores/JournalFiltersArсhiveStore";
+import { useFilterStore } from "../JournalStores/FilterStore";
 
 const rows = createListCollection({
     items: [
@@ -41,7 +40,7 @@ export const ArchiveFilter = () => {
         endDate,
         stringsQuantity,
         Location,
-    } = useJournalFiltersArchiveStore();
+    } = useFilterStore();
 
     return (
         <Stack p={"1"}>

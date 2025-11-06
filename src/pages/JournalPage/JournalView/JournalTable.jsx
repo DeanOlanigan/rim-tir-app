@@ -1,19 +1,14 @@
 import { Box, IconButton, Text } from "@chakra-ui/react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { flexRender } from "@tanstack/react-table";
-import { useGroupStore } from "../JournalStores/GroupFilterStore";
-import { useMessageFilterStore } from "../JournalStores/MessageFilterStore";
-import { useColumnsStore } from "../JournalStores/ColumnsStore";
+import { useFilterStore } from "../JournalStores/FilterStore";
 import { useStickToBottom } from "use-stick-to-bottom";
 import { NoData } from "@/components/NoData";
 import { Loader } from "@/components/Loader";
-import { MenuGroups } from "../JournalFilter/MenuFilters/MenuGroups";
-import { MenuTypes } from "../JournalFilter/MenuFilters/MenuTypes";
 import { useJournalStream } from "../JournalStores/journal-stream-store";
 import { useJournalData } from "../hooks/useJournalData";
 import { useFilterData } from "../hooks/useFilterData";
 import { useFilterColumns } from "../hooks/useFilterColumns";
-import { useCreateTable } from "../hooks/useCreateTable";
+import { HeaderCell, TableData, useCreateTable } from "../hooks/useCreateTable";
 import { LuArrowDown } from "react-icons/lu";
 
 const tableColumns = [
@@ -25,18 +20,10 @@ const tableColumns = [
     { label: "Описание", value: "desc", size: 240 },
 ];
 
-const cellType = {
-    group: (content) => <MenuGroups name={content} />,
-    type: (content) => <MenuTypes name={content} />,
-};
-
 export const JournalTable = () => {
     const { isLoading, isError, error } = useJournalData();
-    const selectedGroups = useGroupStore((state) => state.selectedGroups);
-    const selectedMessages = useMessageFilterStore(
-        (state) => state.selectedMessages
-    );
-    const tableColumnsZus = useColumnsStore((state) => state.tableColumnsZus);
+    const { selectedGroups, selectedMessages, tableColumnsZus } =
+        useFilterStore();
     const { live } = useJournalStream();
 
     const sticky = useStickToBottom({
@@ -78,27 +65,27 @@ export const JournalTable = () => {
             )}
             <table
                 style={{
-                    display: "grid",
+                    tableLayout: "fixed",
                     width: "100%",
                 }}
             >
+                <colgroup>
+                    {table.getVisibleLeafColumns().map((column) => (
+                        <col
+                            key={column.id}
+                            style={{ width: `${column.getSize()}px` }}
+                        />
+                    ))}
+                </colgroup>
                 <thead
                     style={{
-                        display: "grid",
                         position: "sticky",
                         top: 0,
                         zIndex: 1,
-                        width: "100%",
                     }}
                 >
                     {table.getHeaderGroups().map((headerGroup) => (
-                        <tr
-                            key={headerGroup.id}
-                            style={{
-                                display: "flex",
-                                width: "100%",
-                            }}
-                        >
+                        <tr key={headerGroup.id} style={{}}>
                             {headerGroup.headers.map((header) => (
                                 <HeaderCell key={header.id} header={header} />
                             ))}
@@ -107,50 +94,31 @@ export const JournalTable = () => {
                 </thead>
                 <tbody
                     style={{
-                        display: "grid",
                         height: `${virtualizer.getTotalSize()}px`,
-                        position: "relative",
-                        width: "100%",
                     }}
                     ref={sticky.contentRef}
                 >
-                    {virtualRows.map((virtualRow) => {
-                        const row = rows[virtualRow.index];
-                        return (
-                            <tr
-                                key={row.id}
-                                style={{
-                                    position: "absolute",
-                                    height: `${virtualRow.size}px`,
-                                    transform: `translateY(${virtualRow.start}px)`,
-                                    display: "flex",
-                                    width: "100%",
-                                }}
-                            >
-                                {row.getVisibleCells().map((cell) => (
-                                    <td
-                                        key={cell.id}
-                                        style={{
-                                            width: `${cell.column.getSize()}px`,
-                                            textAlign: "center",
-                                            fontSize: "sm",
-                                            fontWeight: "500",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            flexShrink: 0,
-                                            padding: "4px",
-                                        }}
-                                    >
-                                        {flexRender(
-                                            cell.column.columnDef.cell,
-                                            cell.getContext()
-                                        )}
-                                    </td>
-                                ))}
-                            </tr>
-                        );
-                    })}
+                    {virtualRows.length > 0 && virtualRows[0].start > 0 && (
+                        <tr style={{ height: virtualRows[0].start }}>
+                            <td
+                                colSpan={table.getVisibleLeafColumns().length}
+                            />
+                        </tr>
+                    )}
+                    <TableData rows={rows} virtualRows={virtualRows} />
+                    {virtualRows.length > 0 && (
+                        <tr
+                            style={{
+                                height:
+                                    virtualizer.getTotalSize() -
+                                    virtualRows[virtualRows.length - 1].end,
+                            }}
+                        >
+                            <td
+                                colSpan={table.getVisibleLeafColumns().length}
+                            />
+                        </tr>
+                    )}
                 </tbody>
             </table>
             {!sticky.isAtBottom && (
@@ -174,33 +142,5 @@ export const JournalTable = () => {
                 </Box>
             )}
         </div>
-    );
-};
-
-const HeaderCell = ({ header }) => {
-    if (header.isPlaceholder) return null;
-
-    const content = flexRender(
-        header.column.columnDef.header,
-        header.getContext()
-    );
-
-    return (
-        <Box
-            as="th"
-            key={header.id}
-            colSpan={header.colSpan}
-            bg="colorPalette.solid"
-            color="fg.inverted"
-            w={`${header.getSize()}px`}
-            py="1"
-            fontWeight="medium"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            flexShrink={0}
-        >
-            {cellType[header.id] ? cellType[header.id](content) : content}
-        </Box>
     );
 };

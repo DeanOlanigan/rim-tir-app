@@ -10,8 +10,8 @@ import { LuPlay, LuDownload, LuColumns3, LuPause } from "react-icons/lu";
 
 import { JournalTable } from "./JournalTable";
 import { JournalFilter } from "../JournalFilter/JournalFilter";
-import { useColumnsStore } from "../JournalStores/ColumnsStore";
 import { useJournalStream } from "../JournalStores/journal-stream-store";
+import { useFilterStore } from "../JournalStores/FilterStore";
 
 const tableColumns = [
     { label: "Дата и время", value: "date" },
@@ -72,7 +72,7 @@ const JournalHeader = () => {
 
 // TODO Встроить в таблицу
 const ColumnViewMenu = () => {
-    const { tableColumnsZus, setColons } = useColumnsStore();
+    const { tableColumnsZus, setColons } = useFilterStore();
     const group = useCheckboxGroup({ value: tableColumnsZus });
 
     const handleCheckboxChange = (value, checked) => {
