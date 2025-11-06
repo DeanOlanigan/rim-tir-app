@@ -1,5 +1,5 @@
 import { Box, Menu, Portal, useCheckboxGroup } from "@chakra-ui/react";
-import { useGroupStore } from "../../JournalStores/GroupFilterStore";
+import { useFilterStore } from "../../JournalStores/FilterStore";
 import { LuArrowBigDown } from "react-icons/lu";
 
 const groups = [
@@ -10,7 +10,7 @@ const groups = [
 ];
 
 export const MenuGroups = ({ name }) => {
-    const { selectedGroups, setSelectedGroups } = useGroupStore();
+    const { selectedGroups, setSelectedGroups } = useFilterStore();
     const group = useCheckboxGroup({ value: selectedGroups });
 
     const handleCheckboxChange = (value, checked) => {

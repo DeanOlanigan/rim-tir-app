@@ -1,6 +1,6 @@
 import { Box, Menu, Portal, useCheckboxGroup } from "@chakra-ui/react";
-import { useMessageFilterStore } from "../../JournalStores/MessageFilterStore";
 import { LuArrowBigDown } from "react-icons/lu";
+import { useFilterStore } from "../../JournalStores/FilterStore";
 
 const messageTypes = [
     { label: "ТС", value: "ТС" },
@@ -8,7 +8,7 @@ const messageTypes = [
 ];
 
 export const MenuTypes = ({ name }) => {
-    const { selectedMessages, setSelectedMessages } = useMessageFilterStore();
+    const { selectedMessages, setSelectedMessages } = useFilterStore();
     const group = useCheckboxGroup({ value: selectedMessages });
 
     const handleCheckboxChange = (value, checked) => {

@@ -1,6 +1,12 @@
 import { useMemo } from "react";
-import { Text, Badge } from "@chakra-ui/react";
-import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
+import { Text, Badge, Box } from "@chakra-ui/react";
+import {
+    useReactTable,
+    getCoreRowModel,
+    flexRender,
+} from "@tanstack/react-table";
+import { MenuTypes } from "../JournalFilter/MenuFilters/MenuTypes";
+import { MenuGroups } from "../JournalFilter/MenuFilters/MenuGroups";
 
 export const useCreateTable = (filtreColon, filtredData) => {
     const columns = useMemo(
@@ -51,4 +57,68 @@ export const useCreateTable = (filtreColon, filtredData) => {
     });
 
     return table;
+};
+
+const cellType = {
+    group: (content) => <MenuGroups name={content} />,
+    type: (content) => <MenuTypes name={content} />,
+};
+
+export const HeaderCell = ({ header }) => {
+    if (header.isPlaceholder) return null;
+
+    const content = flexRender(
+        header.column.columnDef.header,
+        header.getContext()
+    );
+
+    return (
+        <Box
+            as="th"
+            key={header.id}
+            bg="colorPalette.solid"
+            color="fg.inverted"
+            w={`${header.getSize()}px`}
+            py="1"
+            fontWeight="medium"
+        >
+            {cellType[header.id] ? cellType[header.id](content) : content}
+        </Box>
+    );
+};
+
+export const TableData = ({ virtualRows, rows }) => {
+    return (
+        <>
+            {virtualRows.map((virtualRow) => {
+                if (!rows) return null;
+                const row = rows[virtualRow.index];
+                return (
+                    <tr
+                        key={row.id}
+                        style={{
+                            height: `${virtualRow.size}px`,
+                        }}
+                    >
+                        {row.getVisibleCells().map((cell) => (
+                            <td
+                                key={cell.id}
+                                style={{
+                                    textAlign: "center",
+                                    fontSize: "sm",
+                                    fontWeight: "500",
+                                    padding: "4px",
+                                }}
+                            >
+                                {flexRender(
+                                    cell.column.columnDef.cell,
+                                    cell.getContext()
+                                )}
+                            </td>
+                        ))}
+                    </tr>
+                );
+            })}
+        </>
+    );
 };
