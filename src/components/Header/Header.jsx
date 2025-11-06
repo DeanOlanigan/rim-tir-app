@@ -23,12 +23,10 @@ import Navigation from "@/components/Navigation/Navigation";
 function Header() {
     return (
         <Center as={"header"} gap={"2"} p={"2"}>
-            <Pumpkins />
             <Navigation />
             <SettingsMenu />
             <LogoutBtn />
             <ColorModeButton size={"xs"} />
-            <Pumpkins />
         </Center>
     );
 }
