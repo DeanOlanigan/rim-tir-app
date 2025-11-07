@@ -7,37 +7,35 @@ import { useContextMenuPos } from "./hooks/useContextMenuPos";
 import { usePanZoom } from "./hooks/usePanZoom";
 import { useSelectionBox } from "./hooks/useSelectionBox";
 import { NodesLayer } from "./layers/NodesLayer";
-import { snap } from "./utils/geom";
-import { clampRectInFrame } from "./utils/konva";
 import { toWorld } from "./utils/coords";
+import { useActionsStore } from "../store/actions-store";
+import { snap } from "./utils/geom";
 
 export const HMICanvas = ({
     canvasRef,
     width,
     height,
-    cWidth,
-    cHeight,
-    gridSize = 10,
     minZoom = 0.2,
     maxZoom = 10,
-    snapToGrid,
-    showGrid,
-    setContextMenu,
 }) => {
+    const size = useActionsStore((state) => state.size);
+    const gridSize = useActionsStore((state) => state.gridSize);
+    const snapToGrid = useActionsStore((state) => state.snap);
+
     const colorMode = useColorMode().colorMode;
     const frame = useMemo(
         () => ({
             x: 0,
             y: 0,
-            width: cWidth,
-            height: cHeight,
+            width: size.width,
+            height: size.height,
         }),
-        [cWidth, cHeight]
+        [size]
     );
 
     const sel = useSelectionBox();
     const panZoom = usePanZoom(canvasRef, minZoom, maxZoom);
-    const onContextMenu = useContextMenuPos(canvasRef, setContextMenu);
+    const onContextMenu = useContextMenuPos(canvasRef);
     const fitToFrame = useFitToFrame(
         canvasRef,
         frame,
@@ -125,7 +123,7 @@ export const HMICanvas = ({
             }}
             onContextMenu={onContextMenu}
         >
-            <Layer listening={false} hitGraphEnabled={false}>
+            <Layer listening={false}>
                 <Rect
                     x={frame.x}
                     y={frame.y}
@@ -133,16 +131,14 @@ export const HMICanvas = ({
                     height={frame.height}
                     fill="#ffdadaff"
                 />
-                {showGrid && (
-                    <Grid
-                        frame={frame}
-                        gridSize={gridSize}
-                        color={"#7687d1ff"}
-                        opacity={0.3}
-                        majorEvery={25}
-                        stageRef={canvasRef}
-                    />
-                )}
+                <Grid
+                    frame={frame}
+                    gridSize={gridSize}
+                    color={"#7687d1ff"}
+                    opacity={0.3}
+                    majorEvery={25}
+                    stageRef={canvasRef}
+                />
             </Layer>
             <NodesLayer
                 frame={frame}
@@ -154,7 +150,9 @@ export const HMICanvas = ({
                     ref={tr}
                     keepRatio={false}
                     boundBoxFunc={(oldBox, newBox) => {
-                        const step = snapToGrid ? gridSize : 1;
+                        const step = snapToGrid
+                            ? gridSize * canvasRef.current.scale().x
+                            : 1 * canvasRef.current.scale().x;
 
                         const wp = toWorld(canvasRef.current, {
                             x: newBox.x,
@@ -181,7 +179,7 @@ export const HMICanvas = ({
                     }}
                 />
             </Layer>
-            <Layer listening={false} hitGraphEnabled={false}>
+            <Layer listening={false}>
                 <Rect
                     ref={sel.box}
                     visible={false}

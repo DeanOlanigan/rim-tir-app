@@ -1,6 +1,9 @@
+import { useContextMenuStore } from "@/store/contextMenu-store";
 import { useCallback } from "react";
 
-export function useContextMenuPos(ref, setContextMenu) {
+export function useContextMenuPos(ref) {
+    const { updateContext } = useContextMenuStore.getState();
+
     return useCallback(
         (e) => {
             e.evt.preventDefault();
@@ -9,14 +12,14 @@ export function useContextMenuPos(ref, setContextMenu) {
             const rect = stage.container().getBoundingClientRect();
             const p = stage.getPointerPosition();
             if (!p) return;
-            setContextMenu({
+            updateContext("sch", {
                 x: rect.left + p.x + 4,
                 y: rect.top + p.y + 4,
-                type: e.target,
+                apiPath: e.target,
                 visible: true,
             });
             e.cancelBubble = true;
         },
-        [ref, setContextMenu]
+        [ref, updateContext]
     );
 }

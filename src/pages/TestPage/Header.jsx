@@ -6,6 +6,7 @@ import {
     Portal,
     Select,
 } from "@chakra-ui/react";
+import { useActionsStore } from "./store/actions-store";
 
 const viewportDimensions = createListCollection({
     items: [
@@ -20,15 +21,14 @@ const viewportDimensions = createListCollection({
     ],
 });
 
-export const Header = ({
-    setSize,
-    gridSize,
-    setGridSize,
-    snap,
-    setSnap,
-    showGrid,
-    setShowGrid,
-}) => {
+export const Header = () => {
+    const gridSize = useActionsStore((state) => state.gridSize);
+    const showGrid = useActionsStore((state) => state.showGrid);
+    const snap = useActionsStore((state) => state.snap);
+
+    const { setSize, setGridSize, setShowGrid, setSnap } =
+        useActionsStore.getState();
+
     return (
         <>
             <Select.Root
