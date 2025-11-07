@@ -7,7 +7,7 @@ import { useContextMenuPos } from "./hooks/useContextMenuPos";
 import { usePanZoom } from "./hooks/usePanZoom";
 import { useSelectionBox } from "./hooks/useSelectionBox";
 import { NodesLayer } from "./layers/NodesLayer";
-import { toWorld } from "./utils/coords";
+import { toAbs, toWorld } from "./utils/coords";
 import { useActionsStore } from "../store/actions-store";
 import { snap } from "./utils/geom";
 
@@ -149,10 +149,36 @@ export const HMICanvas = ({
                 <Transformer
                     ref={tr}
                     keepRatio={false}
-                    boundBoxFunc={(oldBox, newBox) => {
-                        const step = snapToGrid
-                            ? gridSize * canvasRef.current.scale().x
-                            : 1 * canvasRef.current.scale().x;
+                    rotationSnaps={[0, 45, 90, 135, 180, 225, 270, 315, 360]}
+                    rotationSnapTolerance={30}
+                    anchorDragBoundFunc={function (oldPos, newPos, evt) {
+                        const stage = canvasRef.current;
+                        const step = snapToGrid ? gridSize : 1;
+
+                        const w = toWorld(stage, newPos);
+
+                        const nx = snap(w.x, step, frame.x);
+                        const ny = snap(w.y, step, frame.y);
+
+                        const cx = Math.min(
+                            Math.max(nx, frame.x),
+                            frame.x + frame.width
+                        );
+                        const cy = Math.min(
+                            Math.max(ny, frame.y),
+                            frame.y + frame.height
+                        );
+
+                        const abs = toAbs(stage, { x: cx, y: cy });
+
+                        return abs;
+                    }}
+                    /* boundBoxFunc={(oldBox, newBox) => {
+                        const stage = canvasRef.current;
+                        const step = snapToGrid ? gridSize: 1;
+
+                        const anchor = tr.current?.getActiveAnchor?.() || null;
+                        console.log(anchor);
 
                         const wp = toWorld(canvasRef.current, {
                             x: newBox.x,
@@ -176,7 +202,7 @@ export const HMICanvas = ({
                         };
                         console.log(newBox, newBoxSnapped, { x: wpx, y: wpy });
                         return newBoxSnapped;
-                    }}
+                    }} */
                 />
             </Layer>
             <Layer listening={false}>

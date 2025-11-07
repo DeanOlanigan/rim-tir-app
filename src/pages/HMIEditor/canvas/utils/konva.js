@@ -1,3 +1,5 @@
+import { toWorld } from "./coords";
+
 export function getOuterSize(node) {
     const sx = node.scaleX() ?? 1;
     const sy = node.scaleY() ?? 1;
@@ -41,11 +43,12 @@ export function clampRectInFrame(rect, frame) {
 
 // TODO fix
 export const clampByBBox = (node, frame, pos) => {
+    const stage = node.getStage();
     // временно выставим позицию, чтобы посчитать бокс в этой точке
     const old = node.position();
     node.position(pos);
-    const box = getBBox(node); // { x, y, width, height } уже с учётом scale/rotation/stroke
-    //const box = toWorld(node.getStage(), { x: boxAbs.x, y: boxAbs.y });
+    const boxAbs = getBBox(node); // { x, y, width, height } уже с учётом scale/rotation/stroke
+    const box = toWorld(stage, { x: boxAbs.x, y: boxAbs.y });
 
     // если вылезает — сдвигаем так, чтобы box вписался
     let dx = 0,

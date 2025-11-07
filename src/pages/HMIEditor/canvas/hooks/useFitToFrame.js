@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { FIT_PADDING } from "../constants";
+import { round4 } from "../utils/coords";
 
 export function useFitToFrame(
     ref,
@@ -12,13 +13,15 @@ export function useFitToFrame(
     return useCallback(() => {
         const stage = ref.current;
         if (!stage) return;
-        const scale = Math.max(
-            minZoom,
-            Math.min(
-                maxZoom,
+        const scale = round4(
+            Math.max(
+                minZoom,
                 Math.min(
-                    (viewportW / frame.width) * FIT_PADDING,
-                    (viewportH / frame.height) * FIT_PADDING
+                    maxZoom,
+                    Math.min(
+                        (viewportW / frame.width) * FIT_PADDING,
+                        (viewportH / frame.height) * FIT_PADDING
+                    )
                 )
             )
         );

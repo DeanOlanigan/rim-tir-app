@@ -1,17 +1,17 @@
 import { Box } from "@chakra-ui/react";
 import { useRef } from "react";
-import { HMICanvas } from "./canvas/Canvas";
 import { SubHeader } from "@/components/Header/SubHeader";
 import { useThrottledResizeObserver } from "@/hooks/useThrottledResizeObserver";
 import { ContextMenu } from "./ContextMenu";
 import { ToolBar } from "./ToolBar";
 import { Header } from "./Header";
 import { ZoomBar } from "./ZoomBar";
+import { HMICanvas } from "./canvas/HMICanvas";
 
-const minZoom = 0.2;
+const minZoom = 0.3;
 const maxZoom = 70;
 
-function TestPage() {
+function HMIEditor() {
     const { ref, width, height } = useThrottledResizeObserver(100);
     const canvasRef = useRef(null);
 
@@ -47,4 +47,4 @@ function TestPage() {
         </>
     );
 }
-export default TestPage;
+export default HMIEditor;

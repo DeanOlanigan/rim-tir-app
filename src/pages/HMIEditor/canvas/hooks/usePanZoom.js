@@ -1,6 +1,8 @@
 import { useCallback, useRef } from "react";
 import { clamp } from "../utils/geom";
 import { SCROLL_STRENGTH } from "../constants";
+import { useActionsStore } from "../../store/actions-store";
+import { round4 } from "../utils/coords";
 
 const zoomAt = (stage, pointer, nextScale) => {
     const oldScale = stage.scaleX();
@@ -17,9 +19,10 @@ const zoomAt = (stage, pointer, nextScale) => {
 };
 
 export function usePanZoom(ref, minZoom, maxZoom) {
+    const setScale = useActionsStore.getState().setScale;
     const spacePressed = useRef(false);
     const panning = useRef(false);
-    const panStart = useRef({ stageX: 0, stageY: 0, pageX: 0, pageY: 0 });
+    const panStart = useRef(null);
 
     const onWheel = useCallback(
         (e) => {
@@ -33,7 +36,10 @@ export function usePanZoom(ref, minZoom, maxZoom) {
 
             if (e.evt.ctrlKey) {
                 const zoomFactor = 1 + direction * 0.1;
-                const next = clamp(oldScale * zoomFactor, minZoom, maxZoom);
+                const next = round4(
+                    clamp(oldScale * zoomFactor, minZoom, maxZoom)
+                );
+                setScale(next);
                 zoomAt(stage, pointer, next);
             } else if (e.evt.shiftKey) {
                 stage.position({
@@ -47,9 +53,13 @@ export function usePanZoom(ref, minZoom, maxZoom) {
                 });
             }
 
+            console.log({
+                x: stage.x(),
+                y: stage.y(),
+            });
             stage.batchDraw();
         },
-        [minZoom, maxZoom]
+        [minZoom, maxZoom, setScale]
     );
 
     const onKeyDown = useCallback(
