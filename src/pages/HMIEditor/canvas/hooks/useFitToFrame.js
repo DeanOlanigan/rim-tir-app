@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { FIT_PADDING } from "../constants";
 import { round4 } from "../utils/coords";
+import { useActionsStore } from "../../store/actions-store";
 
 export function useFitToFrame(
     ref,
@@ -11,6 +12,7 @@ export function useFitToFrame(
     maxZoom
 ) {
     return useCallback(() => {
+        const setScale = useActionsStore.getState().setScale;
         const stage = ref.current;
         if (!stage) return;
         const scale = round4(
@@ -25,6 +27,7 @@ export function useFitToFrame(
                 )
             )
         );
+        setScale(scale);
         stage.scale({ x: scale, y: scale });
         const x = (viewportW - frame.width * scale) / 2 - frame.x * scale;
         const y = (viewportH - frame.height * scale) / 2 - frame.y * scale;

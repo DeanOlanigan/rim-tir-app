@@ -4,8 +4,14 @@ import { clampPosInFrame } from "../utils/konva";
 //import { useState } from "react";
 import { nanoid } from "nanoid";
 import { toAbs, toWorld } from "../utils/coords";
+import { useActionsStore } from "../../store/actions-store";
+import { useNodeStore } from "../../store/node-store";
 
 export const NodesLayer = ({ frame, gridSize, snapToGrid }) => {
+    const clampToArea = useActionsStore((state) => state.clampToArea);
+    const nodes = useNodeStore((state) => state.nodes);
+    console.log("NODES", nodes);
+
     /* const [rect, setRect] = useState({
         id: nanoid(12),
         x: 20,
@@ -45,12 +51,14 @@ export const NodesLayer = ({ frame, gridSize, snapToGrid }) => {
         const stage = this.getStage();
         const step = snapToGrid ? gridSize : 1;
         const local = toWorld(stage, pos);
-        const snappedLocal = {
+        let res = {
             x: snap(local.x, step, frame.x),
             y: snap(local.y, step, frame.y),
         };
-        const clamped = clampPosInFrame(this, frame, snappedLocal);
-        const abs = toAbs(stage, clamped);
+        if (clampToArea) {
+            res = clampPosInFrame(this, frame, res);
+        }
+        const abs = toAbs(stage, res);
         return abs;
     };
 
@@ -85,6 +93,27 @@ export const NodesLayer = ({ frame, gridSize, snapToGrid }) => {
                 draggable
                 dragBoundFunc={dragBoundFunc}
             />
+            {nodes.map(
+                (node) =>
+                    node.type === "rect" && (
+                        <Rect
+                            key={node.id}
+                            id={node.id}
+                            name="node"
+                            x={node.x}
+                            y={node.y}
+                            width={node.width}
+                            height={node.height}
+                            fill={node.fill}
+                            stroke={node.stroke}
+                            strokeWidth={node.strokeWidth}
+                            fillAfterStrokeEnabled={node.fillAfterStrokeEnabled}
+                            draggable
+                            cornerRadius={node.cornerRadius}
+                            dragBoundFunc={dragBoundFunc}
+                        />
+                    )
+            )}
         </Layer>
     );
 };

@@ -1,15 +1,18 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Layer, Rect, Stage, Transformer } from "react-konva";
 import { Grid } from "./Grid";
 import { useColorMode } from "@/components/ui/color-mode";
 import { useFitToFrame } from "./hooks/useFitToFrame";
 import { useContextMenuPos } from "./hooks/useContextMenuPos";
 import { usePanZoom } from "./hooks/usePanZoom";
-import { useSelectionBox } from "./hooks/useSelectionBox";
 import { NodesLayer } from "./layers/NodesLayer";
 import { toAbs, toWorld } from "./utils/coords";
 import { useActionsStore } from "../store/actions-store";
 import { snap } from "./utils/geom";
+import { createSelectTool } from "./tools/select";
+import { createHandTool } from "./tools/hand";
+import { createDrawRectTool } from "./tools/drawRect";
+import { useNodeStore } from "../store/node-store";
 
 export const HMICanvas = ({
     canvasRef,
@@ -18,11 +21,21 @@ export const HMICanvas = ({
     minZoom = 0.2,
     maxZoom = 10,
 }) => {
+    const currentAction = useActionsStore((state) => state.currentAction);
     const size = useActionsStore((state) => state.size);
     const gridSize = useActionsStore((state) => state.gridSize);
     const snapToGrid = useActionsStore((state) => state.snap);
+    const selectedIds = useNodeStore((state) => state.selectedIds);
+    const selectionBoxRef = useRef(null);
+    const addNode = useNodeStore.getState().addNode;
+    const setSelectedIds = useNodeStore.getState().setSelectedIds;
+    const backgroundColor = useActionsStore((state) => state.backgroundColor);
+    const workAreaColor = useActionsStore((state) => state.workAreaColor);
+    const gridColor = useActionsStore((state) => state.gridColor);
 
-    const colorMode = useColorMode().colorMode;
+    console.log("RERENDER");
+
+    //const colorMode = useColorMode().colorMode;
     const frame = useMemo(
         () => ({
             x: 0,
@@ -33,7 +46,42 @@ export const HMICanvas = ({
         [size]
     );
 
-    const sel = useSelectionBox();
+    const depsRef = useRef({
+        canvasRef,
+        selectionBoxRef,
+        frame,
+        gridSize,
+        snapToGrid,
+        addNode,
+        setSelectedIds,
+    });
+    useEffect(() => {
+        depsRef.current.frame = frame;
+        depsRef.current.gridSize = gridSize;
+        depsRef.current.snapToGrid = snapToGrid;
+    }, [frame, gridSize, snapToGrid]);
+
+    const activeToolRef = useRef(null);
+    const toolRef = useRef(null);
+    if (!toolRef.current) {
+        toolRef.current = {
+            select: createSelectTool({
+                selectionBoxRef,
+                setSelectedIds,
+            }),
+            hand: createHandTool({ stageRef: canvasRef }),
+            square: createDrawRectTool({ depsRef }),
+        };
+    }
+
+    useEffect(() => {
+        const tool = toolRef.current[currentAction];
+        activeToolRef.current = tool;
+        const stage = canvasRef.current;
+        if (stage) stage.container().style.cursor = tool.cursor || "default";
+    }, [currentAction, canvasRef]);
+
+    //const sel = useSelectionBox();
     const panZoom = usePanZoom(canvasRef, minZoom, maxZoom);
     const onContextMenu = useContextMenuPos(canvasRef);
     const fitToFrame = useFitToFrame(
@@ -50,19 +98,28 @@ export const HMICanvas = ({
     }, [fitToFrame]);
 
     useEffect(() => {
-        const kd = (e) => panZoom.onKeyDown(e);
-        const ku = (e) => panZoom.onKeyUp(e);
+        const kd = (e) => activeToolRef.current?.onKeyDown?.(e);
+        const ku = (e) => activeToolRef.current?.onKeyUp?.(e);
         window.addEventListener("keydown", kd, { passive: false });
         window.addEventListener("keyup", ku, { passive: false });
         return () => {
             window.removeEventListener("keydown", kd);
             window.removeEventListener("keyup", ku);
         };
-    }, [panZoom]);
+    }, []);
 
-    const [selectedIds, setSelectedIds] = useState([]);
-    console.log("selectedIds", selectedIds);
+    const h = {
+        onMouseDown: (e) => activeToolRef.current?.onPointerDown?.(e),
+        onMouseMove: (e) => activeToolRef.current?.onPointerMove?.(e),
+        onMouseUp: (e) => activeToolRef.current?.onPointerUp?.(e),
+    };
+
     const tr = useRef(null);
+
+    useEffect(() => {
+        if (!tr.current) return;
+        tr.current.nodes(selectedIds);
+    }, [selectedIds]);
 
     const handleStageClick = (e) => {
         if (e.target === e.target.getStage()) {
@@ -105,21 +162,9 @@ export const HMICanvas = ({
             width={width}
             height={height}
             onWheel={panZoom.onWheel}
-            onMouseDown={(e) => {
-                panZoom.onMouseDown(e);
-                sel.begin(e);
-            }}
-            onMouseMove={(e) => {
-                panZoom.onMouseMove(e);
-                sel.move(e);
-            }}
-            onMouseUp={(e) => {
-                panZoom.onMouseUp(e);
-                const r = sel.end(e);
-                tr.current.nodes(r);
-            }}
+            {...h}
             style={{
-                background: colorMode === "light" ? "#bffcbaff" : "#0e1d0dff",
+                background: backgroundColor,
             }}
             onContextMenu={onContextMenu}
         >
@@ -129,12 +174,12 @@ export const HMICanvas = ({
                     y={frame.y}
                     width={frame.width}
                     height={frame.height}
-                    fill="#ffdadaff"
+                    fill={workAreaColor}
                 />
                 <Grid
                     frame={frame}
                     gridSize={gridSize}
-                    color={"#7687d1ff"}
+                    color={gridColor}
                     opacity={0.3}
                     majorEvery={25}
                     stageRef={canvasRef}
@@ -151,7 +196,7 @@ export const HMICanvas = ({
                     keepRatio={false}
                     rotationSnaps={[0, 45, 90, 135, 180, 225, 270, 315, 360]}
                     rotationSnapTolerance={30}
-                    anchorDragBoundFunc={function (oldPos, newPos, evt) {
+                    anchorDragBoundFunc={function (oldPos, newPos) {
                         const stage = canvasRef.current;
                         const step = snapToGrid ? gridSize : 1;
 
@@ -205,9 +250,10 @@ export const HMICanvas = ({
                     }} */
                 />
             </Layer>
+            <Layer listening={false} id="DraftLayer" />
             <Layer listening={false}>
                 <Rect
-                    ref={sel.box}
+                    ref={selectionBoxRef}
                     visible={false}
                     fill={"hsla(205, 90%, 48%, 0.1)"}
                     stroke={"hsla(205, 90%, 48%, 1)"}

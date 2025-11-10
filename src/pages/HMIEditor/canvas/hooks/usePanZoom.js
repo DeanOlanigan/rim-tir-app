@@ -3,6 +3,7 @@ import { clamp } from "../utils/geom";
 import { SCROLL_STRENGTH } from "../constants";
 import { useActionsStore } from "../../store/actions-store";
 import { round4 } from "../utils/coords";
+import { ACTIONS } from "../../store/actions";
 
 const zoomAt = (stage, pointer, nextScale) => {
     const oldScale = stage.scaleX();
@@ -20,6 +21,7 @@ const zoomAt = (stage, pointer, nextScale) => {
 
 export function usePanZoom(ref, minZoom, maxZoom) {
     const setScale = useActionsStore.getState().setScale;
+    const setCurrentAction = useActionsStore.getState().setCurrentAction;
     const spacePressed = useRef(false);
     const panning = useRef(false);
     const panStart = useRef(null);
@@ -65,18 +67,20 @@ export function usePanZoom(ref, minZoom, maxZoom) {
     const onKeyDown = useCallback(
         (e) => {
             if (e.code === "Space" && !spacePressed.current) {
+                setCurrentAction(ACTIONS.hand);
                 spacePressed.current = true;
                 const stage = ref.current;
                 if (stage) stage.container().style.cursor = "grab";
                 e.preventDefault();
             }
         },
-        [ref]
+        [ref, setCurrentAction]
     );
 
     const onKeyUp = useCallback(
         (e) => {
             if (e.code === "Space") {
+                setCurrentAction(ACTIONS.select);
                 spacePressed.current = false;
                 const stage = ref.current;
                 if (stage && !spacePressed.current)
@@ -84,7 +88,7 @@ export function usePanZoom(ref, minZoom, maxZoom) {
                 e.preventDefault();
             }
         },
-        [ref]
+        [ref, setCurrentAction]
     );
 
     const onMouseDown = useCallback(
@@ -92,6 +96,7 @@ export function usePanZoom(ref, minZoom, maxZoom) {
             const stage = ref.current;
             if (!stage) return;
             if (spacePressed.current || e.evt.button === 1) {
+                setCurrentAction(ACTIONS.hand);
                 const pointer = stage.getPointerPosition();
                 panStart.current = {
                     stageX: stage.x(),
@@ -103,7 +108,7 @@ export function usePanZoom(ref, minZoom, maxZoom) {
                 stage.container().style.cursor = "grabbing";
             }
         },
-        [ref]
+        [ref, setCurrentAction]
     );
 
     const onMouseMove = useCallback(() => {
@@ -126,7 +131,8 @@ export function usePanZoom(ref, minZoom, maxZoom) {
         stage.container().style.cursor = spacePressed.current
             ? "grab"
             : "default";
-    }, [ref]);
+        if (!spacePressed.current) setCurrentAction(ACTIONS.select);
+    }, [ref, setCurrentAction]);
 
     return { onWheel, onKeyDown, onKeyUp, onMouseDown, onMouseMove, onMouseUp };
 }

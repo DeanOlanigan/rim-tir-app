@@ -1,12 +1,15 @@
 import {
     Checkbox,
+    ColorPicker,
     createListCollection,
     Field,
     NumberInput,
+    parseColor,
     Portal,
     Select,
 } from "@chakra-ui/react";
 import { useActionsStore } from "./store/actions-store";
+import { useState } from "react";
 
 const viewportDimensions = createListCollection({
     items: [
@@ -25,8 +28,9 @@ export const Header = () => {
     const gridSize = useActionsStore((state) => state.gridSize);
     const showGrid = useActionsStore((state) => state.showGrid);
     const snap = useActionsStore((state) => state.snap);
+    const clampToArea = useActionsStore((state) => state.clampToArea);
 
-    const { setSize, setGridSize, setShowGrid, setSnap } =
+    const { setSize, setGridSize, setShowGrid, setSnap, setClampToArea } =
         useActionsStore.getState();
 
     return (
@@ -97,6 +101,105 @@ export const Header = () => {
                 <Checkbox.Control />
                 <Checkbox.Label>Show grid</Checkbox.Label>
             </Checkbox.Root>
+            <Checkbox.Root
+                checked={clampToArea}
+                onCheckedChange={(e) => setClampToArea(!!e.checked)}
+            >
+                <Checkbox.HiddenInput />
+                <Checkbox.Control />
+                <Checkbox.Label>Clamp to work area</Checkbox.Label>
+            </Checkbox.Root>
+            <ColorBg />
+            <ColorWA />
+            <ColorGrid />
         </>
+    );
+};
+
+const ColorBg = () => {
+    const backgroundColor = useActionsStore((state) => state.backgroundColor);
+    const setBackgroundColor = useActionsStore(
+        (state) => state.setBackgroundColor
+    );
+    const [color, setColor] = useState(parseColor(backgroundColor));
+
+    return (
+        <ColorPicker.Root
+            size={"xs"}
+            value={color}
+            onValueChange={(e) => setColor(e.value)}
+            onValueChangeEnd={(e) =>
+                setBackgroundColor(e.value.toString("hex"))
+            }
+        >
+            <ColorPicker.HiddenInput />
+            <ColorPicker.Control>
+                <ColorPicker.Trigger />
+            </ColorPicker.Control>
+            <Portal>
+                <ColorPicker.Positioner>
+                    <ColorPicker.Content>
+                        <ColorPicker.Area />
+                        <ColorPicker.Sliders />
+                    </ColorPicker.Content>
+                </ColorPicker.Positioner>
+            </Portal>
+        </ColorPicker.Root>
+    );
+};
+
+const ColorWA = () => {
+    const workAreaColor = useActionsStore((state) => state.workAreaColor);
+    const setWorkAreaColor = useActionsStore((state) => state.setWorkAreaColor);
+    const [color, setColor] = useState(parseColor(workAreaColor));
+
+    return (
+        <ColorPicker.Root
+            size={"xs"}
+            value={color}
+            onValueChange={(e) => setColor(e.value)}
+            onValueChangeEnd={(e) => setWorkAreaColor(e.value.toString("hex"))}
+        >
+            <ColorPicker.HiddenInput />
+            <ColorPicker.Control>
+                <ColorPicker.Trigger />
+            </ColorPicker.Control>
+            <Portal>
+                <ColorPicker.Positioner>
+                    <ColorPicker.Content>
+                        <ColorPicker.Area />
+                        <ColorPicker.Sliders />
+                    </ColorPicker.Content>
+                </ColorPicker.Positioner>
+            </Portal>
+        </ColorPicker.Root>
+    );
+};
+
+const ColorGrid = () => {
+    const gridColor = useActionsStore((state) => state.gridColor);
+    const setGridColor = useActionsStore((state) => state.setGridColor);
+    const [color, setColor] = useState(parseColor(gridColor));
+
+    return (
+        <ColorPicker.Root
+            size={"xs"}
+            value={color}
+            onValueChange={(e) => setColor(e.value)}
+            onValueChangeEnd={(e) => setGridColor(e.value.toString("hex"))}
+        >
+            <ColorPicker.HiddenInput />
+            <ColorPicker.Control>
+                <ColorPicker.Trigger />
+            </ColorPicker.Control>
+            <Portal>
+                <ColorPicker.Positioner>
+                    <ColorPicker.Content>
+                        <ColorPicker.Area />
+                        <ColorPicker.Sliders />
+                    </ColorPicker.Content>
+                </ColorPicker.Positioner>
+            </Portal>
+        </ColorPicker.Root>
     );
 };

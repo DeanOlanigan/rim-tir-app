@@ -8,6 +8,10 @@ export const useActionsStore = create((set) => ({
     showGrid: true,
     snap: false,
     scale: 1,
+    clampToArea: true,
+    backgroundColor: "#bffcbaff",
+    workAreaColor: "#ffdadaff",
+    gridColor: "#7687d1ff",
 
     setCurrentAction: (action) => set({ currentAction: action }),
 
@@ -16,4 +20,8 @@ export const useActionsStore = create((set) => ({
     setShowGrid: (show) => set({ showGrid: show }),
     setSnap: (snap) => set({ snap }),
     setScale: (scale) => set({ scale }),
+    setClampToArea: (clamp) => set({ clampToArea: clamp }),
+    setBackgroundColor: (color) => set({ backgroundColor: color }),
+    setWorkAreaColor: (color) => set({ workAreaColor: color }),
+    setGridColor: (color) => set({ gridColor: color }),
 }));
