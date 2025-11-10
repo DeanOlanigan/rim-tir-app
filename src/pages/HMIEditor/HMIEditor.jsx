@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, HStack } from "@chakra-ui/react";
 import { useRef } from "react";
 import { SubHeader } from "@/components/Header/SubHeader";
 import { useThrottledResizeObserver } from "@/hooks/useThrottledResizeObserver";
@@ -7,6 +7,7 @@ import { ToolBar } from "./ToolBar";
 import { Header } from "./Header";
 import { ZoomBar } from "./ZoomBar";
 import { HMICanvas } from "./canvas/HMICanvas";
+import { UndoRedoButtons } from "./UndoRedoButtons";
 
 const minZoom = 0.3;
 const maxZoom = 70;
@@ -36,13 +37,21 @@ function HMIEditor() {
                 />
                 <ContextMenu />
             </Box>
-            <ZoomBar
-                minZoom={minZoom}
-                maxZoom={maxZoom}
-                width={width}
-                height={height}
-                canvasRef={canvasRef}
-            />
+            <HStack
+                position={"absolute"}
+                left={5}
+                bottom={10}
+                zIndex={"popover"}
+            >
+                <ZoomBar
+                    minZoom={minZoom}
+                    maxZoom={maxZoom}
+                    width={width}
+                    height={height}
+                    canvasRef={canvasRef}
+                />
+                <UndoRedoButtons />
+            </HStack>
             <ToolBar />
         </>
     );

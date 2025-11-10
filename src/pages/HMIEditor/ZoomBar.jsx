@@ -1,4 +1,4 @@
-import { Box, Button, HStack, IconButton } from "@chakra-ui/react";
+import { Button, Flex, IconButton } from "@chakra-ui/react";
 import { LuZoomIn, LuZoomOut } from "react-icons/lu";
 import { useActionsStore } from "./store/actions-store";
 
@@ -36,15 +36,7 @@ export const ZoomBar = ({ minZoom, maxZoom, width, height, canvasRef }) => {
     };
 
     return (
-        <HStack
-            position={"absolute"}
-            left={5}
-            bottom={10}
-            zIndex={"popover"}
-            bg={"bg.subtle"}
-            rounded={"md"}
-            shadow={"md"}
-        >
+        <Flex bg={"bg.subtle"} rounded={"md"} shadow={"md"}>
             <IconButton
                 variant={"ghost"}
                 size={"md"}
@@ -52,7 +44,7 @@ export const ZoomBar = ({ minZoom, maxZoom, width, height, canvasRef }) => {
             >
                 <LuZoomOut />
             </IconButton>
-            <Button size={"md"} variant={"ghost"} onClick={resetZoom}>
+            <Button size={"md"} variant={"ghost"} onClick={resetZoom} w={"6ch"}>
                 {Math.round(scale * 100)}%
             </Button>
             <IconButton
@@ -62,6 +54,6 @@ export const ZoomBar = ({ minZoom, maxZoom, width, height, canvasRef }) => {
             >
                 <LuZoomIn />
             </IconButton>
-        </HStack>
+        </Flex>
     );
 };
