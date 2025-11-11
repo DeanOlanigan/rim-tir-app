@@ -39,13 +39,13 @@ export const ZoomBar = ({ minZoom, maxZoom, width, height, canvasRef }) => {
         <Group attached shadow={"md"}>
             <IconButton
                 variant={"subtle"}
-                size={"md"}
+                size={"xs"}
                 onClick={() => handleZoom(-1)}
             >
                 <LuZoomOut />
             </IconButton>
             <Button
-                size={"md"}
+                size={"xs"}
                 variant={"subtle"}
                 onClick={resetZoom}
                 w={"6ch"}
@@ -54,7 +54,7 @@ export const ZoomBar = ({ minZoom, maxZoom, width, height, canvasRef }) => {
             </Button>
             <IconButton
                 variant={"subtle"}
-                size={"md"}
+                size={"xs"}
                 onClick={() => handleZoom(1)}
             >
                 <LuZoomIn />

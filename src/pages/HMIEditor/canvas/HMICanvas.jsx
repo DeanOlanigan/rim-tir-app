@@ -165,13 +165,14 @@ export const HMICanvas = ({
             }}
             onContextMenu={onContextMenu}
         >
-            <Layer listening={false}>
+            <Layer>
                 <Rect
                     x={frame.x}
                     y={frame.y}
                     width={frame.width}
                     height={frame.height}
                     fill={workAreaColor}
+                    listening={false}
                 />
                 <Grid
                     frame={frame}
@@ -181,13 +182,21 @@ export const HMICanvas = ({
                     majorEvery={25}
                     stageRef={canvasRef}
                 />
+                <NodesLayer
+                    frame={frame}
+                    gridSize={gridSize}
+                    snapToGrid={snapToGrid}
+                />
             </Layer>
-            <NodesLayer
-                frame={frame}
-                gridSize={gridSize}
-                snapToGrid={snapToGrid}
-            />
-            <Layer>
+            <Layer listening={false} id="DraftLayer">
+                <Rect
+                    ref={selectionBoxRef}
+                    visible={false}
+                    fill={"hsla(205, 90%, 48%, 0.1)"}
+                    stroke={"hsla(205, 90%, 48%, 1)"}
+                    strokeScaleEnabled={false}
+                    strokeWidth={1}
+                />
                 <Transformer
                     ref={tr}
                     keepRatio={false}
@@ -245,17 +254,6 @@ export const HMICanvas = ({
                         console.log(newBox, newBoxSnapped, { x: wpx, y: wpy });
                         return newBoxSnapped;
                     }} */
-                />
-            </Layer>
-            <Layer listening={false} id="DraftLayer" />
-            <Layer listening={false}>
-                <Rect
-                    ref={selectionBoxRef}
-                    visible={false}
-                    fill={"hsla(205, 90%, 48%, 0.1)"}
-                    stroke={"hsla(205, 90%, 48%, 1)"}
-                    strokeScaleEnabled={false}
-                    strokeWidth={1}
                 />
             </Layer>
         </Stage>

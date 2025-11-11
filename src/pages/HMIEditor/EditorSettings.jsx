@@ -40,7 +40,7 @@ export const EditorSettings = () => {
     return (
         <Popover.Root size={"xs"}>
             <Popover.Trigger asChild>
-                <IconButton size={"md"} variant={"subtle"}>
+                <IconButton size={"xs"} variant={"subtle"}>
                     <LuMenu />
                 </IconButton>
             </Popover.Trigger>

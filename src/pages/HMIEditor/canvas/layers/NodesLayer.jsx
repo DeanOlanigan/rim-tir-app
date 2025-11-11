@@ -1,4 +1,4 @@
-import { Circle, Layer, Rect } from "react-konva";
+import { Circle, Rect } from "react-konva";
 import { snap } from "../utils/geom";
 import { clampPosInFrame } from "../utils/konva";
 import { toAbs, toWorld } from "../utils/coords";
@@ -60,34 +60,30 @@ export const NodesLayer = ({ frame, gridSize, snapToGrid }) => {
         return abs;
     };
 
-    return (
-        <Layer>
-            {Object.values(nodes).map((node) => {
-                switch (node.type) {
-                    case "rect":
-                        return (
-                            <Rect
-                                key={node.id}
-                                name="node"
-                                {...node}
-                                draggable
-                                dragBoundFunc={dragBoundFunc}
-                                onDragEnd={handleDragEnd}
-                            />
-                        );
-                    case "circle":
-                        return (
-                            <Circle
-                                key={node.id}
-                                name="node"
-                                {...node}
-                                draggable
-                                dragBoundFunc={dragBoundFunc}
-                                onDragEnd={handleDragEnd}
-                            />
-                        );
-                }
-            })}
-        </Layer>
-    );
+    return Object.values(nodes).map((node) => {
+        switch (node.type) {
+            case "rect":
+                return (
+                    <Rect
+                        key={node.id}
+                        name="node"
+                        {...node}
+                        draggable
+                        dragBoundFunc={dragBoundFunc}
+                        onDragEnd={handleDragEnd}
+                    />
+                );
+            case "circle":
+                return (
+                    <Circle
+                        key={node.id}
+                        name="node"
+                        {...node}
+                        draggable
+                        dragBoundFunc={dragBoundFunc}
+                        onDragEnd={handleDragEnd}
+                    />
+                );
+        }
+    });
 };
