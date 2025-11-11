@@ -1,4 +1,4 @@
-import { Button, Flex, IconButton } from "@chakra-ui/react";
+import { Button, Group, IconButton } from "@chakra-ui/react";
 import { LuZoomIn, LuZoomOut } from "react-icons/lu";
 import { useActionsStore } from "./store/actions-store";
 
@@ -36,24 +36,29 @@ export const ZoomBar = ({ minZoom, maxZoom, width, height, canvasRef }) => {
     };
 
     return (
-        <Flex bg={"bg.subtle"} rounded={"md"} shadow={"md"}>
+        <Group attached shadow={"md"}>
             <IconButton
-                variant={"ghost"}
+                variant={"subtle"}
                 size={"md"}
                 onClick={() => handleZoom(-1)}
             >
                 <LuZoomOut />
             </IconButton>
-            <Button size={"md"} variant={"ghost"} onClick={resetZoom} w={"6ch"}>
+            <Button
+                size={"md"}
+                variant={"subtle"}
+                onClick={resetZoom}
+                w={"6ch"}
+            >
                 {Math.round(scale * 100)}%
             </Button>
             <IconButton
-                variant={"ghost"}
+                variant={"subtle"}
                 size={"md"}
                 onClick={() => handleZoom(1)}
             >
                 <LuZoomIn />
             </IconButton>
-        </Flex>
+        </Group>
     );
 };

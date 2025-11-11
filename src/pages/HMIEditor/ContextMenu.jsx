@@ -1,12 +1,14 @@
 import { useContextMenuStore } from "@/store/contextMenu-store";
 import { Menu, Portal } from "@chakra-ui/react";
+import { useNodeStore } from "./store/node-store";
 
 export const ContextMenu = () => {
     const { updateContext } = useContextMenuStore.getState();
     const { apiPath, x, y, visible } = useContextMenuStore(
         (state) => state.sch
     );
-
+    const removeNode = useNodeStore.getState().removeNode;
+    console.log(apiPath);
     return (
         <Menu.Root
             open={visible}
@@ -29,11 +31,19 @@ export const ContextMenu = () => {
             <Portal>
                 <Menu.Positioner>
                     <Menu.Content>
-                        <Menu.Item value="new-txt">{apiPath?._id}</Menu.Item>
-                        <Menu.Item value="new-file">New File...</Menu.Item>
-                        <Menu.Item value="new-win">New Window</Menu.Item>
-                        <Menu.Item value="open-file">Open File...</Menu.Item>
-                        <Menu.Item value="export">Export</Menu.Item>
+                        <Menu.ItemGroup>
+                            <Menu.ItemGroupLabel>
+                                {apiPath?.attrs.id}
+                            </Menu.ItemGroupLabel>
+                            <Menu.Item
+                                value="delete"
+                                color="fg.error"
+                                _hover={{ bg: "bg.error", color: "fg.error" }}
+                                onClick={() => removeNode(apiPath?.attrs.id)}
+                            >
+                                Delete
+                            </Menu.Item>
+                        </Menu.ItemGroup>
                     </Menu.Content>
                 </Menu.Positioner>
             </Portal>

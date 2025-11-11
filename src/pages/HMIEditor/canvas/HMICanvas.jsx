@@ -78,7 +78,7 @@ export const HMICanvas = ({
         const tool = toolRef.current[currentAction];
         activeToolRef.current = tool;
         const stage = canvasRef.current;
-        if (stage) stage.container().style.cursor = tool.cursor || "default";
+        if (stage) stage.container().style.cursor = tool?.cursor || "default";
     }, [currentAction, canvasRef]);
 
     //const sel = useSelectionBox();

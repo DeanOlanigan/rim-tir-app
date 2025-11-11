@@ -1,13 +1,13 @@
-import { Box, HStack } from "@chakra-ui/react";
+import { Box, Flex, HStack } from "@chakra-ui/react";
 import { useRef } from "react";
-import { SubHeader } from "@/components/Header/SubHeader";
 import { useThrottledResizeObserver } from "@/hooks/useThrottledResizeObserver";
 import { ContextMenu } from "./ContextMenu";
 import { ToolBar } from "./ToolBar";
-import { Header } from "./Header";
 import { ZoomBar } from "./ZoomBar";
 import { HMICanvas } from "./canvas/HMICanvas";
 import { UndoRedoButtons } from "./UndoRedoButtons";
+import { NodeSettings } from "./NodeSettings";
+import { EditorSettings } from "./EditorSettings";
 
 const minZoom = 0.3;
 const maxZoom = 70;
@@ -17,30 +17,42 @@ function HMIEditor() {
     const canvasRef = useRef(null);
 
     return (
-        <>
-            <SubHeader>
-                <Header />
-            </SubHeader>
-            <Box
-                ref={ref}
-                bg={"bg.emphasized"}
-                h={"100%"}
-                w={"100%"}
-                position={"relative"}
-            >
-                <HMICanvas
-                    canvasRef={canvasRef}
-                    width={width}
-                    height={height}
-                    minZoom={minZoom}
-                    maxZoom={maxZoom}
-                />
-                <ContextMenu />
+        <Flex
+            ref={ref}
+            bg={"bg.emphasized"}
+            h={"100%"}
+            w={"100%"}
+            position={"relative"}
+            direction={"column"}
+        >
+            <HMICanvas
+                canvasRef={canvasRef}
+                width={width}
+                height={height}
+                minZoom={minZoom}
+                maxZoom={maxZoom}
+            />
+
+            <ContextMenu />
+
+            <Box position={"absolute"} left={2} top={2} zIndex={"popover"}>
+                <EditorSettings />
             </Box>
+
+            <Box
+                position={"absolute"}
+                bottom={2}
+                top={2}
+                right={2}
+                zIndex={"popover"}
+            >
+                <NodeSettings />
+            </Box>
+
             <HStack
                 position={"absolute"}
-                left={5}
-                bottom={10}
+                left={2}
+                bottom={2}
                 zIndex={"popover"}
             >
                 <ZoomBar
@@ -52,8 +64,17 @@ function HMIEditor() {
                 />
                 <UndoRedoButtons />
             </HStack>
-            <ToolBar />
-        </>
+
+            <HStack
+                position={"absolute"}
+                bottom={2}
+                align={"center"}
+                alignSelf={"center"}
+                zIndex={"popover"}
+            >
+                <ToolBar />
+            </HStack>
+        </Flex>
     );
 }
 export default HMIEditor;

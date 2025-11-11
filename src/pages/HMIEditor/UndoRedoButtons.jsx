@@ -1,15 +1,15 @@
-import { Flex, IconButton } from "@chakra-ui/react";
+import { Group, IconButton } from "@chakra-ui/react";
 import { LuRedo, LuUndo } from "react-icons/lu";
 
 export const UndoRedoButtons = () => {
     return (
-        <Flex bg={"bg.subtle"} rounded={"md"} shadow={"md"}>
-            <IconButton variant={"ghost"} size={"md"}>
+        <Group attached shadow={"md"}>
+            <IconButton variant={"subtle"} size={"md"}>
                 <LuUndo />
             </IconButton>
-            <IconButton variant={"ghost"} size={"md"}>
+            <IconButton variant={"subtle"} size={"md"}>
                 <LuRedo />
             </IconButton>
-        </Flex>
+        </Group>
     );
 };
