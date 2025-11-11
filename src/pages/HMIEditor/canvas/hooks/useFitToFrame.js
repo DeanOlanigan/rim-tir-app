@@ -32,6 +32,5 @@ export function useFitToFrame(
         const x = (viewportW - frame.width * scale) / 2 - frame.x * scale;
         const y = (viewportH - frame.height * scale) / 2 - frame.y * scale;
         stage.position({ x: x || 0, y: y || 0 });
-        stage.batchDraw();
     }, [ref, frame, viewportW, viewportH, minZoom, maxZoom]);
 }

@@ -46,7 +46,6 @@ export function createHandTool({ stageRef }) {
                 x: panStart.stageX + dx,
                 y: panStart.stageY + dy,
             });
-            stage.batchDraw();
         },
 
         onPointerUp(e) {

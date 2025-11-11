@@ -107,9 +107,11 @@ export function createDrawRectTool({ depsRef }) {
             draft = null;
             if (rect.width < 1 || rect.height < 1) return;
 
-            addNode({
+            const id = nanoid(12);
+            addNode(id, {
                 type: "rect",
-                id: nanoid(12),
+                id,
+                name: "node",
                 x: rect.x,
                 y: rect.y,
                 width: rect.width,

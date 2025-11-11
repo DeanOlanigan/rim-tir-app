@@ -1,8 +1,6 @@
 import { Circle, Layer, Rect } from "react-konva";
 import { snap } from "../utils/geom";
 import { clampPosInFrame } from "../utils/konva";
-//import { useState } from "react";
-import { nanoid } from "nanoid";
 import { toAbs, toWorld } from "../utils/coords";
 import { useActionsStore } from "../../store/actions-store";
 import { useNodeStore } from "../../store/node-store";
@@ -10,21 +8,7 @@ import { useNodeStore } from "../../store/node-store";
 export const NodesLayer = ({ frame, gridSize, snapToGrid }) => {
     const clampToArea = useActionsStore((state) => state.clampToArea);
     const nodes = useNodeStore((state) => state.nodes);
-    console.log("NODES", nodes);
-
-    /* const [rect, setRect] = useState({
-        id: nanoid(12),
-        x: 20,
-        y: 20,
-        width: 25,
-        height: 15,
-        fill: "#fff",
-        stroke: "black",
-        strokeWidth: 0,
-        fillAfterStrokeEnabled: true,
-        draggable: true,
-        cornerRadius: 2,
-    }); */
+    const updateNode = useNodeStore.getState().updateNode;
 
     /* const handleDragMove = (e) => {
         //const { x, y } = e.target.position();
@@ -38,14 +22,28 @@ export const NodesLayer = ({ frame, gridSize, snapToGrid }) => {
         node.getLayer()?.batchDraw();
     }; */
 
-    /* const handleDragEnd = (e) => {
+    const handleDragEnd = (e) => {
         const node = e.target;
-        const step = snapToGrid ? gridSize : 1;
-        const nx = snap(node.x(), step, frame.x);
-        const ny = snap(node.y(), step, frame.y);
-        const clamped = clampPosInFrame(node, frame, { x: nx, y: ny });
-        setRect((prev) => ({ ...prev, ...clamped }));
-    }; */
+        const data = {
+            type: node.attrs.type,
+            id: node.attrs.id,
+            x: node.attrs.x,
+            y: node.attrs.y,
+            fill: node.attrs.fill,
+            stroke: node.attrs.stroke,
+            strokeWidth: node.attrs.strokeWidth,
+            fillAfterStrokeEnabled: node.attrs.fillAfterStrokeEnabled,
+            cornerRadius: node.attrs.cornerRadius,
+        };
+        if (node.attrs.type === "rect") {
+            data.width = node.attrs.width;
+            data.height = node.attrs.height;
+        }
+        if (node.attrs.type === "circle") {
+            data.radius = node.attrs.radius;
+        }
+        updateNode(node.attrs.id, data);
+    };
 
     const dragBoundFunc = function (pos) {
         const stage = this.getStage();
@@ -64,56 +62,32 @@ export const NodesLayer = ({ frame, gridSize, snapToGrid }) => {
 
     return (
         <Layer>
-            <Rect
-                id={nanoid(12)}
-                name="node"
-                x={20}
-                y={20}
-                width={20}
-                height={20}
-                fill="#fff"
-                stroke="black"
-                strokeWidth={2}
-                fillAfterStrokeEnabled={true}
-                draggable
-                cornerRadius={2}
-                dragBoundFunc={dragBoundFunc}
-            />
-            <Circle
-                id={nanoid(12)}
-                name="node"
-                x={40}
-                y={40}
-                width={20}
-                height={20}
-                fill="#8fda93ff"
-                stroke="black"
-                strokeWidth={2}
-                fillAfterStrokeEnabled={true}
-                draggable
-                dragBoundFunc={dragBoundFunc}
-            />
-            {nodes.map(
-                (node) =>
-                    node.type === "rect" && (
-                        <Rect
-                            key={node.id}
-                            id={node.id}
-                            name="node"
-                            x={node.x}
-                            y={node.y}
-                            width={node.width}
-                            height={node.height}
-                            fill={node.fill}
-                            stroke={node.stroke}
-                            strokeWidth={node.strokeWidth}
-                            fillAfterStrokeEnabled={node.fillAfterStrokeEnabled}
-                            draggable
-                            cornerRadius={node.cornerRadius}
-                            dragBoundFunc={dragBoundFunc}
-                        />
-                    )
-            )}
+            {Object.values(nodes).map((node) => {
+                switch (node.type) {
+                    case "rect":
+                        return (
+                            <Rect
+                                key={node.id}
+                                name="node"
+                                {...node}
+                                draggable
+                                dragBoundFunc={dragBoundFunc}
+                                onDragEnd={handleDragEnd}
+                            />
+                        );
+                    case "circle":
+                        return (
+                            <Circle
+                                key={node.id}
+                                name="node"
+                                {...node}
+                                draggable
+                                dragBoundFunc={dragBoundFunc}
+                                onDragEnd={handleDragEnd}
+                            />
+                        );
+                }
+            })}
         </Layer>
     );
 };

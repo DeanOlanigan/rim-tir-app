@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import { Layer, Rect, Stage, Transformer } from "react-konva";
 import { Grid } from "./Grid";
-import { useColorMode } from "@/components/ui/color-mode";
 import { useFitToFrame } from "./hooks/useFitToFrame";
 import { useContextMenuPos } from "./hooks/useContextMenuPos";
 import { usePanZoom } from "./hooks/usePanZoom";
@@ -35,7 +34,6 @@ export const HMICanvas = ({
 
     console.log("RERENDER");
 
-    //const colorMode = useColorMode().colorMode;
     const frame = useMemo(
         () => ({
             x: 0,
@@ -81,7 +79,6 @@ export const HMICanvas = ({
         if (stage) stage.container().style.cursor = tool?.cursor || "default";
     }, [currentAction, canvasRef]);
 
-    //const sel = useSelectionBox();
     const panZoom = usePanZoom(canvasRef, minZoom, maxZoom);
     const onContextMenu = useContextMenuPos(canvasRef);
     const fitToFrame = useFitToFrame(
@@ -161,7 +158,7 @@ export const HMICanvas = ({
             ref={canvasRef}
             width={width}
             height={height}
-            onWheel={panZoom.onWheel}
+            onWheel={panZoom}
             {...h}
             style={{
                 background: backgroundColor,
