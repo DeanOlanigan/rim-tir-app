@@ -10,6 +10,7 @@ export const ToolBar = () => {
         <RadioCard.Root
             size={"md"}
             variant={"subtle"}
+            shadow={"md"}
             value={action}
             onValueChange={(e) => setAction(e.value)}
         >

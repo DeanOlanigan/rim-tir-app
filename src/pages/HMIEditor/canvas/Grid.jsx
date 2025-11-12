@@ -1,21 +1,14 @@
 import { Shape } from "react-konva";
 import { useActionsStore } from "../store/actions-store";
+import { GRID_MAJOR_STEP, GRID_OPACITY } from "../constants";
 
-export const Grid = ({
-    frame,
-    gridSize = 10,
-    color = "#ddd",
-    opacity = 0.3,
-    majorEvery = 5,
-    stageRef,
-}) => {
+export const Grid = ({ width, height, gridSize = 10, stageRef }) => {
     const showGrid = useActionsStore((state) => state.showGrid);
+    const gridColor = useActionsStore((state) => state.gridColor);
 
     return (
         showGrid && (
             <Shape
-                x={frame.x}
-                y={frame.y}
                 perfectDrawEnabled={false}
                 shadowForStrokeEnabled={false}
                 listening={false}
@@ -33,28 +26,23 @@ export const Grid = ({
                     ctx.save();
                     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-                    let clipX = 0,
-                        clipY = 0,
-                        clipW = 0,
-                        clipH = 0;
-                    if (frame) {
-                        clipX = sx + frame.x * scale;
-                        clipY = sy + frame.y * scale;
-                        clipW = frame.width * scale;
-                        clipH = frame.height * scale;
+                    const clipX = sx + 0 * scale;
+                    const clipY = sy + 0 * scale;
+                    const clipW = width * scale;
+                    const clipH = height * scale;
 
-                        ctx.beginPath();
-                        ctx.rect(clipX, clipY, clipW, clipH);
-                        ctx.clip();
-                    }
-                    const xMin = clipX,
-                        xMax = clipX + clipW;
-                    const yMin = clipY,
-                        yMax = clipY + clipH;
+                    ctx.beginPath();
+                    ctx.rect(clipX, clipY, clipW, clipH);
+                    ctx.clip();
+
+                    const xMin = clipX;
+                    const xMax = clipX + clipW;
+                    const yMin = clipY;
+                    const yMax = clipY + clipH;
 
                     //ctx.clearRect(0, 0, vw, vh);
-                    ctx.strokeStyle = color;
-                    ctx.globalAlpha = opacity;
+                    ctx.strokeStyle = gridColor;
+                    ctx.globalAlpha = GRID_OPACITY;
                     ctx.lineWidth = 1;
 
                     const nStartX = Math.ceil((xMin - sx) / step);
@@ -80,8 +68,8 @@ export const Grid = ({
                     }
                     ctx.stroke();
 
-                    const majorStep = step * majorEvery;
-                    ctx.globalAlpha = Math.min(opacity + 0.3, 0.75);
+                    const majorStep = step * GRID_MAJOR_STEP;
+                    ctx.globalAlpha = Math.min(GRID_OPACITY + 0.3, 0.75);
 
                     const nStartXMajor = Math.ceil((xMin - sx) / majorStep);
                     const nStartYMajor = Math.ceil((yMin - sy) / majorStep);

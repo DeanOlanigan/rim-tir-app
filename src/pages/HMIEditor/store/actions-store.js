@@ -12,6 +12,7 @@ export const useActionsStore = create((set) => ({
     backgroundColor: "#bffcbaff",
     workAreaColor: "#ffdadaff",
     gridColor: "#7687d1ff",
+    debugMode: true,
 
     setCurrentAction: (action) => set({ currentAction: action }),
 
@@ -24,4 +25,5 @@ export const useActionsStore = create((set) => ({
     setBackgroundColor: (color) => set({ backgroundColor: color }),
     setWorkAreaColor: (color) => set({ workAreaColor: color }),
     setGridColor: (color) => set({ gridColor: color }),
+    setDebugMode: (mode) => set({ debugMode: mode }),
 }));

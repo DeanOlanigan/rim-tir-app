@@ -4,23 +4,13 @@ import { clampPosInFrame } from "../utils/konva";
 import { toAbs, toWorld } from "../utils/coords";
 import { useActionsStore } from "../../store/actions-store";
 import { useNodeStore } from "../../store/node-store";
+import { ACTIONS } from "../../store/actions";
 
-export const NodesLayer = ({ frame, gridSize, snapToGrid }) => {
+export const NodesLayer = ({ width, height, gridSize, snapToGrid }) => {
     const clampToArea = useActionsStore((state) => state.clampToArea);
+    const currentAction = useActionsStore((state) => state.currentAction);
     const nodes = useNodeStore((state) => state.nodes);
     const updateNode = useNodeStore.getState().updateNode;
-
-    /* const handleDragMove = (e) => {
-        //const { x, y } = e.target.position();
-        const node = e.target;
-        const step = snapToGrid ? gridSize : 1;
-        console.log("move", { x: node.x(), y: node.y() });
-        const nx = snap(node.x(), step, frame.x);
-        const ny = snap(node.y(), step, frame.y);
-        const clamped = clampPosInFrame(node, frame, { x: nx, y: ny });
-        node.position(clamped);
-        node.getLayer()?.batchDraw();
-    }; */
 
     const handleDragEnd = (e) => {
         const node = e.target;
@@ -50,14 +40,24 @@ export const NodesLayer = ({ frame, gridSize, snapToGrid }) => {
         const step = snapToGrid ? gridSize : 1;
         const local = toWorld(stage, pos);
         let res = {
-            x: snap(local.x, step, frame.x),
-            y: snap(local.y, step, frame.y),
+            x: snap(local.x, step, 0),
+            y: snap(local.y, step, 0),
         };
         if (clampToArea) {
-            res = clampPosInFrame(this, frame, res);
+            res = clampPosInFrame(this, width, height, res);
         }
         const abs = toAbs(stage, res);
         return abs;
+    };
+
+    const mouseOverHandler = (e) => {
+        if (currentAction !== ACTIONS.select) return;
+        e.target.getStage().container().style.cursor = "move";
+    };
+
+    const mouseOutHandler = (e) => {
+        if (currentAction !== ACTIONS.select) return;
+        e.target.getStage().container().style.cursor = "default";
     };
 
     return Object.values(nodes).map((node) => {
@@ -68,9 +68,11 @@ export const NodesLayer = ({ frame, gridSize, snapToGrid }) => {
                         key={node.id}
                         name="node"
                         {...node}
-                        draggable
+                        draggable={currentAction === ACTIONS.select}
                         dragBoundFunc={dragBoundFunc}
                         onDragEnd={handleDragEnd}
+                        onMouseOver={mouseOverHandler}
+                        onMouseOut={mouseOutHandler}
                     />
                 );
             case "circle":
@@ -79,9 +81,11 @@ export const NodesLayer = ({ frame, gridSize, snapToGrid }) => {
                         key={node.id}
                         name="node"
                         {...node}
-                        draggable
+                        draggable={currentAction === ACTIONS.select}
                         dragBoundFunc={dragBoundFunc}
                         onDragEnd={handleDragEnd}
+                        onMouseOver={mouseOverHandler}
+                        onMouseOut={mouseOutHandler}
                     />
                 );
         }

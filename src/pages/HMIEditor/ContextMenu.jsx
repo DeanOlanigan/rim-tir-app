@@ -8,7 +8,6 @@ export const ContextMenu = () => {
         (state) => state.sch
     );
     const removeNode = useNodeStore.getState().removeNode;
-    console.log(apiPath);
     return (
         <Menu.Root
             open={visible}

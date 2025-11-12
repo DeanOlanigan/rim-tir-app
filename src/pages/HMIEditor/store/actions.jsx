@@ -1,4 +1,5 @@
 import {
+    LuCircle,
     LuHand,
     LuMousePointer2,
     LuMoveUpRight,
@@ -36,6 +37,11 @@ export const ACTION_OPTIONS = [
         value: ACTIONS.square,
         label: "Square",
         icon: LuSquare,
+    },
+    {
+        value: ACTIONS.circle,
+        label: "Circle",
+        icon: LuCircle,
     },
     {
         value: ACTIONS.text,

@@ -33,14 +33,21 @@ export const EditorSettings = () => {
     const showGrid = useActionsStore((state) => state.showGrid);
     const snap = useActionsStore((state) => state.snap);
     const clampToArea = useActionsStore((state) => state.clampToArea);
+    const debugMode = useActionsStore((state) => state.debugMode);
 
-    const { setSize, setGridSize, setShowGrid, setSnap, setClampToArea } =
-        useActionsStore.getState();
+    const {
+        setSize,
+        setGridSize,
+        setShowGrid,
+        setSnap,
+        setClampToArea,
+        setDebugMode,
+    } = useActionsStore.getState();
 
     return (
         <Popover.Root size={"xs"}>
             <Popover.Trigger asChild>
-                <IconButton size={"xs"} variant={"subtle"}>
+                <IconButton size={"xs"} variant={"subtle"} shadow={"md"}>
                     <LuMenu />
                 </IconButton>
             </Popover.Trigger>
@@ -141,7 +148,16 @@ export const EditorSettings = () => {
                                         Clamp to work area
                                     </Checkbox.Label>
                                 </Checkbox.Root>
-
+                                <Checkbox.Root
+                                    checked={debugMode}
+                                    onCheckedChange={(e) =>
+                                        setDebugMode(!!e.checked)
+                                    }
+                                >
+                                    <Checkbox.HiddenInput />
+                                    <Checkbox.Control />
+                                    <Checkbox.Label>Debug mode</Checkbox.Label>
+                                </Checkbox.Root>
                                 <ColorBg />
                                 <ColorWA />
                                 <ColorGrid />

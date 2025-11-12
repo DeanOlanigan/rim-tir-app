@@ -16,12 +16,12 @@ export function getBBox(node) {
     return node.getClientRect({ skipShadow: true, skipStroke: false });
 }
 
-export function clampPosInFrame(node, frame, pos) {
+export function clampPosInFrame(node, width, height, pos) {
     const { width: ow, height: oh, pad } = getOuterSize(node);
-    const minX = frame.x + pad;
-    const minY = frame.y + pad;
-    const maxX = frame.x + frame.width - ow + pad;
-    const maxY = frame.y + frame.height - oh + pad;
+    const minX = pad;
+    const minY = pad;
+    const maxX = width - ow + pad;
+    const maxY = height - oh + pad;
     return {
         x: Math.min(Math.max(pos.x, minX), maxX),
         y: Math.min(Math.max(pos.y, minY), maxY),

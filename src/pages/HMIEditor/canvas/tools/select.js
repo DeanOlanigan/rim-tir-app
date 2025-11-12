@@ -3,7 +3,7 @@ import { ACTIONS } from "../../store/actions";
 import { toWorld } from "../utils/coords";
 import Konva from "konva";
 
-export function createSelectTool({ selectionBoxRef, setSelectedIds }) {
+export function createSelectTool({ selectionBoxRef, setSelectedIds, tr }) {
     let start = { x: 0, y: 0 };
 
     const showBox = (attrs) =>
@@ -17,8 +17,11 @@ export function createSelectTool({ selectionBoxRef, setSelectedIds }) {
         cursor: "default",
 
         onPointerDown(e) {
+            if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
             if (!stage || e.target !== stage) return;
+            tr.current.nodes([]);
+            setSelectedIds([]);
             const wp = toWorld(stage, stage.getPointerPosition());
             start = wp;
             showBox({ x: wp.x, y: wp.y, width: 0, height: 0 });
@@ -35,10 +38,10 @@ export function createSelectTool({ selectionBoxRef, setSelectedIds }) {
                 width: Math.abs(wp.x - start.x),
                 height: Math.abs(wp.y - start.y),
             });
-            //box.getLayer().batchDraw();
         },
 
         onPointerUp(e) {
+            if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
             const box = selectionBoxRef.current;
             if (!stage || !box || !box.visible()) return;
@@ -55,7 +58,9 @@ export function createSelectTool({ selectionBoxRef, setSelectedIds }) {
                     node.getClientRect({ skipShadow: true, skipStroke: true })
                 )
             );
-            setSelectedIds(selected);
+            const selectedIds = selected.map((node) => node.attrs.id);
+            tr.current.nodes(selected);
+            setSelectedIds(selectedIds);
         },
 
         cancel() {

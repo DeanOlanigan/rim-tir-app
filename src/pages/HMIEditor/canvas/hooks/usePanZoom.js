@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { clamp } from "../utils/geom";
-import { SCROLL_STRENGTH } from "../constants";
 import { useActionsStore } from "../../store/actions-store";
 import { round4 } from "../utils/coords";
+import { SCROLL_STRENGTH } from "../../constants";
 
 const zoomAt = (stage, pointer, nextScale) => {
     const oldScale = stage.scaleX();

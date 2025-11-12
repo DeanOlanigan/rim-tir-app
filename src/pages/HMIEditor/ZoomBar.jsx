@@ -1,8 +1,9 @@
 import { Button, Group, IconButton } from "@chakra-ui/react";
 import { LuZoomIn, LuZoomOut } from "react-icons/lu";
 import { useActionsStore } from "./store/actions-store";
+import { DEFAULT_MAX_ZOOM, DEFAULT_MIN_ZOOM } from "./constants";
 
-export const ZoomBar = ({ minZoom, maxZoom, width, height, canvasRef }) => {
+export const ZoomBar = ({ width, height, canvasRef }) => {
     const scale = useActionsStore((state) => state.scale);
     const setScale = useActionsStore.getState().setScale;
 
@@ -11,8 +12,8 @@ export const ZoomBar = ({ minZoom, maxZoom, width, height, canvasRef }) => {
         if (!stage) return;
         const oldScale = stage.scaleX();
         const nextScale = Math.min(
-            Math.max(oldScale * (1 + 0.2 * dir), minZoom),
-            maxZoom
+            Math.max(oldScale * (1 + 0.2 * dir), DEFAULT_MIN_ZOOM),
+            DEFAULT_MAX_ZOOM
         );
         const pointer = { x: width / 2, y: height / 2 };
         const mousePointTo = {

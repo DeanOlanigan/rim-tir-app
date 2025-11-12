@@ -8,70 +8,30 @@ import { HMICanvas } from "./canvas/HMICanvas";
 import { UndoRedoButtons } from "./UndoRedoButtons";
 import { NodeSettings } from "./NodeSettings";
 import { EditorSettings } from "./EditorSettings";
-
-const minZoom = 0.3;
-const maxZoom = 70;
+import { DebugInfo } from "./DebugInfo";
 
 function HMIEditor() {
     const { ref, width, height } = useThrottledResizeObserver(100);
     const canvasRef = useRef(null);
 
     return (
-        <Flex
-            ref={ref}
-            bg={"bg.emphasized"}
-            h={"100%"}
-            w={"100%"}
-            position={"relative"}
-            direction={"column"}
-        >
-            <HMICanvas
-                canvasRef={canvasRef}
-                width={width}
-                height={height}
-                minZoom={minZoom}
-                maxZoom={maxZoom}
-            />
-
+        <Flex ref={ref} h={"100%"} position={"relative"} direction={"column"}>
             <ContextMenu />
-
-            <Box position={"absolute"} left={2} top={2} zIndex={"popover"}>
+            <HMICanvas canvasRef={canvasRef} width={width} height={height} />
+            <Box position={"absolute"} left={2} top={2}>
                 <EditorSettings />
             </Box>
-
-            <Box
-                position={"absolute"}
-                bottom={2}
-                top={2}
-                right={2}
-                zIndex={"popover"}
-            >
+            <Box position={"absolute"} bottom={12} left={2}>
+                <DebugInfo />
+            </Box>
+            <Box position={"absolute"} bottom={2} top={2} right={2}>
                 <NodeSettings />
             </Box>
-
-            <HStack
-                position={"absolute"}
-                left={2}
-                bottom={2}
-                zIndex={"popover"}
-            >
-                <ZoomBar
-                    minZoom={minZoom}
-                    maxZoom={maxZoom}
-                    width={width}
-                    height={height}
-                    canvasRef={canvasRef}
-                />
+            <HStack position={"absolute"} left={2} bottom={2}>
+                <ZoomBar width={width} height={height} canvasRef={canvasRef} />
                 <UndoRedoButtons />
             </HStack>
-
-            <HStack
-                position={"absolute"}
-                bottom={2}
-                align={"center"}
-                alignSelf={"center"}
-                zIndex={"popover"}
-            >
+            <HStack position={"absolute"} bottom={2} alignSelf={"center"}>
                 <ToolBar />
             </HStack>
         </Flex>

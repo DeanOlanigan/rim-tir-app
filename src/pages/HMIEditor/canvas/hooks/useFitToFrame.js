@@ -1,11 +1,12 @@
 import { useCallback } from "react";
-import { FIT_PADDING } from "../constants";
 import { round4 } from "../utils/coords";
 import { useActionsStore } from "../../store/actions-store";
+import { FIT_PADDING } from "../../constants";
 
 export function useFitToFrame(
     ref,
-    frame,
+    workW,
+    workH,
     viewportW,
     viewportH,
     minZoom,
@@ -21,16 +22,16 @@ export function useFitToFrame(
                 Math.min(
                     maxZoom,
                     Math.min(
-                        (viewportW / frame.width) * FIT_PADDING,
-                        (viewportH / frame.height) * FIT_PADDING
+                        (viewportW / workW) * FIT_PADDING,
+                        (viewportH / workH) * FIT_PADDING
                     )
                 )
             )
         );
         setScale(scale);
         stage.scale({ x: scale, y: scale });
-        const x = (viewportW - frame.width * scale) / 2 - frame.x * scale;
-        const y = (viewportH - frame.height * scale) / 2 - frame.y * scale;
+        const x = (viewportW - workW * scale) / 2;
+        const y = (viewportH - workH * scale) / 2;
         stage.position({ x: x || 0, y: y || 0 });
-    }, [ref, frame, viewportW, viewportH, minZoom, maxZoom]);
+    }, [ref, workW, workH, viewportW, viewportH, minZoom, maxZoom]);
 }

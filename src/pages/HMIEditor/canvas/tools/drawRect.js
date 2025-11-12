@@ -5,25 +5,24 @@ import { toWorld } from "../utils/coords";
 import Konva from "konva";
 import { nanoid } from "nanoid";
 
-export function createDrawRectTool({ depsRef }) {
+export function createDrawRectTool({
+    getGrid,
+    getWorkSize,
+    addNode,
+    setSelectedIds,
+}) {
     let draft = null;
     let start = { x: 0, y: 0 };
 
     // prettier-ignore
-    const snapP = (p, gridSize, frame, snapToGrid) => snapToGrid ? {
-        x: snap(p.x, gridSize, frame.x),
-        y: snap(p.y, gridSize, frame.y),
+    const snapP = (p, gridSize, snapToGrid) => snapToGrid ? {
+        x: snap(p.x, gridSize, 0),
+        y: snap(p.y, gridSize, 0),
     } : p;
 
-    const clampRectInFrame = (r, frame) => {
-        const x = Math.max(
-            frame.x,
-            Math.min(r.x, frame.x + frame.width - r.width)
-        );
-        const y = Math.max(
-            frame.y,
-            Math.min(r.y, frame.y + frame.height - r.height)
-        );
+    const clampRectInFrame = (r, workW, workH) => {
+        const x = Math.max(0, Math.min(r.x, workW - r.width));
+        const y = Math.max(0, Math.min(r.y, workH - r.height));
         return { ...r, x, y };
     };
 
@@ -35,12 +34,11 @@ export function createDrawRectTool({ depsRef }) {
 
         onPointerDown(e) {
             const stage = e.currentTarget;
-            const { gridSize, frame, snapToGrid } = depsRef.current;
+            const { gridSize, snapToGrid } = getGrid();
             if (!stage || e.target !== stage) return;
             const p = snapP(
                 toWorld(stage, stage.getPointerPosition()),
                 gridSize,
-                frame,
                 snapToGrid
             );
             start = p;
@@ -68,12 +66,12 @@ export function createDrawRectTool({ depsRef }) {
 
         onPointerMove(e) {
             const stage = e.currentTarget;
-            const { gridSize, frame, snapToGrid } = depsRef.current;
             if (!stage || !draft) return;
+            const { workW, workH } = getWorkSize();
+            const { gridSize, snapToGrid } = getGrid();
             const cur = snapP(
                 toWorld(stage, stage.getPointerPosition()),
                 gridSize,
-                frame,
                 snapToGrid
             );
 
@@ -92,7 +90,8 @@ export function createDrawRectTool({ depsRef }) {
 
             const clamped = clampRectInFrame(
                 { x, y, width: w, height: h },
-                frame
+                workW,
+                workH
             );
             draft.setAttrs(clamped);
             draft.getLayer().batchDraw();
@@ -100,7 +99,6 @@ export function createDrawRectTool({ depsRef }) {
 
         onPointerUp(e) {
             const stage = e.currentTarget;
-            const { addNode } = depsRef.current;
             if (!stage || !draft) return;
             const rect = draft.getAttrs();
             draft.destroy();
@@ -122,6 +120,7 @@ export function createDrawRectTool({ depsRef }) {
                 fillAfterStrokeEnabled: true,
                 cornerRadius: 2,
             });
+            //setSelectedIds([id]);
         },
 
         cancel() {
