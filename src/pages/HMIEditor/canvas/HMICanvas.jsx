@@ -13,6 +13,8 @@ import { useNodeStore } from "../store/node-store";
 import { DEFAULT_MAX_ZOOM, DEFAULT_MIN_ZOOM } from "../constants";
 import { HMITransformer } from "./HMITransformer";
 import { ACTIONS } from "../store/actions";
+import { createDrawEllipseTool } from "./tools/drawEllipse";
+import { createDrawLineTool } from "./tools/drawLine";
 
 export const HMICanvas = ({ canvasRef, width, height }) => {
     const currentAction = useActionsStore((state) => state.currentAction);
@@ -22,7 +24,7 @@ export const HMICanvas = ({ canvasRef, width, height }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const selectionBoxRef = useRef(null);
     const setSelectedIds = useNodeStore.getState().setSelectedIds;
-    const backgroundColor = useActionsStore((state) => state.backgroundColor);
+    const bgColor = useActionsStore((state) => state.backgroundColor);
     const workAreaColor = useActionsStore((state) => state.workAreaColor);
     const tr = useRef(null);
 
@@ -42,6 +44,14 @@ export const HMICanvas = ({ canvasRef, width, height }) => {
                 getWorkSize: () => ({ workW: size.width, workH: size.height }),
                 addNode: useNodeStore.getState().addNode,
                 setSelectedIds: useNodeStore.getState().setSelectedIds,
+            }),
+            ellipse: createDrawEllipseTool({
+                getGrid: () => ({ gridSize, snapToGrid }),
+                addNode: useNodeStore.getState().addNode,
+            }),
+            line: createDrawLineTool({
+                getGrid: () => ({ gridSize, snapToGrid }),
+                addNode: useNodeStore.getState().addNode,
             }),
         }),
         [canvasRef, gridSize, snapToGrid, size.width, size.height]
@@ -87,12 +97,6 @@ export const HMICanvas = ({ canvasRef, width, height }) => {
         transformer.nodes(nodes);
     }, [selectedIds, canvasRef]);
 
-    const h = {
-        onPointerDown: (e) => activeToolRef.current?.onPointerDown?.(e),
-        onPointerMove: (e) => activeToolRef.current?.onPointerMove?.(e),
-        onPointerUp: (e) => activeToolRef.current?.onPointerUp?.(e),
-    };
-
     const handleStageClick = (e) => {
         if (currentAction !== ACTIONS.select) return;
         if (!e.target.hasName("node")) return;
@@ -113,11 +117,11 @@ export const HMICanvas = ({ canvasRef, width, height }) => {
             ref={canvasRef}
             width={width}
             height={height}
+            style={{ background: bgColor }}
             onWheel={panZoom}
-            {...h}
-            style={{
-                background: backgroundColor,
-            }}
+            onPointerDown={(e) => activeToolRef.current?.onPointerDown?.(e)}
+            onPointerMove={(e) => activeToolRef.current?.onPointerMove?.(e)}
+            onPointerUp={(e) => activeToolRef.current?.onPointerUp?.(e)}
             onClick={handleStageClick}
             onContextMenu={onContextMenu}
         >
@@ -128,12 +132,7 @@ export const HMICanvas = ({ canvasRef, width, height }) => {
                     fill={workAreaColor}
                     listening={false}
                 />
-                <Grid
-                    width={size.width}
-                    height={size.height}
-                    gridSize={gridSize}
-                    stageRef={canvasRef}
-                />
+                <Grid />
                 <NodesLayer
                     width={size.width}
                     height={size.height}

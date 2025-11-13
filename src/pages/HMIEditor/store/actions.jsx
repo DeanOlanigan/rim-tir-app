@@ -14,7 +14,7 @@ export const ACTIONS = {
     select: "select",
     hand: "hand",
     square: "square",
-    circle: "circle",
+    ellipse: "ellipse",
     text: "text",
     arrow: "arrow",
     line: "line",
@@ -39,8 +39,8 @@ export const ACTION_OPTIONS = [
         icon: LuSquare,
     },
     {
-        value: ACTIONS.circle,
-        label: "Circle",
+        value: ACTIONS.ellipse,
+        label: "Ellipse",
         icon: LuCircle,
     },
     {

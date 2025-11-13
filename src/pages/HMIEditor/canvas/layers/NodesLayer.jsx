@@ -1,10 +1,11 @@
-import { Circle, Rect } from "react-konva";
+import { Ellipse, Line, Rect } from "react-konva";
 import { snap } from "../utils/geom";
 import { clampPosInFrame } from "../utils/konva";
 import { toAbs, toWorld } from "../utils/coords";
 import { useActionsStore } from "../../store/actions-store";
 import { useNodeStore } from "../../store/node-store";
 import { ACTIONS } from "../../store/actions";
+import { updateStoreNode } from "../utils/store";
 
 export const NodesLayer = ({ width, height, gridSize, snapToGrid }) => {
     const clampToArea = useActionsStore((state) => state.clampToArea);
@@ -14,31 +15,14 @@ export const NodesLayer = ({ width, height, gridSize, snapToGrid }) => {
 
     const handleDragEnd = (e) => {
         const node = e.target;
-        const data = {
-            type: node.attrs.type,
-            id: node.attrs.id,
-            x: node.attrs.x,
-            y: node.attrs.y,
-            fill: node.attrs.fill,
-            stroke: node.attrs.stroke,
-            strokeWidth: node.attrs.strokeWidth,
-            fillAfterStrokeEnabled: node.attrs.fillAfterStrokeEnabled,
-            cornerRadius: node.attrs.cornerRadius,
-        };
-        if (node.attrs.type === "rect") {
-            data.width = node.attrs.width;
-            data.height = node.attrs.height;
-        }
-        if (node.attrs.type === "circle") {
-            data.radius = node.attrs.radius;
-        }
-        updateNode(node.attrs.id, data);
+        updateStoreNode(node, updateNode);
     };
 
     const dragBoundFunc = function (pos) {
         const stage = this.getStage();
         const step = snapToGrid ? gridSize : 1;
         const local = toWorld(stage, pos);
+        // TODO Ellipse wrong snap
         let res = {
             x: snap(local.x, step, 0),
             y: snap(local.y, step, 0),
@@ -75,9 +59,22 @@ export const NodesLayer = ({ width, height, gridSize, snapToGrid }) => {
                         onMouseOut={mouseOutHandler}
                     />
                 );
-            case "circle":
+            case "ellipse":
                 return (
-                    <Circle
+                    <Ellipse
+                        key={node.id}
+                        name="node"
+                        {...node}
+                        draggable={currentAction === ACTIONS.select}
+                        dragBoundFunc={dragBoundFunc}
+                        onDragEnd={handleDragEnd}
+                        onMouseOver={mouseOverHandler}
+                        onMouseOut={mouseOutHandler}
+                    />
+                );
+            case "line":
+                return (
+                    <Line
                         key={node.id}
                         name="node"
                         {...node}

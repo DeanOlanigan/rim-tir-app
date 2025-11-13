@@ -20,7 +20,6 @@ export function createSelectTool({ selectionBoxRef, setSelectedIds, tr }) {
             if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
             if (!stage || e.target !== stage) return;
-            tr.current.nodes([]);
             setSelectedIds([]);
             const wp = toWorld(stage, stage.getPointerPosition());
             start = wp;
@@ -58,8 +57,8 @@ export function createSelectTool({ selectionBoxRef, setSelectedIds, tr }) {
                     node.getClientRect({ skipShadow: true, skipStroke: true })
                 )
             );
+            if (selected.length === 0) return;
             const selectedIds = selected.map((node) => node.attrs.id);
-            tr.current.nodes(selected);
             setSelectedIds(selectedIds);
         },
 

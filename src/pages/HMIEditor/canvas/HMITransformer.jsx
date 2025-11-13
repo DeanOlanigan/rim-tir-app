@@ -3,6 +3,8 @@ import { ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS } from "../constants";
 import { toAbs, toWorld } from "./utils/coords";
 import { snap } from "./utils/geom";
 import { useCallback } from "react";
+import { useNodeStore } from "../store/node-store";
+import { updateStoreNode } from "./utils/store";
 
 export const HMITransformer = ({
     transformerRef,
@@ -27,13 +29,29 @@ export const HMITransformer = ({
         [canvasRef, workW, workH, gridSize, snapToGrid]
     );
 
+    const transformEndHandler = (e) => {
+        const node = e.target;
+        updateStoreNode(node, useNodeStore.getState().updateNode);
+    };
+
+    const transformHandler = (e) => {
+        const node = e.target;
+        node.width(node.width() * node.scaleX());
+        node.height(node.height() * node.scaleY());
+        node.scaleX(1);
+        node.scaleY(1);
+    };
+
     return (
         <Transformer
             ref={transformerRef}
             keepRatio={false}
             rotationSnaps={ROTATION_SNAPS}
             rotationSnapTolerance={ROTATION_SNAP_TOLERANCE}
+            ignoreStroke={true}
             anchorDragBoundFunc={anchorBound}
+            onTransformEnd={transformEndHandler}
+            onTransform={transformHandler}
         />
     );
 };

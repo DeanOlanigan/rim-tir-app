@@ -1,4 +1,4 @@
-import { LuSquare } from "react-icons/lu";
+import { LuSlash } from "react-icons/lu";
 import { ACTIONS } from "../../store/actions";
 import { snap } from "../utils/geom";
 import { toWorld } from "../utils/coords";
@@ -6,12 +6,7 @@ import Konva from "konva";
 import { nanoid } from "nanoid";
 import { useShapeStore } from "../../store/shape-store";
 
-export function createDrawRectTool({
-    getGrid,
-    getWorkSize,
-    addNode,
-    setSelectedIds,
-}) {
+export function createDrawLineTool({ getGrid, addNode }) {
     let draft = null;
     let start = { x: 0, y: 0 };
 
@@ -21,16 +16,10 @@ export function createDrawRectTool({
         y: snap(p.y, gridSize, 0),
     } : p;
 
-    const clampRectInFrame = (r, workW, workH) => {
-        const x = Math.max(0, Math.min(r.x, workW - r.width));
-        const y = Math.max(0, Math.min(r.y, workH - r.height));
-        return { ...r, x, y };
-    };
-
     return {
-        name: ACTIONS.square,
-        label: "Draw Rectangle",
-        icon: LuSquare,
+        name: ACTIONS.line,
+        label: "Draw line",
+        icon: LuSlash,
         cursor: "crosshair",
 
         onPointerDown(e) {
@@ -43,18 +32,14 @@ export function createDrawRectTool({
                 snapToGrid
             );
             start = p;
-            draft = new Konva.Rect({
-                x: p.x,
-                y: p.y,
-                width: 0,
-                height: 0,
-                fill: useShapeStore.getState().fillColor,
+            draft = new Konva.Line({
+                points: [p.x, p.y, p.x, p.y],
                 stroke: useShapeStore.getState().strokeColor,
                 strokeWidth: useShapeStore.getState().strokeWidth,
+                lineCap: "round",
+                lineJoin: "round",
                 listening: false,
                 shadowForStrokeEnabled: false,
-                fillAfterStrokeEnabled: true,
-                cornerRadius: useShapeStore.getState().cornerRadius,
             });
             const layer = stage.findOne("#DraftLayer");
             if (!layer) {
@@ -68,7 +53,6 @@ export function createDrawRectTool({
         onPointerMove(e) {
             const stage = e.currentTarget;
             if (!stage || !draft) return;
-            const { workW, workH } = getWorkSize();
             const { gridSize, snapToGrid } = getGrid();
             const cur = snapP(
                 toWorld(stage, stage.getPointerPosition()),
@@ -76,52 +60,48 @@ export function createDrawRectTool({
                 snapToGrid
             );
 
-            let x = Math.min(start.x, cur.x);
-            let y = Math.min(start.y, cur.y);
-            let w = Math.abs(cur.x - start.x);
-            let h = Math.abs(cur.y - start.y);
-
-            if (e.evt.shiftKey) {
-                const s = Math.max(w, h);
-                x = cur.x < start.x ? start.x - s : start.x;
-                y = cur.y < start.y ? start.y - s : start.y;
-                w = s;
-                h = s;
-            }
-
-            const clamped = clampRectInFrame(
-                { x, y, width: w, height: h },
-                workW,
-                workH
-            );
-            draft.setAttrs(clamped);
+            draft.points([start.x, start.y, cur.x, cur.y]);
             draft.getLayer().batchDraw();
         },
 
         onPointerUp(e) {
             const stage = e.currentTarget;
             if (!stage || !draft) return;
-            const rect = draft.getAttrs();
+
+            const { gridSize, snapToGrid } = getGrid();
+            const cur = snapP(
+                toWorld(stage, stage.getPointerPosition()),
+                gridSize,
+                snapToGrid
+            );
+
+            // финальные точки
+            const x1 = start.x;
+            const y1 = start.y;
+            const x2 = cur.x;
+            const y2 = cur.y;
+
+            // минимальная длина линии (чтоб не создавать "тык" по экрану)
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
             draft.destroy();
             draft = null;
-            if (rect.width < 1 || rect.height < 1) return;
+
+            if (distance < 1) return;
 
             const id = nanoid(12);
             addNode(id, {
-                type: "rect",
+                type: "line",
                 id,
                 name: "node",
-                x: rect.x,
-                y: rect.y,
-                width: rect.width,
-                height: rect.height,
-                fill: useShapeStore.getState().fillColor,
+                points: [x1, y1, x2, y2],
                 stroke: useShapeStore.getState().strokeColor,
                 strokeWidth: useShapeStore.getState().strokeWidth,
-                fillAfterStrokeEnabled: true,
-                cornerRadius: useShapeStore.getState().cornerRadius,
+                lineCap: "round",
+                lineJoin: "round",
             });
-            //setSelectedIds([id]);
         },
 
         cancel() {
