@@ -1,4 +1,4 @@
-import { Button, Group, IconButton } from "@chakra-ui/react";
+import { Button, Group, IconButton, Menu, Portal } from "@chakra-ui/react";
 import { LuZoomIn, LuZoomOut } from "react-icons/lu";
 import { useActionsStore } from "./store/actions-store";
 import { DEFAULT_MAX_ZOOM, DEFAULT_MIN_ZOOM } from "./constants";
@@ -29,10 +29,10 @@ export const ZoomBar = ({ width, height, canvasRef }) => {
         stage.position(newPos);
     };
 
-    const resetZoom = () => {
-        setScale(1);
+    const handleScale = (scale) => {
+        setScale(scale);
         // TODO do better
-        canvasRef.current.scale({ x: 1, y: 1 });
+        canvasRef.current.scale({ x: scale, y: scale });
         canvasRef.current.position({ x: width / 3, y: height / 4 });
     };
 
@@ -41,21 +41,58 @@ export const ZoomBar = ({ width, height, canvasRef }) => {
             <IconButton
                 variant={"subtle"}
                 size={"xs"}
+                disabled={scale === DEFAULT_MIN_ZOOM}
                 onClick={() => handleZoom(-1)}
             >
                 <LuZoomOut />
             </IconButton>
-            <Button
-                size={"xs"}
-                variant={"subtle"}
-                onClick={resetZoom}
-                w={"6ch"}
-            >
-                {Math.round(scale * 100)}%
-            </Button>
+            <Menu.Root size={"sm"}>
+                <Menu.Trigger asChild>
+                    <Button size={"xs"} variant={"subtle"} w={"7ch"}>
+                        {Math.round(scale * 100)}%
+                    </Button>
+                </Menu.Trigger>
+                <Portal>
+                    <Menu.Positioner>
+                        <Menu.Content>
+                            <Menu.Item
+                                value="1000"
+                                onClick={() => handleScale(10)}
+                            >
+                                1000%
+                            </Menu.Item>
+                            <Menu.Item
+                                value="250"
+                                onClick={() => handleScale(2.5)}
+                            >
+                                75%
+                            </Menu.Item>
+                            <Menu.Item
+                                value="50"
+                                onClick={() => handleScale(0.5)}
+                            >
+                                50%
+                            </Menu.Item>
+                            <Menu.Item
+                                value="25"
+                                onClick={() => handleScale(0.25)}
+                            >
+                                25%
+                            </Menu.Item>
+                            <Menu.Item
+                                value="reset"
+                                onClick={() => handleScale(1)}
+                            >
+                                Сброс
+                            </Menu.Item>
+                        </Menu.Content>
+                    </Menu.Positioner>
+                </Portal>
+            </Menu.Root>
             <IconButton
                 variant={"subtle"}
                 size={"xs"}
+                disabled={scale === DEFAULT_MAX_ZOOM}
                 onClick={() => handleZoom(1)}
             >
                 <LuZoomIn />
