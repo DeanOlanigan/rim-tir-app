@@ -50,6 +50,11 @@ const SelectedNodeInfo = ({ nodes, selectedIds }) => {
             <Text>H: {showParam("height")}</Text>
             <Text>Rx: {showParam("radiusX")}</Text>
             <Text>Ry: {showParam("radiusY")}</Text>
+            <Text>
+                Points:{" "}
+                {Array.isArray(showParam("points")) &&
+                    showParam("points")?.join(", ")}
+            </Text>
         </Box>
     );
 };

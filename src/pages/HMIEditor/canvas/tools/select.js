@@ -3,7 +3,7 @@ import { ACTIONS } from "../../store/actions";
 import { toWorld } from "../utils/coords";
 import Konva from "konva";
 
-export function createSelectTool({ selectionBoxRef, setSelectedIds, tr }) {
+export function createSelectTool({ selectionBoxRef, setSelectedIds }) {
     let start = { x: 0, y: 0 };
 
     const showBox = (attrs) =>

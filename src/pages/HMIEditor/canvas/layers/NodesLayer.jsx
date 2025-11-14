@@ -23,14 +23,18 @@ export const NodesLayer = ({ width, height, gridSize, snapToGrid }) => {
         const step = snapToGrid ? gridSize : 1;
         const local = toWorld(stage, pos);
         // TODO Ellipse wrong snap
-        let res = {
-            x: snap(local.x, step, 0),
-            y: snap(local.y, step, 0),
-        };
-        if (clampToArea) {
-            res = clampPosInFrame(this, width, height, res);
+        let res = local;
+        if (this.attrs.type === "rect") {
+            res = {
+                x: snap(local.x, step, 0),
+                y: snap(local.y, step, 0),
+            };
         }
+        /* if (clampToArea) {
+            res = clampPosInFrame(this, width, height, res);
+        } */
         const abs = toAbs(stage, res);
+        // FIXME Broken while zoom
         return abs;
     };
 

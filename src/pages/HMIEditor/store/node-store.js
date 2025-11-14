@@ -38,7 +38,9 @@ export const useNodeStore = create((set) => ({
             const { [id]: _, ...nodes } = state.nodes;
             return { nodes };
         }),
-    updateNode: (id, node) =>
-        set((state) => ({ nodes: { ...state.nodes, [id]: node } })),
+    updateNode: (id, patch) =>
+        set((state) => ({
+            nodes: { ...state.nodes, [id]: { ...state.nodes[id], ...patch } },
+        })),
     setSelectedIds: (ids) => set({ selectedIds: ids }),
 }));

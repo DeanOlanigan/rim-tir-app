@@ -5,6 +5,8 @@ import { snap } from "./utils/geom";
 import { useCallback } from "react";
 import { useNodeStore } from "../store/node-store";
 import { updateStoreNode } from "./utils/store";
+import { getShape } from "./shapes";
+import { useActionsStore } from "../store/actions-store";
 
 export const HMITransformer = ({
     transformerRef,
@@ -31,7 +33,17 @@ export const HMITransformer = ({
 
     const transformEndHandler = (e) => {
         const node = e.target;
-        updateStoreNode(node, useNodeStore.getState().updateNode);
+        const { id, type } = node.attrs;
+        const shape = getShape(type);
+
+        const { gridSize, snapToGrid } = useActionsStore.getState();
+        const ctx = { gridSize, snapToGrid };
+        let patch = {};
+
+        if (shape && typeof shape.onTransformEnd === "function") {
+            patch = shape.onTransformEnd(node, ctx);
+        }
+        useNodeStore.getState().updateNode(id, patch);
     };
 
     const transformHandler = (e) => {

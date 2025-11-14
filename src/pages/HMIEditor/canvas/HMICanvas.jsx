@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Layer, Rect, Stage } from "react-konva";
 import { Grid } from "./Grid";
 import { useFitToFrame } from "./hooks/useFitToFrame";
@@ -6,75 +6,40 @@ import { useContextMenuPos } from "./hooks/useContextMenuPos";
 import { usePanZoom } from "./hooks/usePanZoom";
 import { NodesLayer } from "./layers/NodesLayer";
 import { useActionsStore } from "../store/actions-store";
-import { createSelectTool } from "./tools/select";
-import { createHandTool } from "./tools/hand";
-import { createDrawRectTool } from "./tools/drawRect";
 import { useNodeStore } from "../store/node-store";
 import { HMITransformer } from "./HMITransformer";
 import { ACTIONS } from "../store/actions";
-import { createDrawEllipseTool } from "./tools/drawEllipse";
-import { createDrawLineTool } from "./tools/drawLine";
+import { useToolsManager } from "./hooks/useToolsManager";
 
 export const HMICanvas = ({ canvasRef, width, height }) => {
     const currentAction = useActionsStore((state) => state.currentAction);
     const size = useActionsStore((state) => state.size);
     const gridSize = useActionsStore((state) => state.gridSize);
     const snapToGrid = useActionsStore((state) => state.snap);
-    const selectedIds = useNodeStore((state) => state.selectedIds);
-    const selectionBoxRef = useRef(null);
-    const setSelectedIds = useNodeStore.getState().setSelectedIds;
     const bgColor = useActionsStore((state) => state.backgroundColor);
     const workAreaColor = useActionsStore((state) => state.workAreaColor);
+
+    const selectionBoxRef = useRef(null);
     const tr = useRef(null);
+
+    const selectedIds = useNodeStore((state) => state.selectedIds);
+    const setSelectedIds = useNodeStore.getState().setSelectedIds;
 
     console.log("RERENDER");
 
-    const toolset = useMemo(
-        () => ({
-            select: createSelectTool({
-                selectionBoxRef,
-                setSelectedIds: useNodeStore.getState().setSelectedIds,
-                tr,
-            }),
-            hand: createHandTool({ stageRef: canvasRef }),
-            square: createDrawRectTool({
-                getStage: () => canvasRef.current,
-                getGrid: () => ({ gridSize, snapToGrid }),
-                getWorkSize: () => ({ workW: size.width, workH: size.height }),
-                addNode: useNodeStore.getState().addNode,
-                setSelectedIds: useNodeStore.getState().setSelectedIds,
-            }),
-            ellipse: createDrawEllipseTool({
-                getGrid: () => ({ gridSize, snapToGrid }),
-                addNode: useNodeStore.getState().addNode,
-            }),
-            line: createDrawLineTool({
-                getGrid: () => ({ gridSize, snapToGrid }),
-                addNode: useNodeStore.getState().addNode,
-            }),
-        }),
-        [canvasRef, gridSize, snapToGrid, size.width, size.height]
-    );
+    const manager = useToolsManager(canvasRef, selectionBoxRef, tr);
 
-    const activeToolRef = useRef(null);
-
-    useEffect(() => {
-        const tool = toolset[currentAction];
-        activeToolRef.current = tool;
-        const stage = canvasRef.current;
-        if (stage) stage.container().style.cursor = tool?.cursor || "default";
-    }, [currentAction, toolset, canvasRef]);
-
-    useEffect(() => {
+    /* useEffect(() => {
         if (currentAction !== ACTIONS.select) {
             setSelectedIds([]);
         }
-    }, [currentAction, setSelectedIds]);
+    }, [currentAction, setSelectedIds]); */
 
     const panZoom = usePanZoom();
     const onContextMenu = useContextMenuPos(canvasRef);
     useFitToFrame(canvasRef, size.width, size.height, width, height);
 
+    // #region ??? transformer&selectedIds ???
     useEffect(() => {
         const stage = canvasRef.current;
         const transformer = tr.current;
@@ -98,6 +63,7 @@ export const HMICanvas = ({ canvasRef, width, height }) => {
             setSelectedIds([...selectedIds, clickedId]);
         }
     };
+    // #endregion
 
     return (
         <Stage
@@ -106,9 +72,9 @@ export const HMICanvas = ({ canvasRef, width, height }) => {
             height={height}
             style={{ background: bgColor }}
             onWheel={panZoom}
-            onPointerDown={(e) => activeToolRef.current?.onPointerDown?.(e)}
-            onPointerMove={(e) => activeToolRef.current?.onPointerMove?.(e)}
-            onPointerUp={(e) => activeToolRef.current?.onPointerUp?.(e)}
+            onPointerDown={manager.handlers.onPointerDown}
+            onPointerMove={manager.handlers.onPointerMove}
+            onPointerUp={manager.handlers.onPointerUp}
             onClick={handleStageClick}
             onContextMenu={onContextMenu}
         >
