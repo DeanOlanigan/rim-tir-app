@@ -15,7 +15,7 @@ export function useContextMenuPos(ref) {
             updateContext("sch", {
                 x: rect.left + p.x + 4,
                 y: rect.top + p.y + 4,
-                apiPath: e.target,
+                apiPath: e.target.id(),
                 visible: true,
             });
             e.cancelBubble = true;

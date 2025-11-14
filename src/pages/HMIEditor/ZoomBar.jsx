@@ -2,42 +2,39 @@ import { Button, Group, IconButton, Menu, Portal } from "@chakra-ui/react";
 import { LuZoomIn, LuZoomOut } from "react-icons/lu";
 import { useActionsStore } from "./store/actions-store";
 import { DEFAULT_MAX_ZOOM, DEFAULT_MIN_ZOOM } from "./constants";
+import { setZoom, zoomByPercent } from "./canvas/utils/zoomService";
+import { getClampedWorkAreaAnchor } from "./canvas/utils/zoom";
+import { useFitToFrame } from "./canvas/hooks/useFitToFrame";
 
-export const ZoomBar = ({ width, height, canvasRef }) => {
+export const ZoomBar = ({ canvasRef, width, height }) => {
     const scale = useActionsStore((state) => state.scale);
-    const setScale = useActionsStore.getState().setScale;
+    const size = useActionsStore((state) => state.size);
 
     const handleZoom = (dir) => {
         const stage = canvasRef.current;
         if (!stage) return;
-        const oldScale = stage.scaleX();
-        const nextScale = Math.min(
-            Math.max(oldScale * (1 + 0.2 * dir), DEFAULT_MIN_ZOOM),
-            DEFAULT_MAX_ZOOM
-        );
-        const pointer = { x: width / 2, y: height / 2 };
-        const mousePointTo = {
-            x: (pointer.x - stage.x()) / oldScale,
-            y: (pointer.y - stage.y()) / oldScale,
-        };
-        setScale(nextScale);
-        stage.scale({ x: nextScale, y: nextScale });
-        const newPos = {
-            x: pointer.x - mousePointTo.x * nextScale,
-            y: pointer.y - mousePointTo.y * nextScale,
-        };
-        stage.position(newPos);
+        const anchor = getClampedWorkAreaAnchor(stage, size.width, size.height);
+        zoomByPercent(stage, dir, anchor);
     };
 
     const handleScale = (scale) => {
-        setScale(scale);
-        // TODO do better
-        canvasRef.current.scale({ x: scale, y: scale });
-        canvasRef.current.position({ x: width / 3, y: height / 4 });
+        const stage = canvasRef.current;
+        if (!stage) return;
+        const anchor = getClampedWorkAreaAnchor(stage, size.width, size.height);
+        setZoom(stage, scale, anchor);
     };
 
+    const fitToFrame = useFitToFrame(
+        canvasRef,
+        size.width,
+        size.height,
+        width,
+        height,
+        false
+    );
+
     return (
-        <Group attached shadow={"md"}>
+        <Group attached shadow={"md"} borderRadius={"l2"}>
             <IconButton
                 variant={"subtle"}
                 size={"xs"}
@@ -48,7 +45,12 @@ export const ZoomBar = ({ width, height, canvasRef }) => {
             </IconButton>
             <Menu.Root size={"sm"}>
                 <Menu.Trigger asChild>
-                    <Button size={"xs"} variant={"subtle"} w={"7ch"}>
+                    <Button
+                        size={"xs"}
+                        variant={"subtle"}
+                        w={"7ch"}
+                        rounded={"none"}
+                    >
                         {Math.round(scale * 100)}%
                     </Button>
                 </Menu.Trigger>
@@ -65,7 +67,13 @@ export const ZoomBar = ({ width, height, canvasRef }) => {
                                 value="250"
                                 onClick={() => handleScale(2.5)}
                             >
-                                75%
+                                250%
+                            </Menu.Item>
+                            <Menu.Item
+                                value="100"
+                                onClick={() => handleScale(1)}
+                            >
+                                100%
                             </Menu.Item>
                             <Menu.Item
                                 value="50"
@@ -79,11 +87,8 @@ export const ZoomBar = ({ width, height, canvasRef }) => {
                             >
                                 25%
                             </Menu.Item>
-                            <Menu.Item
-                                value="reset"
-                                onClick={() => handleScale(1)}
-                            >
-                                Сброс
+                            <Menu.Item value="reset" onClick={fitToFrame}>
+                                Масштаб по рабочей области
                             </Menu.Item>
                         </Menu.Content>
                     </Menu.Positioner>

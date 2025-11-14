@@ -10,7 +10,6 @@ import { createSelectTool } from "./tools/select";
 import { createHandTool } from "./tools/hand";
 import { createDrawRectTool } from "./tools/drawRect";
 import { useNodeStore } from "../store/node-store";
-import { DEFAULT_MAX_ZOOM, DEFAULT_MIN_ZOOM } from "../constants";
 import { HMITransformer } from "./HMITransformer";
 import { ACTIONS } from "../store/actions";
 import { createDrawEllipseTool } from "./tools/drawEllipse";
@@ -72,21 +71,9 @@ export const HMICanvas = ({ canvasRef, width, height }) => {
         }
     }, [currentAction, setSelectedIds]);
 
-    const panZoom = usePanZoom(canvasRef, DEFAULT_MIN_ZOOM, DEFAULT_MAX_ZOOM);
+    const panZoom = usePanZoom();
     const onContextMenu = useContextMenuPos(canvasRef);
-    const fitToFrame = useFitToFrame(
-        canvasRef,
-        size.width,
-        size.height,
-        width,
-        height,
-        DEFAULT_MIN_ZOOM,
-        DEFAULT_MAX_ZOOM
-    );
-
-    useEffect(() => {
-        fitToFrame();
-    }, [fitToFrame]);
+    useFitToFrame(canvasRef, size.width, size.height, width, height);
 
     useEffect(() => {
         const stage = canvasRef.current;

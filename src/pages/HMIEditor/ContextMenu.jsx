@@ -7,7 +7,7 @@ export const ContextMenu = () => {
     const { apiPath, x, y, visible } = useContextMenuStore(
         (state) => state.sch
     );
-    const removeNode = useNodeStore.getState().removeNode;
+    const { removeNode, setSelectedIds } = useNodeStore.getState();
     return (
         <Menu.Root
             open={visible}
@@ -31,14 +31,15 @@ export const ContextMenu = () => {
                 <Menu.Positioner>
                     <Menu.Content>
                         <Menu.ItemGroup>
-                            <Menu.ItemGroupLabel>
-                                {apiPath?.attrs.id}
-                            </Menu.ItemGroupLabel>
+                            <Menu.ItemGroupLabel>{apiPath}</Menu.ItemGroupLabel>
                             <Menu.Item
                                 value="delete"
                                 color="fg.error"
                                 _hover={{ bg: "bg.error", color: "fg.error" }}
-                                onClick={() => removeNode(apiPath?.attrs.id)}
+                                onClick={() => {
+                                    removeNode(apiPath);
+                                    setSelectedIds([]);
+                                }}
                             >
                                 Delete
                             </Menu.Item>

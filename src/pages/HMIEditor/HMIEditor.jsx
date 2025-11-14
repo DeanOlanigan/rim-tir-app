@@ -28,7 +28,7 @@ function HMIEditor() {
                 <NodeSettings />
             </Box>
             <HStack position={"absolute"} left={2} bottom={2}>
-                <ZoomBar width={width} height={height} canvasRef={canvasRef} />
+                <ZoomBar canvasRef={canvasRef} width={width} height={height} />
                 <UndoRedoButtons />
             </HStack>
             <HStack position={"absolute"} bottom={2} alignSelf={"center"}>

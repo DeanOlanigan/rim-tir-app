@@ -3,7 +3,7 @@ import { LuRedo, LuUndo } from "react-icons/lu";
 
 export const UndoRedoButtons = () => {
     return (
-        <Group attached shadow={"md"}>
+        <Group attached shadow={"md"} borderRadius={"l2"}>
             <IconButton variant={"subtle"} size={"xs"}>
                 <LuUndo />
             </IconButton>
