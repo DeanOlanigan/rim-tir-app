@@ -53,7 +53,7 @@ export const ZoomBar = ({ canvasRef, width, height }) => {
                             {[1000, 250, 100, 50, 25].map((scale) => (
                                 <Menu.Item
                                     key={scale}
-                                    value={scale}
+                                    value={scale.toString()}
                                     onClick={() => handleScale(scale / 100)}
                                 >
                                     {scale}%

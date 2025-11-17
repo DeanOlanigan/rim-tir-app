@@ -1,24 +1,16 @@
 import { LuCircle } from "react-icons/lu";
 import { ACTIONS } from "../../store/actions";
-import { snap } from "../utils/geom";
 import { toWorld } from "../utils/coords";
 import Konva from "konva";
 import { nanoid } from "nanoid";
 import { useShapeStore } from "../../store/shape-store";
+import { snapPointToGrid } from "./utils";
 
-export function createDrawEllipseTool({ getGrid, addNode }) {
+export function createDrawEllipseTool({ layerRef, getGrid, addNode }) {
     let draft = null;
     let start = { x: 0, y: 0 };
     let layer = null;
     const minSize = 4;
-
-    const snapP = (p, gridSize, snapToGrid) => {
-        const step = snapToGrid ? gridSize : 1;
-        return {
-            x: snap(p.x, step, 0),
-            y: snap(p.y, step, 0),
-        };
-    };
 
     return {
         name: ACTIONS.ellipse,
@@ -33,7 +25,7 @@ export function createDrawEllipseTool({ getGrid, addNode }) {
             if (!ptr) return;
             const { gridSize, snapToGrid } = getGrid();
             const worldPos = toWorld(stage, ptr);
-            const p = snapP(worldPos, gridSize, snapToGrid);
+            const p = snapPointToGrid(worldPos, gridSize, snapToGrid);
 
             start = p;
 
@@ -50,13 +42,7 @@ export function createDrawEllipseTool({ getGrid, addNode }) {
                 shadowForStrokeEnabled: false,
                 fillAfterStrokeEnabled: true,
             });
-            layer = stage.findOne("#DraftLayer");
-            if (!layer) {
-                console.warn("DraftLayer not found");
-                draft.destroy();
-                draft = null;
-                return;
-            }
+            layer = layer = layerRef.current;
             layer.add(draft);
             layer.batchDraw();
         },
@@ -70,7 +56,7 @@ export function createDrawEllipseTool({ getGrid, addNode }) {
 
             const { gridSize, snapToGrid } = getGrid();
             const curWord = toWorld(stage, ptr);
-            const cur = snapP(curWord, gridSize, snapToGrid);
+            const cur = snapPointToGrid(curWord, gridSize, snapToGrid);
 
             const alt = !!(e.evt && e.evt.altKey);
             const shift = !!(e.evt && e.evt.shiftKey);

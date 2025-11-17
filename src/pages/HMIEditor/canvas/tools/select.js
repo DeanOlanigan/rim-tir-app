@@ -28,17 +28,17 @@ export function createSelectTool({
                 const clickedId = e.target.id();
                 const metaPressed =
                     e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
-                const isSelected = selectedIds.includes(clickedId);
+                const isSelected = selectedIds().includes(clickedId);
                 if (!metaPressed && !isSelected) {
                     setSelectedIds([clickedId]);
                 } else if (metaPressed && isSelected) {
                     setSelectedIds(
-                        selectedIds.filter((id) => id !== clickedId)
+                        selectedIds().filter((id) => id !== clickedId)
                     );
                 } else if (metaPressed && !isSelected) {
-                    setSelectedIds([...selectedIds, clickedId]);
+                    setSelectedIds([...selectedIds(), clickedId]);
                 }
-            } else {
+            } else if (e.target === stage) {
                 setSelectedIds([]);
                 const wp = toWorld(stage, stage.getPointerPosition());
                 start = wp;

@@ -1,12 +1,13 @@
 import { LuSquare } from "react-icons/lu";
 import { ACTIONS } from "../../store/actions";
-import { snap } from "../utils/geom";
 import { toWorld } from "../utils/coords";
 import Konva from "konva";
 import { nanoid } from "nanoid";
 import { useShapeStore } from "../../store/shape-store";
+import { snapPointToGrid } from "./utils";
 
 export function createDrawRectTool({
+    layerRef,
     getGrid,
     getWorkSize,
     addNode,
@@ -16,14 +17,6 @@ export function createDrawRectTool({
     let start = { x: 0, y: 0 };
     let layer = null;
     const minSize = 4;
-
-    const snapP = (p, gridSize, snapToGrid) => {
-        const step = snapToGrid ? gridSize : 1;
-        return {
-            x: snap(p.x, step, 0),
-            y: snap(p.y, step, 0),
-        };
-    };
 
     /* const clampRectInFrame = (r, workW, workH) => {
         const x = Math.max(0, Math.min(r.x, workW - r.width));
@@ -44,7 +37,7 @@ export function createDrawRectTool({
             if (!ptr) return;
             const { gridSize, snapToGrid } = getGrid();
             const worldPos = toWorld(stage, ptr);
-            const p = snapP(worldPos, gridSize, snapToGrid);
+            const p = snapPointToGrid(worldPos, gridSize, snapToGrid);
             console.log(p);
 
             start = p;
@@ -63,13 +56,7 @@ export function createDrawRectTool({
                 shadowForStrokeEnabled: false,
                 fillAfterStrokeEnabled: true,
             });
-            layer = stage.findOne("#DraftLayer");
-            if (!layer) {
-                console.warn("DraftLayer not found");
-                draft.destroy();
-                draft = null;
-                return;
-            }
+            layer = layerRef.current;
             layer.add(draft);
             layer.batchDraw();
         },
@@ -82,7 +69,7 @@ export function createDrawRectTool({
             //const { workW, workH } = getWorkSize();
             const { gridSize, snapToGrid } = getGrid();
             const curWord = toWorld(stage, ptr);
-            const cur = snapP(curWord, gridSize, snapToGrid);
+            const cur = snapPointToGrid(curWord, gridSize, snapToGrid);
 
             const alt = !!(e.evt && e.evt.altKey);
             const shift = !!(e.evt && e.evt.shiftKey);

@@ -1,24 +1,16 @@
 import { LuMoveUpRight } from "react-icons/lu";
 import { ACTIONS } from "../../store/actions";
-import { snap } from "../utils/geom";
 import { toWorld } from "../utils/coords";
 import Konva from "konva";
 import { nanoid } from "nanoid";
 import { useShapeStore } from "../../store/shape-store";
+import { snapPointToGrid } from "./utils";
 
-export function createDrawArrowTool({ getGrid, addNode }) {
+export function createDrawArrowTool({ layerRef, getGrid, addNode }) {
     let draft = null;
     let start = { x: 0, y: 0 };
     let layer = null;
     const minSize = 4;
-
-    const snapP = (p, gridSize, snapToGrid) => {
-        const step = snapToGrid ? gridSize : 1;
-        return {
-            x: snap(p.x, step, 0),
-            y: snap(p.y, step, 0),
-        };
-    };
 
     return {
         name: ACTIONS.arrow,
@@ -33,7 +25,7 @@ export function createDrawArrowTool({ getGrid, addNode }) {
             if (!prt) return;
             const { gridSize, snapToGrid } = getGrid();
             const worldPos = toWorld(stage, prt);
-            const p = snapP(worldPos, gridSize, snapToGrid);
+            const p = snapPointToGrid(worldPos, gridSize, snapToGrid);
 
             start = p;
 
@@ -50,13 +42,7 @@ export function createDrawArrowTool({ getGrid, addNode }) {
                 listening: false,
                 shadowForStrokeEnabled: false,
             });
-            layer = stage.findOne("#DraftLayer");
-            if (!layer) {
-                console.warn("DraftLayer not found");
-                draft.destroy();
-                draft = null;
-                return;
-            }
+            layer = layerRef.current;
             layer.add(draft);
             layer.batchDraw();
         },
@@ -68,7 +54,7 @@ export function createDrawArrowTool({ getGrid, addNode }) {
             if (!ptr) return;
             const { gridSize, snapToGrid } = getGrid();
             const curWord = toWorld(stage, ptr);
-            const cur = snapP(curWord, gridSize, snapToGrid);
+            const cur = snapPointToGrid(curWord, gridSize, snapToGrid);
 
             draft.points([start.x, start.y, cur.x, cur.y]);
             layer.batchDraw();
@@ -81,7 +67,7 @@ export function createDrawArrowTool({ getGrid, addNode }) {
             if (!ptr) return;
             const { gridSize, snapToGrid } = getGrid();
             const curWord = toWorld(stage, ptr);
-            const cur = snapP(curWord, gridSize, snapToGrid);
+            const cur = snapPointToGrid(curWord, gridSize, snapToGrid);
 
             // финальные точки
             const x1 = start.x;

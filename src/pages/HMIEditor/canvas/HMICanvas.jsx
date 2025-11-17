@@ -16,8 +16,9 @@ export const HMICanvas = ({ canvasRef, width, height }) => {
 
     const selectionBoxRef = useRef(null);
     const tr = useRef(null);
+    const layerRef = useRef(null);
 
-    const manager = useToolsManager(canvasRef, selectionBoxRef, tr);
+    const manager = useToolsManager(canvasRef, selectionBoxRef, tr, layerRef);
 
     const panZoom = usePanZoom();
     const onContextMenu = useContextMenuPos(canvasRef);
@@ -35,7 +36,7 @@ export const HMICanvas = ({ canvasRef, width, height }) => {
             onPointerUp={manager.handlers.onPointerUp}
             onContextMenu={onContextMenu}
         >
-            <Layer id="DraftLayer">
+            <Layer ref={layerRef}>
                 <Rect
                     width={size.width}
                     height={size.height}

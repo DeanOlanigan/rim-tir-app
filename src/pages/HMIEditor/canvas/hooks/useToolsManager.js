@@ -9,14 +9,21 @@ import { createDrawEllipseTool } from "../tools/drawEllipse";
 import { createDrawLineTool } from "../tools/drawLine";
 import { createDrawArrowTool } from "../tools/drawArrow";
 
-export function useToolsManager(stageRef, selectionBoxRef, tr) {
+export function useToolsManager(
+    stageRef,
+    selectionBoxRef,
+    transformerRef,
+    layerRef
+) {
     const managerRef = useRef(null);
     const currentAction = useActionsStore((state) => state.currentAction);
-    const selectedIds = useNodeStore((state) => state.selectedIds);
 
     if (!managerRef.current) {
-        const addNode = useNodeStore.getState().addNode;
-        const setSelectedIds = useNodeStore.getState().setSelectedIds;
+        const selectedIds = () => useNodeStore.getState().selectedIds;
+        const setSelectedIds = (ids) =>
+            useNodeStore.getState().setSelectedIds(ids);
+        const addNode = (id, patch) =>
+            useNodeStore.getState().addNode(id, patch);
         const getGrid = () => {
             const { gridSize, snapToGrid } = useActionsStore.getState();
             return { gridSize, snapToGrid };
@@ -26,38 +33,24 @@ export function useToolsManager(stageRef, selectionBoxRef, tr) {
             return { workW: size.width, workH: size.height };
         };
         const api = {
+            stageRef,
+            selectionBoxRef,
+            transformerRef,
+            layerRef,
             addNode,
+            selectedIds,
             setSelectedIds,
             getGrid,
             getWorkSize,
         };
 
         const toolsMap = {
-            select: createSelectTool({
-                selectionBoxRef,
-                selectedIds,
-                setSelectedIds,
-            }),
+            select: createSelectTool({ ...api }),
             hand: createHandTool({ stageRef }),
-            square: createDrawRectTool({
-                getStage: () => stageRef.current,
-                getGrid,
-                getWorkSize,
-                addNode,
-                setSelectedIds,
-            }),
-            ellipse: createDrawEllipseTool({
-                getGrid,
-                addNode,
-            }),
-            line: createDrawLineTool({
-                getGrid,
-                addNode,
-            }),
-            arrow: createDrawArrowTool({
-                getGrid,
-                addNode,
-            }),
+            square: createDrawRectTool({ ...api }),
+            ellipse: createDrawEllipseTool({ ...api }),
+            line: createDrawLineTool({ ...api }),
+            arrow: createDrawArrowTool({ ...api }),
         };
 
         managerRef.current = createToolManager({ stageRef, toolsMap, api });
