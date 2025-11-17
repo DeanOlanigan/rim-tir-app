@@ -24,14 +24,7 @@ export const ZoomBar = ({ canvasRef, width, height }) => {
         setZoom(stage, scale, anchor);
     };
 
-    const fitToFrame = useFitToFrame(
-        canvasRef,
-        size.width,
-        size.height,
-        width,
-        height,
-        false
-    );
+    const fitToFrame = useFitToFrame(canvasRef, width, height, false);
 
     return (
         <Group attached shadow={"md"} borderRadius={"l2"}>
@@ -43,7 +36,7 @@ export const ZoomBar = ({ canvasRef, width, height }) => {
             >
                 <LuZoomOut />
             </IconButton>
-            <Menu.Root size={"sm"}>
+            <Menu.Root size={"sm"} unmountOnExit lazyMount>
                 <Menu.Trigger asChild>
                     <Button
                         size={"xs"}

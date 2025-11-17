@@ -1,21 +1,25 @@
-import { Ellipse, Line, Rect } from "react-konva";
+import { Arrow, Ellipse, Line, Rect } from "react-konva";
 import { snap } from "../utils/geom";
 import { clampPosInFrame } from "../utils/konva";
 import { toAbs, toWorld } from "../utils/coords";
 import { useActionsStore } from "../../store/actions-store";
 import { useNodeStore } from "../../store/node-store";
 import { ACTIONS } from "../../store/actions";
-import { updateStoreNode } from "../utils/store";
 
-export const NodesLayer = ({ width, height, gridSize, snapToGrid }) => {
-    const clampToArea = useActionsStore((state) => state.clampToArea);
+export const NodesLayer = () => {
+    const size = useActionsStore((state) => state.size);
     const currentAction = useActionsStore((state) => state.currentAction);
+    const gridSize = useActionsStore((state) => state.gridSize);
+    const snapToGrid = useActionsStore((state) => state.snap);
     const nodes = useNodeStore((state) => state.nodes);
-    const updateNode = useNodeStore.getState().updateNode;
 
     const handleDragEnd = (e) => {
-        const node = e.target;
-        updateStoreNode(node, updateNode);
+        const nodeId = e.target.attrs?.id;
+        if (!nodeId) return;
+        useNodeStore.getState().updateNode(nodeId, {
+            x: Math.round(e.target.x()),
+            y: Math.round(e.target.y()),
+        });
     };
 
     const dragBoundFunc = function (pos) {
@@ -30,65 +34,29 @@ export const NodesLayer = ({ width, height, gridSize, snapToGrid }) => {
                 y: snap(local.y, step, 0),
             };
         }
-        /* if (clampToArea) {
-            res = clampPosInFrame(this, width, height, res);
-        } */
+        //res = clampPosInFrame(this, width, height, res);
         const abs = toAbs(stage, res);
         // FIXME Broken while zoom
         return abs;
     };
 
-    const mouseOverHandler = (e) => {
-        if (currentAction !== ACTIONS.select) return;
-        e.target.getStage().container().style.cursor = "move";
-    };
-
-    const mouseOutHandler = (e) => {
-        if (currentAction !== ACTIONS.select) return;
-        e.target.getStage().container().style.cursor = "default";
+    const common = {
+        name: "node",
+        draggable: currentAction === ACTIONS.select,
+        dragBoundFunc,
+        onDragEnd: handleDragEnd,
     };
 
     return Object.values(nodes).map((node) => {
         switch (node.type) {
             case "rect":
-                return (
-                    <Rect
-                        key={node.id}
-                        name="node"
-                        {...node}
-                        draggable={currentAction === ACTIONS.select}
-                        dragBoundFunc={dragBoundFunc}
-                        onDragEnd={handleDragEnd}
-                        onMouseOver={mouseOverHandler}
-                        onMouseOut={mouseOutHandler}
-                    />
-                );
+                return <Rect key={node.id} {...node} {...common} />;
             case "ellipse":
-                return (
-                    <Ellipse
-                        key={node.id}
-                        name="node"
-                        {...node}
-                        draggable={currentAction === ACTIONS.select}
-                        dragBoundFunc={dragBoundFunc}
-                        onDragEnd={handleDragEnd}
-                        onMouseOver={mouseOverHandler}
-                        onMouseOut={mouseOutHandler}
-                    />
-                );
+                return <Ellipse key={node.id} {...node} {...common} />;
             case "line":
-                return (
-                    <Line
-                        key={node.id}
-                        name="node"
-                        {...node}
-                        draggable={currentAction === ACTIONS.select}
-                        dragBoundFunc={dragBoundFunc}
-                        onDragEnd={handleDragEnd}
-                        onMouseOver={mouseOverHandler}
-                        onMouseOut={mouseOutHandler}
-                    />
-                );
+                return <Line key={node.id} {...node} {...common} />;
+            case "arrow":
+                return <Arrow key={node.id} {...node} {...common} />;
         }
     });
 };

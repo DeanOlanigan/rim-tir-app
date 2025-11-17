@@ -8,7 +8,7 @@ export const useActionsStore = create((set) => ({
     showGrid: true,
     snap: false,
     scale: 1,
-    clampToArea: true,
+    clampToArea: false,
     backgroundColor: "#bffcbaff",
     workAreaColor: "#ffdadaff",
     gridColor: "#7687d1ff",

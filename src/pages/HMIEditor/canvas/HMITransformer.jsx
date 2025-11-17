@@ -2,20 +2,51 @@ import { Transformer } from "react-konva";
 import { ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS } from "../constants";
 import { toAbs, toWorld } from "./utils/coords";
 import { snap } from "./utils/geom";
-import { useCallback } from "react";
+import { memo, useCallback, useEffect, useMemo } from "react";
 import { useNodeStore } from "../store/node-store";
-import { updateStoreNode } from "./utils/store";
 import { getShape } from "./shapes";
 import { useActionsStore } from "../store/actions-store";
+import { ACTIONS } from "../store/actions";
+import LinesTransformer from "./LinesTransformer";
 
-export const HMITransformer = ({
-    transformerRef,
-    canvasRef,
-    workW,
-    workH,
-    gridSize,
-    snapToGrid,
-}) => {
+const LINE_TYPES = new Set([ACTIONS.line, ACTIONS.arrow]);
+
+const HMITransformer = ({ transformerRef, canvasRef }) => {
+    console.log("Render HMITRansformer");
+    //const size = useActionsStore((state) => state.size);
+    const selectedIds = useNodeStore((state) => state.selectedIds);
+    const gridSize = useActionsStore((state) => state.gridSize);
+    const snapToGrid = useActionsStore((state) => state.snap);
+    const currentAction = useActionsStore((state) => state.currentAction);
+
+    const singleSelectedId = selectedIds.length === 1 ? selectedIds[0] : null;
+    const selectedNodeType = useMemo(() => {
+        const stage = canvasRef.current;
+        if (!stage || !singleSelectedId) return null;
+        const node = stage.findOne(`#${singleSelectedId}`);
+        return node ? node.attrs?.type : null;
+    }, [canvasRef, singleSelectedId]);
+
+    useEffect(() => {
+        const stage = canvasRef.current;
+        const transformer = transformerRef.current;
+        if (!stage || !transformer) return;
+        const set = new Set(selectedIds);
+
+        if (selectedIds.length === 1 && LINE_TYPES.has(selectedNodeType)) {
+            transformer.nodes([]);
+            return;
+        }
+        const nodes = stage.find(".node").filter((n) => set.has(n.id()));
+        transformer.nodes(nodes);
+    }, [selectedIds, selectedNodeType, canvasRef, transformerRef]);
+
+    useEffect(() => {
+        if (currentAction !== ACTIONS.select) {
+            useNodeStore.getState().setSelectedIds([]);
+        }
+    }, [currentAction]);
+
     const anchorBound = useCallback(
         function (_oldPos, newPos) {
             const stage = canvasRef.current;
@@ -23,12 +54,12 @@ export const HMITransformer = ({
             const w = toWorld(stage, newPos);
             const nx = snap(w.x, step, 0);
             const ny = snap(w.y, step, 0);
-            const cx = Math.min(Math.max(nx, 0), workW);
-            const cy = Math.min(Math.max(ny, 0), workH);
-            const abs = toAbs(stage, { x: cx, y: cy });
+            //const cx = Math.min(Math.max(nx, 0), workW);
+            //const cy = Math.min(Math.max(ny, 0), workH);
+            const abs = toAbs(stage, { x: nx, y: ny });
             return abs;
         },
-        [canvasRef, workW, workH, gridSize, snapToGrid]
+        [canvasRef, gridSize, snapToGrid]
     );
 
     const transformEndHandler = (e) => {
@@ -54,7 +85,14 @@ export const HMITransformer = ({
         node.scaleY(1);
     };
 
-    return (
+    return singleSelectedId && LINE_TYPES.has(selectedNodeType) ? (
+        <LinesTransformer
+            canvasRef={canvasRef}
+            nodeId={singleSelectedId}
+            gridSize={gridSize}
+            snapToGrid={snapToGrid}
+        />
+    ) : (
         <Transformer
             ref={transformerRef}
             keepRatio={false}
@@ -67,3 +105,5 @@ export const HMITransformer = ({
         />
     );
 };
+
+export default memo(HMITransformer);

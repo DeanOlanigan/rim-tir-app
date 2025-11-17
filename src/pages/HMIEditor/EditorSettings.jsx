@@ -45,7 +45,7 @@ export const EditorSettings = () => {
     } = useActionsStore.getState();
 
     return (
-        <Popover.Root size={"xs"}>
+        <Popover.Root size={"xs"} lazyMount unmountOnExit>
             <Popover.Trigger asChild>
                 <IconButton size={"xs"} variant={"subtle"} shadow={"md"}>
                     <LuMenu />
