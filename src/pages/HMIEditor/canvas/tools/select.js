@@ -3,7 +3,11 @@ import { ACTIONS } from "../../store/actions";
 import { toWorld } from "../utils/coords";
 import Konva from "konva";
 
-export function createSelectTool({ selectionBoxRef, setSelectedIds }) {
+export function createSelectTool({
+    selectionBoxRef,
+    selectedIds,
+    setSelectedIds,
+}) {
     let start = { x: 0, y: 0 };
 
     const showBox = (attrs) =>
@@ -19,11 +23,27 @@ export function createSelectTool({ selectionBoxRef, setSelectedIds }) {
         onPointerDown(e) {
             if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
-            if (!stage || e.target !== stage) return;
-            setSelectedIds([]);
-            const wp = toWorld(stage, stage.getPointerPosition());
-            start = wp;
-            showBox({ x: wp.x, y: wp.y, width: 0, height: 0 });
+            if (!stage) return;
+            if (e.target.hasName("node")) {
+                const clickedId = e.target.id();
+                const metaPressed =
+                    e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
+                const isSelected = selectedIds.includes(clickedId);
+                if (!metaPressed && !isSelected) {
+                    setSelectedIds([clickedId]);
+                } else if (metaPressed && isSelected) {
+                    setSelectedIds(
+                        selectedIds.filter((id) => id !== clickedId)
+                    );
+                } else if (metaPressed && !isSelected) {
+                    setSelectedIds([...selectedIds, clickedId]);
+                }
+            } else {
+                setSelectedIds([]);
+                const wp = toWorld(stage, stage.getPointerPosition());
+                start = wp;
+                showBox({ x: wp.x, y: wp.y, width: 0, height: 0 });
+            }
         },
 
         onPointerMove(e) {

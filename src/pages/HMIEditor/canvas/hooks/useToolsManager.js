@@ -7,10 +7,12 @@ import { createSelectTool } from "../tools/select";
 import { createDrawRectTool } from "../tools/drawRect";
 import { createDrawEllipseTool } from "../tools/drawEllipse";
 import { createDrawLineTool } from "../tools/drawLine";
+import { createDrawArrowTool } from "../tools/drawArrow";
 
 export function useToolsManager(stageRef, selectionBoxRef, tr) {
     const managerRef = useRef(null);
     const currentAction = useActionsStore((state) => state.currentAction);
+    const selectedIds = useNodeStore((state) => state.selectedIds);
 
     if (!managerRef.current) {
         const addNode = useNodeStore.getState().addNode;
@@ -33,6 +35,7 @@ export function useToolsManager(stageRef, selectionBoxRef, tr) {
         const toolsMap = {
             select: createSelectTool({
                 selectionBoxRef,
+                selectedIds,
                 setSelectedIds,
             }),
             hand: createHandTool({ stageRef }),
@@ -48,6 +51,10 @@ export function useToolsManager(stageRef, selectionBoxRef, tr) {
                 addNode,
             }),
             line: createDrawLineTool({
+                getGrid,
+                addNode,
+            }),
+            arrow: createDrawArrowTool({
                 getGrid,
                 addNode,
             }),

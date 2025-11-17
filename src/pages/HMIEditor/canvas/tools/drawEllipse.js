@@ -9,12 +9,16 @@ import { useShapeStore } from "../../store/shape-store";
 export function createDrawEllipseTool({ getGrid, addNode }) {
     let draft = null;
     let start = { x: 0, y: 0 };
+    let layer = null;
+    const minSize = 4;
 
-    // prettier-ignore
-    const snapP = (p, gridSize, snapToGrid) => snapToGrid ? {
-        x: snap(p.x, gridSize, 0),
-        y: snap(p.y, gridSize, 0),
-    } : p;
+    const snapP = (p, gridSize, snapToGrid) => {
+        const step = snapToGrid ? gridSize : 1;
+        return {
+            x: snap(p.x, step, 0),
+            y: snap(p.y, step, 0),
+        };
+    };
 
     return {
         name: ACTIONS.ellipse,
@@ -24,31 +28,33 @@ export function createDrawEllipseTool({ getGrid, addNode }) {
 
         onPointerDown(e) {
             const stage = e.currentTarget;
+            if (!stage) return;
+            const ptr = stage.getPointerPosition();
+            if (!ptr) return;
             const { gridSize, snapToGrid } = getGrid();
-            if (!stage || e.target !== stage) return;
-            const p = snapP(
-                toWorld(stage, stage.getPointerPosition()),
-                gridSize,
-                snapToGrid
-            );
+            const worldPos = toWorld(stage, ptr);
+            const p = snapP(worldPos, gridSize, snapToGrid);
+
             start = p;
+
+            const shapeState = useShapeStore.getState();
             draft = new Konva.Ellipse({
                 x: p.x,
                 y: p.y,
-                width: 0,
-                height: 0,
                 radiusX: 0,
                 radiusY: 0,
-                fill: useShapeStore.getState().fillColor,
-                stroke: useShapeStore.getState().strokeColor,
-                strokeWidth: useShapeStore.getState().strokeWidth,
+                fill: shapeState.fillColor,
+                stroke: shapeState.strokeColor,
+                strokeWidth: shapeState.strokeWidth,
                 listening: false,
                 shadowForStrokeEnabled: false,
                 fillAfterStrokeEnabled: true,
             });
-            const layer = stage.findOne("#DraftLayer");
+            layer = stage.findOne("#DraftLayer");
             if (!layer) {
                 console.warn("DraftLayer not found");
+                draft.destroy();
+                draft = null;
                 return;
             }
             layer.add(draft);
@@ -57,61 +63,87 @@ export function createDrawEllipseTool({ getGrid, addNode }) {
 
         onPointerMove(e) {
             const stage = e.currentTarget;
-            if (!stage || !draft) return;
+            if (!stage || !draft || !layer) return;
+
+            const ptr = stage.getPointerPosition();
+            if (!ptr) return;
+
             const { gridSize, snapToGrid } = getGrid();
-            const cur = snapP(
-                toWorld(stage, stage.getPointerPosition()),
-                gridSize,
-                snapToGrid
-            );
+            const curWord = toWorld(stage, ptr);
+            const cur = snapP(curWord, gridSize, snapToGrid);
 
-            let x = Math.min(start.x, cur.x);
-            let y = Math.min(start.y, cur.y);
-            let w = Math.abs(cur.x - start.x);
-            let h = Math.abs(cur.y - start.y);
-            let rx = w / 2;
-            let ry = h / 2;
+            const alt = !!(e.evt && e.evt.altKey);
+            const shift = !!(e.evt && e.evt.shiftKey);
 
-            console.log({
-                x,
-                y,
-                width: w,
-                height: h,
-                radiusX: rx,
-                radiusY: ry,
-            });
+            let left = Math.min(start.x, cur.x);
+            let top = Math.min(start.y, cur.y);
+            let w = Math.abs(start.x - cur.x);
+            let h = Math.abs(start.y - cur.y);
+
+            if (alt) {
+                const dx = Math.abs(start.x - cur.x);
+                const dy = Math.abs(start.y - cur.y);
+                w = dx * 2;
+                h = dy * 2;
+                left = start.x - w / 2;
+                top = start.y - h / 2;
+            }
+
+            // FIXME Немного криво, когда нажаты shift+alt
+            if (shift) {
+                const size = Math.max(w, h);
+                w = size;
+                h = size;
+                if (!alt) {
+                    left = start.x <= cur.x ? start.x : start.x - w;
+                    top = start.y <= cur.y ? start.y : start.y - h;
+                }
+            }
+
+            const rx = w / 2;
+            const ry = h / 2;
+            const cx = left + rx;
+            const cy = top + ry;
+
             draft.setAttrs({
-                x,
-                y,
+                x: cx,
+                y: cy,
                 width: w,
                 height: h,
                 radiusX: rx,
                 radiusY: ry,
             });
-            draft.getLayer().batchDraw();
+            layer.batchDraw();
         },
 
         onPointerUp(e) {
             const stage = e.currentTarget;
-            if (!stage || !draft) return;
-            const ellipse = draft.getAttrs();
-            console.log(ellipse);
+            if (!stage || !draft || !layer) return;
+
+            const attrs = draft.getAttrs();
             draft.destroy();
             draft = null;
-            if (ellipse.width < 1 || ellipse.height < 1) return;
+            layer.batchDraw();
+
+            if (
+                (attrs.radiusX || 0) * 2 < minSize ||
+                (attrs.radiusY || 0) * 2 < minSize
+            )
+                return;
 
             const id = nanoid(12);
+            const shapeState = useShapeStore.getState();
             addNode(id, {
                 type: "ellipse",
                 id,
                 name: "node",
-                x: ellipse.x,
-                y: ellipse.y,
-                radiusX: ellipse.radiusX,
-                radiusY: ellipse.radiusY,
-                fill: useShapeStore.getState().fillColor,
-                stroke: useShapeStore.getState().strokeColor,
-                strokeWidth: useShapeStore.getState().strokeWidth,
+                x: attrs.x,
+                y: attrs.y,
+                radiusX: attrs.radiusX,
+                radiusY: attrs.radiusY,
+                fill: shapeState.fillColor,
+                stroke: shapeState.strokeColor,
+                strokeWidth: shapeState.strokeWidth,
                 fillAfterStrokeEnabled: true,
             });
         },
@@ -119,6 +151,7 @@ export function createDrawEllipseTool({ getGrid, addNode }) {
         cancel() {
             draft?.destroy();
             draft = null;
+            layer?.batchDraw?.();
         },
     };
 }

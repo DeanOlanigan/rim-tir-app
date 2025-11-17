@@ -14,18 +14,22 @@ export function createDrawRectTool({
 }) {
     let draft = null;
     let start = { x: 0, y: 0 };
+    let layer = null;
+    const minSize = 4;
 
-    // prettier-ignore
-    const snapP = (p, gridSize, snapToGrid) => snapToGrid ? {
-        x: snap(p.x, gridSize, 0),
-        y: snap(p.y, gridSize, 0),
-    } : p;
+    const snapP = (p, gridSize, snapToGrid) => {
+        const step = snapToGrid ? gridSize : 1;
+        return {
+            x: snap(p.x, step, 0),
+            y: snap(p.y, step, 0),
+        };
+    };
 
-    const clampRectInFrame = (r, workW, workH) => {
+    /* const clampRectInFrame = (r, workW, workH) => {
         const x = Math.max(0, Math.min(r.x, workW - r.width));
         const y = Math.max(0, Math.min(r.y, workH - r.height));
         return { ...r, x, y };
-    };
+    }; */
 
     return {
         name: ACTIONS.square,
@@ -35,30 +39,35 @@ export function createDrawRectTool({
 
         onPointerDown(e) {
             const stage = e.currentTarget;
+            if (!stage) return;
+            const ptr = stage.getPointerPosition();
+            if (!ptr) return;
             const { gridSize, snapToGrid } = getGrid();
-            if (!stage || e.target !== stage) return;
-            const p = snapP(
-                toWorld(stage, stage.getPointerPosition()),
-                gridSize,
-                snapToGrid
-            );
+            const worldPos = toWorld(stage, ptr);
+            const p = snapP(worldPos, gridSize, snapToGrid);
+            console.log(p);
+
             start = p;
+
+            const shapeState = useShapeStore.getState();
             draft = new Konva.Rect({
                 x: p.x,
                 y: p.y,
                 width: 0,
                 height: 0,
-                fill: useShapeStore.getState().fillColor,
-                stroke: useShapeStore.getState().strokeColor,
-                strokeWidth: useShapeStore.getState().strokeWidth,
+                fill: shapeState.fillColor,
+                stroke: shapeState.strokeColor,
+                strokeWidth: shapeState.strokeWidth,
+                cornerRadius: shapeState.cornerRadius,
                 listening: false,
                 shadowForStrokeEnabled: false,
                 fillAfterStrokeEnabled: true,
-                cornerRadius: useShapeStore.getState().cornerRadius,
             });
-            const layer = stage.findOne("#DraftLayer");
+            layer = stage.findOne("#DraftLayer");
             if (!layer) {
                 console.warn("DraftLayer not found");
+                draft.destroy();
+                draft = null;
                 return;
             }
             layer.add(draft);
@@ -67,59 +76,78 @@ export function createDrawRectTool({
 
         onPointerMove(e) {
             const stage = e.currentTarget;
-            if (!stage || !draft) return;
-            const { workW, workH } = getWorkSize();
+            if (!stage || !draft || !layer) return;
+            const ptr = stage.getPointerPosition();
+            if (!ptr) return;
+            //const { workW, workH } = getWorkSize();
             const { gridSize, snapToGrid } = getGrid();
-            const cur = snapP(
-                toWorld(stage, stage.getPointerPosition()),
-                gridSize,
-                snapToGrid
-            );
+            const curWord = toWorld(stage, ptr);
+            const cur = snapP(curWord, gridSize, snapToGrid);
+
+            const alt = !!(e.evt && e.evt.altKey);
+            const shift = !!(e.evt && e.evt.shiftKey);
 
             let x = Math.min(start.x, cur.x);
             let y = Math.min(start.y, cur.y);
-            let w = Math.abs(cur.x - start.x);
-            let h = Math.abs(cur.y - start.y);
+            let w = Math.abs(start.x - cur.x);
+            let h = Math.abs(start.y - cur.y);
 
-            if (e.evt.shiftKey) {
-                const s = Math.max(w, h);
-                x = cur.x < start.x ? start.x - s : start.x;
-                y = cur.y < start.y ? start.y - s : start.y;
-                w = s;
-                h = s;
+            if (alt) {
+                const dx = Math.abs(start.x - cur.x);
+                const dy = Math.abs(start.y - cur.y);
+                w = dx * 2;
+                h = dy * 2;
+                x = start.x - w / 2;
+                y = start.y - h / 2;
             }
 
-            const clamped = clampRectInFrame(
+            // FIXME Немного криво, когда нажаты shift+alt
+            if (shift) {
+                const size = Math.max(w, h);
+                w = size;
+                h = size;
+                if (!alt) {
+                    x = cur.x < start.x ? start.x - size : start.x;
+                    y = cur.y < start.y ? start.y - size : start.y;
+                }
+            }
+
+            /* const clamped = clampRectInFrame(
                 { x, y, width: w, height: h },
                 workW,
                 workH
-            );
-            draft.setAttrs(clamped);
+            ); */
+
+            draft.setAttrs({ x, y, width: w, height: h });
             draft.getLayer().batchDraw();
         },
 
         onPointerUp(e) {
             const stage = e.currentTarget;
-            if (!stage || !draft) return;
-            const rect = draft.getAttrs();
+            if (!stage || !draft || !layer) return;
+
+            const attrs = draft.getAttrs();
             draft.destroy();
             draft = null;
-            if (rect.width < 1 || rect.height < 1) return;
+            layer.batchDraw();
+
+            if (attrs.width < minSize || attrs.height < minSize) return;
 
             const id = nanoid(12);
+            const shapeState = useShapeStore.getState();
             addNode(id, {
                 type: "rect",
                 id,
                 name: "node",
-                x: rect.x,
-                y: rect.y,
-                width: rect.width,
-                height: rect.height,
-                fill: useShapeStore.getState().fillColor,
-                stroke: useShapeStore.getState().strokeColor,
-                strokeWidth: useShapeStore.getState().strokeWidth,
+                x: attrs.x,
+                y: attrs.y,
+                width: attrs.width,
+                height: attrs.height,
+                fill: shapeState.fillColor,
+                stroke: shapeState.strokeColor,
+                strokeWidth: shapeState.strokeWidth,
+                cornerRadius: shapeState.cornerRadius,
                 fillAfterStrokeEnabled: true,
-                cornerRadius: useShapeStore.getState().cornerRadius,
             });
             //setSelectedIds([id]);
         },
@@ -127,6 +155,7 @@ export function createDrawRectTool({
         cancel() {
             draft?.destroy();
             draft = null;
+            layer?.batchDraw?.();
         },
     };
 }

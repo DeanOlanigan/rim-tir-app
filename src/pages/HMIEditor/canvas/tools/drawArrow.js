@@ -1,4 +1,4 @@
-import { LuSlash } from "react-icons/lu";
+import { LuMoveUpRight } from "react-icons/lu";
 import { ACTIONS } from "../../store/actions";
 import { snap } from "../utils/geom";
 import { toWorld } from "../utils/coords";
@@ -6,7 +6,7 @@ import Konva from "konva";
 import { nanoid } from "nanoid";
 import { useShapeStore } from "../../store/shape-store";
 
-export function createDrawLineTool({ getGrid, addNode }) {
+export function createDrawArrowTool({ getGrid, addNode }) {
     let draft = null;
     let start = { x: 0, y: 0 };
     let layer = null;
@@ -21,9 +21,9 @@ export function createDrawLineTool({ getGrid, addNode }) {
     };
 
     return {
-        name: ACTIONS.line,
-        label: "Draw line",
-        icon: LuSlash,
+        name: ACTIONS.arrow,
+        label: "Draw arrow",
+        icon: LuMoveUpRight,
         cursor: "crosshair",
 
         onPointerDown(e) {
@@ -38,10 +38,13 @@ export function createDrawLineTool({ getGrid, addNode }) {
             start = p;
 
             const shapeState = useShapeStore.getState();
-            draft = new Konva.Line({
+            draft = new Konva.Arrow({
                 points: [p.x, p.y, p.x, p.y],
                 stroke: shapeState.strokeColor,
                 strokeWidth: shapeState.strokeWidth,
+                fill: shapeState.fillColor,
+                pointerLength: 10,
+                pointerWidth: 10,
                 lineCap: "round",
                 lineJoin: "round",
                 listening: false,
@@ -100,14 +103,17 @@ export function createDrawLineTool({ getGrid, addNode }) {
             const id = nanoid(12);
             const shapeState = useShapeStore.getState();
             addNode(id, {
-                type: "line",
+                type: "arrow",
                 id,
                 name: "node",
                 points: [x1, y1, x2, y2],
+                fill: shapeState.fillColor,
                 stroke: shapeState.strokeColor,
                 strokeWidth: shapeState.strokeWidth,
                 lineCap: "round",
                 lineJoin: "round",
+                pointerLength: 10,
+                pointerWidth: 10,
             });
         },
 
