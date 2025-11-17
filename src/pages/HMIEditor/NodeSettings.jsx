@@ -11,6 +11,7 @@ import { ACTIONS } from "./store/actions";
 import { useState } from "react";
 import { useShapeStore } from "./store/shape-store";
 import { useNodeStore } from "./store/node-store";
+import { ColorComp } from "./ColorComp";
 
 const NODES_WITH_SETTINGS = [
     ACTIONS.square,
@@ -23,6 +24,9 @@ const NODES_WITH_SETTINGS = [
 export const NodeSettings = () => {
     const currentAction = useActionsStore((state) => state.currentAction);
     const selectedIds = useNodeStore((state) => state.selectedIds);
+    const fillColor = useShapeStore((state) => state.fillColor);
+    const strokeColor = useShapeStore((state) => state.strokeColor);
+    const { setFillColor, setStrokeColor } = useShapeStore.getState();
 
     if (
         !NODES_WITH_SETTINGS.includes(currentAction) &&
@@ -42,67 +46,21 @@ export const NodeSettings = () => {
             <Fieldset.Root>
                 <Fieldset.Legend>NodeSettings</Fieldset.Legend>
                 <Fieldset.Content>
-                    <FillColor />
-                    <StrokeColor />
+                    <ColorComp
+                        label={"Fill color"}
+                        outerColor={fillColor}
+                        setOuterColor={setFillColor}
+                    />
+                    <ColorComp
+                        label={"Stroke color"}
+                        outerColor={strokeColor}
+                        setOuterColor={setStrokeColor}
+                    />
                     <StrokeWidth />
                     {currentAction === ACTIONS.square && <CornerRadius />}
                 </Fieldset.Content>
             </Fieldset.Root>
         </Box>
-    );
-};
-
-const FillColor = () => {
-    const fillColor = useShapeStore((state) => state.fillColor);
-    const setFillColor = useShapeStore((state) => state.setFillColor);
-    const [color, setColor] = useState(parseColor(fillColor));
-
-    return (
-        <ColorPicker.Root
-            size={"xs"}
-            value={color}
-            onValueChange={(e) => setColor(e.value)}
-            onValueChangeEnd={(e) => setFillColor(e.value.toString("hex"))}
-        >
-            <ColorPicker.HiddenInput />
-            <ColorPicker.Label>Fill color</ColorPicker.Label>
-            <ColorPicker.Control>
-                <ColorPicker.Trigger />
-            </ColorPicker.Control>
-            <ColorPicker.Positioner>
-                <ColorPicker.Content>
-                    <ColorPicker.Area />
-                    <ColorPicker.Sliders />
-                </ColorPicker.Content>
-            </ColorPicker.Positioner>
-        </ColorPicker.Root>
-    );
-};
-
-const StrokeColor = () => {
-    const strokeColor = useShapeStore((state) => state.strokeColor);
-    const setStrokeColor = useShapeStore((state) => state.setStrokeColor);
-    const [color, setColor] = useState(parseColor(strokeColor));
-
-    return (
-        <ColorPicker.Root
-            size={"xs"}
-            value={color}
-            onValueChange={(e) => setColor(e.value)}
-            onValueChangeEnd={(e) => setStrokeColor(e.value.toString("hex"))}
-        >
-            <ColorPicker.HiddenInput />
-            <ColorPicker.Label>Stroke color</ColorPicker.Label>
-            <ColorPicker.Control>
-                <ColorPicker.Trigger />
-            </ColorPicker.Control>
-            <ColorPicker.Positioner>
-                <ColorPicker.Content>
-                    <ColorPicker.Area />
-                    <ColorPicker.Sliders />
-                </ColorPicker.Content>
-            </ColorPicker.Positioner>
-        </ColorPicker.Root>
     );
 };
 

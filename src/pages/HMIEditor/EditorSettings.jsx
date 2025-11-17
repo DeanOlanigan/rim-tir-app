@@ -1,11 +1,9 @@
 import {
     Checkbox,
-    ColorPicker,
     createListCollection,
     Field,
     IconButton,
     NumberInput,
-    parseColor,
     Popover,
     Portal,
     Select,
@@ -13,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { LuMenu } from "react-icons/lu";
 import { useActionsStore } from "./store/actions-store";
-import { useState } from "react";
+import { ColorComp } from "./ColorComp";
 
 const viewportDimensions = createListCollection({
     items: [
@@ -34,6 +32,9 @@ export const EditorSettings = () => {
     const snap = useActionsStore((state) => state.snap);
     const clampToArea = useActionsStore((state) => state.clampToArea);
     const debugMode = useActionsStore((state) => state.debugMode);
+    const gridColor = useActionsStore((state) => state.gridColor);
+    const backgroundColor = useActionsStore((state) => state.backgroundColor);
+    const workAreaColor = useActionsStore((state) => state.workAreaColor);
 
     const {
         setSize,
@@ -42,6 +43,9 @@ export const EditorSettings = () => {
         setSnap,
         setClampToArea,
         setDebugMode,
+        setWorkAreaColor,
+        setBackgroundColor,
+        setGridColor,
     } = useActionsStore.getState();
 
     return (
@@ -158,99 +162,26 @@ export const EditorSettings = () => {
                                     <Checkbox.Control />
                                     <Checkbox.Label>Debug mode</Checkbox.Label>
                                 </Checkbox.Root>
-                                <ColorBg />
-                                <ColorWA />
-                                <ColorGrid />
+                                <ColorComp
+                                    label={"Background color"}
+                                    outerColor={backgroundColor}
+                                    setOuterColor={setBackgroundColor}
+                                />
+                                <ColorComp
+                                    label={"Work area color"}
+                                    outerColor={workAreaColor}
+                                    setOuterColor={setWorkAreaColor}
+                                />
+                                <ColorComp
+                                    label={"Grid color"}
+                                    outerColor={gridColor}
+                                    setOuterColor={setGridColor}
+                                />
                             </Stack>
                         </Popover.Body>
                     </Popover.Content>
                 </Popover.Positioner>
             </Portal>
         </Popover.Root>
-    );
-};
-
-const ColorBg = () => {
-    const backgroundColor = useActionsStore((state) => state.backgroundColor);
-    const setBackgroundColor = useActionsStore(
-        (state) => state.setBackgroundColor
-    );
-    const [color, setColor] = useState(parseColor(backgroundColor));
-
-    return (
-        <ColorPicker.Root
-            size={"xs"}
-            value={color}
-            onValueChange={(e) => setColor(e.value)}
-            onValueChangeEnd={(e) =>
-                setBackgroundColor(e.value.toString("hex"))
-            }
-        >
-            <ColorPicker.HiddenInput />
-            <ColorPicker.Label>Background color</ColorPicker.Label>
-            <ColorPicker.Control>
-                <ColorPicker.Trigger />
-            </ColorPicker.Control>
-            <ColorPicker.Positioner>
-                <ColorPicker.Content>
-                    <ColorPicker.Area />
-                    <ColorPicker.Sliders />
-                </ColorPicker.Content>
-            </ColorPicker.Positioner>
-        </ColorPicker.Root>
-    );
-};
-
-const ColorWA = () => {
-    const workAreaColor = useActionsStore((state) => state.workAreaColor);
-    const setWorkAreaColor = useActionsStore((state) => state.setWorkAreaColor);
-    const [color, setColor] = useState(parseColor(workAreaColor));
-
-    return (
-        <ColorPicker.Root
-            size={"xs"}
-            value={color}
-            onValueChange={(e) => setColor(e.value)}
-            onValueChangeEnd={(e) => setWorkAreaColor(e.value.toString("hex"))}
-        >
-            <ColorPicker.HiddenInput />
-            <ColorPicker.Label>Work area color</ColorPicker.Label>
-            <ColorPicker.Control>
-                <ColorPicker.Trigger />
-            </ColorPicker.Control>
-            <ColorPicker.Positioner>
-                <ColorPicker.Content>
-                    <ColorPicker.Area />
-                    <ColorPicker.Sliders />
-                </ColorPicker.Content>
-            </ColorPicker.Positioner>
-        </ColorPicker.Root>
-    );
-};
-
-const ColorGrid = () => {
-    const gridColor = useActionsStore((state) => state.gridColor);
-    const setGridColor = useActionsStore((state) => state.setGridColor);
-    const [color, setColor] = useState(parseColor(gridColor));
-
-    return (
-        <ColorPicker.Root
-            size={"xs"}
-            value={color}
-            onValueChange={(e) => setColor(e.value)}
-            onValueChangeEnd={(e) => setGridColor(e.value.toString("hex"))}
-        >
-            <ColorPicker.HiddenInput />
-            <ColorPicker.Label>Grid color</ColorPicker.Label>
-            <ColorPicker.Control>
-                <ColorPicker.Trigger />
-            </ColorPicker.Control>
-            <ColorPicker.Positioner>
-                <ColorPicker.Content>
-                    <ColorPicker.Area />
-                    <ColorPicker.Sliders />
-                </ColorPicker.Content>
-            </ColorPicker.Positioner>
-        </ColorPicker.Root>
     );
 };

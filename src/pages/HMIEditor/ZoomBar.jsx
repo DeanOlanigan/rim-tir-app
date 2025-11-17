@@ -50,36 +50,15 @@ export const ZoomBar = ({ canvasRef, width, height }) => {
                 <Portal>
                     <Menu.Positioner>
                         <Menu.Content>
-                            <Menu.Item
-                                value="1000"
-                                onClick={() => handleScale(10)}
-                            >
-                                1000%
-                            </Menu.Item>
-                            <Menu.Item
-                                value="250"
-                                onClick={() => handleScale(2.5)}
-                            >
-                                250%
-                            </Menu.Item>
-                            <Menu.Item
-                                value="100"
-                                onClick={() => handleScale(1)}
-                            >
-                                100%
-                            </Menu.Item>
-                            <Menu.Item
-                                value="50"
-                                onClick={() => handleScale(0.5)}
-                            >
-                                50%
-                            </Menu.Item>
-                            <Menu.Item
-                                value="25"
-                                onClick={() => handleScale(0.25)}
-                            >
-                                25%
-                            </Menu.Item>
+                            {[1000, 250, 100, 50, 25].map((scale) => (
+                                <Menu.Item
+                                    key={scale}
+                                    value={scale}
+                                    onClick={() => handleScale(scale / 100)}
+                                >
+                                    {scale}%
+                                </Menu.Item>
+                            ))}
                             <Menu.Item value="reset" onClick={fitToFrame}>
                                 Масштаб по рабочей области
                             </Menu.Item>
