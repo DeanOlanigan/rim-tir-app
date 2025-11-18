@@ -88,7 +88,6 @@ export function createDrawRectTool({
                 y = start.y - h / 2;
             }
 
-            // FIXME Немного криво, когда нажаты shift+alt
             if (shift) {
                 const size = Math.max(w, h);
                 w = size;
@@ -96,8 +95,13 @@ export function createDrawRectTool({
                 if (!alt) {
                     x = cur.x < start.x ? start.x - size : start.x;
                     y = cur.y < start.y ? start.y - size : start.y;
+                } else {
+                    x = start.x - w / 2;
+                    y = start.y - h / 2;
                 }
             }
+
+            if (w === 0 || h === 0) return;
 
             /* const clamped = clampRectInFrame(
                 { x, y, width: w, height: h },

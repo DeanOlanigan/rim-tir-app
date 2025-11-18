@@ -61,30 +61,38 @@ export function createDrawEllipseTool({ layerRef, getGrid, addNode }) {
             const alt = !!(e.evt && e.evt.altKey);
             const shift = !!(e.evt && e.evt.shiftKey);
 
+            const dx = cur.x - start.x;
+            const dy = cur.y - start.y;
+
             let left = Math.min(start.x, cur.x);
             let top = Math.min(start.y, cur.y);
-            let w = Math.abs(start.x - cur.x);
-            let h = Math.abs(start.y - cur.y);
+            let w = Math.abs(dx);
+            let h = Math.abs(dy);
 
             if (alt) {
-                const dx = Math.abs(start.x - cur.x);
-                const dy = Math.abs(start.y - cur.y);
-                w = dx * 2;
-                h = dy * 2;
+                const absDx = Math.abs(dx);
+                const absDy = Math.abs(dy);
+                w = absDx * 2;
+                h = absDy * 2;
                 left = start.x - w / 2;
                 top = start.y - h / 2;
             }
 
-            // FIXME Немного криво, когда нажаты shift+alt
             if (shift) {
                 const size = Math.max(w, h);
                 w = size;
                 h = size;
+
                 if (!alt) {
-                    left = start.x <= cur.x ? start.x : start.x - w;
-                    top = start.y <= cur.y ? start.y : start.y - h;
+                    left = cur.x < start.x ? start.x - w : start.x;
+                    top = cur.y < start.y ? start.y - h : start.y;
+                } else {
+                    left = start.x - w / 2;
+                    top = start.y - h / 2;
                 }
             }
+
+            if (w < minSize || h < minSize) return;
 
             const rx = w / 2;
             const ry = h / 2;
