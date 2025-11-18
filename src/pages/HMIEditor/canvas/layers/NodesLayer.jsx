@@ -17,27 +17,49 @@ export const NodesLayer = () => {
         const nodeId = e.target.attrs?.id;
         if (!nodeId) return;
         useNodeStore.getState().updateNode(nodeId, {
-            x: Math.round(e.target.x()),
-            y: Math.round(e.target.y()),
+            x: e.target.x(),
+            y: e.target.y(),
         });
     };
 
     const dragBoundFunc = function (pos) {
         const stage = this.getStage();
         const step = snapToGrid ? gridSize : 1;
-        const local = toWorld(stage, pos);
-        // TODO Ellipse wrong snap
-        let res = local;
-        if (this.attrs.type === "rect") {
-            res = {
-                x: snap(local.x, step, 0),
-                y: snap(local.y, step, 0),
-            };
-        }
-        //res = clampPosInFrame(this, width, height, res);
+        const absRect = this.getClientRect({
+            skipShadow: true,
+            skipStroke: true,
+        });
+        const curAbsPos = this.getAbsolutePosition();
+
+        const absTlCurrent = {
+            x: absRect.x,
+            y: absRect.y,
+        };
+        const deltaPos = {
+            x: pos.x - curAbsPos.x,
+            y: pos.y - curAbsPos.y,
+        };
+        const absTlProposed = {
+            x: absTlCurrent.x + deltaPos.x,
+            y: absTlCurrent.y + deltaPos.y,
+        };
+
+        const local = toWorld(stage, absTlProposed);
+        const res = {
+            x: snap(local.x, step, 0),
+            y: snap(local.y, step, 0),
+        };
         const abs = toAbs(stage, res);
-        // FIXME Broken while zoom
-        return abs;
+
+        const delta = {
+            x: abs.x - absTlProposed.x,
+            y: abs.y - absTlProposed.y,
+        };
+
+        return {
+            x: pos.x + delta.x,
+            y: pos.y + delta.y,
+        };
     };
 
     const common = {
