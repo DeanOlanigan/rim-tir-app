@@ -1,12 +1,12 @@
 import { Arrow, Ellipse, Line, Rect } from "react-konva";
-import { snap } from "../utils/geom";
-import { clampPosInFrame } from "../utils/konva";
-import { toAbs, toWorld } from "../utils/coords";
-import { useActionsStore } from "../../store/actions-store";
-import { useNodeStore } from "../../store/node-store";
-import { ACTIONS } from "../../store/actions";
+import { clampPosInFrame } from "./utils/konva";
+import { toAbs, toWorld } from "./utils/coords";
+import { useActionsStore } from "./../store/actions-store";
+import { useNodeStore } from "./../store/node-store";
+import { ACTIONS } from "./../store/actions";
+import { snap } from "./utils/geom";
 
-export const NodesLayer = () => {
+export const Nodes = () => {
     const size = useActionsStore((state) => state.size);
     const currentAction = useActionsStore((state) => state.currentAction);
     const gridSize = useActionsStore((state) => state.gridSize);

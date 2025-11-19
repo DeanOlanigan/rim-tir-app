@@ -4,15 +4,16 @@ import { toWorld } from "../utils/coords";
 import Konva from "konva";
 
 export function createSelectTool({
-    selectionBoxRef,
-    selectedIds,
+    getSelectionBox,
+    getSelectedIds,
     setSelectedIds,
+    getLayer,
 }) {
     let start = { x: 0, y: 0 };
 
     const showBox = (attrs) =>
-        selectionBoxRef.current?.setAttrs({ visible: true, ...attrs });
-    const hideBox = () => selectionBoxRef.current?.setAttrs({ visible: false });
+        getSelectionBox()?.setAttrs({ visible: true, ...attrs });
+    const hideBox = () => getSelectionBox()?.setAttrs({ visible: false });
 
     return {
         name: ACTIONS.select,
@@ -28,15 +29,15 @@ export function createSelectTool({
                 const clickedId = e.target.id();
                 const metaPressed =
                     e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
-                const isSelected = selectedIds().includes(clickedId);
+                const isSelected = getSelectedIds().includes(clickedId);
                 if (!metaPressed && !isSelected) {
                     setSelectedIds([clickedId]);
                 } else if (metaPressed && isSelected) {
                     setSelectedIds(
-                        selectedIds().filter((id) => id !== clickedId)
+                        getSelectedIds().filter((id) => id !== clickedId)
                     );
                 } else if (metaPressed && !isSelected) {
-                    setSelectedIds([...selectedIds(), clickedId]);
+                    setSelectedIds([...getSelectedIds(), clickedId]);
                 }
             } else if (e.target === stage) {
                 setSelectedIds([]);
@@ -44,11 +45,12 @@ export function createSelectTool({
                 start = wp;
                 showBox({ x: wp.x, y: wp.y, width: 0, height: 0 });
             }
+            getLayer().batchDraw();
         },
 
         onPointerMove(e) {
             const stage = e.currentTarget;
-            const box = selectionBoxRef.current;
+            const box = getSelectionBox();
             if (!stage || !box || !box.visible()) return;
             const wp = toWorld(stage, stage.getPointerPosition());
             box.setAttrs({
@@ -57,14 +59,16 @@ export function createSelectTool({
                 width: Math.abs(wp.x - start.x),
                 height: Math.abs(wp.y - start.y),
             });
+            getLayer().batchDraw();
         },
 
         onPointerUp(e) {
             if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
-            const box = selectionBoxRef.current;
+            const box = getSelectionBox();
             if (!stage || !box || !box.visible()) return;
             hideBox();
+            getLayer().batchDraw();
             const nodes = stage.find(".node");
             const selection =
                 box.getClientRect({
@@ -80,6 +84,17 @@ export function createSelectTool({
             if (selected.length === 0) return;
             const selectedIds = selected.map((node) => node.attrs.id);
             setSelectedIds(selectedIds);
+        },
+
+        onKeyDown(e, api) {
+            switch (e.code) {
+                case "Space":
+                    api.manager.setActive("hand");
+                    break;
+                case "Escape":
+                    this.cancel();
+                    break;
+            }
         },
 
         cancel() {

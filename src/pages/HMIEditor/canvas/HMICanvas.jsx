@@ -1,24 +1,22 @@
-import { useRef } from "react";
 import { Layer, Rect, Stage } from "react-konva";
 import { Grid } from "./Grid";
 import { useFitToFrame } from "./hooks/useFitToFrame";
 import { useContextMenuPos } from "./hooks/useContextMenuPos";
 import { usePanZoom } from "./hooks/usePanZoom";
-import { NodesLayer } from "./layers/NodesLayer";
 import { useActionsStore } from "../store/actions-store";
-import { useToolsManager } from "./hooks/useToolsManager";
 import HMITransformer from "./HMITransformer";
+import { Nodes } from "./Nodes";
 
-export const HMICanvas = ({ canvasRef, width, height }) => {
-    const size = useActionsStore((state) => state.size);
+export const HMICanvas = ({
+    manager,
+    canvasRef,
+    layerRef,
+    selectionBoxRef,
+    transformerRef,
+    width,
+    height,
+}) => {
     const bgColor = useActionsStore((state) => state.backgroundColor);
-    const workAreaColor = useActionsStore((state) => state.workAreaColor);
-
-    const selectionBoxRef = useRef(null);
-    const tr = useRef(null);
-    const layerRef = useRef(null);
-
-    const manager = useToolsManager(canvasRef, selectionBoxRef, tr, layerRef);
 
     const panZoom = usePanZoom();
     const onContextMenu = useContextMenuPos(canvasRef);
@@ -36,15 +34,13 @@ export const HMICanvas = ({ canvasRef, width, height }) => {
             onPointerUp={manager.handlers.onPointerUp}
             onContextMenu={onContextMenu}
         >
-            <Layer ref={layerRef}>
-                <Rect
-                    width={size.width}
-                    height={size.height}
-                    fill={workAreaColor}
-                    listening={false}
-                />
+            <Layer name="staticLayer">
                 <Grid />
-                <NodesLayer />
+            </Layer>
+            <Layer name="nodesLayer">
+                <Nodes />
+            </Layer>
+            <Layer ref={layerRef} name="overlayLayer">
                 <Rect
                     ref={selectionBoxRef}
                     visible={false}
@@ -54,7 +50,10 @@ export const HMICanvas = ({ canvasRef, width, height }) => {
                     strokeWidth={1}
                     listening={false}
                 />
-                <HMITransformer transformerRef={tr} canvasRef={canvasRef} />
+                <HMITransformer
+                    transformerRef={transformerRef}
+                    canvasRef={canvasRef}
+                />
             </Layer>
         </Stage>
     );

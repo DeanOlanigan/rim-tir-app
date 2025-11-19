@@ -9,15 +9,16 @@ import { UndoRedoButtons } from "./UndoRedoButtons";
 import { NodeSettings } from "./NodeSettings";
 import { EditorSettings } from "./EditorSettings";
 import { DebugInfo } from "./DebugInfo";
+import { useToolsManager } from "./canvas/hooks/useToolsManager";
 
 function HMIEditor() {
     const { ref, width, height } = useThrottledResizeObserver(100);
-    const canvasRef = useRef(null);
+    const tools = useToolsManager();
 
     return (
         <Flex ref={ref} h={"100%"} position={"relative"} direction={"column"}>
             <ContextMenu />
-            <HMICanvas canvasRef={canvasRef} width={width} height={height} />
+            <HMICanvas {...tools} width={width} height={height} />
             <Box position={"absolute"} left={2} top={2}>
                 <EditorSettings />
             </Box>
@@ -25,14 +26,18 @@ function HMIEditor() {
                 <DebugInfo />
             </Box>
             <Box position={"absolute"} bottom={2} top={2} right={2}>
-                <NodeSettings />
+                <NodeSettings canvasRef={tools.canvasRef} />
             </Box>
             <HStack position={"absolute"} left={2} bottom={2}>
-                <ZoomBar canvasRef={canvasRef} width={width} height={height} />
+                <ZoomBar
+                    canvasRef={tools.canvasRef}
+                    width={width}
+                    height={height}
+                />
                 <UndoRedoButtons />
             </HStack>
             <HStack position={"absolute"} bottom={2} alignSelf={"center"}>
-                <ToolBar />
+                <ToolBar manager={tools.manager} />
             </HStack>
         </Flex>
     );

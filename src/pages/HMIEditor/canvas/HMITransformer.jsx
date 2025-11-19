@@ -17,7 +17,6 @@ const HMITransformer = ({ transformerRef, canvasRef }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const gridSize = useActionsStore((state) => state.gridSize);
     const snapToGrid = useActionsStore((state) => state.snap);
-    const currentAction = useActionsStore((state) => state.currentAction);
 
     const singleSelectedId = selectedIds.length === 1 ? selectedIds[0] : null;
     const selectedNodeType = useMemo(() => {
@@ -40,12 +39,6 @@ const HMITransformer = ({ transformerRef, canvasRef }) => {
         const nodes = stage.find(".node").filter((n) => set.has(n.id()));
         transformer.nodes(nodes);
     }, [selectedIds, selectedNodeType, canvasRef, transformerRef]);
-
-    useEffect(() => {
-        if (currentAction !== ACTIONS.select) {
-            useNodeStore.getState().setSelectedIds([]);
-        }
-    }, [currentAction]);
 
     const anchorBound = useCallback(
         function (_oldPos, newPos) {
@@ -102,6 +95,7 @@ const HMITransformer = ({ transformerRef, canvasRef }) => {
             anchorDragBoundFunc={anchorBound}
             onTransformEnd={transformEndHandler}
             onTransform={transformHandler}
+            flipEnabled={false}
         />
     );
 };

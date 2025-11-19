@@ -9,9 +9,9 @@ export const useActionsStore = create((set) => ({
     snap: false,
     scale: 1,
     clampToArea: false,
-    backgroundColor: "#bffcbaff",
+    backgroundColor: "#254e25ff",
     workAreaColor: "#ffdadaff",
-    gridColor: "#7687d1ff",
+    gridColor: "#9b9b9bff",
     debugMode: true,
 
     setCurrentAction: (action) => set({ currentAction: action }),

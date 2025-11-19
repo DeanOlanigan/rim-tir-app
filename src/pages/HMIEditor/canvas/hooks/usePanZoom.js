@@ -24,6 +24,7 @@ export function usePanZoom() {
                 y: stage.y() + dir * SCROLL_STRENGTH,
             });
         }
+        stage.batchDraw();
     }, []);
 
     return onWheel;

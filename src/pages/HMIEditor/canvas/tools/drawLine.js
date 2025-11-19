@@ -6,7 +6,12 @@ import { nanoid } from "nanoid";
 import { useShapeStore } from "../../store/shape-store";
 import { snapPointToGrid } from "./utils";
 
-export function createDrawLineTool({ layerRef, getGrid, addNode }) {
+export function createDrawLineTool({
+    getLayer,
+    getGrid,
+    addNode,
+    setSelectedIds,
+}) {
     let draft = null;
     let start = { x: 0, y: 0 };
     let layer = null;
@@ -39,7 +44,7 @@ export function createDrawLineTool({ layerRef, getGrid, addNode }) {
                 listening: false,
                 shadowForStrokeEnabled: false,
             });
-            layer = layerRef.current;
+            layer = getLayer();
             layer.add(draft);
             layer.batchDraw();
         },
@@ -57,7 +62,7 @@ export function createDrawLineTool({ layerRef, getGrid, addNode }) {
             layer.batchDraw();
         },
 
-        onPointerUp(e) {
+        onPointerUp(e, api) {
             const stage = e.currentTarget;
             if (!stage || !draft || !layer) return;
             const ptr = stage.getPointerPosition();
@@ -95,6 +100,14 @@ export function createDrawLineTool({ layerRef, getGrid, addNode }) {
                 lineCap: "round",
                 lineJoin: "round",
             });
+            api.manager.setActive("select");
+            setSelectedIds([id]);
+        },
+
+        onKeyDown(e, api) {
+            if (e.code === "Space") {
+                api.manager.setActive("hand");
+            }
         },
 
         cancel() {

@@ -1,11 +1,12 @@
-export function createToolManager({ stageRef, toolsMap, api }) {
-    let active = null;
+import { ACTIONS } from "../../store/actions";
+import { useActionsStore } from "../../store/actions-store";
+
+export function createToolManager({ toolsMap, api }) {
+    let active = toolsMap[ACTIONS.select];
     const tempStack = [];
 
-    const getStage = () => stageRef.current;
-
     const setCursor = (cursor) => {
-        const stage = getStage();
+        const stage = api.getStage();
         if (!stage) return;
         const container = stage.container();
         container.style.cursor = cursor || "default";
@@ -27,6 +28,10 @@ export function createToolManager({ stageRef, toolsMap, api }) {
         setCursor(active.cursor);
         if (active.onEnter) {
             active.onEnter(prev, { ...api, manager });
+        }
+        useActionsStore.getState().setCurrentAction(name);
+        if (active.name !== ACTIONS.select) {
+            api.setSelectedIds([]);
         }
     };
 

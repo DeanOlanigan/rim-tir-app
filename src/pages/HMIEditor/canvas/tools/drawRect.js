@@ -7,7 +7,7 @@ import { useShapeStore } from "../../store/shape-store";
 import { snapPointToGrid } from "./utils";
 
 export function createDrawRectTool({
-    layerRef,
+    getLayer,
     getGrid,
     getWorkSize,
     addNode,
@@ -56,7 +56,7 @@ export function createDrawRectTool({
                 shadowForStrokeEnabled: false,
                 fillAfterStrokeEnabled: true,
             });
-            layer = layerRef.current;
+            layer = getLayer();
             layer.add(draft);
             layer.batchDraw();
         },
@@ -110,10 +110,10 @@ export function createDrawRectTool({
             ); */
 
             draft.setAttrs({ x, y, width: w, height: h });
-            draft.getLayer().batchDraw();
+            layer.batchDraw();
         },
 
-        onPointerUp(e) {
+        onPointerUp(e, api) {
             const stage = e.currentTarget;
             if (!stage || !draft || !layer) return;
 
@@ -140,7 +140,19 @@ export function createDrawRectTool({
                 cornerRadius: shapeState.cornerRadius,
                 fillAfterStrokeEnabled: true,
             });
-            //setSelectedIds([id]);
+            api.manager.setActive("select");
+            setSelectedIds([id]);
+        },
+
+        onKeyDown(e, api) {
+            switch (e.code) {
+                case "Space":
+                    api.manager.setActive("hand");
+                    break;
+                case "Escape":
+                    this.cancel();
+                    break;
+            }
         },
 
         cancel() {

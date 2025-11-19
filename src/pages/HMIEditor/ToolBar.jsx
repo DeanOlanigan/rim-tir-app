@@ -2,9 +2,8 @@ import { Group, Icon, RadioCard } from "@chakra-ui/react";
 import { useActionsStore } from "./store/actions-store";
 import { ACTION_OPTIONS } from "./store/actions";
 
-export const ToolBar = () => {
+export const ToolBar = ({ manager }) => {
     const action = useActionsStore((state) => state.currentAction);
-    const setAction = useActionsStore((state) => state.setCurrentAction);
 
     return (
         <RadioCard.Root
@@ -12,7 +11,7 @@ export const ToolBar = () => {
             variant={"subtle"}
             shadow={"md"}
             value={action}
-            onValueChange={(e) => setAction(e.value)}
+            onValueChange={(e) => manager.setActive(e.value)}
         >
             <Group attached>
                 {ACTION_OPTIONS.map((action) => (

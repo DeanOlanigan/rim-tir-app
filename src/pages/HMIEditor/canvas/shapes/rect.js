@@ -9,6 +9,8 @@ registerShape("rect", {
         konvaNode.scaleY(1);
 
         const patch = {
+            x: Math.round(konvaNode.x()),
+            y: Math.round(konvaNode.y()),
             width: Math.round(width),
             height: Math.round(height),
         };

@@ -1,8 +1,8 @@
 import { LuHand } from "react-icons/lu";
 import { ACTIONS } from "../../store/actions";
 
-export function createHandTool({ stageRef }) {
-    let space = false;
+export function createHandTool() {
+    //let space = false;
     let panStart = null;
     let panning = false;
 
@@ -41,6 +41,7 @@ export function createHandTool({ stageRef }) {
                 x: panStart.stageX + dx,
                 y: panStart.stageY + dy,
             });
+            stage.batchDraw();
         },
 
         onPointerUp(e) {
@@ -50,25 +51,26 @@ export function createHandTool({ stageRef }) {
             stage.container().style.cursor = "grab";
         },
 
-        onKeyDown(e) {
+        /* onKeyDown(e) {
             if (e.code === "Space" && !space) {
                 space = true;
-                const stage = stageRef.current;
+                const stage = getStage();
                 if (stage) stage.container().style.cursor = "grab";
                 e.preventDefault();
             }
-        },
+        }, */
 
-        onKeyUp(e) {
+        onKeyUp(e, api) {
             if (e.code === "Space") {
-                space = false;
-                e.preventDefault();
+                api.manager.setActive("select");
+                //space = false;
+                //e.preventDefault();
             }
         },
 
         cancel() {
             panning = false;
-            space = false;
+            //space = false;
             panStart = null;
         },
     };

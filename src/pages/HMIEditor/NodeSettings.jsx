@@ -3,6 +3,7 @@ import {
     ColorPicker,
     Fieldset,
     HStack,
+    IconButton,
     parseColor,
     Slider,
 } from "@chakra-ui/react";
@@ -12,6 +13,7 @@ import { useState } from "react";
 import { useShapeStore } from "./store/shape-store";
 import { useNodeStore } from "./store/node-store";
 import { ColorComp } from "./ColorComp";
+import { LuArrowDown, LuArrowUp } from "react-icons/lu";
 
 const NODES_WITH_SETTINGS = [
     ACTIONS.square,
@@ -21,7 +23,7 @@ const NODES_WITH_SETTINGS = [
     ACTIONS.line,
 ];
 
-export const NodeSettings = () => {
+export const NodeSettings = ({ canvasRef }) => {
     const currentAction = useActionsStore((state) => state.currentAction);
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const fillColor = useShapeStore((state) => state.fillColor);
@@ -56,21 +58,54 @@ export const NodeSettings = () => {
                         outerColor={strokeColor}
                         setOuterColor={setStrokeColor}
                     />
-                    <StrokeWidth />
-                    {currentAction === ACTIONS.square && <CornerRadius />}
+                    <StrokeWidth
+                        canvasRef={canvasRef}
+                        selectedIds={selectedIds}
+                    />
+                    {currentAction === ACTIONS.square ||
+                        (selectedIds.length === 1 &&
+                            canvasRef.current.findOne(`#${selectedIds[0]}`)
+                                .attrs.type === "rect" && (
+                                <CornerRadius
+                                    canvasRef={canvasRef}
+                                    selectedIds={selectedIds}
+                                />
+                            ))}
+                    <MoveToTopBtn
+                        canvasRef={canvasRef}
+                        selectedIds={selectedIds}
+                    />
+                    <MoveToBottomBtn
+                        canvasRef={canvasRef}
+                        selectedIds={selectedIds}
+                    />
                 </Fieldset.Content>
             </Fieldset.Root>
         </Box>
     );
 };
 
-const StrokeWidth = () => {
+const StrokeWidth = ({ canvasRef, selectedIds }) => {
     const strokeWidth = useShapeStore((state) => state.strokeWidth);
     const setStrokeWidth = useShapeStore((state) => state.setStrokeWidth);
+
+    const defaultValue =
+        selectedIds.length === 1
+            ? canvasRef.current.findOne(`#${selectedIds[0]}`).strokeWidth()
+            : strokeWidth;
+
     return (
         <Slider.Root
-            value={[strokeWidth]}
-            onValueChange={(e) => setStrokeWidth(e.value[0])}
+            defaultValue={[defaultValue]}
+            onValueChange={(e) => {
+                if (selectedIds.length === 1) {
+                    canvasRef.current
+                        .findOne(`#${selectedIds[0]}`)
+                        .strokeWidth(e.value[0]);
+                } else {
+                    setStrokeWidth(e.value[0]);
+                }
+            }}
             step={1}
             min={0}
             max={10}
@@ -91,13 +126,27 @@ const StrokeWidth = () => {
     );
 };
 
-const CornerRadius = () => {
+const CornerRadius = ({ canvasRef, selectedIds }) => {
     const cornerRadius = useShapeStore((state) => state.cornerRadius);
     const setCornerRadius = useShapeStore((state) => state.setCornerRadius);
+
+    const defaultValue =
+        selectedIds.length === 1
+            ? canvasRef.current.findOne(`#${selectedIds[0]}`).cornerRadius()
+            : cornerRadius;
+
     return (
         <Slider.Root
-            value={[cornerRadius]}
-            onValueChange={(e) => setCornerRadius(e.value[0])}
+            defaultValue={[defaultValue]}
+            onValueChange={(e) => {
+                if (selectedIds.length === 1) {
+                    canvasRef.current
+                        .findOne(`#${selectedIds[0]}`)
+                        .cornerRadius(e.value[0]);
+                } else {
+                    setCornerRadius(e.value[0]);
+                }
+            }}
             step={1}
             min={0}
             max={10}
@@ -115,5 +164,35 @@ const CornerRadius = () => {
                 <Slider.Thumb />
             </Slider.Control>
         </Slider.Root>
+    );
+};
+
+const MoveToTopBtn = ({ canvasRef, selectedIds }) => {
+    return (
+        <IconButton
+            onClick={() => {
+                if (selectedIds.length === 1) {
+                    canvasRef.current.findOne(`#${selectedIds[0]}`).moveToTop();
+                }
+            }}
+        >
+            <LuArrowUp />
+        </IconButton>
+    );
+};
+
+const MoveToBottomBtn = ({ canvasRef, selectedIds }) => {
+    return (
+        <IconButton
+            onClick={() => {
+                if (selectedIds.length === 1) {
+                    canvasRef.current
+                        .findOne(`#${selectedIds[0]}`)
+                        .moveToBottom();
+                }
+            }}
+        >
+            <LuArrowDown />
+        </IconButton>
     );
 };

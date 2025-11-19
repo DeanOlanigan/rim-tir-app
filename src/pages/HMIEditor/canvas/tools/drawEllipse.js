@@ -6,7 +6,12 @@ import { nanoid } from "nanoid";
 import { useShapeStore } from "../../store/shape-store";
 import { snapPointToGrid } from "./utils";
 
-export function createDrawEllipseTool({ layerRef, getGrid, addNode }) {
+export function createDrawEllipseTool({
+    getLayer,
+    getGrid,
+    addNode,
+    setSelectedIds,
+}) {
     let draft = null;
     let start = { x: 0, y: 0 };
     let layer = null;
@@ -42,7 +47,7 @@ export function createDrawEllipseTool({ layerRef, getGrid, addNode }) {
                 shadowForStrokeEnabled: false,
                 fillAfterStrokeEnabled: true,
             });
-            layer = layer = layerRef.current;
+            layer = layer = getLayer();
             layer.add(draft);
             layer.batchDraw();
         },
@@ -110,7 +115,7 @@ export function createDrawEllipseTool({ layerRef, getGrid, addNode }) {
             layer.batchDraw();
         },
 
-        onPointerUp(e) {
+        onPointerUp(e, api) {
             const stage = e.currentTarget;
             if (!stage || !draft || !layer) return;
 
@@ -140,6 +145,14 @@ export function createDrawEllipseTool({ layerRef, getGrid, addNode }) {
                 strokeWidth: shapeState.strokeWidth,
                 fillAfterStrokeEnabled: true,
             });
+            api.manager.setActive("select");
+            setSelectedIds([id]);
+        },
+
+        onKeyDown(e, api) {
+            if (e.code === "Space") {
+                api.manager.setActive("hand");
+            }
         },
 
         cancel() {
