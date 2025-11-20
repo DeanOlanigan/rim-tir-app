@@ -8,6 +8,7 @@ import {
 import { AuthGate } from "./guards";
 import { configurationLoader, monitoringLoader } from "./loaders";
 import { createBrowserRouter } from "react-router-dom";
+import { SettingsPage } from "@/pages/SettingsPage/SettingsPage";
 
 const LoginPage =           lazy(() => import("@/pages/LoginPage/LoginPage")); // prettier-ignore
 const ConfigurationPage =   lazy(() => import("@/pages/ConfigurationPage/ConfigurationPage")); // prettier-ignore
@@ -56,6 +57,7 @@ export const routes = [
                             { path: "log", element: <LogPage /> },
                             { path: "journal", element: <JournalPage /> },
                             { path: "graph", element: <GraphPage /> },
+                            { path: "settings", element: <SettingsPage /> },
                         ],
                     },
                 ],
