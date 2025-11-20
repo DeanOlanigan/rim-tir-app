@@ -1,19 +1,23 @@
 import {
     Box,
-    ColorPicker,
     Fieldset,
+    Group,
     HStack,
     IconButton,
-    parseColor,
+    Presence,
     Slider,
 } from "@chakra-ui/react";
 import { useActionsStore } from "./store/actions-store";
-import { ACTIONS } from "./store/actions";
-import { useState } from "react";
 import { useShapeStore } from "./store/shape-store";
 import { useNodeStore } from "./store/node-store";
 import { ColorComp } from "./ColorComp";
-import { LuArrowDown, LuArrowUp } from "react-icons/lu";
+import {
+    LuArrowDownFromLine,
+    LuArrowUpFromLine,
+    LuMoveDown,
+    LuMoveUp,
+} from "react-icons/lu";
+import { ACTIONS } from "./constants";
 
 const NODES_WITH_SETTINGS = [
     ACTIONS.square,
@@ -30,58 +34,88 @@ export const NodeSettings = ({ canvasRef }) => {
     const strokeColor = useShapeStore((state) => state.strokeColor);
     const { setFillColor, setStrokeColor } = useShapeStore.getState();
 
-    if (
-        !NODES_WITH_SETTINGS.includes(currentAction) &&
-        selectedIds.length !== 1
-    )
-        return null;
+    const viewSettings =
+        NODES_WITH_SETTINGS.includes(currentAction) || selectedIds.length === 1;
+
+    const isRectangleSelected =
+        selectedIds.length === 1 &&
+        canvasRef.current.findOne(`#${selectedIds[0]}`).attrs.type === "rect";
+
+    const showCornerRadius =
+        currentAction === ACTIONS.square ||
+        (isRectangleSelected && selectedIds.length === 1);
+
+    const defaultFillColor =
+        selectedIds.length === 1
+            ? canvasRef.current.findOne(`#${selectedIds[0]}`).fill()
+            : fillColor;
+
+    const fillColorHandler = (color) => {
+        if (selectedIds.length === 1) {
+            canvasRef.current.findOne(`#${selectedIds[0]}`).fill(color);
+        } else {
+            setFillColor(color);
+        }
+    };
+
+    const defaultStrokeColor =
+        selectedIds.length === 1
+            ? canvasRef.current.findOne(`#${selectedIds[0]}`).stroke()
+            : strokeColor;
+
+    const strokeColorHandler = (color) => {
+        if (selectedIds.length === 1) {
+            canvasRef.current.findOne(`#${selectedIds[0]}`).stroke(color);
+        } else {
+            setStrokeColor(color);
+        }
+    };
 
     return (
-        <Box
-            bg={"bg"}
-            w={"350px"}
-            h={"100%"}
-            p={"4"}
-            borderRadius={"md"}
-            shadow={"md"}
+        <Presence
+            present={viewSettings}
+            animationName={{ _open: "fade-in", _closed: "fade-out" }}
+            animationDuration="moderate"
         >
-            <Fieldset.Root>
-                <Fieldset.Legend>NodeSettings</Fieldset.Legend>
-                <Fieldset.Content>
-                    <ColorComp
-                        label={"Fill color"}
-                        outerColor={fillColor}
-                        setOuterColor={setFillColor}
-                    />
-                    <ColorComp
-                        label={"Stroke color"}
-                        outerColor={strokeColor}
-                        setOuterColor={setStrokeColor}
-                    />
-                    <StrokeWidth
-                        canvasRef={canvasRef}
-                        selectedIds={selectedIds}
-                    />
-                    {currentAction === ACTIONS.square ||
-                        (selectedIds.length === 1 &&
-                            canvasRef.current.findOne(`#${selectedIds[0]}`)
-                                .attrs.type === "rect" && (
-                                <CornerRadius
-                                    canvasRef={canvasRef}
-                                    selectedIds={selectedIds}
-                                />
-                            ))}
-                    <MoveToTopBtn
-                        canvasRef={canvasRef}
-                        selectedIds={selectedIds}
-                    />
-                    <MoveToBottomBtn
-                        canvasRef={canvasRef}
-                        selectedIds={selectedIds}
-                    />
-                </Fieldset.Content>
-            </Fieldset.Root>
-        </Box>
+            <Box
+                bg={"bg"}
+                w={"350px"}
+                h={"100%"}
+                p={"4"}
+                borderRadius={"md"}
+                shadow={"md"}
+            >
+                <Fieldset.Root>
+                    <Fieldset.Legend>NodeSettings</Fieldset.Legend>
+                    <Fieldset.Content>
+                        {/* <ColorComp
+                            label={"Fill color"}
+                            outerColor={defaultFillColor}
+                            setOuterColor={fillColorHandler}
+                        /> */}
+                        <ColorComp
+                            label={"Stroke color"}
+                            outerColor={defaultStrokeColor}
+                            setOuterColor={strokeColorHandler}
+                        />
+                        <StrokeWidth
+                            canvasRef={canvasRef}
+                            selectedIds={selectedIds}
+                        />
+                        {showCornerRadius && (
+                            <CornerRadius
+                                canvasRef={canvasRef}
+                                selectedIds={selectedIds}
+                            />
+                        )}
+                        <Layers
+                            canvasRef={canvasRef}
+                            selectedIds={selectedIds}
+                        />
+                    </Fieldset.Content>
+                </Fieldset.Root>
+            </Box>
+        </Presence>
     );
 };
 
@@ -167,32 +201,57 @@ const CornerRadius = ({ canvasRef, selectedIds }) => {
     );
 };
 
-const MoveToTopBtn = ({ canvasRef, selectedIds }) => {
+const Layers = ({ canvasRef, selectedIds }) => {
     return (
-        <IconButton
-            onClick={() => {
-                if (selectedIds.length === 1) {
-                    canvasRef.current.findOne(`#${selectedIds[0]}`).moveToTop();
-                }
-            }}
-        >
-            <LuArrowUp />
-        </IconButton>
-    );
-};
-
-const MoveToBottomBtn = ({ canvasRef, selectedIds }) => {
-    return (
-        <IconButton
-            onClick={() => {
-                if (selectedIds.length === 1) {
-                    canvasRef.current
-                        .findOne(`#${selectedIds[0]}`)
-                        .moveToBottom();
-                }
-            }}
-        >
-            <LuArrowDown />
-        </IconButton>
+        <Group attached grow>
+            <IconButton
+                size={"xs"}
+                onClick={() => {
+                    if (selectedIds.length === 1) {
+                        canvasRef.current
+                            .findOne(`#${selectedIds[0]}`)
+                            .moveToTop();
+                    }
+                }}
+            >
+                <LuArrowUpFromLine />
+            </IconButton>
+            <IconButton
+                size={"xs"}
+                onClick={() => {
+                    if (selectedIds.length === 1) {
+                        canvasRef.current
+                            .findOne(`#${selectedIds[0]}`)
+                            .moveUp();
+                    }
+                }}
+            >
+                <LuMoveUp />
+            </IconButton>
+            <IconButton
+                size={"xs"}
+                onClick={() => {
+                    if (selectedIds.length === 1) {
+                        canvasRef.current
+                            .findOne(`#${selectedIds[0]}`)
+                            .moveDown();
+                    }
+                }}
+            >
+                <LuMoveDown />
+            </IconButton>
+            <IconButton
+                size={"xs"}
+                onClick={() => {
+                    if (selectedIds.length === 1) {
+                        canvasRef.current
+                            .findOne(`#${selectedIds[0]}`)
+                            .moveToBottom();
+                    }
+                }}
+            >
+                <LuArrowDownFromLine />
+            </IconButton>
+        </Group>
     );
 };

@@ -1,5 +1,4 @@
 import { Box, Flex, HStack } from "@chakra-ui/react";
-import { useRef } from "react";
 import { useThrottledResizeObserver } from "@/hooks/useThrottledResizeObserver";
 import { ContextMenu } from "./ContextMenu";
 import { ToolBar } from "./ToolBar";

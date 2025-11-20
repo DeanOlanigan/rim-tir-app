@@ -1,10 +1,10 @@
 import { LuSlash } from "react-icons/lu";
-import { ACTIONS } from "../../store/actions";
-import { toWorld } from "../utils/coords";
 import Konva from "konva";
 import { nanoid } from "nanoid";
 import { useShapeStore } from "../../store/shape-store";
 import { snapPointToGrid } from "./utils";
+import { ACTIONS } from "../../constants";
+import { toWorld } from "../utils/coords";
 
 export function createDrawLineTool({
     getLayer,
@@ -24,6 +24,7 @@ export function createDrawLineTool({
         cursor: "crosshair",
 
         onPointerDown(e) {
+            if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
             if (!stage) return;
             const prt = stage.getPointerPosition();
@@ -102,12 +103,6 @@ export function createDrawLineTool({
             });
             api.manager.setActive("select");
             setSelectedIds([id]);
-        },
-
-        onKeyDown(e, api) {
-            if (e.code === "Space") {
-                api.manager.setActive("hand");
-            }
         },
 
         cancel() {

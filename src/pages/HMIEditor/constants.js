@@ -8,3 +8,14 @@ export const ROTATION_SNAP_TOLERANCE = 15;
 export const GRID_OPACITY = 0.3;
 export const GRID_MAJOR_STEP = 25;
 export const ZOOM_PERCENTAGE_STEP = 0.1;
+export const ACTIONS = {
+    select: "select",
+    hand: "hand",
+    square: "square",
+    ellipse: "ellipse",
+    text: "text",
+    arrow: "arrow",
+    line: "line",
+    zoomIn: "zoomIn",
+    zoomOut: "zoomOut",
+};

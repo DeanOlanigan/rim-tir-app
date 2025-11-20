@@ -1,7 +1,7 @@
 import { LuMousePointer2 } from "react-icons/lu";
-import { ACTIONS } from "../../store/actions";
 import { toWorld } from "../utils/coords";
 import Konva from "konva";
+import { ACTIONS } from "../../constants";
 
 export function createSelectTool({
     getSelectionBox,
@@ -63,7 +63,6 @@ export function createSelectTool({
         },
 
         onPointerUp(e) {
-            if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
             const box = getSelectionBox();
             if (!stage || !box || !box.visible()) return;
@@ -86,19 +85,9 @@ export function createSelectTool({
             setSelectedIds(selectedIds);
         },
 
-        onKeyDown(e, api) {
-            switch (e.code) {
-                case "Space":
-                    api.manager.setActive("hand");
-                    break;
-                case "Escape":
-                    this.cancel();
-                    break;
-            }
-        },
-
         cancel() {
             hideBox();
+            start = { x: 0, y: 0 };
         },
     };
 }

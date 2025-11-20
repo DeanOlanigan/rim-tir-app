@@ -1,7 +1,7 @@
 import { registerShape } from "./registry";
 
 registerShape("line", {
-    onTransformEnd(konvaNode, ctx) {
+    onTransformEnd(konvaNode) {
         const a = konvaNode.attrs;
         return {
             points: a.points.slice(),

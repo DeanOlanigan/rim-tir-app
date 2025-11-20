@@ -1,11 +1,7 @@
 import { memo, useCallback, useEffect, useState } from "react";
-import { useNodeStore } from "../store/node-store";
-import { toAbs, toWorld } from "./utils/coords";
-import { snap } from "./utils/geom";
 import { Circle } from "react-konva";
 
-const LinesTransformer = ({ nodeId, canvasRef, gridSize, snapToGrid }) => {
-    const updateNode = useNodeStore.getState().updateNode;
+const LinesTransformer = ({ nodeId, canvasRef }) => {
     const [points, setPoints] = useState([0, 0, 0, 0]);
 
     useEffect(() => {
@@ -21,27 +17,12 @@ const LinesTransformer = ({ nodeId, canvasRef, gridSize, snapToGrid }) => {
         setPoints(pts);
     }, [canvasRef, nodeId]);
 
-    const toSnappedAbs = useCallback(
-        (stage, pos) => {
-            const step = snapToGrid ? gridSize : 1;
-            const w = toWorld(stage, pos);
-            const nx = snap(w.x, step, 0);
-            const ny = snap(w.y, step, 0);
-            return toAbs(stage, { x: nx, y: ny });
-        },
-        [gridSize, snapToGrid]
-    );
-
     const handleDragPoint = useCallback(
         (indexPair, e) => {
             const stage = canvasRef.current;
             if (!stage) return;
-            // pos in absolute coords relative to stage
             const absPos = { x: e.target.x(), y: e.target.y() };
-            // snap to grid in world coords then convert back to absolute for storing and rendering
-            const snappedAbs = toSnappedAbs(stage, absPos);
 
-            // read current points from stage node (so concurrent updates survive)
             const node = stage.findOne(`#${nodeId}`);
             if (!node) return;
             const pts = node.points ? node.points().slice() : [];
@@ -49,8 +30,8 @@ const LinesTransformer = ({ nodeId, canvasRef, gridSize, snapToGrid }) => {
                 while (pts.length < 4) pts.push(0);
             }
 
-            pts[indexPair[0]] = snappedAbs.x;
-            pts[indexPair[1]] = snappedAbs.y;
+            pts[indexPair[0]] = absPos.x;
+            pts[indexPair[1]] = absPos.y;
 
             // update visual node immediately
             node.points(pts);
@@ -58,9 +39,9 @@ const LinesTransformer = ({ nodeId, canvasRef, gridSize, snapToGrid }) => {
             setPoints(pts);
 
             // persist via store (передаём патч — адаптируйте под вашу структуру)
-            updateNode(nodeId, { points: pts });
+            //updateNode(nodeId, { points: pts });
         },
-        [canvasRef, nodeId, toSnappedAbs, updateNode]
+        [canvasRef, nodeId]
     );
 
     // вычисляем позиции ручек в абсолютных coords (они уже хранятся в points как абсолютные)
@@ -70,15 +51,9 @@ const LinesTransformer = ({ nodeId, canvasRef, gridSize, snapToGrid }) => {
     const p1y = points[points.length - 1] ?? 0;
 
     // радиус/стиль ручек — можно менять
-    const r = 2;
+    const r = 7;
 
-    console.log({
-        p0x,
-        p0y,
-        p1x,
-        p1y,
-    });
-
+    const scale = canvasRef.current.scaleX();
     return (
         <>
             <Circle
@@ -87,12 +62,15 @@ const LinesTransformer = ({ nodeId, canvasRef, gridSize, snapToGrid }) => {
                 radius={r}
                 draggable
                 onDragMove={(e) => handleDragPoint([0, 1], e)}
-                onDragEnd={(e) => handleDragPoint([0, 1], e)}
                 listening={true}
                 id={`line-handle-${nodeId}-start`}
-                fill={"red"}
+                fill={"white"}
+                stroke={"rgb(0, 161, 255)"}
+                strokeWidth={1}
+                scale={{ x: 1 / scale, y: 1 / scale }}
             />
             <Circle
+                scale={{ x: 1 / scale, y: 1 / scale }}
                 x={p1x}
                 y={p1y}
                 radius={r}
@@ -100,12 +78,11 @@ const LinesTransformer = ({ nodeId, canvasRef, gridSize, snapToGrid }) => {
                 onDragMove={(e) =>
                     handleDragPoint([points.length - 2, points.length - 1], e)
                 }
-                onDragEnd={(e) =>
-                    handleDragPoint([points.length - 2, points.length - 1], e)
-                }
                 listening={true}
                 id={`line-handle-${nodeId}-end`}
-                fill={"red"}
+                fill={"white"}
+                stroke={"rgb(0, 161, 255)"}
+                strokeWidth={1}
             />
         </>
     );

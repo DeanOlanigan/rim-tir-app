@@ -1,12 +1,11 @@
 import { Transformer } from "react-konva";
-import { ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS } from "../constants";
+import { ACTIONS, ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS } from "../constants";
 import { toAbs, toWorld } from "./utils/coords";
 import { snap } from "./utils/geom";
 import { memo, useCallback, useEffect, useMemo } from "react";
 import { useNodeStore } from "../store/node-store";
 import { getShape } from "./shapes";
 import { useActionsStore } from "../store/actions-store";
-import { ACTIONS } from "../store/actions";
 import LinesTransformer from "./LinesTransformer";
 
 const LINE_TYPES = new Set([ACTIONS.line, ACTIONS.arrow]);

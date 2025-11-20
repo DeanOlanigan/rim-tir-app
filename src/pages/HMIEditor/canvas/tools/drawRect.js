@@ -1,15 +1,14 @@
 import { LuSquare } from "react-icons/lu";
-import { ACTIONS } from "../../store/actions";
-import { toWorld } from "../utils/coords";
 import Konva from "konva";
 import { nanoid } from "nanoid";
 import { useShapeStore } from "../../store/shape-store";
 import { snapPointToGrid } from "./utils";
+import { ACTIONS } from "../../constants";
+import { toWorld } from "../utils/coords";
 
 export function createDrawRectTool({
     getLayer,
     getGrid,
-    getWorkSize,
     addNode,
     setSelectedIds,
 }) {
@@ -18,12 +17,6 @@ export function createDrawRectTool({
     let layer = null;
     const minSize = 4;
 
-    /* const clampRectInFrame = (r, workW, workH) => {
-        const x = Math.max(0, Math.min(r.x, workW - r.width));
-        const y = Math.max(0, Math.min(r.y, workH - r.height));
-        return { ...r, x, y };
-    }; */
-
     return {
         name: ACTIONS.square,
         label: "Draw Rectangle",
@@ -31,6 +24,7 @@ export function createDrawRectTool({
         cursor: "crosshair",
 
         onPointerDown(e) {
+            if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
             if (!stage) return;
             const ptr = stage.getPointerPosition();
@@ -38,7 +32,6 @@ export function createDrawRectTool({
             const { gridSize, snapToGrid } = getGrid();
             const worldPos = toWorld(stage, ptr);
             const p = snapPointToGrid(worldPos, gridSize, snapToGrid);
-            console.log(p);
 
             start = p;
 
@@ -66,7 +59,6 @@ export function createDrawRectTool({
             if (!stage || !draft || !layer) return;
             const ptr = stage.getPointerPosition();
             if (!ptr) return;
-            //const { workW, workH } = getWorkSize();
             const { gridSize, snapToGrid } = getGrid();
             const curWord = toWorld(stage, ptr);
             const cur = snapPointToGrid(curWord, gridSize, snapToGrid);
@@ -103,12 +95,6 @@ export function createDrawRectTool({
 
             if (w === 0 || h === 0) return;
 
-            /* const clamped = clampRectInFrame(
-                { x, y, width: w, height: h },
-                workW,
-                workH
-            ); */
-
             draft.setAttrs({ x, y, width: w, height: h });
             layer.batchDraw();
         },
@@ -142,17 +128,6 @@ export function createDrawRectTool({
             });
             api.manager.setActive("select");
             setSelectedIds([id]);
-        },
-
-        onKeyDown(e, api) {
-            switch (e.code) {
-                case "Space":
-                    api.manager.setActive("hand");
-                    break;
-                case "Escape":
-                    this.cancel();
-                    break;
-            }
         },
 
         cancel() {

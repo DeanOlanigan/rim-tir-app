@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { ACTIONS } from "./actions";
+import { ACTIONS } from "../constants";
 
 export const useActionsStore = create((set) => ({
     currentAction: ACTIONS.select,

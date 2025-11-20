@@ -1,8 +1,10 @@
-import { ACTIONS } from "../../store/actions";
+import { ACTIONS } from "../../constants";
 import { useActionsStore } from "../../store/actions-store";
 
 export function createToolManager({ toolsMap, api }) {
     let active = toolsMap[ACTIONS.select];
+    let tempSpaceActive = false;
+    let pointerDown = false;
     const tempStack = [];
 
     const setCursor = (cursor) => {
@@ -40,6 +42,7 @@ export function createToolManager({ toolsMap, api }) {
         if (!next) return;
         if (active) tempStack.push(active);
         active = next;
+        useActionsStore.getState().setCurrentAction(name);
         setCursor(active.cursor);
         active.onEnter && active.onEnter(null, { ...api, manager });
     };
@@ -47,13 +50,25 @@ export function createToolManager({ toolsMap, api }) {
     const popTemp = () => {
         const prev = active;
         const next = tempStack.pop() || null;
+        if (!next) return;
         prev && prev.onExit && prev.onExit(next, { ...api, manager });
         active = next;
+        useActionsStore.getState().setCurrentAction(active.name);
         setCursor(active && active.cursor);
+    };
+
+    const cancelActive = () => {
+        active && active.cancel && active.cancel({ ...api, manager });
     };
 
     const handlers = {
         onPointerDown(e) {
+            pointerDown = true;
+
+            if (e.evt.button === 1) {
+                pushTemp(ACTIONS.hand);
+            }
+
             active &&
                 active.onPointerDown &&
                 active.onPointerDown(e, { ...api, manager });
@@ -67,17 +82,35 @@ export function createToolManager({ toolsMap, api }) {
             active &&
                 active.onPointerUp &&
                 active.onPointerUp(e, { ...api, manager });
+            if (e.evt.button === 1) {
+                popTemp();
+            }
+            pointerDown = false;
         },
         onKeyDown(e) {
-            active &&
-                active.onKeyDown &&
-                active.onKeyDown(e, { ...api, manager });
+            if (e.code === "Escape") {
+                cancelActive();
+                pointerDown = false;
+                return;
+            }
+            if (e.code === "Space" && !tempSpaceActive) {
+                if (pointerDown) return;
+                tempSpaceActive = true;
+                pushTemp(ACTIONS.hand);
+                return;
+            }
+            active.onKeyDown?.call(active, e, { ...api, manager });
         },
         onKeyUp(e) {
-            active && active.onKeyUp && active.onKeyUp(e, { ...api, manager });
+            if (e.code === "Space" && tempSpaceActive) {
+                tempSpaceActive = false;
+                popTemp();
+                return;
+            }
+            active.onKeyUp?.call(active, e, { ...api, manager });
         },
         cancel() {
-            active && active.cancel && active.cancel({ ...api, manager });
+            cancelActive();
         },
     };
 
@@ -88,6 +121,7 @@ export function createToolManager({ toolsMap, api }) {
         popTemp,
         setCursor,
         handlers,
+        toolsMap,
     };
 
     return manager;

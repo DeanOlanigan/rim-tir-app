@@ -1,7 +1,7 @@
 import { registerShape } from "./registry";
 
 registerShape("ellipse", {
-    onTransformEnd(konvaNode, ctx) {
+    onTransformEnd(konvaNode) {
         const radiusX = konvaNode.radiusX() * konvaNode.scaleX();
         const radiusY = konvaNode.radiusY() * konvaNode.scaleY();
 

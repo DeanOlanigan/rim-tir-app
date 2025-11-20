@@ -1,7 +1,7 @@
 import { registerShape } from "./registry";
 
 registerShape("rect", {
-    onTransformEnd(konvaNode, ctx) {
+    onTransformEnd(konvaNode) {
         const width = konvaNode.width() * konvaNode.scaleX();
         const height = konvaNode.height() * konvaNode.scaleY();
 

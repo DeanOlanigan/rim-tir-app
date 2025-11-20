@@ -53,18 +53,17 @@ const initialNodes = {
         fillAfterStrokeEnabled: true,
         cornerRadius: 2,
     },
-    /* ellipse1: {
-        type: "ellipse",
-        id: "ellipse1",
-        x: 50,
-        y: 25,
-        radiusX: 12.5,
-        radiusY: 12.5,
-        fill: "#8fda93ff",
+    line1: {
+        type: "line",
+        id: "line1",
+        x: 0,
+        y: 0,
+        points: [0, 25, 50, 25],
         stroke: "black",
-        strokeWidth: 0,
-        fillAfterStrokeEnabled: true,
-    }, */
+        strokeWidth: 1,
+        lineCap: "round",
+        lineJoin: "round",
+    },
 };
 
 export const useNodeStore = create((set) => ({
@@ -74,8 +73,9 @@ export const useNodeStore = create((set) => ({
         set((state) => ({ nodes: { ...state.nodes, [id]: node } })),
     removeNode: (id) =>
         set((state) => {
-            const { [id]: _, ...nodes } = state.nodes;
-            return { nodes };
+            const newNodes = { ...state.nodes };
+            delete newNodes[id];
+            return { nodes: newNodes };
         }),
     updateNode: (id, patch) =>
         set((state) => ({
