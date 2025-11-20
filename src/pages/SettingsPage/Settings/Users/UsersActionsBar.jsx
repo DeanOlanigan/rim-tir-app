@@ -6,11 +6,7 @@ import { DeleteDialog } from "./DeleteDialog";
 export const UsersActionsBar = () => {
     const { selectedRows, setSelectedRows } = useTableStore();
     return (
-        <ActionBar.Root
-            shadow={"xl"}
-            open={selectedRows.length}
-            closeOnInteractOutside={true}
-        >
+        <ActionBar.Root shadow={"xl"} open={selectedRows.length}>
             <Portal>
                 <ActionBar.Positioner>
                     <ActionBar.Content>

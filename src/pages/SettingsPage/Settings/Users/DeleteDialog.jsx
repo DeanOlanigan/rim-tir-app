@@ -10,7 +10,7 @@ export const DeleteDialog = () => {
             placement={"center"}
             role="alertdialog"
             motionPreset={"slide-in-bottom"}
-            closeOnInteractOutside={"true"}
+            closeOnInteractOutside={"false"}
         >
             <Dialog.Trigger asChild>
                 <IconButton

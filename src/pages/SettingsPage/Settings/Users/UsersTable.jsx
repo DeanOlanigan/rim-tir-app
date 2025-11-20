@@ -141,7 +141,13 @@ export const UsersTable = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {live.length === 0 && <NoData />}
+                        {live.length === 0 && (
+                            <Table.Row>
+                                <Table.Cell>
+                                    <NoData />
+                                </Table.Cell>
+                            </Table.Row>
+                        )}
                         {live.map((row) => (
                             <Table.Row
                                 key={row.login}

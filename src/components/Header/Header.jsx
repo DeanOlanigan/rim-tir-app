@@ -19,6 +19,7 @@ import {
 } from "react-icons/gi";
 
 import Navigation from "@/components/Navigation/Navigation";
+import { NavLink } from "react-router-dom";
 
 function Header() {
     return (
@@ -34,11 +35,12 @@ export default Header;
 
 const SettingsMenu = () => {
     return (
-        <Menu.Root>
-            <Menu.Trigger asChild>
+        <NavLink to={"settings"}>
+            {({ isActive }) => (
                 <IconButton
                     size={"xs"}
-                    variant="ghost"
+                    variant={isActive ? "solid" : "ghost"}
+                    shadow={isActive ? "md" : ""}
                     aria-label="Settings"
                     css={{
                         _icon: {
@@ -49,33 +51,8 @@ const SettingsMenu = () => {
                 >
                     <LuSettings />
                 </IconButton>
-            </Menu.Trigger>
-
-            <Menu.Positioner>
-                <Menu.Content>
-                    <Dialog.Root lazyMount unmountOnExit>
-                        <Dialog.Trigger asChild>
-                            <Menu.Item value="update" closeOnSelect={false}>
-                                Обновление
-                            </Menu.Item>
-                        </Dialog.Trigger>
-                        <Portal>
-                            <Dialog.Positioner>
-                                <Dialog.Content>
-                                    <Dialog.Header>
-                                        <Dialog.Title>Обновление</Dialog.Title>
-                                    </Dialog.Header>
-                                    <Dialog.Body></Dialog.Body>
-                                    <Dialog.CloseTrigger asChild>
-                                        <CloseButton size={"sm"} />
-                                    </Dialog.CloseTrigger>
-                                </Dialog.Content>
-                            </Dialog.Positioner>
-                        </Portal>
-                    </Dialog.Root>
-                </Menu.Content>
-            </Menu.Positioner>
-        </Menu.Root>
+            )}
+        </NavLink>
     );
 };
 
