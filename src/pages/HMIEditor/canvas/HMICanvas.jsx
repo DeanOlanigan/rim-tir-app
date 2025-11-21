@@ -6,6 +6,8 @@ import { usePanZoom } from "./hooks/usePanZoom";
 import { useActionsStore } from "../store/actions-store";
 import HMITransformer from "./HMITransformer";
 import { Nodes } from "./Nodes";
+import { useRef } from "react";
+import { LineTransformerNew } from "./LineTransformerNew";
 
 export const HMICanvas = ({
     manager,
@@ -21,7 +23,7 @@ export const HMICanvas = ({
     const panZoom = usePanZoom();
     const onContextMenu = useContextMenuPos(canvasRef);
     useFitToFrame(canvasRef, width, height);
-
+    const nodesRef = useRef(new Map());
     return (
         <Stage
             ref={canvasRef}
@@ -38,7 +40,7 @@ export const HMICanvas = ({
                 <Grid />
             </Layer>
             <Layer name="nodesLayer">
-                <Nodes />
+                <Nodes nodesRef={nodesRef} />
             </Layer>
             <Layer ref={layerRef} name="overlayLayer">
                 <Rect
@@ -51,9 +53,11 @@ export const HMICanvas = ({
                     listening={false}
                 />
                 <HMITransformer
+                    nodesRef={nodesRef}
                     transformerRef={transformerRef}
                     canvasRef={canvasRef}
                 />
+                <LineTransformerNew nodesRef={nodesRef} canvasRef={canvasRef} />
             </Layer>
         </Stage>
     );

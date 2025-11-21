@@ -1,43 +1,40 @@
 import { Transformer } from "react-konva";
-import { ACTIONS, ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS } from "../constants";
+import { ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS } from "../constants";
 import { toAbs, toWorld } from "./utils/coords";
 import { snap } from "./utils/geom";
-import { memo, useCallback, useEffect, useMemo } from "react";
+import { memo, useCallback, useEffect } from "react";
 import { useNodeStore } from "../store/node-store";
 import { getShape } from "./shapes";
 import { useActionsStore } from "../store/actions-store";
-import LinesTransformer from "./LinesTransformer";
 
-const LINE_TYPES = new Set([ACTIONS.line, ACTIONS.arrow]);
-
-const HMITransformer = ({ transformerRef, canvasRef }) => {
-    console.log("Render HMITRansformer");
+const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
+    console.log("Render HMITRansformer", nodesRef);
     //const size = useActionsStore((state) => state.size);
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const gridSize = useActionsStore((state) => state.gridSize);
     const snapToGrid = useActionsStore((state) => state.snap);
+    const primaryNode = useNodeStore((state) => state.nodes[selectedIds[0]]);
 
-    const singleSelectedId = selectedIds.length === 1 ? selectedIds[0] : null;
-    const selectedNodeType = useMemo(() => {
-        const stage = canvasRef.current;
-        if (!stage || !singleSelectedId) return null;
-        const node = stage.findOne(`#${singleSelectedId}`);
-        return node ? node.attrs?.type : null;
-    }, [canvasRef, singleSelectedId]);
+    const isLineLike =
+        primaryNode &&
+        (primaryNode.type === "line" || primaryNode.type === "arrow");
+    const resizeEnabled = !isLineLike;
+    const enabledAnchors = resizeEnabled ? undefined : [];
+    console.log({ isLineLike, resizeEnabled });
 
     useEffect(() => {
-        const stage = canvasRef.current;
         const transformer = transformerRef.current;
-        if (!stage || !transformer) return;
-        const set = new Set(selectedIds);
+        if (!transformer) return;
 
-        if (selectedIds.length === 1 && LINE_TYPES.has(selectedNodeType)) {
+        if (selectedIds.length > 0) {
+            const instances = selectedIds
+                .map((id) => nodesRef.current.get(id))
+                .filter(Boolean);
+            transformer.nodes(instances);
+        } else {
             transformer.nodes([]);
-            return;
         }
-        const nodes = stage.find(".node").filter((n) => set.has(n.id()));
-        transformer.nodes(nodes);
-    }, [selectedIds, selectedNodeType, canvasRef, transformerRef]);
+    }, [selectedIds, nodesRef, transformerRef]);
 
     const anchorBound = useCallback(
         function (_oldPos, newPos) {
@@ -77,24 +74,19 @@ const HMITransformer = ({ transformerRef, canvasRef }) => {
         node.scaleY(1);
     };
 
-    return singleSelectedId && LINE_TYPES.has(selectedNodeType) ? (
-        <LinesTransformer
-            canvasRef={canvasRef}
-            nodeId={singleSelectedId}
-            gridSize={gridSize}
-            snapToGrid={snapToGrid}
-        />
-    ) : (
+    return (
         <Transformer
             ref={transformerRef}
             keepRatio={false}
             rotationSnaps={ROTATION_SNAPS}
             rotationSnapTolerance={ROTATION_SNAP_TOLERANCE}
             ignoreStroke={true}
-            anchorDragBoundFunc={anchorBound}
-            onTransformEnd={transformEndHandler}
-            onTransform={transformHandler}
             flipEnabled={false}
+            resizeEnabled={resizeEnabled}
+            enabledAnchors={enabledAnchors}
+            anchorDragBoundFunc={resizeEnabled ? anchorBound : undefined}
+            onTransformEnd={resizeEnabled ? transformEndHandler : undefined}
+            onTransform={resizeEnabled ? transformHandler : undefined}
         />
     );
 };

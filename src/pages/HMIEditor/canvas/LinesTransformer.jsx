@@ -68,6 +68,12 @@ const LinesTransformer = ({ nodeId, canvasRef }) => {
                 stroke={"rgb(0, 161, 255)"}
                 strokeWidth={1}
                 scale={{ x: 1 / scale, y: 1 / scale }}
+                onMouseOver={(e) => {
+                    e.target.getStage().container().style.cursor = "move";
+                }}
+                onMouseOut={(e) => {
+                    e.target.getStage().container().style.cursor = "";
+                }}
             />
             <Circle
                 scale={{ x: 1 / scale, y: 1 / scale }}
@@ -83,6 +89,12 @@ const LinesTransformer = ({ nodeId, canvasRef }) => {
                 fill={"white"}
                 stroke={"rgb(0, 161, 255)"}
                 strokeWidth={1}
+                onMouseOver={(e) => {
+                    e.target.getStage().container().style.cursor = "move";
+                }}
+                onMouseOut={(e) => {
+                    e.target.getStage().container().style.cursor = "";
+                }}
             />
         </>
     );
