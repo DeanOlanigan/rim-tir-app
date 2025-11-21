@@ -1,4 +1,5 @@
 import {
+    Button,
     Card,
     Field,
     Fieldset,
@@ -13,8 +14,8 @@ export const JournalSettings = () => {
     return (
         <>
             <Heading paddingBottom={"2"}>Журналы</Heading>
-            <Stack>
-                <Card.Root variant={"elevated"}>
+            <Stack direction={"row"}>
+                <Card.Root variant={"elevated"} w={"50%"}>
                     <Card.Body>
                         <Fieldset.Root>
                             <Fieldset.Legend>
@@ -58,8 +59,11 @@ export const JournalSettings = () => {
                             </Fieldset.Content>
                         </Fieldset.Root>
                     </Card.Body>
+                    <Card.Footer>
+                        <Button size={"sm"}>Применить</Button>
+                    </Card.Footer>
                 </Card.Root>
-                <Card.Root variant={"elevated"}>
+                <Card.Root variant={"elevated"} w={"50%"}>
                     <Card.Body>
                         <Fieldset.Root>
                             <Fieldset.Legend>
@@ -103,6 +107,9 @@ export const JournalSettings = () => {
                             </Fieldset.Content>
                         </Fieldset.Root>
                     </Card.Body>
+                    <Card.Footer>
+                        <Button size={"sm"}>Применить</Button>
+                    </Card.Footer>
                 </Card.Root>
             </Stack>
         </>
