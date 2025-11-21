@@ -30,7 +30,12 @@ export const Lecesne = () => {
                             </Field.Label>
                             <Text>{useLecense()}</Text>
                         </Field.Root>
-                        <KeyInput />
+                        <Field.Root>
+                            <Field.Label>
+                                Ввод ключа для активации ПО
+                            </Field.Label>
+                            <KeyInput />
+                        </Field.Root>
                     </HStack>
                 </Card.Body>
             </Card.Root>
@@ -39,7 +44,7 @@ export const Lecesne = () => {
 };
 const KeyInput = () => {
     return (
-        <Group attached w={"40%"}>
+        <Group attached w={"100%"}>
             <Input
                 variant="flushed"
                 placeholder="Введите свой ключ активации"
