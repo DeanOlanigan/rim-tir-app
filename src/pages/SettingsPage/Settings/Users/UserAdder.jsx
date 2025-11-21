@@ -1,6 +1,6 @@
 import { Field, IconButton, Input, Table } from "@chakra-ui/react";
 import { LuUserRoundPlus } from "react-icons/lu";
-import { RoleSelector } from "./RoleSelector";
+import { RoleSelector } from "./Roles/RoleSelector";
 import { useTableStore } from "../SettingsStore/tablestore";
 import { useUserStore } from "../SettingsStore/user-add-store";
 

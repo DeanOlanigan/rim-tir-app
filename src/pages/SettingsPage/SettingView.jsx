@@ -1,6 +1,5 @@
 import { Stack } from "@chakra-ui/react";
 import { ServerSettings } from "./Settings/WebServSettings";
-import { RightsSettings } from "./Settings/RightsSettings";
 import { LogSettings } from "./Settings/LogSettings";
 import { JournalSettings } from "./Settings/JournalSettings";
 import { Updates } from "./Settings/Updates";
@@ -19,7 +18,6 @@ export const SettingView = () => {
         >
             <ServerSettings />
             <UsersView />
-            <RightsSettings />
             <LogSettings />
             <JournalSettings />
             <Updates />

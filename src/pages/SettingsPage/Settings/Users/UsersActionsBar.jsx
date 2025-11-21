@@ -1,7 +1,8 @@
 import { ActionBar, IconButton, Portal } from "@chakra-ui/react";
-import { LuUserRoundPen, LuX } from "react-icons/lu";
+import { LuX } from "react-icons/lu";
 import { useTableStore } from "../SettingsStore/tablestore";
-import { DeleteDialog } from "./DeleteDialog";
+import { DeleteDialog } from "./Dialogs/DeleteDialog";
+import { EditDialog } from "./Dialogs/EditDialog";
 
 export const UsersActionsBar = () => {
     const { selectedRows, setSelectedRows } = useTableStore();
@@ -14,9 +15,7 @@ export const UsersActionsBar = () => {
                             {selectedRows.length} выбрано
                         </ActionBar.SelectionTrigger>
                         <ActionBar.Separator />
-                        <IconButton size={"sm"} variant={"outline"} w={"50px"}>
-                            <LuUserRoundPen />
-                        </IconButton>
+                        <EditDialog />
                         <DeleteDialog />
                         <ActionBar.Separator />
                         <IconButton

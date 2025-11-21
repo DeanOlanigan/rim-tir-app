@@ -1,5 +1,5 @@
 import { createListCollection, Portal, Select, Table } from "@chakra-ui/react";
-import { useUserStore } from "../SettingsStore/user-add-store";
+import { useUserStore } from "../../SettingsStore/user-add-store";
 
 const Roles = createListCollection({
     items: [
@@ -10,8 +10,21 @@ const Roles = createListCollection({
     ],
 });
 
-export const RoleSelector = ({ roleRef }) => {
+export const RoleSelector = (noPortal = false) => {
     const { newUser, makeUser } = useUserStore();
+
+    const content = (
+        <Select.Positioner>
+            <Select.Content>
+                {Roles.items.map((value) => (
+                    <Select.Item key={value.value} item={value}>
+                        {value.label}
+                        <Select.ItemIndicator />
+                    </Select.Item>
+                ))}
+            </Select.Content>
+        </Select.Positioner>
+    );
 
     return (
         <Table.Cell padding={"4px"}>
@@ -19,11 +32,9 @@ export const RoleSelector = ({ roleRef }) => {
                 value={newUser.role || []}
                 onValueChange={(e) => makeUser(["role", e.value])}
                 w="100%"
-                padding="4px"
                 size="xs"
                 collection={Roles}
                 positioning={{ sameWidth: false }}
-                ref={roleRef}
                 invalid={!newUser.role.length > 0}
             >
                 <Select.HiddenSelect />
@@ -36,18 +47,7 @@ export const RoleSelector = ({ roleRef }) => {
                         <Select.ClearTrigger />
                     </Select.IndicatorGroup>
                 </Select.Control>
-                <Portal>
-                    <Select.Positioner>
-                        <Select.Content>
-                            {Roles.items.map((value) => (
-                                <Select.Item key={value.value} item={value}>
-                                    {value.label}
-                                    <Select.ItemIndicator />
-                                </Select.Item>
-                            ))}
-                        </Select.Content>
-                    </Select.Positioner>
-                </Portal>
+                {noPortal ? content : <Portal>{content}</Portal>}
             </Select.Root>
         </Table.Cell>
     );
