@@ -9,10 +9,7 @@ import { useActionsStore } from "../store/actions-store";
 
 const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
     console.log("Render HMITRansformer", nodesRef);
-    //const size = useActionsStore((state) => state.size);
     const selectedIds = useNodeStore((state) => state.selectedIds);
-    const gridSize = useActionsStore((state) => state.gridSize);
-    const snapToGrid = useActionsStore((state) => state.snap);
     const primaryNode = useNodeStore((state) => state.nodes[selectedIds[0]]);
 
     const isLineLike =
@@ -20,7 +17,6 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         (primaryNode.type === "line" || primaryNode.type === "arrow");
     const resizeEnabled = !isLineLike;
     const enabledAnchors = resizeEnabled ? undefined : [];
-    console.log({ isLineLike, resizeEnabled });
 
     useEffect(() => {
         const transformer = transformerRef.current;
@@ -38,6 +34,7 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
 
     const anchorBound = useCallback(
         function (_oldPos, newPos) {
+            const { gridSize, snapToGrid } = useActionsStore.getState();
             const stage = canvasRef.current;
             const step = snapToGrid ? gridSize : 1;
             const w = toWorld(stage, newPos);
@@ -48,7 +45,7 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
             const abs = toAbs(stage, { x: nx, y: ny });
             return abs;
         },
-        [canvasRef, gridSize, snapToGrid]
+        [canvasRef]
     );
 
     const transformEndHandler = (e) => {
