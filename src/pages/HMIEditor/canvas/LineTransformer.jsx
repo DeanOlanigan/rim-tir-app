@@ -5,7 +5,7 @@ import { Circle } from "react-konva";
 import { toAbs, toWorld } from "./utils/coords";
 import { snap } from "./utils/geom";
 
-export const LineTransformerNew = memo(({ nodesRef, canvasRef }) => {
+export const LineTransformer = memo(({ nodesRef, canvasRef }) => {
     const scale = useActionsStore((state) => state.scale);
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const primaryNode = useNodeStore((state) => state.nodes[selectedIds[0]]);
@@ -64,4 +64,4 @@ export const LineTransformerNew = memo(({ nodesRef, canvasRef }) => {
     }
     return res;
 });
-LineTransformerNew.displayName = "LineTransformerNew";
+LineTransformer.displayName = "LineTransformerNew";

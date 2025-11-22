@@ -7,7 +7,7 @@ import { useActionsStore } from "../store/actions-store";
 import HMITransformer from "./HMITransformer";
 import { Nodes } from "./Nodes";
 import { useRef } from "react";
-import { LineTransformerNew } from "./LineTransformerNew";
+import { LineTransformer } from "./LineTransformer";
 
 export const HMICanvas = ({
     manager,
@@ -57,7 +57,7 @@ export const HMICanvas = ({
                     transformerRef={transformerRef}
                     canvasRef={canvasRef}
                 />
-                <LineTransformerNew nodesRef={nodesRef} canvasRef={canvasRef} />
+                <LineTransformer nodesRef={nodesRef} canvasRef={canvasRef} />
             </Layer>
         </Stage>
     );
