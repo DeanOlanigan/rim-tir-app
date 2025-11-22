@@ -1,14 +1,15 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import { useActionsStore } from "../store/actions-store";
 import { useNodeStore } from "../store/node-store";
 import { Circle } from "react-konva";
 import { toAbs, toWorld } from "./utils/coords";
 import { snap } from "./utils/geom";
 
-export const LineTransformer = memo(({ nodesRef, canvasRef }) => {
+export const LineTransformer = memo(({ nodesRef, canvasRef, layerRef }) => {
     const scale = useActionsStore((state) => state.scale);
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const primaryNode = useNodeStore((state) => state.nodes[selectedIds[0]]);
+    const startPos = useRef(null);
 
     const dragBoundFunc = useCallback(function (pos) {
         const { gridSize, snapToGrid } = useActionsStore.getState();
@@ -35,6 +36,40 @@ export const LineTransformer = memo(({ nodesRef, canvasRef }) => {
         canvasRef.current.batchDraw();
     };
 
+    const onNodeMoveStart = useCallback((e) => {
+        const node = e.target;
+        startPos.current = node.position();
+    }, []);
+
+    const onNodeMove = useCallback(
+        (e) => {
+            const node = e.target;
+            const circles = layerRef.current.find(".line-drag-handle");
+            const dx = node.x() - startPos.current.x;
+            const dy = node.y() - startPos.current.y;
+            circles.forEach((c) =>
+                c.position({ x: c.x() + dx, y: c.y() + dy })
+            );
+            startPos.current = node.position();
+        },
+        [layerRef]
+    );
+
+    useEffect(() => {
+        if (
+            !primaryNode ||
+            (primaryNode.type !== "line" && primaryNode.type !== "arrow")
+        )
+            return;
+        const node = nodesRef.current.get(primaryNode.id);
+        node.on("dragmove.ltr", onNodeMove);
+        node.on("dragstart.ltr", onNodeMoveStart);
+        return () => {
+            node.off("dragmove.ltr", onNodeMove);
+            node.off("dragstart.ltr", onNodeMoveStart);
+        };
+    }, [primaryNode, nodesRef, onNodeMove, onNodeMoveStart]);
+
     if (
         !primaryNode ||
         (primaryNode.type !== "line" && primaryNode.type !== "arrow")
@@ -49,6 +84,7 @@ export const LineTransformer = memo(({ nodesRef, canvasRef }) => {
         res.push(
             <Circle
                 key={i}
+                name={"line-drag-handle"}
                 x={points[i]}
                 y={points[i + 1]}
                 scale={{ x: 1 / scale, y: 1 / scale }}

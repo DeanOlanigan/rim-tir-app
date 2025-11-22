@@ -57,7 +57,11 @@ export const HMICanvas = ({
                     transformerRef={transformerRef}
                     canvasRef={canvasRef}
                 />
-                <LineTransformer nodesRef={nodesRef} canvasRef={canvasRef} />
+                <LineTransformer
+                    nodesRef={nodesRef}
+                    canvasRef={canvasRef}
+                    layerRef={layerRef}
+                />
             </Layer>
         </Stage>
     );
