@@ -36,6 +36,7 @@ export const EditorSettings = () => {
     const backgroundColor = useActionsStore((state) => state.backgroundColor);
     const workAreaColor = useActionsStore((state) => state.workAreaColor);
     const showNodesTree = useActionsStore((state) => state.showNodesTree);
+    const showHitRegions = useActionsStore((state) => state.showHitRegions);
 
     const {
         setSize,
@@ -48,6 +49,7 @@ export const EditorSettings = () => {
         setBackgroundColor,
         setGridColor,
         setShowNodesTree,
+        setShowHitRegions,
     } = useActionsStore.getState();
 
     return (
@@ -175,6 +177,18 @@ export const EditorSettings = () => {
                                     <Checkbox.HiddenInput />
                                     <Checkbox.Control />
                                     <Checkbox.Label>Debug mode</Checkbox.Label>
+                                </Checkbox.Root>
+                                <Checkbox.Root
+                                    checked={showHitRegions}
+                                    onCheckedChange={(e) =>
+                                        setShowHitRegions(!!e.checked)
+                                    }
+                                >
+                                    <Checkbox.HiddenInput />
+                                    <Checkbox.Control />
+                                    <Checkbox.Label>
+                                        Show hit regions
+                                    </Checkbox.Label>
                                 </Checkbox.Root>
                                 <ColorComp
                                     label={"Background color"}

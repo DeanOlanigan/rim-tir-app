@@ -6,7 +6,7 @@ import { usePanZoom } from "./hooks/usePanZoom";
 import { useActionsStore } from "../store/actions-store";
 import HMITransformer from "./HMITransformer";
 import { Nodes } from "./Nodes";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { LineTransformer } from "./LineTransformer";
 
 export const HMICanvas = ({
@@ -20,6 +20,21 @@ export const HMICanvas = ({
     height,
 }) => {
     const bgColor = useActionsStore((state) => state.backgroundColor);
+    const showHitRegions = useActionsStore((state) => state.showHitRegions);
+
+    useEffect(() => {
+        if (showHitRegions) {
+            canvasRef.current
+                .container()
+                .appendChild(nodesLayerRef.current.hitCanvas._canvas);
+
+            nodesLayerRef.current.hitCanvas._canvas.style.position = "absolute";
+            nodesLayerRef.current.hitCanvas._canvas.style.top = 0;
+            nodesLayerRef.current.hitCanvas._canvas.style.left = 0;
+        } else {
+            nodesLayerRef.current.hitCanvas._canvas.remove();
+        }
+    }, [showHitRegions, nodesLayerRef, canvasRef]);
 
     const panZoom = usePanZoom();
     const onContextMenu = useContextMenuPos(canvasRef);
