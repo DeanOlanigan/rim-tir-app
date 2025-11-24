@@ -12,14 +12,14 @@ export const EditDialog = () => {
             </Dialog.Trigger>
             <Portal>
                 <Dialog.Backdrop />
-                <Dialog.Positioner>
+                <Dialog.Positioner overflow="clip">
                     <Dialog.Content>
                         <Dialog.Header>
                             <Dialog.Title>
                                 Редактирование выбранных пользователей
                             </Dialog.Title>
                         </Dialog.Header>
-                        <Dialog.Body overflow={"auto"}>
+                        <Dialog.Body>
                             <UserEditor />
                         </Dialog.Body>
                         <Dialog.Footer>

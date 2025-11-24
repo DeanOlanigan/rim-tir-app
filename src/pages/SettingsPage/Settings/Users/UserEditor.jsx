@@ -64,56 +64,58 @@ export const UserEditor = () => {
 
 const ManyUsers = ({ selectedUsers }) => {
     return (
-        <Table.Root>
-            <Table.Header>
-                <Table.Row>
-                    {tableColumns.map((header) => (
-                        <Table.ColumnHeader
-                            key={header.value}
-                            bg={"colorPalette.solid"}
-                            color={"fg.inverted"}
-                            fontSize="sm"
-                            fontWeight="500"
-                            padding="4px"
-                            textAlign="center"
-                        >
-                            {header.value === "role" ? (
-                                <RoleMenu noPortal />
-                            ) : (
-                                header.label
-                            )}
-                        </Table.ColumnHeader>
-                    ))}
-                </Table.Row>
-            </Table.Header>
-            <Table.Body>
-                {selectedUsers.map((row) => (
-                    <Table.Row key={row.login}>
-                        {Object.keys(row).map((key) => (
-                            <Table.Cell
-                                key={key}
-                                textAlign="center"
+        <Table.ScrollArea height={"xl"} overflow={"auto"}>
+            <Table.Root stickyHeader>
+                <Table.Header>
+                    <Table.Row>
+                        {tableColumns.map((header) => (
+                            <Table.ColumnHeader
+                                key={header.value}
+                                bg={"colorPalette.solid"}
+                                color={"fg.inverted"}
                                 fontSize="sm"
                                 fontWeight="500"
                                 padding="4px"
+                                textAlign="center"
                             >
-                                {key === "role" ? (
-                                    <RoleSelectorEditor
-                                        data={row[key]}
-                                        noPortal
-                                    />
+                                {header.value === "role" ? (
+                                    <RoleMenu noPortal />
                                 ) : (
-                                    <Input
-                                        value={row[key]}
-                                        size={"2xs"}
-                                        textAlign={"center"}
-                                    />
+                                    header.label
                                 )}
-                            </Table.Cell>
+                            </Table.ColumnHeader>
                         ))}
                     </Table.Row>
-                ))}
-            </Table.Body>
-        </Table.Root>
+                </Table.Header>
+                <Table.Body>
+                    {selectedUsers.map((row) => (
+                        <Table.Row key={row.login}>
+                            {Object.keys(row).map((key) => (
+                                <Table.Cell
+                                    key={key}
+                                    textAlign="center"
+                                    fontSize="sm"
+                                    fontWeight="500"
+                                    padding="4px"
+                                >
+                                    {key === "role" ? (
+                                        <RoleSelectorEditor
+                                            data={row[key]}
+                                            noPortal
+                                        />
+                                    ) : (
+                                        <Input
+                                            value={row[key]}
+                                            size={"xs"}
+                                            textAlign={"center"}
+                                        />
+                                    )}
+                                </Table.Cell>
+                            ))}
+                        </Table.Row>
+                    ))}
+                </Table.Body>
+            </Table.Root>
+        </Table.ScrollArea>
     );
 };

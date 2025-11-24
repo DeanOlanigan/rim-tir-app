@@ -60,7 +60,8 @@ export const Updates = () => {
                         w="100%"
                         alignItems="stretch"
                         maxFiles={MAX_FILES}
-                        accept={["exe"]}
+                        accept={[".ipk"]}
+                        onFileChange={(e) => console.log(e.acceptedFiles)}
                     >
                         <FileUpload.HiddenInput />
                         <ConditionalDropzone />

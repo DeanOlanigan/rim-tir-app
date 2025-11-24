@@ -24,11 +24,10 @@ export const RoleSelectorEditor = ({ noPortal = false, data = [] }) => {
     );
 
     return (
-        <Table.Cell padding={"4px"}>
+        <Table.Cell padding={"4px"} w={"3xs"}>
             <Select.Root
                 value={data || []}
                 onValueChange={(e) => (data = e)}
-                w="100%"
                 size="xs"
                 collection={Roles}
                 positioning={{ sameWidth: false }}
@@ -37,7 +36,9 @@ export const RoleSelectorEditor = ({ noPortal = false, data = [] }) => {
                 <Select.HiddenSelect />
                 <Select.Control>
                     <Select.Trigger>
-                        <Select.ValueText placeholder="Выберите роль" />
+                        <Select.ValueText placeholder="Выберите роль">
+                            {data}
+                        </Select.ValueText>
                     </Select.Trigger>
                     <Select.IndicatorGroup>
                         <Select.Indicator />
