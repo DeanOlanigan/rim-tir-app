@@ -79,7 +79,35 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
     const points = line.points();
     if (points.length < 4) return null;
 
+    const midPoints = [];
+    for (let i = 0; i < points.length / 2 - 1; i++) {
+        midPoints.push(
+            ...pointBetweenPoints(
+                [points[i * 2], points[i * 2 + 1]],
+                [points[(i + 1) * 2], points[(i + 1) * 2 + 1]]
+            )
+        );
+    }
+
     const res = [];
+    for (let i = 0; i < midPoints.length; i += 2) {
+        res.push(
+            <Circle
+                key={"mid-" + i}
+                name={"line-drag-handle"}
+                x={midPoints[i]}
+                y={midPoints[i + 1]}
+                scale={{ x: 1 / scale, y: 1 / scale }}
+                radius={5}
+                fill="rgb(255, 0, 85)"
+                strokeWidth={1}
+                draggable
+                dragBoundFunc={dragBoundFunc}
+                onDragMove={(e) => onDragMove(e, i / 2)}
+            />
+        );
+    }
+
     for (let i = 0; i < points.length; i += 2) {
         res.push(
             <Circle
@@ -101,3 +129,7 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
     return res;
 });
 LineTransformer.displayName = "LineTransformerNew";
+
+const pointBetweenPoints = (p1, p2) => {
+    return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
+};

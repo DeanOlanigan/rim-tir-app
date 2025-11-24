@@ -58,7 +58,11 @@ const initialNodes = {
         id: "line1",
         x: 0,
         y: 0,
-        points: [0, 25, 25, 25, 25, 50],
+        points: [
+            0, 25, 5, 25, 5, 30, 10, 30, 10, 25, 15, 25, 15, 30, 20, 30, 20, 25,
+            25, 25, 25, 35, 0, 35, 0, 25,
+        ],
+        closed: true,
         stroke: "black",
         strokeWidth: 1,
         lineCap: "round",
