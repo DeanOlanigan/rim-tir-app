@@ -13,6 +13,7 @@ export const useActionsStore = create((set) => ({
     workAreaColor: "#ffdadaff",
     gridColor: "#9b9b9bff",
     debugMode: true,
+    showNodesTree: true,
 
     setCurrentAction: (action) => set({ currentAction: action }),
 
@@ -26,4 +27,5 @@ export const useActionsStore = create((set) => ({
     setWorkAreaColor: (color) => set({ workAreaColor: color }),
     setGridColor: (color) => set({ gridColor: color }),
     setDebugMode: (mode) => set({ debugMode: mode }),
+    setShowNodesTree: (show) => set({ showNodesTree: show }),
 }));

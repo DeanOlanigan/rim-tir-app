@@ -35,6 +35,7 @@ export const EditorSettings = () => {
     const gridColor = useActionsStore((state) => state.gridColor);
     const backgroundColor = useActionsStore((state) => state.backgroundColor);
     const workAreaColor = useActionsStore((state) => state.workAreaColor);
+    const showNodesTree = useActionsStore((state) => state.showNodesTree);
 
     const {
         setSize,
@@ -46,6 +47,7 @@ export const EditorSettings = () => {
         setWorkAreaColor,
         setBackgroundColor,
         setGridColor,
+        setShowNodesTree,
     } = useActionsStore.getState();
 
     return (
@@ -150,6 +152,18 @@ export const EditorSettings = () => {
                                     <Checkbox.Control />
                                     <Checkbox.Label>
                                         Clamp to work area
+                                    </Checkbox.Label>
+                                </Checkbox.Root>
+                                <Checkbox.Root
+                                    checked={showNodesTree}
+                                    onCheckedChange={(e) =>
+                                        setShowNodesTree(!!e.checked)
+                                    }
+                                >
+                                    <Checkbox.HiddenInput />
+                                    <Checkbox.Control />
+                                    <Checkbox.Label>
+                                        Show nodes tree
                                     </Checkbox.Label>
                                 </Checkbox.Root>
                                 <Checkbox.Root

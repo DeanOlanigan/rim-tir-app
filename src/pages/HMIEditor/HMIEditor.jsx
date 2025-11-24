@@ -9,6 +9,7 @@ import { NodeSettings } from "./NodeSettings";
 import { EditorSettings } from "./EditorSettings";
 import { DebugInfo } from "./DebugInfo";
 import { useToolsManager } from "./canvas/hooks/useToolsManager";
+import { NodesTree } from "./NodesTree";
 
 function HMIEditor() {
     const { ref, width, height } = useThrottledResizeObserver(100);
@@ -21,10 +22,13 @@ function HMIEditor() {
             <Box position={"absolute"} left={2} top={2}>
                 <EditorSettings />
             </Box>
+            <Box position={"absolute"} right={2} bottom={2}>
+                <NodesTree />
+            </Box>
             <Box position={"absolute"} bottom={12} left={2}>
                 <DebugInfo />
             </Box>
-            <Box position={"absolute"} bottom={2} top={2} right={2}>
+            <Box position={"absolute"} top={2} right={2}>
                 <NodeSettings canvasRef={tools.canvasRef} />
             </Box>
             <HStack position={"absolute"} left={2} bottom={2}>

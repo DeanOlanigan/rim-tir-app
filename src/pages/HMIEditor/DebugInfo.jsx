@@ -1,4 +1,4 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useActionsStore } from "./store/actions-store";
 import { useNodeStore } from "./store/node-store";
 
@@ -11,25 +11,34 @@ export const DebugInfo = () => {
     if (!debugMode) return null;
 
     return (
-        <Box
+        <Flex
+            direction={"column"}
             bg={"bg"}
-            w={"100%"}
-            h={"100%"}
-            maxH={"250px"}
-            overflow={"auto"}
+            w={"180px"}
+            h={"210px"}
             borderRadius={"md"}
             shadow={"md"}
             p={2}
         >
             <Text fontWeight={"medium"}>DebugInfo</Text>
 
-            <Text>Current action: {currentAction}</Text>
-            <Text>Selected nodes: {selectedIds.length}</Text>
-            <Text>Nodes: {Object.keys(nodes).length}</Text>
-            {selectedIds.length > 0 && (
-                <SelectedNodeInfo nodes={nodes} selectedIds={selectedIds} />
-            )}
-        </Box>
+            <Box
+                h={"100%"}
+                overflow={"auto"}
+                p={1}
+                border={"1px solid"}
+                borderColor={"border"}
+                bg={"bg.muted"}
+                borderRadius={"md"}
+            >
+                <Text>Current action: {currentAction}</Text>
+                <Text>Selected nodes: {selectedIds.length}</Text>
+                <Text>Nodes: {Object.keys(nodes).length}</Text>
+                {selectedIds.length > 0 && (
+                    <SelectedNodeInfo nodes={nodes} selectedIds={selectedIds} />
+                )}
+            </Box>
+        </Flex>
     );
 };
 
