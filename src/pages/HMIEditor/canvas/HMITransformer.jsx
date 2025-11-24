@@ -1,4 +1,4 @@
-import { Transformer } from "react-konva";
+import { Rect, Transformer } from "react-konva";
 import { ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS } from "../constants";
 import { toAbs, toWorld } from "./utils/coords";
 import { snap } from "./utils/geom";
@@ -14,6 +14,7 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
 
     const isLineLike =
         primaryNode &&
+        selectedIds.length === 1 &&
         (primaryNode.type === "line" || primaryNode.type === "arrow");
 
     useEffect(() => {
@@ -75,17 +76,43 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
     if (isLineLike) return null;
 
     return (
-        <Transformer
-            ref={transformerRef}
-            keepRatio={false}
-            rotationSnaps={ROTATION_SNAPS}
-            rotationSnapTolerance={ROTATION_SNAP_TOLERANCE}
-            ignoreStroke={true}
-            flipEnabled={false}
-            anchorDragBoundFunc={anchorBound}
-            onTransformEnd={transformEndHandler}
-            onTransform={transformHandler}
-        />
+        <>
+            <Transformer
+                ref={transformerRef}
+                keepRatio={false}
+                rotationSnaps={ROTATION_SNAPS}
+                rotationSnapTolerance={ROTATION_SNAP_TOLERANCE}
+                ignoreStroke={true}
+                flipEnabled={false}
+                borderDash={selectedIds.length > 1 ? [4, 4] : undefined}
+                anchorDragBoundFunc={anchorBound}
+                onTransformEnd={transformEndHandler}
+                onTransform={transformHandler}
+            />
+            {selectedIds.length > 1 &&
+                selectedIds.map((id) => {
+                    const node = nodesRef.current.get(id);
+                    if (!node) return null;
+                    const bb = node.getClientRect({
+                        relativeTo: canvasRef.current,
+                        skipStroke: true,
+                        skipShadow: true,
+                    });
+                    return (
+                        <Rect
+                            key={id}
+                            x={bb.x}
+                            y={bb.y}
+                            width={bb.width}
+                            height={bb.height}
+                            stroke="rgb(0, 100, 255)"
+                            strokeWidth={2}
+                            strokeScaleEnabled={false}
+                            listening={false}
+                        />
+                    );
+                })}
+        </>
     );
 };
 export default memo(HMITransformer);
