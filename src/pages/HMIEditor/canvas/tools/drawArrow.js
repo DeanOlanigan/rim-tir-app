@@ -7,7 +7,7 @@ import { snapPointToGrid } from "./utils";
 import { ACTIONS } from "../../constants";
 
 export function createDrawArrowTool({
-    getLayer,
+    getOverviewLayer,
     getGrid,
     addNode,
     setSelectedIds,
@@ -48,7 +48,7 @@ export function createDrawArrowTool({
                 listening: false,
                 shadowForStrokeEnabled: false,
             });
-            layer = getLayer();
+            layer = getOverviewLayer();
             layer.add(draft);
             layer.batchDraw();
         },

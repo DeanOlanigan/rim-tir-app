@@ -7,7 +7,7 @@ export function createSelectTool({
     getSelectionBox,
     getSelectedIds,
     setSelectedIds,
-    getLayer,
+    getOverviewLayer,
 }) {
     let start = { x: 0, y: 0 };
 
@@ -45,7 +45,7 @@ export function createSelectTool({
                 start = wp;
                 showBox({ x: wp.x, y: wp.y, width: 0, height: 0 });
             }
-            getLayer().batchDraw();
+            getOverviewLayer().batchDraw();
         },
 
         onPointerMove(e) {
@@ -59,7 +59,7 @@ export function createSelectTool({
                 width: Math.abs(wp.x - start.x),
                 height: Math.abs(wp.y - start.y),
             });
-            getLayer().batchDraw();
+            getOverviewLayer().batchDraw();
         },
 
         onPointerUp(e) {
@@ -67,7 +67,7 @@ export function createSelectTool({
             const box = getSelectionBox();
             if (!stage || !box || !box.visible()) return;
             hideBox();
-            getLayer().batchDraw();
+            getOverviewLayer().batchDraw();
             const nodes = stage.find(".node");
             const selection =
                 box.getClientRect({

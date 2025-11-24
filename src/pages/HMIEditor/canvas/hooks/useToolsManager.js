@@ -14,14 +14,16 @@ export function useToolsManager() {
     const canvasRef = useRef(null);
     const selectionBoxRef = useRef(null);
     const transformerRef = useRef(null);
-    const layerRef = useRef(null);
+    const nodesLayerRef = useRef(null);
+    const overviewLayerRef = useRef(null);
 
     if (!managerRef.current) {
         const api = getApi({
             canvasRef,
             selectionBoxRef,
             transformerRef,
-            layerRef,
+            overviewLayerRef,
+            nodesLayerRef,
         });
         const toolsMap = {
             [ACTIONS.select]: createSelectTool({ ...api }),
@@ -50,6 +52,7 @@ export function useToolsManager() {
         canvasRef,
         selectionBoxRef,
         transformerRef,
-        layerRef,
+        nodesLayerRef,
+        overviewLayerRef,
     };
 }

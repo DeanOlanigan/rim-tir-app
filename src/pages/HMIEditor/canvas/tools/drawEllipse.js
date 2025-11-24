@@ -7,7 +7,7 @@ import { snapPointToGrid } from "./utils";
 import { ACTIONS } from "../../constants";
 
 export function createDrawEllipseTool({
-    getLayer,
+    getOverviewLayer,
     getGrid,
     addNode,
     setSelectedIds,
@@ -48,7 +48,7 @@ export function createDrawEllipseTool({
                 shadowForStrokeEnabled: false,
                 fillAfterStrokeEnabled: true,
             });
-            layer = layer = getLayer();
+            layer = layer = getOverviewLayer();
             layer.add(draft);
             layer.batchDraw();
         },

@@ -5,7 +5,7 @@ import { Circle } from "react-konva";
 import { toAbs, toWorld } from "./utils/coords";
 import { snap } from "./utils/geom";
 
-export const LineTransformer = memo(({ nodesRef, canvasRef, layerRef }) => {
+export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
     const scale = useActionsStore((state) => state.scale);
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const primaryNode = useNodeStore((state) => state.nodes[selectedIds[0]]);
@@ -44,7 +44,7 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, layerRef }) => {
     const onNodeMove = useCallback(
         (e) => {
             const node = e.target;
-            const circles = layerRef.current.find(".line-drag-handle");
+            const circles = overviewRef.current.find(".line-drag-handle");
             const dx = node.x() - startPos.current.x;
             const dy = node.y() - startPos.current.y;
             circles.forEach((c) =>
@@ -52,7 +52,7 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, layerRef }) => {
             );
             startPos.current = node.position();
         },
-        [layerRef]
+        [overviewRef]
     );
 
     useEffect(() => {

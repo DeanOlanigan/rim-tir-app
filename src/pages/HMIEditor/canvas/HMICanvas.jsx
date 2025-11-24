@@ -12,7 +12,8 @@ import { LineTransformer } from "./LineTransformer";
 export const HMICanvas = ({
     manager,
     canvasRef,
-    layerRef,
+    overviewLayerRef,
+    nodesLayerRef,
     selectionBoxRef,
     transformerRef,
     width,
@@ -39,10 +40,10 @@ export const HMICanvas = ({
             <Layer name="staticLayer">
                 <Grid />
             </Layer>
-            <Layer name="nodesLayer">
+            <Layer ref={nodesLayerRef} name="nodesLayer">
                 <Nodes nodesRef={nodesRef} />
             </Layer>
-            <Layer ref={layerRef} name="overlayLayer">
+            <Layer ref={overviewLayerRef} name="overlayLayer">
                 <Rect
                     ref={selectionBoxRef}
                     visible={false}
@@ -60,7 +61,7 @@ export const HMICanvas = ({
                 <LineTransformer
                     nodesRef={nodesRef}
                     canvasRef={canvasRef}
-                    layerRef={layerRef}
+                    overviewRef={overviewLayerRef}
                 />
             </Layer>
         </Stage>

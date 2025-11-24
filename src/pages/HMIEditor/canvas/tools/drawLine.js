@@ -7,7 +7,7 @@ import { ACTIONS } from "../../constants";
 import { toWorld } from "../utils/coords";
 
 export function createDrawLineTool({
-    getLayer,
+    getOverviewLayer,
     getGrid,
     addNode,
     setSelectedIds,
@@ -45,7 +45,7 @@ export function createDrawLineTool({
                 listening: false,
                 shadowForStrokeEnabled: false,
             });
-            layer = getLayer();
+            layer = getOverviewLayer();
             layer.add(draft);
             layer.batchDraw();
         },
