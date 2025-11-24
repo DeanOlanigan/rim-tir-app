@@ -5,6 +5,7 @@ import { JournalSettings } from "./Settings/JournalSettings";
 import { Updates } from "./Settings/Updates";
 import { UsersView } from "./Settings/Users/UsersVeiw";
 import { Lecesne } from "./Lecense";
+import { SendButton } from "./SendButton";
 
 export const SettingView = () => {
     return (
@@ -17,9 +18,10 @@ export const SettingView = () => {
             }}
         >
             <ServerSettings />
-            <UsersView />
             <LogSettings />
             <JournalSettings />
+            <SendButton />
+            <UsersView />
             <Updates />
             <Lecesne />
         </Stack>
