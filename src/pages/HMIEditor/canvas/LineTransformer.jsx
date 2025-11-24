@@ -25,14 +25,14 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, layerRef }) => {
 
     const onDragMove = (e, pointIndex) => {
         const circle = e.target;
-        const line = nodesRef.current.get(selectedIds[0]);
+        const line = nodesRef.current.get(primaryNode.id);
         const circlePos = circle.position();
         const oldPoints = line.points();
         if (!oldPoints || oldPoints.length < 4) return;
         let newPoints = oldPoints.slice();
         newPoints[pointIndex * 2] = circlePos.x;
         newPoints[pointIndex * 2 + 1] = circlePos.y;
-        nodesRef.current.get(selectedIds[0])?.points(newPoints);
+        nodesRef.current.get(primaryNode.id)?.points(newPoints);
         canvasRef.current.batchDraw();
     };
 
@@ -65,8 +65,7 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, layerRef }) => {
         node.on("dragmove.ltr", onNodeMove);
         node.on("dragstart.ltr", onNodeMoveStart);
         return () => {
-            node.off("dragmove.ltr", onNodeMove);
-            node.off("dragstart.ltr", onNodeMoveStart);
+            node.off(".ltr");
         };
     }, [primaryNode, nodesRef, onNodeMove, onNodeMoveStart]);
 
@@ -76,7 +75,8 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, layerRef }) => {
     )
         return null;
 
-    const points = nodesRef.current.get(primaryNode.id)?.points();
+    const line = nodesRef.current.get(primaryNode.id);
+    const points = line.points();
     if (points.length < 4) return null;
 
     const res = [];
