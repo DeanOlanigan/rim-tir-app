@@ -15,8 +15,6 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
     const isLineLike =
         primaryNode &&
         (primaryNode.type === "line" || primaryNode.type === "arrow");
-    const resizeEnabled = !isLineLike;
-    const enabledAnchors = resizeEnabled ? undefined : [];
 
     useEffect(() => {
         const transformer = transformerRef.current;
@@ -65,11 +63,16 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
 
     const transformHandler = (e) => {
         const node = e.target;
-        node.width(node.width() * node.scaleX());
-        node.height(node.height() * node.scaleY());
-        node.scaleX(1);
-        node.scaleY(1);
+        const type = node.attrs.type;
+        const shape = getShape(type);
+        const { gridSize, snapToGrid } = useActionsStore.getState();
+        const ctx = { gridSize, snapToGrid };
+        if (shape && typeof shape.onTransform === "function") {
+            shape.onTransform(node, ctx);
+        }
     };
+
+    if (isLineLike) return null;
 
     return (
         <Transformer
@@ -79,13 +82,10 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
             rotationSnapTolerance={ROTATION_SNAP_TOLERANCE}
             ignoreStroke={true}
             flipEnabled={false}
-            resizeEnabled={resizeEnabled}
-            enabledAnchors={enabledAnchors}
-            anchorDragBoundFunc={resizeEnabled ? anchorBound : undefined}
-            onTransformEnd={resizeEnabled ? transformEndHandler : undefined}
-            onTransform={resizeEnabled ? transformHandler : undefined}
+            anchorDragBoundFunc={anchorBound}
+            onTransformEnd={transformEndHandler}
+            onTransform={transformHandler}
         />
     );
 };
-
 export default memo(HMITransformer);

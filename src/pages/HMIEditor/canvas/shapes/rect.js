@@ -18,6 +18,15 @@ registerShape("rect", {
         return patch;
     },
 
+    onTransform(konvaNode) {
+        const width = konvaNode.width() * konvaNode.scaleX();
+        const height = konvaNode.height() * konvaNode.scaleY();
+        konvaNode.scaleX(1);
+        konvaNode.scaleY(1);
+        konvaNode.width(width);
+        konvaNode.height(height);
+    },
+
     toModelFromKonva(konvaNode) {
         const a = konvaNode.attrs;
         return {

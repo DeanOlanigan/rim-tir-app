@@ -16,6 +16,15 @@ registerShape("ellipse", {
         return patch;
     },
 
+    onTransform(konvaNode) {
+        const radiusX = konvaNode.radiusX() * konvaNode.scaleX();
+        const radiusY = konvaNode.radiusY() * konvaNode.scaleY();
+        konvaNode.scaleX(1);
+        konvaNode.scaleY(1);
+        konvaNode.radiusX(radiusX);
+        konvaNode.radiusY(radiusY);
+    },
+
     toModelFromKonva(konvaNode) {
         const a = konvaNode.attrs;
         return {
