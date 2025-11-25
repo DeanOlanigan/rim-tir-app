@@ -6,7 +6,13 @@ import {
     Listbox,
 } from "@chakra-ui/react";
 import { useNodeStore } from "./store/node-store";
-import { LuCircle, LuMoveUpRight, LuSlash, LuSquare } from "react-icons/lu";
+import {
+    LuCircle,
+    LuGroup,
+    LuMoveUpRight,
+    LuSlash,
+    LuSquare,
+} from "react-icons/lu";
 import { useActionsStore } from "./store/actions-store";
 
 const TYPES_ICONS = {
@@ -14,6 +20,7 @@ const TYPES_ICONS = {
     ellipse: LuCircle,
     line: LuSlash,
     arrow: LuMoveUpRight,
+    group: LuGroup,
 };
 
 export const NodesTree = () => {
@@ -23,9 +30,9 @@ export const NodesTree = () => {
     if (!showNodesTree) return null;
 
     const nodesList = createListCollection({
-        items: Object.values(nodes).map((node) => ({
+        items: nodes.map((node) => ({
             value: node.id,
-            label: node.id,
+            label: node.name,
             icon: TYPES_ICONS[node.type],
         })),
     });

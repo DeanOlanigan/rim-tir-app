@@ -8,8 +8,10 @@ export function createSelectTool({
     getSelectedIds,
     setSelectedIds,
     getOverviewLayer,
+    getNodesLayer,
 }) {
     let start = { x: 0, y: 0 };
+    const minSize = 4;
 
     const showBox = (attrs) =>
         getSelectionBox()?.setAttrs({ visible: true, ...attrs });
@@ -26,7 +28,10 @@ export function createSelectTool({
             const stage = e.currentTarget;
             if (!stage) return;
             if (e.target.hasName("node")) {
-                const clickedId = e.target.id();
+                const parentGroups = e.target.findAncestors("Group");
+                const clickedId =
+                    parentGroups[parentGroups.length - 1]?.id() ||
+                    e.target.id();
                 const metaPressed =
                     e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
                 const isSelected = getSelectedIds().includes(clickedId);
@@ -68,7 +73,8 @@ export function createSelectTool({
             if (!stage || !box || !box.visible()) return;
             hideBox();
             getOverviewLayer().batchDraw();
-            const nodes = stage.find(".node");
+            if (box.attrs.width < minSize || box.attrs.height < minSize) return;
+            const nodes = getNodesLayer().getChildren();
             const selection =
                 box.getClientRect({
                     skipShadow: true,

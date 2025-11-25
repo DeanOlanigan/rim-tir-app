@@ -1,103 +1,89 @@
-import { Arrow, Ellipse, Line, Rect } from "react-konva";
-import { toAbs, toWorld } from "./utils/coords";
+import { Arrow, Ellipse, Group, Line, Rect } from "react-konva";
 import { useActionsStore } from "./../store/actions-store";
 import { useNodeStore } from "./../store/node-store";
-import { snap } from "./utils/geom";
 import { ACTIONS } from "../constants";
-import { memo, useCallback, useMemo } from "react";
+import { dragBound } from "./utils/dragBound";
 
-export const Nodes = ({ nodesRef }) => {
-    const currentAction = useActionsStore((state) => state.currentAction);
-    const gridSize = useActionsStore((state) => state.gridSize);
-    const snapToGrid = useActionsStore((state) => state.snap);
-    const nodes = useNodeStore((state) => state.nodes);
+const common = {
+    name: "node",
+    dragBoundFunc(pos) {
+        console.log({ this: this });
+        const { gridSize, snapToGrid } = useActionsStore.getState();
+        const stage = this.getStage();
+        const absRect = this.getClientRect({
+            skipShadow: true,
+            skipStroke: true,
+        });
+        const curAbsPos = this.getAbsolutePosition();
 
-    const dragBoundFunc = useCallback(
-        function (pos) {
-            const stage = this.getStage();
-            const step = snapToGrid ? gridSize : 1;
-            const absRect = this.getClientRect({
-                skipShadow: true,
-                skipStroke: true,
-            });
-            const curAbsPos = this.getAbsolutePosition();
+        const absTlCurrent = {
+            x: absRect.x,
+            y: absRect.y,
+        };
+        const deltaPos = {
+            x: pos.x - curAbsPos.x,
+            y: pos.y - curAbsPos.y,
+        };
+        const absTlProposed = {
+            x: absTlCurrent.x + deltaPos.x,
+            y: absTlCurrent.y + deltaPos.y,
+        };
 
-            const absTlCurrent = {
-                x: absRect.x,
-                y: absRect.y,
-            };
-            const deltaPos = {
-                x: pos.x - curAbsPos.x,
-                y: pos.y - curAbsPos.y,
-            };
-            const absTlProposed = {
-                x: absTlCurrent.x + deltaPos.x,
-                y: absTlCurrent.y + deltaPos.y,
-            };
+        const abs = dragBound(absTlProposed, stage, gridSize, snapToGrid);
 
-            const local = toWorld(stage, absTlProposed);
-            const res = {
-                x: snap(local.x, step, 0),
-                y: snap(local.y, step, 0),
-            };
-            const abs = toAbs(stage, res);
+        const delta = {
+            x: abs.x - absTlProposed.x,
+            y: abs.y - absTlProposed.y,
+        };
 
-            const delta = {
-                x: abs.x - absTlProposed.x,
-                y: abs.y - absTlProposed.y,
-            };
-
-            return {
-                x: pos.x + delta.x,
-                y: pos.y + delta.y,
-            };
-        },
-        [gridSize, snapToGrid]
-    );
-
-    const onDragEnd = useCallback((e) => {
+        return {
+            x: pos.x + delta.x,
+            y: pos.y + delta.y,
+        };
+    },
+    onDragEnd(e) {
         const nodeId = e.target.attrs?.id;
         if (!nodeId) return;
         useNodeStore.getState().updateNode(nodeId, {
             x: e.target.x(),
             y: e.target.y(),
         });
-    }, []);
-
-    const common = useMemo(
-        () => ({
-            name: "node",
-            draggable: currentAction === ACTIONS.select,
-            dragBoundFunc,
-            onDragEnd,
-        }),
-        [currentAction, dragBoundFunc, onDragEnd]
-    );
-
-    return Object.keys(nodes).map((id) => {
-        return (
-            <NodeInstance
-                key={id}
-                id={id}
-                common={common}
-                nodesRef={nodesRef}
-            />
-        );
-    });
+    },
 };
 
-const NodeInstance = memo(({ id, common, nodesRef }) => {
-    const node = useNodeStore((state) => state.nodes[id]);
-    const registerRef = useCallback(
-        (el) => {
-            if (el) {
-                nodesRef.current.set(id, el);
-            } else {
-                nodesRef.current.delete(id);
-            }
-        },
-        [id, nodesRef]
+export const Nodes = ({ nodesRef }) => {
+    const currentAction = useActionsStore((state) => state.currentAction);
+    const nodes = useNodeStore((state) => state.nodes);
+
+    return (
+        <NodeWrapper
+            nodes={nodes}
+            nodesRef={nodesRef}
+            draggable={currentAction === ACTIONS.select}
+        />
     );
+};
+
+const NodeWrapper = ({ nodes, draggable, nodesRef }) => {
+    return nodes.map((node) => (
+        <NodeInstance
+            key={node.id}
+            id={node.id}
+            node={node}
+            draggable={draggable}
+            nodesRef={nodesRef}
+        />
+    ));
+};
+
+const NodeInstance = ({ id, node, draggable, nodesRef }) => {
+    const registerRef = (el) => {
+        if (el) {
+            nodesRef.current.set(id, el);
+        } else {
+            nodesRef.current.delete(id);
+        }
+    };
 
     switch (node.type) {
         case "rect":
@@ -110,17 +96,48 @@ const NodeInstance = memo(({ id, common, nodesRef }) => {
                     key={node.id}
                     {...node}
                     {...common}
+                    draggable={draggable}
                     ref={registerRef}
                 />
             );
         case "line":
             return (
-                <Line key={node.id} {...node} {...common} ref={registerRef} />
+                <Line
+                    key={node.id}
+                    {...node}
+                    {...common}
+                    draggable={draggable}
+                    ref={registerRef}
+                    hitStrokeWidth={node.strokeWidth + 3 || 3}
+                />
             );
         case "arrow":
             return (
-                <Arrow key={node.id} {...node} {...common} ref={registerRef} />
+                <Arrow
+                    key={node.id}
+                    {...node}
+                    {...common}
+                    draggable={draggable}
+                    ref={registerRef}
+                />
+            );
+        case "group":
+            return (
+                <Group
+                    key={node.id}
+                    {...node}
+                    {...common}
+                    x={0}
+                    y={0}
+                    draggable={draggable}
+                    ref={registerRef}
+                >
+                    <NodeWrapper
+                        nodes={node.children}
+                        nodesRef={nodesRef}
+                        draggable={false}
+                    />
+                </Group>
             );
     }
-});
-NodeInstance.displayName = "NodeInstance";
+};

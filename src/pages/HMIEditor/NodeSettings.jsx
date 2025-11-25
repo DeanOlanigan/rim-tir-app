@@ -4,10 +4,8 @@ import {
     Group,
     HStack,
     IconButton,
-    Presence,
     Slider,
 } from "@chakra-ui/react";
-import { useActionsStore } from "./store/actions-store";
 import { useShapeStore } from "./store/shape-store";
 import { useNodeStore } from "./store/node-store";
 import { ColorComp } from "./ColorComp";
@@ -17,105 +15,89 @@ import {
     LuMoveDown,
     LuMoveUp,
 } from "react-icons/lu";
-import { ACTIONS } from "./constants";
 
-const NODES_WITH_SETTINGS = [
-    ACTIONS.square,
-    ACTIONS.ellipse,
-    ACTIONS.text,
-    ACTIONS.arrow,
-    ACTIONS.line,
-];
+const SHAPES_WITH_SETTINGS = new Set(["rect", "ellipse", "line", "arrow"]);
 
 export const NodeSettings = ({ canvasRef }) => {
-    const currentAction = useActionsStore((state) => state.currentAction);
     const selectedIds = useNodeStore((state) => state.selectedIds);
-    const fillColor = useShapeStore((state) => state.fillColor);
-    const strokeColor = useShapeStore((state) => state.strokeColor);
-    const { setFillColor, setStrokeColor } = useShapeStore.getState();
+    const nodes = useNodeStore((state) => state.nodes);
 
-    const viewSettings =
-        NODES_WITH_SETTINGS.includes(currentAction) || selectedIds.length === 1;
+    if (
+        selectedIds.length !== 1 ||
+        !SHAPES_WITH_SETTINGS.has(
+            nodes.find((n) => n.id === selectedIds[0]).type
+        )
+    )
+        return null;
 
     const isRectangleSelected =
-        selectedIds.length === 1 &&
         canvasRef.current.findOne(`#${selectedIds[0]}`).attrs.type === "rect";
+    const showCornerRadius = isRectangleSelected;
 
-    const showCornerRadius =
-        currentAction === ACTIONS.square ||
-        (isRectangleSelected && selectedIds.length === 1);
-
-    const defaultFillColor =
-        selectedIds.length === 1
-            ? canvasRef.current.findOne(`#${selectedIds[0]}`).fill()
-            : fillColor;
+    const defaultFillColor = canvasRef.current
+        .findOne(`#${selectedIds[0]}`)
+        .fill?.();
 
     const fillColorHandler = (color) => {
-        if (selectedIds.length === 1) {
-            canvasRef.current.findOne(`#${selectedIds[0]}`).fill(color);
-        } else {
-            setFillColor(color);
-        }
+        canvasRef.current.findOne(`#${selectedIds[0]}`).fill(color);
     };
 
-    const defaultStrokeColor =
-        selectedIds.length === 1
-            ? canvasRef.current.findOne(`#${selectedIds[0]}`).stroke()
-            : strokeColor;
+    const defaultStrokeColor = canvasRef.current
+        .findOne(`#${selectedIds[0]}`)
+        .stroke?.();
 
     const strokeColorHandler = (color) => {
-        if (selectedIds.length === 1) {
-            canvasRef.current.findOne(`#${selectedIds[0]}`).stroke(color);
-        } else {
-            setStrokeColor(color);
-        }
+        canvasRef.current.findOne(`#${selectedIds[0]}`).stroke(color);
     };
 
     return (
-        <Presence
-            present={viewSettings}
-            animationName={{ _open: "fade-in", _closed: "fade-out" }}
-            animationDuration="moderate"
+        <Box
+            bg={"bg"}
+            w={"350px"}
+            h={"100%"}
+            p={"4"}
+            borderRadius={"md"}
+            shadow={"md"}
         >
-            <Box
-                bg={"bg"}
-                w={"350px"}
-                h={"100%"}
-                p={"4"}
-                borderRadius={"md"}
-                shadow={"md"}
-            >
-                <Fieldset.Root>
-                    <Fieldset.Legend>NodeSettings</Fieldset.Legend>
-                    <Fieldset.Content>
-                        {/* <ColorComp
-                            label={"Fill color"}
-                            outerColor={defaultFillColor}
-                            setOuterColor={fillColorHandler}
-                        /> */}
-                        <ColorComp
-                            label={"Stroke color"}
-                            outerColor={defaultStrokeColor}
-                            setOuterColor={strokeColorHandler}
-                        />
-                        <StrokeWidth
+            <Fieldset.Root>
+                <Fieldset.Legend>NodeSettings</Fieldset.Legend>
+                <Fieldset.Content>
+                    <BaseSettings />
+                    <ColorComp
+                        label={"Fill color"}
+                        outerColor={defaultFillColor}
+                        setOuterColor={fillColorHandler}
+                    />
+                    <ColorComp
+                        label={"Stroke color"}
+                        outerColor={defaultStrokeColor}
+                        setOuterColor={strokeColorHandler}
+                    />
+                    <StrokeWidth
+                        canvasRef={canvasRef}
+                        selectedIds={selectedIds}
+                    />
+                    {showCornerRadius && (
+                        <CornerRadius
                             canvasRef={canvasRef}
                             selectedIds={selectedIds}
                         />
-                        {showCornerRadius && (
-                            <CornerRadius
-                                canvasRef={canvasRef}
-                                selectedIds={selectedIds}
-                            />
-                        )}
-                        <Layers
-                            canvasRef={canvasRef}
-                            selectedIds={selectedIds}
-                        />
-                    </Fieldset.Content>
-                </Fieldset.Root>
-            </Box>
-        </Presence>
+                    )}
+                    <Layers canvasRef={canvasRef} selectedIds={selectedIds} />
+                </Fieldset.Content>
+            </Fieldset.Root>
+        </Box>
+    );
+};
+
+const BaseSettings = () => {
+    return (
+        <HStack>
+            <Fieldset.Root>
+                <Fieldset.Legend>Position</Fieldset.Legend>
+                <Fieldset.Content></Fieldset.Content>
+            </Fieldset.Root>
+        </HStack>
     );
 };
 
