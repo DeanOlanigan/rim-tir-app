@@ -29,7 +29,7 @@ function HMIEditor() {
                 <DebugInfo />
             </Box>
             <Box position={"absolute"} top={2} right={2}>
-                <NodeSettings canvasRef={tools.canvasRef} />
+                <NodeSettings canvasRef={tools.nodesLayerRef} />
             </Box>
             <HStack position={"absolute"} left={2} bottom={2}>
                 <ZoomBar

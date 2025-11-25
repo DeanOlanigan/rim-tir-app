@@ -2,7 +2,7 @@ import { ColorPicker, parseColor } from "@chakra-ui/react";
 import { useState } from "react";
 
 export const ColorComp = ({ outerColor, setOuterColor, label }) => {
-    const [color, setColor] = useState(parseColor(outerColor));
+    const [color, setColor] = useState(parseColor(outerColor ?? "#000000"));
 
     return (
         <ColorPicker.Root
