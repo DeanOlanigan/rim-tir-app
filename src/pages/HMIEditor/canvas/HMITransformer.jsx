@@ -1,16 +1,15 @@
 import { Rect, Transformer } from "react-konva";
 import { ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS } from "../constants";
-import { toAbs, toWorld } from "./utils/coords";
-import { snap } from "./utils/geom";
 import { memo, useCallback, useEffect } from "react";
 import { useNodeStore } from "../store/node-store";
 import { getShape } from "./shapes";
 import { useActionsStore } from "../store/actions-store";
+import { dragBound } from "./utils/dragBound";
 
 const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
-    console.log("Render HMITRansformer", nodesRef);
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const primaryNode = useNodeStore((state) => state.nodes[selectedIds[0]]);
+    console.log("Render HMITRansformer", nodesRef, selectedIds);
 
     const isLineLike =
         primaryNode &&
@@ -35,14 +34,7 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         function (_oldPos, newPos) {
             const { gridSize, snapToGrid } = useActionsStore.getState();
             const stage = canvasRef.current;
-            const step = snapToGrid ? gridSize : 1;
-            const w = toWorld(stage, newPos);
-            const nx = snap(w.x, step, 0);
-            const ny = snap(w.y, step, 0);
-            //const cx = Math.min(Math.max(nx, 0), workW);
-            //const cy = Math.min(Math.max(ny, 0), workH);
-            const abs = toAbs(stage, { x: nx, y: ny });
-            return abs;
+            return dragBound(newPos, stage, gridSize, snapToGrid);
         },
         [canvasRef]
     );

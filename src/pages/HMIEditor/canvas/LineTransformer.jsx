@@ -2,8 +2,7 @@ import { memo, useCallback, useEffect, useRef } from "react";
 import { useActionsStore } from "../store/actions-store";
 import { useNodeStore } from "../store/node-store";
 import { Circle } from "react-konva";
-import { toAbs, toWorld } from "./utils/coords";
-import { snap } from "./utils/geom";
+import { dragBound } from "./utils/dragBound";
 
 export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
     const scale = useActionsStore((state) => state.scale);
@@ -14,13 +13,7 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
     const dragBoundFunc = useCallback(function (pos) {
         const { gridSize, snapToGrid } = useActionsStore.getState();
         const stage = this.getStage();
-        const step = snapToGrid ? gridSize : 1;
-        const local = toWorld(stage, pos);
-        const res = {
-            x: snap(local.x, step, 0),
-            y: snap(local.y, step, 0),
-        };
-        return toAbs(stage, res);
+        return dragBound(pos, stage, gridSize, snapToGrid);
     }, []);
 
     const onDragMove = (e, pointIndex) => {
