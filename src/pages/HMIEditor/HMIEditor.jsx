@@ -5,11 +5,11 @@ import { ToolBar } from "./ToolBar";
 import { ZoomBar } from "./ZoomBar";
 import { HMICanvas } from "./canvas/HMICanvas";
 import { UndoRedoButtons } from "./UndoRedoButtons";
-import { NodeSettings } from "./NodeSettings";
 import { EditorSettings } from "./EditorSettings";
 import { DebugInfo } from "./DebugInfo";
 import { useToolsManager } from "./canvas/hooks/useToolsManager";
 import { NodesTree } from "./NodesTree";
+import { NodeSettings } from "./NodeSettings/NodeSettings";
 
 function HMIEditor() {
     const { ref, width, height } = useThrottledResizeObserver(100);
@@ -28,7 +28,7 @@ function HMIEditor() {
             <Box position={"absolute"} bottom={12} left={2}>
                 <DebugInfo />
             </Box>
-            <Box position={"absolute"} top={2} right={2}>
+            <Box position={"absolute"} h={"100%"} top={0} right={0} p={2}>
                 <NodeSettings canvasRef={tools.nodesLayerRef} />
             </Box>
             <HStack position={"absolute"} left={2} bottom={2}>
