@@ -19,7 +19,7 @@ export const Lecesne = () => {
             <Card.Root variant={"elevated"}>
                 <Card.Header>
                     <Text fontSize={"lg"} fontWeight="medium">
-                        Зарегистрируйте ПО
+                        UUID и активация ПО
                     </Text>
                 </Card.Header>
                 <Card.Body>
