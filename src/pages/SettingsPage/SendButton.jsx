@@ -1,33 +1,43 @@
 import { Button } from "@chakra-ui/react";
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiv2 } from "@/api/baseUrl";
 import { useSettingStore } from "./Settings/SettingsStore/settings-store";
-import { delay } from "msw";
 
 export const SendButton = () => {
-    const [loading, setLoading] = useState(false);
-    const { Journals, Logs, WebServer } = useSettingStore();
+    const client = useQueryClient();
+    const resetChanged = useSettingStore((s) => s.resetChanged);
+
+    const settingsMutation = useMutation({
+        mutationKey: ["settingsSender"],
+        mutationFn: async () => {
+            const newSettings = await client.getQueryData(["settings"]);
+            await apiv2
+                .put("/setsettings", newSettings, {
+                    headers: { "Content-Type": "application/json" },
+                    title: "New Settings",
+                })
+                .then((res) => console.log(res))
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
+        onSuccess: () => {
+            console.log("COOL");
+            resetChanged();
+        },
+    });
+
+    const checkChanged = useSettingStore((s) => s.checkChanged);
+
+    const disabled = !checkChanged();
+
     return (
         <Button
-            loading={loading}
-            onClick={() => SendSettings(Journals, Logs, WebServer, setLoading)}
+            disabled={disabled}
+            loading={settingsMutation.isPending}
+            onClick={() => settingsMutation.mutate()}
         >
             Применить
         </Button>
     );
-};
-
-const SendSettings = async (Journals, Logs, WebServer, setLoading) => {
-    setLoading(true);
-    const settings = { Journals, Logs, WebServer };
-
-    await delay(500);
-    fetch("https://jsonplaceholder.typicode.com/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settings),
-    })
-        .then((res) => res.json())
-        .then((data) => console.log(data))
-        .catch((err) => console.log(err));
-    setLoading(false);
 };

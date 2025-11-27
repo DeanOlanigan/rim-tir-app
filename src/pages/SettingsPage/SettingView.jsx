@@ -1,11 +1,8 @@
 import { Stack } from "@chakra-ui/react";
-import { ServerSettings } from "./Settings/WebServSettings";
-import { LogSettings } from "./Settings/LogSettings";
-import { JournalSettings } from "./Settings/JournalSettings";
 import { Updates } from "./Settings/Updates";
 import { UsersView } from "./Settings/Users/UsersVeiw";
 import { Lecesne } from "./Lecense";
-import { SendButton } from "./SendButton";
+import { Settings } from "./Settings";
 
 export const SettingView = () => {
     return (
@@ -17,10 +14,7 @@ export const SettingView = () => {
                 _open: "scale-fade-in",
             }}
         >
-            <ServerSettings />
-            <LogSettings />
-            <JournalSettings />
-            <SendButton />
+            <Settings />
             <UsersView />
             <Updates />
             <Lecesne />

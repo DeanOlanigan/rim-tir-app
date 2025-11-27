@@ -7,11 +7,14 @@ import {
     Switch,
     Text,
 } from "@chakra-ui/react";
-
+import { useSettingsEditor } from "./hooks/useSettingsEditor";
+import { useCheck } from "./hooks/useCheck";
 import { useSettingStore } from "./SettingsStore/settings-store";
 
-export const LogSettings = () => {
-    const { Logs, setSettings } = useSettingStore();
+export const LogSettings = ({ settings }) => {
+    const EditSettings = useSettingsEditor();
+    const isLogsChanged = useSettingStore((s) => s.isLogsChanged);
+    const CheckChange = useCheck();
     return (
         <>
             <Heading paddingBottom={"2"}>Лог файлы</Heading>
@@ -24,20 +27,21 @@ export const LogSettings = () => {
                         <Fieldset.Content>
                             <Field.Root
                                 invalid={
-                                    parseFloat(Logs.size) < 0.5 ||
-                                    parseFloat(Logs.size) < 0 ||
-                                    Logs.size.trim() === "MB" ||
-                                    Logs.size.trim() === ""
+                                    parseFloat(settings?.size) < 0.5 ||
+                                    parseFloat(settings?.size) > 5 ||
+                                    (settings?.size || "").trim() === "MB" ||
+                                    (settings?.size || "").trim() === ""
                                 }
                             >
                                 <Field.Label>Размер</Field.Label>
                                 <NumberInput.Root
                                     w="100%"
                                     size={"sm"}
-                                    value={Logs.size}
-                                    onValueChange={(e) =>
-                                        setSettings("Logs", "size", e.value)
-                                    }
+                                    value={settings?.size || ""}
+                                    onValueChange={(e) => {
+                                        CheckChange("isLogsChanged");
+                                        EditSettings(e.value, "size", "Logs");
+                                    }}
                                     min={"0.5"}
                                     max={"5"}
                                     step={"0.5"}
@@ -58,9 +62,9 @@ export const LogSettings = () => {
                             </Field.Root>
                             <Field.Root
                                 invalid={
-                                    Number(Logs.files) < 1 ||
-                                    Number(Logs.files) > 10 ||
-                                    Logs.files.trim() === ""
+                                    Number(settings?.files) < 1 ||
+                                    Number(settings?.files) > 10 ||
+                                    (settings?.size || "").trim === ""
                                 }
                             >
                                 <Field.Label>Количество файлов</Field.Label>
@@ -68,11 +72,12 @@ export const LogSettings = () => {
                                     w="100%"
                                     min="1"
                                     max="10"
-                                    value={Logs.files}
+                                    value={settings?.files || ""}
                                     size="sm"
-                                    onValueChange={(e) =>
-                                        setSettings("Logs", "files", e.value)
-                                    }
+                                    onValueChange={(e) => {
+                                        CheckChange("isLogsChanged");
+                                        EditSettings(e.value, "files", "Logs");
+                                    }}
                                 >
                                     <NumberInput.Control />
                                     <NumberInput.Input />
@@ -84,10 +89,11 @@ export const LogSettings = () => {
                             </Field.Root>
                             <Switch.Root
                                 paddingTop="3"
-                                value={Logs.archive}
-                                onCheckedChange={(e) =>
-                                    setSettings("Logs", "archive", e.checked)
-                                }
+                                checked={settings?.archive || false}
+                                onCheckedChange={(e) => {
+                                    CheckChange("isLogsChanged");
+                                    EditSettings(e.value, "archive", "Logs");
+                                }}
                             >
                                 <Switch.HiddenInput />
                                 <Switch.Control />
@@ -96,6 +102,13 @@ export const LogSettings = () => {
                         </Fieldset.Content>
                     </Fieldset.Root>
                 </Card.Body>
+                {isLogsChanged && (
+                    <Card.Footer>
+                        <Text fontWeight={"medium"} color={"red"}>
+                            *Не забудьте применить изменения!
+                        </Text>
+                    </Card.Footer>
+                )}
             </Card.Root>
         </>
     );

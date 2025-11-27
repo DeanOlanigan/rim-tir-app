@@ -8,16 +8,19 @@ import {
     Switch,
     Text,
 } from "@chakra-ui/react";
+import { useSettingsEditor } from "./hooks/useSettingsEditor";
+import { useCheck } from "./hooks/useCheck";
 import { useSettingStore } from "./SettingsStore/settings-store";
 
-export const JournalSettings = () => {
-    const { Journals, setJournalSetting } = useSettingStore();
-    console.log(Journals);
+export const JournalSettings = ({ settings }) => {
+    const EditSettings = useSettingsEditor(true);
+    const isJournalsChanged = useSettingStore((s) => s.isJournalsChanged);
+    const CheckChange = useCheck();
     return (
         <>
             <Heading paddingBottom={"2"}>Журналы</Heading>
             <Stack direction={"row"}>
-                {Journals.map((journal) => (
+                {settings?.map((journal) => (
                     <Card.Root
                         variant={"elevated"}
                         w={"50%"}
@@ -48,13 +51,17 @@ export const JournalSettings = () => {
                                         </Field.Label>
                                         <NumberInput.Root
                                             value={journal.size}
-                                            onValueChange={(e) =>
-                                                setJournalSetting(
-                                                    journal.name,
+                                            onValueChange={(e) => {
+                                                CheckChange(
+                                                    "isJournalsChanged"
+                                                );
+                                                EditSettings(
+                                                    e.value,
                                                     "size",
-                                                    e.value
-                                                )
-                                            }
+                                                    "Journals",
+                                                    journal.name
+                                                );
+                                            }}
                                             w="100%"
                                             min="0.5"
                                             max="5"
@@ -87,13 +94,17 @@ export const JournalSettings = () => {
                                         </Field.Label>
                                         <NumberInput.Root
                                             value={journal.files}
-                                            onValueChange={(e) =>
-                                                setJournalSetting(
-                                                    journal.name,
+                                            onValueChange={(e) => {
+                                                CheckChange(
+                                                    "isJournalsChanged"
+                                                );
+                                                EditSettings(
+                                                    e.value,
                                                     "files",
-                                                    e.value
-                                                )
-                                            }
+                                                    "Journals",
+                                                    journal.name
+                                                );
+                                            }}
                                             w="100%"
                                             min="1"
                                             max="10"
@@ -110,14 +121,16 @@ export const JournalSettings = () => {
                                     </Field.Root>
                                     <Switch.Root
                                         paddingTop="3"
-                                        value={journal.archive}
-                                        onCheckedChange={(e) =>
-                                            setJournalSetting(
-                                                journal.name,
+                                        checked={journal.archive}
+                                        onCheckedChange={(e) => {
+                                            CheckChange("isJournalsChanged");
+                                            EditSettings(
+                                                e.checked,
                                                 "archive",
-                                                e.checked
-                                            )
-                                        }
+                                                "Journals",
+                                                journal.name
+                                            );
+                                        }}
                                     >
                                         <Switch.HiddenInput />
                                         <Switch.Control />
@@ -126,6 +139,13 @@ export const JournalSettings = () => {
                                 </Fieldset.Content>
                             </Fieldset.Root>
                         </Card.Body>
+                        {isJournalsChanged && (
+                            <Card.Footer>
+                                <Text fontWeight={"medium"} color={"red"}>
+                                    *Не забудьте применить изменения!
+                                </Text>
+                            </Card.Footer>
+                        )}
                     </Card.Root>
                 ))}
             </Stack>

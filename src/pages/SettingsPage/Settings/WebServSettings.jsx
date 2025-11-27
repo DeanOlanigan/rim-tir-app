@@ -11,10 +11,15 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { LuUpload } from "react-icons/lu";
+import { useSettingsEditor } from "./hooks/useSettingsEditor";
+import { useCheck } from "./hooks/useCheck";
 import { useSettingStore } from "./SettingsStore/settings-store";
 
-export const ServerSettings = () => {
-    const { WebServer, setSettings } = useSettingStore();
+export const ServerSettings = ({ settings }) => {
+    const EditSettings = useSettingsEditor();
+    const isServerChanged = useSettingStore((s) => s.isServerChanged);
+    console.log(settings.https, 123);
+    const CheckChange = useCheck();
     return (
         <>
             <Heading paddingBottom={"2"}>Web Сервер</Heading>
@@ -27,35 +32,37 @@ export const ServerSettings = () => {
                         <Fieldset.Content>
                             <Field.Root
                                 invalid={
-                                    Number(WebServer.port) < 50 ||
-                                    Number(WebServer.port) > 9999 ||
-                                    WebServer.port.trim() === ""
+                                    Number(settings?.port) < 1024 ||
+                                    Number(settings?.port) > 49151 ||
+                                    (settings?.port || "").trim() === ""
                                 }
                             >
                                 <Field.Label>Порт</Field.Label>
                                 <NumberInput.Root
-                                    value={WebServer.port}
+                                    value={settings?.port || ""}
                                     pattern={"[0-9]*"}
                                     allowMouseWheel="true"
-                                    min={"50"}
-                                    max={"9999"}
+                                    min={"1024"}
+                                    max={"49151"}
+                                    allowOverflow={false}
                                     w="100%"
                                     inputMode={"numeric"}
                                     size={"sm"}
-                                    onValueChange={(e) =>
-                                        setSettings(
-                                            "WebServer",
+                                    onValueChange={(e) => {
+                                        CheckChange("isServerChanged");
+                                        EditSettings(
+                                            e.value,
                                             "port",
-                                            e.value
-                                        )
-                                    }
+                                            "WebServer"
+                                        );
+                                    }}
                                 >
                                     <NumberInput.Control />
                                     <NumberInput.Input />
                                 </NumberInput.Root>
                                 <Field.ErrorText>
-                                    *Порт не может быть отрицательным, меньше 50
-                                    или больше 9999
+                                    *Порт не может быть отрицательным, меньше
+                                    1024 или больше 49151
                                 </Field.ErrorText>
                             </Field.Root>
                             <Field.Root>
@@ -63,30 +70,32 @@ export const ServerSettings = () => {
                                 <Input
                                     size={"sm"}
                                     type="time"
-                                    value={WebServer.time}
-                                    onChange={(e) =>
-                                        setSettings(
-                                            "WebServer",
+                                    value={settings?.time || ""}
+                                    onChange={(e) => {
+                                        CheckChange("isServerChanged");
+                                        EditSettings(
+                                            e.target.value,
                                             "time",
-                                            e.target.value
-                                        )
-                                    }
+                                            "WebServer"
+                                        );
+                                    }}
                                 />
                             </Field.Root>
                         </Fieldset.Content>
                     </Fieldset.Root>
                     <Switch.Root
                         paddingTop="3"
-                        value={WebServer.https}
-                        onCheckedChange={(e) =>
-                            setSettings("WebServer", "https", e.checked)
-                        }
+                        checked={settings?.https || false}
+                        onCheckedChange={(e) => {
+                            CheckChange("isServerChanged");
+                            EditSettings(e.checked, "https", "WebServer");
+                        }}
                     >
                         <Switch.HiddenInput />
                         <Switch.Control />
                         <Switch.Label>HTTPS</Switch.Label>
                     </Switch.Root>
-                    {WebServer.https && (
+                    {settings?.https && (
                         <FileUpload.Root paddingTop="3">
                             <FileUpload.HiddenInput />
                             <FileUpload.Trigger asChild>
@@ -97,6 +106,13 @@ export const ServerSettings = () => {
                         </FileUpload.Root>
                     )}
                 </Card.Body>
+                {isServerChanged && (
+                    <Card.Footer>
+                        <Text fontWeight={"medium"} color={"red"}>
+                            *Не забудьте применить изменения!
+                        </Text>
+                    </Card.Footer>
+                )}
             </Card.Root>
         </>
     );
