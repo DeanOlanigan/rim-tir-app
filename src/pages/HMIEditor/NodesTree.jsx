@@ -24,17 +24,20 @@ const TYPES_ICONS = {
 };
 
 export const NodesTree = () => {
-    const nodes = useNodeStore((state) => state.nodes);
+    const rootIds = useNodeStore((state) => state.rootIds);
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const showNodesTree = useActionsStore((state) => state.showNodesTree);
     if (!showNodesTree) return null;
 
     const nodesList = createListCollection({
-        items: nodes.map((node) => ({
-            value: node.id,
-            label: node.name,
-            icon: TYPES_ICONS[node.type],
-        })),
+        items: rootIds.map((id) => {
+            const node = useNodeStore.getState().nodes[id];
+            return {
+                value: node.id,
+                label: node.name,
+                icon: TYPES_ICONS[node.type],
+            };
+        }),
     });
 
     return (

@@ -7,7 +7,6 @@ import { dragBound } from "./utils/dragBound";
 const common = {
     name: "node",
     dragBoundFunc(pos) {
-        console.log({ this: this });
         const { gridSize, snapToGrid } = useActionsStore.getState();
         const stage = this.getStage();
         const absRect = this.getClientRect({
@@ -53,30 +52,30 @@ const common = {
 
 export const Nodes = ({ nodesRef }) => {
     const currentAction = useActionsStore((state) => state.currentAction);
-    const nodes = useNodeStore((state) => state.nodes);
-
+    const rootIds = useNodeStore((state) => state.rootIds);
     return (
         <NodeWrapper
-            nodes={nodes}
+            ids={rootIds}
             nodesRef={nodesRef}
             draggable={currentAction === ACTIONS.select}
         />
     );
 };
 
-const NodeWrapper = ({ nodes, draggable, nodesRef }) => {
-    return nodes.map((node) => (
+const NodeWrapper = ({ ids, draggable, nodesRef }) => {
+    return ids?.map((id) => (
         <NodeInstance
-            key={node.id}
-            id={node.id}
-            node={node}
+            key={id}
+            id={id}
             draggable={draggable}
             nodesRef={nodesRef}
         />
     ));
 };
 
-const NodeInstance = ({ id, node, draggable, nodesRef }) => {
+const NodeInstance = ({ id, draggable, nodesRef }) => {
+    const node = useNodeStore((state) => state.nodes[id]);
+
     const registerRef = (el) => {
         if (el) {
             nodesRef.current.set(id, el);
@@ -88,7 +87,13 @@ const NodeInstance = ({ id, node, draggable, nodesRef }) => {
     switch (node.type) {
         case "rect":
             return (
-                <Rect key={node.id} {...node} {...common} ref={registerRef} />
+                <Rect
+                    key={node.id}
+                    {...node}
+                    {...common}
+                    draggable={draggable}
+                    ref={registerRef}
+                />
             );
         case "ellipse":
             return (
@@ -133,7 +138,7 @@ const NodeInstance = ({ id, node, draggable, nodesRef }) => {
                     ref={registerRef}
                 >
                     <NodeWrapper
-                        nodes={node.children}
+                        ids={node.childrenIds}
                         nodesRef={nodesRef}
                         draggable={false}
                     />

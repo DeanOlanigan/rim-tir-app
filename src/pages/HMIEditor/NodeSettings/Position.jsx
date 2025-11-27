@@ -1,5 +1,6 @@
 import { Fieldset, Group, InputGroup, NumberInput } from "@chakra-ui/react";
 import { useState } from "react";
+import { useNodeStore } from "../store/node-store";
 
 export const PositionBlock = ({ node }) => {
     const { x, y } = node.position();
@@ -27,6 +28,13 @@ export const PositionBlock = ({ node }) => {
                         value={pos.x}
                         onValueChange={(e) =>
                             handleChangeCoord(e.valueAsNumber, "x")
+                        }
+                        onBlur={(e) =>
+                            useNodeStore
+                                .getState()
+                                .updateNode(node.id(), {
+                                    x: parseInt(e.target.value),
+                                })
                         }
                     >
                         <NumberInput.Control />

@@ -20,14 +20,12 @@ const SHAPES_NAMES = {
 
 export const NodeSettings = ({ canvasRef }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
-    const nodes = useNodeStore((state) => state.nodes);
+    if (!selectedIds.length) return null;
+    const node = canvasRef.current.findOne(`#${selectedIds[0]}`);
+    if (!node) return null;
+    const type = node.attrs.type;
 
-    if (
-        selectedIds.length !== 1 ||
-        !SHAPES_WITH_SETTINGS.has(
-            nodes.find((n) => n.id === selectedIds[0]).type
-        )
-    )
+    if (selectedIds.length !== 1 || !SHAPES_WITH_SETTINGS.has(type))
         return null;
 
     return (
@@ -58,7 +56,6 @@ export const NodeSettings = ({ canvasRef }) => {
                         <BaseSettings
                             canvasRef={canvasRef}
                             selectedIds={selectedIds}
-                            nodes={nodes}
                         />
                     </Box>
                 </Tabs.Content>

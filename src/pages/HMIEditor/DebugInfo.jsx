@@ -33,7 +33,7 @@ export const DebugInfo = () => {
             >
                 <Text>Current action: {currentAction}</Text>
                 <Text>Selected nodes: {selectedIds.length}</Text>
-                <Text>Nodes: {nodes.length}</Text>
+                <Text>Nodes: {Object.keys(nodes).length}</Text>
                 {selectedIds.length > 0 && (
                     <SelectedNodeInfo nodes={nodes} selectedIds={selectedIds} />
                 )}
