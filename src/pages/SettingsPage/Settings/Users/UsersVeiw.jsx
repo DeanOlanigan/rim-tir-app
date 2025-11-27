@@ -4,14 +4,14 @@ import { LuUserCog, LuUserRoundPlus } from "react-icons/lu";
 import { useTableStore } from "../SettingsStore/tablestore";
 
 export const UsersView = () => {
-    const { setIsAdding, selectedRows, isAdding } = useTableStore();
+    const { setIsAdding, isAdding } = useTableStore();
     return (
         <>
             <Heading paddingBottom={"2"}>Редактор пользователей</Heading>
             <Card.Root
                 w={"100%"}
                 variant={"elevated"}
-                h={"2xl"}
+                maxH={"2xl"}
                 overflow={"clip"}
             >
                 <Card.Header>
@@ -29,11 +29,7 @@ export const UsersView = () => {
                         >
                             <LuUserRoundPlus />
                         </IconButton>
-                        <IconButton
-                            disabled={!selectedRows.length}
-                            size="sm"
-                            width="50px"
-                        >
+                        <IconButton size="sm" width="50px">
                             <LuUserCog />
                         </IconButton>
                     </HStack>

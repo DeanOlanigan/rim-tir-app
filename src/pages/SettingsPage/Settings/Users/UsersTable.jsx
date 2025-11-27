@@ -9,7 +9,7 @@ const tableColumns = [
 
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "@/components/Loader";
-import { Checkbox, Table, Text } from "@chakra-ui/react";
+import { Box, Checkbox, Table, Text } from "@chakra-ui/react";
 import { useTableStore } from "../SettingsStore/tablestore";
 import { UsersActionsBar } from "./UsersActionsBar";
 import { UserAdder } from "./UserAdder";
@@ -71,8 +71,7 @@ export const UsersTable = () => {
     const { isLoading, isError, error } = useUsersHistory();
     const indeterminate =
         selectedRows.length > 0 && selectedRows.length < live.length;
-    console.log(live);
-    console.log(selectedRows);
+
     const checkRow = (prev, changes, row) => {
         if (changes.checked) return [...prev, row.login];
         return selectedRows.filter((login) => login !== row.login);
@@ -90,7 +89,12 @@ export const UsersTable = () => {
 
     if (isAdding) setTimeout(() => scrollToBottom(), 0);
 
-    if (isLoading) return <Loader text={"Загрузка пользователей"} />;
+    if (isLoading)
+        return (
+            <Box h={"2xl"}>
+                <Loader text={"Загрузка пользователей"} />
+            </Box>
+        );
     if (isError) return <Text>Ошибка: {error}</Text>;
     return (
         <>
