@@ -9,7 +9,7 @@ import { EditorSettings } from "./EditorSettings";
 import { DebugInfo } from "./DebugInfo";
 import { useToolsManager } from "./canvas/hooks/useToolsManager";
 import { NodesTree } from "./NodesTree";
-import { NodeSettings } from "./NodeSettings/NodeSettings";
+import { NodeSettings } from "./NodeSettings";
 
 function HMIEditor() {
     const { ref, width, height } = useThrottledResizeObserver(100);
