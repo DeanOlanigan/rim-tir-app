@@ -1,4 +1,4 @@
-import { Layer, Rect, Stage } from "react-konva";
+import { Layer, Rect, Stage, Star } from "react-konva";
 import { Grid } from "./Grid";
 import { useFitToFrame } from "./hooks/useFitToFrame";
 import { useContextMenuPos } from "./hooks/useContextMenuPos";
@@ -6,7 +6,7 @@ import { usePanZoom } from "./hooks/usePanZoom";
 import { useActionsStore } from "../store/actions-store";
 import HMITransformer from "./HMITransformer";
 import { Nodes } from "./Nodes";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { LineTransformer } from "./LineTransformer";
 
 export const HMICanvas = ({
@@ -54,6 +54,14 @@ export const HMICanvas = ({
         >
             <Layer name="staticLayer">
                 <Grid />
+                <Star
+                    x={0}
+                    y={0}
+                    numPoints={4}
+                    innerRadius={1}
+                    stroke={"black"}
+                    strokeWidth={0.2}
+                />
             </Layer>
             <Layer ref={nodesLayerRef} name="nodesLayer">
                 <Nodes nodesRef={nodesRef} />
