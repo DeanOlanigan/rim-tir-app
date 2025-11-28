@@ -43,27 +43,16 @@ export const DebugInfo = () => {
 };
 
 const SelectedNodeInfo = ({ nodes, selectedIds }) => {
-    function showParam(param) {
-        return selectedIds.length > 1
-            ? "Multiple"
-            : nodes[selectedIds[0]]?.[param];
-    }
+    if (selectedIds.length > 1) return <Text>Multiple nodes selected</Text>;
 
     return (
         <Box>
-            <Text>Node: {showParam("type")}</Text>
-            <Text>Id: {showParam("id")}</Text>
-            <Text>X: {showParam("x")}</Text>
-            <Text>Y: {showParam("y")}</Text>
-            <Text>W: {showParam("width")}</Text>
-            <Text>H: {showParam("height")}</Text>
-            <Text>Rx: {showParam("radiusX")}</Text>
-            <Text>Ry: {showParam("radiusY")}</Text>
-            <Text>
-                Points:{" "}
-                {Array.isArray(showParam("points")) &&
-                    showParam("points")?.join(", ")}
-            </Text>
+            {Object.entries(nodes[selectedIds[0]]).map(([key, value]) => (
+                <Text key={key}>
+                    {key}:{" "}
+                    {Array.isArray(value) ? value.join(", ") : String(value)}
+                </Text>
+            ))}
         </Box>
     );
 };
