@@ -8,6 +8,9 @@ registerShape("line", {
         };
     },
 
+    // TODO
+    onDragEnd(konvaNode) {},
+
     onTransform(konvaNode) {
         const newPoints = [];
         for (let i = 0; i < konvaNode.points().length; i += 2) {

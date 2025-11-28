@@ -21,9 +21,9 @@ const initialNodes = {
         name: "line1",
         type: "line",
         x: 0,
-        y: 0,
+        y: 25,
         points: [
-            0, 25, 5, 25, 5, 30, 10, 30, 10, 25, 15, 25, 15, 30, 20, 30, 20, 25,
+            0, 0, 5, 25, 5, 30, 10, 30, 10, 25, 15, 25, 15, 30, 20, 30, 20, 25,
             25, 25, 25, 35, 0, 35,
         ],
         stroke: "black",
@@ -56,7 +56,7 @@ const initialNodes = {
         type: "line",
         x: 0,
         y: 0,
-        points: [50, 50, 40, 50],
+        points: [0, 0, 40, 50],
         stroke: "black",
         strokeWidth: 1,
         lineCap: "round",
@@ -96,8 +96,8 @@ export const useNodeStore = create(
         persist(
             (set) => ({
                 selectedIds: [],
-                nodes: {},
-                rootIds: [],
+                nodes: initialNodes,
+                rootIds: rootIds,
                 addNode: (id, node) =>
                     set((state) => ({
                         nodes: { ...state.nodes, [id]: node },

@@ -18,14 +18,42 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
 
     const onDragMove = (e, pointIndex) => {
         const circle = e.target;
-        const line = nodesRef.current.get(primaryNode.id);
         const circlePos = circle.position();
         const oldPoints = line.points();
         if (!oldPoints || oldPoints.length < 4) return;
-        let newPoints = oldPoints.slice();
-        newPoints[pointIndex * 2] = circlePos.x;
-        newPoints[pointIndex * 2 + 1] = circlePos.y;
-        nodesRef.current.get(primaryNode.id)?.points(newPoints);
+
+        const newPoints = oldPoints.slice();
+
+        if (pointIndex === 0) {
+            const worldFirstX = line.x() + oldPoints[0];
+            const worldFirstY = line.y() + oldPoints[1];
+
+            const targetX = circlePos.x;
+            const targetY = circlePos.y;
+
+            const dxLine = targetX - worldFirstX;
+            const dyLine = targetY - worldFirstY;
+
+            const newLineX = line.x() + dxLine;
+            const newLineY = line.y() + dyLine;
+
+            for (let i = 0; i < newPoints.length; i += 2) {
+                newPoints[i] -= dxLine;
+                newPoints[i + 1] -= dyLine;
+            }
+
+            newPoints[0] = 0;
+            newPoints[1] = 0;
+
+            line.x(newLineX);
+            line.y(newLineY);
+            line.points(newPoints);
+        } else {
+            newPoints[pointIndex * 2] = circlePos.x - line.x();
+            newPoints[pointIndex * 2 + 1] = circlePos.y - line.y();
+            line.points(newPoints);
+        }
+
         canvasRef.current.batchDraw();
     };
 
@@ -69,10 +97,11 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
         return null;
 
     const line = nodesRef.current.get(primaryNode.id);
+    console.log({ x: line.x(), y: line.y(), points: line.points() });
     const points = line.points();
     if (points.length < 4) return null;
 
-    const midPoints = [];
+    /* const midPoints = [];
     for (let i = 0; i < points.length / 2 - 1; i++) {
         midPoints.push(
             ...pointBetweenPoints(
@@ -80,10 +109,10 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
                 [points[(i + 1) * 2], points[(i + 1) * 2 + 1]]
             )
         );
-    }
+    } */
 
     const res = [];
-    for (let i = 0; i < midPoints.length; i += 2) {
+    /* for (let i = 0; i < midPoints.length; i += 2) {
         res.push(
             <Circle
                 key={"mid-" + i}
@@ -99,15 +128,15 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
                 onDragMove={(e) => onDragMove(e, i / 2)}
             />
         );
-    }
+    } */
 
     for (let i = 0; i < points.length; i += 2) {
         res.push(
             <Circle
                 key={i}
                 name={"line-drag-handle"}
-                x={points[i]}
-                y={points[i + 1]}
+                x={points[i] + line.x()}
+                y={points[i + 1] + line.y()}
                 scale={{ x: 1 / scale, y: 1 / scale }}
                 radius={5}
                 fill="white"
@@ -123,6 +152,6 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
 });
 LineTransformer.displayName = "LineTransformerNew";
 
-const pointBetweenPoints = (p1, p2) => {
+/* const pointBetweenPoints = (p1, p2) => {
     return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
-};
+}; */
