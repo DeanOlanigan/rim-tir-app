@@ -11,6 +11,8 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { MdLineWeight } from "react-icons/md";
+import { useNodeStore } from "../store/node-store";
+import { patchNodeThrottled } from "./utils";
 
 export const StrokeBlock = ({ node }) => {
     return (
@@ -26,16 +28,21 @@ const StrokeColorSolid = ({ node }) => {
     const fill = node.stroke() ?? "#000000";
     const [color, setColor] = useState(parseColor(fill));
 
-    const handleChangeColor = (color) => {
-        node.stroke(color);
+    const handleChangeColor = (e) => {
+        node.stroke(e.valueAsString);
+        setColor(e.value);
+    };
+
+    const handleChangeColorEnd = (color) => {
+        useNodeStore.getState().updateNode(node.id(), { stroke: color });
     };
 
     return (
         <ColorPicker.Root
             size={"xs"}
             value={color}
-            onValueChange={(e) => setColor(e.value)}
-            onValueChangeEnd={(e) => handleChangeColor(e.valueAsString)}
+            onValueChange={(e) => handleChangeColor(e)}
+            onValueChangeEnd={(e) => handleChangeColorEnd(e.valueAsString)}
             lazyMount
             unmountOnExit
         >
@@ -63,6 +70,7 @@ const StrokeWeightBlock = ({ node }) => {
         if (Number.isNaN(value)) val = 0;
         node.strokeWidth(val);
         setWeight(val);
+        patchNodeThrottled(node.id(), { strokeWidth: val });
     };
 
     return (

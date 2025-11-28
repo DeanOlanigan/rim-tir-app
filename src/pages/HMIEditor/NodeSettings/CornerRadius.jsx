@@ -15,6 +15,7 @@ import {
     RxCornerTopRight,
 } from "react-icons/rx";
 import { LuMaximize } from "react-icons/lu";
+import { patchNodeThrottled } from "./utils";
 
 const CORNER_ICONS = [
     RxCornerTopLeft,
@@ -69,16 +70,16 @@ export const CornerRadiusBlock = ({ node }) => {
         const next = [v, v, v, v];
         setCorners(next);
         syncNode(next);
+        patchNodeThrottled(node.id(), { cornerRadius: next });
     };
 
     const handleMixedChange = (index, raw) => {
         const v = normalizeNumber(raw);
-        setCorners((prev) => {
-            const next = [...prev];
-            next[index] = v;
-            syncNode(next);
-            return next;
-        });
+        const next = [...corners];
+        next[index] = v;
+        setCorners(next);
+        syncNode(next);
+        patchNodeThrottled(node.id(), { cornerRadius: next });
     };
 
     const toggleMixed = () => {

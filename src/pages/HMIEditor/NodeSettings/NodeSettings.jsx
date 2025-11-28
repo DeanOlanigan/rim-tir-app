@@ -18,10 +18,10 @@ const SHAPES_NAMES = {
     arrow: "Arrow",
 };
 
-export const NodeSettings = ({ canvasRef }) => {
+export const NodeSettings = ({ nodesRef }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
     if (!selectedIds.length) return null;
-    const node = canvasRef.current.findOne(`#${selectedIds[0]}`);
+    const node = nodesRef.current.get(selectedIds[0]);
     if (!node) return null;
     const type = node.attrs.type;
 
@@ -54,7 +54,7 @@ export const NodeSettings = ({ canvasRef }) => {
                 <Tabs.Content value="base" display={"flex"} overflow={"hidden"}>
                     <Box overflow={"auto"}>
                         <BaseSettings
-                            canvasRef={canvasRef}
+                            nodesRef={nodesRef}
                             selectedIds={selectedIds}
                         />
                     </Box>
@@ -65,8 +65,8 @@ export const NodeSettings = ({ canvasRef }) => {
     );
 };
 
-const BaseSettings = ({ canvasRef, selectedIds }) => {
-    const primaryNode = canvasRef.current.findOne(`#${selectedIds[0]}`);
+const BaseSettings = ({ nodesRef, selectedIds }) => {
+    const primaryNode = nodesRef.current.get(selectedIds[0]);
     const type = primaryNode.attrs.type;
     const heading =
         selectedIds.length > 1

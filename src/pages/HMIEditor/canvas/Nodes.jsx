@@ -63,7 +63,7 @@ export const Nodes = ({ nodesRef }) => {
 };
 
 const NodeWrapper = ({ ids, draggable, nodesRef }) => {
-    return ids?.map((id) => (
+    return ids.map((id) => (
         <NodeInstance
             key={id}
             id={id}
@@ -75,68 +75,38 @@ const NodeWrapper = ({ ids, draggable, nodesRef }) => {
 
 const NodeInstance = ({ id, draggable, nodesRef }) => {
     const node = useNodeStore((state) => state.nodes[id]);
+    if (!node) return null;
 
     const registerRef = (el) => {
-        if (el) {
-            nodesRef.current.set(id, el);
-        } else {
-            nodesRef.current.delete(id);
-        }
+        if (el) nodesRef.current.set(id, el);
+        else nodesRef.current.delete(id);
+    };
+
+    const params = {
+        ...node,
+        ...common,
+        draggable,
     };
 
     switch (node.type) {
         case "rect":
-            return (
-                <Rect
-                    key={node.id}
-                    {...node}
-                    {...common}
-                    draggable={draggable}
-                    ref={registerRef}
-                />
-            );
+            return <Rect key={node.id} {...params} ref={registerRef} />;
         case "ellipse":
-            return (
-                <Ellipse
-                    key={node.id}
-                    {...node}
-                    {...common}
-                    draggable={draggable}
-                    ref={registerRef}
-                />
-            );
+            return <Ellipse key={node.id} {...params} ref={registerRef} />;
         case "line":
             return (
                 <Line
                     key={node.id}
-                    {...node}
-                    {...common}
-                    draggable={draggable}
+                    {...params}
                     ref={registerRef}
                     hitStrokeWidth={node.strokeWidth + 3 || 3}
                 />
             );
         case "arrow":
-            return (
-                <Arrow
-                    key={node.id}
-                    {...node}
-                    {...common}
-                    draggable={draggable}
-                    ref={registerRef}
-                />
-            );
+            return <Arrow key={node.id} {...params} ref={registerRef} />;
         case "group":
             return (
-                <Group
-                    key={node.id}
-                    {...node}
-                    {...common}
-                    x={0}
-                    y={0}
-                    draggable={draggable}
-                    ref={registerRef}
-                >
+                <Group key={node.id} {...params} x={0} y={0} ref={registerRef}>
                     <NodeWrapper
                         ids={node.childrenIds}
                         nodesRef={nodesRef}
@@ -144,5 +114,7 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
                     />
                 </Group>
             );
+        default:
+            return null;
     }
 };

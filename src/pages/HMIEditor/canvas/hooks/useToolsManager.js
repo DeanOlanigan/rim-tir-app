@@ -16,6 +16,7 @@ export function useToolsManager() {
     const transformerRef = useRef(null);
     const nodesLayerRef = useRef(null);
     const overviewLayerRef = useRef(null);
+    const nodesRef = useRef(new Map());
 
     if (!managerRef.current) {
         const api = getApi({
@@ -24,6 +25,7 @@ export function useToolsManager() {
             transformerRef,
             overviewLayerRef,
             nodesLayerRef,
+            nodesRef,
         });
         const toolsMap = {
             [ACTIONS.select]: createSelectTool({ ...api }),
@@ -54,5 +56,6 @@ export function useToolsManager() {
         transformerRef,
         nodesLayerRef,
         overviewLayerRef,
+        nodesRef,
     };
 }

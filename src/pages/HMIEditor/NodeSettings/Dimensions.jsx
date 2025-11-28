@@ -1,20 +1,30 @@
 import { Fieldset, Group, InputGroup, NumberInput } from "@chakra-ui/react";
 import { useState } from "react";
+import { patchNodeThrottled } from "./utils";
 
 export const DimensionsBlock = ({ node }) => {
+    /* const selectedNode = useNodeStore(
+        (state) => state.nodes[node.id()],
+        (a, b) => a.width === b.width && a.height === b.height
+    ); */
     const { width, height } = node.size();
-    const [dim, setDim] = useState({ width, height });
+    const [dim, setDim] = useState({
+        width,
+        height,
+    });
+
+    /* useEffect(() => {
+        setDim({
+            width: selectedNode.width,
+            height: selectedNode.height,
+        });
+    }, [selectedNode.width, selectedNode.height, selectedNode.id]); */
 
     const handleChangeDim = (value, type) => {
         const val = Number.isNaN(value) ? 0 : value;
-        if (type === "width") {
-            node.width(val);
-            setDim((prev) => ({ ...prev, width: val }));
-        }
-        if (type === "height") {
-            node.height(val);
-            setDim((prev) => ({ ...prev, height: val }));
-        }
+        node[type](val);
+        setDim((prev) => ({ ...prev, [type]: val }));
+        patchNodeThrottled(node.id(), { [type]: val });
     };
 
     return (

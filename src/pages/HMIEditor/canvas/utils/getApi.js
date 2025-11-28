@@ -7,12 +7,14 @@ export function getApi({
     transformerRef,
     overviewLayerRef,
     nodesLayerRef,
+    nodesRef,
 }) {
     const getStage = () => canvasRef.current;
     const getSelectionBox = () => selectionBoxRef.current;
     const getTransformer = () => transformerRef.current;
     const getOverviewLayer = () => overviewLayerRef.current;
     const getNodesLayer = () => nodesLayerRef.current;
+    const getNodes = () => nodesRef.current;
     const getSelectedIds = () => useNodeStore.getState().selectedIds;
     const setSelectedIds = (ids) => useNodeStore.getState().setSelectedIds(ids);
     const addNode = (id, patch) => useNodeStore.getState().addNode(id, patch);
@@ -31,6 +33,7 @@ export function getApi({
         getTransformer,
         getOverviewLayer,
         getNodesLayer,
+        getNodes,
         getSelectedIds,
         setSelectedIds,
         addNode,

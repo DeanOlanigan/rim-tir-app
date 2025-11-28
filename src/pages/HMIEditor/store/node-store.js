@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 
 const initialNodes = {
     rect1: {
@@ -89,138 +89,52 @@ const initialNodes = {
         fill: "#0000ffff",
     },
 };
-
 const rootIds = ["rect1", "line1", "group1"];
-
-const initialNodes2 = [
-    {
-        id: "rect1",
-        parentId: null,
-        name: "rect1",
-        type: "rect",
-        x: 0,
-        y: 0,
-        width: 20,
-        height: 20,
-        fill: "#fff",
-        stroke: "black",
-        strokeWidth: 2,
-        cornerRadius: 2,
-    },
-    {
-        id: "line1",
-        parentId: null,
-        name: "line1",
-        type: "line",
-        x: 0,
-        y: 0,
-        points: [
-            0, 25, 5, 25, 5, 30, 10, 30, 10, 25, 15, 25, 15, 30, 20, 30, 20, 25,
-            25, 25, 25, 35, 0, 35,
-        ],
-        stroke: "black",
-        strokeWidth: 1,
-        lineCap: "round",
-        lineJoin: "round",
-    },
-    {
-        id: "group1",
-        parentId: null,
-        name: "Группа",
-        type: "group",
-        children: [
-            {
-                id: "rect2",
-                parentId: "group1",
-                name: "rect2",
-                type: "rect",
-                x: 50,
-                y: 50,
-                width: 20,
-                height: 20,
-                fill: "#00ff2aff",
-                stroke: "black",
-                strokeWidth: 2,
-                cornerRadius: 2,
-            },
-            {
-                id: "line2",
-                parentId: "group1",
-                name: "line2",
-                type: "line",
-                x: 0,
-                y: 0,
-                points: [50, 50, 40, 50],
-                stroke: "black",
-                strokeWidth: 1,
-                lineCap: "round",
-                lineJoin: "round",
-            },
-            {
-                id: "group2",
-                parentId: "group1",
-                name: "group2",
-                type: "group",
-                children: [
-                    {
-                        id: "rect3",
-                        parentId: "group2",
-                        name: "rect3",
-                        type: "rect",
-                        x: 50,
-                        y: 80,
-                        width: 20,
-                        height: 20,
-                        fill: "#ff0000ff",
-                    },
-                    {
-                        id: "ellipse1",
-                        parentId: "group2",
-                        name: "ellipse1",
-                        type: "ellipse",
-                        x: 80,
-                        y: 80,
-                        radiusX: 10,
-                        radiusY: 15,
-                        fill: "#0000ffff",
-                    },
-                ],
-            },
-        ],
-    },
-];
 
 export const useNodeStore = create(
     devtools(
-        (set) => ({
-            selectedIds: [],
-            nodes: initialNodes,
-            rootIds,
-            addNode: (id, node) =>
-                set((state) => ({
-                    nodes: { ...state.nodes, [id]: node },
-                    rootIds: [...state.rootIds, id],
-                })),
-            removeNode: (id) =>
-                set((state) => {
-                    const newNodes = { ...state.nodes };
-                    delete newNodes[id];
-                    return { nodes: newNodes };
+        persist(
+            (set) => ({
+                selectedIds: [],
+                nodes: {},
+                rootIds: [],
+                addNode: (id, node) =>
+                    set((state) => ({
+                        nodes: { ...state.nodes, [id]: node },
+                        rootIds: [...state.rootIds, id],
+                    })),
+                setRootIds: (ids) => set(() => ({ rootIds: ids })),
+                removeNode: (id) =>
+                    set((state) => {
+                        const newNodes = { ...state.nodes };
+                        delete newNodes[id];
+                        const newRootIds = state.rootIds.filter(
+                            (nid) => nid !== id
+                        );
+                        return { nodes: newNodes, rootIds: newRootIds };
+                    }),
+                updateNode: (id, patch) =>
+                    set((state) => ({
+                        nodes: {
+                            ...state.nodes,
+                            [id]: { ...state.nodes[id], ...patch },
+                        },
+                    })),
+                setSelectedIds: (ids) =>
+                    set((state) => {
+                        const prev = state.selectedIds;
+                        if (arraysEqual(prev, ids)) return state;
+                        return { selectedIds: ids };
+                    }),
+            }),
+            {
+                name: "hmi-node-store",
+                partialize: (state) => ({
+                    nodes: state.nodes,
+                    rootIds: state.rootIds,
                 }),
-            updateNode: (id, patch) =>
-                set((state) => ({
-                    nodes: {
-                        ...state.nodes,
-                        [id]: { ...state.nodes[id], ...patch },
-                    },
-                })),
-            setSelectedIds: (ids) =>
-                set((state) => {
-                    const prev = state.selectedIds;
-                    if (arraysEqual(prev, ids)) return state;
-                    return { selectedIds: ids };
-                }),
-        }),
+            }
+        ),
         { name: "node-store" }
     )
 );

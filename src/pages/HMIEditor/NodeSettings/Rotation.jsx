@@ -13,6 +13,7 @@ import {
     LuRotateCwSquare,
 } from "react-icons/lu";
 import { RxAngle } from "react-icons/rx";
+import { patchNodeThrottled } from "./utils";
 
 function toDegIn0To360Range(deg) {
     return ((deg % 360) + 360) % 360;
@@ -60,22 +61,24 @@ export const RotationBlock = ({ node }) => {
         const val = Number.isNaN(angle) ? 0 : angle;
         const next = toDegIn0To360Range(val);
 
-        applyCenteredTransform(() => {
+        applyCenteredTransform(node, () => {
             node.rotation(next);
         });
-
         setValue(next);
+        patchNodeThrottled(node.id(), { rotation: next });
     };
 
+    // TODO сделать синхронизацию со стором
     const flipHorizontal = () => {
-        applyCenteredTransform(() => {
+        applyCenteredTransform(node, () => {
             node.scaleX(node.scaleX() * -1);
         });
         // rotation не меняется, input остаётся с тем же value
     };
 
+    // TODO сделать синхронизацию со стором
     const flipVertical = () => {
-        applyCenteredTransform(() => {
+        applyCenteredTransform(node, () => {
             node.scaleY(node.scaleY() * -1);
         });
         // rotation тоже без изменений
@@ -118,6 +121,7 @@ export const RotationBlock = ({ node }) => {
                             size={"xs"}
                             variant={"outline"}
                             onClick={flipHorizontal}
+                            disabled
                         >
                             <LuFlipHorizontal2 />
                         </IconButton>
@@ -125,6 +129,7 @@ export const RotationBlock = ({ node }) => {
                             size={"xs"}
                             variant={"outline"}
                             onClick={flipVertical}
+                            disabled
                         >
                             <LuFlipVertical2 />
                         </IconButton>

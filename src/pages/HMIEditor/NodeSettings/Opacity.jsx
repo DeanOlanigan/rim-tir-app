@@ -8,6 +8,8 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { LuArrowRightLeft, LuEye, LuEyeClosed } from "react-icons/lu";
+import { useNodeStore } from "../store/node-store";
+import { patchNodeThrottled } from "./utils";
 
 export const OpacityBlock = ({ node }) => {
     const [value, setValue] = useState((node.opacity() * 100).toString());
@@ -17,16 +19,18 @@ export const OpacityBlock = ({ node }) => {
         const val = Number.isNaN(value) ? 0 : value;
         if (show) node.opacity(val / 100);
         setValue(String(val));
+        patchNodeThrottled(node.id(), { opacity: val / 100 });
     };
 
     const toggleOpacity = () => {
-        if (node.opacity() === 0) {
-            node.opacity(value / 100);
-            setShow(true);
-        } else {
-            node.opacity(0);
-            setShow(false);
-        }
+        const isHidden = node.opacity() === 0;
+        const nextShow = isHidden;
+        if (isHidden) node.opacity(value / 100);
+        else node.opacity(0);
+        setShow(nextShow);
+        useNodeStore
+            .getState()
+            .updateNode(node.id(), { opacity: nextShow ? value / 100 : 0 });
     };
 
     return (

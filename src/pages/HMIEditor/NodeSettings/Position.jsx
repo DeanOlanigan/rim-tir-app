@@ -1,6 +1,6 @@
 import { Fieldset, Group, InputGroup, NumberInput } from "@chakra-ui/react";
 import { useState } from "react";
-import { useNodeStore } from "../store/node-store";
+import { patchNodeThrottled } from "./utils";
 
 export const PositionBlock = ({ node }) => {
     const { x, y } = node.position();
@@ -8,14 +8,9 @@ export const PositionBlock = ({ node }) => {
 
     const handleChangeCoord = (value, type) => {
         const val = Number.isNaN(value) ? 0 : value;
-        if (type === "x") {
-            node.x(val);
-            setPos((prev) => ({ ...prev, x: val }));
-        }
-        if (type === "y") {
-            node.y(val);
-            setPos((prev) => ({ ...prev, y: val }));
-        }
+        node[type](val);
+        setPos((prev) => ({ ...prev, [type]: val }));
+        patchNodeThrottled(node.id(), { [type]: val });
     };
 
     return (
@@ -28,13 +23,6 @@ export const PositionBlock = ({ node }) => {
                         value={pos.x}
                         onValueChange={(e) =>
                             handleChangeCoord(e.valueAsNumber, "x")
-                        }
-                        onBlur={(e) =>
-                            useNodeStore
-                                .getState()
-                                .updateNode(node.id(), {
-                                    x: parseInt(e.target.value),
-                                })
                         }
                     >
                         <NumberInput.Control />

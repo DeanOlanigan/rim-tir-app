@@ -1,5 +1,6 @@
 import { ColorPicker, Heading, parseColor, VStack } from "@chakra-ui/react";
 import { useState } from "react";
+import { useNodeStore } from "../store/node-store";
 
 export const FillBlock = ({ node }) => {
     return (
@@ -14,16 +15,21 @@ const FillColorSolid = ({ node }) => {
     const fill = node.fill() ?? "#000000";
     const [color, setColor] = useState(parseColor(fill));
 
-    const handleChangeColor = (color) => {
-        node.fill(color);
+    const handleChangeColor = (e) => {
+        node.fill(e.valueAsString);
+        setColor(e.value);
+    };
+
+    const handleChangeColorEnd = (color) => {
+        useNodeStore.getState().updateNode(node.id(), { fill: color });
     };
 
     return (
         <ColorPicker.Root
             size={"xs"}
             value={color}
-            onValueChange={(e) => setColor(e.value)}
-            onValueChangeEnd={(e) => handleChangeColor(e.valueAsString)}
+            onValueChange={(e) => handleChangeColor(e)}
+            onValueChangeEnd={(e) => handleChangeColorEnd(e.valueAsString)}
             lazyMount
             unmountOnExit
         >

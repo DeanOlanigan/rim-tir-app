@@ -14,6 +14,7 @@ export const HMICanvas = ({
     canvasRef,
     overviewLayerRef,
     nodesLayerRef,
+    nodesRef,
     selectionBoxRef,
     transformerRef,
     width,
@@ -39,7 +40,6 @@ export const HMICanvas = ({
     const panZoom = usePanZoom();
     const onContextMenu = useContextMenuPos(canvasRef);
     useFitToFrame(canvasRef, width, height);
-    const nodesRef = useRef(new Map());
     return (
         <Stage
             ref={canvasRef}
