@@ -2,8 +2,7 @@ import { LuHexagon } from "react-icons/lu";
 import { toWorld } from "../utils/coords";
 import Konva from "konva";
 import { nanoid } from "nanoid";
-import { useShapeStore } from "../../store/shape-store";
-import { snapPointToGrid } from "./utils";
+import { BASE_PARAMS, snapPointToGrid } from "./utils";
 import { ACTIONS } from "../../constants";
 
 export function createDrawPolygonTool({
@@ -35,18 +34,13 @@ export function createDrawPolygonTool({
 
             start = p;
 
-            const shapeState = useShapeStore.getState();
             draft = new Konva.RegularPolygon({
+                ...BASE_PARAMS,
                 x: p.x,
                 y: p.y,
                 radius: 0,
                 sides: 6,
-                fill: shapeState.fillColor,
-                stroke: shapeState.strokeColor,
-                strokeWidth: shapeState.strokeWidth,
                 listening: false,
-                shadowForStrokeEnabled: false,
-                fillAfterStrokeEnabled: true,
             });
             layer = layer = getOverviewLayer();
             layer.add(draft);
@@ -125,8 +119,8 @@ export function createDrawPolygonTool({
             if ((attrs.radius || 0) * 2 < minSize) return;
 
             const id = nanoid(12);
-            const shapeState = useShapeStore.getState();
             addNode(id, {
+                ...BASE_PARAMS,
                 type: ACTIONS.polygon,
                 id,
                 name: "node",
@@ -134,10 +128,6 @@ export function createDrawPolygonTool({
                 y: attrs.y,
                 radius: attrs.radius,
                 sides: attrs.sides,
-                fill: shapeState.fillColor,
-                stroke: shapeState.strokeColor,
-                strokeWidth: shapeState.strokeWidth,
-                fillAfterStrokeEnabled: true,
             });
             api.manager.setActive("select");
             setSelectedIds([id]);

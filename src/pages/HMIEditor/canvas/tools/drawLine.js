@@ -1,8 +1,7 @@
 import { LuSlash } from "react-icons/lu";
 import Konva from "konva";
 import { nanoid } from "nanoid";
-import { useShapeStore } from "../../store/shape-store";
-import { snapPointToGrid } from "./utils";
+import { BASE_PARAMS, snapPointToGrid } from "./utils";
 import { ACTIONS } from "../../constants";
 import { toWorld } from "../utils/coords";
 
@@ -35,15 +34,11 @@ export function createDrawLineTool({
 
             start = p;
 
-            const shapeState = useShapeStore.getState();
             draft = new Konva.Line({
+                ...BASE_PARAMS,
                 points: [p.x, p.y, p.x, p.y],
-                stroke: shapeState.strokeColor,
-                strokeWidth: shapeState.strokeWidth,
-                lineCap: "round",
-                lineJoin: "round",
+                strokeWidth: 1,
                 listening: false,
-                shadowForStrokeEnabled: false,
             });
             layer = getOverviewLayer();
             layer.add(draft);
@@ -90,18 +85,15 @@ export function createDrawLineTool({
             if (distance < minSize) return;
 
             const id = nanoid(12);
-            const shapeState = useShapeStore.getState();
             addNode(id, {
-                type: "line",
                 id,
+                type: "line",
                 name: "node",
+                ...BASE_PARAMS,
                 x: x1,
                 y: y1,
                 points: [0, 0, dx, dy],
-                stroke: shapeState.strokeColor,
-                strokeWidth: shapeState.strokeWidth,
-                lineCap: "round",
-                lineJoin: "round",
+                strokeWidth: 1,
             });
             api.manager.setActive("select");
             setSelectedIds([id]);

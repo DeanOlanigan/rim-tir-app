@@ -1,8 +1,7 @@
 import { LuSquare } from "react-icons/lu";
 import Konva from "konva";
 import { nanoid } from "nanoid";
-import { useShapeStore } from "../../store/shape-store";
-import { snapPointToGrid } from "./utils";
+import { BASE_PARAMS, snapPointToGrid } from "./utils";
 import { ACTIONS } from "../../constants";
 import { toWorld } from "../utils/coords";
 
@@ -35,19 +34,14 @@ export function createDrawRectTool({
 
             start = p;
 
-            const shapeState = useShapeStore.getState();
             draft = new Konva.Rect({
+                ...BASE_PARAMS,
                 x: p.x,
                 y: p.y,
                 width: 0,
                 height: 0,
-                fill: shapeState.fillColor,
-                stroke: shapeState.strokeColor,
-                strokeWidth: shapeState.strokeWidth,
-                cornerRadius: shapeState.cornerRadius,
+                cornerRadius: 0,
                 listening: false,
-                shadowForStrokeEnabled: false,
-                fillAfterStrokeEnabled: true,
             });
             layer = getOverviewLayer();
             layer.add(draft);
@@ -111,8 +105,8 @@ export function createDrawRectTool({
             if (attrs.width < minSize || attrs.height < minSize) return;
 
             const id = nanoid(12);
-            const shapeState = useShapeStore.getState();
             addNode(id, {
+                ...BASE_PARAMS,
                 type: "rect",
                 id,
                 name: "node",
@@ -120,11 +114,7 @@ export function createDrawRectTool({
                 y: attrs.y,
                 width: attrs.width,
                 height: attrs.height,
-                fill: shapeState.fillColor,
-                stroke: shapeState.strokeColor,
-                strokeWidth: shapeState.strokeWidth,
-                cornerRadius: shapeState.cornerRadius,
-                fillAfterStrokeEnabled: true,
+                cornerRadius: 0,
             });
             api.manager.setActive("select");
             setSelectedIds([id]);

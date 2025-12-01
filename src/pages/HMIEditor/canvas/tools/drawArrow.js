@@ -2,8 +2,7 @@ import { LuMoveUpRight } from "react-icons/lu";
 import { toWorld } from "../utils/coords";
 import Konva from "konva";
 import { nanoid } from "nanoid";
-import { useShapeStore } from "../../store/shape-store";
-import { snapPointToGrid } from "./utils";
+import { BASE_PARAMS, snapPointToGrid } from "./utils";
 import { ACTIONS } from "../../constants";
 
 export function createDrawArrowTool({
@@ -35,18 +34,13 @@ export function createDrawArrowTool({
 
             start = p;
 
-            const shapeState = useShapeStore.getState();
             draft = new Konva.Arrow({
+                ...BASE_PARAMS,
                 points: [p.x, p.y, p.x, p.y],
-                stroke: shapeState.strokeColor,
-                strokeWidth: shapeState.strokeWidth,
-                fill: shapeState.fillColor,
+                strokeWidth: 1,
                 pointerLength: 10,
                 pointerWidth: 10,
-                lineCap: "round",
-                lineJoin: "round",
                 listening: false,
-                shadowForStrokeEnabled: false,
             });
             layer = getOverviewLayer();
             layer.add(draft);
@@ -93,19 +87,15 @@ export function createDrawArrowTool({
             if (distance < minSize) return;
 
             const id = nanoid(12);
-            const shapeState = useShapeStore.getState();
             addNode(id, {
-                type: "arrow",
                 id,
+                type: "arrow",
                 name: "node",
+                ...BASE_PARAMS,
                 points: [x1, y1, x2, y2],
-                fill: shapeState.fillColor,
-                stroke: shapeState.strokeColor,
-                strokeWidth: shapeState.strokeWidth,
-                lineCap: "round",
-                lineJoin: "round",
                 pointerLength: 10,
                 pointerWidth: 10,
+                strokeWidth: 1,
             });
             api.manager.setActive("select");
             setSelectedIds([id]);
