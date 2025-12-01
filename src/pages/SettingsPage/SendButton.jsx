@@ -56,7 +56,7 @@ export const SendButton = () => {
             loading={settingsMutation.isPending}
             onClick={() => settingsMutation.mutate()}
         >
-            Применить
+            {disabled ? "Нет изменений" : "Применить изменения"}
         </Button>
     );
 };
