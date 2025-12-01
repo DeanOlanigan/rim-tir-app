@@ -13,7 +13,7 @@ import { patchNodeThrottled } from "./utils";
 
 export const OpacityBlock = ({ node }) => {
     const [value, setValue] = useState((node.opacity() * 100).toString());
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(node.visible());
 
     const handleOpacity = (value) => {
         const val = Number.isNaN(value) ? 0 : value;
@@ -23,14 +23,10 @@ export const OpacityBlock = ({ node }) => {
     };
 
     const toggleOpacity = () => {
-        const isHidden = node.opacity() === 0;
-        const nextShow = isHidden;
-        if (isHidden) node.opacity(value / 100);
-        else node.opacity(0);
-        setShow(nextShow);
-        useNodeStore
-            .getState()
-            .updateNode(node.id(), { opacity: nextShow ? value / 100 : 0 });
+        const visible = !show;
+        node.visible(visible);
+        setShow(visible);
+        useNodeStore.getState().updateNode(node.id(), { visible });
     };
 
     return (

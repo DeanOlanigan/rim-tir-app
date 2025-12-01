@@ -1,67 +1,15 @@
+import { useState } from "react";
+import { patchNodeThrottled } from "../utils";
 import {
-    ColorPicker,
     Fieldset,
     Group,
-    Heading,
     InputGroup,
     NumberInput,
-    parseColor,
     Slider,
-    VStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { MdLineWeight } from "react-icons/md";
-import { useNodeStore } from "../store/node-store";
-import { patchNodeThrottled } from "./utils";
 
-export const StrokeBlock = ({ node }) => {
-    return (
-        <VStack align={"start"} w={"100%"}>
-            <Heading size={"md"}>Stroke</Heading>
-            <StrokeColorSolid node={node} />
-            <StrokeWeightBlock node={node} />
-        </VStack>
-    );
-};
-
-const StrokeColorSolid = ({ node }) => {
-    const fill = node.stroke() ?? "#000000";
-    const [color, setColor] = useState(parseColor(fill));
-
-    const handleChangeColor = (e) => {
-        node.stroke(e.valueAsString);
-        setColor(e.value);
-    };
-
-    const handleChangeColorEnd = (color) => {
-        useNodeStore.getState().updateNode(node.id(), { stroke: color });
-    };
-
-    return (
-        <ColorPicker.Root
-            size={"xs"}
-            value={color}
-            onValueChange={(e) => handleChangeColor(e)}
-            onValueChangeEnd={(e) => handleChangeColorEnd(e.valueAsString)}
-            lazyMount
-            unmountOnExit
-        >
-            <ColorPicker.HiddenInput />
-            <ColorPicker.Control>
-                <ColorPicker.Trigger />
-                <ColorPicker.Input />
-            </ColorPicker.Control>
-            <ColorPicker.Positioner>
-                <ColorPicker.Content>
-                    <ColorPicker.Area />
-                    <ColorPicker.Sliders />
-                </ColorPicker.Content>
-            </ColorPicker.Positioner>
-        </ColorPicker.Root>
-    );
-};
-
-const StrokeWeightBlock = ({ node }) => {
+export const StrokeWeightBlock = ({ node }) => {
     const strokeWidth = node.strokeWidth();
     const [weight, setWeight] = useState(strokeWidth);
 

@@ -1,4 +1,11 @@
-import { Box, Flex, Heading, Tabs, VStack } from "@chakra-ui/react";
+import {
+    Box,
+    Flex,
+    Heading,
+    StackSeparator,
+    Tabs,
+    VStack,
+} from "@chakra-ui/react";
 import { useNodeStore } from "../store/node-store";
 import { StrokeBlock } from "./Stroke";
 import { FillBlock } from "./Fill";
@@ -73,7 +80,11 @@ const BaseSettings = ({ nodesRef, selectedIds }) => {
             ? `${selectedIds.length} selected`
             : SHAPES_NAMES[primaryNode.attrs.type];
     return (
-        <VStack pe={2} w={"100%"}>
+        <VStack
+            pe={2}
+            w={"100%"}
+            separator={<StackSeparator borderColor={"colorPalette.solid"} />}
+        >
             <VStack align={"start"}>
                 <Heading size={"md"}>{heading}</Heading>
                 <PositionBlock node={primaryNode} />
