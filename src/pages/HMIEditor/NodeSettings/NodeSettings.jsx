@@ -15,8 +15,15 @@ import { RotationBlock } from "./Rotation";
 import { OpacityBlock } from "./Opacity";
 import { CornerRadiusBlock } from "./CornerRadius";
 import { Layers } from "./Layers";
+import { SidesBlock } from "./Sides";
 
-const SHAPES_WITH_SETTINGS = new Set(["rect", "ellipse", "line", "arrow"]);
+const SHAPES_WITH_SETTINGS = new Set([
+    "rect",
+    "polygon",
+    "ellipse",
+    "line",
+    "arrow",
+]);
 
 const SHAPES_NAMES = {
     rect: "Rectangle",
@@ -94,7 +101,10 @@ const BaseSettings = ({ nodesRef, selectedIds }) => {
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Appearance</Heading>
                 <OpacityBlock node={primaryNode} />
-                {type === "rect" && <CornerRadiusBlock node={primaryNode} />}
+                {(type === "rect" || type === "polygon") && (
+                    <CornerRadiusBlock node={primaryNode} />
+                )}
+                {type === "polygon" && <SidesBlock node={primaryNode} />}
             </VStack>
             <FillBlock node={primaryNode} />
             <StrokeBlock node={primaryNode} />

@@ -4,6 +4,7 @@ import { ACTIONS } from "./constants";
 import {
     LuCircle,
     LuHand,
+    LuHexagon,
     LuMousePointer2,
     LuMoveUpRight,
     LuSlash,
@@ -25,6 +26,11 @@ const TOOLS_LIST = [
         name: ACTIONS.square,
         label: "Draw Rectangle",
         icon: LuSquare,
+    },
+    {
+        name: ACTIONS.polygon,
+        label: "Draw Polygon",
+        icon: LuHexagon,
     },
     {
         name: ACTIONS.ellipse,

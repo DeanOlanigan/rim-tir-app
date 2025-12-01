@@ -1,4 +1,4 @@
-import { Arrow, Ellipse, Group, Line, Rect } from "react-konva";
+import { Arrow, Ellipse, Group, Line, Rect, RegularPolygon } from "react-konva";
 import { useActionsStore } from "./../store/actions-store";
 import { useNodeStore } from "./../store/node-store";
 import { ACTIONS } from "../constants";
@@ -91,6 +91,10 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
     switch (node.type) {
         case "rect":
             return <Rect key={node.id} {...params} ref={registerRef} />;
+        case "polygon":
+            return (
+                <RegularPolygon key={node.id} {...params} ref={registerRef} />
+            );
         case "ellipse":
             return <Ellipse key={node.id} {...params} ref={registerRef} />;
         case "line":

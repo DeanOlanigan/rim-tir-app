@@ -12,6 +12,7 @@ export const ACTIONS = {
     select: "select",
     hand: "hand",
     square: "square",
+    polygon: "polygon",
     ellipse: "ellipse",
     text: "text",
     arrow: "arrow",

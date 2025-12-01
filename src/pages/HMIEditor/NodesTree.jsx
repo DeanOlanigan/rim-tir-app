@@ -9,6 +9,7 @@ import { useNodeStore } from "./store/node-store";
 import {
     LuCircle,
     LuGroup,
+    LuHexagon,
     LuMoveUpRight,
     LuSlash,
     LuSquare,
@@ -17,6 +18,7 @@ import { useActionsStore } from "./store/actions-store";
 
 const TYPES_ICONS = {
     rect: LuSquare,
+    polygon: LuHexagon,
     ellipse: LuCircle,
     line: LuSlash,
     arrow: LuMoveUpRight,

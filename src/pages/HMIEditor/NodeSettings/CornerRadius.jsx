@@ -57,6 +57,7 @@ function areAllEqual(arr) {
 }
 
 export const CornerRadiusBlock = ({ node }) => {
+    // TODO учитывать RegylarPolygon с количеством сторон != 4
     const initialCorners = useMemo(() => fromNodeCornerRadius(node), [node]);
     const [corners, setCorners] = useState(initialCorners);
     const [showMixed, setShowMixed] = useState(!areAllEqual(initialCorners));

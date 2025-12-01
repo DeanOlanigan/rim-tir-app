@@ -8,6 +8,7 @@ import { createDrawLineTool } from "../tools/drawLine";
 import { createDrawArrowTool } from "../tools/drawArrow";
 import { ACTIONS } from "../../constants";
 import { getApi } from "../utils/getApi";
+import { createDrawPolygonTool } from "../tools/drawPolygon";
 
 export function useToolsManager() {
     const managerRef = useRef(null);
@@ -31,6 +32,7 @@ export function useToolsManager() {
             [ACTIONS.select]: createSelectTool({ ...api }),
             [ACTIONS.hand]: createHandTool({ ...api }),
             [ACTIONS.square]: createDrawRectTool({ ...api }),
+            [ACTIONS.polygon]: createDrawPolygonTool({ ...api }),
             [ACTIONS.ellipse]: createDrawEllipseTool({ ...api }),
             [ACTIONS.line]: createDrawLineTool({ ...api }),
             [ACTIONS.arrow]: createDrawArrowTool({ ...api }),
