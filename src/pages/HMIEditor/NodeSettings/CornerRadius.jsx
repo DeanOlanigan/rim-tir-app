@@ -139,13 +139,15 @@ export const CornerRadiusBlock = ({ node }) => {
                             <Slider.Thumbs />
                         </Slider.Control>
                     </Slider.Root>
-                    <IconButton
-                        size={"xs"}
-                        variant={showMixed ? "solid" : "outline"}
-                        onClick={toggleMixed}
-                    >
-                        <LuMaximize />
-                    </IconButton>
+                    {node.attrs.type === "rect" && (
+                        <IconButton
+                            size={"xs"}
+                            variant={showMixed ? "solid" : "outline"}
+                            onClick={toggleMixed}
+                        >
+                            <LuMaximize />
+                        </IconButton>
+                    )}
                 </Group>
                 {showMixed && (
                     <SimpleGrid columns={2} gap={2}>
