@@ -8,7 +8,7 @@ export const CloseBlock = ({ node }) => {
     const onChange = (value) => {
         setChecked(value);
         node.closed(value);
-        patchNodeThrottled(node, { closed: value });
+        patchNodeThrottled(node.id(), { closed: value });
     };
 
     return (

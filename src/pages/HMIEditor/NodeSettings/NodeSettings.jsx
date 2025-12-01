@@ -27,6 +27,7 @@ const SHAPES_WITH_SETTINGS = new Set([
 
 const SHAPES_NAMES = {
     rect: "Rectangle",
+    polygon: "Polygon",
     ellipse: "Ellipse",
     line: "Line",
     arrow: "Arrow",

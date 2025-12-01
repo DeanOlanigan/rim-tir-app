@@ -8,7 +8,7 @@ export const BezierBlock = ({ node }) => {
     const onChange = (value) => {
         setChecked(value);
         node.bezier(value);
-        patchNodeThrottled(node, { bezier: value });
+        patchNodeThrottled(node.id(), { bezier: value });
     };
 
     return (
