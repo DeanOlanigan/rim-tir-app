@@ -90,27 +90,32 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
 
     switch (node.type) {
         case "rect":
-            return <Rect key={node.id} {...params} ref={registerRef} />;
+            return <Rect key={id} {...params} ref={registerRef} />;
         case "polygon":
-            return (
-                <RegularPolygon key={node.id} {...params} ref={registerRef} />
-            );
+            return <RegularPolygon key={id} {...params} ref={registerRef} />;
         case "ellipse":
-            return <Ellipse key={node.id} {...params} ref={registerRef} />;
+            return <Ellipse key={id} {...params} ref={registerRef} />;
         case "line":
             return (
                 <Line
-                    key={node.id}
+                    key={id}
                     {...params}
                     ref={registerRef}
                     hitStrokeWidth={node.strokeWidth + 3 || 3}
                 />
             );
         case "arrow":
-            return <Arrow key={node.id} {...params} ref={registerRef} />;
+            return (
+                <Arrow
+                    key={id}
+                    {...params}
+                    ref={registerRef}
+                    hitStrokeWidth={node.strokeWidth + 3 || 3}
+                />
+            );
         case "group":
             return (
-                <Group key={node.id} {...params} x={0} y={0} ref={registerRef}>
+                <Group key={id} {...params} x={0} y={0} ref={registerRef}>
                     <NodeWrapper
                         ids={node.childrenIds}
                         nodesRef={nodesRef}
