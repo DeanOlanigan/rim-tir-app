@@ -13,6 +13,7 @@ import {
     LuMoveUpRight,
     LuSlash,
     LuSquare,
+    LuType,
 } from "react-icons/lu";
 import { useActionsStore } from "./store/actions-store";
 
@@ -20,6 +21,7 @@ const TYPES_ICONS = {
     rect: LuSquare,
     polygon: LuHexagon,
     ellipse: LuCircle,
+    text: LuType,
     line: LuSlash,
     arrow: LuMoveUpRight,
     group: LuGroup,

@@ -9,6 +9,7 @@ import {
     LuMoveUpRight,
     LuSlash,
     LuSquare,
+    LuType,
 } from "react-icons/lu";
 
 const TOOLS_LIST = [
@@ -36,6 +37,11 @@ const TOOLS_LIST = [
         name: ACTIONS.ellipse,
         label: "Draw ellipse",
         icon: LuCircle,
+    },
+    {
+        name: ACTIONS.text,
+        label: "Text",
+        icon: LuType,
     },
     {
         name: ACTIONS.line,

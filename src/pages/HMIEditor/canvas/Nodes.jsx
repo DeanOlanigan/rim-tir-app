@@ -1,4 +1,12 @@
-import { Arrow, Ellipse, Group, Line, Rect, RegularPolygon } from "react-konva";
+import {
+    Arrow,
+    Ellipse,
+    Group,
+    Line,
+    Rect,
+    RegularPolygon,
+    Text,
+} from "react-konva";
 import { useActionsStore } from "./../store/actions-store";
 import { useNodeStore } from "./../store/node-store";
 import { ACTIONS } from "../constants";
@@ -95,6 +103,8 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
             return <RegularPolygon key={id} {...params} ref={registerRef} />;
         case "ellipse":
             return <Ellipse key={id} {...params} ref={registerRef} />;
+        case "text":
+            return <Text key={id} {...params} ref={registerRef} />;
         case "line":
             return (
                 <Line
