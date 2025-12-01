@@ -1,6 +1,13 @@
-import { Fieldset, Group, InputGroup, NumberInput } from "@chakra-ui/react";
+import {
+    Fieldset,
+    Group,
+    IconButton,
+    InputGroup,
+    NumberInput,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { patchNodeThrottled } from "./utils";
+import { LuProportions } from "react-icons/lu";
 
 export const DimensionsBlock = ({ node }) => {
     /* const selectedNode = useNodeStore(
@@ -12,6 +19,7 @@ export const DimensionsBlock = ({ node }) => {
         width,
         height,
     });
+    const [aspectRatio, setAspectRatio] = useState(false);
 
     /* useEffect(() => {
         setDim({
@@ -22,9 +30,21 @@ export const DimensionsBlock = ({ node }) => {
 
     const handleChangeDim = (value, type) => {
         const val = Number.isNaN(value) ? 0 : value;
-        node[type](val);
-        setDim((prev) => ({ ...prev, [type]: val }));
-        patchNodeThrottled(node.id(), { [type]: val });
+
+        if (aspectRatio) {
+            node.width(val);
+            node.height(val);
+            setDim((prev) => ({ ...prev, width: val, height: val }));
+            patchNodeThrottled(node.id(), { width: val, height: val });
+        } else {
+            node[type](val);
+            setDim((prev) => ({ ...prev, [type]: val }));
+            patchNodeThrottled(node.id(), { [type]: val });
+        }
+    };
+
+    const toggleAspectRatio = () => {
+        setAspectRatio((prev) => !prev);
     };
 
     return (
@@ -72,6 +92,13 @@ export const DimensionsBlock = ({ node }) => {
                             <NumberInput.Input />
                         </InputGroup>
                     </NumberInput.Root>
+                    <IconButton
+                        size={"xs"}
+                        variant={aspectRatio ? "solid" : "outline"}
+                        onClick={toggleAspectRatio}
+                    >
+                        <LuProportions />
+                    </IconButton>
                 </Group>
             </Fieldset.Content>
         </Fieldset.Root>
