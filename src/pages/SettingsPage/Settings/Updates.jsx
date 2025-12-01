@@ -28,9 +28,13 @@ const useUpdatesLogs = (enabled) => {
     });
 };
 
-const ConditionalDropzone = () => {
+const ConditionalDropzone = ({ setDownloader }) => {
     const fileUpload = useFileUploadContext();
     const acceptedFiles = fileUpload.acceptedFiles;
+
+    useEffect(() => {
+        setDownloader(acceptedFiles);
+    }, [acceptedFiles]);
 
     if (acceptedFiles.length >= MAX_FILES) {
         return null;
@@ -58,16 +62,38 @@ export const Updates = () => {
     const [downloaderFile, setDownloader] = useState();
     const [isDown, setDown] = useState(false);
     const [logs, setLogs] = useState([]);
+    console.log(downloaderFile, 30);
 
     const sendFileMutation = useMutation({
         mutationKey: ["senderFile"],
         mutationFn: async () => {
             const formData = new FormData();
             formData.append("downloader", downloaderFile[0]);
-            console.log(downloaderFile[0]);
+            return apiv2
+                .post("/getUpdate", formData)
+                .then((res) => console.log(res, 123))
+                .catch((err) => {
+                    throw err;
+                });
         },
         onSuccess: () => {
             setDown(!isDown);
+            setDownloader();
+            setLogs([]);
+        },
+        onError: (err) => {
+            console.log(err, 12312312);
+            const status =
+                err?.response?.status || err?.message || "NO CONNECTION";
+            const code =
+                err?.response?.data?.error?.code ||
+                err?.response?.data?.error ||
+                err?.code ||
+                "NO CONNECTION";
+            setLogs([
+                "Ошибка при установке обновления: " + `${status} ${code}`,
+            ]);
+            setDown(false);
         },
     });
 
@@ -75,11 +101,16 @@ export const Updates = () => {
 
     useEffect(() => {
         if (data?.message) {
-            setLogs((prev) => [...prev.concat(data.message)]);
+            setLogs((prev) => [
+                ...prev.concat(data.message + data.progress + "%"),
+            ]);
+            if (data.progress === 100) {
+                setLogs(["Обновление установлено!!!"]);
+                setDown(false);
+                setDownloader();
+            }
         }
     }, [data]);
-
-    console.log(isDown);
 
     return (
         <>
@@ -94,6 +125,7 @@ export const Updates = () => {
                     <Textarea
                         value={logs.join("\n") || ""}
                         variant="subtle"
+                        readOnly
                         placeholder="Здесь будет виден процесс установки"
                         fontWeight={"500"}
                         autoresize
@@ -105,16 +137,22 @@ export const Updates = () => {
                         alignItems="stretch"
                         maxFiles={MAX_FILES}
                         accept={[".ipk"]}
-                        onFileChange={(e) => setDownloader(e.acceptedFiles)}
                     >
                         <FileUpload.HiddenInput />
-                        <ConditionalDropzone />
+                        <ConditionalDropzone setDownloader={setDownloader} />
                         <FileUpload.List clearable />
                     </FileUpload.Root>
                 </Card.Body>
                 <Card.Footer>
-                    <Button onClick={() => sendFileMutation.mutate()}>
-                        Установить
+                    <Button
+                        disabled={!downloaderFile?.length > 0}
+                        loading={isDown}
+                        loadingText={"Установка обновления"}
+                        onClick={() => sendFileMutation.mutate()}
+                    >
+                        {downloaderFile?.length > 0
+                            ? "Установить"
+                            : "Загрузите установочный файл"}
                     </Button>
                 </Card.Footer>
             </Card.Root>

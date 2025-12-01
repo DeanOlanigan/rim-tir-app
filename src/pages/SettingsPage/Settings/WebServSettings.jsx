@@ -18,7 +18,7 @@ import { useSettingStore } from "./SettingsStore/settings-store";
 export const ServerSettings = ({ settings }) => {
     const EditSettings = useSettingsEditor();
     const isServerChanged = useSettingStore((s) => s.isServerChanged);
-    console.log(settings.https, 123);
+    console.log(settings?.https, 123);
     const CheckChange = useCheck();
     return (
         <>

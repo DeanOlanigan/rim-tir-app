@@ -13,6 +13,7 @@ import { useSettingStore } from "./SettingsStore/settings-store";
 
 export const LogSettings = ({ settings }) => {
     const EditSettings = useSettingsEditor();
+
     const isLogsChanged = useSettingStore((s) => s.isLogsChanged);
     const CheckChange = useCheck();
     return (
@@ -92,7 +93,7 @@ export const LogSettings = ({ settings }) => {
                                 checked={settings?.archive || false}
                                 onCheckedChange={(e) => {
                                     CheckChange("isLogsChanged");
-                                    EditSettings(e.value, "archive", "Logs");
+                                    EditSettings(e.checked, "archive", "Logs");
                                 }}
                             >
                                 <Switch.HiddenInput />
