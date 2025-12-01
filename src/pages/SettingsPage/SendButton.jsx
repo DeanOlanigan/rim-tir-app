@@ -6,14 +6,15 @@ import { toaster } from "@/components/ui/toaster";
 
 export const SendButton = () => {
     const client = useQueryClient();
-    const resetChanged = useSettingStore((s) => s.resetChanged);
+
+    const settings = useSettingStore((s) => s.settings);
+    const setSettings = useSettingStore((s) => s.setSettings);
 
     const settingsMutation = useMutation({
         mutationKey: ["settingsSender"],
         mutationFn: async () => {
-            const newSettings = await client.getQueryData(["settings"]);
             return await apiv2
-                .put("/setsettings", newSettings, {
+                .put("/setsettings", settings, {
                     headers: { "Content-Type": "application/json" },
                     title: "New Settings",
                 })
@@ -24,15 +25,14 @@ export const SendButton = () => {
         },
         onSuccess: () => {
             console.log("COOL");
-            resetChanged();
             toaster.create({
                 description: "Настройки успешно применены!",
                 type: "success",
                 closable: true,
             });
+            client.setQueryData(["settings"], settings);
         },
         onError: (err) => {
-            resetChanged();
             const status =
                 err?.response?.status || err?.message || "NO CONNECTION";
             const code = err?.response?.data?.error?.code || "NO CONNECTION";
@@ -42,12 +42,13 @@ export const SendButton = () => {
                 type: "error",
                 closable: true,
             });
+            setSettings(client.getQueryData(["settings"]));
         },
     });
 
-    const checkChanged = useSettingStore((s) => s.checkChanged);
-
-    const disabled = !checkChanged();
+    const disabled =
+        JSON.stringify(client.getQueryData(["settings"])) ===
+        JSON.stringify(settings);
 
     return (
         <Button

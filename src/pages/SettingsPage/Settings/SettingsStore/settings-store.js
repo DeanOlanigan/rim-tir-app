@@ -1,25 +1,41 @@
 import { create } from "zustand";
 
 export const useSettingStore = create(
-    (set, get) => ({
+    (set) => ({
 
-        isServerChanged: false,
-        isLogsChanged: false,
-        isJournalsChanged: false,
-
-
-        setChanged: (newChanged) => set(() => ({
-            [newChanged]: true
-        })),
-
-        checkChanged: () => {
-            return get().isServerChanged || get().isLogsChanged || get().isJournalsChanged;
+        settings : {
+            Journals: [
+                { name: "event", size: "0.5 MB", files: "1", archive: false },
+                { name: "TI", size: "0.5 MB", files: "1", archive: false },
+            ],
+            WebServer: { port: "41105", time: "14:00", https: false, sslSert: "" },
+            Logs: { size: "0.5", files: "1", archive: false },
         },
 
-        resetChanged: () => set(() => ({
-            isServerChanged: false,
-            isLogsChanged: false,
-            isJournalsChanged: false,
-        }))
+        setSettings: (newSettings) => set(() => ({settings: newSettings})),
+
+        EditSettings: (data, field, name) => set((state) => ({
+            settings: {
+                ...state.settings,
+                [name]: {
+                    ...state.settings[name],
+                    [field]: data
+                }
+            }
+        })),
+
+        EditSettingsJourn: (data, field, name) => set((state) => ({
+            settings: {
+                ...state.settings,
+                Journals: 
+                    state.settings.Journals.map((journal) => 
+                        journal.name === name
+                            ? {...journal, [field] : data}
+                            : journal
+                    )
+                
+            }
+        })),
+
     })
 );

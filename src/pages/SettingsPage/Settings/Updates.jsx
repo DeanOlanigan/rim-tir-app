@@ -62,7 +62,6 @@ export const Updates = () => {
     const [downloaderFile, setDownloader] = useState();
     const [isDown, setDown] = useState(false);
     const [logs, setLogs] = useState([]);
-    console.log(downloaderFile, 30);
 
     const sendFileMutation = useMutation({
         mutationKey: ["senderFile"],
@@ -71,7 +70,7 @@ export const Updates = () => {
             formData.append("downloader", downloaderFile[0]);
             return apiv2
                 .post("/getUpdate", formData)
-                .then((res) => console.log(res, 123))
+                .then((res) => console.log(res))
                 .catch((err) => {
                     throw err;
                 });
@@ -82,7 +81,6 @@ export const Updates = () => {
             setLogs([]);
         },
         onError: (err) => {
-            console.log(err, 12312312);
             const status =
                 err?.response?.status || err?.message || "NO CONNECTION";
             const code =

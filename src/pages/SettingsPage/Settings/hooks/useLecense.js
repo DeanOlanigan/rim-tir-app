@@ -6,7 +6,6 @@ export const useLecense = (uuid) => {
         queryKey:["lecense", uuid],
         queryFn: async ({queryKey }) => {
             const [,uuid] = queryKey;
-            console.log(uuid, 40);
             const res = await apiv2.get(`checkLecense?uuid=${uuid}`);
             return res.data;
         },

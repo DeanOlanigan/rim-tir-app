@@ -11,15 +11,11 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { LuUpload } from "react-icons/lu";
-import { useSettingsEditor } from "./hooks/useSettingsEditor";
-import { useCheck } from "./hooks/useCheck";
 import { useSettingStore } from "./SettingsStore/settings-store";
 
-export const ServerSettings = ({ settings }) => {
-    const EditSettings = useSettingsEditor();
-    const isServerChanged = useSettingStore((s) => s.isServerChanged);
-    console.log(settings?.https, 123);
-    const CheckChange = useCheck();
+export const ServerSettings = () => {
+    const settings = useSettingStore((s) => s.settings);
+    const EditSettings = useSettingStore((s) => s.EditSettings);
     return (
         <>
             <Heading paddingBottom={"2"}>Web Сервер</Heading>
@@ -32,14 +28,15 @@ export const ServerSettings = ({ settings }) => {
                         <Fieldset.Content>
                             <Field.Root
                                 invalid={
-                                    Number(settings?.port) < 1024 ||
-                                    Number(settings?.port) > 49151 ||
-                                    (settings?.port || "").trim() === ""
+                                    Number(settings?.WebServer?.port) < 1024 ||
+                                    Number(settings?.WebServer?.port) > 49151 ||
+                                    (settings?.WebServer?.port || "").trim() ===
+                                        ""
                                 }
                             >
                                 <Field.Label>Порт</Field.Label>
                                 <NumberInput.Root
-                                    value={settings?.port || ""}
+                                    value={settings?.WebServer?.port || ""}
                                     pattern={"[0-9]*"}
                                     allowMouseWheel="true"
                                     min={"1024"}
@@ -49,7 +46,6 @@ export const ServerSettings = ({ settings }) => {
                                     inputMode={"numeric"}
                                     size={"sm"}
                                     onValueChange={(e) => {
-                                        CheckChange("isServerChanged");
                                         EditSettings(
                                             e.value,
                                             "port",
@@ -70,9 +66,8 @@ export const ServerSettings = ({ settings }) => {
                                 <Input
                                     size={"sm"}
                                     type="time"
-                                    value={settings?.time || ""}
+                                    value={settings?.WebServer?.time || ""}
                                     onChange={(e) => {
-                                        CheckChange("isServerChanged");
                                         EditSettings(
                                             e.target.value,
                                             "time",
@@ -85,9 +80,8 @@ export const ServerSettings = ({ settings }) => {
                     </Fieldset.Root>
                     <Switch.Root
                         paddingTop="3"
-                        checked={settings?.https || false}
+                        checked={settings?.WebServer?.https || false}
                         onCheckedChange={(e) => {
-                            CheckChange("isServerChanged");
                             EditSettings(e.checked, "https", "WebServer");
                         }}
                     >
@@ -95,7 +89,7 @@ export const ServerSettings = ({ settings }) => {
                         <Switch.Control />
                         <Switch.Label>HTTPS</Switch.Label>
                     </Switch.Root>
-                    {settings?.https && (
+                    {settings?.WebServer?.https && (
                         <FileUpload.Root paddingTop="3">
                             <FileUpload.HiddenInput />
                             <FileUpload.Trigger asChild>
@@ -106,13 +100,6 @@ export const ServerSettings = ({ settings }) => {
                         </FileUpload.Root>
                     )}
                 </Card.Body>
-                {isServerChanged && (
-                    <Card.Footer>
-                        <Text fontWeight={"medium"} color={"red"}>
-                            *Не забудьте применить изменения!
-                        </Text>
-                    </Card.Footer>
-                )}
             </Card.Root>
         </>
     );

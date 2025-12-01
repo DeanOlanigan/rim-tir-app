@@ -2,27 +2,16 @@ import { Stack } from "@chakra-ui/react";
 import { JournalSettings } from "./Settings/JournalSettings";
 import { LogSettings } from "./Settings/LogSettings";
 import { ServerSettings } from "./Settings/WebServSettings";
-import { useQuery } from "@tanstack/react-query";
-import { apiv2 } from "@/api/baseUrl";
 import { Loader } from "@/components/Loader";
 import { SendButton } from "./SendButton";
 import { ErrorModal } from "./Settings/ErrorModal";
-
-const useSettings = () => {
-    const s = useQuery({
-        queryKey: ["settings"],
-        queryFn: async () => {
-            const res = await apiv2.get("/settings");
-            await new Promise((res) => setTimeout(res, 1000));
-            return res.data;
-        },
-        retry: false,
-    });
-    return s;
-};
+import { useSettingStore } from "./Settings/SettingsStore/settings-store";
+import { useSettings } from "./Settings/hooks/useSettings";
 
 export const Settings = () => {
     const { data: settings, isLoading, isError, refetch } = useSettings();
+    const setSet = useSettingStore((s) => s.setSettings);
+    setSet(settings);
 
     return isLoading ? (
         <Stack gap="3" position={"relative"} h={"xl"}>
