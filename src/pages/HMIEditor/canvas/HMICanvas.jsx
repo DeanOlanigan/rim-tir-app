@@ -54,14 +54,7 @@ export const HMICanvas = ({
         >
             <Layer name="staticLayer">
                 <Grid />
-                <Star
-                    x={0}
-                    y={0}
-                    numPoints={4}
-                    innerRadius={1}
-                    stroke={"black"}
-                    strokeWidth={0.2}
-                />
+                <StartCoords />
             </Layer>
             <Layer ref={nodesLayerRef} name="nodesLayer">
                 <Nodes nodesRef={nodesRef} />
@@ -88,5 +81,23 @@ export const HMICanvas = ({
                 />
             </Layer>
         </Stage>
+    );
+};
+
+const StartCoords = () => {
+    const showStartCoordMarker = useActionsStore(
+        (state) => state.showStartCoordMarker
+    );
+    return (
+        showStartCoordMarker && (
+            <Star
+                x={0}
+                y={0}
+                numPoints={4}
+                innerRadius={1}
+                stroke={"black"}
+                strokeWidth={0.2}
+            />
+        )
     );
 };

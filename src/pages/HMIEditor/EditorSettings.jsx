@@ -37,6 +37,9 @@ export const EditorSettings = () => {
     const workAreaColor = useActionsStore((state) => state.workAreaColor);
     const showNodesTree = useActionsStore((state) => state.showNodesTree);
     const showHitRegions = useActionsStore((state) => state.showHitRegions);
+    const showStartCoordMarker = useActionsStore(
+        (state) => state.showStartCoordMarker
+    );
 
     const {
         setSize,
@@ -50,6 +53,7 @@ export const EditorSettings = () => {
         setGridColor,
         setShowNodesTree,
         setShowHitRegions,
+        setShowStartCoordMarker,
     } = useActionsStore.getState();
 
     return (
@@ -188,6 +192,18 @@ export const EditorSettings = () => {
                                     <Checkbox.Control />
                                     <Checkbox.Label>
                                         Show hit regions
+                                    </Checkbox.Label>
+                                </Checkbox.Root>
+                                <Checkbox.Root
+                                    checked={showStartCoordMarker}
+                                    onCheckedChange={(e) =>
+                                        setShowStartCoordMarker(!!e.checked)
+                                    }
+                                >
+                                    <Checkbox.HiddenInput />
+                                    <Checkbox.Control />
+                                    <Checkbox.Label>
+                                        Show start coordinate marker
                                     </Checkbox.Label>
                                 </Checkbox.Root>
                                 <ColorComp
