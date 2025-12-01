@@ -91,15 +91,20 @@ const BaseSettings = ({ nodesRef, selectedIds }) => {
             : SHAPES_NAMES[primaryNode.attrs.type];
     return (
         <VStack
+            align={"start"}
             pe={2}
             w={"100%"}
             separator={<StackSeparator borderColor={"colorPalette.solid"} />}
         >
+            <Heading size={"md"}>{heading}</Heading>
             <VStack align={"start"}>
-                <Heading size={"md"}>{heading}</Heading>
+                <Heading size={"md"}>Position</Heading>
                 <PositionBlock node={primaryNode} />
-                <DimensionsBlock node={primaryNode} />
                 <RotationBlock node={primaryNode} />
+            </VStack>
+            <VStack align={"start"} w={"100%"}>
+                <Heading size={"md"}>Layout</Heading>
+                <DimensionsBlock node={primaryNode} />
             </VStack>
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Appearance</Heading>
@@ -109,9 +114,17 @@ const BaseSettings = ({ nodesRef, selectedIds }) => {
                 )}
                 {type === "polygon" && <SidesBlock node={primaryNode} />}
             </VStack>
+            {type === "text" && (
+                <VStack align={"start"} w={"100%"}>
+                    <Heading size={"md"}>Typography</Heading>
+                </VStack>
+            )}
             <FillBlock node={primaryNode} />
             <StrokeBlock node={primaryNode} />
-            <Layers node={primaryNode} />
+            <VStack align={"start"} w={"100%"}>
+                <Heading size={"md"}>Layers</Heading>
+                <Layers node={primaryNode} />
+            </VStack>
         </VStack>
     );
 };
