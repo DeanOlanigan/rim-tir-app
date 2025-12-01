@@ -50,6 +50,8 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
 
         if (shape && typeof shape.onTransformEnd === "function") {
             patch = shape.onTransformEnd(node, ctx);
+        } else {
+            console.warn("No onTransformEnd handler for shape type:", type);
         }
         useNodeStore.getState().updateNode(id, patch);
     };
@@ -62,6 +64,8 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         const ctx = { gridSize, snapToGrid };
         if (shape && typeof shape.onTransform === "function") {
             shape.onTransform(node, ctx);
+        } else {
+            console.warn("No onTransform handler for shape type:", type);
         }
     };
 
