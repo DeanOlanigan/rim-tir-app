@@ -64,7 +64,7 @@ export const Lecesne = () => {
                 <Card.Body>
                     {isError && (
                         <ErrorModal
-                            text={"Ошибка при проверке лецензии"}
+                            text={"Ошибка при проверке лицензии"}
                             refetch={refetch}
                         />
                     )}
