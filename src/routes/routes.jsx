@@ -6,9 +6,12 @@ import {
     WideLayout,
 } from "./layouts";
 import { AuthGate } from "./guards";
-import { configurationLoader, monitoringLoader } from "./loaders";
+import {
+    configurationLoader,
+    monitoringLoader,
+    settingsLoader,
+} from "./loaders";
 import { createBrowserRouter } from "react-router-dom";
-import { SettingsPage } from "@/pages/SettingsPage/SettingsPage";
 
 const LoginPage =           lazy(() => import("@/pages/LoginPage/LoginPage")); // prettier-ignore
 const ConfigurationPage =   lazy(() => import("@/pages/ConfigurationPage/ConfigurationPage")); // prettier-ignore
@@ -17,6 +20,7 @@ const LogPage =             lazy(() => import("@/pages/LogPage/LogLayout")); // 
 const JournalPage =         lazy(() => import("@/pages/JournalPage/JournalPage")); // prettier-ignore
 const GraphPage =           lazy(() => import("@/pages/GraphsPage/GraphPage")); // prettier-ignore
 const TestPage =            lazy(() => import("@/pages/TestPage/TestPage")); // prettier-ignore
+const SettingsPage =        lazy(() => import("@/pages/SettingsPage/SettingsPage")); // prettier-ignore
 
 export const routes = [
     {
@@ -57,7 +61,11 @@ export const routes = [
                             { path: "log", element: <LogPage /> },
                             { path: "journal", element: <JournalPage /> },
                             { path: "graph", element: <GraphPage /> },
-                            { path: "settings", element: <SettingsPage /> },
+                            {
+                                path: "settings",
+                                loader: settingsLoader,
+                                element: <SettingsPage />,
+                            },
                         ],
                     },
                 ],

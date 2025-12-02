@@ -10,8 +10,10 @@ import {
 import { useSettingStore } from "./SettingsStore/settings-store";
 
 export const LogSettings = () => {
-    const settings = useSettingStore((s) => s.settings);
-    const EditSettings = useSettingStore((s) => s.EditSettings);
+    const size = useSettingStore((s) => s.settings?.Logs?.size);
+    const files = useSettingStore((s) => s.settings?.Logs?.files);
+    const archive = useSettingStore((s) => s.settings?.Logs?.archive);
+    const editSettings = useSettingStore((s) => s.editSettings);
     return (
         <>
             <Heading paddingBottom={"2"}>Лог файлы</Heading>
@@ -24,20 +26,19 @@ export const LogSettings = () => {
                         <Fieldset.Content>
                             <Field.Root
                                 invalid={
-                                    parseFloat(settings?.Logs?.size) < 0.5 ||
-                                    parseFloat(settings?.Logs?.size) > 5 ||
-                                    (settings?.Logs?.size || "").trim() ===
-                                        "MB" ||
-                                    (settings?.Logs?.size || "").trim() === ""
+                                    parseFloat(size) < 0.5 ||
+                                    parseFloat(size) > 5 ||
+                                    (size || "").trim() === "MB" ||
+                                    (size || "").trim() === ""
                                 }
                             >
                                 <Field.Label>Размер</Field.Label>
                                 <NumberInput.Root
                                     w="100%"
                                     size={"sm"}
-                                    value={settings?.Logs?.size || ""}
+                                    value={size || ""}
                                     onValueChange={(e) => {
-                                        EditSettings(e.value, "size", "Logs");
+                                        editSettings(e.value, "size", "Logs");
                                     }}
                                     min={"0.5"}
                                     max={"5"}
@@ -59,9 +60,9 @@ export const LogSettings = () => {
                             </Field.Root>
                             <Field.Root
                                 invalid={
-                                    Number(settings?.Logs?.files) < 1 ||
-                                    Number(settings?.Logs?.files) > 10 ||
-                                    (settings?.Logs?.size || "").trim === ""
+                                    Number(files) < 1 ||
+                                    Number(files) > 10 ||
+                                    (size || "").trim === ""
                                 }
                             >
                                 <Field.Label>Количество файлов</Field.Label>
@@ -69,10 +70,10 @@ export const LogSettings = () => {
                                     w="100%"
                                     min="1"
                                     max="10"
-                                    value={settings?.Logs?.files || ""}
+                                    value={files || ""}
                                     size="sm"
                                     onValueChange={(e) => {
-                                        EditSettings(e.value, "files", "Logs");
+                                        editSettings(e.value, "files", "Logs");
                                     }}
                                 >
                                     <NumberInput.Control />
@@ -85,9 +86,9 @@ export const LogSettings = () => {
                             </Field.Root>
                             <Switch.Root
                                 paddingTop="3"
-                                checked={settings?.Logs?.archive || false}
+                                checked={archive || false}
                                 onCheckedChange={(e) => {
-                                    EditSettings(e.checked, "archive", "Logs");
+                                    editSettings(e.checked, "archive", "Logs");
                                 }}
                             >
                                 <Switch.HiddenInput />

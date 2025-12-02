@@ -11,13 +11,13 @@ import {
 import { useSettingStore } from "./SettingsStore/settings-store";
 
 export const JournalSettings = () => {
-    const settings = useSettingStore((s) => s.settings);
-    const EditSettings = useSettingStore((s) => s.EditSettingsJourn);
+    const Journals = useSettingStore((s) => s.settings?.Journals);
+    const editSettings = useSettingStore((s) => s.editSettingsJourn);
     return (
         <>
             <Heading paddingBottom={"2"}>Журналы</Heading>
             <Stack direction={"row"}>
-                {settings?.Journals?.map((journal) => (
+                {Journals?.map((journal) => (
                     <Card.Root
                         variant={"elevated"}
                         w={"50%"}
@@ -49,7 +49,7 @@ export const JournalSettings = () => {
                                         <NumberInput.Root
                                             value={journal.size}
                                             onValueChange={(e) => {
-                                                EditSettings(
+                                                editSettings(
                                                     e.value,
                                                     "size",
                                                     journal.name
@@ -88,7 +88,7 @@ export const JournalSettings = () => {
                                         <NumberInput.Root
                                             value={journal.files}
                                             onValueChange={(e) => {
-                                                EditSettings(
+                                                editSettings(
                                                     e.value,
                                                     "files",
                                                     journal.name
@@ -112,7 +112,7 @@ export const JournalSettings = () => {
                                         paddingTop="3"
                                         checked={journal.archive}
                                         onCheckedChange={(e) => {
-                                            EditSettings(
+                                            editSettings(
                                                 e.checked,
                                                 "archive",
                                                 journal.name

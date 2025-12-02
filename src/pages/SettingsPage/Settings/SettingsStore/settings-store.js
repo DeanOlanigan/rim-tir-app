@@ -14,7 +14,7 @@ export const useSettingStore = create(
 
         setSettings: (newSettings) => set(() => ({settings: newSettings})),
 
-        EditSettings: (data, field, name) => set((state) => ({
+        editSettings: (data, field, name) => set((state) => ({
             settings: {
                 ...state.settings,
                 [name]: {
@@ -24,7 +24,7 @@ export const useSettingStore = create(
             }
         })),
 
-        EditSettingsJourn: (data, field, name) => set((state) => ({
+        editSettingsJourn: (data, field, name) => set((state) => ({
             settings: {
                 ...state.settings,
                 Journals: 

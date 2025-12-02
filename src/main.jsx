@@ -2,16 +2,9 @@ import { createRoot } from "react-dom/client";
 //import { StrictMode } from "react";
 import App from "./App.jsx";
 import "./index.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { MqttProvider } from "@/utils/mqtt/mqtt-provider.jsx";
-
-const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            staleTime: Infinity,
-        },
-    },
-});
+import { queryClient } from "./queryClients.js";
 
 // This code is for all users
 window.__TANSTACK_QUERY_CLIENT__ = queryClient;

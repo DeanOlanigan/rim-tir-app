@@ -1,3 +1,6 @@
+
+import { apiv2 } from "@/api/baseUrl";
+import { queryClient } from "@/queryClients";
 import { configuratorConfig } from "@/store/configurator-config";
 
 export async function monitoringLoader() {
@@ -6,6 +9,29 @@ export async function monitoringLoader() {
     );
     await ensureConfiguratorConfig();
     return null;
+}
+
+export async function settingsLoader() {
+    return await Promise.all([
+        queryClient.prefetchQuery({
+            queryKey: ["settings"],
+            queryFn: async () => {
+                const res = await apiv2.get("/settings");
+                await new Promise((res) => setTimeout(res, 1000));
+                return res.data;
+            },
+            retry: false
+        }),
+        queryClient.prefetchQuery({
+            queryKey: ["license"],
+            queryFn: async ({queryKey }) => {
+                const [,uuid] = queryKey;
+                const res = await apiv2.get(`checkLecense?uuid=${uuid}`);
+                return res.data;
+            },
+            retry: false
+        })
+    ]);
 }
 
 export async function configurationLoader() {

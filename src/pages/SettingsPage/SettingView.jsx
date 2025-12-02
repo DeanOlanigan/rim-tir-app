@@ -1,7 +1,7 @@
 import { Stack } from "@chakra-ui/react";
 import { Updates } from "./Settings/Updates";
 import { UsersView } from "./Settings/Users/UsersVeiw";
-import { Lecesne } from "./Lecense";
+import { License } from "./License";
 import { Settings } from "./Settings";
 
 export const SettingView = () => {
@@ -17,7 +17,7 @@ export const SettingView = () => {
             <Settings />
             <UsersView />
             <Updates />
-            <Lecesne />
+            <License />
         </Stack>
     );
 };

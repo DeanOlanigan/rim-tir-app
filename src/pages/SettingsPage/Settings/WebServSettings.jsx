@@ -14,8 +14,11 @@ import { LuUpload } from "react-icons/lu";
 import { useSettingStore } from "./SettingsStore/settings-store";
 
 export const ServerSettings = () => {
-    const settings = useSettingStore((s) => s.settings);
-    const EditSettings = useSettingStore((s) => s.EditSettings);
+    const port = useSettingStore((s) => s.settings?.WebServer?.port);
+    const time = useSettingStore((s) => s.settings?.WebServer?.time);
+    const https = useSettingStore((s) => s.settings?.WebServer?.https);
+    const editSettings = useSettingStore((s) => s.editSettings);
+
     return (
         <>
             <Heading paddingBottom={"2"}>Web Сервер</Heading>
@@ -28,15 +31,14 @@ export const ServerSettings = () => {
                         <Fieldset.Content>
                             <Field.Root
                                 invalid={
-                                    Number(settings?.WebServer?.port) < 1024 ||
-                                    Number(settings?.WebServer?.port) > 49151 ||
-                                    (settings?.WebServer?.port || "").trim() ===
-                                        ""
+                                    Number(port) < 1024 ||
+                                    Number(port) > 49151 ||
+                                    (port || "").trim() === ""
                                 }
                             >
                                 <Field.Label>Порт</Field.Label>
                                 <NumberInput.Root
-                                    value={settings?.WebServer?.port || ""}
+                                    value={port || ""}
                                     pattern={"[0-9]*"}
                                     allowMouseWheel="true"
                                     min={"1024"}
@@ -46,7 +48,7 @@ export const ServerSettings = () => {
                                     inputMode={"numeric"}
                                     size={"sm"}
                                     onValueChange={(e) => {
-                                        EditSettings(
+                                        editSettings(
                                             e.value,
                                             "port",
                                             "WebServer"
@@ -66,9 +68,9 @@ export const ServerSettings = () => {
                                 <Input
                                     size={"sm"}
                                     type="time"
-                                    value={settings?.WebServer?.time || ""}
+                                    value={time || ""}
                                     onChange={(e) => {
-                                        EditSettings(
+                                        editSettings(
                                             e.target.value,
                                             "time",
                                             "WebServer"
@@ -80,16 +82,16 @@ export const ServerSettings = () => {
                     </Fieldset.Root>
                     <Switch.Root
                         paddingTop="3"
-                        checked={settings?.WebServer?.https || false}
+                        checked={https || false}
                         onCheckedChange={(e) => {
-                            EditSettings(e.checked, "https", "WebServer");
+                            editSettings(e.checked, "https", "WebServer");
                         }}
                     >
                         <Switch.HiddenInput />
                         <Switch.Control />
                         <Switch.Label>HTTPS</Switch.Label>
                     </Switch.Root>
-                    {settings?.WebServer?.https && (
+                    {https && (
                         <FileUpload.Root paddingTop="3">
                             <FileUpload.HiddenInput />
                             <FileUpload.Trigger asChild>
