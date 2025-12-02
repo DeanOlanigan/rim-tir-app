@@ -16,13 +16,24 @@ function HMIEditor() {
     const tools = useToolsManager();
 
     return (
-        <Flex ref={ref} h={"100%"} position={"relative"} direction={"column"}>
+        <Flex
+            ref={ref}
+            h={"100%"}
+            position={"relative"}
+            direction={"column"}
+            overflow={"hidden"}
+        >
             <ContextMenu />
             <HMICanvas {...tools} width={width} height={height} />
             <Box position={"absolute"} left={2} top={2}>
                 <EditorSettings />
             </Box>
-            <Box position={"absolute"} right={2} bottom={2}>
+            <Box
+                position={"absolute"}
+                left={2}
+                top={"50%"}
+                transform={"translateY(-50%)"}
+            >
                 <NodesTree />
             </Box>
             <Box position={"absolute"} bottom={12} left={2}>

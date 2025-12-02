@@ -16,6 +16,8 @@ import { OpacityBlock } from "./Opacity";
 import { CornerRadiusBlock } from "./CornerRadius";
 import { Layers } from "./Layers";
 import { SidesBlock } from "./Sides";
+import { TypographyBlock } from "./Typography";
+import { ActionsBlock } from "./Actions";
 
 const SHAPES_WITH_SETTINGS = new Set([
     "rect",
@@ -24,6 +26,7 @@ const SHAPES_WITH_SETTINGS = new Set([
     "text",
     "line",
     "arrow",
+    "group",
 ]);
 
 const SHAPES_NAMES = {
@@ -33,6 +36,7 @@ const SHAPES_NAMES = {
     text: "Text",
     line: "Line",
     arrow: "Arrow",
+    group: "Group",
 };
 
 export const NodeSettings = ({ nodesRef }) => {
@@ -40,10 +44,9 @@ export const NodeSettings = ({ nodesRef }) => {
     if (!selectedIds.length) return null;
     const node = nodesRef.current.get(selectedIds[0]);
     if (!node) return null;
-    const type = node.attrs.type;
+    const types = selectedIds.map((id) => nodesRef.current.get(id).attrs.type);
 
-    if (selectedIds.length !== 1 || !SHAPES_WITH_SETTINGS.has(type))
-        return null;
+    if (!types.every((type) => SHAPES_WITH_SETTINGS.has(type))) return null;
 
     return (
         <Flex
@@ -85,6 +88,7 @@ export const NodeSettings = ({ nodesRef }) => {
 const BaseSettings = ({ nodesRef, selectedIds }) => {
     const primaryNode = nodesRef.current.get(selectedIds[0]);
     const type = primaryNode.attrs.type;
+    const isMultiple = selectedIds.length > 1;
     const heading =
         selectedIds.length > 1
             ? `${selectedIds.length} selected`
@@ -114,16 +118,20 @@ const BaseSettings = ({ nodesRef, selectedIds }) => {
                 )}
                 {type === "polygon" && <SidesBlock node={primaryNode} />}
             </VStack>
-            {type === "text" && (
-                <VStack align={"start"} w={"100%"}>
-                    <Heading size={"md"}>Typography</Heading>
-                </VStack>
+            {type === "text" && <TypographyBlock node={primaryNode} />}
+            {type !== "group" && !isMultiple && (
+                <>
+                    <FillBlock node={primaryNode} />
+                    <StrokeBlock node={primaryNode} />
+                </>
             )}
-            <FillBlock node={primaryNode} />
-            <StrokeBlock node={primaryNode} />
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Layers</Heading>
                 <Layers node={primaryNode} />
+            </VStack>
+            <VStack align={"start"} w={"100%"}>
+                <Heading size={"md"}>Actions</Heading>
+                <ActionsBlock node={primaryNode} />
             </VStack>
         </VStack>
     );

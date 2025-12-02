@@ -1,0 +1,1 @@
+export { TypographyBlock } from "./TypographyBlock";

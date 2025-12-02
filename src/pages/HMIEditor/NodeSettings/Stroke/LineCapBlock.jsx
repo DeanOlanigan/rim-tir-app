@@ -16,7 +16,7 @@ export const LineCapBlock = ({ node }) => {
         <Field.Root>
             <Field.Label>Line Cap</Field.Label>
             <SegmentGroup.Root
-                size={"sm"}
+                size={"xs"}
                 value={value}
                 onValueChange={handleChange}
             >

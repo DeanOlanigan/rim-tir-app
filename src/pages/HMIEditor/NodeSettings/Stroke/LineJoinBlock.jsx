@@ -16,7 +16,7 @@ export const LineJoinBlock = ({ node }) => {
         <Field.Root>
             <Field.Label>Line Join</Field.Label>
             <SegmentGroup.Root
-                size={"sm"}
+                size={"xs"}
                 value={value}
                 onValueChange={handleChange}
             >

@@ -48,6 +48,8 @@ export const DashBlock = ({ node }) => {
                 collection={lineTypes}
                 value={value}
                 onValueChange={handleTypeChange}
+                lazyMount
+                unmountOnExit
             >
                 <Select.HiddenSelect />
                 <Select.Label>Dash</Select.Label>
