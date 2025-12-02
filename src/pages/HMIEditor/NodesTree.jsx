@@ -16,6 +16,7 @@ import {
     LuType,
 } from "react-icons/lu";
 import { useActionsStore } from "./store/actions-store";
+import { Tree } from "react-arborist";
 
 const TYPES_ICONS = {
     rect: LuSquare,
@@ -27,13 +28,36 @@ const TYPES_ICONS = {
     group: LuGroup,
 };
 
-export const NodesTree = () => {
+const useNodesData = () => {
     const rootIds = useNodeStore((state) => state.rootIds);
-    const selectedIds = useNodeStore((state) => state.selectedIds);
+    if (rootIds.length === 0) return [];
+    function createRecursiveList(items) {
+        return items.map((id) => {
+            const node = useNodeStore.getState().nodes[id];
+            const res = {
+                id,
+                name: node.name,
+                icon: TYPES_ICONS[node.type],
+            };
+            if (node.childrenIds)
+                res.children = createRecursiveList(node.childrenIds);
+            return res;
+        });
+    }
+
+    return createRecursiveList(rootIds);
+};
+
+export const NodesTree = () => {
+    const testData = useNodesData();
+    console.log(testData);
+
+    //const rootIds = useNodeStore((state) => state.rootIds);
+    //const selectedIds = useNodeStore((state) => state.selectedIds);
     const showNodesTree = useActionsStore((state) => state.showNodesTree);
     if (!showNodesTree) return null;
 
-    const nodesList = createListCollection({
+    /* const nodesList = createListCollection({
         items: rootIds.map((id) => {
             const node = useNodeStore.getState().nodes[id];
             return {
@@ -42,7 +66,7 @@ export const NodesTree = () => {
                 icon: TYPES_ICONS[node.type],
             };
         }),
-    });
+    }); */
 
     return (
         <Box
@@ -53,7 +77,8 @@ export const NodesTree = () => {
             shadow={"md"}
             p={2}
         >
-            <Listbox.Root
+            <Tree initialData={testData} />
+            {/* <Listbox.Root
                 collection={nodesList}
                 value={selectedIds}
                 onValueChange={(details) =>
@@ -76,7 +101,7 @@ export const NodesTree = () => {
                         </Listbox.Item>
                     ))}
                 </Listbox.Content>
-            </Listbox.Root>
+            </Listbox.Root> */}
         </Box>
     );
 };
