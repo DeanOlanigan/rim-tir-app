@@ -1,6 +1,7 @@
+import { SHAPES } from "../../constants";
 import { registerShape } from "./registry";
 
-registerShape("ellipse", {
+registerShape(SHAPES.ellipse, {
     onTransformEnd(konvaNode) {
         const radiusX = konvaNode.radiusX() * konvaNode.scaleX();
         const radiusY = konvaNode.radiusY() * konvaNode.scaleY();
@@ -28,7 +29,7 @@ registerShape("ellipse", {
     toModelFromKonva(konvaNode) {
         const a = konvaNode.attrs;
         return {
-            type: "ellipse",
+            type: SHAPES.ellipse,
             id: a.id,
             x: Math.round(a.x),
             y: Math.round(a.y),

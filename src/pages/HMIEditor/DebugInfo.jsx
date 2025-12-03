@@ -14,8 +14,8 @@ export const DebugInfo = () => {
         <Flex
             direction={"column"}
             bg={"bg"}
-            w={"180px"}
-            h={"210px"}
+            w={"250px"}
+            h={"400px"}
             borderRadius={"md"}
             shadow={"md"}
             p={2}

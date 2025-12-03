@@ -9,10 +9,6 @@ export function toAbs(stage, worldPoint) {
     return t.point(worldPoint); // world -> abs
 }
 
-export function round4(x) {
-    return Math.round(x * 1e4) / 1e4;
-}
-
 export function absRectToWorld(stage, rect) {
     const p1 = toWorld(stage, { x: rect.x, y: rect.y });
     const p2 = toWorld(stage, {

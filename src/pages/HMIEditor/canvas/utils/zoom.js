@@ -4,7 +4,7 @@ import {
     FIT_PADDING,
     ZOOM_PERCENTAGE_STEP,
 } from "../../constants";
-import { round4 } from "./coords";
+import { round4 } from "../../utils";
 import { clamp } from "./geom";
 
 const zoomAt = (stage, nextScale, anchorPoint) => {

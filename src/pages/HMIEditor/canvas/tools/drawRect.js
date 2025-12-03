@@ -2,7 +2,7 @@ import { LuSquare } from "react-icons/lu";
 import Konva from "konva";
 import { nanoid } from "nanoid";
 import { BASE_PARAMS, snapPointToGrid } from "./utils";
-import { ACTIONS } from "../../constants";
+import { ACTIONS, SHAPES } from "../../constants";
 import { toWorld } from "../utils/coords";
 
 export function createDrawRectTool({
@@ -107,7 +107,7 @@ export function createDrawRectTool({
             const id = nanoid(12);
             addNode(id, {
                 ...BASE_PARAMS,
-                type: "rect",
+                type: SHAPES.rect,
                 id,
                 name: "node",
                 x: attrs.x,

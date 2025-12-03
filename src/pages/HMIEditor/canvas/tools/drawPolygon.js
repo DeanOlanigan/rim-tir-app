@@ -3,7 +3,7 @@ import { toWorld } from "../utils/coords";
 import Konva from "konva";
 import { nanoid } from "nanoid";
 import { BASE_PARAMS, snapPointToGrid } from "./utils";
-import { ACTIONS } from "../../constants";
+import { ACTIONS, SHAPES } from "../../constants";
 
 export function createDrawPolygonTool({
     getOverviewLayer,
@@ -121,7 +121,7 @@ export function createDrawPolygonTool({
             const id = nanoid(12);
             addNode(id, {
                 ...BASE_PARAMS,
-                type: ACTIONS.polygon,
+                type: SHAPES.polygon,
                 id,
                 name: "node",
                 x: attrs.x,

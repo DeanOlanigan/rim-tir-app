@@ -3,6 +3,7 @@ import { useActionsStore } from "../store/actions-store";
 import { useNodeStore } from "../store/node-store";
 import { Circle } from "react-konva";
 import { dragBound } from "./utils/dragBound";
+import { isLineLikeType } from "../utils";
 
 export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
     const scale = useActionsStore((state) => state.scale);
@@ -36,11 +37,7 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
     );
 
     useEffect(() => {
-        if (
-            !primaryNode ||
-            (primaryNode.type !== "line" && primaryNode.type !== "arrow")
-        )
-            return;
+        if (!primaryNode || !isLineLikeType(primaryNode.type)) return;
 
         const node = nodesRef.current.get(primaryNode.id);
         if (!node) return;
@@ -53,11 +50,7 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
         };
     }, [primaryNode, nodesRef, onNodeMove, onNodeMoveStart]);
 
-    if (
-        !primaryNode ||
-        (primaryNode.type !== "line" && primaryNode.type !== "arrow")
-    )
-        return null;
+    if (!primaryNode || !isLineLikeType(primaryNode.type)) return null;
 
     const line = nodesRef.current.get(primaryNode.id);
     if (!line) return null;

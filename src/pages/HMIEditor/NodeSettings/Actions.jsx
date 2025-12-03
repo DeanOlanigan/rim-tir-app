@@ -1,11 +1,16 @@
 import { Group, IconButton } from "@chakra-ui/react";
-import { LuClipboardCopy, LuLayers2, LuTrash2 } from "react-icons/lu";
+import { LuClipboardCopy, LuGroup, LuLayers2, LuTrash2 } from "react-icons/lu";
 
 //TODO WIP
 
-export const ActionsBlock = ({ node }) => {
+export const ActionsBlock = ({ node, isMultiple }) => {
     return (
         <Group>
+            {isMultiple && (
+                <IconButton size={"xs"}>
+                    <LuGroup />
+                </IconButton>
+            )}
             <IconButton size={"xs"}>
                 <LuClipboardCopy />
             </IconButton>

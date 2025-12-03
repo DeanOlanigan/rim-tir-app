@@ -3,7 +3,7 @@ import { toWorld } from "../utils/coords";
 import Konva from "konva";
 import { nanoid } from "nanoid";
 import { BASE_PARAMS, snapPointToGrid } from "./utils";
-import { ACTIONS } from "../../constants";
+import { ACTIONS, SHAPES } from "../../constants";
 
 export function createDrawArrowTool({
     getOverviewLayer,
@@ -89,7 +89,7 @@ export function createDrawArrowTool({
             const id = nanoid(12);
             addNode(id, {
                 id,
-                type: "arrow",
+                type: SHAPES.arrow,
                 name: "node",
                 ...BASE_PARAMS,
                 points: [x1, y1, x2, y2],

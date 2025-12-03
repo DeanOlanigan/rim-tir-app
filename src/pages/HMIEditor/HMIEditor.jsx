@@ -31,8 +31,8 @@ function HMIEditor() {
             <Box
                 position={"absolute"}
                 left={2}
-                top={"50%"}
-                transform={"translateY(-50%)"}
+                top={"25%"}
+                transform={"translateY(-25%)"}
             >
                 <NodesTree />
             </Box>

@@ -52,12 +52,12 @@ export const HMICanvas = ({
             onPointerUp={manager.handlers.onPointerUp}
             onContextMenu={onContextMenu}
         >
+            <Layer ref={nodesLayerRef} name="nodesLayer">
+                <Nodes nodesRef={nodesRef} />
+            </Layer>
             <Layer name="staticLayer">
                 <Grid />
                 <StartCoords />
-            </Layer>
-            <Layer ref={nodesLayerRef} name="nodesLayer">
-                <Nodes nodesRef={nodesRef} />
             </Layer>
             <Layer ref={overviewLayerRef} name="overlayLayer">
                 <Rect

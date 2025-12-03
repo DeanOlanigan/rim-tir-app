@@ -14,58 +14,60 @@ import {
 } from "react-icons/lu";
 import { RxAngle } from "react-icons/rx";
 import { patchNodeThrottled } from "./utils";
+import { round4 } from "../utils";
 
 function toDegIn0To360Range(deg) {
     return ((deg % 360) + 360) % 360;
 }
 
-function round4(x) {
-    return Math.round(x * 1e4) / 1e4;
+function applyCenteredTransform(node, transformFn) {
+    const stage = node.getStage();
+    if (!stage) return;
+
+    // центр до трансформации
+    const oldRect = node.getClientRect({ relativeTo: stage });
+    const oldCenter = {
+        x: oldRect.x + oldRect.width / 2,
+        y: oldRect.y + oldRect.height / 2,
+    };
+
+    // сама трансформация (rotation / flip / что угодно)
+    transformFn();
+
+    // центр после трансформации
+    const newRect = node.getClientRect({ relativeTo: stage });
+    const newCenter = {
+        x: newRect.x + newRect.width / 2,
+        y: newRect.y + newRect.height / 2,
+    };
+
+    // сдвигаем ноду так, чтобы визуальный центр остался на месте
+    const dx = oldCenter.x - newCenter.x;
+    const dy = oldCenter.y - newCenter.y;
+
+    const newPosX = round4(node.x() + dx);
+    const newPosY = round4(node.y() + dy);
+
+    node.position({
+        x: newPosX,
+        y: newPosY,
+    });
+
+    return { x: newPosX, y: newPosY };
 }
 
 export const RotationBlock = ({ node }) => {
     const [value, setValue] = useState(node.rotation());
 
-    const applyCenteredTransform = (node, transformFn) => {
-        const stage = node.getStage();
-        if (!stage) return;
-
-        // центр до трансформации
-        const oldRect = node.getClientRect({ relativeTo: stage });
-        const oldCenter = {
-            x: oldRect.x + oldRect.width / 2,
-            y: oldRect.y + oldRect.height / 2,
-        };
-
-        // сама трансформация (rotation / flip / что угодно)
-        transformFn();
-
-        // центр после трансформации
-        const newRect = node.getClientRect({ relativeTo: stage });
-        const newCenter = {
-            x: newRect.x + newRect.width / 2,
-            y: newRect.y + newRect.height / 2,
-        };
-
-        // сдвигаем ноду так, чтобы визуальный центр остался на месте
-        const dx = oldCenter.x - newCenter.x;
-        const dy = oldCenter.y - newCenter.y;
-
-        node.position({
-            x: round4(node.x() + dx),
-            y: round4(node.y() + dy),
-        });
-    };
-
     const handleRotation = (angle) => {
         const val = Number.isNaN(angle) ? 0 : angle;
         const next = toDegIn0To360Range(val);
 
-        applyCenteredTransform(node, () => {
+        const { x, y } = applyCenteredTransform(node, () => {
             node.rotation(next);
         });
         setValue(next);
-        patchNodeThrottled(node.id(), { rotation: next });
+        patchNodeThrottled(node.id(), { x, y, rotation: next });
     };
 
     // TODO сделать синхронизацию со стором

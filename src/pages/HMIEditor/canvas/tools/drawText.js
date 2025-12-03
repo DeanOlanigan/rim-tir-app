@@ -2,7 +2,7 @@ import { LuType } from "react-icons/lu";
 import Konva from "konva";
 import { nanoid } from "nanoid";
 import { BASE_PARAMS, snapPointToGrid } from "./utils";
-import { ACTIONS } from "../../constants";
+import { ACTIONS, SHAPES } from "../../constants";
 import { toWorld } from "../utils/coords";
 
 export function createDrawTextTool({
@@ -134,7 +134,7 @@ export function createDrawTextTool({
             const id = nanoid(12);
             addNode(id, {
                 ...BASE_PARAMS,
-                type: "text",
+                type: SHAPES.text,
                 id,
                 name: "node",
                 x: attrs.x,

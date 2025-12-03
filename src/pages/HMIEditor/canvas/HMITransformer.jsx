@@ -5,6 +5,7 @@ import { useNodeStore } from "../store/node-store";
 import { getShape } from "./shapes";
 import { useActionsStore } from "../store/actions-store";
 import { dragBound } from "./utils/dragBound";
+import { isLineLikeType } from "../utils";
 
 const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
@@ -14,7 +15,7 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
     const isLineLike =
         primaryNode &&
         selectedIds.length === 1 &&
-        (primaryNode.type === "line" || primaryNode.type === "arrow");
+        isLineLikeType(primaryNode.type);
 
     useEffect(() => {
         const transformer = transformerRef.current;
@@ -40,20 +41,21 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
     );
 
     const transformEndHandler = (e) => {
-        const node = e.target;
-        const { id, type } = node.attrs;
-        const shape = getShape(type);
-
-        const { gridSize, snapToGrid } = useActionsStore.getState();
-        const ctx = { gridSize, snapToGrid };
+        const nodes = transformerRef.current.nodes();
+        if (nodes.length === 0) return;
         let patch = {};
-
-        if (shape && typeof shape.onTransformEnd === "function") {
-            patch = shape.onTransformEnd(node, ctx);
-        } else {
-            console.warn("No onTransformEnd handler for shape type:", type);
+        for (const node of nodes) {
+            const { id, type } = node.attrs;
+            const shape = getShape(type);
+            const { gridSize, snapToGrid } = useActionsStore.getState();
+            const ctx = { gridSize, snapToGrid };
+            if (shape && typeof shape.onTransformEnd === "function") {
+                patch = shape.onTransformEnd(node, ctx);
+            } else {
+                console.warn("No onTransformEnd handler for shape type:", type);
+            }
+            useNodeStore.getState().updateNode(id, patch);
         }
-        useNodeStore.getState().updateNode(id, patch);
     };
 
     const transformHandler = (e) => {
@@ -69,7 +71,7 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         }
     };
 
-    if (isLineLike) return null;
+    //if (isLineLike) return null;
 
     return (
         <>

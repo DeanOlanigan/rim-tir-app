@@ -2,7 +2,7 @@ import { LuSlash } from "react-icons/lu";
 import Konva from "konva";
 import { nanoid } from "nanoid";
 import { BASE_PARAMS, snapPointToGrid } from "./utils";
-import { ACTIONS } from "../../constants";
+import { ACTIONS, SHAPES } from "../../constants";
 import { toWorld } from "../utils/coords";
 
 export function createDrawLineTool({
@@ -86,10 +86,10 @@ export function createDrawLineTool({
 
             const id = nanoid(12);
             addNode(id, {
-                id,
-                type: "line",
-                name: "node",
                 ...BASE_PARAMS,
+                type: SHAPES.line,
+                id,
+                name: "node",
                 x: x1,
                 y: y1,
                 points: [0, 0, dx, dy],

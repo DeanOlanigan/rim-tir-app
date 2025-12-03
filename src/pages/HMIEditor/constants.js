@@ -1,3 +1,13 @@
+import {
+    LuCircle,
+    LuGroup,
+    LuHexagon,
+    LuMoveUpRight,
+    LuSlash,
+    LuSquare,
+    LuType,
+} from "react-icons/lu";
+
 export const DEFAULT_GRID_SIZE = 10;
 export const SCROLL_STRENGTH = 25;
 export const DEFAULT_MIN_ZOOM = 0.2;
@@ -19,4 +29,40 @@ export const ACTIONS = {
     line: "line",
     zoomIn: "zoomIn",
     zoomOut: "zoomOut",
+};
+export const SHAPES = {
+    rect: "rect",
+    polygon: "polygon",
+    ellipse: "ellipse",
+    text: "text",
+    line: "line",
+    arrow: "arrow",
+    group: "group",
+};
+export const SHAPES_WITH_SETTINGS = new Set([
+    SHAPES.rect,
+    SHAPES.polygon,
+    SHAPES.ellipse,
+    SHAPES.text,
+    SHAPES.line,
+    SHAPES.arrow,
+    SHAPES.group,
+]);
+export const SHAPES_NAMES = {
+    [SHAPES.rect]: "Rectangle",
+    [SHAPES.polygon]: "Polygon",
+    [SHAPES.ellipse]: "Ellipse",
+    [SHAPES.text]: "Text",
+    [SHAPES.line]: "Line",
+    [SHAPES.arrow]: "Arrow",
+    [SHAPES.group]: "Group",
+};
+export const SHAPES_ICONS = {
+    [SHAPES.rect]: LuSquare,
+    [SHAPES.polygon]: LuHexagon,
+    [SHAPES.ellipse]: LuCircle,
+    [SHAPES.text]: LuType,
+    [SHAPES.line]: LuSlash,
+    [SHAPES.arrow]: LuMoveUpRight,
+    [SHAPES.group]: LuGroup,
 };

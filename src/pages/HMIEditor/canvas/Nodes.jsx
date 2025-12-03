@@ -9,7 +9,7 @@ import {
 } from "react-konva";
 import { useActionsStore } from "./../store/actions-store";
 import { useNodeStore } from "./../store/node-store";
-import { ACTIONS } from "../constants";
+import { ACTIONS, SHAPES } from "../constants";
 import { dragBound } from "./utils/dragBound";
 
 const common = {
@@ -97,15 +97,15 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
     };
 
     switch (node.type) {
-        case "rect":
+        case SHAPES.rect:
             return <Rect key={id} {...params} ref={registerRef} />;
-        case "polygon":
+        case SHAPES.polygon:
             return <RegularPolygon key={id} {...params} ref={registerRef} />;
-        case "ellipse":
+        case SHAPES.ellipse:
             return <Ellipse key={id} {...params} ref={registerRef} />;
-        case "text":
+        case SHAPES.text:
             return <Text key={id} {...params} ref={registerRef} />;
-        case "line":
+        case SHAPES.line:
             return (
                 <Line
                     key={id}
@@ -114,7 +114,7 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
                     hitStrokeWidth={node.strokeWidth + 3 || 3}
                 />
             );
-        case "arrow":
+        case SHAPES.arrow:
             return (
                 <Arrow
                     key={id}
@@ -123,7 +123,7 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
                     hitStrokeWidth={node.strokeWidth + 3 || 3}
                 />
             );
-        case "group":
+        case SHAPES.group:
             return (
                 <Group key={id} {...params} x={0} y={0} ref={registerRef}>
                     <NodeWrapper

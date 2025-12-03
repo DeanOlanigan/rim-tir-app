@@ -1,6 +1,7 @@
+import { SHAPES } from "../../constants";
 import { registerShape } from "./registry";
 
-registerShape("text", {
+registerShape(SHAPES.text, {
     onTransformEnd(konvaNode) {
         const width = konvaNode.width() * konvaNode.scaleX();
         const height = konvaNode.height() * konvaNode.scaleY();
@@ -30,7 +31,7 @@ registerShape("text", {
     toModelFromKonva(konvaNode) {
         const a = konvaNode.attrs;
         return {
-            type: "text",
+            type: SHAPES.text,
             id: a.id,
             x: Math.round(a.x),
             y: Math.round(a.y),

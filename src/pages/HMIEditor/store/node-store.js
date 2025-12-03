@@ -120,6 +120,18 @@ export const useNodeStore = create(
                             [id]: { ...state.nodes[id], ...patch },
                         },
                     })),
+                updateNodes: (ids, patchesById) =>
+                    set((state) => ({
+                        nodes: {
+                            ...state.nodes,
+                            ...ids.reduce((acc, id) => {
+                                const patch = patchesById[id];
+                                if (!patch) return acc;
+                                acc[id] = { ...state.nodes[id], ...patch };
+                                return acc;
+                            }, {}),
+                        },
+                    })),
                 setSelectedIds: (ids) =>
                     set((state) => {
                         const prev = state.selectedIds;

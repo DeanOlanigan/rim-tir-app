@@ -2,6 +2,7 @@ import {
     Box,
     Flex,
     Heading,
+    HStack,
     StackSeparator,
     Tabs,
     VStack,
@@ -18,34 +19,16 @@ import { Layers } from "./Layers";
 import { SidesBlock } from "./Sides";
 import { TypographyBlock } from "./Typography";
 import { ActionsBlock } from "./Actions";
-
-const SHAPES_WITH_SETTINGS = new Set([
-    "rect",
-    "polygon",
-    "ellipse",
-    "text",
-    "line",
-    "arrow",
-    "group",
-]);
-
-const SHAPES_NAMES = {
-    rect: "Rectangle",
-    polygon: "Polygon",
-    ellipse: "Ellipse",
-    text: "Text",
-    line: "Line",
-    arrow: "Arrow",
-    group: "Group",
-};
+import { SHAPES, SHAPES_NAMES, SHAPES_WITH_SETTINGS } from "../constants";
 
 export const NodeSettings = ({ nodesRef }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
     if (!selectedIds.length) return null;
+
     const node = nodesRef.current.get(selectedIds[0]);
     if (!node) return null;
-    const types = selectedIds.map((id) => nodesRef.current.get(id).attrs.type);
 
+    const types = selectedIds.map((id) => nodesRef.current.get(id).attrs.type);
     if (!types.every((type) => SHAPES_WITH_SETTINGS.has(type))) return null;
 
     return (
@@ -100,7 +83,10 @@ const BaseSettings = ({ nodesRef, selectedIds }) => {
             w={"100%"}
             separator={<StackSeparator borderColor={"colorPalette.solid"} />}
         >
-            <Heading size={"md"}>{heading}</Heading>
+            <HStack w={"100%"} justify={"space-between"}>
+                <Heading size={"md"}>{heading}</Heading>
+                <ActionsBlock node={primaryNode} isMultiple={isMultiple} />
+            </HStack>
             <VStack align={"start"}>
                 <Heading size={"md"}>Position</Heading>
                 <PositionBlock node={primaryNode} />
@@ -108,18 +94,22 @@ const BaseSettings = ({ nodesRef, selectedIds }) => {
             </VStack>
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Layout</Heading>
-                <DimensionsBlock node={primaryNode} />
+                <DimensionsBlock
+                    node={primaryNode}
+                    nodesRef={nodesRef}
+                    selectedIds={selectedIds}
+                />
             </VStack>
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Appearance</Heading>
                 <OpacityBlock node={primaryNode} />
-                {(type === "rect" || type === "polygon") && (
+                {(type === SHAPES.rect || type === SHAPES.polygon) && (
                     <CornerRadiusBlock node={primaryNode} />
                 )}
-                {type === "polygon" && <SidesBlock node={primaryNode} />}
+                {type === SHAPES.polygon && <SidesBlock node={primaryNode} />}
             </VStack>
-            {type === "text" && <TypographyBlock node={primaryNode} />}
-            {type !== "group" && !isMultiple && (
+            {type === SHAPES.text && <TypographyBlock node={primaryNode} />}
+            {type !== SHAPES.group && !isMultiple && (
                 <>
                     <FillBlock node={primaryNode} />
                     <StrokeBlock node={primaryNode} />
@@ -128,10 +118,6 @@ const BaseSettings = ({ nodesRef, selectedIds }) => {
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Layers</Heading>
                 <Layers node={primaryNode} />
-            </VStack>
-            <VStack align={"start"} w={"100%"}>
-                <Heading size={"md"}>Actions</Heading>
-                <ActionsBlock node={primaryNode} />
             </VStack>
         </VStack>
     );

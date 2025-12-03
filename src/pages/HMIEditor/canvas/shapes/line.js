@@ -1,11 +1,24 @@
+import { SHAPES } from "../../constants";
+import { round4 } from "../../utils";
 import { registerShape } from "./registry";
 
-registerShape("line", {
+registerShape(SHAPES.line, {
     onTransformEnd(konvaNode) {
-        const a = konvaNode.attrs;
-        return {
-            points: a.points.slice(),
+        const newPoints = [];
+        for (let i = 0; i < konvaNode.points().length; i += 2) {
+            newPoints[i] = round4(konvaNode.points()[i] * konvaNode.scaleX());
+            newPoints[i + 1] = round4(
+                konvaNode.points()[i + 1] * konvaNode.scaleY()
+            );
+        }
+        const patch = {
+            x: round4(konvaNode.x()),
+            y: round4(konvaNode.y()),
+            rotation: round4(konvaNode.rotation()),
+            points: newPoints,
         };
+
+        return patch;
     },
 
     // TODO
@@ -14,18 +27,23 @@ registerShape("line", {
     onTransform(konvaNode) {
         const newPoints = [];
         for (let i = 0; i < konvaNode.points().length; i += 2) {
-            newPoints[i] = konvaNode.points()[i] * konvaNode.scaleX();
-            newPoints[i + 1] = konvaNode.points()[i + 1] * konvaNode.scaleY();
+            newPoints[i] = round4(konvaNode.points()[i] * konvaNode.scaleX());
+            newPoints[i + 1] = round4(
+                konvaNode.points()[i + 1] * konvaNode.scaleY()
+            );
         }
-        konvaNode.points(newPoints);
         konvaNode.scaleX(1);
         konvaNode.scaleY(1);
+        konvaNode.x(round4(konvaNode.x()));
+        konvaNode.y(round4(konvaNode.y()));
+        konvaNode.rotation(round4(konvaNode.rotation()));
+        konvaNode.points(newPoints);
     },
 
     toModelFromKonva(konvaNode) {
         const a = konvaNode.attrs;
         return {
-            type: "line",
+            type: SHAPES.line,
             id: a.id,
             x: Math.round(a.x),
             y: Math.round(a.y),

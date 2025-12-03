@@ -1,32 +1,8 @@
-import {
-    Box,
-    createListCollection,
-    Flex,
-    Icon,
-    Listbox,
-} from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useNodeStore } from "./store/node-store";
-import {
-    LuCircle,
-    LuGroup,
-    LuHexagon,
-    LuMoveUpRight,
-    LuSlash,
-    LuSquare,
-    LuType,
-} from "react-icons/lu";
 import { useActionsStore } from "./store/actions-store";
 import { Tree } from "react-arborist";
-
-const TYPES_ICONS = {
-    rect: LuSquare,
-    polygon: LuHexagon,
-    ellipse: LuCircle,
-    text: LuType,
-    line: LuSlash,
-    arrow: LuMoveUpRight,
-    group: LuGroup,
-};
+import { SHAPES_ICONS } from "./constants";
 
 const useNodesData = () => {
     const rootIds = useNodeStore((state) => state.rootIds);
@@ -36,8 +12,8 @@ const useNodesData = () => {
             const node = useNodeStore.getState().nodes[id];
             const res = {
                 id,
-                name: node.name,
-                icon: TYPES_ICONS[node.type],
+                name: `${node.name} (${id})`,
+                icon: SHAPES_ICONS[node.type],
             };
             if (node.childrenIds)
                 res.children = createRecursiveList(node.childrenIds);
@@ -71,13 +47,13 @@ export const NodesTree = () => {
     return (
         <Box
             bg={"bg"}
-            w={"180px"}
+            w={"250px"}
             h={"250px"}
             borderRadius={"md"}
             shadow={"md"}
             p={2}
         >
-            <Tree initialData={testData} />
+            <Tree data={testData} />
             {/* <Listbox.Root
                 collection={nodesList}
                 value={selectedIds}
