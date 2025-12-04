@@ -85,7 +85,11 @@ const BaseSettings = ({ nodesRef, selectedIds }) => {
         >
             <HStack w={"100%"} justify={"space-between"}>
                 <Heading size={"md"}>{heading}</Heading>
-                <ActionsBlock node={primaryNode} isMultiple={isMultiple} />
+                <ActionsBlock
+                    node={primaryNode}
+                    nodesRef={nodesRef}
+                    selectedIds={selectedIds}
+                />
             </HStack>
             <VStack align={"start"}>
                 <Heading size={"md"}>Position</Heading>

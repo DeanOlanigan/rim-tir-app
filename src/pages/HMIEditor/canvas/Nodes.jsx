@@ -125,7 +125,7 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
             );
         case SHAPES.group:
             return (
-                <Group key={id} {...params} x={0} y={0} ref={registerRef}>
+                <Group key={id} {...params} ref={registerRef}>
                     <NodeWrapper
                         ids={node.childrenIds}
                         nodesRef={nodesRef}

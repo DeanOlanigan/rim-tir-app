@@ -3,7 +3,8 @@ import { LuClipboardCopy, LuGroup, LuLayers2, LuTrash2 } from "react-icons/lu";
 
 //TODO WIP
 
-export const ActionsBlock = ({ node, isMultiple }) => {
+export const ActionsBlock = ({ node, nodesRef, selectedIds }) => {
+    const isMultiple = selectedIds.length > 1;
     return (
         <Group>
             {isMultiple && (

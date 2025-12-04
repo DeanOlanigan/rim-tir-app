@@ -5,17 +5,17 @@ import { useNodeStore } from "../store/node-store";
 import { getShape } from "./shapes";
 import { useActionsStore } from "../store/actions-store";
 import { dragBound } from "./utils/dragBound";
-import { isLineLikeType } from "../utils";
+//import { isLineLikeType } from "../utils";
 
 const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
-    const primaryNode = useNodeStore((state) => state.nodes[selectedIds[0]]);
+    //const primaryNode = useNodeStore((state) => state.nodes[selectedIds[0]]);
     console.log("Render HMITRansformer", nodesRef, selectedIds);
 
-    const isLineLike =
+    /* const isLineLike =
         primaryNode &&
         selectedIds.length === 1 &&
-        isLineLikeType(primaryNode.type);
+        isLineLikeType(primaryNode.type); */
 
     useEffect(() => {
         const transformer = transformerRef.current;
@@ -40,34 +40,38 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         [canvasRef]
     );
 
-    const transformEndHandler = (e) => {
+    const transformEndHandler = () => {
         const nodes = transformerRef.current.nodes();
         if (nodes.length === 0) return;
-        let patch = {};
+        const ids = nodes.map((node) => node.id());
+        let patchesById = {};
         for (const node of nodes) {
             const { id, type } = node.attrs;
             const shape = getShape(type);
             const { gridSize, snapToGrid } = useActionsStore.getState();
             const ctx = { gridSize, snapToGrid };
             if (shape && typeof shape.onTransformEnd === "function") {
-                patch = shape.onTransformEnd(node, ctx);
+                patchesById[id] = shape.onTransformEnd(node, ctx);
             } else {
                 console.warn("No onTransformEnd handler for shape type:", type);
             }
-            useNodeStore.getState().updateNode(id, patch);
         }
+        useNodeStore.getState().updateNodes(ids, patchesById);
     };
 
-    const transformHandler = (e) => {
-        const node = e.target;
-        const type = node.attrs.type;
-        const shape = getShape(type);
-        const { gridSize, snapToGrid } = useActionsStore.getState();
-        const ctx = { gridSize, snapToGrid };
-        if (shape && typeof shape.onTransform === "function") {
-            shape.onTransform(node, ctx);
-        } else {
-            console.warn("No onTransform handler for shape type:", type);
+    const transformHandler = () => {
+        const nodes = transformerRef.current.nodes();
+        if (nodes.length === 0) return;
+        for (const node of nodes) {
+            const type = node.attrs.type;
+            const shape = getShape(type);
+            const { gridSize, snapToGrid } = useActionsStore.getState();
+            const ctx = { gridSize, snapToGrid };
+            if (shape && typeof shape.onTransform === "function") {
+                shape.onTransform(node, ctx);
+            } else {
+                console.warn("No onTransform handler for shape type:", type);
+            }
         }
     };
 

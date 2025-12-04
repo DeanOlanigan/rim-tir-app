@@ -6,9 +6,9 @@ import {
     NumberInput,
 } from "@chakra-ui/react";
 import { useMemo, useState } from "react";
-import { patchNodeThrottled } from "./utils";
 import { LuProportions } from "react-icons/lu";
 import { isLineLikeType, round4 } from "../utils";
+import { patchNodesThrottled } from "./utils";
 
 function collectSelectionDimensions(nodeRef, selectedIds) {
     let width;
@@ -45,10 +45,55 @@ function collectSelectionDimensions(nodeRef, selectedIds) {
     };
 }
 
+function resizeLineLike(node, targetWidth, targetHeight) {
+    const rect = node.getSelfRect();
+    const curWidth = rect.width || 1;
+    const curHeight = rect.height || 1;
+
+    const sx = targetWidth / curWidth;
+    const sy = targetHeight / curHeight;
+
+    const oldPoints = node.points();
+    const newPoints = [];
+
+    for (let i = 0; i < oldPoints.length; i += 2) {
+        const px = oldPoints[i];
+        const py = oldPoints[i + 1];
+
+        const relX = px - rect.x;
+        const relY = py - rect.y;
+
+        const scaleX = round4(rect.x + relX * sx);
+        const scaleY = round4(rect.y + relY * sy);
+
+        newPoints.push(scaleX, scaleY);
+    }
+
+    node.points(newPoints);
+    return newPoints;
+}
+
 export const DimensionsBlock = ({ node, nodesRef, selectedIds }) => {
     const type = node.attrs.type;
     const isLineLike = isLineLikeType(type);
     const isMultiple = selectedIds.length > 1;
+
+    console.log({
+        pos: node.position(),
+        apos: node.absolutePosition(),
+        size: node.size(),
+        gcr: node.getClientRect(),
+        gcrst: node.getClientRect({ skipTransform: true }),
+        gcrssh: node.getClientRect({ skipShadow: true }),
+        gcrsst: node.getClientRect({ skipStroke: true }),
+        gcrrt: node.getClientRect({ relativeTo: node.parent }),
+        gcrrtsshsst: node.getClientRect({
+            relativeTo: node.parent,
+            skipShadow: true,
+            skipStroke: true,
+        }),
+        gsr: node?.getSelfRect?.(),
+    });
 
     const initialDim = useMemo(() => {
         if (isMultiple) {
@@ -63,51 +108,89 @@ export const DimensionsBlock = ({ node, nodesRef, selectedIds }) => {
 
     const handleChangeDim = (value, type) => {
         const val = Number.isNaN(value) ? 0 : value;
+        const ids = selectedIds.length ? selectedIds : [node.id()];
 
-        if (isLineLike) {
-            const rect = node.getSelfRect();
-            const curWidth = rect.width || 1;
-            const curHeight = rect.height || 1;
+        const patchesById = {};
 
-            let sx, sy;
+        ids.forEach((id) => {
+            const n = nodesRef.current.get(id);
+            if (!n) return;
+            const t = n.attrs.type;
+            const isLineLike = isLineLikeType(t);
 
-            if (aspectRatio) {
-                sx = sy = type === "width" ? val / curWidth : val / curHeight;
+            if (isLineLike) {
+                const rect = n.getSelfRect();
+                const curWidth = rect.width || 1;
+                const curHeight = rect.height || 1;
+
+                let targetWidth = curWidth;
+                let targetHeight = curHeight;
+
+                if (aspectRatio) {
+                    if (type === "width") {
+                        const scale = val / curWidth;
+                        targetWidth = val;
+                        targetHeight = curHeight * scale;
+                    } else {
+                        const scale = val / curHeight;
+                        targetWidth = curWidth * scale;
+                        targetHeight = val;
+                    }
+                } else {
+                    if (type === "width") targetWidth = val;
+                    if (type === "height") targetHeight = val;
+                }
+
+                const newPoints = resizeLineLike(
+                    n,
+                    Math.max(targetWidth, 0),
+                    Math.max(targetHeight, 0)
+                );
+
+                patchesById[id] = {
+                    points: newPoints,
+                    width: targetWidth,
+                    height: targetHeight,
+                };
             } else {
-                sx = type === "width" ? val / curWidth : 1;
-                sy = type === "height" ? val / curHeight : 1;
+                if (aspectRatio) {
+                    const target = Math.max(val, 0);
+                    n.width(target);
+                    n.height(target);
+
+                    patchesById[id] = {
+                        width: target,
+                        height: target,
+                    };
+                } else {
+                    const target = Math.max(val, 0);
+                    n[type](target);
+
+                    patchesById[id] = {
+                        [type]: target,
+                    };
+                }
             }
+        });
 
-            const oldPoints = node.points();
-            const newPoints = [];
-
-            for (let i = 0; i < oldPoints.length; i += 2) {
-                const px = oldPoints[i];
-                const py = oldPoints[i + 1];
-                const relX = px - rect.x;
-                const relY = py - rect.y;
-
-                const scaledX = round4(rect.x + relX * sx);
-                const scaledY = round4(rect.y + relY * sy);
-
-                newPoints.push(scaledX, scaledY);
-            }
-
-            node.points(newPoints);
-            setDim((prev) => ({ ...prev, [type]: val }));
-            patchNodeThrottled(node.id(), { points: newPoints });
-        } else {
+        setDim((prev) => {
             if (aspectRatio) {
-                node.width(val);
-                node.height(val);
-                setDim((prev) => ({ ...prev, width: val, height: val }));
-                patchNodeThrottled(node.id(), { width: val, height: val });
+                if (isLineLike || isMultiple) {
+                    return {
+                        ...prev,
+                        [type]: val,
+                    };
+                }
+                return { width: val, height: val };
             } else {
-                node[type](val);
-                setDim((prev) => ({ ...prev, [type]: val }));
-                patchNodeThrottled(node.id(), { [type]: val });
+                return {
+                    ...prev,
+                    [type]: val,
+                };
             }
-        }
+        });
+
+        patchNodesThrottled(ids, patchesById);
     };
 
     const toggleAspectRatio = () => {

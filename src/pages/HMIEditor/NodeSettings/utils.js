@@ -5,4 +5,9 @@ function patchStoreNode(id, patch) {
     useNodeStore.getState().updateNode(id, patch);
 }
 
-export const patchNodeThrottled = throttle(patchStoreNode, 200);
+function patchStoreNodes(ids, patchesById) {
+    useNodeStore.getState().updateNodes(ids, patchesById);
+}
+
+export const patchNodeThrottled = throttle(patchStoreNode, 20);
+export const patchNodesThrottled = throttle(patchStoreNodes, 20);
