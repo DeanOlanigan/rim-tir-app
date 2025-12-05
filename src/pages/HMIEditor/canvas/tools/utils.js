@@ -86,3 +86,22 @@ export function computeDragLine(start, cur, minSize = 4) {
     if (distance < minSize) return null;
     return { x1: start.x, y1: start.y, x2: cur.x, y2: cur.y, dx, dy, distance };
 }
+
+export function buildPolygon(
+    radiusX,
+    radiusY,
+    sides,
+    startAngle = -Math.PI / 2
+) {
+    const pts = [];
+    const step = (Math.PI * 2) / sides;
+
+    for (let i = 0; i < sides; i++) {
+        const angle = startAngle + i * step;
+        const x = Math.cos(angle) * radiusX;
+        const y = Math.sin(angle) * radiusY;
+        pts.push(x, y);
+    }
+
+    return pts;
+}
