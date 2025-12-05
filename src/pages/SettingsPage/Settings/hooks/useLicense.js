@@ -1,8 +1,8 @@
 import { apiv2 } from "@/api/baseUrl";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const useLicense = (uuid) => {
-    return useQuery({
+    return useSuspenseQuery({
         queryKey:["license", uuid],
         queryFn: async ({queryKey }) => {
             const [,uuid] = queryKey;

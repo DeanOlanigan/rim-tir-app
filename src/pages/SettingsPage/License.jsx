@@ -8,33 +8,40 @@ import {
     HStack,
     Field,
     Icon,
-    Stack,
 } from "@chakra-ui/react";
 
-import { LuCheck, LuSend } from "react-icons/lu";
+import { LuCheck, LuSend, LuTriangleAlert } from "react-icons/lu";
 import { useLicense } from "./Settings/hooks/useLicense";
-import { useEffect, useState } from "react";
-import { Loader } from "@/components/Loader";
+import { useEffect, useMemo, useState } from "react";
 import { useLicenseMutation } from "./Settings/hooks/useLicenseMutation";
-import { ErrorModal } from "./Settings/ErrorModal";
+
+function checkDate(endDate, setIsKeyEnd) {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDay()).padStart(2, "0");
+    const date = `${year}-${month}-${day}`;
+    setIsKeyEnd(date >= endDate);
+}
 
 export const License = () => {
-    const { data, isError, isLoading, refetch } = useLicense(
-        "Vryd3q7NQ3BLOOpIuGYsW"
-    );
+    const { data } = useLicense("Vryd3q7NQ3BLOOpIuGYsW");
     const [active, setActive] = useState(data);
+    const [isKeyEnd, setIsKeyEnd] = useState(false);
 
     useEffect(() => {
         if (data) {
-            setActive(data);
+            setActive(data.isActive);
         }
     }, [data]);
 
-    const licenseMutation = useLicenseMutation(setActive);
+    useMemo(() => checkDate(data.endDate, setIsKeyEnd), [data.endDate]);
+
+    const licenseMutation = useLicenseMutation(setActive, setIsKeyEnd);
 
     return (
         <>
-            <Heading paddingBottom={"2"}>Регистрация ПО</Heading>
+            <LicenseHead isKeyEnd={isKeyEnd} isActive={data.isActive} />
             <Card.Root variant={"elevated"} minH={"0.5"}>
                 <Card.Header>
                     <Text fontSize={"lg"} fontWeight="medium">
@@ -42,68 +49,53 @@ export const License = () => {
                     </Text>
                 </Card.Header>
                 <Card.Body>
-                    {isLoading ? (
-                        <Stack position={"relative"} h={"2xs"}>
-                            <Loader text={"Проверка лицензии"} />
-                        </Stack>
-                    ) : (
-                        <>
-                            {isError && (
-                                <ErrorModal
-                                    text={"Ошибка проверки лицензии"}
-                                    refetch={refetch}
-                                />
-                            )}
-                            <HStack
-                                justifyContent={"space-between"}
-                                align={"stretch"}
-                            >
-                                <Field.Root>
-                                    <Field.Label>
-                                        Ваш универсальный уникальный
-                                        идентификатор
-                                    </Field.Label>
-                                    <Text>Vryd3q7NQ3BLOOpIuGYsW</Text>
-                                </Field.Root>
-                                {active ? (
-                                    <KeyIsActive />
-                                ) : (
-                                    <Field.Root>
-                                        <Field.Label>
-                                            Ввод ключа для активации ПО
-                                        </Field.Label>
-                                        <KeyInput
-                                            licenseMutation={licenseMutation}
-                                            isError={isError}
-                                        />
-                                    </Field.Root>
-                                )}
-                            </HStack>
-                        </>
-                    )}
+                    <HStack justifyContent={"space-between"} align={"stretch"}>
+                        <Field.Root>
+                            <Field.Label>
+                                Ваш универсальный уникальный идентификатор
+                            </Field.Label>
+                            <Text>Vryd3q7NQ3BLOOpIuGYsW</Text>
+                        </Field.Root>
+                        {active && !isKeyEnd ? (
+                            <KeyIsActive />
+                        ) : (
+                            <Field.Root>
+                                <Field.Label>
+                                    Ввод ключа для активации ПО
+                                </Field.Label>
+                                <KeyInput licenseMutation={licenseMutation} />
+                            </Field.Root>
+                        )}
+                    </HStack>
                 </Card.Body>
+                {isKeyEnd && (
+                    <Card.Footer>
+                        <Text
+                            fontSize={"xl"}
+                            fontWeight={"bold"}
+                            color={"red.400"}
+                        >
+                            Ваша лицензия недействительна! Введите новый ключ
+                            или обратитесь в тех. поддержку!
+                        </Text>
+                    </Card.Footer>
+                )}
             </Card.Root>
         </>
     );
 };
-const KeyInput = ({ licenseMutation, isError }) => {
+const KeyInput = ({ licenseMutation }) => {
     const [key, setKey] = useState("");
     return (
         <Group attached w={"100%"}>
             <Input
-                disabled={isError}
                 value={key}
                 onChange={(e) => setKey(e.target.value)}
                 variant="flushed"
-                placeholder={
-                    isError
-                        ? "Ошибка проверки лицензии"
-                        : "Введите свой ключ активации"
-                }
+                placeholder={"Введите свой ключ активации"}
                 h={"50%"}
             />
             <IconButton
-                disabled={isError}
                 loading={licenseMutation.isPending}
                 variant={"plain"}
                 onClick={() =>
@@ -129,5 +121,26 @@ const KeyIsActive = () => {
                 <LuCheck />
             </Icon>
         </Group>
+    );
+};
+
+const LicenseHead = ({ isKeyEnd, isActive }) => {
+    return (
+        <HStack>
+            <Heading paddingBottom={"2"}>Регистрация ПО</Heading>
+            {(isKeyEnd || !isActive) && (
+                <Icon
+                    size={"xl"}
+                    paddingBottom={"2"}
+                    title={
+                        isKeyEnd
+                            ? "Обновите ключ активации"
+                            : "Зарегестрируйте ПО"
+                    }
+                >
+                    <LuTriangleAlert color="red" />
+                </Icon>
+            )}
+        </HStack>
     );
 };

@@ -3,7 +3,7 @@ import { toaster } from "@/components/ui/toaster";
 import { useMutation } from "@tanstack/react-query";
 
 
-export const useLicenseMutation = (setActive) => {
+export const useLicenseMutation = (setActive, setIsKeyEnd) => {
     return useMutation({
         mutationKey: ["licenseActivator"],
         mutationFn: async ({ uuid, key }) => {
@@ -17,6 +17,7 @@ export const useLicenseMutation = (setActive) => {
         },
         onSuccess: () => {
             setActive(true);
+            setIsKeyEnd(false);
         },
         onError: (err) => {
             const status = err?.response?.data?.error || "NO CONNECTION";
