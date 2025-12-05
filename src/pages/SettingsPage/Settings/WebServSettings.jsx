@@ -17,7 +17,7 @@ export const ServerSettings = () => {
     const port = useSettingStore((s) => s.settings?.WebServer?.port);
     const time = useSettingStore((s) => s.settings?.WebServer?.time);
     const https = useSettingStore((s) => s.settings?.WebServer?.https);
-    const editSettings = useSettingStore((s) => s.editSettings);
+    const editSettings = useSettingStore.getState().editSettings;
 
     return (
         <>
@@ -32,7 +32,7 @@ export const ServerSettings = () => {
                             <Field.Root
                                 invalid={
                                     Number(port) < 1024 ||
-                                    Number(port) > 49151 ||
+                                    Number(port) > 65535 ||
                                     (port || "").trim() === ""
                                 }
                             >
@@ -60,7 +60,7 @@ export const ServerSettings = () => {
                                 </NumberInput.Root>
                                 <Field.ErrorText>
                                     *Порт не может быть отрицательным, меньше
-                                    1024 или больше 49151
+                                    1024 или больше 65535
                                 </Field.ErrorText>
                             </Field.Root>
                             <Field.Root>

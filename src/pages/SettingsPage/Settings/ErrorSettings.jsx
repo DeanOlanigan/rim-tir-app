@@ -1,27 +1,24 @@
-import {
-    AbsoluteCenter,
-    Box,
-    Button,
-    Icon,
-    Text,
-    VStack,
-} from "@chakra-ui/react";
+import { queryClient } from "@/queryClients";
+import { AbsoluteCenter, Button, Icon, Text, VStack } from "@chakra-ui/react";
 import { LuTriangleAlert } from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
 
-export const ErrorModal = ({ text, refetch }) => (
-    <Box zIndex={"modal"}>
-        <AbsoluteCenter
-            backdropFilter={"blur(4px)"}
-            h={"100%"}
-            w={"100%"}
-            justifyContent={"center"}
-        >
+export const ErrorSettings = () => {
+    const navigate = useNavigate("/settings");
+
+    const refetch = async () => {
+        await queryClient.refetchQueries(["settings", "license"]);
+        navigate();
+    };
+
+    return (
+        <AbsoluteCenter backdropFilter={"blur(4px)"} h={"100%"} w={"100%"}>
             <VStack>
                 <Icon w={"50%"} h={"50%"} color={"red.400"}>
                     <LuTriangleAlert />
                 </Icon>
                 <Text color={"fg.muted"} fontSize={"3xl"}>
-                    {text}
+                    Ошибка загрузки настроек
                 </Text>
                 <Button
                     onClick={() => refetch()}
@@ -32,5 +29,5 @@ export const ErrorModal = ({ text, refetch }) => (
                 </Button>
             </VStack>
         </AbsoluteCenter>
-    </Box>
-);
+    );
+};

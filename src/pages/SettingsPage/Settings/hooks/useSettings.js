@@ -1,5 +1,5 @@
 import { apiv2 } from "@/api/baseUrl";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 async function getSettings() {
     const res = await apiv2.get("/settings");
@@ -8,7 +8,7 @@ async function getSettings() {
 } 
 
 export const useSettings = () => {
-    const s = useQuery({
+    const s = useSuspenseQuery({
         queryKey: ["settings"],
         queryFn: async () => getSettings(),
     });

@@ -13,7 +13,7 @@ export const LogSettings = () => {
     const size = useSettingStore((s) => s.settings?.Logs?.size);
     const files = useSettingStore((s) => s.settings?.Logs?.files);
     const archive = useSettingStore((s) => s.settings?.Logs?.archive);
-    const editSettings = useSettingStore((s) => s.editSettings);
+    const editSettings = useSettingStore.getState().editSettings;
     return (
         <>
             <Heading paddingBottom={"2"}>Лог файлы</Heading>

@@ -12,7 +12,7 @@ import { useSettingStore } from "./SettingsStore/settings-store";
 
 export const JournalSettings = () => {
     const Journals = useSettingStore((s) => s.settings?.Journals);
-    const editSettings = useSettingStore((s) => s.editSettingsJourn);
+    const editSettings = useSettingStore.getState().editSettingsJourn;
     return (
         <>
             <Heading paddingBottom={"2"}>Журналы</Heading>
