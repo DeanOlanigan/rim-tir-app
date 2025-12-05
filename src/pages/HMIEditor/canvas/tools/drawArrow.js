@@ -1,7 +1,6 @@
 import { LuMoveUpRight } from "react-icons/lu";
 import { toWorld } from "../utils/coords";
 import Konva from "konva";
-import { nanoid } from "nanoid";
 import { BASE_PARAMS, snapPointToGrid } from "./utils";
 import { ACTIONS, SHAPES } from "../../constants";
 
@@ -86,19 +85,16 @@ export function createDrawArrowTool({
 
             if (distance < minSize) return;
 
-            const id = nanoid(12);
-            addNode(id, {
-                id,
-                type: SHAPES.arrow,
-                name: "node",
+            addNode({
                 ...BASE_PARAMS,
+                type: SHAPES.arrow,
+                name: "Arrow",
                 points: [x1, y1, x2, y2],
                 pointerLength: 10,
                 pointerWidth: 10,
                 strokeWidth: 1,
             });
             api.manager.setActive("select");
-            setSelectedIds([id]);
         },
 
         cancel() {

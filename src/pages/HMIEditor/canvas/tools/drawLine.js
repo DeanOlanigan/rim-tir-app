@@ -1,6 +1,5 @@
 import { LuSlash } from "react-icons/lu";
 import Konva from "konva";
-import { nanoid } from "nanoid";
 import { BASE_PARAMS, snapPointToGrid } from "./utils";
 import { ACTIONS, SHAPES } from "../../constants";
 import { toWorld } from "../utils/coords";
@@ -84,19 +83,16 @@ export function createDrawLineTool({
 
             if (distance < minSize) return;
 
-            const id = nanoid(12);
-            addNode(id, {
+            addNode({
                 ...BASE_PARAMS,
                 type: SHAPES.line,
-                id,
-                name: "node",
+                name: "Line",
                 x: x1,
                 y: y1,
                 points: [0, 0, dx, dy],
                 strokeWidth: 1,
             });
             api.manager.setActive("select");
-            setSelectedIds([id]);
         },
 
         cancel() {

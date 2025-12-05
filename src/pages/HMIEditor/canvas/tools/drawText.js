@@ -1,6 +1,5 @@
 import { LuType } from "react-icons/lu";
 import Konva from "konva";
-import { nanoid } from "nanoid";
 import { BASE_PARAMS, snapPointToGrid } from "./utils";
 import { ACTIONS, SHAPES } from "../../constants";
 import { toWorld } from "../utils/coords";
@@ -131,12 +130,10 @@ export function createDrawTextTool({
 
             if (attrs.width < minSize || attrs.height < minSize) return;
 
-            const id = nanoid(12);
-            addNode(id, {
+            addNode({
                 ...BASE_PARAMS,
                 type: SHAPES.text,
-                id,
-                name: "node",
+                name: "Text",
                 x: attrs.x,
                 y: attrs.y,
                 width: attrs.width,
@@ -144,7 +141,6 @@ export function createDrawTextTool({
                 text: "Default Text",
             });
             api.manager.setActive("select");
-            setSelectedIds([id]);
         },
 
         cancel() {

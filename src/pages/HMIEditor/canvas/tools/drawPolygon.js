@@ -1,7 +1,6 @@
 import { LuHexagon } from "react-icons/lu";
 import { toWorld } from "../utils/coords";
 import Konva from "konva";
-import { nanoid } from "nanoid";
 import { BASE_PARAMS, snapPointToGrid } from "./utils";
 import { ACTIONS, SHAPES } from "../../constants";
 
@@ -118,19 +117,16 @@ export function createDrawPolygonTool({
 
             if ((attrs.radius || 0) * 2 < minSize) return;
 
-            const id = nanoid(12);
-            addNode(id, {
+            addNode({
                 ...BASE_PARAMS,
                 type: SHAPES.polygon,
-                id,
-                name: "node",
+                name: "Polygon",
                 x: attrs.x,
                 y: attrs.y,
                 radius: attrs.radius,
                 sides: attrs.sides,
             });
             api.manager.setActive("select");
-            setSelectedIds([id]);
         },
 
         cancel() {

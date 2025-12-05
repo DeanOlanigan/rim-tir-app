@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import { nanoid } from "nanoid";
 
 const initialNodes = {
     rect1: {
@@ -69,11 +70,16 @@ export const useNodeStore = create(
                 selectedIds: [],
                 nodes: initialNodes,
                 rootIds: rootIds,
-                addNode: (id, node) =>
-                    set((state) => ({
-                        nodes: { ...state.nodes, [id]: node },
-                        rootIds: [...state.rootIds, id],
-                    })),
+                addNode: (node) =>
+                    set((state) => {
+                        const id = nanoid(12);
+                        const newNode = { ...node, id };
+                        return {
+                            nodes: { ...state.nodes, [id]: newNode },
+                            rootIds: [...state.rootIds, id],
+                            selectedIds: [id],
+                        };
+                    }),
                 setRootIds: (ids) => set(() => ({ rootIds: ids })),
                 removeNode: (id) =>
                     set((state) => {
