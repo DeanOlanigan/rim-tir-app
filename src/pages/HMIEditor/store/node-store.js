@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { nanoid } from "nanoid";
+import { round4 } from "../utils";
+import { SHAPES } from "../constants";
 
 const initialNodes = {
     rect1: {
@@ -109,6 +111,62 @@ export const useNodeStore = create(
                             }, {}),
                         },
                     })),
+
+                groupNodes: (ids, bbox) => {
+                    set((state) => {
+                        const id = nanoid(12);
+                        const newRootIds = [...state.rootIds, id].filter(
+                            (nid) => !ids.includes(nid)
+                        );
+                        const newNodes = {
+                            ...state.nodes,
+                            [id]: {
+                                id,
+                                type: SHAPES.group,
+                                name: "Группа",
+                                x: round4(bbox.x),
+                                y: round4(bbox.y),
+                                width: round4(bbox.width),
+                                height: round4(bbox.height),
+                                childrenIds: ids,
+                            },
+                        };
+                        for (const id of ids) {
+                            newNodes[id].x = newNodes[id].x - bbox.x;
+                            newNodes[id].y = newNodes[id].y - bbox.y;
+                        }
+                        return {
+                            rootIds: newRootIds,
+                            nodes: newNodes,
+                            selectedIds: [id],
+                        };
+                    });
+                },
+
+                ungroupNodes: (id) => {
+                    set((state) => {
+                        const node = state.nodes[id];
+                        const type = node.type;
+                        if (type !== SHAPES.group) return state;
+                        const childrenIds = node.childrenIds;
+                        const newRootIds = [
+                            ...state.rootIds.filter((nid) => nid !== id),
+                            ...childrenIds,
+                        ];
+                        const newNodes = { ...state.nodes };
+                        for (const childId of childrenIds) {
+                            newNodes[childId].x = newNodes[childId].x + node.x;
+                            newNodes[childId].y = newNodes[childId].y + node.y;
+                        }
+                        delete newNodes[id];
+                        return {
+                            rootIds: newRootIds,
+                            nodes: newNodes,
+                            selectedIds: childrenIds,
+                        };
+                    });
+                },
+
                 setSelectedIds: (ids) =>
                     set((state) => {
                         const prev = state.selectedIds;

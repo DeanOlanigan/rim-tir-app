@@ -21,6 +21,16 @@ registerShape(SHAPES.rect, {
         return patch;
     },
 
+    onGroupMod(konvaNode, scaleX, scaleY) {
+        const width = konvaNode.width() * scaleX;
+        const height = konvaNode.height() * scaleY;
+        konvaNode.width(round4(width));
+        konvaNode.height(round4(height));
+        konvaNode.rotation(round4(konvaNode.rotation()));
+        konvaNode.x(round4(konvaNode.x()));
+        konvaNode.y(round4(konvaNode.y()));
+    },
+
     onTransform(konvaNode) {
         const width = konvaNode.width() * konvaNode.scaleX();
         const height = konvaNode.height() * konvaNode.scaleY();

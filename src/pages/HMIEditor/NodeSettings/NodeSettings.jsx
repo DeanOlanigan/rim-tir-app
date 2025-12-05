@@ -21,12 +21,9 @@ import { TypographyBlock } from "./Typography";
 import { ActionsBlock } from "./Actions";
 import { SHAPES, SHAPES_NAMES, SHAPES_WITH_SETTINGS } from "../constants";
 
-export const NodeSettings = ({ nodesRef }) => {
+export const NodeSettings = ({ nodesRef, transformerRef }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
     if (!selectedIds.length) return null;
-
-    const node = nodesRef.current.get(selectedIds[0]);
-    if (!node) return null;
 
     const types = selectedIds.map((id) => nodesRef.current.get(id).attrs.type);
     if (!types.every((type) => SHAPES_WITH_SETTINGS.has(type))) return null;
@@ -59,6 +56,7 @@ export const NodeSettings = ({ nodesRef }) => {
                         <BaseSettings
                             nodesRef={nodesRef}
                             selectedIds={selectedIds}
+                            transformerRef={transformerRef}
                         />
                     </Box>
                 </Tabs.Content>
@@ -68,14 +66,20 @@ export const NodeSettings = ({ nodesRef }) => {
     );
 };
 
-const BaseSettings = ({ nodesRef, selectedIds }) => {
+const BaseSettings = ({ nodesRef, selectedIds, transformerRef }) => {
     const primaryNode = nodesRef.current.get(selectedIds[0]);
     const type = primaryNode.attrs.type;
     const isMultiple = selectedIds.length > 1;
-    const heading =
-        selectedIds.length > 1
-            ? `${selectedIds.length} selected`
-            : SHAPES_NAMES[primaryNode.attrs.type];
+    const heading = isMultiple
+        ? `${selectedIds.length} selected`
+        : SHAPES_NAMES[primaryNode.attrs.type];
+
+    const showCornerRadius =
+        !isMultiple && (type === SHAPES.rect || type === SHAPES.polygon);
+    const showSides = !isMultiple && type === SHAPES.polygon;
+    const showTypography = !isMultiple && type === SHAPES.text;
+    const showFillStroke = !isMultiple && type !== SHAPES.group;
+
     return (
         <VStack
             align={"start"}
@@ -89,6 +93,7 @@ const BaseSettings = ({ nodesRef, selectedIds }) => {
                     node={primaryNode}
                     nodesRef={nodesRef}
                     selectedIds={selectedIds}
+                    transformerRef={transformerRef}
                 />
             </HStack>
             <VStack align={"start"}>
@@ -107,13 +112,11 @@ const BaseSettings = ({ nodesRef, selectedIds }) => {
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Appearance</Heading>
                 <OpacityBlock node={primaryNode} />
-                {(type === SHAPES.rect || type === SHAPES.polygon) && (
-                    <CornerRadiusBlock node={primaryNode} />
-                )}
-                {type === SHAPES.polygon && <SidesBlock node={primaryNode} />}
+                {showCornerRadius && <CornerRadiusBlock node={primaryNode} />}
+                {showSides && <SidesBlock node={primaryNode} />}
             </VStack>
-            {type === SHAPES.text && <TypographyBlock node={primaryNode} />}
-            {type !== SHAPES.group && !isMultiple && (
+            {showTypography && <TypographyBlock node={primaryNode} />}
+            {showFillStroke && (
                 <>
                     <FillBlock node={primaryNode} />
                     <StrokeBlock node={primaryNode} />

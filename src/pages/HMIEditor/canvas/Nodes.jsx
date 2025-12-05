@@ -11,6 +11,7 @@ import { useActionsStore } from "./../store/actions-store";
 import { useNodeStore } from "./../store/node-store";
 import { ACTIONS, SHAPES } from "../constants";
 import { dragBound } from "./utils/dragBound";
+import { round4 } from "../utils";
 
 const common = {
     name: "node",
@@ -48,12 +49,20 @@ const common = {
             y: pos.y + delta.y,
         };
     },
+    onDragMove(e) {
+        const nodeId = e.target.attrs?.id;
+        if (!nodeId) return;
+        useNodeStore.getState().updateNode(nodeId, {
+            x: round4(e.target.x()),
+            y: round4(e.target.y()),
+        });
+    },
     onDragEnd(e) {
         const nodeId = e.target.attrs?.id;
         if (!nodeId) return;
         useNodeStore.getState().updateNode(nodeId, {
-            x: e.target.x(),
-            y: e.target.y(),
+            x: round4(e.target.x()),
+            y: round4(e.target.y()),
         });
     },
 };
