@@ -4,7 +4,7 @@ import { RoleSelector } from "./Roles/RoleSelector";
 import { useTableStore } from "../SettingsStore/tablestore";
 import { useUserStore } from "../SettingsStore/user-add-store";
 
-const Inputs = [
+const inputs = [
     { id: "login", label: "логин" },
     { id: "surname", label: "фамилию" },
     { id: "name", label: "имя" },
@@ -34,7 +34,7 @@ export const UserAdder = () => {
                         <LuUserRoundPlus />
                     </IconButton>
                 </Table.Cell>
-                {Inputs.map((input) => (
+                {inputs.map((input) => (
                     <Table.Cell
                         key={input.id}
                         padding={"4px"}

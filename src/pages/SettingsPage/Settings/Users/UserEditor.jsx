@@ -21,47 +21,6 @@ export const UserEditor = () => {
     return <ManyUsers selectedUsers={selectedUsers} />;
 };
 
-// const OneUser = ({ selectedUsers }) => {
-//     return (
-//         <Table.Root>
-//             <Table.Header>
-//                 <Table.Row>
-//                     {tableColumns.map((header) => (
-//                         <Table.ColumnHeader
-//                             key={header.value}
-//                             bg={"colorPalette.solid"}
-//                             color={"fg.inverted"}
-//                             fontSize="sm"
-//                             fontWeight="500"
-//                             padding="4px"
-//                             textAlign="center"
-//                         >
-//                             {header.label}
-//                         </Table.ColumnHeader>
-//                     ))}
-//                 </Table.Row>
-//             </Table.Header>
-//             <Table.Body>
-//                 {selectedUsers.map((row) => (
-//                     <Table.Row key={row.login}>
-//                         {Object.keys(row).map((key) => (
-//                             <Table.Cell
-//                                 key={key}
-//                                 textAlign="center"
-//                                 fontSize="sm"
-//                                 fontWeight="500"
-//                                 padding="4px"
-//                             >
-//                                 {row[key]}
-//                             </Table.Cell>
-//                         ))}
-//                     </Table.Row>
-//                 ))}
-//             </Table.Body>
-//         </Table.Root>
-//     );
-// };
-
 const ManyUsers = ({ selectedUsers }) => {
     return (
         <Table.ScrollArea height={"xl"} overflow={"auto"}>
@@ -105,6 +64,7 @@ const ManyUsers = ({ selectedUsers }) => {
                                         />
                                     ) : (
                                         <Input
+                                            readOnly={key === "login"}
                                             value={row[key]}
                                             size={"xs"}
                                             textAlign={"center"}

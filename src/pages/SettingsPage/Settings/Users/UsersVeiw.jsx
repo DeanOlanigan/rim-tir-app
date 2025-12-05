@@ -1,7 +1,8 @@
 import { Card, Heading, HStack, IconButton, Text } from "@chakra-ui/react";
 import { UsersTable } from "./UsersTable";
-import { LuUserCog, LuUserRoundPlus } from "react-icons/lu";
+import { LuUserRoundPlus } from "react-icons/lu";
 import { useTableStore } from "../SettingsStore/tablestore";
+import { RoleCreator } from "./Roles/RoleCreator";
 
 export const UsersView = () => {
     const { setIsAdding, isAdding } = useTableStore();
@@ -29,9 +30,7 @@ export const UsersView = () => {
                         >
                             <LuUserRoundPlus />
                         </IconButton>
-                        <IconButton size="sm" width="50px">
-                            <LuUserCog />
-                        </IconButton>
+                        <RoleCreator />
                     </HStack>
                 </Card.Header>
                 <Card.Body>
