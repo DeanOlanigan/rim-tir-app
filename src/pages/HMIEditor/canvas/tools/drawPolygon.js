@@ -4,12 +4,7 @@ import Konva from "konva";
 import { BASE_PARAMS, snapPointToGrid } from "./utils";
 import { ACTIONS, SHAPES } from "../../constants";
 
-export function createDrawPolygonTool({
-    getOverviewLayer,
-    getGrid,
-    addNode,
-    setSelectedIds,
-}) {
+export function createDrawPolygonTool() {
     let draft = null;
     let start = { x: 0, y: 0 };
     let layer = null;
@@ -21,13 +16,13 @@ export function createDrawPolygonTool({
         icon: LuHexagon,
         cursor: "crosshair",
 
-        onPointerDown(e) {
+        onPointerDown(e, ctx) {
             if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
             if (!stage) return;
             const ptr = stage.getPointerPosition();
             if (!ptr) return;
-            const { gridSize, snapToGrid } = getGrid();
+            const { gridSize, snapToGrid } = ctx.getGrid();
             const worldPos = toWorld(stage, ptr);
             const p = snapPointToGrid(worldPos, gridSize, snapToGrid);
 
@@ -41,21 +36,21 @@ export function createDrawPolygonTool({
                 sides: 6,
                 listening: false,
             });
-            layer = layer = getOverviewLayer();
+            layer = ctx.getOverviewLayer();
             layer.add(draft);
             layer.batchDraw();
         },
 
-        onPointerMove(e) {
+        onPointerMove(e, ctx) {
             const stage = e.currentTarget;
             if (!stage || !draft || !layer) return;
 
             const ptr = stage.getPointerPosition();
             if (!ptr) return;
 
-            const { gridSize, snapToGrid } = getGrid();
-            const curWord = toWorld(stage, ptr);
-            const cur = snapPointToGrid(curWord, gridSize, snapToGrid);
+            const { gridSize, snapToGrid } = ctx.getGrid();
+            const curWorld = toWorld(stage, ptr);
+            const cur = snapPointToGrid(curWorld, gridSize, snapToGrid);
 
             const alt = !!(e.evt && e.evt.altKey);
             const shift = !!(e.evt && e.evt.shiftKey);
@@ -106,7 +101,7 @@ export function createDrawPolygonTool({
             layer.batchDraw();
         },
 
-        onPointerUp(e, api) {
+        onPointerUp(e, ctx) {
             const stage = e.currentTarget;
             if (!stage || !draft || !layer) return;
 
@@ -117,7 +112,7 @@ export function createDrawPolygonTool({
 
             if ((attrs.radius || 0) * 2 < minSize) return;
 
-            addNode({
+            ctx.addNode({
                 ...BASE_PARAMS,
                 type: SHAPES.polygon,
                 name: "Polygon",
@@ -126,7 +121,7 @@ export function createDrawPolygonTool({
                 radius: attrs.radius,
                 sides: attrs.sides,
             });
-            api.manager.setActive("select");
+            ctx.manager.setActive(ACTIONS.select);
         },
 
         cancel() {

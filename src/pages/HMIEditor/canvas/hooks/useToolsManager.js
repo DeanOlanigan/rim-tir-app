@@ -7,9 +7,9 @@ import { createDrawEllipseTool } from "../tools/drawEllipse";
 import { createDrawLineTool } from "../tools/drawLine";
 import { createDrawArrowTool } from "../tools/drawArrow";
 import { ACTIONS } from "../../constants";
-import { getApi } from "../utils/getApi";
 import { createDrawPolygonTool } from "../tools/drawPolygon";
 import { createDrawTextTool } from "../tools/drawText";
+import { createCanvasApi } from "../utils/createCanvasApi";
 
 export function useToolsManager() {
     const managerRef = useRef(null);
@@ -21,7 +21,7 @@ export function useToolsManager() {
     const nodesRef = useRef(new Map());
 
     if (!managerRef.current) {
-        const api = getApi({
+        const api = createCanvasApi({
             canvasRef,
             selectionBoxRef,
             transformerRef,
@@ -30,14 +30,14 @@ export function useToolsManager() {
             nodesRef,
         });
         const toolsMap = {
-            [ACTIONS.select]: createSelectTool({ ...api }),
-            [ACTIONS.hand]: createHandTool({ ...api }),
-            [ACTIONS.square]: createDrawRectTool({ ...api }),
-            [ACTIONS.polygon]: createDrawPolygonTool({ ...api }),
-            [ACTIONS.ellipse]: createDrawEllipseTool({ ...api }),
-            [ACTIONS.text]: createDrawTextTool({ ...api }),
-            [ACTIONS.line]: createDrawLineTool({ ...api }),
-            [ACTIONS.arrow]: createDrawArrowTool({ ...api }),
+            [ACTIONS.select]: createSelectTool(),
+            [ACTIONS.hand]: createHandTool(),
+            [ACTIONS.square]: createDrawRectTool(),
+            [ACTIONS.polygon]: createDrawPolygonTool(),
+            [ACTIONS.ellipse]: createDrawEllipseTool(),
+            [ACTIONS.text]: createDrawTextTool(),
+            [ACTIONS.line]: createDrawLineTool(),
+            [ACTIONS.arrow]: createDrawArrowTool(),
         };
         managerRef.current = createToolManager({ toolsMap, api });
     }

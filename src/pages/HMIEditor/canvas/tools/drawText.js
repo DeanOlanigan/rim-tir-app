@@ -4,12 +4,7 @@ import { BASE_PARAMS, snapPointToGrid } from "./utils";
 import { ACTIONS, SHAPES } from "../../constants";
 import { toWorld } from "../utils/coords";
 
-export function createDrawTextTool({
-    getOverviewLayer,
-    getGrid,
-    addNode,
-    setSelectedIds,
-}) {
+export function createDrawTextTool() {
     let draft = null;
     let start = { x: 0, y: 0 };
     let layer = null;
@@ -21,13 +16,13 @@ export function createDrawTextTool({
         icon: LuType,
         cursor: "crosshair",
 
-        onPointerDown(e) {
+        onPointerDown(e, ctx) {
             if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
             if (!stage) return;
             const ptr = stage.getPointerPosition();
             if (!ptr) return;
-            const { gridSize, snapToGrid } = getGrid();
+            const { gridSize, snapToGrid } = ctx.getGrid();
             const worldPos = toWorld(stage, ptr);
             const p = snapPointToGrid(worldPos, gridSize, snapToGrid);
 
@@ -67,19 +62,19 @@ export function createDrawTextTool({
             draft.add(text);
             draft.add(rect);
 
-            layer = getOverviewLayer();
+            layer = ctx.getOverviewLayer();
             layer.add(draft);
             layer.batchDraw();
         },
 
-        onPointerMove(e) {
+        onPointerMove(e, ctx) {
             const stage = e.currentTarget;
             if (!stage || !draft || !layer) return;
             const ptr = stage.getPointerPosition();
             if (!ptr) return;
-            const { gridSize, snapToGrid } = getGrid();
-            const curWord = toWorld(stage, ptr);
-            const cur = snapPointToGrid(curWord, gridSize, snapToGrid);
+            const { gridSize, snapToGrid } = ctx.getGrid();
+            const curWorld = toWorld(stage, ptr);
+            const cur = snapPointToGrid(curWorld, gridSize, snapToGrid);
 
             const alt = !!(e.evt && e.evt.altKey);
             const shift = !!(e.evt && e.evt.shiftKey);
@@ -119,7 +114,7 @@ export function createDrawTextTool({
             layer.batchDraw();
         },
 
-        onPointerUp(e, api) {
+        onPointerUp(e, ctx) {
             const stage = e.currentTarget;
             if (!stage || !draft || !layer) return;
 
@@ -130,7 +125,7 @@ export function createDrawTextTool({
 
             if (attrs.width < minSize || attrs.height < minSize) return;
 
-            addNode({
+            ctx.addNode({
                 ...BASE_PARAMS,
                 type: SHAPES.text,
                 name: "Text",
@@ -140,7 +135,7 @@ export function createDrawTextTool({
                 height: attrs.height,
                 text: "Default Text",
             });
-            api.manager.setActive("select");
+            ctx.manager.setActive(ACTIONS.select);
         },
 
         cancel() {

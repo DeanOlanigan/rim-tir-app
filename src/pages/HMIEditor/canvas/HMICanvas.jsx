@@ -1,8 +1,6 @@
 import { Layer, Rect, Stage, Star } from "react-konva";
 import { Grid } from "./Grid";
 import { useFitToFrame } from "./hooks/useFitToFrame";
-import { useContextMenuPos } from "./hooks/useContextMenuPos";
-import { usePanZoom } from "./hooks/usePanZoom";
 import { useActionsStore } from "../store/actions-store";
 import HMITransformer from "./HMITransformer";
 import { Nodes } from "./Nodes";
@@ -37,8 +35,6 @@ export const HMICanvas = ({
         }
     }, [showHitRegions, nodesLayerRef, canvasRef]);
 
-    const panZoom = usePanZoom();
-    const onContextMenu = useContextMenuPos(canvasRef);
     useFitToFrame(canvasRef, width, height);
     return (
         <Stage
@@ -46,11 +42,11 @@ export const HMICanvas = ({
             width={width}
             height={height}
             style={{ background: bgColor }}
-            onWheel={panZoom}
+            onWheel={manager.handlers.onWheel}
             onPointerDown={manager.handlers.onPointerDown}
             onPointerMove={manager.handlers.onPointerMove}
             onPointerUp={manager.handlers.onPointerUp}
-            onContextMenu={onContextMenu}
+            onContextMenu={manager.handlers.onContextMenu}
         >
             <Layer ref={nodesLayerRef} name="nodesLayer">
                 <Nodes nodesRef={nodesRef} />

@@ -1,7 +1,7 @@
 import { useActionsStore } from "../../store/actions-store";
 import { useNodeStore } from "../../store/node-store";
 
-export function getApi({
+export function createCanvasApi({
     canvasRef,
     selectionBoxRef,
     transformerRef,

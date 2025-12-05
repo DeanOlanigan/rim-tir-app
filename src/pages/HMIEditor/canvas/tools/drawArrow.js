@@ -4,12 +4,7 @@ import Konva from "konva";
 import { BASE_PARAMS, snapPointToGrid } from "./utils";
 import { ACTIONS, SHAPES } from "../../constants";
 
-export function createDrawArrowTool({
-    getOverviewLayer,
-    getGrid,
-    addNode,
-    setSelectedIds,
-}) {
+export function createDrawArrowTool() {
     let draft = null;
     let start = { x: 0, y: 0 };
     let layer = null;
@@ -21,13 +16,13 @@ export function createDrawArrowTool({
         icon: LuMoveUpRight,
         cursor: "crosshair",
 
-        onPointerDown(e) {
+        onPointerDown(e, ctx) {
             if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
             if (!stage) return;
             const prt = stage.getPointerPosition();
             if (!prt) return;
-            const { gridSize, snapToGrid } = getGrid();
+            const { gridSize, snapToGrid } = ctx.getGrid();
             const worldPos = toWorld(stage, prt);
             const p = snapPointToGrid(worldPos, gridSize, snapToGrid);
 
@@ -41,30 +36,30 @@ export function createDrawArrowTool({
                 pointerWidth: 10,
                 listening: false,
             });
-            layer = getOverviewLayer();
+            layer = ctx.getOverviewLayer();
             layer.add(draft);
             layer.batchDraw();
         },
 
-        onPointerMove(e) {
+        onPointerMove(e, ctx) {
             const stage = e.currentTarget;
             if (!stage || !draft || !layer) return;
             const ptr = stage.getPointerPosition();
             if (!ptr) return;
-            const { gridSize, snapToGrid } = getGrid();
-            const curWord = toWorld(stage, ptr);
-            const cur = snapPointToGrid(curWord, gridSize, snapToGrid);
+            const { gridSize, snapToGrid } = ctx.getGrid();
+            const curWorld = toWorld(stage, ptr);
+            const cur = snapPointToGrid(curWorld, gridSize, snapToGrid);
 
             draft.points([start.x, start.y, cur.x, cur.y]);
             layer.batchDraw();
         },
 
-        onPointerUp(e, api) {
+        onPointerUp(e, ctx) {
             const stage = e.currentTarget;
             if (!stage || !draft || !layer) return;
             const ptr = stage.getPointerPosition();
             if (!ptr) return;
-            const { gridSize, snapToGrid } = getGrid();
+            const { gridSize, snapToGrid } = ctx.getGrid();
             const curWord = toWorld(stage, ptr);
             const cur = snapPointToGrid(curWord, gridSize, snapToGrid);
 
@@ -85,16 +80,18 @@ export function createDrawArrowTool({
 
             if (distance < minSize) return;
 
-            addNode({
+            ctx.addNode({
                 ...BASE_PARAMS,
                 type: SHAPES.arrow,
                 name: "Arrow",
-                points: [x1, y1, x2, y2],
+                x: x1,
+                y: y1,
+                points: [0, 0, x2, y2],
                 pointerLength: 10,
                 pointerWidth: 10,
                 strokeWidth: 1,
             });
-            api.manager.setActive("select");
+            ctx.manager.setActive(ACTIONS.select);
         },
 
         cancel() {

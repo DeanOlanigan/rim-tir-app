@@ -51,8 +51,8 @@ export function createHandTool() {
             stage.container().style.cursor = "grab";
         },
 
-        cancel(api) {
-            const stage = api.getStage();
+        cancel(ctx) {
+            const stage = ctx.getStage();
             if (!stage || !panning) return;
             stage.container().style.cursor = "grab";
             panning = false;

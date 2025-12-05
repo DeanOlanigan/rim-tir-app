@@ -3,19 +3,14 @@ import { toWorld } from "../utils/coords";
 import Konva from "konva";
 import { ACTIONS } from "../../constants";
 
-export function createSelectTool({
-    getSelectionBox,
-    getSelectedIds,
-    setSelectedIds,
-    getOverviewLayer,
-    getNodesLayer,
-}) {
+export function createSelectTool() {
     let start = { x: 0, y: 0 };
     const minSize = 4;
 
-    const showBox = (attrs) =>
-        getSelectionBox()?.setAttrs({ visible: true, ...attrs });
-    const hideBox = () => getSelectionBox()?.setAttrs({ visible: false });
+    const showBox = (ctx, attrs) =>
+        ctx.getSelectionBox()?.setAttrs({ visible: true, ...attrs });
+    const hideBox = (ctx) =>
+        ctx.getSelectionBox()?.setAttrs({ visible: false });
 
     return {
         name: ACTIONS.select,
@@ -23,7 +18,7 @@ export function createSelectTool({
         icon: LuMousePointer2,
         cursor: "default",
 
-        onPointerDown(e) {
+        onPointerDown(e, ctx) {
             if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
             if (!stage) return;
@@ -32,31 +27,34 @@ export function createSelectTool({
                 const clickedId =
                     parentGroups[parentGroups.length - 1]?.id() ||
                     e.target.id();
+
                 const metaPressed =
                     e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
-                const isSelected = getSelectedIds().includes(clickedId);
+                const selectedIds = ctx.getSelectedIds();
+                const isSelected = selectedIds.includes(clickedId);
                 if (!metaPressed && !isSelected) {
-                    setSelectedIds([clickedId]);
+                    ctx.setSelectedIds([clickedId]);
                 } else if (metaPressed && isSelected) {
-                    setSelectedIds(
-                        getSelectedIds().filter((id) => id !== clickedId)
+                    ctx.setSelectedIds(
+                        selectedIds.filter((id) => id !== clickedId)
                     );
                 } else if (metaPressed && !isSelected) {
-                    setSelectedIds([...getSelectedIds(), clickedId]);
+                    ctx.setSelectedIds([...selectedIds, clickedId]);
                 }
             } else if (e.target === stage) {
-                setSelectedIds([]);
+                ctx.setSelectedIds([]);
                 const wp = toWorld(stage, stage.getPointerPosition());
                 start = wp;
-                showBox({ x: wp.x, y: wp.y, width: 0, height: 0 });
+                showBox(ctx, { x: wp.x, y: wp.y, width: 0, height: 0 });
             }
-            getOverviewLayer().batchDraw();
+            ctx.getOverviewLayer().batchDraw();
         },
 
-        onPointerMove(e) {
+        onPointerMove(e, ctx) {
             const stage = e.currentTarget;
-            const box = getSelectionBox();
+            const box = ctx.getSelectionBox();
             if (!stage || !box || !box.visible()) return;
+
             const wp = toWorld(stage, stage.getPointerPosition());
             box.setAttrs({
                 x: Math.min(start.x, wp.x),
@@ -64,17 +62,17 @@ export function createSelectTool({
                 width: Math.abs(wp.x - start.x),
                 height: Math.abs(wp.y - start.y),
             });
-            getOverviewLayer().batchDraw();
+            ctx.getOverviewLayer().batchDraw();
         },
 
-        onPointerUp(e) {
+        onPointerUp(e, ctx) {
             const stage = e.currentTarget;
-            const box = getSelectionBox();
+            const box = ctx.getSelectionBox();
             if (!stage || !box || !box.visible()) return;
-            hideBox();
-            getOverviewLayer().batchDraw();
+            hideBox(ctx);
+            ctx.getOverviewLayer().batchDraw();
             if (box.attrs.width < minSize || box.attrs.height < minSize) return;
-            const nodes = getNodesLayer().getChildren();
+            const nodes = ctx.getNodesLayer().getChildren();
             const selection =
                 box.getClientRect({
                     skipShadow: true,
@@ -88,11 +86,11 @@ export function createSelectTool({
             );
             if (selected.length === 0) return;
             const selectedIds = selected.map((node) => node.attrs.id);
-            setSelectedIds(selectedIds);
+            ctx.setSelectedIds(selectedIds);
         },
 
-        cancel() {
-            hideBox();
+        cancel(ctx) {
+            hideBox(ctx);
             start = { x: 0, y: 0 };
         },
     };

@@ -4,12 +4,7 @@ import { BASE_PARAMS, snapPointToGrid } from "./utils";
 import { ACTIONS, SHAPES } from "../../constants";
 import { toWorld } from "../utils/coords";
 
-export function createDrawLineTool({
-    getOverviewLayer,
-    getGrid,
-    addNode,
-    setSelectedIds,
-}) {
+export function createDrawLineTool() {
     let draft = null;
     let start = { x: 0, y: 0 };
     let layer = null;
@@ -21,13 +16,13 @@ export function createDrawLineTool({
         icon: LuSlash,
         cursor: "crosshair",
 
-        onPointerDown(e) {
+        onPointerDown(e, ctx) {
             if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
             if (!stage) return;
             const prt = stage.getPointerPosition();
             if (!prt) return;
-            const { gridSize, snapToGrid } = getGrid();
+            const { gridSize, snapToGrid } = ctx.getGrid();
             const worldPos = toWorld(stage, prt);
             const p = snapPointToGrid(worldPos, gridSize, snapToGrid);
 
@@ -39,17 +34,17 @@ export function createDrawLineTool({
                 strokeWidth: 1,
                 listening: false,
             });
-            layer = getOverviewLayer();
+            layer = ctx.getOverviewLayer();
             layer.add(draft);
             layer.batchDraw();
         },
 
-        onPointerMove(e) {
+        onPointerMove(e, ctx) {
             const stage = e.currentTarget;
             if (!stage || !draft || !layer) return;
             const ptr = stage.getPointerPosition();
             if (!ptr) return;
-            const { gridSize, snapToGrid } = getGrid();
+            const { gridSize, snapToGrid } = ctx.getGrid();
             const curWord = toWorld(stage, ptr);
             const cur = snapPointToGrid(curWord, gridSize, snapToGrid);
 
@@ -57,14 +52,14 @@ export function createDrawLineTool({
             layer.batchDraw();
         },
 
-        onPointerUp(e, api) {
+        onPointerUp(e, ctx) {
             const stage = e.currentTarget;
             if (!stage || !draft || !layer) return;
             const ptr = stage.getPointerPosition();
             if (!ptr) return;
-            const { gridSize, snapToGrid } = getGrid();
-            const curWord = toWorld(stage, ptr);
-            const cur = snapPointToGrid(curWord, gridSize, snapToGrid);
+            const { gridSize, snapToGrid } = ctx.getGrid();
+            const curWorld = toWorld(stage, ptr);
+            const cur = snapPointToGrid(curWorld, gridSize, snapToGrid);
 
             // финальные точки
             const x1 = start.x;
@@ -83,7 +78,7 @@ export function createDrawLineTool({
 
             if (distance < minSize) return;
 
-            addNode({
+            ctx.addNode({
                 ...BASE_PARAMS,
                 type: SHAPES.line,
                 name: "Line",
@@ -92,7 +87,7 @@ export function createDrawLineTool({
                 points: [0, 0, dx, dy],
                 strokeWidth: 1,
             });
-            api.manager.setActive("select");
+            ctx.manager.setActive(ACTIONS.select);
         },
 
         cancel() {
