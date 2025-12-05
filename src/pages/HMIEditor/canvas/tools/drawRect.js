@@ -1,8 +1,7 @@
 import { LuSquare } from "react-icons/lu";
 import Konva from "konva";
-import { BASE_PARAMS, snapPointToGrid } from "./utils";
+import { BASE_PARAMS, computeDragBox, getSnappedWorldPointer } from "./utils";
 import { ACTIONS, SHAPES } from "../../constants";
-import { toWorld } from "../utils/coords";
 
 export function createDrawRectTool() {
     let draft = null;
@@ -18,16 +17,14 @@ export function createDrawRectTool() {
 
         onPointerDown(e, ctx) {
             if (e.evt.button !== 0) return;
+
             const stage = e.currentTarget;
             if (!stage) return;
-            const ptr = stage.getPointerPosition();
-            if (!ptr) return;
-            const { gridSize, snapToGrid } = ctx.getGrid();
-            const worldPos = toWorld(stage, ptr);
-            const p = snapPointToGrid(worldPos, gridSize, snapToGrid);
+
+            const p = getSnappedWorldPointer(stage, ctx);
+            if (!p) return;
 
             start = p;
-
             draft = new Konva.Rect({
                 ...BASE_PARAMS,
                 x: p.x,
@@ -37,53 +34,31 @@ export function createDrawRectTool() {
                 cornerRadius: 0,
                 listening: false,
             });
+
             layer = ctx.getOverviewLayer();
             layer.add(draft);
             layer.batchDraw();
         },
 
         onPointerMove(e, ctx) {
+            if (!draft || !layer) return;
             const stage = e.currentTarget;
-            if (!stage || !draft || !layer) return;
-            const ptr = stage.getPointerPosition();
-            if (!ptr) return;
-            const { gridSize, snapToGrid } = ctx.getGrid();
-            const curWorld = toWorld(stage, ptr);
-            const cur = snapPointToGrid(curWorld, gridSize, snapToGrid);
+            if (!stage) return;
+
+            const cur = getSnappedWorldPointer(stage, ctx);
+            if (!cur) return;
 
             const alt = !!(e.evt && e.evt.altKey);
             const shift = !!(e.evt && e.evt.shiftKey);
+            const box = computeDragBox(start, cur, { alt, shift, minSize: 0 });
+            if (!box) return;
 
-            let x = Math.min(start.x, cur.x);
-            let y = Math.min(start.y, cur.y);
-            let w = Math.abs(start.x - cur.x);
-            let h = Math.abs(start.y - cur.y);
-
-            if (alt) {
-                const dx = Math.abs(start.x - cur.x);
-                const dy = Math.abs(start.y - cur.y);
-                w = dx * 2;
-                h = dy * 2;
-                x = start.x - w / 2;
-                y = start.y - h / 2;
-            }
-
-            if (shift) {
-                const size = Math.max(w, h);
-                w = size;
-                h = size;
-                if (!alt) {
-                    x = cur.x < start.x ? start.x - size : start.x;
-                    y = cur.y < start.y ? start.y - size : start.y;
-                } else {
-                    x = start.x - w / 2;
-                    y = start.y - h / 2;
-                }
-            }
-
-            if (w === 0 || h === 0) return;
-
-            draft.setAttrs({ x, y, width: w, height: h });
+            draft.setAttrs({
+                x: box.left,
+                y: box.top,
+                width: box.width,
+                height: box.height,
+            });
             layer.batchDraw();
         },
 
@@ -91,21 +66,28 @@ export function createDrawRectTool() {
             const stage = e.currentTarget;
             if (!stage || !draft || !layer) return;
 
-            const attrs = draft.getAttrs();
+            const cur = getSnappedWorldPointer(stage, ctx);
+            const alt = !!(e.evt && e.evt.altKey);
+            const shift = !!(e.evt && e.evt.shiftKey);
+
+            const box = cur
+                ? computeDragBox(start, cur, { alt, shift, minSize })
+                : null;
+
             draft.destroy();
             draft = null;
             layer.batchDraw();
 
-            if (attrs.width < minSize || attrs.height < minSize) return;
+            if (!box) return;
 
             ctx.addNode({
                 ...BASE_PARAMS,
                 type: SHAPES.rect,
                 name: "Rectangle",
-                x: attrs.x,
-                y: attrs.y,
-                width: attrs.width,
-                height: attrs.height,
+                x: box.left,
+                y: box.top,
+                width: box.width,
+                height: box.height,
                 cornerRadius: 0,
             });
             ctx.manager.setActive(ACTIONS.select);

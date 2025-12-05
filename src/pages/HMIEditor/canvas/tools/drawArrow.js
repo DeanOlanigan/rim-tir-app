@@ -1,7 +1,6 @@
 import { LuMoveUpRight } from "react-icons/lu";
-import { toWorld } from "../utils/coords";
 import Konva from "konva";
-import { BASE_PARAMS, snapPointToGrid } from "./utils";
+import { BASE_PARAMS, computeDragLine, getSnappedWorldPointer } from "./utils";
 import { ACTIONS, SHAPES } from "../../constants";
 
 export function createDrawArrowTool() {
@@ -20,14 +19,11 @@ export function createDrawArrowTool() {
             if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
             if (!stage) return;
-            const prt = stage.getPointerPosition();
-            if (!prt) return;
-            const { gridSize, snapToGrid } = ctx.getGrid();
-            const worldPos = toWorld(stage, prt);
-            const p = snapPointToGrid(worldPos, gridSize, snapToGrid);
+
+            const p = getSnappedWorldPointer(stage, ctx);
+            if (!p) return;
 
             start = p;
-
             draft = new Konva.Arrow({
                 ...BASE_PARAMS,
                 points: [p.x, p.y, p.x, p.y],
@@ -36,19 +32,19 @@ export function createDrawArrowTool() {
                 pointerWidth: 10,
                 listening: false,
             });
+
             layer = ctx.getOverviewLayer();
             layer.add(draft);
             layer.batchDraw();
         },
 
         onPointerMove(e, ctx) {
+            if (!draft || !layer) return;
             const stage = e.currentTarget;
-            if (!stage || !draft || !layer) return;
-            const ptr = stage.getPointerPosition();
-            if (!ptr) return;
-            const { gridSize, snapToGrid } = ctx.getGrid();
-            const curWorld = toWorld(stage, ptr);
-            const cur = snapPointToGrid(curWorld, gridSize, snapToGrid);
+            if (!stage) return;
+
+            const cur = getSnappedWorldPointer(stage, ctx);
+            if (!cur) return;
 
             draft.points([start.x, start.y, cur.x, cur.y]);
             layer.batchDraw();
@@ -57,36 +53,30 @@ export function createDrawArrowTool() {
         onPointerUp(e, ctx) {
             const stage = e.currentTarget;
             if (!stage || !draft || !layer) return;
-            const ptr = stage.getPointerPosition();
-            if (!ptr) return;
-            const { gridSize, snapToGrid } = ctx.getGrid();
-            const curWord = toWorld(stage, ptr);
-            const cur = snapPointToGrid(curWord, gridSize, snapToGrid);
 
-            // финальные точки
-            const x1 = start.x;
-            const y1 = start.y;
-            const x2 = cur.x;
-            const y2 = cur.y;
+            const cur = getSnappedWorldPointer(stage, ctx);
+            if (!cur) {
+                draft.destroy();
+                draft = null;
+                layer.batchDraw();
+                return;
+            }
 
-            // минимальная длина линии (чтоб не создавать "тык" по экрану)
-            const dx = x2 - x1;
-            const dy = y2 - y1;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+            const info = computeDragLine(start, cur, minSize);
 
             draft.destroy();
             draft = null;
             layer.batchDraw();
 
-            if (distance < minSize) return;
+            if (!info) return;
 
             ctx.addNode({
                 ...BASE_PARAMS,
                 type: SHAPES.arrow,
                 name: "Arrow",
-                x: x1,
-                y: y1,
-                points: [0, 0, x2, y2],
+                x: info.x1,
+                y: info.y1,
+                points: [0, 0, info.dx, info.dy],
                 pointerLength: 10,
                 pointerWidth: 10,
                 strokeWidth: 1,
