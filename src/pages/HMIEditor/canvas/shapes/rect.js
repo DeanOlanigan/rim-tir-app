@@ -4,17 +4,11 @@ import { registerShape } from "./registry";
 
 registerShape(SHAPES.rect, {
     onTransformEnd(konvaNode) {
-        const width = konvaNode.width() * konvaNode.scaleX();
-        const height = konvaNode.height() * konvaNode.scaleY();
-
-        konvaNode.scaleX(1);
-        konvaNode.scaleY(1);
-
         const patch = {
             x: round4(konvaNode.x()),
             y: round4(konvaNode.y()),
-            width: Math.round(width),
-            height: Math.round(height),
+            width: round4(konvaNode.width()),
+            height: round4(konvaNode.height()),
             rotation: round4(konvaNode.rotation()),
         };
 

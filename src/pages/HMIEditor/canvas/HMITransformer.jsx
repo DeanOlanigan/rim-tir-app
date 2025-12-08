@@ -1,11 +1,33 @@
 import { Rect, Transformer } from "react-konva";
-import { ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS } from "../constants";
+import { ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS, SHAPES } from "../constants";
 import { memo, useCallback, useEffect } from "react";
 import { useNodeStore } from "../store/node-store";
 import { getShape } from "./shapes";
 import { useActionsStore } from "../store/actions-store";
 import { dragBound } from "./utils/dragBound";
 //import { isLineLikeType } from "../utils";
+
+function collectInstancesFromSelection(selectedIds, nodesRef) {
+    const result = [];
+    for (const id of selectedIds) {
+        const node = nodesRef.current.get(id);
+        if (!node) continue;
+        collectEditableNodesFromNode(node, result);
+    }
+    return result;
+}
+
+function collectEditableNodesFromNode(node, result = []) {
+    const type = node.attrs.type;
+    if (type === SHAPES.group) {
+        node.getChildren().forEach((child) => {
+            collectEditableNodesFromNode(child, result);
+        });
+    } else {
+        result.push(node);
+    }
+    return result;
+}
 
 const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
@@ -22,9 +44,10 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         if (!transformer) return;
 
         if (selectedIds.length > 0) {
-            const instances = selectedIds
-                .map((id) => nodesRef.current.get(id))
-                .filter(Boolean);
+            const instances = collectInstancesFromSelection(
+                selectedIds,
+                nodesRef
+            );
             transformer.nodes(instances);
         } else {
             transformer.nodes([]);
@@ -48,10 +71,8 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         for (const node of nodes) {
             const { id, type } = node.attrs;
             const shape = getShape(type);
-            const { gridSize, snapToGrid } = useActionsStore.getState();
-            const ctx = { gridSize, snapToGrid };
             if (shape && typeof shape.onTransformEnd === "function") {
-                patchesById[id] = shape.onTransformEnd(node, ctx);
+                patchesById[id] = shape.onTransformEnd(node);
             } else {
                 console.warn("No onTransformEnd handler for shape type:", type);
             }
@@ -59,19 +80,15 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         useNodeStore.getState().updateNodes(ids, patchesById);
     };
 
-    const transformHandler = () => {
-        const nodes = transformerRef.current.nodes();
-        if (nodes.length === 0) return;
-        for (const node of nodes) {
-            const type = node.attrs.type;
-            const shape = getShape(type);
-            const { gridSize, snapToGrid } = useActionsStore.getState();
-            const ctx = { gridSize, snapToGrid };
-            if (shape && typeof shape.onTransform === "function") {
-                shape.onTransform(node, ctx);
-            } else {
-                console.warn("No onTransform handler for shape type:", type);
-            }
+    const transformHandler = (e) => {
+        const node = e.target;
+        const type = node.attrs.type;
+        const shape = getShape(type);
+
+        if (shape && typeof shape.onTransform === "function") {
+            shape.onTransform(node);
+        } else {
+            console.warn("No onTransform handler for shape type:", type);
         }
     };
 
