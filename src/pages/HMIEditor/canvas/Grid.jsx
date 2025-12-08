@@ -7,13 +7,17 @@ function drawGrid({ ctx, shape, gridSize, gridColor, clipSize }) {
     const stage = shape.getStage();
     if (!stage) return;
 
-    const vw = stage.width();
-    const vh = stage.height();
-    const scale = stage.scaleX();
-    const sx = stage.x();
-    const sy = stage.y();
+    const layer = shape.getLayer();
+    const pixelRatio =
+        layer?.getCanvas?.().getPixelRatio?.() ?? window.devicePixelRatio ?? 1;
 
-    const step = gridSize * scale;
+    const vw = stage.width() * pixelRatio;
+    const vh = stage.height() * pixelRatio;
+    const scale = stage.scaleX();
+    const sx = stage.x() * pixelRatio;
+    const sy = stage.y() * pixelRatio;
+
+    const step = gridSize * scale * pixelRatio;
     if (step <= 10) return;
 
     ctx.save();
@@ -27,8 +31,8 @@ function drawGrid({ ctx, shape, gridSize, gridColor, clipSize }) {
         clipX = sx;
         clipY = sy;
 
-        clipW = clipSize.width * scale;
-        clipH = clipSize.height * scale;
+        clipW = clipSize.width * scale * pixelRatio;
+        clipH = clipSize.height * scale * pixelRatio;
         ctx.beginPath();
         ctx.rect(clipX, clipY, clipW, clipH);
         ctx.clip();
