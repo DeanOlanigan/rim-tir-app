@@ -121,21 +121,29 @@ export function createToolManager({ toolsMap, api }) {
             e.evt.preventDefault();
             const stage = e.currentTarget;
             if (!stage) return;
-
+            const { ctrlKey, metaKey, shiftKey, deltaY, deltaX } = e.evt;
             const pointer = stage.getPointerPosition();
-            const dir = e.evt.deltaY > 0 ? -1 : 1;
-
-            if (e.evt.ctrlKey) {
-                zoomByPercent(stage, dir, pointer);
-            } else if (e.evt.shiftKey) {
+            if (metaKey || ctrlKey) {
+                let dir = -deltaY * 0.1;
+                if (dir > 1) dir = 1;
+                if (dir < -1) dir = -1;
+                if (dir !== 0) {
+                    zoomByPercent(stage, dir, pointer);
+                    stage.batchDraw();
+                }
+                return;
+            }
+            const panX = -deltaX * 1;
+            const panY = -deltaY * 1;
+            if (shiftKey) {
                 stage.position({
-                    x: stage.x() + dir * SCROLL_STRENGTH,
+                    x: stage.x() + (panX || panY),
                     y: stage.y(),
                 });
             } else {
                 stage.position({
-                    x: stage.x(),
-                    y: stage.y() + dir * SCROLL_STRENGTH,
+                    x: stage.x() + panX,
+                    y: stage.y() + panY,
                 });
             }
             stage.batchDraw();
