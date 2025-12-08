@@ -9,6 +9,7 @@ export function toAbs(stage, worldPoint) {
     return t.point(worldPoint); // world -> abs
 }
 
+// not used
 export function absRectToWorld(stage, rect) {
     const p1 = toWorld(stage, { x: rect.x, y: rect.y });
     const p2 = toWorld(stage, {
@@ -24,6 +25,7 @@ export function absRectToWorld(stage, rect) {
     };
 }
 
+// not used
 export function worldRectToAbs(stage, rect) {
     const p1 = toAbs(stage, { x: rect.x, y: rect.y });
     const p2 = toAbs(stage, {

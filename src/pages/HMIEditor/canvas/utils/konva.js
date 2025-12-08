@@ -1,5 +1,6 @@
 import { toWorld } from "./coords";
 
+// not used
 export function getOuterSize(node) {
     const sx = node.scaleX() ?? 1;
     const sy = node.scaleY() ?? 1;
@@ -12,10 +13,12 @@ export function getOuterSize(node) {
     return { width: w + sw, height: h + sw, pad: half };
 }
 
+// not used
 export function getBBox(node) {
     return node.getClientRect({ skipShadow: true, skipStroke: false });
 }
 
+// not used
 export function clampPosInFrame(node, width, height, pos) {
     const { width: ow, height: oh, pad } = getOuterSize(node);
     const minX = pad;
@@ -28,6 +31,7 @@ export function clampPosInFrame(node, width, height, pos) {
     };
 }
 
+// not used
 export function clampRectInFrame(rect, frame) {
     const x = Math.max(rect.x, frame.x);
     const y = Math.max(rect.y, frame.y);
@@ -41,6 +45,7 @@ export function clampRectInFrame(rect, frame) {
     };
 }
 
+// not used
 // TODO fix
 export const clampByBBox = (node, frame, pos) => {
     const stage = node.getStage();

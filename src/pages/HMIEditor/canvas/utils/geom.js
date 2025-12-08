@@ -7,6 +7,7 @@ export function snap(v, step, origin = 0) {
     return Math.round((v - origin) / step) * step + origin;
 }
 
+// not used
 export function normalizeRect(x1, y1, x2, y2) {
     return {
         x: Math.min(x1, x2),
@@ -16,6 +17,7 @@ export function normalizeRect(x1, y1, x2, y2) {
     };
 }
 
+// not used
 export function clampPointToRect(rect, p) {
     return {
         x: Math.min(Math.max(p.x, rect.x), rect.x + rect.width),

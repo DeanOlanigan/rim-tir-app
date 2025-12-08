@@ -1,5 +1,6 @@
 import { getShape } from "../shapes";
 
+// not used
 export const updateStoreNode = (node, updateNode) => {
     const { id, type } = node.attrs;
     const shape = getShape(type);
