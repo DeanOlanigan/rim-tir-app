@@ -1,6 +1,4 @@
-import { useContextMenuStore } from "@/store/contextMenu-store";
-import { ACTIONS, SCROLL_STRENGTH } from "../../constants";
-import { useActionsStore } from "../../store/actions-store";
+import { ACTIONS } from "../../constants";
 import { zoomByPercent } from "../utils/zoomService";
 
 export function createToolManager({ toolsMap, api }) {
@@ -33,7 +31,7 @@ export function createToolManager({ toolsMap, api }) {
         if (active.onEnter) {
             active.onEnter(prev, ctx);
         }
-        useActionsStore.getState().setCurrentAction(name);
+        api.setCurrentAction(name);
         if (active.name !== ACTIONS.select) {
             api.setSelectedIds([]);
         }
@@ -44,7 +42,7 @@ export function createToolManager({ toolsMap, api }) {
         if (!next) return;
         if (active) tempStack.push(active);
         active = next;
-        useActionsStore.getState().setCurrentAction(name);
+        api.setCurrentAction(name);
         setCursor(active.cursor);
         active.onEnter && active.onEnter(null, ctx);
     };
@@ -55,7 +53,7 @@ export function createToolManager({ toolsMap, api }) {
         if (!next) return;
         prev && prev.onExit && prev.onExit(next, ctx);
         active = next;
-        useActionsStore.getState().setCurrentAction(active.name);
+        api.setCurrentAction(active.name);
         setCursor(active && active.cursor);
     };
 
@@ -158,7 +156,7 @@ export function createToolManager({ toolsMap, api }) {
             const target = e.target;
             const id =
                 typeof target.id === "function" ? target.id() : undefined;
-            useContextMenuStore.getState().updateContext("sch", {
+            api.updateContextMenu("sch", {
                 x: rect.left + p.x + 4,
                 y: rect.top + p.y + 4,
                 apiPath: id,

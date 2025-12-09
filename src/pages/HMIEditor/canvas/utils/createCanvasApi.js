@@ -1,3 +1,4 @@
+import { useContextMenuStore } from "@/store/contextMenu-store";
 import { useActionsStore } from "../../store/actions-store";
 import { useNodeStore } from "../../store/node-store";
 
@@ -26,6 +27,11 @@ export function createCanvasApi({
         const size = useActionsStore.getState().size;
         return { workW: size.width, workH: size.height };
     };
+    const setCurrentAction = (action) =>
+        useActionsStore.getState().setCurrentAction(action);
+    const getActiveAction = () => useActionsStore.getState().currentAction;
+    const updateContextMenu = (type, data) =>
+        useContextMenuStore.getState().updateContext(type, data);
 
     return {
         getStage,
@@ -39,5 +45,8 @@ export function createCanvasApi({
         addNode,
         getGrid,
         getWorkSize,
+        setCurrentAction,
+        getActiveAction,
+        updateContextMenu,
     };
 }
