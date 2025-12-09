@@ -11,13 +11,13 @@ import {
 import { useSettingStore } from "./SettingsStore/settings-store";
 
 export const JournalSettings = () => {
-    const Journals = useSettingStore((s) => s.settings?.Journals);
+    const journals = useSettingStore((s) => s.settings?.Journals);
     const editSettings = useSettingStore.getState().editSettingsJourn;
     return (
         <>
             <Heading paddingBottom={"2"}>Журналы</Heading>
             <Stack direction={"row"}>
-                {Journals?.map((journal) => (
+                {journals?.map((journal) => (
                     <Card.Root
                         variant={"elevated"}
                         w={"50%"}

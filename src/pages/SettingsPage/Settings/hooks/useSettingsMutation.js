@@ -6,7 +6,7 @@ import { useSettingStore } from "../SettingsStore/settings-store";
 
 
 export const useSettingsMutation = (client, settings) => {
-    const setSettings = useSettingStore((s) => s.setSettings);
+    const setSettings = useSettingStore.getState().setSettings;
     return useMutation({
         mutationKey: ["settingsSender"],
         mutationFn: async () => {
