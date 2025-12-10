@@ -41,7 +41,7 @@ export const InputFactory = memo(function InputFactory(props) {
         ...rest
     } = props;
     const errors = useValidationStore((state) =>
-        state.errorsTree.get(id)?.get(inputParam)
+        state.errorsTree.get(id)?.get(inputParam),
     );
 
     const renderer = inputRenderers[type] || inputRenderers.default;

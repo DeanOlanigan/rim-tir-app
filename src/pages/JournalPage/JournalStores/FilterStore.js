@@ -8,49 +8,46 @@ const ArchiveInitialState = {
     Location: { value: ["sd"] },
 };
 
-export const useFilterStore = create(
-    (set) => ({
-        selectedGroups: [
-            "Состояние",
-            "Аварийная",
-            "Предупредительная",
-            "Без Группы",
-            "Пауза",
-            "Возобновлен",
-        ],
+export const useFilterStore = create((set) => ({
+    selectedGroups: [
+        "Состояние",
+        "Аварийная",
+        "Предупредительная",
+        "Без Группы",
+        "Пауза",
+        "Возобновлен",
+    ],
 
-        ...ArchiveInitialState,
+    ...ArchiveInitialState,
 
-        setArchive: (data) => set({ isArchive: data }),
+    setArchive: (data) => set({ isArchive: data }),
 
-        chooseStartDate: (newDate) => set({ startDate: newDate }),
-        chooseEndDate: (newDate) => set({ endDate: newDate }),
+    chooseStartDate: (newDate) => set({ startDate: newDate }),
+    chooseEndDate: (newDate) => set({ endDate: newDate }),
 
-        setStringQuantity: (newQuantity) =>
-            set(() => ({ stringsQuantity: { value: newQuantity } })),
+    setStringQuantity: (newQuantity) =>
+        set(() => ({ stringsQuantity: { value: newQuantity } })),
 
-        chooseLocation: (newLocation) =>
-            set(() => ({ Location: { value: newLocation } })),
+    chooseLocation: (newLocation) =>
+        set(() => ({ Location: { value: newLocation } })),
 
-        setArchiveInitial: () =>
-            set({
-                ...ArchiveInitialState,
-                initialState: {
-                    startDate: Date.now() - 86400000,
-                    endDate: Date.now(),
-                },
-            }),
-        
-        tableColumnsZus: ["date", "type", "group", "var", "val", "desc"],
+    setArchiveInitial: () =>
+        set({
+            ...ArchiveInitialState,
+            initialState: {
+                startDate: Date.now() - 86400000,
+                endDate: Date.now(),
+            },
+        }),
 
-        selectedMessages: ["ТС", "ТУ", "Пауза", "Старт"],
+    tableColumnsZus: ["date", "type", "group", "var", "val", "desc"],
 
-        setSelectedGroups: (newGroups) =>
-            set({ selectedGroups: newGroups }),
-        
-        setSelectedMessages: (newMessages) =>
-            set({ selectedMessages: newMessages }),
+    selectedMessages: ["ТС", "ТУ", "Пауза", "Старт"],
 
-        setColons: (newColumns) => set({ tableColumnsZus: newColumns }),
-    }),
-);
+    setSelectedGroups: (newGroups) => set({ selectedGroups: newGroups }),
+
+    setSelectedMessages: (newMessages) =>
+        set({ selectedMessages: newMessages }),
+
+    setColons: (newColumns) => set({ tableColumnsZus: newColumns }),
+}));

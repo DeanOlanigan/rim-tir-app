@@ -82,7 +82,7 @@ export const HMICanvas = ({
 
 const StartCoords = () => {
     const showStartCoordMarker = useActionsStore(
-        (state) => state.showStartCoordMarker
+        (state) => state.showStartCoordMarker,
     );
     return (
         showStartCoordMarker && (

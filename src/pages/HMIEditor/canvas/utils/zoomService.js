@@ -20,14 +20,14 @@ export function fitToFrame(
     workspaceW,
     workspaceH,
     viewportW,
-    viewportH
+    viewportH,
 ) {
     const nextScale = fitStageToWork(
         stage,
         workspaceW,
         workspaceH,
         viewportW,
-        viewportH
+        viewportH,
     );
     updateUiScale(nextScale);
 }

@@ -11,11 +11,11 @@ export function useBreadcrumbParts(id) {
                 out.unshift(
                     cur.type === "dataObject"
                         ? cur.id
-                        : truncateString(cur.name, 15)
+                        : truncateString(cur.name, 15),
                 );
                 cur = cur.parentId ? s.settings[cur.parentId] : null;
             }
             return out;
-        })
+        }),
     );
 }

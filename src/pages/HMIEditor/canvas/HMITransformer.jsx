@@ -46,7 +46,7 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         if (selectedIds.length > 0) {
             const instances = collectInstancesFromSelection(
                 selectedIds,
-                nodesRef
+                nodesRef,
             );
             transformer.nodes(instances);
         } else {
@@ -60,7 +60,7 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
             const stage = canvasRef.current;
             return dragBound(newPos, stage, gridSize, snapToGrid);
         },
-        [canvasRef]
+        [canvasRef],
     );
 
     const transformEndHandler = () => {

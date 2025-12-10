@@ -158,7 +158,7 @@ const ParamBadgeInfo = ({ parameters }) => {
         let value;
         if (selectOptions) {
             value = selectOptions.items.find(
-                (item) => item.value === param.value
+                (item) => item.value === param.value,
             )?.label;
         } else {
             value = param.value;

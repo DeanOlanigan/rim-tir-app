@@ -32,7 +32,7 @@ export const TreeView = memo(function TreeView({
             setApi("config", treeType, api);
             apiRef.current = api;
         },
-        [setApi, treeType]
+        [setApi, treeType],
     );
     const hkref = useTreeHostkeys(apiRef?.current);
 

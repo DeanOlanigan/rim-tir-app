@@ -8,7 +8,7 @@ registerShape(SHAPES.line, {
         for (let i = 0; i < konvaNode.points().length; i += 2) {
             newPoints[i] = round4(konvaNode.points()[i] * konvaNode.scaleX());
             newPoints[i + 1] = round4(
-                konvaNode.points()[i + 1] * konvaNode.scaleY()
+                konvaNode.points()[i + 1] * konvaNode.scaleY(),
             );
         }
         const patch = {
@@ -29,7 +29,7 @@ registerShape(SHAPES.line, {
         for (let i = 0; i < konvaNode.points().length; i += 2) {
             newPoints[i] = round4(konvaNode.points()[i] * konvaNode.scaleX());
             newPoints[i + 1] = round4(
-                konvaNode.points()[i + 1] * konvaNode.scaleY()
+                konvaNode.points()[i + 1] * konvaNode.scaleY(),
             );
         }
         konvaNode.scaleX(1);

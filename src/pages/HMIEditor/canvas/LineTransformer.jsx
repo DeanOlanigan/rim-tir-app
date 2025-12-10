@@ -29,11 +29,11 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
             const dx = node.x() - startPos.current.x;
             const dy = node.y() - startPos.current.y;
             circles.forEach((c) =>
-                c.position({ x: c.x() + dx, y: c.y() + dy })
+                c.position({ x: c.x() + dx, y: c.y() + dy }),
             );
             startPos.current = node.position();
         },
-        [overviewRef]
+        [overviewRef],
     );
 
     useEffect(() => {
@@ -192,7 +192,7 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
                 onDragStart={(e) => onMidDragStart(e, segmentIndex)}
                 onDragMove={onMidDragMove}
                 onDragEnd={onMidDragEnd}
-            />
+            />,
         );
     }
 
@@ -214,7 +214,7 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
                 onDragMove={(e) => onDragMove(e, pointIndex)}
                 onDragEnd={onDragEnd}
                 onDblClick={(e) => onPointDouble(e, pointIndex)}
-            />
+            />,
         );
     }
 

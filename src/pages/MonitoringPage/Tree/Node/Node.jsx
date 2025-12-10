@@ -24,7 +24,7 @@ export const Node = memo(function Node({ node, style, tree }) {
                 settings,
                 node.id,
                 "monitoring",
-                Object.values(TREE_TYPES)
+                Object.values(TREE_TYPES),
             );
     };
 

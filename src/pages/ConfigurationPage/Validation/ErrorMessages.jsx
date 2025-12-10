@@ -13,8 +13,8 @@ export const ErrorMessages = ({ errors }) => {
                             <Icon size={"md"} as={LuDot} />
                             <Text>{message}</Text>
                         </Flex>
-                    ))
-                )
+                    )),
+                ),
             )}
         </Box>
     );

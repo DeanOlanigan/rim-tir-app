@@ -20,7 +20,7 @@ export const ConfInfoEdit = ({ children }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [initialName, setName] = useState(info.name ?? "");
     const [initialDescription, setDescription] = useState(
-        info.description ?? ""
+        info.description ?? "",
     );
 
     const isNameValid = initialName?.trim().length > 3;
@@ -86,7 +86,7 @@ export const ConfInfoEdit = ({ children }) => {
                                         </Text>
                                         <Text fontSize={"md"}>
                                             {new Date(
-                                                parseInt(info.ts)
+                                                parseInt(info.ts),
                                             ).toLocaleString()}
                                         </Text>
                                     </Box>

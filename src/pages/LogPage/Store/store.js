@@ -47,8 +47,8 @@ export const useLogStore = create(
         }),
         {
             name: "log-store",
-        }
-    )
+        },
+    ),
 );
 
 export const useHasChosenLog = () =>

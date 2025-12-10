@@ -49,7 +49,7 @@ export const ActionsBlock = ({
 const GroupSelected = ({ node, nodesRef, selectedIds, transformerRef }) => {
     const handleGroup = () => {
         const bbox = calcBBox(
-            selectedIds.map((id) => nodesRef.current.get(id))
+            selectedIds.map((id) => nodesRef.current.get(id)),
         );
         useNodeStore.getState().groupNodes(selectedIds, bbox);
     };

@@ -18,7 +18,7 @@ export const TreeView = ({
         (api) => {
             useTreeRegistry.getState().setApi("monitoring", treeType, api);
         },
-        [treeType]
+        [treeType],
     );
 
     const searchMatch = useSearchMatch();

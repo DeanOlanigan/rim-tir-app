@@ -20,22 +20,13 @@ export const CodeField = ({ setting, config, w, h }) => {
         }
 
         (async () => {
-            const monaco = await import(
-                "monaco-editor/esm/vs/editor/editor.api"
-            );
+            const monaco =
+                await import("monaco-editor/esm/vs/editor/editor.api");
             await Promise.all([
-                import(
-                    "monaco-editor/esm/vs/editor/contrib/suggest/browser/suggestController"
-                ),
-                import(
-                    "monaco-editor/esm/vs/editor/contrib/snippet/browser/snippetController2"
-                ),
-                import(
-                    "monaco-editor/esm/vs/editor/contrib/suggest/browser/suggest"
-                ),
-                import(
-                    "monaco-editor/esm/vs/basic-languages/lua/lua.contribution"
-                ),
+                import("monaco-editor/esm/vs/editor/contrib/suggest/browser/suggestController"),
+                import("monaco-editor/esm/vs/editor/contrib/snippet/browser/snippetController2"),
+                import("monaco-editor/esm/vs/editor/contrib/suggest/browser/suggest"),
+                import("monaco-editor/esm/vs/basic-languages/lua/lua.contribution"),
             ]);
             loader.config({ monaco });
             await loader.init();

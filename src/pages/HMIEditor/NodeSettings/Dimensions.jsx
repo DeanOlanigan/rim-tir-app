@@ -144,7 +144,7 @@ export const DimensionsBlock = ({ node, nodesRef, selectedIds }) => {
                 const newPoints = resizeLineLike(
                     n,
                     Math.max(targetWidth, 0),
-                    Math.max(targetHeight, 0)
+                    Math.max(targetHeight, 0),
                 );
 
                 patchesById[id] = {

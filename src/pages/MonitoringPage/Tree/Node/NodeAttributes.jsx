@@ -20,7 +20,7 @@ export const NodeAttributes = memo(function NodeAttributes({ id }) {
                             aria-hidden
                             title={attr.label}
                         />
-                    )
+                    ),
             )}
             <Icon
                 as={LuCircle}

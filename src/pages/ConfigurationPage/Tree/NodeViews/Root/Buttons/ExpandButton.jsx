@@ -5,7 +5,7 @@ import { LuCopyPlus, LuCopyMinus } from "react-icons/lu";
 
 export const ExpandButton = ({ treeApi }) => {
     const [expanded, setExpanded] = useState(
-        treeApi.isOpen(treeApi.props.treeType)
+        treeApi.isOpen(treeApi.props.treeType),
     );
 
     const handleExpand = (e) => {

@@ -4,7 +4,7 @@ import { LuArrowRight, LuDot, LuTriangleAlert } from "react-icons/lu";
 
 export const NodeError = ({ id }) => {
     const validationErrors = useValidationStore((state) =>
-        state.errorsTree.get(id)?.get("node")
+        state.errorsTree.get(id)?.get("node"),
     );
 
     return (
@@ -46,7 +46,7 @@ export const NodeError = ({ id }) => {
                                                 <Icon size={"md"} as={LuDot} />
                                                 <Text>{e.messages}</Text>
                                             </Flex>
-                                        )
+                                        ),
                                     )}
                                 </Flex>
                             </Popover.Body>

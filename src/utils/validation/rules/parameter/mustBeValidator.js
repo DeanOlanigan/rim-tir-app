@@ -15,6 +15,6 @@ export function mustBeValidator({ nodeId, param, rule, context, draft }) {
         nodeId,
         param,
         VALIDATOR.MUSTBE,
-        res ? [] : [rule.message || "Value is not allowed"]
+        res ? [] : [rule.message || "Value is not allowed"],
     );
 }

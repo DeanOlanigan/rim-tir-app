@@ -38,7 +38,7 @@ function transformConfiguration(
     nodePaths = {},
     settingPaths = {},
     visiblePaths = {},
-    parent = null
+    parent = null,
 ) {
     if (!Array.isArray(data)) return { nodePaths, settingPaths, visiblePaths };
     data.forEach((element) => {
@@ -58,7 +58,7 @@ function transformConfiguration(
             nodePaths,
             settingPaths,
             visiblePaths,
-            element
+            element,
         );
     });
     return { nodePaths, settingPaths, visiblePaths };

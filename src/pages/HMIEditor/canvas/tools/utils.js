@@ -33,7 +33,7 @@ export function getSnappedWorldPointer(stage, ctx) {
 export function computeDragBox(
     start,
     cur,
-    { alt = false, shift = false, minSize = 0 } = {}
+    { alt = false, shift = false, minSize = 0 } = {},
 ) {
     let left = Math.min(start.x, cur.x);
     let top = Math.min(start.y, cur.y);
@@ -91,7 +91,7 @@ export function buildPolygon(
     radiusX,
     radiusY,
     sides,
-    startAngle = -Math.PI / 2
+    startAngle = -Math.PI / 2,
 ) {
     const pts = [];
     const step = (Math.PI * 2) / sides;

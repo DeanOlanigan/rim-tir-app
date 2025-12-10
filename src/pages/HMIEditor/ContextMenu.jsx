@@ -5,7 +5,7 @@ import { useNodeStore } from "./store/node-store";
 export const ContextMenu = () => {
     const { updateContext } = useContextMenuStore.getState();
     const { apiPath, x, y, visible } = useContextMenuStore(
-        (state) => state.sch
+        (state) => state.sch,
     );
     const { removeNode, setSelectedIds } = useNodeStore.getState();
     return (

@@ -1,9 +1,8 @@
 import { configuratorConfig } from "@/store/configurator-config";
 
 export async function monitoringLoader() {
-    const { ensureConfiguratorConfig } = await import(
-        "@/utils/configurationParser"
-    );
+    const { ensureConfiguratorConfig } =
+        await import("@/utils/configurationParser");
     await ensureConfiguratorConfig();
     return null;
 }

@@ -12,7 +12,7 @@ const toSyncPayload = (x) => ({
 
 export const ConfSyncManager = () => {
     const local = useVariablesStore(
-        useShallow((state) => toSyncPayload(state))
+        useShallow((state) => toSyncPayload(state)),
     );
     const { setSync } = useVariablesStore.getState();
     const { data } = useQuery({

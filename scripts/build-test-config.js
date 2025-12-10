@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 const schemaPath = path.join(__dirname, "../config/instance.json");
 const outputPath = path.join(
     __dirname,
-    "../src/config/generated/generatedConfig.js"
+    "../src/config/generated/generatedConfig.js",
 );
 
 function main() {

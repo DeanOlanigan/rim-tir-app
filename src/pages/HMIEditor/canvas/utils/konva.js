@@ -7,7 +7,8 @@ export function getOuterSize(node) {
     const w = (node.width() ?? 0) * sx;
     const h = (node.height() ?? 0) * sy;
 
-    const sw = node.strokeEnabled?.() === false ? 0 : node.strokeWidth?.() ?? 0;
+    const sw =
+        node.strokeEnabled?.() === false ? 0 : (node.strokeWidth?.() ?? 0);
     const half = sw / 2;
 
     return { width: w + sw, height: h + sw, pad: half };

@@ -15,6 +15,6 @@ export function regexValidator({ nodeId, param, rule, context, draft }) {
         nodeId,
         param,
         VALIDATOR.REGEX,
-        res ? [] : [rule.message || "Value does not match regex"]
+        res ? [] : [rule.message || "Value does not match regex"],
     );
 }

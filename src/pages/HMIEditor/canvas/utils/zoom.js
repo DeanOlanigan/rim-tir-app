@@ -38,7 +38,7 @@ export function zoomPercent(stage, dir, pointer) {
     const oldScale = stage.scaleX();
     const zoomFactor = 1 + dir * ZOOM_PERCENTAGE_STEP;
     const nextScale = round4(
-        clamp(oldScale * zoomFactor, DEFAULT_MIN_ZOOM, DEFAULT_MAX_ZOOM)
+        clamp(oldScale * zoomFactor, DEFAULT_MIN_ZOOM, DEFAULT_MAX_ZOOM),
     );
     zoomAt(stage, nextScale, pointer);
     return nextScale;
@@ -48,7 +48,7 @@ export function calcFitScale(workspaceW, workspaceH, viewportW, viewportH) {
     if (!workspaceW || !workspaceH || !viewportW || !viewportH) return 1;
     const scale = Math.min(
         (viewportW / workspaceW) * FIT_PADDING,
-        (viewportH / workspaceH) * FIT_PADDING
+        (viewportH / workspaceH) * FIT_PADDING,
     );
     return round4(clamp(scale, DEFAULT_MIN_ZOOM, DEFAULT_MAX_ZOOM));
 }
@@ -58,7 +58,7 @@ export function fitStageToWork(
     workspaceW,
     workspaceH,
     viewportW,
-    viewportH
+    viewportH,
 ) {
     const scale = calcFitScale(workspaceW, workspaceH, viewportW, viewportH);
     stage.scale({ x: scale, y: scale });

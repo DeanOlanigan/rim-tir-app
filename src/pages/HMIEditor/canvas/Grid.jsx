@@ -102,7 +102,7 @@ export const Grid = ({ clipSize }) => {
         (ctx, shape) => {
             drawGrid({ ctx, shape, gridSize, gridColor, clipSize });
         },
-        [gridSize, gridColor, clipSize]
+        [gridSize, gridColor, clipSize],
     );
 
     return (

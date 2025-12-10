@@ -9,7 +9,7 @@ export function useLogData() {
     const q = useLogHistory(
         chosenLog?.category,
         chosenLog?.label,
-        logRowsCount
+        logRowsCount,
     );
     useMqttLogs(chosenLog?.category, chosenLog?.label);
 

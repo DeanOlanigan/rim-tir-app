@@ -17,7 +17,7 @@ ChartJS.register(
     PointElement,
     LinearScale,
     CategoryScale,
-    Filler
+    Filler,
 );
 
 const chartAreaBorder = {
@@ -61,7 +61,7 @@ export const Sparkline = memo(function Sparkline({
                 },
             ],
         }),
-        [data]
+        [data],
     );
 
     const baseOptions = useMemo(
@@ -94,7 +94,7 @@ export const Sparkline = memo(function Sparkline({
                 y: { type: "linear", display: false },
             },
         }),
-        [xMax]
+        [xMax],
     );
 
     const plugins = useMemo(() => [chartAreaBorder], []);

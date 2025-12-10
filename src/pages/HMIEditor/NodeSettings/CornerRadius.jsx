@@ -107,7 +107,7 @@ export const CornerRadiusBlock = ({ node }) => {
                         size={"xs"}
                         min={0}
                         max={100}
-                        value={areAllEqual(corners) ? corners[0] ?? 0 : ""}
+                        value={areAllEqual(corners) ? (corners[0] ?? 0) : ""}
                         onValueChange={(e) =>
                             handleUniformChange(e.valueAsNumber)
                         }
@@ -129,7 +129,7 @@ export const CornerRadiusBlock = ({ node }) => {
                     <Slider.Root
                         size={"sm"}
                         w={"100%"}
-                        value={[areAllEqual(corners) ? corners[0] ?? 0 : 0]}
+                        value={[areAllEqual(corners) ? (corners[0] ?? 0) : 0]}
                         onValueChange={(e) => handleUniformChange(e.value[0])}
                     >
                         <Slider.Control>
@@ -163,7 +163,7 @@ export const CornerRadiusBlock = ({ node }) => {
                                     onValueChange={(e) =>
                                         handleMixedChange(
                                             index,
-                                            e.valueAsNumber
+                                            e.valueAsNumber,
                                         )
                                     }
                                 >

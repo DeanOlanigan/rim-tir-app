@@ -14,6 +14,6 @@ export function rangeValidator({ nodeId, param, rule, context, draft }) {
         nodeId,
         param,
         VALIDATOR.RANGE,
-        res ? [] : [rule.message || `Value must be between ${min} and ${max}`]
+        res ? [] : [rule.message || `Value must be between ${min} and ${max}`],
     );
 }

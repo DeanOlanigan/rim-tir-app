@@ -74,7 +74,7 @@ function readNode(
     parentId = null,
     stateArr = [],
     settings,
-    treeType
+    treeType,
 ) {
     const id = nodeElem.getAttribute("id");
     const name = nodeElem.getAttribute("name") || undefined;

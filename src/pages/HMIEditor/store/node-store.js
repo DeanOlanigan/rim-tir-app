@@ -88,7 +88,7 @@ export const useNodeStore = create(
                         const newNodes = { ...state.nodes };
                         delete newNodes[id];
                         const newRootIds = state.rootIds.filter(
-                            (nid) => nid !== id
+                            (nid) => nid !== id,
                         );
                         return { nodes: newNodes, rootIds: newRootIds };
                     }),
@@ -116,7 +116,7 @@ export const useNodeStore = create(
                     set((state) => {
                         const id = nanoid(12);
                         const newRootIds = [...state.rootIds, id].filter(
-                            (nid) => !ids.includes(nid)
+                            (nid) => !ids.includes(nid),
                         );
                         const newNodes = {
                             ...state.nodes,
@@ -180,10 +180,10 @@ export const useNodeStore = create(
                     nodes: state.nodes,
                     rootIds: state.rootIds,
                 }),
-            }
+            },
         ),
-        { name: "node-store" }
-    )
+        { name: "node-store" },
+    ),
 );
 
 function arraysEqual(a, b) {

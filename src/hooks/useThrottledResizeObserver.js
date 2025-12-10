@@ -10,7 +10,7 @@ export function useThrottledResizeObserver(wait = 150) {
             throttle(({ width, height }) => {
                 setSize({ width, height });
             }, wait),
-        [wait]
+        [wait],
     );
 
     const { ref } = useResizeObserver({ onResize });

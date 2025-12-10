@@ -26,7 +26,7 @@ ChartJS.register(
     Legend,
     zoomPlugin,
     RealTimeScale,
-    StreamingPlugin
+    StreamingPlugin,
 );
 
 export const ExampleChart = ({

@@ -36,7 +36,7 @@ export function createSelectTool() {
                     ctx.setSelectedIds([clickedId]);
                 } else if (metaPressed && isSelected) {
                     ctx.setSelectedIds(
-                        selectedIds.filter((id) => id !== clickedId)
+                        selectedIds.filter((id) => id !== clickedId),
                     );
                 } else if (metaPressed && !isSelected) {
                     ctx.setSelectedIds([...selectedIds, clickedId]);
@@ -81,8 +81,8 @@ export function createSelectTool() {
             const selected = nodes.filter((node) =>
                 Konva.Util.haveIntersection(
                     selection,
-                    node.getClientRect({ skipShadow: true, skipStroke: true })
-                )
+                    node.getClientRect({ skipShadow: true, skipStroke: true }),
+                ),
             );
             if (selected.length === 0) return;
             const selectedIds = selected.map((node) => node.attrs.id);
