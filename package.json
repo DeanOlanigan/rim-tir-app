@@ -14,7 +14,14 @@
         "depgraph-html": "depcruise --include-only \"^src/\" --output-type html src > depgraph_html.html",
         "depgraph-report": "depcruise --include-only \"^src/\" --output-type err-html src > depgraph_report.html",
         "depgraph-err": "depcruise --include-only \"^src/\"",
-        "depgraph-v": "depcruise --include-only \"^src/utils/validation\" --output-type dot src | dot -T svg | depcruise-wrap-stream-in-html > depgraph_v.html"
+        "depgraph-v": "depcruise --include-only \"^src/utils/validation\" --output-type dot src | dot -T svg | depcruise-wrap-stream-in-html > depgraph_v.html",
+        "prepare": "husky"
+    },
+    "lint-staged": {
+        "**/*.{js,jsx,ts,tsx}": [
+            "eslint --fix",
+            "prettier --write"
+        ]
     },
     "dependencies": {
         "@chakra-ui/react": "^3.27.0",
@@ -72,6 +79,8 @@
         "eslint-plugin-react-refresh": "^0.4.14",
         "eslint-plugin-sonarjs": "^3.0.4",
         "globals": "^15.12.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.2.7",
         "msw": "^2.10.5",
         "prettier": "3.7.4",
         "rollup-plugin-visualizer": "^6.0.3",
