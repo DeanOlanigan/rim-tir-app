@@ -8,10 +8,9 @@ import {
     Switch,
     Popover,
     Portal,
-    Icon,
 } from "@chakra-ui/react";
 import { Tooltip } from "@/components/ui/tooltip";
-import { LuPencil, LuPencilOff, LuChevronDown } from "react-icons/lu";
+import { LuChevronDown } from "react-icons/lu";
 import { InputFactory } from "@/pages/ConfigurationPage/InputComponents/InputFactory";
 import { useVariablesStore } from "@/store/variables-store";
 import { InputController } from "@/pages/ConfigurationPage/InputComponents/InputController";

@@ -2,7 +2,9 @@ import { Box, useBreakpointValue, Input } from "@chakra-ui/react";
 import { useColorMode } from "@/components/ui/color-mode";
 import React, { useEffect, useState, forwardRef } from "react";
 import ReactDatePicker from "react-datepicker";
+
 // TODO Разобраться с темами
+// eslint-disable-next-line
 const datePickerThemes = {
     light: {
         gray100: "gray.100",
@@ -51,7 +53,7 @@ const generateTheme = (mode, colorPalette) => ({
     gray100: mode === "light" ? "gray.100" : "gray.700",
     gray200: mode === "light" ? "gray.200" : "gray.600",
     gray300: mode === "light" ? "gray.300" : "gray.500",
-    gray400: mode === "light" ? "gray.400" : "gray.400",
+    gray400: "gray.400",
     gray500: mode === "light" ? "gray.500" : "gray.300",
     color300: `${colorPalette}.300`,
     color500: `${colorPalette}.500`,

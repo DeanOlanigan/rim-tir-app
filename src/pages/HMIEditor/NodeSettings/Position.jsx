@@ -1,6 +1,4 @@
 import { Fieldset, Group, InputGroup, NumberInput } from "@chakra-ui/react";
-import { useState } from "react";
-import { patchNodeThrottled } from "./utils";
 import { useNodeStore } from "../store/node-store";
 
 export const PositionBlock = ({ node }) => {

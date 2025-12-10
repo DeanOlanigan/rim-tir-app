@@ -178,6 +178,8 @@ const LoginCard = () => {
 
 async function sha1(data) {
     const text = new TextEncoder().encode(data);
+    // TODO SHA-1 слаб
+    // eslint-disable-next-line
     const hashBuffer = await crypto.subtle.digest("SHA-1", text);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");

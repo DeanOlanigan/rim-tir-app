@@ -1,9 +1,6 @@
-import Konva from "konva";
 import { SHAPES } from "../../constants";
-import { useActionsStore } from "../../store/actions-store";
-import { useNodeStore } from "../../store/node-store";
 import { round4 } from "../../utils";
-import { getShape, registerShape } from "./registry";
+import { registerShape } from "./registry";
 
 registerShape(SHAPES.group, {
     onTransformEnd(konvaNode) {
@@ -51,7 +48,7 @@ registerShape(SHAPES.group, {
         return patch; */
     },
 
-    onTransform(konvaNode) {
+    onTransform() {
         console.log("Transform group");
         /* const parent = konvaNode.getParent();
         if (!parent) return;

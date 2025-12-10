@@ -22,7 +22,7 @@ registerShape(SHAPES.line, {
     },
 
     // TODO
-    onDragEnd(konvaNode) {},
+    onDragEnd() {},
 
     onTransform(konvaNode) {
         const newPoints = [];

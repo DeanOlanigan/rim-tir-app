@@ -97,6 +97,8 @@ const LogoutBtn = () => {
     );
 };
 
+// TODO потом придумать куда деть
+// eslint-disable-next-line
 const Pumpkins = () => {
     return (
         <Flex gap={"6"}>

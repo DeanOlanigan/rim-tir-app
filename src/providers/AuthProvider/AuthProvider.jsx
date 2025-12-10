@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AuthContext } from "./AuthContext";
 
+// eslint-disable-next-line
 const checkAuth = () => {
     const sessionExpirationTime = localStorage.getItem(
         "session_expiration_time",

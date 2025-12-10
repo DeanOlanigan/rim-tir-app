@@ -4,7 +4,6 @@ import { Loader } from "@/components/Loader";
 import { ErrorInformer } from "@/components/ErrorInformer";
 import { LOG_LEVELS } from "@/config/constants";
 import { useLogData } from "./useLogData";
-import { useEffect } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useStickToBottom } from "use-stick-to-bottom";
 import { LuArrowDown } from "react-icons/lu";

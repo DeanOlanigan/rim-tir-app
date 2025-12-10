@@ -67,6 +67,8 @@ function ConfigurationPage() {
 }
 export default ConfigurationPage;
 
+// TODO потом придумать куда деть
+// eslint-disable-next-line
 const MobileConfigurationPage = () => {
     return (
         <Center h={"100%"}>

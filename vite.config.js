@@ -8,6 +8,7 @@ export default defineConfig({
     server: {
         proxy: {
             "/api": {
+                // eslint-disable-next-line
                 target: "http://192.168.1.1:8080",
                 changeOrigin: true,
                 secure: false,

@@ -11,7 +11,6 @@ export function collapseBreadcrumbs(items, maxLength, focusIndex, edgeCount) {
     );
 
     // Базовый скелет: всегда держим левый/правый «край»
-    const leftEdgeEnd = edges - 1; // индекс последнего слева, включительно
     const rightEdgeStart = n - edges; // индекс первого справа, включительно
 
     // Сколько позиций остаётся на «окно» вокруг фокуса

@@ -46,7 +46,7 @@ export const ActionsBlock = ({
     );
 };
 
-const GroupSelected = ({ node, nodesRef, selectedIds, transformerRef }) => {
+const GroupSelected = ({ nodesRef, selectedIds }) => {
     const handleGroup = () => {
         const bbox = calcBBox(
             selectedIds.map((id) => nodesRef.current.get(id)),
@@ -61,7 +61,7 @@ const GroupSelected = ({ node, nodesRef, selectedIds, transformerRef }) => {
     );
 };
 
-const Ungroup = ({ node, nodesRef, selectedIds }) => {
+const Ungroup = ({ selectedIds }) => {
     const handleUngroup = () => {
         useNodeStore.getState().ungroupNodes(selectedIds[0]);
     };
