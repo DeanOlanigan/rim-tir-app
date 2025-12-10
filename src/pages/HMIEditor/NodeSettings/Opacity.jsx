@@ -6,27 +6,35 @@ import {
     NumberInput,
     Slider,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { LuArrowRightLeft, LuEye, LuEyeClosed } from "react-icons/lu";
 import { useNodeStore } from "../store/node-store";
-import { patchNodeThrottled } from "./utils";
+import { useNodesByIds } from "./utils";
 
-export const OpacityBlock = ({ node }) => {
-    const [value, setValue] = useState((node.opacity() * 100).toString());
-    const [show, setShow] = useState(node.visible());
+export const OpacityBlock = ({ ids }) => {
+    const op = useNodesByIds(ids, "opacity");
+    const vis = useNodesByIds(ids, "visible");
+
+    const opacity = op.every((n) => n === op[0]) ? op[0] * 100 : "";
+
+    const show = vis.every((n) => n === vis[0]) ? vis[0] : true;
 
     const handleOpacity = (value) => {
-        const val = Number.isNaN(value) ? 0 : value;
-        if (show) node.opacity(val / 100);
-        setValue(String(val));
-        patchNodeThrottled(node.id(), { opacity: val / 100 });
+        const val = Number.isNaN(value) ? 0 : Number((value / 100).toFixed(2));
+
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { opacity: val };
+        });
+        useNodeStore.getState().updateNodes(ids, patch);
     };
 
     const toggleOpacity = () => {
         const visible = !show;
-        node.visible(visible);
-        setShow(visible);
-        useNodeStore.getState().updateNode(node.id(), { visible });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { visible };
+        });
+        useNodeStore.getState().updateNodes(ids, patch);
     };
 
     return (
@@ -38,7 +46,7 @@ export const OpacityBlock = ({ node }) => {
                         size={"xs"}
                         min={0}
                         max={100}
-                        value={value}
+                        value={opacity}
                         disabled={!show}
                         onValueChange={(e) => handleOpacity(e.valueAsNumber)}
                     >
@@ -59,7 +67,7 @@ export const OpacityBlock = ({ node }) => {
                     <Slider.Root
                         size={"sm"}
                         w={"100%"}
-                        value={[value]}
+                        value={[opacity]}
                         disabled={!show}
                         onValueChange={(e) => handleOpacity(e.value[0])}
                     >

@@ -55,6 +55,7 @@ export const NodeSettings = ({ nodesRef, transformerRef }) => {
                     <Box overflow={"auto"}>
                         <BaseSettings
                             nodesRef={nodesRef}
+                            types={types}
                             selectedIds={selectedIds}
                             transformerRef={transformerRef}
                         />
@@ -66,19 +67,19 @@ export const NodeSettings = ({ nodesRef, transformerRef }) => {
     );
 };
 
-const BaseSettings = ({ nodesRef, selectedIds, transformerRef }) => {
+const BaseSettings = ({ nodesRef, types, selectedIds, transformerRef }) => {
     const primaryNode = nodesRef.current.get(selectedIds[0]);
-    const type = primaryNode.attrs.type;
     const isMultiple = selectedIds.length > 1;
     const heading = isMultiple
         ? `${selectedIds.length} selected`
-        : SHAPES_NAMES[primaryNode.attrs.type];
+        : SHAPES_NAMES[types[0]];
 
-    const showCornerRadius =
-        !isMultiple && (type === SHAPES.rect || type === SHAPES.polygon);
-    const showSides = !isMultiple && type === SHAPES.polygon;
-    const showTypography = !isMultiple && type === SHAPES.text;
-    const showFillStroke = !isMultiple && type !== SHAPES.group;
+    const showCornerRadius = types.every(
+        (type) => type === SHAPES.rect || type === SHAPES.polygon,
+    );
+    const showSides = types.every((type) => type === SHAPES.polygon);
+    const showTypography = types.every((type) => type === SHAPES.text);
+    const showFillStroke = types.every((type) => type !== SHAPES.group);
 
     return (
         <VStack
@@ -90,28 +91,24 @@ const BaseSettings = ({ nodesRef, selectedIds, transformerRef }) => {
             <HStack w={"100%"} justify={"space-between"}>
                 <Heading size={"md"}>{heading}</Heading>
                 <ActionsBlock
-                    node={primaryNode}
+                    ids={selectedIds}
                     nodesRef={nodesRef}
-                    selectedIds={selectedIds}
                     transformerRef={transformerRef}
+                    types={types}
                 />
             </HStack>
             <VStack align={"start"}>
                 <Heading size={"md"}>Position</Heading>
-                <PositionBlock node={primaryNode} />
-                <RotationBlock node={primaryNode} />
+                <PositionBlock ids={selectedIds} />
+                <RotationBlock ids={selectedIds} nodesRef={nodesRef} />
             </VStack>
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Layout</Heading>
-                <DimensionsBlock
-                    node={primaryNode}
-                    nodesRef={nodesRef}
-                    selectedIds={selectedIds}
-                />
+                <DimensionsBlock ids={selectedIds} nodesRef={nodesRef} />
             </VStack>
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Appearance</Heading>
-                <OpacityBlock node={primaryNode} />
+                <OpacityBlock ids={selectedIds} />
                 {showCornerRadius && <CornerRadiusBlock node={primaryNode} />}
                 {showSides && <SidesBlock node={primaryNode} />}
             </VStack>

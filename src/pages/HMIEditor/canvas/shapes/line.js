@@ -17,7 +17,8 @@ registerShape(SHAPES.line, {
             rotation: round4(konvaNode.rotation()),
             points: newPoints,
         };
-
+        konvaNode.scaleX(1);
+        konvaNode.scaleY(1);
         return patch;
     },
 

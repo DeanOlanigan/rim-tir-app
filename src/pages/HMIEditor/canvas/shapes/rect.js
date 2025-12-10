@@ -7,10 +7,12 @@ registerShape(SHAPES.rect, {
         const patch = {
             x: round4(konvaNode.x()),
             y: round4(konvaNode.y()),
-            width: round4(konvaNode.width()),
-            height: round4(konvaNode.height()),
+            width: round4(konvaNode.width() * konvaNode.scaleX()),
+            height: round4(konvaNode.height() * konvaNode.scaleY()),
             rotation: round4(konvaNode.rotation()),
         };
+        konvaNode.scaleX(1);
+        konvaNode.scaleY(1);
 
         return patch;
     },

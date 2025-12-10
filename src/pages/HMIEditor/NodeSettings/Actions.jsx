@@ -8,28 +8,19 @@ import {
 } from "react-icons/lu";
 import { round4 } from "../utils";
 import { useNodeStore } from "../store/node-store";
+import { SHAPES } from "../constants";
 
-//TODO WIP
+export const ActionsBlock = ({ nodesRef, ids, transformerRef, types }) => {
+    const isMultiple = ids.length > 1;
+    const showUngroup = types.every((type) => type === SHAPES.group);
 
-export const ActionsBlock = ({
-    node,
-    nodesRef,
-    selectedIds,
-    transformerRef,
-}) => {
-    const isMultiple = selectedIds.length > 1;
     return (
         <Group>
-            <Ungroup
-                node={node}
-                nodesRef={nodesRef}
-                selectedIds={selectedIds}
-            />
+            {showUngroup && <Ungroup ids={ids} />}
             {isMultiple && (
                 <GroupSelected
-                    node={node}
                     nodesRef={nodesRef}
-                    selectedIds={selectedIds}
+                    ids={ids}
                     transformerRef={transformerRef}
                 />
             )}
@@ -46,12 +37,13 @@ export const ActionsBlock = ({
     );
 };
 
-const GroupSelected = ({ nodesRef, selectedIds }) => {
+const GroupSelected = ({ nodesRef, ids, transformerRef }) => {
+    const transformer = transformerRef.current;
+    console.log(transformer);
     const handleGroup = () => {
-        const bbox = calcBBox(
-            selectedIds.map((id) => nodesRef.current.get(id)),
-        );
-        useNodeStore.getState().groupNodes(selectedIds, bbox);
+        // TODO считать bbox через getClientRect или transformerRef
+        const bbox = calcBBox(ids.map((id) => nodesRef.current.get(id)));
+        useNodeStore.getState().groupNodes(ids, bbox);
     };
 
     return (
@@ -61,9 +53,11 @@ const GroupSelected = ({ nodesRef, selectedIds }) => {
     );
 };
 
-const Ungroup = ({ selectedIds }) => {
+const Ungroup = ({ ids }) => {
+    // TODO передалать для множества
+    const id = ids[0];
     const handleUngroup = () => {
-        useNodeStore.getState().ungroupNodes(selectedIds[0]);
+        useNodeStore.getState().ungroupNodes(id);
     };
 
     return (

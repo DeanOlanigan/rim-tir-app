@@ -6,15 +6,15 @@ import {
     InputGroup,
     NumberInput,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import {
     LuFlipHorizontal2,
     LuFlipVertical2,
     LuRotateCwSquare,
 } from "react-icons/lu";
 import { RxAngle } from "react-icons/rx";
-import { patchNodeThrottled } from "./utils";
+import { sameCheck, useNodesByIds } from "./utils";
 import { round4 } from "../utils";
+import { useNodeStore } from "../store/node-store";
 
 function toDegIn0To360Range(deg) {
     return ((deg % 360) + 360) % 360;
@@ -56,33 +56,40 @@ function applyCenteredTransform(node, transformFn) {
     return { x: newPosX, y: newPosY };
 }
 
-export const RotationBlock = ({ node }) => {
-    const [value, setValue] = useState(node.rotation());
+export const RotationBlock = ({ ids, nodesRef }) => {
+    const rot = useNodesByIds(ids, "rotation");
+    const r = sameCheck(rot);
 
     const handleRotation = (angle) => {
         const val = Number.isNaN(angle) ? 0 : angle;
         const next = toDegIn0To360Range(val);
+        const patch = {};
 
-        const { x, y } = applyCenteredTransform(node, () => {
-            node.rotation(next);
+        ids.forEach((id) => {
+            const node = nodesRef.current.get(id);
+            if (!node) return;
+            const { x, y } = applyCenteredTransform(node, () => {
+                node.rotation(next);
+            });
+            patch[id] = { x, y, rotation: next };
         });
-        setValue(next);
-        patchNodeThrottled(node.id(), { x, y, rotation: next });
+
+        useNodeStore.getState().updateNodes(ids, patch);
     };
 
     // TODO сделать синхронизацию со стором
     const flipHorizontal = () => {
-        applyCenteredTransform(node, () => {
+        /* applyCenteredTransform(node, () => {
             node.scaleX(node.scaleX() * -1);
-        });
+        }); */
         // rotation не меняется, input остаётся с тем же value
     };
 
     // TODO сделать синхронизацию со стором
     const flipVertical = () => {
-        applyCenteredTransform(node, () => {
+        /* applyCenteredTransform(node, () => {
             node.scaleY(node.scaleY() * -1);
-        });
+        }); */
         // rotation тоже без изменений
     };
 
@@ -93,8 +100,7 @@ export const RotationBlock = ({ node }) => {
                 <Flex justify={"space-between"}>
                     <NumberInput.Root
                         size={"xs"}
-                        allowOverflow={false}
-                        value={value}
+                        value={r}
                         onValueChange={(e) => handleRotation(e.valueAsNumber)}
                     >
                         <NumberInput.Control />
@@ -115,7 +121,7 @@ export const RotationBlock = ({ node }) => {
                         <IconButton
                             size={"xs"}
                             variant={"outline"}
-                            onClick={() => handleRotation(value + 90)}
+                            onClick={() => handleRotation(r + 90)}
                         >
                             <LuRotateCwSquare />
                         </IconButton>

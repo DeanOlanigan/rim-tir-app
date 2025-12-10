@@ -50,17 +50,17 @@ const common = {
         };
     },
     onDragMove(e) {
-        const nodeId = e.target.attrs?.id;
-        if (!nodeId) return;
-        useNodeStore.getState().updateNode(nodeId, {
+        const id = e.target.id();
+        if (!id) return;
+        useNodeStore.getState().updateNode(id, {
             x: round4(e.target.x()),
             y: round4(e.target.y()),
         });
     },
     onDragEnd(e) {
-        const nodeId = e.target.attrs?.id;
-        if (!nodeId) return;
-        useNodeStore.getState().updateNode(nodeId, {
+        const id = e.target.id();
+        if (!id) return;
+        useNodeStore.getState().updateNode(id, {
             x: round4(e.target.x()),
             y: round4(e.target.y()),
         });

@@ -82,14 +82,16 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
 
     const transformHandler = (e) => {
         const node = e.target;
+        const id = node.attrs.id;
         const type = node.attrs.type;
         const shape = getShape(type);
-
-        if (shape && typeof shape.onTransform === "function") {
-            shape.onTransform(node);
+        let patch = {};
+        if (shape && typeof shape.onTransformEnd === "function") {
+            patch[id] = shape.onTransformEnd(node);
         } else {
             console.warn("No onTransform handler for shape type:", type);
         }
+        useNodeStore.getState().updateNodes([id], patch);
     };
 
     //if (isLineLike) return null;
