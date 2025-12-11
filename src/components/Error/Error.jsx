@@ -3,11 +3,11 @@ import { AbsoluteCenter, Button, Icon, Text, VStack } from "@chakra-ui/react";
 import { LuTriangleAlert } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 
-export const ErrorSettings = () => {
-    const navigate = useNavigate("/settings");
+export const ErrorElement = ({ text, keys, way }) => {
+    const navigate = useNavigate(way);
 
     const refetch = async () => {
-        await queryClient.refetchQueries(["settings", "license"]);
+        await queryClient.refetchQueries([keys]);
         navigate();
     };
 
@@ -18,7 +18,7 @@ export const ErrorSettings = () => {
                     <LuTriangleAlert />
                 </Icon>
                 <Text color={"fg.muted"} fontSize={"3xl"}>
-                    Ошибка загрузки настроек
+                    Ошибка загрузки {text}
                 </Text>
                 <Button
                     onClick={() => refetch()}

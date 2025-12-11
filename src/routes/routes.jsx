@@ -12,7 +12,8 @@ import {
     settingsLoader,
 } from "./loaders";
 import { createBrowserRouter } from "react-router-dom";
-import { ErrorSettings } from "@/pages/SettingsPage/Settings/ErrorSettings";
+import { ErrorElement } from "@/components/Error/Error";
+import { QK } from "@/api";
 
 const LoginPage =           lazy(() => import("@/pages/LoginPage/LoginPage")); // prettier-ignore
 const ConfigurationPage =   lazy(() => import("@/pages/ConfigurationPage/ConfigurationPage")); // prettier-ignore
@@ -66,8 +67,10 @@ export const routes = [
                                 path: "settings",
                                 loader: settingsLoader,
                                 errorElement: (
-                                    <ErrorSettings
-                                        text={"Ошибка загрузки настроек"}
+                                    <ErrorElement
+                                        text={"настроек"}
+                                        keys={[QK.settings, QK.license]}
+                                        way={"/settings"}
                                     />
                                 ),
                                 element: <SettingsPage />,

@@ -12,7 +12,7 @@ import {
 
 import { LuCheck, LuSend, LuTriangleAlert } from "react-icons/lu";
 import { useLicense } from "./Settings/hooks/useLicense";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLicenseMutation } from "./Settings/hooks/useLicenseMutation";
 
 function checkDate(endDate, setIsKeyEnd) {
@@ -26,18 +26,14 @@ function checkDate(endDate, setIsKeyEnd) {
 
 export const License = () => {
     const { data } = useLicense("Vryd3q7NQ3BLOOpIuGYsW");
-    const [active, setActive] = useState(data);
     const [isKeyEnd, setIsKeyEnd] = useState(false);
 
-    useEffect(() => {
-        if (data) {
-            setActive(data.isActive);
-        }
-    }, [data]);
+    useEffect(() => checkDate(data.endDate, setIsKeyEnd), [data.endDate]);
 
-    useMemo(() => checkDate(data.endDate, setIsKeyEnd), [data.endDate]);
-
-    const licenseMutation = useLicenseMutation(setActive, setIsKeyEnd);
+    const licenseMutation = useLicenseMutation(
+        setIsKeyEnd,
+        "Vryd3q7NQ3BLOOpIuGYsW"
+    );
 
     return (
         <>
@@ -56,7 +52,7 @@ export const License = () => {
                             </Field.Label>
                             <Text>Vryd3q7NQ3BLOOpIuGYsW</Text>
                         </Field.Root>
-                        {active && !isKeyEnd ? (
+                        {data.isActive && !isKeyEnd ? (
                             <KeyIsActive />
                         ) : (
                             <Field.Root>
