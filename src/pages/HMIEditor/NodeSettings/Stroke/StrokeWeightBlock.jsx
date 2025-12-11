@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
 import {
     Fieldset,
     Group,
@@ -8,17 +7,20 @@ import {
     Slider,
 } from "@chakra-ui/react";
 import { MdLineWeight } from "react-icons/md";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const StrokeWeightBlock = ({ node }) => {
-    const strokeWidth = node.strokeWidth();
-    const [weight, setWeight] = useState(strokeWidth);
+export const StrokeWeightBlock = ({ ids }) => {
+    const strokeWidths = useNodesByIds(ids, "strokeWidth");
+    const strokeWidth = sameCheck(strokeWidths);
 
     const handleWeight = (value) => {
         let val = value;
         if (Number.isNaN(value)) val = 0;
-        node.strokeWidth(val);
-        setWeight(val);
-        patchNodeThrottled(node.id(), { strokeWidth: val });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { strokeWidth: val };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
@@ -30,7 +32,7 @@ export const StrokeWeightBlock = ({ node }) => {
                         size={"xs"}
                         min={0}
                         max={100}
-                        value={weight}
+                        value={strokeWidth}
                         onValueChange={(e) => handleWeight(e.valueAsNumber)}
                     >
                         <NumberInput.Control />
@@ -50,7 +52,7 @@ export const StrokeWeightBlock = ({ node }) => {
                     <Slider.Root
                         size={"sm"}
                         w={"100%"}
-                        value={[weight]}
+                        value={[strokeWidth]}
                         onValueChange={(e) => handleWeight(e.value[0])}
                     >
                         <Slider.Control>

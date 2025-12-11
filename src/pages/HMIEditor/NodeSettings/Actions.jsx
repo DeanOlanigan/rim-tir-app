@@ -10,39 +10,41 @@ import { round4 } from "../utils";
 import { useNodeStore } from "../store/node-store";
 import { SHAPES } from "../constants";
 
-export const ActionsBlock = ({ nodesRef, ids, transformerRef, types }) => {
+export const ActionsBlock = ({ ids, api, types }) => {
     const isMultiple = ids.length > 1;
     const showUngroup = types.every((type) => type === SHAPES.group);
+
+    const handleDelete = () => {
+        useNodeStore.getState().removeNodes(ids);
+    };
+
+    const handleDuplicate = () => {
+        useNodeStore.getState().duplicateNodes(ids);
+    };
 
     return (
         <Group>
             {showUngroup && <Ungroup ids={ids} />}
-            {isMultiple && (
-                <GroupSelected
-                    nodesRef={nodesRef}
-                    ids={ids}
-                    transformerRef={transformerRef}
-                />
-            )}
-            <IconButton size={"xs"}>
+            {isMultiple && <GroupSelected ids={ids} api={api} />}
+            <IconButton size={"xs"} disabled>
                 <LuClipboardCopy />
             </IconButton>
-            <IconButton size={"xs"}>
+            <IconButton size={"xs"} onClick={handleDuplicate}>
                 <LuLayers2 />
             </IconButton>
-            <IconButton size={"xs"} colorPalette={"red"}>
+            <IconButton size={"xs"} colorPalette={"red"} onClick={handleDelete}>
                 <LuTrash2 />
             </IconButton>
         </Group>
     );
 };
 
-const GroupSelected = ({ nodesRef, ids, transformerRef }) => {
-    const transformer = transformerRef.current;
+const GroupSelected = ({ ids, api }) => {
+    const transformer = api.canvas.getTransformer();
     console.log(transformer);
     const handleGroup = () => {
         // TODO считать bbox через getClientRect или transformerRef
-        const bbox = calcBBox(ids.map((id) => nodesRef.current.get(id)));
+        const bbox = calcBBox(ids.map((id) => api.canvas.getNodes().get(id)));
         useNodeStore.getState().groupNodes(ids, bbox);
     };
 

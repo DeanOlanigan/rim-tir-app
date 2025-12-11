@@ -1,20 +1,23 @@
 import { Switch } from "@chakra-ui/react";
-import { useState } from "react";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const CloseBlock = ({ node }) => {
-    const [checked, setChecked] = useState(node.closed());
+export const CloseBlock = ({ ids }) => {
+    const allClosed = useNodesByIds(ids, "closed");
+    const closed = sameCheck(allClosed) || allClosed[0];
 
     const onChange = (value) => {
-        setChecked(value);
-        node.closed(value);
-        patchNodeThrottled(node.id(), { closed: value });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { closed: value };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
         <Switch.Root
             size={"md"}
-            checked={checked}
+            checked={closed}
             onCheckedChange={(e) => onChange(e.checked)}
         >
             <Switch.HiddenInput />

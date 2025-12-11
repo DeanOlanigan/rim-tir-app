@@ -1,16 +1,20 @@
 import { InputGroup, NumberInput } from "@chakra-ui/react";
-import { useState } from "react";
 import { LuHexagon } from "react-icons/lu";
-import { patchNodeThrottled } from "./utils";
+import { sameCheck, useNodesByIds } from "./utils";
+import { patchStoreRaf } from "../store/node-store";
 
-export const SidesBlock = ({ node }) => {
-    const [value, setValue] = useState(node.sides());
+export const SidesBlock = ({ ids }) => {
+    const sides = useNodesByIds(ids, "sides");
+    const side = sameCheck(sides);
 
     const handleChange = (value) => {
         const num = Number.isNaN(value) ? 3 : Math.max(3, Math.round(value));
-        setValue(num);
-        node.sides(num);
-        patchNodeThrottled(node.id(), { sides: num });
+
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { sides: num };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
@@ -19,7 +23,7 @@ export const SidesBlock = ({ node }) => {
             min={3}
             max={12}
             step={1}
-            value={value}
+            value={side}
             onValueChange={(e) => handleChange(e.valueAsNumber)}
         >
             <NumberInput.Control />

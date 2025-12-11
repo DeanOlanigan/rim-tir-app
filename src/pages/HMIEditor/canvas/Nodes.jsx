@@ -8,7 +8,7 @@ import {
     Text,
 } from "react-konva";
 import { useActionsStore } from "./../store/actions-store";
-import { useNodeStore } from "./../store/node-store";
+import { patchStoreRaf, useNodeStore } from "./../store/node-store";
 import { ACTIONS, SHAPES } from "../constants";
 import { dragBound } from "./utils/dragBound";
 import { round4 } from "../utils";
@@ -52,10 +52,12 @@ const common = {
     onDragMove(e) {
         const id = e.target.id();
         if (!id) return;
-        useNodeStore.getState().updateNode(id, {
+        const patch = {};
+        patch[id] = {
             x: round4(e.target.x()),
             y: round4(e.target.y()),
-        });
+        };
+        patchStoreRaf([id], patch);
     },
     onDragEnd(e) {
         const id = e.target.id();

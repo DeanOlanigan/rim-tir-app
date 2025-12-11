@@ -18,7 +18,10 @@ export const BASE_PARAMS = {
     lineJoin: "miter",
     lineCap: "butt",
     dashEnabled: false,
+    dash: [0, 0],
     opacity: 1,
+    visible: true,
+    rotation: 0,
 };
 
 export function getSnappedWorldPointer(stage, ctx) {

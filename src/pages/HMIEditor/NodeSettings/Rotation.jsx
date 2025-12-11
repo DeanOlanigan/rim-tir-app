@@ -13,50 +13,14 @@ import {
 } from "react-icons/lu";
 import { RxAngle } from "react-icons/rx";
 import { sameCheck, useNodesByIds } from "./utils";
-import { round4 } from "../utils";
-import { useNodeStore } from "../store/node-store";
+import { rotateNodeAroundCenter } from "../canvas/services/shapeTransforms";
+import { patchStoreRaf } from "../store/node-store";
 
 function toDegIn0To360Range(deg) {
     return ((deg % 360) + 360) % 360;
 }
 
-function applyCenteredTransform(node, transformFn) {
-    const stage = node.getStage();
-    if (!stage) return;
-
-    // центр до трансформации
-    const oldRect = node.getClientRect({ relativeTo: stage });
-    const oldCenter = {
-        x: oldRect.x + oldRect.width / 2,
-        y: oldRect.y + oldRect.height / 2,
-    };
-
-    // сама трансформация (rotation / flip / что угодно)
-    transformFn();
-
-    // центр после трансформации
-    const newRect = node.getClientRect({ relativeTo: stage });
-    const newCenter = {
-        x: newRect.x + newRect.width / 2,
-        y: newRect.y + newRect.height / 2,
-    };
-
-    // сдвигаем ноду так, чтобы визуальный центр остался на месте
-    const dx = oldCenter.x - newCenter.x;
-    const dy = oldCenter.y - newCenter.y;
-
-    const newPosX = round4(node.x() + dx);
-    const newPosY = round4(node.y() + dy);
-
-    node.position({
-        x: newPosX,
-        y: newPosY,
-    });
-
-    return { x: newPosX, y: newPosY };
-}
-
-export const RotationBlock = ({ ids, nodesRef }) => {
+export const RotationBlock = ({ ids, api }) => {
     const rot = useNodesByIds(ids, "rotation");
     const r = sameCheck(rot);
 
@@ -64,17 +28,11 @@ export const RotationBlock = ({ ids, nodesRef }) => {
         const val = Number.isNaN(angle) ? 0 : angle;
         const next = toDegIn0To360Range(val);
         const patch = {};
-
         ids.forEach((id) => {
-            const node = nodesRef.current.get(id);
-            if (!node) return;
-            const { x, y } = applyCenteredTransform(node, () => {
-                node.rotation(next);
-            });
-            patch[id] = { x, y, rotation: next };
+            patch[id] = rotateNodeAroundCenter(api, id, next);
         });
 
-        useNodeStore.getState().updateNodes(ids, patch);
+        patchStoreRaf(ids, patch);
     };
 
     // TODO сделать синхронизацию со стором

@@ -1,15 +1,18 @@
 import { Field, SegmentGroup } from "@chakra-ui/react";
-import { useState } from "react";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
 import { TbCapProjecting, TbCapRounded, TbCapStraight } from "react-icons/tb";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const LineCapBlock = ({ node }) => {
-    const [value, setValue] = useState(node.lineCap() ?? "butt");
+export const LineCapBlock = ({ ids }) => {
+    const lineCaps = useNodesByIds(ids, "lineCap");
+    const lineCap = sameCheck(lineCaps);
 
     const handleChange = (e) => {
-        setValue(e.value);
-        node.lineCap(e.value);
-        patchNodeThrottled(node.id(), { lineCap: e.value });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { lineCap: e.value };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
@@ -17,7 +20,7 @@ export const LineCapBlock = ({ node }) => {
             <Field.Label>Line Cap</Field.Label>
             <SegmentGroup.Root
                 size={"xs"}
-                value={value}
+                value={lineCap}
                 onValueChange={handleChange}
             >
                 <SegmentGroup.Indicator bg={"colorPalette.solid"} />

@@ -7,8 +7,8 @@ import {
     Slider,
 } from "@chakra-ui/react";
 import { LuArrowRightLeft, LuEye, LuEyeClosed } from "react-icons/lu";
-import { useNodeStore } from "../store/node-store";
 import { useNodesByIds } from "./utils";
+import { patchStoreRaf } from "../store/node-store";
 
 export const OpacityBlock = ({ ids }) => {
     const op = useNodesByIds(ids, "opacity");
@@ -25,7 +25,7 @@ export const OpacityBlock = ({ ids }) => {
         ids.forEach((id) => {
             patch[id] = { opacity: val };
         });
-        useNodeStore.getState().updateNodes(ids, patch);
+        patchStoreRaf(ids, patch);
     };
 
     const toggleOpacity = () => {
@@ -34,7 +34,7 @@ export const OpacityBlock = ({ ids }) => {
         ids.forEach((id) => {
             patch[id] = { visible };
         });
-        useNodeStore.getState().updateNodes(ids, patch);
+        patchStoreRaf(ids, patch);
     };
 
     return (

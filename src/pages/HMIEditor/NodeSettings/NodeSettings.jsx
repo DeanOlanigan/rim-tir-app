@@ -21,11 +21,13 @@ import { TypographyBlock } from "./Typography";
 import { ActionsBlock } from "./Actions";
 import { SHAPES, SHAPES_NAMES, SHAPES_WITH_SETTINGS } from "../constants";
 
-export const NodeSettings = ({ nodesRef, transformerRef }) => {
+export const NodeSettings = ({ api }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
     if (!selectedIds.length) return null;
 
-    const types = selectedIds.map((id) => nodesRef.current.get(id).attrs.type);
+    const types = selectedIds.map(
+        (id) => api.canvas.getNodes().get(id).attrs.type,
+    );
     if (!types.every((type) => SHAPES_WITH_SETTINGS.has(type))) return null;
 
     return (
@@ -54,10 +56,9 @@ export const NodeSettings = ({ nodesRef, transformerRef }) => {
                 <Tabs.Content value="base" display={"flex"} overflow={"hidden"}>
                     <Box overflow={"auto"}>
                         <BaseSettings
-                            nodesRef={nodesRef}
+                            api={api}
                             types={types}
                             selectedIds={selectedIds}
-                            transformerRef={transformerRef}
                         />
                     </Box>
                 </Tabs.Content>
@@ -67,8 +68,8 @@ export const NodeSettings = ({ nodesRef, transformerRef }) => {
     );
 };
 
-const BaseSettings = ({ nodesRef, types, selectedIds, transformerRef }) => {
-    const primaryNode = nodesRef.current.get(selectedIds[0]);
+const BaseSettings = ({ api, types, selectedIds }) => {
+    const primaryNode = api.canvas.getNodes().get(selectedIds[0]);
     const isMultiple = selectedIds.length > 1;
     const heading = isMultiple
         ? `${selectedIds.length} selected`
@@ -90,33 +91,28 @@ const BaseSettings = ({ nodesRef, types, selectedIds, transformerRef }) => {
         >
             <HStack w={"100%"} justify={"space-between"}>
                 <Heading size={"md"}>{heading}</Heading>
-                <ActionsBlock
-                    ids={selectedIds}
-                    nodesRef={nodesRef}
-                    transformerRef={transformerRef}
-                    types={types}
-                />
+                <ActionsBlock ids={selectedIds} api={api} types={types} />
             </HStack>
             <VStack align={"start"}>
                 <Heading size={"md"}>Position</Heading>
                 <PositionBlock ids={selectedIds} />
-                <RotationBlock ids={selectedIds} nodesRef={nodesRef} />
+                <RotationBlock ids={selectedIds} api={api} />
             </VStack>
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Layout</Heading>
-                <DimensionsBlock ids={selectedIds} nodesRef={nodesRef} />
+                <DimensionsBlock ids={selectedIds} api={api} />
             </VStack>
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Appearance</Heading>
                 <OpacityBlock ids={selectedIds} />
                 {showCornerRadius && <CornerRadiusBlock node={primaryNode} />}
-                {showSides && <SidesBlock node={primaryNode} />}
+                {showSides && <SidesBlock ids={selectedIds} />}
             </VStack>
             {showTypography && <TypographyBlock node={primaryNode} />}
             {showFillStroke && (
                 <>
-                    <FillBlock node={primaryNode} />
-                    <StrokeBlock node={primaryNode} />
+                    <FillBlock ids={selectedIds} />
+                    <StrokeBlock ids={selectedIds} types={types} />
                 </>
             )}
             <VStack align={"start"} w={"100%"}>

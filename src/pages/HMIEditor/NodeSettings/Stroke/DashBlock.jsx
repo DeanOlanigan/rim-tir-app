@@ -5,40 +5,60 @@ import {
     Portal,
     Select,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
 const lineTypes = createListCollection({
     items: [
+        { label: "Mixed", value: "mixed", disabled: true },
         { label: "Solid", value: "solid" },
         { label: "Dashed", value: "dashed" },
     ],
 });
 
-export const DashBlock = ({ node }) => {
-    const [value, setValue] = useState([
-        node.dashEnabled() ? "dashed" : "solid",
-    ]);
-    const [dashArray, setDashArray] = useState(node.dash() || [0, 0]);
+export const DashBlock = ({ ids }) => {
+    const allDashEnabled = useNodesByIds(ids, "dashEnabled");
+    let dashEnabled = sameCheck(allDashEnabled);
+
+    switch (dashEnabled) {
+        case true:
+            dashEnabled = "dashed";
+            break;
+        case false:
+            dashEnabled = "solid";
+            break;
+        default:
+            dashEnabled = "mixed";
+            break;
+    }
+
+    const dashes = useNodesByIds(ids, "dash");
+    const firstDash = dashes[0];
+    // TODO очень хрупкая проверка
+    const dash = dashes.every(
+        (d) => d[0] === firstDash[0] && d[1] === firstDash[1],
+    )
+        ? firstDash
+        : ["", ""];
 
     const handleTypeChange = (e) => {
-        setValue(e.value);
-        if (e.value[0] === "solid") {
-            node.dashEnabled(false);
-            patchNodeThrottled(node.id(), { dashEnabled: false });
-        } else {
-            node.dashEnabled(true);
-            patchNodeThrottled(node.id(), { dashEnabled: true });
-        }
+        let dashEnabled = e.value[0] === "solid" ? false : true;
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { dashEnabled };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     const handleDashChange = (value, index) => {
         const val = Number.isNaN(value) ? 0 : value;
-        const newDashArray = [...dashArray];
+        const newDashArray = [...dash];
         newDashArray[index] = val;
-        setDashArray(newDashArray);
-        node.dash(newDashArray);
-        patchNodeThrottled(node.id(), { dash: newDashArray });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { dash: newDashArray };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
@@ -46,7 +66,7 @@ export const DashBlock = ({ node }) => {
             <Select.Root
                 size={"xs"}
                 collection={lineTypes}
-                value={value}
+                value={[dashEnabled]}
                 onValueChange={handleTypeChange}
                 lazyMount
                 unmountOnExit
@@ -74,14 +94,14 @@ export const DashBlock = ({ node }) => {
                     </Select.Positioner>
                 </Portal>
             </Select.Root>
-            {value[0] === "dashed" && (
+            {dashEnabled === "dashed" && (
                 <>
                     <Field.Root orientation="horizontal">
                         <Field.Label>Dash</Field.Label>
                         <NumberInput.Root
                             size={"xs"}
                             flex={1}
-                            value={dashArray[0]}
+                            value={dash[0]}
                             onValueChange={(e) =>
                                 handleDashChange(e.valueAsNumber, 0)
                             }
@@ -95,7 +115,7 @@ export const DashBlock = ({ node }) => {
                         <NumberInput.Root
                             size={"xs"}
                             flex={1}
-                            value={dashArray[1]}
+                            value={dash[1]}
                             onValueChange={(e) =>
                                 handleDashChange(e.valueAsNumber, 1)
                             }

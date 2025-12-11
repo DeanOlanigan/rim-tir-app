@@ -1,26 +1,26 @@
 import { ColorPicker, parseColor } from "@chakra-ui/react";
-import { useState } from "react";
-import { useNodeStore } from "../../store/node-store";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const StrokeColorSolidBlock = ({ node }) => {
-    const fill = node.stroke() ?? "#000000";
-    const [color, setColor] = useState(parseColor(fill));
+export const StrokeColorSolidBlock = ({ ids }) => {
+    const strokes = useNodesByIds(ids, "stroke");
+    const stroke = parseColor(sameCheck(strokes) || strokes[0]);
 
-    const handleChangeColor = (e) => {
-        node.stroke(e.valueAsString);
-        setColor(e.value);
+    const handleChangeColor = (stroke) => {
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { stroke };
+        });
+        patchStoreRaf(ids, patch);
     };
 
-    const handleChangeColorEnd = (color) => {
-        useNodeStore.getState().updateNode(node.id(), { stroke: color });
-    };
+    //TODO вернуть onValueChangeEnd
 
     return (
         <ColorPicker.Root
             size={"xs"}
-            value={color}
-            onValueChange={(e) => handleChangeColor(e)}
-            onValueChangeEnd={(e) => handleChangeColorEnd(e.valueAsString)}
+            value={stroke}
+            onValueChange={(e) => handleChangeColor(e.valueAsString)}
             lazyMount
             unmountOnExit
         >

@@ -1,35 +1,35 @@
 import { ColorPicker, Heading, parseColor, VStack } from "@chakra-ui/react";
-import { useState } from "react";
-import { useNodeStore } from "../store/node-store";
+import { sameCheck, useNodesByIds } from "./utils";
+import { patchStoreRaf } from "../store/node-store";
 
-export const FillBlock = ({ node }) => {
+export const FillBlock = ({ ids }) => {
     return (
         <VStack align={"start"} w={"100%"}>
             <Heading size={"md"}>Fill</Heading>
-            <FillColorSolid node={node} />
+            <FillColorSolid ids={ids} />
         </VStack>
     );
 };
 
-const FillColorSolid = ({ node }) => {
-    const fill = node.fill() ?? "#000000";
-    const [color, setColor] = useState(parseColor(fill));
+const FillColorSolid = ({ ids }) => {
+    const fills = useNodesByIds(ids, "fill");
+    const fill = parseColor(sameCheck(fills) || fills[0]);
 
-    const handleChangeColor = (e) => {
-        node.fill(e.valueAsString);
-        setColor(e.value);
+    const handleChangeColor = (fill) => {
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { fill };
+        });
+        patchStoreRaf(ids, patch);
     };
 
-    const handleChangeColorEnd = (color) => {
-        useNodeStore.getState().updateNode(node.id(), { fill: color });
-    };
+    //TODO вернуть onValueChangeEnd
 
     return (
         <ColorPicker.Root
             size={"xs"}
-            value={color}
-            onValueChange={(e) => handleChangeColor(e)}
-            onValueChangeEnd={(e) => handleChangeColorEnd(e.valueAsString)}
+            value={fill}
+            onValueChange={(e) => handleChangeColor(e.valueAsString)}
             lazyMount
             unmountOnExit
         >

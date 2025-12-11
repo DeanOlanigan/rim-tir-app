@@ -40,10 +40,7 @@ function HMIEditor() {
                 <DebugInfo />
             </Box>
             <Box position={"absolute"} h={"100%"} top={0} right={0} p={2}>
-                <NodeSettings
-                    nodesRef={tools.nodesRef}
-                    transformerRef={tools.transformerRef}
-                />
+                <NodeSettings api={tools.api} />
             </Box>
             <HStack position={"absolute"} left={2} bottom={2}>
                 <ZoomBar

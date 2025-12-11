@@ -11,6 +11,13 @@ registerShape(SHAPES.rect, {
             height: round4(konvaNode.height() * konvaNode.scaleY()),
             rotation: round4(konvaNode.rotation()),
         };
+        konvaNode.position({
+            x: patch.x,
+            y: patch.y,
+        });
+        konvaNode.width(patch.width);
+        konvaNode.height(patch.height);
+        konvaNode.rotation(patch.rotation);
         konvaNode.scaleX(1);
         konvaNode.scaleY(1);
 

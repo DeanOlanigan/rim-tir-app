@@ -7,24 +7,29 @@ import { LineCapBlock } from "./LineCapBlock";
 import { CloseBlock } from "./CloseBlock";
 import { BezierBlock } from "./BezierBlock";
 import { TensionBlock } from "./TensionBlock";
+import { isLineLikeType } from "../../utils";
 
-export const StrokeBlock = ({ node }) => {
+export const StrokeBlock = ({ ids, types }) => {
+    const isMultiple = ids.length > 1;
+    const showLineSpecifics =
+        !isMultiple && types.every((type) => isLineLikeType(type));
+
     return (
         <VStack align={"start"} w={"100%"}>
             <Heading size={"md"}>Stroke</Heading>
-            <StrokeColorSolidBlock node={node} />
-            <StrokeWeightBlock node={node} />
+            <StrokeColorSolidBlock ids={ids} />
+            <StrokeWeightBlock ids={ids} />
             <HStack w={"100%"} justify={"space-between"}>
-                <LineJoinBlock node={node} />
-                <LineCapBlock node={node} />
+                <LineJoinBlock ids={ids} />
+                <LineCapBlock ids={ids} />
             </HStack>
-            <DashBlock node={node} />
-            {(node.attrs.type === "line" || node.attrs.type === "arrow") && (
+            <DashBlock ids={ids} />
+            {showLineSpecifics && (
                 <HStack justify={"space-between"} w={"100%"}>
-                    <TensionBlock node={node} />
+                    <TensionBlock ids={ids} />
                     <VStack>
-                        <CloseBlock node={node} />
-                        <BezierBlock node={node} />
+                        <CloseBlock ids={ids} />
+                        <BezierBlock ids={ids} />
                     </VStack>
                 </HStack>
             )}

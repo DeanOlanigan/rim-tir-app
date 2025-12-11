@@ -1,7 +1,7 @@
 import { Rect, Transformer } from "react-konva";
 import { ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS, SHAPES } from "../constants";
 import { memo, useCallback, useEffect } from "react";
-import { useNodeStore } from "../store/node-store";
+import { patchStoreRaf, useNodeStore } from "../store/node-store";
 import { getShape } from "./shapes";
 import { useActionsStore } from "../store/actions-store";
 import { dragBound } from "./utils/dragBound";
@@ -79,19 +79,19 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         }
         useNodeStore.getState().updateNodes(ids, patchesById);
     };
-
     const transformHandler = (e) => {
         const node = e.target;
         const id = node.attrs.id;
         const type = node.attrs.type;
         const shape = getShape(type);
         let patch = {};
+        // TODO во всех шейпах обновлять konva
         if (shape && typeof shape.onTransformEnd === "function") {
             patch[id] = shape.onTransformEnd(node);
         } else {
             console.warn("No onTransform handler for shape type:", type);
         }
-        useNodeStore.getState().updateNodes([id], patch);
+        patchStoreRaf([id], patch);
     };
 
     //if (isLineLike) return null;

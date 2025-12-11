@@ -1,20 +1,23 @@
 import { Switch } from "@chakra-ui/react";
-import { useState } from "react";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const BezierBlock = ({ node }) => {
-    const [checked, setChecked] = useState(node.bezier());
+export const BezierBlock = ({ ids }) => {
+    const allBezier = useNodesByIds(ids, "bezier");
+    const bezier = sameCheck(allBezier) || allBezier[0];
 
     const onChange = (value) => {
-        setChecked(value);
-        node.bezier(value);
-        patchNodeThrottled(node.id(), { bezier: value });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { bezier: value };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
         <Switch.Root
             size={"md"}
-            checked={checked}
+            checked={bezier}
             onCheckedChange={(e) => onChange(e.checked)}
         >
             <Switch.HiddenInput />

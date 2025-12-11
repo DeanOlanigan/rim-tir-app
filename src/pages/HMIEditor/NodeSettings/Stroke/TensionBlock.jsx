@@ -1,16 +1,19 @@
 import { Field, InputGroup, NumberInput } from "@chakra-ui/react";
-import { useState } from "react";
 import { LuSpline } from "react-icons/lu";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const TensionBlock = ({ node }) => {
-    const [value, setValue] = useState(node.tension() || 0);
+export const TensionBlock = ({ ids }) => {
+    const tensions = useNodesByIds(ids, "tension");
+    const tension = sameCheck(tensions);
 
     const handleChange = (val) => {
         const num = Number.isNaN(val) ? 0 : val;
-        setValue(num);
-        node.tension(num);
-        patchNodeThrottled(node.id(), { tension: num });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { tension: num };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
@@ -22,7 +25,7 @@ export const TensionBlock = ({ node }) => {
                 min={0}
                 max={2}
                 step={0.1}
-                value={value}
+                value={tension}
                 onValueChange={(e) => handleChange(e.valueAsNumber)}
             >
                 <NumberInput.Control />

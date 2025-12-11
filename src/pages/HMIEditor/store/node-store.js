@@ -90,7 +90,26 @@ export const useNodeStore = create(
                         const newRootIds = state.rootIds.filter(
                             (nid) => nid !== id,
                         );
-                        return { nodes: newNodes, rootIds: newRootIds };
+                        return {
+                            nodes: newNodes,
+                            rootIds: newRootIds,
+                            selectedIds: [],
+                        };
+                    }),
+                removeNodes: (ids) =>
+                    set((state) => {
+                        const newNodes = { ...state.nodes };
+                        ids.forEach((id) => {
+                            delete newNodes[id];
+                        });
+                        const newRootIds = state.rootIds.filter(
+                            (nid) => !ids.includes(nid),
+                        );
+                        return {
+                            nodes: newNodes,
+                            rootIds: newRootIds,
+                            selectedIds: [],
+                        };
                     }),
                 updateNode: (id, patch) =>
                     set((state) => ({
@@ -111,7 +130,6 @@ export const useNodeStore = create(
                             }, {}),
                         },
                     })),
-
                 groupNodes: (ids, bbox) => {
                     set((state) => {
                         const id = nanoid(12);
@@ -142,7 +160,6 @@ export const useNodeStore = create(
                         };
                     });
                 },
-
                 ungroupNodes: (id) => {
                     set((state) => {
                         const node = state.nodes[id];
@@ -166,7 +183,34 @@ export const useNodeStore = create(
                         };
                     });
                 },
-
+                duplicateNodes: (ids) =>
+                    set((state) => {
+                        const newNodes = { ...state.nodes };
+                        const newRootIds = [...state.rootIds];
+                        const newSelectedIds = [];
+                        // TODO добавить копирование групп
+                        for (const id of ids) {
+                            const node = state.nodes[id];
+                            const x = node.x;
+                            const y = node.y;
+                            const width = node.width;
+                            const height = node.height;
+                            const newNode = {
+                                ...node,
+                                id: nanoid(12),
+                                x: x + width / 2,
+                                y: y + height / 2,
+                            };
+                            newNodes[newNode.id] = newNode;
+                            newRootIds.push(newNode.id);
+                            newSelectedIds.push(newNode.id);
+                        }
+                        return {
+                            nodes: newNodes,
+                            rootIds: newRootIds,
+                            selectedIds: newSelectedIds,
+                        };
+                    }),
                 setSelectedIds: (ids) =>
                     set((state) => {
                         const prev = state.selectedIds;
@@ -196,3 +240,38 @@ function arraysEqual(a, b) {
     }
     return true;
 }
+
+export const patchStoreRaf = (() => {
+    let queuedIds = new Set();
+    let queuedPatch = {};
+    let frame = null;
+
+    const flush = () => {
+        if (!queuedIds.size) {
+            frame = null;
+            return;
+        }
+
+        const ids = Array.from(queuedIds);
+        const patchById = queuedPatch;
+
+        queuedIds = new Set();
+        queuedPatch = {};
+        frame = null;
+        useNodeStore.getState().updateNodes(ids, patchById);
+    };
+
+    return (ids, patchById) => {
+        ids.forEach((id) => {
+            queuedIds.add(id);
+            queuedPatch[id] = {
+                ...(queuedPatch[id] || {}),
+                ...(patchById[id] || {}),
+            };
+        });
+
+        if (!frame) {
+            frame = requestAnimationFrame(flush);
+        }
+    };
+})();

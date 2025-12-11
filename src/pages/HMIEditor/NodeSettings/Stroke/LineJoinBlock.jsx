@@ -1,15 +1,18 @@
 import { Field, SegmentGroup } from "@chakra-ui/react";
-import { useState } from "react";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
 import { TbJoinBevel, TbJoinRound, TbJoinStraight } from "react-icons/tb";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const LineJoinBlock = ({ node }) => {
-    const [value, setValue] = useState(node.lineJoin() ?? "miter");
+export const LineJoinBlock = ({ ids }) => {
+    const lineJoins = useNodesByIds(ids, "lineJoin");
+    const lineJoin = sameCheck(lineJoins);
 
     const handleChange = (e) => {
-        setValue(e.value);
-        node.lineJoin(e.value);
-        patchNodeThrottled(node.id(), { lineJoin: e.value });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { lineJoin: e.value };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
@@ -17,7 +20,7 @@ export const LineJoinBlock = ({ node }) => {
             <Field.Label>Line Join</Field.Label>
             <SegmentGroup.Root
                 size={"xs"}
-                value={value}
+                value={lineJoin}
                 onValueChange={handleChange}
             >
                 <SegmentGroup.Indicator bg={"colorPalette.solid"} />
