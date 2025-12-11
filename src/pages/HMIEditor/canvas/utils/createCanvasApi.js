@@ -1,7 +1,3 @@
-import { useContextMenuStore } from "@/store/contextMenu-store";
-import { useActionsStore } from "../../store/actions-store";
-import { useNodeStore } from "../../store/node-store";
-
 export function createCanvasApi({
     canvasRef,
     selectionBoxRef,
@@ -9,6 +5,7 @@ export function createCanvasApi({
     overviewLayerRef,
     nodesLayerRef,
     nodesRef,
+    stateApi,
 }) {
     const getStage = () => canvasRef.current;
     const getSelectionBox = () => selectionBoxRef.current;
@@ -16,37 +13,49 @@ export function createCanvasApi({
     const getOverviewLayer = () => overviewLayerRef.current;
     const getNodesLayer = () => nodesLayerRef.current;
     const getNodes = () => nodesRef.current;
-    const getSelectedIds = () => useNodeStore.getState().selectedIds;
-    const setSelectedIds = (ids) => useNodeStore.getState().setSelectedIds(ids);
-    const addNode = (id, patch) => useNodeStore.getState().addNode(id, patch);
-    const getGrid = () => {
-        const { gridSize, snapToGrid } = useActionsStore.getState();
-        return { gridSize, snapToGrid };
-    };
-    const getWorkSize = () => {
-        const size = useActionsStore.getState().size;
-        return { workW: size.width, workH: size.height };
-    };
-    const setCurrentAction = (action) =>
-        useActionsStore.getState().setCurrentAction(action);
-    const getActiveAction = () => useActionsStore.getState().currentAction;
-    const updateContextMenu = (type, data) =>
-        useContextMenuStore.getState().updateContext(type, data);
 
-    return {
-        getStage,
-        getSelectionBox,
-        getTransformer,
-        getOverviewLayer,
-        getNodesLayer,
-        getNodes,
-        getSelectedIds,
-        setSelectedIds,
-        addNode,
-        getGrid,
-        getWorkSize,
-        setCurrentAction,
-        getActiveAction,
-        updateContextMenu,
+    const api = {
+        canvas: {
+            getStage,
+            getSelectionBox,
+            getTransformer,
+            getOverviewLayer,
+            getNodesLayer,
+            getNodes,
+        },
+        selection: {
+            getSelectedIds: stateApi.getSelectedIds,
+            setSelectedIds: stateApi.setSelectedIds,
+        },
+        nodes: {
+            addNode: stateApi.addNode,
+        },
+        view: {
+            getGrid: stateApi.getGrid,
+            getWorkSize: stateApi.getWorkSize,
+        },
+        tools: {
+            getActiveAction: stateApi.getActiveAction,
+            setCurrentAction: stateApi.setCurrentAction,
+        },
+        ui: {
+            updateContextMenu: stateApi.updateContextMenu,
+        },
     };
+    api.getStage = api.canvas.getStage;
+    api.getSelectionBox = api.canvas.getSelectionBox;
+    api.getTransformer = api.canvas.getTransformer;
+    api.getOverviewLayer = api.canvas.getOverviewLayer;
+    api.getNodesLayer = api.canvas.getNodesLayer;
+    api.getNodes = api.canvas.getNodes;
+    api.getSelectedIds = api.selection.getSelectedIds;
+    api.setSelectedIds = api.selection.setSelectedIds;
+    api.addNode = api.nodes.addNode;
+    api.getGrid = api.view.getGrid;
+    api.getWorkSize = api.view.getWorkSize;
+    api.getActiveAction = api.tools.getActiveAction;
+    api.setCurrentAction = api.tools.setCurrentAction;
+    api.updateContextMenu = api.ui.updateContextMenu;
+
+    return api;
 }

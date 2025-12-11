@@ -10,6 +10,10 @@ import { ACTIONS } from "../../constants";
 import { createDrawPolygonTool } from "../tools/drawPolygon";
 import { createDrawTextTool } from "../tools/drawText";
 import { createCanvasApi } from "../utils/createCanvasApi";
+import { useNodeStore } from "../../store/node-store";
+import { useActionsStore } from "../../store/actions-store";
+import { useContextMenuStore } from "@/store/contextMenu-store";
+import { createStateApi } from "../utils/createStateApi";
 
 export function useToolsManager() {
     const managerRef = useRef(null);
@@ -19,8 +23,14 @@ export function useToolsManager() {
     const nodesLayerRef = useRef(null);
     const overviewLayerRef = useRef(null);
     const nodesRef = useRef(new Map());
+    const apiRef = useRef(null);
 
     if (!managerRef.current) {
+        const stateApi = createStateApi(
+            useNodeStore,
+            useActionsStore,
+            useContextMenuStore,
+        );
         const api = createCanvasApi({
             canvasRef,
             selectionBoxRef,
@@ -28,7 +38,9 @@ export function useToolsManager() {
             overviewLayerRef,
             nodesLayerRef,
             nodesRef,
+            stateApi,
         });
+        apiRef.current = api;
         const toolsMap = {
             [ACTIONS.select]: createSelectTool(),
             [ACTIONS.hand]: createHandTool(),
@@ -61,5 +73,6 @@ export function useToolsManager() {
         nodesLayerRef,
         overviewLayerRef,
         nodesRef,
+        api: apiRef.current,
     };
 }
