@@ -7,7 +7,6 @@ import { QK } from "@/api";
 import axios from "axios";
 
 export const useSettingsMutation = (settings) => {
-    const setSettings = useSettingStore.getState().setSettings;
     return useMutation({
         mutationKey: ["settingsSender"],
         mutationFn: async () => {
@@ -43,7 +42,7 @@ export const useSettingsMutation = (settings) => {
                     closable: true,
                 });
             }
-            setSettings(queryClient.getQueryData(QK.settings));
+            useSettingStore.getState().setSettings(queryClient.getQueryData(QK.settings));
         },
     });
 };

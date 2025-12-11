@@ -1,4 +1,3 @@
-import { QK } from "@/api";
 import { apiv2 } from "@/api/baseUrl";
 import { toaster } from "@/components/ui/toaster";
 import { queryClient } from "@/queryClients";
