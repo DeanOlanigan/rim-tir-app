@@ -154,8 +154,9 @@ export function createToolManager({ toolsMap, api }) {
             const p = stage.getPointerPosition();
             if (!p) return;
             const target = e.target;
+            const parentGroups = target.findAncestors("Group");
             const id =
-                typeof target.id === "function" ? target.id() : undefined;
+                parentGroups[parentGroups.length - 1]?.id() || target.id();
             api.updateContextMenu("sch", {
                 x: rect.left + p.x + 4,
                 y: rect.top + p.y + 4,
