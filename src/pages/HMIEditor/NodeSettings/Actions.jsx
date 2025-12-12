@@ -12,7 +12,7 @@ import { SHAPES } from "../constants";
 
 export const ActionsBlock = ({ ids, api, types }) => {
     const isMultiple = ids.length > 1;
-    const showUngroup = types.every((type) => type === SHAPES.group);
+    const showUngroup = types.some((type) => type === SHAPES.group);
 
     const handleDelete = () => {
         useNodeStore.getState().removeNodes(ids);
@@ -40,11 +40,13 @@ export const ActionsBlock = ({ ids, api, types }) => {
 };
 
 const GroupSelected = ({ ids, api }) => {
-    const transformer = api.canvas.getTransformer();
-    console.log(transformer);
+    const stage = api.canvas.getStage();
+    const nodes = api.canvas.getNodes();
     const handleGroup = () => {
-        // TODO считать bbox через getClientRect или transformerRef
-        const bbox = calcBBox(ids.map((id) => api.canvas.getNodes().get(id)));
+        const gcl = ids.map((id) =>
+            nodes.get(id).getClientRect({ relativeTo: stage }),
+        );
+        const bbox = calcBBox(gcl);
         useNodeStore.getState().groupNodes(ids, bbox);
     };
 
@@ -56,10 +58,8 @@ const GroupSelected = ({ ids, api }) => {
 };
 
 const Ungroup = ({ ids }) => {
-    // TODO передалать для множества
-    const id = ids[0];
     const handleUngroup = () => {
-        useNodeStore.getState().ungroupNodes(id);
+        useNodeStore.getState().ungroupMultipleNodes(ids);
     };
 
     return (
@@ -70,9 +70,14 @@ const Ungroup = ({ ids }) => {
 };
 
 function calcBBox(nodes) {
-    const minX = round4(Math.min(...nodes.map((n) => n.x())));
-    const minY = round4(Math.min(...nodes.map((n) => n.y())));
-    const maxX = round4(Math.max(...nodes.map((n) => n.x() + n.width())));
-    const maxY = round4(Math.max(...nodes.map((n) => n.y() + n.height())));
-    return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+    const minX = round4(Math.min(...nodes.map((n) => n.x)));
+    const minY = round4(Math.min(...nodes.map((n) => n.y)));
+    const maxX = Math.max(...nodes.map((n) => n.x + n.width));
+    const maxY = Math.max(...nodes.map((n) => n.y + n.height));
+    return {
+        x: minX,
+        y: minY,
+        width: round4(maxX - minX),
+        height: round4(maxY - minY),
+    };
 }

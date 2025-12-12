@@ -4,74 +4,13 @@ import { nanoid } from "nanoid";
 import { round4 } from "../utils";
 import { SHAPES } from "../constants";
 
-const initialNodes = {
-    rect1: {
-        id: "rect1",
-        name: "rect1",
-        type: "rect",
-        x: 0,
-        y: 0,
-        width: 20,
-        height: 20,
-        fill: "#fff",
-        stroke: "black",
-        strokeWidth: 2,
-        fillAfterStrokeEnabled: true,
-        cornerRadius: 2,
-    },
-    line1: {
-        id: "line1",
-        name: "line1",
-        type: "line",
-        x: 0,
-        y: 25,
-        points: [
-            0, 0, 5, 0, 5, 5, 10, 5, 10, 0, 15, 0, 15, 5, 20, 5, 20, 0, 25, 0,
-            25, 10, 0, 10,
-        ],
-        stroke: "black",
-        strokeWidth: 1,
-        lineCap: "round",
-        lineJoin: "round",
-    },
-    group1: {
-        id: "group1",
-        name: "Группа",
-        type: "group",
-        x: 50,
-        y: 50,
-        childrenIds: ["rect2", "rect3"],
-    },
-    rect2: {
-        id: "rect2",
-        name: "rect2",
-        type: "rect",
-        x: 0,
-        y: 0,
-        width: 20,
-        height: 20,
-        fill: "#00ff2aff",
-    },
-    rect3: {
-        id: "rect3",
-        name: "rect3",
-        type: "rect",
-        x: 0,
-        y: 20,
-        width: 20,
-        height: 20,
-        fill: "#ff0000ff",
-    },
-};
-const rootIds = ["rect1", "line1", "group1"];
-
 export const useNodeStore = create(
     devtools(
         persist(
             (set) => ({
                 selectedIds: [],
-                nodes: initialNodes,
-                rootIds: rootIds,
+                nodes: {},
+                rootIds: [],
                 addNode: (node) =>
                     set((state) => {
                         const id = nanoid(12);
@@ -130,87 +69,13 @@ export const useNodeStore = create(
                             }, {}),
                         },
                     })),
-                groupNodes: (ids, bbox) => {
-                    set((state) => {
-                        const id = nanoid(12);
-                        const newRootIds = [...state.rootIds, id].filter(
-                            (nid) => !ids.includes(nid),
-                        );
-                        const newNodes = {
-                            ...state.nodes,
-                            [id]: {
-                                id,
-                                type: SHAPES.group,
-                                name: "Группа",
-                                x: round4(bbox.x),
-                                y: round4(bbox.y),
-                                width: round4(bbox.width),
-                                height: round4(bbox.height),
-                                childrenIds: ids,
-                            },
-                        };
-                        for (const id of ids) {
-                            newNodes[id].x = newNodes[id].x - bbox.x;
-                            newNodes[id].y = newNodes[id].y - bbox.y;
-                        }
-                        return {
-                            rootIds: newRootIds,
-                            nodes: newNodes,
-                            selectedIds: [id],
-                        };
-                    });
-                },
-                ungroupNodes: (id) => {
-                    set((state) => {
-                        const node = state.nodes[id];
-                        const type = node.type;
-                        if (type !== SHAPES.group) return state;
-                        const childrenIds = node.childrenIds;
-                        const newRootIds = [
-                            ...state.rootIds.filter((nid) => nid !== id),
-                            ...childrenIds,
-                        ];
-                        const newNodes = { ...state.nodes };
-                        for (const childId of childrenIds) {
-                            newNodes[childId].x = newNodes[childId].x + node.x;
-                            newNodes[childId].y = newNodes[childId].y + node.y;
-                        }
-                        delete newNodes[id];
-                        return {
-                            rootIds: newRootIds,
-                            nodes: newNodes,
-                            selectedIds: childrenIds,
-                        };
-                    });
-                },
+                groupNodes: (ids, bbox) =>
+                    set((state) => group(ids, bbox, state)),
+                ungroupNodes: (id) => set((state) => ungroup([id], state)),
+                ungroupMultipleNodes: (ids) =>
+                    set((state) => ungroup(ids, state)),
                 duplicateNodes: (ids) =>
-                    set((state) => {
-                        const newNodes = { ...state.nodes };
-                        const newRootIds = [...state.rootIds];
-                        const newSelectedIds = [];
-                        // TODO добавить копирование групп
-                        for (const id of ids) {
-                            const node = state.nodes[id];
-                            const x = node.x;
-                            const y = node.y;
-                            const width = node.width;
-                            const height = node.height;
-                            const newNode = {
-                                ...node,
-                                id: nanoid(12),
-                                x: x + width / 2,
-                                y: y + height / 2,
-                            };
-                            newNodes[newNode.id] = newNode;
-                            newRootIds.push(newNode.id);
-                            newSelectedIds.push(newNode.id);
-                        }
-                        return {
-                            nodes: newNodes,
-                            rootIds: newRootIds,
-                            selectedIds: newSelectedIds,
-                        };
-                    }),
+                    set((state) => deepDuplicate(ids, state)),
                 setSelectedIds: (ids) =>
                     set((state) => {
                         const prev = state.selectedIds;
@@ -229,6 +94,160 @@ export const useNodeStore = create(
         { name: "node-store" },
     ),
 );
+
+function deepDuplicate(ids, state, opts = {}) {
+    const {
+        offset = { x: 1, y: 1 }, // чуть сдвинуть копию, чтобы было видно
+        groupType = SHAPES.group,
+    } = opts;
+
+    const newNodes = { ...state.nodes };
+    const newRootIds = [...state.rootIds];
+    const newSelectedIds = [];
+
+    const selected = new Set(ids);
+
+    // На всякий случай, если в ids будут id, которые уже есть в выбранной группе
+    const topLevelIds = ids.filter((id) => {
+        let cur = state.nodes[id]?.parentId;
+        while (cur) {
+            if (selected.has(cur)) return false;
+            cur = state.nodes[cur]?.parentId;
+        }
+        return true;
+    });
+
+    function cloneSubTree(oldId, applyOffset) {
+        const oldNode = state.nodes[oldId];
+        if (!oldNode) return;
+
+        const newId = nanoid(12);
+
+        const baseClone = {
+            ...oldNode,
+            id: newId,
+        };
+
+        if (applyOffset) {
+            if (typeof baseClone.x === "number") baseClone.x += offset.x;
+            if (typeof baseClone.y === "number") baseClone.y += offset.y;
+        }
+
+        if (oldNode.type === groupType) {
+            const oldChildren = Array.isArray(oldNode.childrenIds)
+                ? oldNode.childrenIds
+                : [];
+            baseClone.childrenIds = [];
+
+            newNodes[newId] = baseClone;
+
+            for (const childOldId of oldChildren) {
+                const childNewId = cloneSubTree(childOldId, false);
+                if (childNewId) baseClone.childrenIds.push(childNewId);
+            }
+
+            newNodes[newId] = {
+                ...baseClone,
+                childrenIds: [...baseClone.childrenIds],
+            };
+        } else {
+            newNodes[newId] = baseClone;
+        }
+        return newId;
+    }
+
+    for (const id of topLevelIds) {
+        const newId = cloneSubTree(id, true);
+        newRootIds.push(newId);
+        if (newId) newSelectedIds.push(newId);
+    }
+
+    return {
+        nodes: newNodes,
+        rootIds: newRootIds,
+        selectedIds: newSelectedIds,
+    };
+}
+
+function ungroup(ids, state) {
+    let newRootIds = [...state.rootIds];
+    const newNodes = { ...state.nodes };
+
+    const selectedIds = [];
+
+    for (const id of ids) {
+        const groupNode = state.nodes[id];
+        if (!groupNode || groupNode.type !== SHAPES.group) continue;
+
+        const groupChildren = Array.isArray(groupNode.childrenIds)
+            ? groupNode.childrenIds
+            : [];
+
+        newRootIds = newRootIds.filter((nid) => nid !== id);
+
+        for (const childId of groupChildren) {
+            const child = state.nodes[childId];
+            if (!child) continue;
+
+            newNodes[childId] = {
+                ...child,
+                x: (child.x ?? 0) + (groupNode.x ?? 0),
+                y: (child.y ?? 0) + (groupNode.y ?? 0),
+            };
+
+            selectedIds.push(childId);
+        }
+
+        delete newNodes[id];
+
+        for (const childId of groupChildren) {
+            if (!newRootIds.includes(childId)) newRootIds.push(childId);
+        }
+    }
+
+    return {
+        rootIds: newRootIds,
+        nodes: newNodes,
+        selectedIds: selectedIds,
+    };
+}
+
+function group(ids, bbox, state) {
+    const groupId = nanoid(12);
+
+    const newRootIds = [...state.rootIds]
+        .filter((nid) => !ids.includes(nid))
+        .concat(groupId);
+
+    const newNodes = { ...state.nodes };
+
+    for (const childId of ids) {
+        const child = state.nodes[childId];
+        if (!child) continue;
+        newNodes[childId] = {
+            ...child,
+            x: round4((child.x ?? 0) - bbox.x),
+            y: round4((child.y ?? 0) - bbox.y),
+        };
+    }
+
+    newNodes[groupId] = {
+        id: groupId,
+        type: SHAPES.group,
+        name: "Группа",
+        x: bbox.x,
+        y: bbox.y,
+        width: bbox.width,
+        height: bbox.height,
+        childrenIds: [...ids],
+    };
+
+    return {
+        rootIds: newRootIds,
+        nodes: newNodes,
+        selectedIds: [groupId],
+    };
+}
 
 function arraysEqual(a, b) {
     if (a === b) return true;

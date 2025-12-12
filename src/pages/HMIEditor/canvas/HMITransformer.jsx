@@ -7,6 +7,7 @@ import { useActionsStore } from "../store/actions-store";
 import { dragBound } from "./utils/dragBound";
 //import { isLineLikeType } from "../utils";
 
+// eslint-disable-next-line
 function collectInstancesFromSelection(selectedIds, nodesRef) {
     const result = [];
     for (const id of selectedIds) {
@@ -44,10 +45,7 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         if (!transformer) return;
 
         if (selectedIds.length > 0) {
-            const instances = collectInstancesFromSelection(
-                selectedIds,
-                nodesRef,
-            );
+            const instances = selectedIds.map((id) => nodesRef.current.get(id));
             transformer.nodes(instances);
         } else {
             transformer.nodes([]);
