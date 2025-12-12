@@ -14,8 +14,8 @@ const tableColumns = [
 ];
 
 export const UserEditor = () => {
-    const { live, selectedRows } = useTableStore();
-
+    const { selectedRows } = useTableStore();
+    const live = useTableStore.getState().live;
     const selectedUsers = useData({ live, selectedRows });
     console.log(selectedUsers, "123");
     return <ManyUsers selectedUsers={selectedUsers} />;

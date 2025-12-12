@@ -10,24 +10,26 @@ const tableColumns = [
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "@/components/Loader";
 import { Box, Checkbox, Table, Text } from "@chakra-ui/react";
-import { useTableStore } from "../SettingsStore/tablestore";
-import { UsersActionsBar } from "./UsersActionsBar";
-import { UserAdder } from "./UserAdder";
+import { useTableStore } from "../../SettingsStore/tablestore";
+import { UsersActionsBar } from "../UsersActionsBar";
+import { UserAdder } from "../UserAdder";
 import { useEffect, useRef } from "react";
 import { NoData } from "@/components/NoData";
+import { useEditStore } from "../../SettingsStore/user-edit-store";
 
 const useUsersHistory = () => {
     const { hydrate } = useTableStore();
     const q = useQuery({
         queryKey: ["users"],
         queryFn: async () => {
-            const out = [];
-            const count = 100;
-
+            let out = {};
+            const count = 50;
             for (let i = 0; i < count; i++) {
-                out.push({
+                const id = i + 1;
+                out[id] = {
                     // eslint-disable-next-line sonarjs/pseudo-random
                     login: Math.random() * 100,
+                    // eslint-disable-next-line sonarjs/pseudo-random
                     surname: ["Петров", "Иванов"][
                         // eslint-disable-next-line sonarjs/pseudo-random
                         Math.floor(Math.random() * 2)
@@ -51,7 +53,7 @@ const useUsersHistory = () => {
                         // eslint-disable-next-line sonarjs/pseudo-random
                         Math.floor(Math.random() * 4)
                     ],
-                });
+                };
             }
             await new Promise((resolve) => setTimeout(resolve, 1000));
             return out;
@@ -64,17 +66,18 @@ const useUsersHistory = () => {
 };
 
 export const UsersTable = () => {
-    const setSelectedRows = useTableStore((s) => s.setSelectedRows);
+    const setSelectedRows = useTableStore.getState().setSelectedRows;
     const isAdding = useTableStore((s) => s.isAdding);
     const selectedRows = useTableStore((s) => s.selectedRows);
     const live = useTableStore((s) => s.live);
     const { isLoading, isError, error } = useUsersHistory();
     const indeterminate =
-        selectedRows.length > 0 && selectedRows.length < live.length;
+        selectedRows.length > 0 &&
+        selectedRows.length < Object.values(live).length;
 
-    const checkRow = (prev, changes, row) => {
-        if (changes.checked) return [...prev, row.login];
-        return selectedRows.filter((login) => login !== row.login);
+    const checkRow = (prev, changes, id) => {
+        if (changes.checked) return [...prev, id];
+        return selectedRows.filter((idf) => idf !== id);
     };
 
     const tableRef = useRef(null);
@@ -120,7 +123,9 @@ export const UsersTable = () => {
                                     onCheckedChange={(changes) => {
                                         setSelectedRows(
                                             changes.checked
-                                                ? live.map((row) => row.login)
+                                                ? Object.keys(live).map(
+                                                      (row) => row
+                                                  )
                                                 : []
                                         );
                                     }}
@@ -145,27 +150,34 @@ export const UsersTable = () => {
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {live.length === 0 && (
+                        {Object.values(live).length === 0 && (
                             <Table.Row>
                                 <Table.Cell>
                                     <NoData />
                                 </Table.Cell>
                             </Table.Row>
                         )}
-                        {live.map((row) => (
+                        {Object.keys(live).map((row) => (
                             <Table.Row
-                                key={row.login}
+                                key={row}
                                 live-selected={
-                                    selectedRows.includes(row.login)
-                                        ? ""
-                                        : undefined
+                                    selectedRows.includes(row) ? "" : undefined
                                 }
+                                onContextMenu={() => {
+                                    console.log(
+                                        "row:",
+                                        row,
+                                        "live[row]:",
+                                        live[row]
+                                    );
+                                    useEditStore
+                                        .getState()
+                                        .setSelectedUser(row, live[row]);
+                                }}
                             >
                                 <Table.Cell textAlign={"center"} padding="4px">
                                     <Checkbox.Root
-                                        checked={selectedRows.includes(
-                                            row.login
-                                        )}
+                                        checked={selectedRows.includes(row)}
                                         onCheckedChange={(changes) => {
                                             const newSelected = checkRow(
                                                 selectedRows,
@@ -179,7 +191,7 @@ export const UsersTable = () => {
                                         <Checkbox.Control />
                                     </Checkbox.Root>
                                 </Table.Cell>
-                                {Object.keys(row).map((key) => (
+                                {Object.keys(live[row]).map((key) => (
                                     <Table.Cell
                                         key={key}
                                         textAlign="center"
@@ -187,7 +199,7 @@ export const UsersTable = () => {
                                         fontWeight="500"
                                         padding="4px"
                                     >
-                                        {row[key]}
+                                        {live[row][key]}
                                     </Table.Cell>
                                 ))}
                             </Table.Row>

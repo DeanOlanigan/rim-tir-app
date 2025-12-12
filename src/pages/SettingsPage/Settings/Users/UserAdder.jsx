@@ -45,14 +45,15 @@ export const UserAdder = () => {
                                 value={newUser[input.id]}
                                 size="xs"
                                 placeholder={`${baseText} ${input.label}`}
-                                onChange={(e) =>
-                                    makeUser([input.id, e.target.value])
-                                }
+                                onChange={(e) => {
+                                    console.log(newUser);
+                                    makeUser([input.id, e.target.value]);
+                                }}
                             />
                         </Field.Root>
                     </Table.Cell>
                 ))}
-                <RoleSelector />
+                <RoleSelector isEditing={false} />
             </Table.Row>
         </Table.Body>
     );
