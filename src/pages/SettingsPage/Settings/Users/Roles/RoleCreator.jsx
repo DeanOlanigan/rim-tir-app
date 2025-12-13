@@ -1,8 +1,11 @@
 import {
+    Button,
     Card,
     Dialog,
+    Field,
     HStack,
     IconButton,
+    Input,
     StackSeparator,
 } from "@chakra-ui/react";
 import { LuUserCog } from "react-icons/lu";
@@ -33,7 +36,17 @@ export const RoleCreator = () => {
                             <Card.Header>
                                 <Card.Title>Создание ролей</Card.Title>
                             </Card.Header>
-                            <Card.Body></Card.Body>
+                            <Card.Body onSubmit={() => console.log("123")}>
+                                <Field.Root>
+                                    <Field.Label>Название роли</Field.Label>
+                                    <Input
+                                        type=""
+                                        placeholder="Напишите название роли"
+                                        required
+                                    />
+                                </Field.Root>
+                                <Button type="submit">ДЩД</Button>
+                            </Card.Body>
                         </Card.Root>
                     </HStack>
                 </Dialog.Content>

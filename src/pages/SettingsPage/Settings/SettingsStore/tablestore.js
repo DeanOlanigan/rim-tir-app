@@ -13,11 +13,19 @@ export const useTableStore = create((set) => ({
     deleteUsers: (deleteUser) =>
         set((state) => {
             const newLive = { ...state.live };
-            delete newLive[deleteUser];
-            return { live: newLive };
+            deleteUser.forEach((id) => delete newLive[id]);
+            return { live: newLive, selectedRows: [] };
         }),
-    editUser: (id, editedUser) =>
-        set((state) => ({
-            live: { ...state.live, [id]: { ...state.live[id], ...editedUser } },
-        })),
+    editUser: (ids, editedUser) =>
+        set((state) => {
+            const newLive = { ...state.live };
+            const changeAll = !editedUser.name ? false : true;
+            ids.forEach((id) => {
+                if (!newLive[id]) return;
+                newLive[id] = changeAll
+                    ? editedUser
+                    : { ...newLive[id], role: editedUser.role };
+            });
+            return { live: newLive, selectedRows: [] };
+        }),
 }));

@@ -14,7 +14,6 @@ const Roles = createListCollection({
 export const RoleSelector = ({ isEditing }) => {
     const usersRole = useEditStore((s) => s.tempUser?.data.role);
     const editTempUser = useEditStore.getState().editTempUser;
-
     const { newUser, makeUser } = useUserStore();
 
     const content = (

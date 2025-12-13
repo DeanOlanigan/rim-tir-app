@@ -15,6 +15,7 @@ export const DeletePopover = () => {
     const id = useEditStore((s) => s.selectedUser?.id);
     const popoverOpen = useEditStore((s) => s.delete);
     const setOpen = useEditStore.getState().setPopoversOpen;
+    const selectedUsers = useTableStore.getState().selectedRows;
     return (
         <Popover.Root
             size={"xs"}
@@ -47,27 +48,32 @@ export const DeletePopover = () => {
                         <Popover.Body>
                             <Text fontWeight={"medium"}>
                                 <Highlight
-                                    query={["нельзя будет отменить!"]}
+                                    query={["НЕЛЬЗЯ БУДЕТ ОТМЕНИТЬ"]}
                                     styles={{
                                         px: 0.5,
-                                        bg: "red.600",
                                         borderRadius: "4px",
-                                        color: "fg.inverted",
+                                        color: "fg.error",
                                     }}
                                 >
                                     Вы уверены? Последствия этого действия
-                                    нельзя будет отменить!
+                                    НЕЛЬЗЯ БУДЕТ ОТМЕНИТЬ!
                                 </Highlight>
                             </Text>
                         </Popover.Body>
                         <Popover.Footer justifyContent={"right"}>
                             <Button
-                                size={"xs"}
+                                size={"2xs"}
                                 variant={"outline"}
                                 colorPalette={"red"}
                                 color={"red.600"}
                                 onClick={() => {
-                                    useTableStore.getState().deleteUsers(id);
+                                    const usersToDelete =
+                                        selectedUsers.length > 0
+                                            ? selectedUsers
+                                            : [id];
+                                    useTableStore
+                                        .getState()
+                                        .deleteUsers(usersToDelete);
                                     useEditStore
                                         .getState()
                                         .setSelectedUser(undefined, {});

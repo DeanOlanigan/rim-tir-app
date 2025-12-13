@@ -16,8 +16,12 @@ export const useEditStore = create((set) => ({
             selectedUser: { id: selectedId, data: selectedData },
         })),
 
-    setTempUser: () =>
-        set((state) => ({ tempUser: { ...state.selectedUser } })),
+    setTempUser: (isOpen) =>
+        set((state) => ({
+            tempUser: isOpen
+                ? { ...state.selectedUser }
+                : { id: undefined, data: {} },
+        })),
 
     editTempUser: (field, newData) =>
         set((state) => ({

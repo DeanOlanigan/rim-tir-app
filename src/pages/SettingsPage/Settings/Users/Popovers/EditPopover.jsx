@@ -30,12 +30,14 @@ export const EditPopover = () => {
     const popoverOpen = useEditStore((s) => s.edit);
     const setOpen = useEditStore.getState().setPopoversOpen;
     const editTempUser = useEditStore.getState().editTempUser;
-
+    const selectedUsers = useTableStore.getState().selectedRows;
+    const setTemp = useEditStore.getState().setTempUser;
+    const isSelected = selectedUsers.length > 0 ? true : false;
     return (
         <Popover.Root
             open={popoverOpen}
             onOpenChange={(e) => {
-                useEditStore.getState().setTempUser();
+                isSelected ? setTemp(false) : setTemp(true);
                 setOpen("edit", e.open);
             }}
             positioning={{ placement: "right" }}
@@ -88,9 +90,6 @@ export const EditPopover = () => {
                                                     value={user[data]}
                                                     size={"xs"}
                                                     onChange={(e) => {
-                                                        console.log(
-                                                            e.target.value,
-                                                        );
                                                         editTempUser(
                                                             data,
                                                             e.target.value,
@@ -100,18 +99,11 @@ export const EditPopover = () => {
                                             </Field.Root>
                                         );
                                     }
-                                    if (data === "role")
-                                        return (
-                                            <Field.Root key={data}>
-                                                <Field.Label>
-                                                    {fieldNames.role}
-                                                </Field.Label>
-                                                <RoleSelector
-                                                    isEditing={true}
-                                                />
-                                            </Field.Root>
-                                        );
                                 })}
+                                <Field.Root>
+                                    <Field.Label>{fieldNames.role}</Field.Label>
+                                    <RoleSelector isEditing={true} />
+                                </Field.Root>
                             </Fieldset.Content>
                         </Fieldset.Root>
                         <Group
@@ -126,7 +118,12 @@ export const EditPopover = () => {
                                 color={"fg.success"}
                                 colorPalette={"green"}
                                 onClick={() => {
-                                    useTableStore.getState().editUser(id, user);
+                                    const usersToEdit = isSelected
+                                        ? selectedUsers
+                                        : [id];
+                                    useTableStore
+                                        .getState()
+                                        .editUser(usersToEdit, user);
                                     setOpen("edit", false);
                                     useEditStore.getState().setMenuOpen(false);
                                 }}
@@ -134,7 +131,9 @@ export const EditPopover = () => {
                                 <LuCheck />
                             </IconButton>
                             <IconButton
-                                onClick={() => setOpen("edit", false)}
+                                onClick={() => {
+                                    setOpen("edit", false);
+                                }}
                                 size={"xs"}
                                 variant={"subtle"}
                                 color={"fg.error"}
