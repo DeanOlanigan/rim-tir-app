@@ -11,7 +11,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader } from "@/components/Loader";
 import { Box, Checkbox, Table, Text } from "@chakra-ui/react";
 import { useTableStore } from "../../SettingsStore/tablestore";
-import { UsersActionsBar } from "../UsersActionsBar";
 import { UserAdder } from "../UserAdder";
 import { useEffect, useRef } from "react";
 import { NoData } from "@/components/NoData";
@@ -29,7 +28,6 @@ const useUsersHistory = () => {
                 out[id] = {
                     // eslint-disable-next-line sonarjs/pseudo-random
                     login: Math.random() * 100,
-                    // eslint-disable-next-line sonarjs/pseudo-random
                     surname: ["Петров", "Иванов"][
                         // eslint-disable-next-line sonarjs/pseudo-random
                         Math.floor(Math.random() * 2)
@@ -124,9 +122,9 @@ export const UsersTable = () => {
                                         setSelectedRows(
                                             changes.checked
                                                 ? Object.keys(live).map(
-                                                      (row) => row
+                                                      (row) => row,
                                                   )
-                                                : []
+                                                : [],
                                         );
                                     }}
                                 >
@@ -151,11 +149,9 @@ export const UsersTable = () => {
                     </Table.Header>
                     <Table.Body>
                         {Object.values(live).length === 0 && (
-                            <Table.Row>
-                                <Table.Cell>
-                                    <NoData />
-                                </Table.Cell>
-                            </Table.Row>
+                            <Box h={"md"}>
+                                <NoData />
+                            </Box>
                         )}
                         {Object.keys(live).map((row) => (
                             <Table.Row
@@ -168,7 +164,7 @@ export const UsersTable = () => {
                                         "row:",
                                         row,
                                         "live[row]:",
-                                        live[row]
+                                        live[row],
                                     );
                                     useEditStore
                                         .getState()
@@ -182,7 +178,7 @@ export const UsersTable = () => {
                                             const newSelected = checkRow(
                                                 selectedRows,
                                                 changes,
-                                                row
+                                                row,
                                             );
                                             setSelectedRows(newSelected);
                                         }}
@@ -208,7 +204,6 @@ export const UsersTable = () => {
                     {isAdding && <UserAdder />}
                 </Table.Root>
             </Table.ScrollArea>
-            <UsersActionsBar />
         </>
     );
 };

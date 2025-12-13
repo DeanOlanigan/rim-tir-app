@@ -46,7 +46,6 @@ export const UserAdder = () => {
                                 size="xs"
                                 placeholder={`${baseText} ${input.label}`}
                                 onChange={(e) => {
-                                    console.log(newUser);
                                     makeUser([input.id, e.target.value]);
                                 }}
                             />

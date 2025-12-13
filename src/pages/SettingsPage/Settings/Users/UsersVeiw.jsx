@@ -1,12 +1,12 @@
 import { Card, Heading, HStack, IconButton, Text } from "@chakra-ui/react";
-import { UsersTable } from "./TableAndMenu/UsersTable";
 import { LuUserRoundPlus } from "react-icons/lu";
 import { useTableStore } from "../SettingsStore/tablestore";
 import { RoleCreator } from "./Roles/RoleCreator";
 import { TableMenu } from "./TableAndMenu/TableMenu";
 
 export const UsersView = () => {
-    const { setIsAdding, isAdding } = useTableStore();
+    const isAdding = useTableStore((s) => s.isAdding);
+    const setIsAdding = useTableStore.getState().setIsAdding;
     return (
         <>
             <Heading paddingBottom={"2"}>Редактор пользователей</Heading>
