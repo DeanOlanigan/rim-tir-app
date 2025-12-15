@@ -20,6 +20,7 @@ import { SidesBlock } from "./Sides";
 import { TypographyBlock } from "./Typography";
 import { ActionsBlock } from "./Actions";
 import { SHAPES, SHAPES_NAMES, SHAPES_WITH_SETTINGS } from "../constants";
+import { SkewBlock } from "./Skew";
 
 export const NodeSettings = ({ api }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
@@ -101,6 +102,7 @@ const BaseSettings = ({ api, types, selectedIds }) => {
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Layout</Heading>
                 <DimensionsBlock ids={selectedIds} api={api} />
+                <SkewBlock ids={selectedIds} />
             </VStack>
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Appearance</Heading>
