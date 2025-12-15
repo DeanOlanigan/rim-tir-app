@@ -1,47 +1,59 @@
 import { SHAPES } from "../../constants";
+import { round4 } from "../../utils";
 import { registerShape } from "./registry";
 
 registerShape(SHAPES.text, {
     onTransformEnd(konvaNode) {
-        const width = konvaNode.width() * konvaNode.scaleX();
-        const height = konvaNode.height() * konvaNode.scaleY();
-
+        const patch = {
+            x: round4(konvaNode.x()),
+            y: round4(konvaNode.y()),
+            width: round4(konvaNode.width() * konvaNode.scaleX()),
+            height: round4(konvaNode.height() * konvaNode.scaleY()),
+            rotation: round4(konvaNode.rotation()),
+            scaleX: 1,
+            scaleY: 1,
+            skewX: round4(konvaNode.skewX()),
+            skewY: round4(konvaNode.skewY()),
+        };
+        konvaNode.position({
+            x: patch.x,
+            y: patch.y,
+        });
+        konvaNode.width(patch.width);
+        konvaNode.height(patch.height);
+        konvaNode.rotation(patch.rotation);
         konvaNode.scaleX(1);
         konvaNode.scaleY(1);
-
-        const patch = {
-            x: Math.round(konvaNode.x()),
-            y: Math.round(konvaNode.y()),
-            width: Math.round(width),
-            height: Math.round(height),
-        };
+        konvaNode.skewX(patch.skewX);
+        konvaNode.skewY(patch.skewY);
 
         return patch;
     },
 
     onTransform(konvaNode) {
-        const width = konvaNode.width() * konvaNode.scaleX();
-        const height = konvaNode.height() * konvaNode.scaleY();
+        const patch = {
+            x: round4(konvaNode.x()),
+            y: round4(konvaNode.y()),
+            width: round4(konvaNode.width() * konvaNode.scaleX()),
+            height: round4(konvaNode.height() * konvaNode.scaleY()),
+            rotation: round4(konvaNode.rotation()),
+            scaleX: 1,
+            scaleY: 1,
+            skewX: round4(konvaNode.skewX()),
+            skewY: round4(konvaNode.skewY()),
+        };
+        konvaNode.position({
+            x: patch.x,
+            y: patch.y,
+        });
+        konvaNode.width(patch.width);
+        konvaNode.height(patch.height);
+        konvaNode.rotation(patch.rotation);
         konvaNode.scaleX(1);
         konvaNode.scaleY(1);
-        konvaNode.width(width);
-        konvaNode.height(height);
-    },
+        konvaNode.skewX(patch.skewX);
+        konvaNode.skewY(patch.skewY);
 
-    toModelFromKonva(konvaNode) {
-        const a = konvaNode.attrs;
-        return {
-            type: SHAPES.text,
-            id: a.id,
-            x: Math.round(a.x),
-            y: Math.round(a.y),
-            width: Math.round(a.width),
-            height: Math.round(a.height),
-            fill: a.fill,
-            stroke: a.stroke,
-            strokeWidth: a.strokeWidth,
-            fillAfterStrokeEnabled: a.fillAfterStrokeEnabled,
-            cornerRadius: a.cornerRadius,
-        };
+        return patch;
     },
 });

@@ -1,94 +1,134 @@
+import { Transform } from "konva/lib/Util";
 import { SHAPES } from "../../constants";
 import { round4 } from "../../utils";
-import { registerShape } from "./registry";
+import { getShape, registerShape } from "./registry";
 
 registerShape(SHAPES.group, {
-    onTransformEnd(konvaNode) {
-        return {
-            x: round4(konvaNode.x()),
-            y: round4(konvaNode.y()),
-            width: round4(konvaNode.width()),
-            height: round4(konvaNode.height()),
-            rotation: round4(konvaNode.rotation()),
+    onTransformEnd(groupNode) {
+        const groupId = groupNode.attrs.id;
+
+        const groupPatch = {
+            x: round4(groupNode.x()),
+            y: round4(groupNode.y()),
+            rotation: round4(groupNode.rotation()),
         };
 
-        /* const x = round4(konvaNode.x());
-        const y = round4(konvaNode.y());
-        const width = round4(konvaNode.width() * konvaNode.scaleX());
-        const height = round4(konvaNode.height() * konvaNode.scaleY());
-        const rotation = round4(konvaNode.rotation());
-
-        const children = konvaNode.getChildren();
-        if (children.length === 0) return;
-        const ids = children.map((node) => node.id());
-        let patchesById = {};
-        for (const child of children) {
-            const id = child.attrs.id;
-            patchesById[id] = {
-                x: round4(child.x()),
-                y: round4(child.y()),
-                width: round4(child.width()),
-                height: round4(child.height()),
-                rotation: round4(child.rotation()),
-            };
+        const children = groupNode.getChildren();
+        if (children.length === 0) {
+            groupNode.scaleX(1);
+            groupNode.scaleY(1);
+            return { [groupId]: groupPatch };
         }
-        useNodeStore.getState().updateNodes(ids, patchesById);
 
-        const patch = {
-            x,
-            y,
-            width,
-            height,
-            rotation,
-        };
+        const absByChild = new Map();
 
-        konvaNode.scaleX(1);
-        konvaNode.scaleY(1);
+        for (const ch of children) {
+            if (!ch?.getStage?.()) continue;
+            absByChild.set(ch._id, ch.getAbsoluteTransform().copy());
+        }
 
-        return patch; */
+        const sx = groupNode.scaleX();
+        const sy = groupNode.scaleY();
+        groupNode.scale({ x: 1, y: 1 });
+        const groupAbsNoScale = groupNode.getAbsoluteTransform().copy();
+        groupNode.scale({ x: sx, y: sy });
+
+        const patch = { [groupId]: groupPatch };
+
+        for (const ch of children) {
+            if (!ch?.getStage?.()) continue;
+
+            const childAbsVisual = absByChild.get(ch._id);
+            if (!childAbsVisual) continue;
+
+            const childLocalNew = new Transform()
+                .multiply(groupAbsNoScale.copy().invert())
+                .multiply(childAbsVisual);
+
+            const attrs = childLocalNew.decompose();
+            ch.setAttrs(attrs);
+
+            const type = ch.attrs.type;
+            const id = ch.attrs.id;
+            const shape = getShape(type);
+
+            if (!shape?.onTransformEnd) {
+                console.warn("No onTransformEnd handler for shape type:", type);
+                continue;
+            }
+            const res = shape.onTransformEnd(ch);
+            if (type === SHAPES.group) {
+                Object.assign(patch, res);
+            } else {
+                patch[id] = res;
+            }
+        }
+
+        groupNode.scale({ x: 1, y: 1 });
+        return patch;
     },
 
-    onTransform() {
-        console.log("Transform group");
-        /* const parent = konvaNode.getParent();
-        if (!parent) return;
+    onTransform(groupNode) {
+        const groupId = groupNode.attrs.id;
 
-        const parentAbs = parent.getAbsoluteTransform();
-        const parentAbsInv = parentAbs.copy().invert();
-
-        konvaNode.getChildren().forEach((child) => {
-            const childAbs = child.getAbsoluteTransform();
-
-            const newLocalTr = new Konva.Transform();
-            newLocalTr.multiply(parentAbsInv).multiply(childAbs);
-
-            const attrs = newLocalTr.decompose();
-
-            const w = child.width() * attrs.scaleX;
-            const h = child.height() * attrs.scaleY;
-
-            child.setAttrs({
-                x: round4(attrs.x),
-                y: round4(attrs.y),
-                width: round4(w),
-                height: round4(h),
-                rotation: round4(attrs.rotation),
-                scaleX: 1,
-                scaleY: 1,
-            });
-        }); */
-    },
-
-    toModelFromKonva(konvaNode) {
-        const a = konvaNode.attrs;
-        return {
-            type: SHAPES.group,
-            id: a.id,
-            x: round4(a.x),
-            y: round4(a.y),
-            width: Math.round(a.width),
-            height: Math.round(a.height),
-            rotation: round4(a.rotation),
+        const groupPatch = {
+            x: round4(groupNode.x()),
+            y: round4(groupNode.y()),
+            rotation: round4(groupNode.rotation()),
         };
+
+        const children = groupNode.getChildren();
+        if (children.length === 0) {
+            groupNode.scaleX(1);
+            groupNode.scaleY(1);
+            return { [groupId]: groupPatch };
+        }
+
+        const absByChild = new Map();
+
+        for (const ch of children) {
+            if (!ch?.getStage?.()) continue;
+            absByChild.set(ch._id, ch.getAbsoluteTransform().copy());
+        }
+
+        const sx = groupNode.scaleX();
+        const sy = groupNode.scaleY();
+        groupNode.scale({ x: 1, y: 1 });
+        const groupAbsNoScale = groupNode.getAbsoluteTransform().copy();
+        groupNode.scale({ x: sx, y: sy });
+
+        const patch = { [groupId]: groupPatch };
+
+        for (const ch of children) {
+            if (!ch?.getStage?.()) continue;
+
+            const childAbsVisual = absByChild.get(ch._id);
+            if (!childAbsVisual) continue;
+
+            const childLocalNew = new Transform()
+                .multiply(groupAbsNoScale.copy().invert())
+                .multiply(childAbsVisual);
+
+            const attrs = childLocalNew.decompose();
+            ch.setAttrs(attrs);
+
+            const type = ch.attrs.type;
+            const id = ch.attrs.id;
+            const shape = getShape(type);
+
+            if (!shape?.onTransformEnd) {
+                console.warn("No onTransformEnd handler for shape type:", type);
+                continue;
+            }
+            const res = shape.onTransformEnd(ch);
+            if (type === SHAPES.group) {
+                Object.assign(patch, res);
+            } else {
+                patch[id] = res;
+            }
+        }
+
+        groupNode.scale({ x: 1, y: 1 });
+        return patch;
     },
 });

@@ -10,6 +10,10 @@ registerShape(SHAPES.rect, {
             width: round4(konvaNode.width() * konvaNode.scaleX()),
             height: round4(konvaNode.height() * konvaNode.scaleY()),
             rotation: round4(konvaNode.rotation()),
+            scaleX: 1,
+            scaleY: 1,
+            skewX: round4(konvaNode.skewX()),
+            skewY: round4(konvaNode.skewY()),
         };
         konvaNode.position({
             x: patch.x,
@@ -20,49 +24,36 @@ registerShape(SHAPES.rect, {
         konvaNode.rotation(patch.rotation);
         konvaNode.scaleX(1);
         konvaNode.scaleY(1);
+        konvaNode.skewX(patch.skewX);
+        konvaNode.skewY(patch.skewY);
 
         return patch;
     },
 
-    onGroupMod(konvaNode, scaleX, scaleY) {
-        const width = konvaNode.width() * scaleX;
-        const height = konvaNode.height() * scaleY;
-        konvaNode.width(round4(width));
-        konvaNode.height(round4(height));
-        konvaNode.rotation(round4(konvaNode.rotation()));
-        konvaNode.x(round4(konvaNode.x()));
-        konvaNode.y(round4(konvaNode.y()));
-    },
-
     onTransform(konvaNode) {
-        const width = konvaNode.width() * konvaNode.scaleX();
-        const height = konvaNode.height() * konvaNode.scaleY();
-        konvaNode.scaleX(1);
-        konvaNode.scaleY(1);
-        konvaNode.position({
+        const patch = {
             x: round4(konvaNode.x()),
             y: round4(konvaNode.y()),
-        });
-        konvaNode.rotation(round4(konvaNode.rotation()));
-        konvaNode.width(round4(width));
-        konvaNode.height(round4(height));
-    },
-
-    toModelFromKonva(konvaNode) {
-        const a = konvaNode.attrs;
-        return {
-            type: SHAPES.rect,
-            id: a.id,
-            x: round4(a.x),
-            y: round4(a.y),
-            width: Math.round(a.width),
-            height: Math.round(a.height),
-            rotation: round4(a.rotation),
-            fill: a.fill,
-            stroke: a.stroke,
-            strokeWidth: a.strokeWidth,
-            fillAfterStrokeEnabled: a.fillAfterStrokeEnabled,
-            cornerRadius: a.cornerRadius,
+            width: round4(konvaNode.width() * konvaNode.scaleX()),
+            height: round4(konvaNode.height() * konvaNode.scaleY()),
+            rotation: round4(konvaNode.rotation()),
+            scaleX: 1,
+            scaleY: 1,
+            skewX: round4(konvaNode.skewX()),
+            skewY: round4(konvaNode.skewY()),
         };
+        konvaNode.position({
+            x: patch.x,
+            y: patch.y,
+        });
+        konvaNode.width(patch.width);
+        konvaNode.height(patch.height);
+        konvaNode.rotation(patch.rotation);
+        konvaNode.scaleX(1);
+        konvaNode.scaleY(1);
+        konvaNode.skewX(patch.skewX);
+        konvaNode.skewY(patch.skewY);
+
+        return patch;
     },
 });

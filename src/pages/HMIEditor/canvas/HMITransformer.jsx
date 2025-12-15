@@ -69,10 +69,15 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         for (const node of nodes) {
             const { id, type } = node.attrs;
             const shape = getShape(type);
-            if (shape && typeof shape.onTransformEnd === "function") {
-                patchesById[id] = shape.onTransformEnd(node);
+            if (!shape) {
+                console.warn("No shape adapter for type:", type);
+                continue;
+            }
+            const res = shape.onTransformEnd(node);
+            if (type === SHAPES.group) {
+                Object.assign(patchesById, res);
             } else {
-                console.warn("No onTransformEnd handler for shape type:", type);
+                patchesById[id] = res;
             }
         }
         useNodeStore.getState().updateNodes(ids, patchesById);
@@ -84,12 +89,18 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         const shape = getShape(type);
         let patch = {};
         // TODO во всех шейпах обновлять konva
-        if (shape && typeof shape.onTransformEnd === "function") {
-            patch[id] = shape.onTransformEnd(node);
-        } else {
+
+        if (!shape?.onTransformEnd) {
             console.warn("No onTransform handler for shape type:", type);
+            return;
         }
-        patchStoreRaf([id], patch);
+        const res = shape.onTransformEnd(node);
+        if (type === SHAPES.group) {
+            Object.assign(patch, res);
+        } else {
+            patch[id] = res;
+        }
+        patchStoreRaf(Object.keys(patch), patch);
     };
 
     //if (isLineLike) return null;
