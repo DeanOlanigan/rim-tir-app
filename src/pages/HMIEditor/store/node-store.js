@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { nanoid } from "nanoid";
-import { round4 } from "../utils";
+import { centerOf, rotateAround, round4, xyFromCenter } from "../utils";
 import { SHAPES } from "../constants";
 
 export const useNodeStore = create(
@@ -169,6 +169,7 @@ function deepDuplicate(ids, state, opts = {}) {
     };
 }
 
+// TODO Доделать работу группировки при вращении
 function ungroup(ids, state) {
     let newRootIds = [...state.rootIds];
     const newNodes = { ...state.nodes };
@@ -185,24 +186,44 @@ function ungroup(ids, state) {
 
         newRootIds = newRootIds.filter((nid) => nid !== id);
 
+        const grot = groupNode.rotation ?? 0;
+
+        const pivotLocal = {
+            x: (groupNode.width ?? 0) / 2,
+            y: (groupNode.height ?? 0) / 2,
+        };
+
         for (const childId of groupChildren) {
             const child = state.nodes[childId];
             if (!child) continue;
 
+            const childCenterLocal = centerOf(child);
+
+            const childCenterLocalRot = rotateAround(
+                childCenterLocal,
+                pivotLocal,
+                grot,
+            );
+
+            const childCenterWorld = {
+                x: (groupNode.x ?? 0) + childCenterLocalRot.x,
+                y: (groupNode.y ?? 0) + childCenterLocalRot.y,
+            };
+
+            const nextXY = xyFromCenter(childCenterWorld, child);
+
             newNodes[childId] = {
                 ...child,
-                x: (child.x ?? 0) + (groupNode.x ?? 0),
-                y: (child.y ?? 0) + (groupNode.y ?? 0),
+                x: round4(nextXY.x),
+                y: round4(nextXY.y),
+                rotation: round4((child.rotation ?? 0) + grot),
             };
 
             selectedIds.push(childId);
+            if (!newRootIds.includes(childId)) newRootIds.push(childId);
         }
 
         delete newNodes[id];
-
-        for (const childId of groupChildren) {
-            if (!newRootIds.includes(childId)) newRootIds.push(childId);
-        }
     }
 
     return {
@@ -215,6 +236,18 @@ function ungroup(ids, state) {
 function group(ids, bbox, state) {
     const groupId = nanoid(12);
 
+    const groupNode = {
+        id: groupId,
+        type: SHAPES.group,
+        name: "Группа",
+        x: bbox.x,
+        y: bbox.y,
+        width: bbox.width,
+        height: bbox.height,
+        rotation: 0,
+        childrenIds: [...ids],
+    };
+
     const newRootIds = [...state.rootIds]
         .filter((nid) => !ids.includes(nid))
         .concat(groupId);
@@ -224,23 +257,15 @@ function group(ids, bbox, state) {
     for (const childId of ids) {
         const child = state.nodes[childId];
         if (!child) continue;
+
         newNodes[childId] = {
             ...child,
-            x: round4((child.x ?? 0) - bbox.x),
-            y: round4((child.y ?? 0) - bbox.y),
+            x: round4((child.x ?? 0) - groupNode.x),
+            y: round4((child.y ?? 0) - groupNode.y),
         };
     }
 
-    newNodes[groupId] = {
-        id: groupId,
-        type: SHAPES.group,
-        name: "Группа",
-        x: bbox.x,
-        y: bbox.y,
-        width: bbox.width,
-        height: bbox.height,
-        childrenIds: [...ids],
-    };
+    newNodes[groupId] = groupNode;
 
     return {
         rootIds: newRootIds,
