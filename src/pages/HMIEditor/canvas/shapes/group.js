@@ -6,11 +6,16 @@ import { getShape, registerShape } from "./registry";
 registerShape(SHAPES.group, {
     onTransformEnd(groupNode) {
         const groupId = groupNode.attrs.id;
+        const clientRect = groupNode.getClientRect({
+            relativeTo: groupNode.parent,
+        });
 
         const groupPatch = {
             x: round4(groupNode.x()),
             y: round4(groupNode.y()),
             rotation: round4(groupNode.rotation()),
+            width: round4(clientRect.width),
+            height: round4(clientRect.height),
         };
 
         const children = groupNode.getChildren();
@@ -70,11 +75,16 @@ registerShape(SHAPES.group, {
 
     onTransform(groupNode) {
         const groupId = groupNode.attrs.id;
+        const clientRect = groupNode.getClientRect({
+            relativeTo: groupNode.parent,
+        });
 
         const groupPatch = {
             x: round4(groupNode.x()),
             y: round4(groupNode.y()),
             rotation: round4(groupNode.rotation()),
+            width: round4(clientRect.width),
+            height: round4(clientRect.height),
         };
 
         const children = groupNode.getChildren();
