@@ -82,10 +82,10 @@ export function createDrawEllipseTool() {
                 ...BASE_PARAMS,
                 type: SHAPES.ellipse,
                 name: "Ellipse",
-                x: box.centerX,
-                y: box.centerY,
-                radiusX: box.radiusX,
-                radiusY: box.radiusY,
+                x: box.left,
+                y: box.top,
+                width: box.width,
+                height: box.height,
             });
             ctx.manager.setActive(ACTIONS.select);
         },

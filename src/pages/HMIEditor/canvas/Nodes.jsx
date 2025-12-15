@@ -11,7 +11,39 @@ import { useActionsStore } from "./../store/actions-store";
 import { patchStoreRaf, useNodeStore } from "./../store/node-store";
 import { ACTIONS, SHAPES } from "../constants";
 import { dragBound } from "./utils/dragBound";
-import { round4 } from "../utils";
+import { isHasRadius, round4 } from "../utils";
+
+function ellipseToKonva(p) {
+    const cx = p.x + p.width / 2;
+    const cy = p.y + p.height / 2;
+    return {
+        x: cx,
+        y: cy,
+        radiusX: p.width / 2,
+        radiusY: p.height / 2,
+        rotation: p.rotation ?? 0,
+    };
+}
+
+function move(node) {
+    const type = node.attrs.type;
+    let x, y;
+    if (isHasRadius(type)) {
+        const rx = Math.abs(node.radiusX() * node.scaleX());
+        const ry = Math.abs(node.radiusY() * node.scaleY());
+
+        const width = rx * 2;
+        const height = ry * 2;
+
+        x = round4(node.x() - width / 2);
+        y = round4(node.y() - height / 2);
+    } else {
+        x = round4(node.x());
+        y = round4(node.y());
+    }
+
+    return { x, y };
+}
 
 const common = {
     name: "node",
@@ -50,22 +82,18 @@ const common = {
         };
     },
     onDragMove(e) {
-        const id = e.target.id();
+        const node = e.target;
+        const id = node.id();
         if (!id) return;
         const patch = {};
-        patch[id] = {
-            x: round4(e.target.x()),
-            y: round4(e.target.y()),
-        };
+        patch[id] = move(node);
         patchStoreRaf([id], patch);
     },
     onDragEnd(e) {
-        const id = e.target.id();
+        const node = e.target;
+        const id = node.id();
         if (!id) return;
-        useNodeStore.getState().updateNode(id, {
-            x: round4(e.target.x()),
-            y: round4(e.target.y()),
-        });
+        useNodeStore.getState().updateNode(id, move(node));
     },
 };
 
@@ -112,8 +140,21 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
             return <Rect key={id} {...params} ref={registerRef} />;
         case SHAPES.polygon:
             return <RegularPolygon key={id} {...params} ref={registerRef} />;
-        case SHAPES.ellipse:
-            return <Ellipse key={id} {...params} ref={registerRef} />;
+        case SHAPES.ellipse: {
+            const k = ellipseToKonva(node);
+            return (
+                <Ellipse
+                    key={id}
+                    {...params}
+                    x={k.x}
+                    y={k.y}
+                    radiusX={k.radiusX}
+                    radiusY={k.radiusY}
+                    rotation={k.rotation}
+                    ref={registerRef}
+                />
+            );
+        }
         case SHAPES.text:
             return <Text key={id} {...params} ref={registerRef} />;
         case SHAPES.line:
