@@ -3,7 +3,8 @@ import { round4 } from "../../utils";
 import { scaleLinePointsLikeSelfRect } from "../services/shapeTransforms";
 import { registerShape } from "./registry";
 
-registerShape(SHAPES.line, {
+registerShape(SHAPES.arrow, {
+    // TODO взыв при вертикальном трансформе
     onTransformEnd(konvaNode) {
         const sx = konvaNode.scaleX();
         const sy = konvaNode.scaleY();

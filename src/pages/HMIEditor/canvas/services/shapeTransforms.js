@@ -51,32 +51,30 @@ export function getLineRect(api, id) {
     return node.getSelfRect();
 }
 
+const MIN_SIZE = 1e-3; // или 0.1 / 1 — что логичнее для твоей сетки/round4
+
+function clampSize(v) {
+    if (!Number.isFinite(v)) return MIN_SIZE;
+    return Math.max(MIN_SIZE, Math.abs(v));
+}
+
 export function resizeLineLike(api, id, targetWidth, targetHeight) {
     const node = api.canvas.getNodes().get(id);
     if (!node) return;
 
+    targetWidth = clampSize(targetWidth);
+    targetHeight = clampSize(targetHeight);
+
     const rect = node.getSelfRect();
-    const curWidth = rect.width || 1;
-    const curHeight = rect.height || 1;
+    const curWidth = Math.max(MIN_SIZE, rect.width || 0);
+    const curHeight = Math.max(MIN_SIZE, rect.height || 0);
 
     const sx = targetWidth / curWidth;
     const sy = targetHeight / curHeight;
 
     const oldPoints = node.points();
-    const newPoints = [];
+    const newPoints = scaleLinePointsLikeSelfRect(oldPoints, rect, sx, sy);
 
-    for (let i = 0; i < oldPoints.length; i += 2) {
-        const px = oldPoints[i];
-        const py = oldPoints[i + 1];
-
-        const relX = px - rect.x;
-        const relY = py - rect.y;
-
-        const scaleX = round4(rect.x + relX * sx);
-        const scaleY = round4(rect.y + relY * sy);
-
-        newPoints.push(scaleX, scaleY);
-    }
     node.points(newPoints);
     return {
         points: newPoints,
@@ -98,19 +96,34 @@ export function changeLineDim(api, id, type, aspectRatio, val) {
     if (aspectRatio) {
         if (type === "width") {
             const scale = val / curWidth;
-            targetWidth = val;
+            targetWidth = clampSize(val);
             targetHeight = curHeight * scale;
         } else {
             const scale = val / curHeight;
             targetWidth = curWidth * scale;
-            targetHeight = val;
+            targetHeight = clampSize(val);
         }
     } else {
-        if (type === "width") targetWidth = val;
-        if (type === "height") targetHeight = val;
+        if (type === "width") targetWidth = clampSize(val);
+        if (type === "height") targetHeight = clampSize(val);
     }
 
     return resizeLineLike(api, id, targetWidth, targetHeight);
+}
+
+export function scaleLinePointsLikeSelfRect(points, rect, sx, sy) {
+    const out = [];
+    const rx = rect.x ?? 0;
+    const ry = rect.y ?? 0;
+
+    for (let i = 0; i < points.length; i += 2) {
+        const px = points[i];
+        const py = points[i + 1];
+
+        out[i] = round4(rx + (px - rx) * sx);
+        out[i + 1] = round4(ry + (py - ry) * sy);
+    }
+    return out;
 }
 
 const EPS = 1e-9;

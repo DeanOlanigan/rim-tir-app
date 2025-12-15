@@ -1,5 +1,6 @@
 import "./ellipse";
 import "./line";
+import "./arrow";
 import "./rect";
 import "./text";
 import "./group";

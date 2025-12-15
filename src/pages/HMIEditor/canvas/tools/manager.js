@@ -157,6 +157,7 @@ export function createToolManager({ toolsMap, api }) {
             const parentGroups = target.findAncestors("Group");
             const id =
                 parentGroups[parentGroups.length - 1]?.id() || target.id();
+            // TODO сделать с учетом текущего выделения и нескольких id
             api.updateContextMenu("sch", {
                 x: rect.left + p.x + 4,
                 y: rect.top + p.y + 4,
