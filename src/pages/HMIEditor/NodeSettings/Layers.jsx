@@ -7,10 +7,9 @@ import {
 } from "react-icons/lu";
 import { layerShift } from "../utils";
 
-export const Layers = ({ node }) => {
+export const Layers = ({ ids }) => {
     const handleMove = (dir) => {
-        const id = node.id();
-        layerShift(id, dir);
+        layerShift(ids, dir);
     };
 
     return (

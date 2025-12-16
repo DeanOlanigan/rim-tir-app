@@ -15,30 +15,46 @@ export function isHasRadius(type) {
 
 export const deg2rad = (deg) => (deg * Math.PI) / 180;
 
-export function layerShift(id, dir) {
-    const rootIds = useNodeStore.getState().rootIds;
-    const zIndex = rootIds.indexOf(id);
-    if (zIndex === -1) return;
+export function layerShift(ids, dir) {
+    const store = useNodeStore.getState();
+    const rootIds = store.rootIds;
 
-    const arr = [...rootIds];
-    arr.splice(zIndex, 1);
+    const moveIds = Array.isArray(ids) ? ids : [ids];
+
+    const indexed = moveIds
+        .map((id) => ({ id, index: rootIds.indexOf(id) }))
+        .filter((v) => v.index !== -1);
+
+    if (indexed.length === 0) return;
+
+    indexed.sort((a, b) => a.index - b.index);
+    const orderedIds = indexed.map((v) => v.id);
+
+    let rest = rootIds.filter((id) => !orderedIds.includes(id));
+
     switch (dir) {
         case "moveToTop":
-            arr.push(id);
+            rest = [...rest, ...orderedIds];
             break;
-        case "moveUp":
-            arr.splice(Math.min(arr.length, zIndex + 1), 0, id);
+        case "moveUp": {
+            const lastIndex = indexed[indexed.length - 1].index;
+            const insertIndex = Math.min(rest.length, lastIndex + 1);
+            rest.splice(insertIndex, 0, ...orderedIds);
             break;
-        case "moveDown":
-            arr.splice(Math.max(0, zIndex - 1), 0, id);
+        }
+        case "moveDown": {
+            const firstIndex = indexed[0].index;
+            const insertIndex = Math.max(0, firstIndex - 1);
+            rest.splice(insertIndex, 0, ...orderedIds);
             break;
+        }
         case "moveToBottom":
-            arr.unshift(id);
+            rest = [...orderedIds, ...rest];
             break;
         default:
             break;
     }
-    useNodeStore.getState().setRootIds(arr);
+    store.setRootIds(rest);
 }
 
 export function mul(A, B) {
