@@ -5,9 +5,9 @@ import {
     Group,
     Icon,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { LuBold, LuItalic } from "react-icons/lu";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
 // eslint-disable-next-line
 //TODO Можно добавить обработку font weight
@@ -24,19 +24,25 @@ const items = [
     },
 ];
 
-export const TextStyleBlock = ({ node }) => {
-    const [value, setValue] = useState(node.fontStyle().split(" "));
+export const TextStyleBlock = ({ ids }) => {
+    const fontStyles = useNodesByIds(ids, "fontStyle");
+    const fontStyle = sameCheck(fontStyles);
 
     const handleChange = (e) => {
-        setValue(e);
         const str = e.length === 0 ? "" : e.join(" ");
-        node.fontStyle(str);
-        patchNodeThrottled(node.id(), { fontStyle: str });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { fontStyle: str };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
         <Fieldset.Root>
-            <CheckboxGroup value={value} onValueChange={handleChange}>
+            <CheckboxGroup
+                value={fontStyle?.split(" ")}
+                onValueChange={handleChange}
+            >
                 <Fieldset.Legend>Text style</Fieldset.Legend>
                 <Group attached>
                     {items.map((item) => (

@@ -15,58 +15,107 @@ export function isHasRadius(type) {
 
 export const deg2rad = (deg) => (deg * Math.PI) / 180;
 
-export function rotateAround(p, pivot, deg) {
-    const r = deg2rad(deg);
-    const c = Math.cos(r);
-    const s = Math.sin(r);
+export function layerShift(ids, dir) {
+    const store = useNodeStore.getState();
+    const rootIds = store.rootIds;
 
-    const x = p.x - pivot.x;
-    const y = p.y - pivot.y;
+    const moveIds = Array.isArray(ids) ? ids : [ids];
 
-    return {
-        x: pivot.x + x * c - y * s,
-        y: pivot.y + x * s + y * c,
-    };
-}
+    const indexed = moveIds
+        .map((id) => ({ id, index: rootIds.indexOf(id) }))
+        .filter((v) => v.index !== -1);
 
-export function centerOf(n) {
-    return {
-        x: (n.x ?? 0) + (n.width ?? 0) / 2,
-        y: (n.y ?? 0) + (n.height ?? 0) / 2,
-    };
-}
+    if (indexed.length === 0) return;
 
-export function xyFromCenter(center, n) {
-    return {
-        x: center.x - (n.width ?? 0) / 2,
-        y: center.y - (n.height ?? 0) / 2,
-    };
-}
+    indexed.sort((a, b) => a.index - b.index);
+    const orderedIds = indexed.map((v) => v.id);
 
-export function layerShift(id, dir) {
-    const rootIds = useNodeStore.getState().rootIds;
-    const zIndex = rootIds.indexOf(id);
-    if (zIndex === -1) return;
+    let rest = rootIds.filter((id) => !orderedIds.includes(id));
 
-    const arr = [...rootIds];
-    arr.splice(zIndex, 1);
     switch (dir) {
         case "moveToTop":
-            arr.push(id);
+            rest = [...rest, ...orderedIds];
             break;
-        case "moveUp":
-            arr.splice(Math.min(arr.length, zIndex + 1), 0, id);
+        case "moveUp": {
+            const lastIndex = indexed[indexed.length - 1].index;
+            const insertIndex = Math.min(rest.length, lastIndex + 1);
+            rest.splice(insertIndex, 0, ...orderedIds);
             break;
-        case "moveDown":
-            arr.splice(Math.max(0, zIndex - 1), 0, id);
+        }
+        case "moveDown": {
+            const firstIndex = indexed[0].index;
+            const insertIndex = Math.max(0, firstIndex - 1);
+            rest.splice(insertIndex, 0, ...orderedIds);
             break;
+        }
         case "moveToBottom":
-            arr.unshift(id);
+            rest = [...orderedIds, ...rest];
             break;
         default:
             break;
     }
-    useNodeStore.getState().setRootIds(arr);
+    store.setRootIds(rest);
+}
+
+export function mul(A, B) {
+    return {
+        a: A.a * B.a + A.c * B.b,
+        b: A.b * B.a + A.d * B.b,
+        c: A.a * B.c + A.c * B.d,
+        d: A.b * B.c + A.d * B.d,
+        e: A.a * B.e + A.c * B.f + A.e,
+        f: A.b * B.e + A.d * B.f + A.f,
+    };
+}
+
+export function inv(M) {
+    const det = M.a * M.d - M.b * M.c;
+    if (!det) return null;
+    const id = 1 / det;
+    return {
+        a: M.d * id,
+        b: -M.b * id,
+        c: -M.c * id,
+        d: M.a * id,
+        e: (M.c * M.f - M.d * M.e) * id,
+        f: (M.b * M.e - M.a * M.f) * id,
+    };
+}
+
+function T(x, y) {
+    return { a: 1, b: 0, c: 0, d: 1, e: x, f: y };
+}
+
+function R(deg) {
+    const r = deg2rad(deg);
+    const c = Math.cos(r),
+        s = Math.sin(r);
+    return { a: c, b: s, c: -s, d: c, e: 0, f: 0 };
+}
+
+export function decomposeTR(M) {
+    const rotation = (Math.atan2(M.b, M.a) * 180) / Math.PI;
+    return { x: M.e, y: M.f, rotation };
+}
+
+export function matTR(x, y, deg) {
+    return mul(T(x, y), R(deg));
+}
+
+export function nodeLocalMatrix(n) {
+    const x = n.x ?? 0;
+    const y = n.y ?? 0;
+    const rot = n.rotation ?? 0;
+
+    // ellipse: в сторе x/y = top-left bbox, а в konva x/y = center
+    if (n.type === SHAPES.ellipse) {
+        const w = n.width ?? 0;
+        const h = n.height ?? 0;
+        return matTR(x + w / 2, y + h / 2, rot);
+    }
+
+    // остальные: x/y как есть
+    return matTR(x, y, rot);
 }
 
 export function getPointsRect(points) {

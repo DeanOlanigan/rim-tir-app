@@ -1,16 +1,19 @@
 import { Field, SegmentGroup } from "@chakra-ui/react";
-import { useState } from "react";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
 import { LuArrowDownToLine, LuArrowUpToLine } from "react-icons/lu";
 import { BsArrowsCollapse } from "react-icons/bs";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const TextAlignVBlock = ({ node }) => {
-    const [value, setValue] = useState(node.verticalAlign() ?? "top");
+export const TextAlignVBlock = ({ ids }) => {
+    const verticalAligns = useNodesByIds(ids, "verticalAlign");
+    const verticalAlign = sameCheck(verticalAligns);
 
     const handleChange = (e) => {
-        setValue(e.value);
-        node.verticalAlign(e.value);
-        patchNodeThrottled(node.id(), { verticalAlign: e.value });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { verticalAlign: e.value };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
@@ -18,7 +21,7 @@ export const TextAlignVBlock = ({ node }) => {
             <Field.Label>Vertical align</Field.Label>
             <SegmentGroup.Root
                 size={"xs"}
-                value={value}
+                value={verticalAlign}
                 onValueChange={handleChange}
             >
                 <SegmentGroup.Indicator bg={"colorPalette.solid"} />

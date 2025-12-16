@@ -94,6 +94,10 @@ const BaseSettings = ({ api, types, selectedIds }) => {
                 <Heading size={"md"}>{heading}</Heading>
                 <ActionsBlock ids={selectedIds} api={api} types={types} />
             </HStack>
+            <VStack align={"start"} w={"100%"}>
+                <Heading size={"md"}>Layers</Heading>
+                <Layers ids={selectedIds} />
+            </VStack>
             <VStack align={"start"}>
                 <Heading size={"md"}>Position</Heading>
                 <PositionBlock ids={selectedIds} />
@@ -110,17 +114,13 @@ const BaseSettings = ({ api, types, selectedIds }) => {
                 {showCornerRadius && <CornerRadiusBlock node={primaryNode} />}
                 {showSides && <SidesBlock ids={selectedIds} />}
             </VStack>
-            {showTypography && <TypographyBlock node={primaryNode} />}
+            {showTypography && <TypographyBlock ids={selectedIds} />}
             {showFillStroke && (
                 <>
                     <FillBlock ids={selectedIds} />
                     <StrokeBlock ids={selectedIds} types={types} />
                 </>
             )}
-            <VStack align={"start"} w={"100%"}>
-                <Heading size={"md"}>Layers</Heading>
-                <Layers node={primaryNode} />
-            </VStack>
         </VStack>
     );
 };

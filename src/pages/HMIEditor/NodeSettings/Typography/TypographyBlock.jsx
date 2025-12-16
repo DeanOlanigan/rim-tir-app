@@ -11,28 +11,28 @@ import { TextDecorationBlock } from "./TextDecoration";
 import { TextStyleBlock } from "./TextStyle";
 import { TextInputBlock } from "./TextInput";
 
-export const TypographyBlock = ({ node }) => {
+export const TypographyBlock = ({ ids }) => {
     return (
         <VStack align={"start"} w={"100%"}>
             <Heading size={"md"}>Typography</Heading>
-            <FontSizeBlock node={node} />
-            <TextInputBlock node={node} />
+            <FontSizeBlock ids={ids} />
+            <TextInputBlock ids={ids} />
             <HStack w={"100%"} justify={"space-between"}>
-                <LineHeightBlock node={node} />
-                <LetterSpacingBlock node={node} />
+                <LineHeightBlock ids={ids} />
+                <LetterSpacingBlock ids={ids} />
             </HStack>
             <HStack w={"100%"} justify={"space-between"}>
-                <TextAlignHBlock node={node} />
-                <TextAlignVBlock node={node} />
+                <TextAlignHBlock ids={ids} />
+                <TextAlignVBlock ids={ids} />
             </HStack>
             <HStack w={"100%"} justify={"space-between"} align={"end"}>
-                <TextWrapBlock node={node} />
-                <EllipsisBlock node={node} />
+                <TextWrapBlock ids={ids} />
+                <EllipsisBlock ids={ids} />
             </HStack>
-            <PaddingBlock node={node} />
+            <PaddingBlock ids={ids} />
             <HStack w={"100%"} justify={"space-between"}>
-                <TextDecorationBlock node={node} />
-                <TextStyleBlock node={node} />
+                <TextDecorationBlock ids={ids} />
+                <TextStyleBlock ids={ids} />
             </HStack>
         </VStack>
     );

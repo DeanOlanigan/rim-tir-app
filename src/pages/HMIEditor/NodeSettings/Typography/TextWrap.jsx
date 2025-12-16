@@ -1,14 +1,17 @@
 import { Field, SegmentGroup } from "@chakra-ui/react";
-import { useState } from "react";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const TextWrapBlock = ({ node }) => {
-    const [value, setValue] = useState(node.wrap() ?? "word");
+export const TextWrapBlock = ({ ids }) => {
+    const words = useNodesByIds(ids, "wrap");
+    const word = sameCheck(words);
 
     const handleChange = (e) => {
-        setValue(e.value);
-        node.wrap(e.value);
-        patchNodeThrottled(node.id(), { wrap: e.value });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { wrap: e.value };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
@@ -16,7 +19,7 @@ export const TextWrapBlock = ({ node }) => {
             <Field.Label>Wrap</Field.Label>
             <SegmentGroup.Root
                 size={"xs"}
-                value={value}
+                value={word}
                 onValueChange={handleChange}
             >
                 <SegmentGroup.Indicator bg={"colorPalette.solid"} />

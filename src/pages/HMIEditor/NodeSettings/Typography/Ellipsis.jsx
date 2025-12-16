@@ -1,20 +1,23 @@
 import { Switch } from "@chakra-ui/react";
-import { useState } from "react";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const EllipsisBlock = ({ node }) => {
-    const [checked, setChecked] = useState(node.ellipsis());
+export const EllipsisBlock = ({ ids }) => {
+    const ellipsises = useNodesByIds(ids, "ellipsis");
+    const ellipsis = sameCheck(ellipsises);
 
     const onChange = (value) => {
-        setChecked(value);
-        node.ellipsis(value);
-        patchNodeThrottled(node.id(), { ellipsis: value });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { ellipsis: value };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
         <Switch.Root
             size={"md"}
-            checked={checked}
+            checked={ellipsis}
             onCheckedChange={(e) => onChange(e.checked)}
         >
             <Switch.HiddenInput />

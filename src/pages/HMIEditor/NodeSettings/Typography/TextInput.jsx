@@ -1,14 +1,17 @@
 import { Field, Textarea } from "@chakra-ui/react";
-import { useState } from "react";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const TextInputBlock = ({ node }) => {
-    const [text, setText] = useState(node.text() ?? "");
+export const TextInputBlock = ({ ids }) => {
+    const texts = useNodesByIds(ids, "text");
+    const text = sameCheck(texts);
 
     const handleChange = (text) => {
-        setText(text);
-        node.text(text);
-        patchNodeThrottled(node.id(), { text });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { text };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (

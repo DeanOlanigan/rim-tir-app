@@ -115,7 +115,17 @@ export function createDrawTextTool() {
                 y: box.top,
                 width: box.width,
                 height: box.height,
+                fontSize: 12,
                 text: "Default Text",
+                lineHeight: 1,
+                letterSpacing: 0,
+                align: "left",
+                verticalAlign: "top",
+                wrap: "word",
+                ellipsis: false,
+                padding: 0,
+                textDecoration: "",
+                fontStyle: "normal",
             });
             ctx.manager.setActive(ACTIONS.select);
         },

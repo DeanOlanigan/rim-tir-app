@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { nanoid } from "nanoid";
-import { centerOf, rotateAround, round4, xyFromCenter } from "../utils";
+import { decomposeTR, isHasRadius, mul, nodeLocalMatrix } from "../utils";
 import { SHAPES } from "../constants";
 
 export const useNodeStore = create(
@@ -169,7 +169,6 @@ function deepDuplicate(ids, state, opts = {}) {
     };
 }
 
-// TODO Доделать работу группировки при вращении
 function ungroup(ids, state) {
     let newRootIds = [...state.rootIds];
     const newNodes = { ...state.nodes };
@@ -185,38 +184,19 @@ function ungroup(ids, state) {
             : [];
 
         newRootIds = newRootIds.filter((nid) => nid !== id);
-
-        const grot = groupNode.rotation ?? 0;
-
-        const pivotLocal = {
-            x: (groupNode.width ?? 0) / 2,
-            y: (groupNode.height ?? 0) / 2,
-        };
+        const G = nodeLocalMatrix(groupNode);
 
         for (const childId of groupChildren) {
             const child = state.nodes[childId];
             if (!child) continue;
 
-            const childCenterLocal = centerOf(child);
-
-            const childCenterLocalRot = rotateAround(
-                childCenterLocal,
-                pivotLocal,
-                grot,
-            );
-
-            const childCenterWorld = {
-                x: (groupNode.x ?? 0) + childCenterLocalRot.x,
-                y: (groupNode.y ?? 0) + childCenterLocalRot.y,
-            };
-
-            const nextXY = xyFromCenter(childCenterWorld, child);
+            const { x, y, rotation } = calcChildTransform(G, child);
 
             newNodes[childId] = {
                 ...child,
-                x: round4(nextXY.x),
-                y: round4(nextXY.y),
-                rotation: round4((child.rotation ?? 0) + grot),
+                x,
+                y,
+                rotation,
             };
 
             selectedIds.push(childId);
@@ -230,6 +210,24 @@ function ungroup(ids, state) {
         rootIds: newRootIds,
         nodes: newNodes,
         selectedIds: selectedIds,
+    };
+}
+
+function calcChildTransform(groupMatrix, child) {
+    const C = nodeLocalMatrix(child);
+    const W = mul(groupMatrix, C);
+    const { x, y, rotation } = decomposeTR(W);
+
+    let newX = x;
+    let newY = y;
+    if (isHasRadius(child.type)) {
+        newX = newX - child.width / 2;
+        newY = newY - child.height / 2;
+    }
+    return {
+        x: newX,
+        y: newY,
+        rotation,
     };
 }
 
@@ -260,8 +258,8 @@ function group(ids, bbox, state) {
 
         newNodes[childId] = {
             ...child,
-            x: round4((child.x ?? 0) - groupNode.x),
-            y: round4((child.y ?? 0) - groupNode.y),
+            x: (child.x ?? 0) - groupNode.x,
+            y: (child.y ?? 0) - groupNode.y,
         };
     }
 

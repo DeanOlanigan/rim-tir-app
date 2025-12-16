@@ -1,20 +1,23 @@
 import { Field, SegmentGroup } from "@chakra-ui/react";
-import { useState } from "react";
 import {
     LuAlignCenter,
     LuAlignJustify,
     LuAlignLeft,
     LuAlignRight,
 } from "react-icons/lu";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const TextAlignHBlock = ({ node }) => {
-    const [value, setValue] = useState(node.align() ?? "left");
+export const TextAlignHBlock = ({ ids }) => {
+    const aligns = useNodesByIds(ids, "align");
+    const align = sameCheck(aligns);
 
     const handleChange = (e) => {
-        setValue(e.value);
-        node.align(e.value);
-        patchNodeThrottled(node.id(), { align: e.value });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { align: e.value };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
@@ -22,7 +25,7 @@ export const TextAlignHBlock = ({ node }) => {
             <Field.Label>Horizontal align</Field.Label>
             <SegmentGroup.Root
                 size={"xs"}
-                value={value}
+                value={align}
                 onValueChange={handleChange}
             >
                 <SegmentGroup.Indicator bg={"colorPalette.solid"} />
