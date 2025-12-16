@@ -16,6 +16,7 @@ export const useActionsStore = create((set) => ({
     showNodesTree: true,
     showHitRegions: false,
     showStartCoordMarker: true,
+    viewOnlyMode: false,
 
     setCurrentAction: (action) => set({ currentAction: action }),
 
@@ -32,4 +33,5 @@ export const useActionsStore = create((set) => ({
     setShowNodesTree: (show) => set({ showNodesTree: show }),
     setShowHitRegions: (show) => set({ showHitRegions: show }),
     setShowStartCoordMarker: (show) => set({ showStartCoordMarker: show }),
+    setViewOnlyMode: (mode) => set({ viewOnlyMode: mode }),
 }));

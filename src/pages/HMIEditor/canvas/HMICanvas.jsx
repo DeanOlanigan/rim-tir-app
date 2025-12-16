@@ -20,6 +20,7 @@ export const HMICanvas = ({
 }) => {
     const bgColor = useActionsStore((state) => state.backgroundColor);
     const showHitRegions = useActionsStore((state) => state.showHitRegions);
+    const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
 
     useEffect(() => {
         if (showHitRegions) {
@@ -35,6 +36,13 @@ export const HMICanvas = ({
         }
     }, [showHitRegions, nodesLayerRef, canvasRef]);
 
+    const handlers = {
+        onPointerDown: manager.handlers.onPointerDown,
+        onPointerMove: manager.handlers.onPointerMove,
+        onPointerUp: manager.handlers.onPointerUp,
+        onContextMenu: manager.handlers.onContextMenu,
+    };
+
     useFitToFrame(canvasRef, width, height);
     return (
         <Stage
@@ -42,14 +50,11 @@ export const HMICanvas = ({
             width={width}
             height={height}
             style={{ background: bgColor }}
+            {...(viewOnlyMode ? null : handlers)}
             onWheel={manager.handlers.onWheel}
-            onPointerDown={manager.handlers.onPointerDown}
-            onPointerMove={manager.handlers.onPointerMove}
-            onPointerUp={manager.handlers.onPointerUp}
-            onContextMenu={manager.handlers.onContextMenu}
         >
             <Layer ref={nodesLayerRef} name="nodesLayer">
-                <Nodes nodesRef={nodesRef} />
+                <Nodes nodesRef={nodesRef} viewOnlyMode={viewOnlyMode} />
             </Layer>
             <Layer name="staticLayer">
                 <Grid />

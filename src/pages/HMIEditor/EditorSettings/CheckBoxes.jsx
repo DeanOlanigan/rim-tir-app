@@ -25,6 +25,11 @@ const PARAMS = [
         label: "Show start coordinate marker",
         setter: "setShowStartCoordMarker",
     },
+    {
+        param: "viewOnlyMode",
+        label: "View only mode",
+        setter: "setViewOnlyMode",
+    },
 ];
 
 export const Checkboxes = () => {

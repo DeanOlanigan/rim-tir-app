@@ -97,14 +97,14 @@ const common = {
     },
 };
 
-export const Nodes = ({ nodesRef }) => {
+export const Nodes = ({ nodesRef, viewOnlyMode }) => {
     const currentAction = useActionsStore((state) => state.currentAction);
     const rootIds = useNodeStore((state) => state.rootIds);
     return (
         <NodeWrapper
             ids={rootIds}
             nodesRef={nodesRef}
-            draggable={currentAction === ACTIONS.select}
+            draggable={currentAction === ACTIONS.select && !viewOnlyMode}
         />
     );
 };

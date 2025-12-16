@@ -57,6 +57,10 @@ const TOOLS_LIST = [
 
 export const ToolBar = ({ manager }) => {
     const action = useActionsStore((state) => state.currentAction);
+    const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
+
+    if (viewOnlyMode) return null;
+
     return (
         <RadioCard.Root
             size={"md"}
