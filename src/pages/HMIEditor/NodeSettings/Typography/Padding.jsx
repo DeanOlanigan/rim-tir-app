@@ -1,16 +1,19 @@
 import { Field, InputGroup, NumberInput } from "@chakra-ui/react";
 import { TbLineHeight } from "react-icons/tb";
-import { patchNodeThrottled } from "../utils";
-import { useState } from "react";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const PaddingBlock = ({ node }) => {
-    const [value, setValue] = useState(node.padding() ?? 0);
+export const PaddingBlock = ({ ids }) => {
+    const paddings = useNodesByIds(ids, "padding");
+    const padding = sameCheck(paddings);
 
     const handleChange = (value) => {
         const val = Number.isNaN(value) ? 0 : value;
-        node.padding(val);
-        setValue(val);
-        patchNodeThrottled(node.id(), { padding: val });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { padding: val };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
@@ -19,7 +22,7 @@ export const PaddingBlock = ({ node }) => {
             <NumberInput.Root
                 size={"xs"}
                 min={0}
-                value={value}
+                value={padding}
                 onValueChange={(e) => handleChange(e.valueAsNumber)}
             >
                 <NumberInput.Control />

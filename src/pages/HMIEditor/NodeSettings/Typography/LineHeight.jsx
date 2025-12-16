@@ -1,16 +1,19 @@
 import { Field, InputGroup, NumberInput } from "@chakra-ui/react";
 import { TbLineHeight } from "react-icons/tb";
-import { patchNodeThrottled } from "../utils";
-import { useState } from "react";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const LineHeightBlock = ({ node }) => {
-    const [value, setValue] = useState(node.lineHeight() ?? 1);
+export const LineHeightBlock = ({ ids }) => {
+    const lineHeights = useNodesByIds(ids, "lineHeight");
+    const lineHeight = sameCheck(lineHeights);
 
     const handleChangeLineHeight = (value) => {
         const val = Number.isNaN(value) ? 0 : value;
-        node.lineHeight(val);
-        setValue(val);
-        patchNodeThrottled(node.id(), { lineHeight: val });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { lineHeight: val };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
@@ -20,7 +23,7 @@ export const LineHeightBlock = ({ node }) => {
                 size={"xs"}
                 min={0}
                 step={0.1}
-                value={value}
+                value={lineHeight}
                 onValueChange={(e) => handleChangeLineHeight(e.valueAsNumber)}
             >
                 <NumberInput.Control />

@@ -1,16 +1,19 @@
 import { Field, InputGroup, NumberInput } from "@chakra-ui/react";
 import { TbLineHeight } from "react-icons/tb";
-import { patchNodeThrottled } from "../utils";
-import { useState } from "react";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
-export const LetterSpacingBlock = ({ node }) => {
-    const [value, setValue] = useState(node.letterSpacing() ?? 0);
+export const LetterSpacingBlock = ({ ids }) => {
+    const letterSpacings = useNodesByIds(ids, "letterSpacing");
+    const letterSpacing = sameCheck(letterSpacings);
 
     const handleChangeLetterSpacing = (value) => {
         const val = Number.isNaN(value) ? 0 : value;
-        node.letterSpacing(val);
-        setValue(val);
-        patchNodeThrottled(node.id(), { letterSpacing: val });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { letterSpacing: val };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
@@ -20,7 +23,7 @@ export const LetterSpacingBlock = ({ node }) => {
                 size={"xs"}
                 min={0}
                 step={0.1}
-                value={value}
+                value={letterSpacing}
                 onValueChange={(e) =>
                     handleChangeLetterSpacing(e.valueAsNumber)
                 }

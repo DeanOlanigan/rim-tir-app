@@ -114,7 +114,7 @@ const BaseSettings = ({ api, types, selectedIds }) => {
                 {showCornerRadius && <CornerRadiusBlock node={primaryNode} />}
                 {showSides && <SidesBlock ids={selectedIds} />}
             </VStack>
-            {showTypography && <TypographyBlock node={primaryNode} />}
+            {showTypography && <TypographyBlock ids={selectedIds} />}
             {showFillStroke && (
                 <>
                     <FillBlock ids={selectedIds} />

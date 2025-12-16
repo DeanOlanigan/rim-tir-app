@@ -5,9 +5,9 @@ import {
     Group,
     Icon,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { LuStrikethrough, LuUnderline } from "react-icons/lu";
-import { patchNodeThrottled } from "../utils";
+import { sameCheck, useNodesByIds } from "../utils";
+import { patchStoreRaf } from "../../store/node-store";
 
 const items = [
     {
@@ -20,19 +20,25 @@ const items = [
     },
 ];
 
-export const TextDecorationBlock = ({ node }) => {
-    const [value, setValue] = useState(node.textDecoration().split(" "));
+export const TextDecorationBlock = ({ ids }) => {
+    const textDecorations = useNodesByIds(ids, "textDecoration");
+    const textDecoration = sameCheck(textDecorations);
 
     const handleChange = (e) => {
-        setValue(e);
         const str = e.length === 0 ? "" : e.join(" ");
-        node.textDecoration(str);
-        patchNodeThrottled(node.id(), { textDecoration: str });
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { textDecoration: str };
+        });
+        patchStoreRaf(ids, patch);
     };
 
     return (
         <Fieldset.Root>
-            <CheckboxGroup value={value} onValueChange={handleChange}>
+            <CheckboxGroup
+                value={textDecoration?.split(" ")}
+                onValueChange={handleChange}
+            >
                 <Fieldset.Legend>Text decoration</Fieldset.Legend>
                 <Group attached>
                     {items.map((item) => (
