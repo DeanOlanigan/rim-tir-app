@@ -9,7 +9,6 @@ import { LuBold, LuItalic } from "react-icons/lu";
 import { sameCheck, useNodesByIds } from "../utils";
 import { patchStoreRaf } from "../../store/node-store";
 
-// eslint-disable-next-line
 //TODO Можно добавить обработку font weight
 // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font#formal_syntax
 

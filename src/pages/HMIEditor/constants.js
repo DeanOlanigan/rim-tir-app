@@ -66,3 +66,4 @@ export const SHAPES_ICONS = {
     [SHAPES.arrow]: LuMoveUpRight,
     [SHAPES.group]: LuGroup,
 };
+export const MAX_POLY_CORNERS = 12;

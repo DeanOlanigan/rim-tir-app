@@ -2,6 +2,7 @@ import { InputGroup, NumberInput } from "@chakra-ui/react";
 import { LuHexagon } from "react-icons/lu";
 import { sameCheck, useNodesByIds } from "./utils";
 import { patchStoreRaf } from "../store/node-store";
+import { MAX_POLY_CORNERS } from "../constants";
 
 export const SidesBlock = ({ ids }) => {
     const sides = useNodesByIds(ids, "sides");
@@ -21,7 +22,7 @@ export const SidesBlock = ({ ids }) => {
         <NumberInput.Root
             size={"xs"}
             min={3}
-            max={12}
+            max={MAX_POLY_CORNERS}
             step={1}
             value={side}
             onValueChange={(e) => handleChange(e.valueAsNumber)}
