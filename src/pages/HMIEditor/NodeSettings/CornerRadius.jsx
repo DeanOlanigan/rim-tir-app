@@ -7,7 +7,7 @@ import {
     SimpleGrid,
     Slider,
 } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     RxCornerBottomLeft,
     RxCornerBottomRight,
@@ -15,7 +15,9 @@ import {
     RxCornerTopRight,
 } from "react-icons/rx";
 import { LuMaximize } from "react-icons/lu";
-import { patchNodeThrottled } from "./utils";
+import { sameCheck, useNodesByIds } from "./utils";
+import { SHAPES } from "../constants";
+import { patchStoreRaf } from "../store/node-store";
 
 const CORNER_ICONS = [
     RxCornerTopLeft,
@@ -23,20 +25,6 @@ const CORNER_ICONS = [
     RxCornerBottomLeft,
     RxCornerBottomRight,
 ];
-
-function fromNodeCornerRadius(node) {
-    const cr = node.cornerRadius();
-    if (Array.isArray(cr)) {
-        const [tl = 0, tr = 0, br = 0, bl = 0] = cr;
-        return [tl, tr, bl, br];
-    }
-    const v = typeof cr === "number" && Number.isFinite(cr) ? cr : 0;
-    return [v, v, v, v];
-}
-
-function toNodeCornerRadius([tl, tr, bl, br]) {
-    return [tl, tr, br, bl];
-}
 
 function normalizeNumber(input) {
     if (typeof input === "number") {
@@ -56,43 +44,131 @@ function areAllEqual(arr) {
     return arr.every((v) => v === first);
 }
 
-export const CornerRadiusBlock = ({ node }) => {
-    // TODO учитывать RegylarPolygon с количеством сторон != 4
-    const initialCorners = useMemo(() => fromNodeCornerRadius(node), [node]);
-    const [corners, setCorners] = useState(initialCorners);
-    const [showMixed, setShowMixed] = useState(!areAllEqual(initialCorners));
+function fromRectCornerRadiusStore(value) {
+    if (Array.isArray(value)) {
+        const [tl = 0, tr = 0, br = 0, bl = 0] = value;
+        return [tl, tr, bl, br].map((v) => normalizeNumber(v));
+    }
+    const v = normalizeNumber(value);
+    return [v, v, v, v];
+}
 
-    const syncNode = (nextCorners) => {
-        node.cornerRadius(toNodeCornerRadius(nextCorners));
+function toRectCornerRadiusStore([tl, tr, bl, br]) {
+    return [tl, tr, br, bl];
+}
+
+export const CornerRadiusBlock = ({ ids, types }) => {
+    const rawCornerRadiuses = useNodesByIds(ids, "cornerRadius");
+
+    const allRects = useMemo(
+        () => types.length > 0 && types.every((t) => t === SHAPES.rect),
+        [types],
+    );
+
+    const uniformPerNode = useMemo(
+        () =>
+            ids.map((_, idx) => {
+                const t = types[idx];
+                const cr = rawCornerRadiuses[idx];
+
+                if (t === SHAPES.rect) {
+                    const corners = fromRectCornerRadiusStore(cr);
+                    return areAllEqual(corners) ? corners[0] : null;
+                }
+
+                if (t === SHAPES.polygon) {
+                    if (Array.isArray(cr)) return normalizeNumber(cr[0] ?? 0);
+                    return normalizeNumber(cr);
+                }
+
+                return null;
+            }),
+        [ids, types, rawCornerRadiuses],
+    );
+
+    const uniformValue = useMemo(() => {
+        if (!uniformPerNode.length) return "";
+        const first = uniformPerNode[0];
+        if (first === null) return "";
+        return uniformPerNode.every((v) => v === first) ? first : "";
+    }, [uniformPerNode]);
+
+    const rectCornersByNode = useMemo(() => {
+        if (!allRects) return [];
+        return rawCornerRadiuses.map((cr) => fromRectCornerRadiusStore(cr));
+    }, [allRects, rawCornerRadiuses]);
+
+    const sameRectCorners = useMemo(() => {
+        if (!allRects || !rectCornersByNode.length) return null;
+        const first = rectCornersByNode[0];
+        const ok = rectCornersByNode.every(
+            (a) =>
+                a.length === first.length && a.every((v, i) => v === first[i]),
+        );
+        return ok ? first : null;
+    }, [allRects, rectCornersByNode]);
+
+    const perCornerValues = useMemo(() => {
+        if (!allRects) return [];
+        return [0, 1, 2, 3].map((i) =>
+            sameCheck(rectCornersByNode.map((cr) => cr[i])),
+        );
+    }, [allRects, rectCornersByNode]);
+
+    const initialShowMixed = useMemo(() => {
+        if (!allRects) return false;
+        if (!sameRectCorners) return true;
+        return !areAllEqual(sameRectCorners);
+    }, [allRects, sameRectCorners]);
+
+    const [showMixed, setShowMixed] = useState(initialShowMixed);
+
+    useEffect(() => {
+        if (!allRects && showMixed) setShowMixed(false);
+    }, [allRects, showMixed]);
+
+    const patchUniformAll = (raw) => {
+        const v = normalizeNumber(raw);
+        const patch = {};
+        ids.forEach((id, idx) => {
+            const t = types[idx];
+            if (t === SHAPES.rect) {
+                patch[id] = {
+                    cornerRadius: toRectCornerRadiusStore([v, v, v, v]),
+                };
+            } else if (t === SHAPES.polygon) {
+                patch[id] = { cornerRadius: v };
+            }
+        });
+        patchStoreRaf(ids, patch);
     };
 
-    const handleUniformChange = (raw) => {
+    const patchMixedRectAll = (cornerIndex, raw) => {
+        if (!allRects) return;
         const v = normalizeNumber(raw);
-        const next = [v, v, v, v];
-        setCorners(next);
-        syncNode(next);
-        patchNodeThrottled(node.id(), { cornerRadius: next });
-    };
 
-    const handleMixedChange = (index, raw) => {
-        const v = normalizeNumber(raw);
-        const next = [...corners];
-        next[index] = v;
-        setCorners(next);
-        syncNode(next);
-        patchNodeThrottled(node.id(), { cornerRadius: next });
+        const base = sameRectCorners ?? rectCornersByNode[0] ?? [0, 0, 0, 0];
+        const next = [...base];
+        next[cornerIndex] = v;
+
+        const patch = {};
+        ids.forEach((id, idx) => {
+            const t = types[idx];
+            if (t === SHAPES.rect) {
+                patch[id] = { cornerRadius: toRectCornerRadiusStore(next) };
+            }
+        });
+        patchStoreRaf(ids, patch);
     };
 
     const toggleMixed = () => {
+        if (!allRects) return;
         setShowMixed((prev) => {
             const next = !prev;
             if (!next) {
-                setCorners((prev) => {
-                    const v = normalizeNumber(prev[0] ?? 0);
-                    const collapsed = [v, v, v, v];
-                    syncNode(collapsed);
-                    return collapsed;
-                });
+                const base = sameRectCorners ??
+                    rectCornersByNode[0] ?? [0, 0, 0, 0];
+                patchUniformAll(base[0] ?? 0);
             }
             return next;
         });
@@ -107,10 +183,8 @@ export const CornerRadiusBlock = ({ node }) => {
                         size={"xs"}
                         min={0}
                         max={100}
-                        value={areAllEqual(corners) ? (corners[0] ?? 0) : ""}
-                        onValueChange={(e) =>
-                            handleUniformChange(e.valueAsNumber)
-                        }
+                        value={uniformValue}
+                        onValueChange={(e) => patchUniformAll(e.valueAsNumber)}
                     >
                         <NumberInput.Control />
                         <InputGroup
@@ -129,8 +203,8 @@ export const CornerRadiusBlock = ({ node }) => {
                     <Slider.Root
                         size={"sm"}
                         w={"100%"}
-                        value={[areAllEqual(corners) ? (corners[0] ?? 0) : 0]}
-                        onValueChange={(e) => handleUniformChange(e.value[0])}
+                        value={[uniformValue === "" ? 0 : (uniformValue ?? 0)]}
+                        onValueChange={(e) => patchUniformAll(e.value[0])}
                     >
                         <Slider.Control>
                             <Slider.Track>
@@ -139,7 +213,7 @@ export const CornerRadiusBlock = ({ node }) => {
                             <Slider.Thumbs />
                         </Slider.Control>
                     </Slider.Root>
-                    {node.attrs.type === "rect" && (
+                    {allRects && (
                         <IconButton
                             size={"xs"}
                             variant={showMixed ? "solid" : "outline"}
@@ -149,9 +223,9 @@ export const CornerRadiusBlock = ({ node }) => {
                         </IconButton>
                     )}
                 </Group>
-                {showMixed && (
-                    <SimpleGrid columns={2} gap={2}>
-                        {corners.map((value, index) => {
+                {allRects && showMixed && (
+                    <SimpleGrid columns={2} gap={2} mt={2}>
+                        {perCornerValues.map((value, index) => {
                             const Icon = CORNER_ICONS[index];
                             return (
                                 <NumberInput.Root
@@ -161,7 +235,7 @@ export const CornerRadiusBlock = ({ node }) => {
                                     max={100}
                                     value={value}
                                     onValueChange={(e) =>
-                                        handleMixedChange(
+                                        patchMixedRectAll(
                                             index,
                                             e.valueAsNumber,
                                         )
@@ -178,7 +252,7 @@ export const CornerRadiusBlock = ({ node }) => {
                                             </NumberInput.Scrubber>
                                         }
                                     >
-                                        <NumberInput.Input />
+                                        <NumberInput.Input placeholder="Mixed" />
                                     </InputGroup>
                                 </NumberInput.Root>
                             );

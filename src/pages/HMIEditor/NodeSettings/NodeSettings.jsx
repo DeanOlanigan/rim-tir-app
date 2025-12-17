@@ -70,7 +70,6 @@ export const NodeSettings = ({ api }) => {
 };
 
 const BaseSettings = ({ api, types, selectedIds }) => {
-    const primaryNode = api.canvas.getNodes().get(selectedIds[0]);
     const isMultiple = selectedIds.length > 1;
     const heading = isMultiple
         ? `${selectedIds.length} selected`
@@ -111,7 +110,9 @@ const BaseSettings = ({ api, types, selectedIds }) => {
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Appearance</Heading>
                 <OpacityBlock ids={selectedIds} />
-                {showCornerRadius && <CornerRadiusBlock node={primaryNode} />}
+                {showCornerRadius && (
+                    <CornerRadiusBlock ids={selectedIds} types={types} />
+                )}
                 {showSides && <SidesBlock ids={selectedIds} />}
             </VStack>
             {showTypography && <TypographyBlock ids={selectedIds} />}
