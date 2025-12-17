@@ -1,4 +1,5 @@
 import "./ellipse";
+import "./polygon";
 import "./line";
 import "./arrow";
 import "./rect";

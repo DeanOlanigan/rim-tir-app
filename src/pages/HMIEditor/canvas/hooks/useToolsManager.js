@@ -7,13 +7,13 @@ import { createDrawEllipseTool } from "../tools/drawEllipse";
 import { createDrawLineTool } from "../tools/drawLine";
 import { createDrawArrowTool } from "../tools/drawArrow";
 import { ACTIONS } from "../../constants";
-import { createDrawPolygonTool } from "../tools/drawPolygon";
 import { createDrawTextTool } from "../tools/drawText";
 import { createCanvasApi } from "../utils/createCanvasApi";
 import { useNodeStore } from "../../store/node-store";
 import { useActionsStore } from "../../store/actions-store";
 import { useContextMenuStore } from "@/store/contextMenu-store";
 import { createStateApi } from "../utils/createStateApi";
+import { createDrawVariablePolygonTool } from "../tools/drawVariablePolygon";
 
 export function useToolsManager() {
     const managerRef = useRef(null);
@@ -45,7 +45,7 @@ export function useToolsManager() {
             [ACTIONS.select]: createSelectTool(),
             [ACTIONS.hand]: createHandTool(),
             [ACTIONS.square]: createDrawRectTool(),
-            [ACTIONS.polygon]: createDrawPolygonTool(),
+            [ACTIONS.polygon]: createDrawVariablePolygonTool(),
             [ACTIONS.ellipse]: createDrawEllipseTool(),
             [ACTIONS.text]: createDrawTextTool(),
             [ACTIONS.line]: createDrawLineTool(),

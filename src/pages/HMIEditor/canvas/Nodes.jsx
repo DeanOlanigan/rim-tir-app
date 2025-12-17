@@ -1,17 +1,10 @@
-import {
-    Arrow,
-    Ellipse,
-    Group,
-    Line,
-    Rect,
-    RegularPolygon,
-    Text,
-} from "react-konva";
+import { Arrow, Ellipse, Group, Line, Rect, Text } from "react-konva";
 import { useActionsStore } from "./../store/actions-store";
 import { patchStoreRaf, useNodeStore } from "./../store/node-store";
 import { ACTIONS, SHAPES } from "../constants";
 import { dragBound } from "./utils/dragBound";
 import { isHasRadius, round4 } from "../utils";
+import { VariablePolygon } from "./shapes/VariablePolygon.react";
 
 function ellipseToKonva(p) {
     const cx = p.x + p.width / 2;
@@ -138,8 +131,21 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
     switch (node.type) {
         case SHAPES.rect:
             return <Rect key={id} {...params} ref={registerRef} />;
-        case SHAPES.polygon:
-            return <RegularPolygon key={id} {...params} ref={registerRef} />;
+        case SHAPES.polygon: {
+            const k = ellipseToKonva(node);
+            return (
+                <VariablePolygon
+                    key={id}
+                    {...params}
+                    x={k.x}
+                    y={k.y}
+                    radiusX={k.radiusX}
+                    radiusY={k.radiusY}
+                    rotation={k.rotation}
+                    ref={registerRef}
+                />
+            );
+        }
         case SHAPES.ellipse: {
             const k = ellipseToKonva(node);
             return (

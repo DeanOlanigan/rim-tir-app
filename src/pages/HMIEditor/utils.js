@@ -113,6 +113,11 @@ export function nodeLocalMatrix(n) {
         const h = n.height ?? 0;
         return matTR(x + w / 2, y + h / 2, rot);
     }
+    if (n.type === SHAPES.polygon) {
+        const w = n.width ?? 0;
+        const h = n.height ?? 0;
+        return matTR(x + w / 2, y + h / 2, rot);
+    }
 
     // остальные: x/y как есть
     return matTR(x, y, rot);
