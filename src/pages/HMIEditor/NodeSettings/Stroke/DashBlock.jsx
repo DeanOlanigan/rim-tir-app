@@ -16,6 +16,22 @@ const lineTypes = createListCollection({
     ],
 });
 
+function resolveDash(dashes) {
+    if (!Array.isArray(dashes) || dashes.length === 0) {
+        return { mixed: true, value: [0, 0] };
+    }
+
+    const [a, b] = dashes[0] ?? [];
+    const same = dashes.every(
+        (d) => Array.isArray(d) && d.length === 2 && d[0] === a && d[1] === b,
+    );
+
+    return {
+        mixed: !same,
+        value: same ? [a, b] : [a ?? 0, b ?? 0],
+    };
+}
+
 export const DashBlock = ({ ids }) => {
     const allDashEnabled = useNodesByIds(ids, "dashEnabled");
     let dashEnabled = sameCheck(allDashEnabled);
@@ -33,16 +49,12 @@ export const DashBlock = ({ ids }) => {
     }
 
     const dashes = useNodesByIds(ids, "dash");
-    const firstDash = dashes[0];
-    // TODO очень хрупкая проверка
-    const dash = dashes.every(
-        (d) => d[0] === firstDash[0] && d[1] === firstDash[1],
-    )
-        ? firstDash
-        : ["", ""];
+    const { mixed: dashMixed, value: dash } = resolveDash(dashes);
 
     const handleTypeChange = (e) => {
-        let dashEnabled = e.value[0] === "solid" ? false : true;
+        const value = e.value[0];
+        if (value === "solid") dashEnabled = false;
+        if (value === "dashed") dashEnabled = true;
         const patch = {};
         ids.forEach((id) => {
             patch[id] = { dashEnabled };
@@ -52,11 +64,18 @@ export const DashBlock = ({ ids }) => {
 
     const handleDashChange = (value, index) => {
         const val = Number.isNaN(value) ? 0 : value;
-        const newDashArray = [...dash];
-        newDashArray[index] = val;
+        const next = [...dash];
+
+        if (dashMixed) {
+            next[0] ??= 4;
+            next[1] ??= 4;
+        }
+
+        next[index] = val;
+
         const patch = {};
         ids.forEach((id) => {
-            patch[id] = { dash: newDashArray };
+            patch[id] = { dash: next };
         });
         patchStoreRaf(ids, patch);
     };
