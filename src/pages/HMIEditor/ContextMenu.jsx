@@ -5,11 +5,12 @@ import { useActionsStore } from "./store/actions-store";
 import { layerShift } from "./utils";
 
 export const ContextMenu = () => {
-    const { updateContext } = useContextMenuStore.getState();
-    const { apiPath, x, y, visible } = useContextMenuStore(
-        (state) => state.sch,
-    );
-    const { removeNode, setSelectedIds } = useNodeStore.getState();
+    const {
+        apiPath: ids,
+        x,
+        y,
+        visible,
+    } = useContextMenuStore((state) => state.sch);
     const showGrid = useActionsStore((state) => state.showGrid);
     const debugMode = useActionsStore((state) => state.debugMode);
     const showNodesTree = useActionsStore((state) => state.showNodesTree);
@@ -17,7 +18,11 @@ export const ContextMenu = () => {
     return (
         <Menu.Root
             open={visible}
-            onOpenChange={(e) => updateContext("sch", { visible: e.open })}
+            onOpenChange={(e) =>
+                useContextMenuStore
+                    .getState()
+                    .updateContext("sch", { visible: e.open })
+            }
             anchorPoint={{ x, y }}
             positioning={{
                 getAnchorRect: () =>
@@ -36,102 +41,90 @@ export const ContextMenu = () => {
             <Portal>
                 <Menu.Positioner>
                     <Menu.Content>
-                        <Menu.ItemGroup>
-                            {apiPath ? (
-                                <>
-                                    <Menu.ItemGroupLabel>
-                                        {apiPath}
-                                    </Menu.ItemGroupLabel>
-                                    <Menu.Item
-                                        value="moveToTop"
-                                        onClick={() =>
-                                            layerShift(apiPath, "moveToTop")
-                                        }
-                                    >
-                                        Move to top
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        value="moveUp"
-                                        onClick={() =>
-                                            layerShift(apiPath, "moveUp")
-                                        }
-                                    >
-                                        Move up
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        value="moveDown"
-                                        onClick={() =>
-                                            layerShift(apiPath, "moveDown")
-                                        }
-                                    >
-                                        Move down
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        value="moveToBottom"
-                                        onClick={() =>
-                                            layerShift(apiPath, "moveToBottom")
-                                        }
-                                    >
-                                        Move to bottom
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        value="delete"
-                                        color="fg.error"
-                                        _hover={{
-                                            bg: "bg.error",
-                                            color: "fg.error",
-                                        }}
-                                        onClick={() => {
-                                            removeNode(apiPath);
-                                            setSelectedIds([]);
-                                        }}
-                                    >
-                                        Delete
-                                    </Menu.Item>
-                                </>
-                            ) : (
-                                <>
-                                    <Menu.CheckboxItem
-                                        value="showGrid"
-                                        checked={showGrid}
-                                        onCheckedChange={() =>
-                                            useActionsStore
-                                                .getState()
-                                                .setShowGrid(!showGrid)
-                                        }
-                                    >
-                                        Show grid
-                                        <Menu.ItemIndicator />
-                                    </Menu.CheckboxItem>
-                                    <Menu.CheckboxItem
-                                        value="debugMode"
-                                        checked={debugMode}
-                                        onCheckedChange={() =>
-                                            useActionsStore
-                                                .getState()
-                                                .setDebugMode(!debugMode)
-                                        }
-                                    >
-                                        Debug mode
-                                        <Menu.ItemIndicator />
-                                    </Menu.CheckboxItem>
-                                    <Menu.CheckboxItem
-                                        value="showNodesTree"
-                                        checked={showNodesTree}
-                                        onCheckedChange={() =>
-                                            useActionsStore
-                                                .getState()
-                                                .setShowNodesTree(
-                                                    !showNodesTree,
-                                                )
-                                        }
-                                    >
-                                        Show nodes tree
-                                        <Menu.ItemIndicator />
-                                    </Menu.CheckboxItem>
-                                </>
-                            )}
-                        </Menu.ItemGroup>
+                        {ids && ids.length > 0 ? (
+                            <Menu.ItemGroup>
+                                <Menu.Item
+                                    value="moveToTop"
+                                    onClick={() => layerShift(ids, "moveToTop")}
+                                >
+                                    Move to top
+                                </Menu.Item>
+                                <Menu.Item
+                                    value="moveUp"
+                                    onClick={() => layerShift(ids, "moveUp")}
+                                >
+                                    Move up
+                                </Menu.Item>
+                                <Menu.Item
+                                    value="moveDown"
+                                    onClick={() => layerShift(ids, "moveDown")}
+                                >
+                                    Move down
+                                </Menu.Item>
+                                <Menu.Item
+                                    value="moveToBottom"
+                                    onClick={() =>
+                                        layerShift(ids, "moveToBottom")
+                                    }
+                                >
+                                    Move to bottom
+                                </Menu.Item>
+                                <Menu.Item
+                                    value="delete"
+                                    color="fg.error"
+                                    _hover={{
+                                        bg: "bg.error",
+                                        color: "fg.error",
+                                    }}
+                                    onClick={() => {
+                                        useNodeStore
+                                            .getState()
+                                            .removeNodes(ids);
+                                    }}
+                                >
+                                    Delete
+                                </Menu.Item>
+                            </Menu.ItemGroup>
+                        ) : (
+                            <Menu.ItemGroup>
+                                <Menu.CheckboxItem
+                                    value="showGrid"
+                                    checked={showGrid}
+                                    onCheckedChange={() =>
+                                        useActionsStore
+                                            .getState()
+                                            .setShowGrid(!showGrid)
+                                    }
+                                >
+                                    Show grid
+                                    <Menu.ItemIndicator />
+                                </Menu.CheckboxItem>
+                                <Menu.CheckboxItem
+                                    value="debugMode"
+                                    checked={debugMode}
+                                    onCheckedChange={() =>
+                                        useActionsStore
+                                            .getState()
+                                            .setDebugMode(!debugMode)
+                                    }
+                                >
+                                    Debug mode
+                                    <Menu.ItemIndicator />
+                                </Menu.CheckboxItem>
+                                <Menu.CheckboxItem
+                                    value="showNodesTree"
+                                    checked={showNodesTree}
+                                    onCheckedChange={() =>
+                                        useActionsStore
+                                            .getState()
+                                            .setShowNodesTree(!showNodesTree)
+                                    }
+                                >
+                                    Show nodes tree
+                                    <Menu.ItemIndicator />
+                                </Menu.CheckboxItem>
+                            </Menu.ItemGroup>
+                        )}
                     </Menu.Content>
                 </Menu.Positioner>
             </Portal>

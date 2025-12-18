@@ -148,20 +148,22 @@ export function createToolManager({ toolsMap, api }) {
         },
         onContextMenu(e) {
             e.evt.preventDefault();
-            const stage = e.currentTarget;
-            if (!stage) return;
-            const rect = stage.container().getBoundingClientRect();
-            const p = stage.getPointerPosition();
-            if (!p) return;
             const target = e.target;
             const parentGroups = target.findAncestors("Group");
             const id =
                 parentGroups[parentGroups.length - 1]?.id() || target.id();
-            // TODO сделать с учетом текущего выделения и нескольких id
+            const selectedIds = api.getSelectedIds();
+            let ids = selectedIds;
+
+            if (id && !selectedIds.includes(id)) {
+                api.setSelectedIds([id]);
+                ids = [id];
+            }
+
             api.updateContextMenu("sch", {
-                x: rect.left + p.x + 4,
-                y: rect.top + p.y + 4,
-                apiPath: id,
+                x: e.evt.clientX + 4,
+                y: e.evt.clientY + 4,
+                apiPath: ids,
                 visible: true,
             });
             e.cancelBubble = true;
