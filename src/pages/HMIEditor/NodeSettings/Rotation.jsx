@@ -14,7 +14,7 @@ import {
 import { RxAngle } from "react-icons/rx";
 import { sameCheck, useNodesByIds } from "./utils";
 import { rotateNodeAroundCenter } from "../canvas/services/shapeTransforms";
-import { patchStoreRaf, useNodeStore } from "../store/node-store";
+import { patchStoreRaf } from "../store/node-store";
 
 function toDegIn0To360Range(deg) {
     return ((deg % 360) + 360) % 360;
@@ -29,10 +29,7 @@ export const RotationBlock = ({ ids, api }) => {
         const next = toDegIn0To360Range(val);
         const patch = {};
         ids.forEach((id) => {
-            const width = useNodeStore.getState().nodes[id].width;
-            const height = useNodeStore.getState().nodes[id].height;
-            const size = { width, height };
-            patch[id] = rotateNodeAroundCenter(api, id, next, size);
+            patch[id] = rotateNodeAroundCenter(api, id, next);
         });
 
         patchStoreRaf(ids, patch);

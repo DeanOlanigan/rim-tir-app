@@ -23,13 +23,22 @@ const FillColorSolid = ({ ids }) => {
         patchStoreRaf(ids, patch);
     };
 
-    //TODO вернуть onValueChangeEnd
+    // eslint-disable-next-line
+    const handleChangeColorEnd = (fill) => {
+        //TODO Добавить undo/redo
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { fill };
+        });
+        patchStoreRaf(ids, patch);
+    };
 
     return (
         <ColorPicker.Root
             size={"xs"}
             value={fill}
             onValueChange={(e) => handleChangeColor(e.valueAsString)}
+            onValueChangeEnd={(e) => handleChangeColorEnd(e.valueAsString)}
             lazyMount
             unmountOnExit
         >

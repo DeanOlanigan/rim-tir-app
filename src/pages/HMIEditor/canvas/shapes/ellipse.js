@@ -7,14 +7,11 @@ registerShape(SHAPES.ellipse, {
         const rx = Math.abs(konvaNode.radiusX() * konvaNode.scaleX());
         const ry = Math.abs(konvaNode.radiusY() * konvaNode.scaleY());
 
-        const width = rx * 2;
-        const height = ry * 2;
-
         const patch = {
-            x: round4(konvaNode.x() - width / 2),
-            y: round4(konvaNode.y() - height / 2),
-            width: round4(width),
-            height: round4(height),
+            x: round4(konvaNode.x() - rx),
+            y: round4(konvaNode.y() - ry),
+            width: round4(rx * 2),
+            height: round4(ry * 2),
             rotation: round4(konvaNode.rotation()),
             scaleX: 1,
             scaleY: 1,
@@ -37,14 +34,11 @@ registerShape(SHAPES.ellipse, {
         const rx = Math.abs(konvaNode.radiusX() * konvaNode.scaleX());
         const ry = Math.abs(konvaNode.radiusY() * konvaNode.scaleY());
 
-        const width = rx * 2;
-        const height = ry * 2;
-
         const patch = {
-            x: round4(konvaNode.x() - width / 2),
-            y: round4(konvaNode.y() - height / 2),
-            width: round4(width),
-            height: round4(height),
+            x: round4(konvaNode.x() - rx),
+            y: round4(konvaNode.y() - ry),
+            width: round4(rx * 2),
+            height: round4(ry * 2),
             rotation: round4(konvaNode.rotation()),
             scaleX: 1,
             scaleY: 1,

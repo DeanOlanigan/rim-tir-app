@@ -14,13 +14,22 @@ export const StrokeColorSolidBlock = ({ ids }) => {
         patchStoreRaf(ids, patch);
     };
 
-    //TODO вернуть onValueChangeEnd
+    // eslint-disable-next-line
+    const handleChangeColorEnd = (stroke) => {
+        //TODO Добавить undo/redo
+        const patch = {};
+        ids.forEach((id) => {
+            patch[id] = { stroke };
+        });
+        patchStoreRaf(ids, patch);
+    };
 
     return (
         <ColorPicker.Root
             size={"xs"}
             value={stroke}
             onValueChange={(e) => handleChangeColor(e.valueAsString)}
+            onValueChangeEnd={(e) => handleChangeColorEnd(e.valueAsString)}
             lazyMount
             unmountOnExit
         >

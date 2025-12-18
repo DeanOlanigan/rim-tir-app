@@ -9,7 +9,7 @@ import { LuBold, LuItalic } from "react-icons/lu";
 import { sameCheck, useNodesByIds } from "../utils";
 import { patchStoreRaf } from "../../store/node-store";
 
-//TODO Можно добавить обработку font weight
+// [ ] Можно добавить обработку font weight
 // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font#formal_syntax
 
 const items = [

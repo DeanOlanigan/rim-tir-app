@@ -1,16 +1,14 @@
 import { round4 } from "../../utils";
 
-export function rotateNodeAroundCenter(api, id, angle, sizeFromStore) {
+export function rotateNodeAroundCenter(api, id, angle) {
     const node = api.canvas.getNodes().get(id);
     if (!node) return;
-    /* const stage = api.canvas.getStage();
-    const { x, y } = applyCenteredTransform(node, stage, () =>
-        node.rotation(angle),
-    );
 
-    return { x, y, rotation: angle }; */
+    const width = node.width();
+    const height = node.height();
+    const size = { width, height };
 
-    return rotateNodeForStore(node, angle, { size: sizeFromStore });
+    return rotateNodeForStore(node, angle, { size });
 }
 
 /* function applyCenteredTransform(node, stage, transformFn) {
