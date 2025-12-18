@@ -1,61 +1,30 @@
-import { memo, useCallback, useEffect, useRef } from "react";
+import { memo } from "react";
 import { useActionsStore } from "../store/actions-store";
-import { useNodeStore } from "../store/node-store";
+import { patchStoreRaf, useNodeStore } from "../store/node-store";
 import { Circle } from "react-konva";
 import { dragBound } from "./utils/dragBound";
 import { isLineLikeType } from "../utils";
 
-export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
+function dragBoundFunc(pos) {
+    const { gridSize, snapToGrid } = useActionsStore.getState();
+    const stage = this.getStage();
+    return dragBound(pos, stage, gridSize, snapToGrid);
+}
+
+function lineLocal(line, x, y) {
+    return line.getTransform().point({ x, y });
+}
+
+export const LineTransformer = memo(({ nodesRef, canvasRef }) => {
     const scale = useActionsStore((state) => state.scale);
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const primaryNode = useNodeStore((state) => state.nodes[selectedIds[0]]);
-    const startPos = useRef(null);
 
-    const dragBoundFunc = useCallback(function (pos) {
-        const { gridSize, snapToGrid } = useActionsStore.getState();
-        const stage = this.getStage();
-        return dragBound(pos, stage, gridSize, snapToGrid);
-    }, []);
-
-    const onNodeMoveStart = useCallback((e) => {
-        const node = e.target;
-        startPos.current = node.position();
-    }, []);
-
-    const onNodeMove = useCallback(
-        (e) => {
-            const node = e.target;
-            const circles = overviewRef.current.find(".line-drag-handle");
-            const dx = node.x() - startPos.current.x;
-            const dy = node.y() - startPos.current.y;
-            circles.forEach((c) =>
-                c.position({ x: c.x() + dx, y: c.y() + dy }),
-            );
-            startPos.current = node.position();
-        },
-        [overviewRef],
-    );
-
-    useEffect(() => {
-        if (!primaryNode || !isLineLikeType(primaryNode.type)) return;
-
-        const node = nodesRef.current.get(primaryNode.id);
-        if (!node) return;
-
-        node.on("dragmove.ltr", onNodeMove);
-        node.on("dragstart.ltr", onNodeMoveStart);
-
-        return () => {
-            node.off(".ltr");
-        };
-    }, [primaryNode, nodesRef, onNodeMove, onNodeMoveStart]);
-
+    if (selectedIds.length !== 1) return null;
     if (!primaryNode || !isLineLikeType(primaryNode.type)) return null;
-
     const line = nodesRef.current.get(primaryNode.id);
     if (!line) return null;
-
-    const points = line.points();
+    const points = primaryNode.points;
     if (!points || points.length < 4) return null;
 
     const onDragMove = (e, pointIndex) => {
@@ -67,6 +36,7 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
 
         const newPoints = oldPoints.slice();
 
+        let x, y, points;
         if (pointIndex === 0) {
             const worldFirstX = line.x() + oldPoints[0];
             const worldFirstY = line.y() + oldPoints[1];
@@ -88,16 +58,18 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
             newPoints[0] = 0;
             newPoints[1] = 0;
 
-            line.x(newLineX);
-            line.y(newLineY);
-            line.points(newPoints);
+            x = newLineX;
+            y = newLineY;
+            points = newPoints;
         } else {
             newPoints[pointIndex * 2] = circlePos.x - line.x();
             newPoints[pointIndex * 2 + 1] = circlePos.y - line.y();
-            line.points(newPoints);
+            x = line.x();
+            y = line.y();
+            points = newPoints;
         }
 
-        canvasRef.current.batchDraw();
+        patchStoreRaf([primaryNode.id], { [primaryNode.id]: { x, y, points } });
     };
 
     const onDragEnd = () => {
@@ -176,13 +148,13 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
     const res = [];
     for (let i = 0; i < midPoints.length; i += 2) {
         const segmentIndex = i / 2;
-
+        const p = lineLocal(line, midPoints[i], midPoints[i + 1]);
         res.push(
             <Circle
                 key={"mid-" + segmentIndex}
                 name={"line-drag-handle"}
-                x={midPoints[i] + line.x()}
-                y={midPoints[i + 1] + line.y()}
+                x={p.x}
+                y={p.y}
                 scale={{ x: 1 / scale, y: 1 / scale }}
                 radius={5}
                 fill="rgb(255, 0, 85)"
@@ -198,12 +170,13 @@ export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
 
     for (let i = 0; i < points.length; i += 2) {
         const pointIndex = i / 2;
+        const p = lineLocal(line, points[i], points[i + 1]);
         res.push(
             <Circle
                 key={pointIndex}
                 name={"line-drag-handle"}
-                x={points[i] + line.x()}
-                y={points[i + 1] + line.y()}
+                x={p.x}
+                y={p.y}
                 scale={{ x: 1 / scale, y: 1 / scale }}
                 radius={5}
                 fill="white"
