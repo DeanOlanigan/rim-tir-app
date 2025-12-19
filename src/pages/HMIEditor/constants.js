@@ -20,6 +20,7 @@ export const GRID_MAJOR_STEP = 25;
 export const ZOOM_PERCENTAGE_STEP = 0.1;
 export const ACTIONS = {
     select: "select",
+    vertex: "vertex",
     hand: "hand",
     square: "square",
     polygon: "polygon",

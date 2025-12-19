@@ -32,7 +32,7 @@ export function createToolManager({ toolsMap, api }) {
             active.onEnter(prev, ctx);
         }
         api.setCurrentAction(name);
-        if (active.name !== ACTIONS.select) {
+        if (active.name !== ACTIONS.select && active.name !== ACTIONS.vertex) {
             api.setSelectedIds([]);
         }
     };
@@ -41,6 +41,7 @@ export function createToolManager({ toolsMap, api }) {
         const next = toolsMap[name];
         if (!next) return;
         if (active) tempStack.push(active);
+        api.tools.setTempAction(active.name);
         active = next;
         api.setCurrentAction(name);
         setCursor(active.cursor);
@@ -53,6 +54,7 @@ export function createToolManager({ toolsMap, api }) {
         if (!next) return;
         prev && prev.onExit && prev.onExit(next, ctx);
         active = next;
+        api.tools.setTempAction(prev.name);
         api.setCurrentAction(active.name);
         setCursor(active && active.cursor);
     };
@@ -74,6 +76,9 @@ export function createToolManager({ toolsMap, api }) {
     const ctx = { ...api, manager };
 
     const handlers = {
+        onDblClick(e) {
+            active && active.onDblClick && active.onDblClick(e, ctx);
+        },
         onPointerDown(e) {
             pointerDown = true;
 

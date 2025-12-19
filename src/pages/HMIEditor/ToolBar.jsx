@@ -8,6 +8,7 @@ import {
     LuMousePointer2,
     LuMoveUpRight,
     LuSlash,
+    LuSpline,
     LuSquare,
     LuType,
 } from "react-icons/lu";
@@ -17,6 +18,11 @@ const TOOLS_LIST = [
         name: ACTIONS.select,
         label: "Select",
         icon: LuMousePointer2,
+    },
+    {
+        name: ACTIONS.vertex,
+        label: "Vertex Editor",
+        icon: LuSpline,
     },
     {
         name: ACTIONS.hand,

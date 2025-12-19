@@ -41,6 +41,7 @@ export const HMICanvas = ({
         onPointerMove: manager.handlers.onPointerMove,
         onPointerUp: manager.handlers.onPointerUp,
         onContextMenu: manager.handlers.onContextMenu,
+        onDblClick: manager.handlers.onDblClick,
     };
 
     useFitToFrame(canvasRef, width, height);

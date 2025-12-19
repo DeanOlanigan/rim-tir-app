@@ -4,6 +4,7 @@ import { patchStoreRaf, useNodeStore } from "../store/node-store";
 import { Circle } from "react-konva";
 import { dragBound } from "./utils/dragBound";
 import { isLineLikeType } from "../utils";
+import { ACTIONS } from "../constants";
 
 function dragBoundFunc(pos) {
     const { gridSize, snapToGrid } = useActionsStore.getState();
@@ -16,10 +17,13 @@ function lineLocal(line, x, y) {
 }
 
 export const LineTransformer = memo(({ nodesRef, canvasRef }) => {
+    const action = useActionsStore((state) => state.currentAction);
+    const tempAction = useActionsStore((state) => state.tempAction);
     const scale = useActionsStore((state) => state.scale);
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const primaryNode = useNodeStore((state) => state.nodes[selectedIds[0]]);
 
+    if (action !== ACTIONS.vertex && tempAction !== ACTIONS.vertex) return null;
     if (selectedIds.length !== 1) return null;
     if (!primaryNode || !isLineLikeType(primaryNode.type)) return null;
     const line = nodesRef.current.get(primaryNode.id);

@@ -13,6 +13,8 @@ export function createStateApi(nodeStore, actionsStore, contextMenuStore) {
     const setCurrentAction = (action) =>
         actionsStore.getState().setCurrentAction(action);
     const getActiveAction = () => actionsStore.getState().currentAction;
+    const setTempAction = (action) =>
+        actionsStore.getState().setTempAction(action);
     const updateContextMenu = (type, data) =>
         contextMenuStore.getState().updateContext(type, data);
 
@@ -24,6 +26,7 @@ export function createStateApi(nodeStore, actionsStore, contextMenuStore) {
         getWorkSize,
         setCurrentAction,
         getActiveAction,
+        setTempAction,
         updateContextMenu,
     };
 }

@@ -1,11 +1,16 @@
 import { Rect, Transformer } from "react-konva";
-import { ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS, SHAPES } from "../constants";
+import {
+    ACTIONS,
+    ROTATION_SNAP_TOLERANCE,
+    ROTATION_SNAPS,
+    SHAPES,
+} from "../constants";
 import { memo, useCallback, useEffect } from "react";
 import { patchStoreRaf, useNodeStore } from "../store/node-store";
 import { getShape } from "./shapes";
 import { useActionsStore } from "../store/actions-store";
 import { dragBound } from "./utils/dragBound";
-import { isLineLikeType } from "../utils";
+//import { isLineLikeType } from "../utils";
 
 function transformHandler(e) {
     const node = e.target;
@@ -49,18 +54,25 @@ function transformEndHandler(nodes) {
 }
 
 const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
+    const action = useActionsStore((state) => state.currentAction);
+    const tempAction = useActionsStore((state) => state.tempAction);
     const selectedIds = useNodeStore((state) => state.selectedIds);
 
     useEffect(() => {
         const transformer = transformerRef.current;
         if (!transformer) return;
 
+        if (action === ACTIONS.vertex || tempAction === ACTIONS.vertex) {
+            transformer.nodes([]);
+            return;
+        }
+
         if (!selectedIds || selectedIds.length === 0) {
             transformer.nodes([]);
             return;
         }
 
-        const nodes = useNodeStore.getState().nodes;
+        /* const nodes = useNodeStore.getState().nodes;
         if (!nodes) return;
 
         if (
@@ -69,11 +81,11 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
         ) {
             transformer.nodes([]);
             return;
-        }
+        } */
 
         const instances = selectedIds.map((id) => nodesRef.current.get(id));
         transformer.nodes(instances);
-    }, [selectedIds, nodesRef, transformerRef]);
+    }, [selectedIds, action, tempAction, nodesRef, transformerRef]);
 
     const anchorBound = useCallback(
         function (_oldPos, newPos) {

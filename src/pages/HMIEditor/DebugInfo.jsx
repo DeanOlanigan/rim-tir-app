@@ -5,6 +5,7 @@ import { useNodeStore } from "./store/node-store";
 export const DebugInfo = () => {
     const debugMode = useActionsStore((state) => state.debugMode);
     const currentAction = useActionsStore((state) => state.currentAction);
+    const tempAction = useActionsStore((state) => state.tempAction);
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const nodes = useNodeStore((state) => state.nodes);
 
@@ -32,6 +33,7 @@ export const DebugInfo = () => {
                 borderRadius={"md"}
             >
                 <Text>Current action: {currentAction}</Text>
+                <Text>Prev action: {tempAction}</Text>
                 <Text>Selected nodes: {selectedIds.length}</Text>
                 <Text>Nodes: {Object.keys(nodes).length}</Text>
                 {selectedIds.length > 0 && (

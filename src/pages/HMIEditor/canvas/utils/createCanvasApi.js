@@ -37,6 +37,7 @@ export function createCanvasApi({
         tools: {
             getActiveAction: stateApi.getActiveAction,
             setCurrentAction: stateApi.setCurrentAction,
+            setTempAction: stateApi.setTempAction,
         },
         ui: {
             updateContextMenu: stateApi.updateContextMenu,
