@@ -13,12 +13,12 @@ function transformHandler(e) {
     const type = node.attrs.type;
     const shape = getShape(type);
     let patch = {};
-    if (!shape?.onTransformEnd) {
+    if (!shape?.onTransform) {
         console.warn("No onTransform handler for shape type:", type);
         return;
     }
     // TODO во всех шейпах обновлять konva
-    const res = shape.onTransformEnd(node);
+    const res = shape.onTransform(node);
     if (type === SHAPES.group) {
         Object.assign(patch, res);
     } else {

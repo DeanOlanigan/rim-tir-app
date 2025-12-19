@@ -45,7 +45,8 @@ export const DimensionsBlock = ({ ids, api }) => {
             const isLineLike = isLineLikeType(t);
 
             if (isLineLike) {
-                patch[id] = changeLineDim(api, id, type, aspectRatio, val);
+                const res = changeLineDim(api, id, type, aspectRatio, val);
+                if (res) patch[id] = res;
             } else {
                 if (aspectRatio) {
                     const target = Math.max(val, 0);

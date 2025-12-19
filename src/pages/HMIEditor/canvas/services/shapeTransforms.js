@@ -8,6 +8,8 @@ export function rotateNodeAroundCenter(api, id, angle) {
     const height = node.height();
     const size = { width, height };
 
+    // TODO проверить с линией. Возможно переписать с использованием transform
+
     return rotateNodeForStore(node, angle, { size });
 }
 
@@ -46,7 +48,8 @@ export function rotateNodeAroundCenter(api, id, angle) {
 export function getLineRect(api, id) {
     const node = api.canvas.getNodes().get(id);
     if (!node) return;
-    return node.getSelfRect();
+    //return node.getSelfRect();
+    return getPointsBounds(node.points());
 }
 
 const MIN_SIZE = 1e-3; // или 0.1 / 1 — что логичнее для твоей сетки/round4
@@ -71,7 +74,7 @@ export function resizeLineLike(api, id, targetWidth, targetHeight) {
     const sy = targetHeight / curHeight;
 
     const oldPoints = node.points();
-    const newPoints = scaleLinePointsLikeSelfRect(oldPoints, rect, sx, sy);
+    const newPoints = scaleLinePointsLikeSelfRect(oldPoints, sx, sy);
 
     node.points(newPoints);
     return {
@@ -79,6 +82,24 @@ export function resizeLineLike(api, id, targetWidth, targetHeight) {
         width: targetWidth,
         height: targetHeight,
     };
+}
+
+function getPointsBounds(points) {
+    let minX = Infinity,
+        minY = Infinity,
+        maxX = -Infinity,
+        maxY = -Infinity;
+    for (let i = 0; i < points.length; i += 2) {
+        const x = points[i],
+            y = points[i + 1];
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+    }
+    if (!Number.isFinite(minX))
+        return { minX: 0, minY: 0, width: 0, height: 0 };
+    return { minX, minY, width: maxX - minX, height: maxY - minY };
 }
 
 export function changeLineDim(api, id, type, aspectRatio, val) {
@@ -109,17 +130,13 @@ export function changeLineDim(api, id, type, aspectRatio, val) {
     return resizeLineLike(api, id, targetWidth, targetHeight);
 }
 
-export function scaleLinePointsLikeSelfRect(points, rect, sx, sy) {
+export function scaleLinePointsLikeSelfRect(points, sx, sy) {
     const out = [];
-    const rx = rect.x ?? 0;
-    const ry = rect.y ?? 0;
-
     for (let i = 0; i < points.length; i += 2) {
         const px = points[i];
         const py = points[i + 1];
-
-        out[i] = round4(rx + (px - rx) * sx);
-        out[i + 1] = round4(ry + (py - ry) * sy);
+        out[i] = px * sx;
+        out[i + 1] = py * sy;
     }
     return out;
 }
