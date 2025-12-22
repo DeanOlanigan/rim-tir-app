@@ -179,11 +179,12 @@ function rotateKeepAnchor(node, angle, opts = {}) {
     const isEllipse =
         typeof node.radiusX === "function" &&
         typeof node.radiusY === "function";
+    const isLineLike = typeof node.points === "function";
 
     if (anchor === "pos") {
         localAnchor = { x: 0, y: 0 };
     } else {
-        if (isEllipse) {
+        if (isEllipse || isLineLike) {
             localAnchor = { x: 0, y: 0 };
         } else {
             localAnchor = { x: width / 2, y: height / 2 };

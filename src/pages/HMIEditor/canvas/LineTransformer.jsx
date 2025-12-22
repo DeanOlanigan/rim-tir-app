@@ -3,8 +3,7 @@ import { useActionsStore } from "../store/actions-store";
 import { patchStoreRaf, useNodeStore } from "../store/node-store";
 import { Circle } from "react-konva";
 import { dragBound } from "./utils/dragBound";
-import { isLineLikeType } from "../utils";
-import { ACTIONS } from "../constants";
+import { isLineLikeType, round4 } from "../utils";
 
 function dragBoundFunc(pos) {
     const { gridSize, snapToGrid } = useActionsStore.getState();
@@ -12,18 +11,47 @@ function dragBoundFunc(pos) {
     return dragBound(pos, stage, gridSize, snapToGrid);
 }
 
-function lineLocal(line, x, y) {
-    return line.getTransform().point({ x, y });
+function lineLocalToOverlay(line, overlayLayer, x, y) {
+    // line-local -> stage(abs)
+    const abs = line.getAbsoluteTransform().point({ x, y });
+
+    // stage(abs) -> overlay-local
+    const invOverlay = overlayLayer.getAbsoluteTransform().copy().invert();
+    return invOverlay.point(abs);
 }
 
-export const LineTransformer = memo(({ nodesRef, canvasRef }) => {
-    const action = useActionsStore((state) => state.currentAction);
-    const tempAction = useActionsStore((state) => state.tempAction);
+function overlayAbsToLineLocal(line, absPos) {
+    // stage(abs) -> line-local
+    const invLine = line.getAbsoluteTransform().copy().invert();
+    return invLine.point(absPos);
+}
+
+function overlayAbsToLineParent(line, absPos) {
+    // stage(abs) -> parent(line)-local (чтобы записать line.x/y в стор)
+    const parent = line.getParent();
+    const invParent = parent.getAbsoluteTransform().copy().invert();
+    return invParent.point(absPos);
+}
+
+function parentVecToLineLocal(line, vecParent) {
+    // Важно: используем line.getTransform() (line->parent), а не absolute,
+    // потому что vecParent уже в parent координатах.
+    const inv = line.getTransform().copy();
+    inv.invert();
+
+    // чтобы “убить” translation, берём разницу двух преобразований
+    const a = inv.point({ x: vecParent.x, y: vecParent.y });
+    const b = inv.point({ x: 0, y: 0 });
+    return { x: a.x - b.x, y: a.y - b.y };
+}
+
+export const LineTransformer = memo(({ nodesRef, canvasRef, overviewRef }) => {
     const scale = useActionsStore((state) => state.scale);
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const primaryNode = useNodeStore((state) => state.nodes[selectedIds[0]]);
 
-    if (action !== ACTIONS.vertex && tempAction !== ACTIONS.vertex) return null;
+    const overlayLayer = overviewRef?.current;
+    if (!overlayLayer) return null;
     if (selectedIds.length !== 1) return null;
     if (!primaryNode || !isLineLikeType(primaryNode.type)) return null;
     const line = nodesRef.current.get(primaryNode.id);
@@ -33,7 +61,7 @@ export const LineTransformer = memo(({ nodesRef, canvasRef }) => {
 
     const onDragMove = (e, pointIndex) => {
         const circle = e.target;
-        const circlePos = circle.position();
+        const absCirclePos = circle.getAbsolutePosition();
         const oldPoints = line.points();
 
         if (!oldPoints || oldPoints.length < 4) return;
@@ -42,45 +70,50 @@ export const LineTransformer = memo(({ nodesRef, canvasRef }) => {
 
         let x, y, points;
         if (pointIndex === 0) {
-            const worldFirstX = line.x() + oldPoints[0];
-            const worldFirstY = line.y() + oldPoints[1];
+            const parentPos = overlayAbsToLineParent(line, absCirclePos);
 
-            const targetX = circlePos.x;
-            const targetY = circlePos.y;
+            const dxParent = parentPos.x - line.x();
+            const dyParent = parentPos.y - line.y();
 
-            const dxLine = targetX - worldFirstX;
-            const dyLine = targetY - worldFirstY;
+            const localDelta = parentVecToLineLocal(line, {
+                x: dxParent,
+                y: dyParent,
+            });
 
-            const newLineX = line.x() + dxLine;
-            const newLineY = line.y() + dyLine;
+            x = parentPos.x;
+            y = parentPos.y;
 
-            for (let i = 0; i < newPoints.length; i += 2) {
-                newPoints[i] -= dxLine;
-                newPoints[i + 1] -= dyLine;
+            for (let i = 2; i < newPoints.length; i += 2) {
+                newPoints[i] = round4(newPoints[i] - localDelta.x);
+                newPoints[i + 1] = round4(newPoints[i + 1] - localDelta.y);
             }
 
             newPoints[0] = 0;
             newPoints[1] = 0;
 
-            x = newLineX;
-            y = newLineY;
             points = newPoints;
         } else {
-            newPoints[pointIndex * 2] = circlePos.x - line.x();
-            newPoints[pointIndex * 2 + 1] = circlePos.y - line.y();
+            const local = overlayAbsToLineLocal(line, absCirclePos);
+            newPoints[pointIndex * 2] = round4(local.x);
+            newPoints[pointIndex * 2 + 1] = round4(local.y);
             x = line.x();
             y = line.y();
             points = newPoints;
         }
 
-        patchStoreRaf([primaryNode.id], { [primaryNode.id]: { x, y, points } });
+        line.x(x);
+        line.y(y);
+        line.points(points);
+        patchStoreRaf([primaryNode.id], {
+            [primaryNode.id]: { x: round4(x), y: round4(y), points },
+        });
     };
 
     const onDragEnd = () => {
         const newPoints = line.points().slice();
         useNodeStore.getState().updateNode(primaryNode.id, {
-            x: line.x(),
-            y: line.y(),
+            x: round4(line.x()),
+            y: round4(line.y()),
             points: newPoints,
         });
     };
@@ -101,12 +134,11 @@ export const LineTransformer = memo(({ nodesRef, canvasRef }) => {
         const insertIndes = circle.getAttr("insertIndex");
         if (!originalPoints || typeof insertIndes !== "number") return;
 
-        const circlePos = circle.position();
-        const localX = circlePos.x - line.x();
-        const localY = circlePos.y - line.y();
+        const absCirclePos = circle.getAbsolutePosition();
+        const local = overlayAbsToLineLocal(line, absCirclePos);
 
         const newPoints = originalPoints.slice();
-        newPoints.splice(insertIndes * 2, 0, localX, localY);
+        newPoints.splice(insertIndes * 2, 0, local.x, local.y);
 
         line.points(newPoints);
         canvasRef.current.batchDraw();
@@ -128,8 +160,8 @@ export const LineTransformer = memo(({ nodesRef, canvasRef }) => {
         newPoints.splice(pointIndex * 2, 2);
         line.points(newPoints);
         useNodeStore.getState().updateNode(primaryNode.id, {
-            x: line.x(),
-            y: line.y(),
+            x: round4(line.x()),
+            y: round4(line.y()),
             points: newPoints,
         });
     };
@@ -152,7 +184,12 @@ export const LineTransformer = memo(({ nodesRef, canvasRef }) => {
     const res = [];
     for (let i = 0; i < midPoints.length; i += 2) {
         const segmentIndex = i / 2;
-        const p = lineLocal(line, midPoints[i], midPoints[i + 1]);
+        const p = lineLocalToOverlay(
+            line,
+            overlayLayer,
+            midPoints[i],
+            midPoints[i + 1],
+        );
         res.push(
             <Circle
                 key={"mid-" + segmentIndex}
@@ -174,7 +211,12 @@ export const LineTransformer = memo(({ nodesRef, canvasRef }) => {
 
     for (let i = 0; i < points.length; i += 2) {
         const pointIndex = i / 2;
-        const p = lineLocal(line, points[i], points[i + 1]);
+        const p = lineLocalToOverlay(
+            line,
+            overlayLayer,
+            points[i],
+            points[i + 1],
+        );
         res.push(
             <Circle
                 key={pointIndex}

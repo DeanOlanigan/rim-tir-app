@@ -1,18 +1,21 @@
 import { SHAPES } from "../../constants";
-import { round4 } from "../../utils";
-import { scaleLinePointsLikeSelfRect } from "../services/shapeTransforms";
+import { clampVal, round4 } from "../../utils";
 import { registerShape } from "./registry";
 
 registerShape(SHAPES.arrow, {
     // TODO взыв при вертикальном трансформе
     onTransformEnd(konvaNode) {
-        const sx = konvaNode.scaleX();
-        const sy = konvaNode.scaleY();
+        const sx = clampVal(konvaNode.scaleX());
+        const sy = clampVal(konvaNode.scaleY());
 
-        const rect = konvaNode.getSelfRect();
         const oldPoints = konvaNode.points();
-
-        const newPoints = scaleLinePointsLikeSelfRect(oldPoints, rect, sx, sy);
+        const newPoints = [];
+        for (let i = 0; i < oldPoints.length; i += 2) {
+            const px = oldPoints[i];
+            const py = oldPoints[i + 1];
+            newPoints[i] = px * sx;
+            newPoints[i + 1] = py * sy;
+        }
 
         konvaNode.points(newPoints);
         konvaNode.scaleX(1);
@@ -21,26 +24,32 @@ registerShape(SHAPES.arrow, {
         const patch = {
             x: round4(konvaNode.x()),
             y: round4(konvaNode.y()),
-            rotation: round4(konvaNode.rotation()),
+            rotation: konvaNode.rotation(),
             points: newPoints,
-            width: round4(konvaNode.width()),
-            height: round4(konvaNode.height()),
+            width: konvaNode.width(),
+            height: konvaNode.height(),
             scaleX: 1,
             scaleY: 1,
-            skewX: round4(konvaNode.skewX()),
-            skewY: round4(konvaNode.skewY()),
+            skewX: konvaNode.skewX(),
+            skewY: konvaNode.skewY(),
+            pointerLength: konvaNode.pointerLength(),
+            pointerWidth: konvaNode.pointerWidth(),
         };
         return patch;
     },
 
     onTransform(konvaNode) {
-        const sx = konvaNode.scaleX();
-        const sy = konvaNode.scaleY();
+        const sx = clampVal(konvaNode.scaleX());
+        const sy = clampVal(konvaNode.scaleY());
 
-        const rect = konvaNode.getSelfRect();
         const oldPoints = konvaNode.points();
-
-        const newPoints = scaleLinePointsLikeSelfRect(oldPoints, rect, sx, sy);
+        const newPoints = [];
+        for (let i = 0; i < oldPoints.length; i += 2) {
+            const px = oldPoints[i];
+            const py = oldPoints[i + 1];
+            newPoints[i] = px * sx;
+            newPoints[i + 1] = py * sy;
+        }
 
         konvaNode.points(newPoints);
         konvaNode.scaleX(1);
@@ -49,14 +58,14 @@ registerShape(SHAPES.arrow, {
         const patch = {
             x: round4(konvaNode.x()),
             y: round4(konvaNode.y()),
-            rotation: round4(konvaNode.rotation()),
+            rotation: konvaNode.rotation(),
             points: newPoints,
-            width: round4(konvaNode.width()),
-            height: round4(konvaNode.height()),
+            width: konvaNode.width(),
+            height: konvaNode.height(),
             scaleX: 1,
             scaleY: 1,
-            skewX: round4(konvaNode.skewX()),
-            skewY: round4(konvaNode.skewY()),
+            skewX: konvaNode.skewX(),
+            skewY: konvaNode.skewY(),
         };
         return patch;
     },
