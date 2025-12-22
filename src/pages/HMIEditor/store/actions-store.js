@@ -3,7 +3,7 @@ import { ACTIONS } from "../constants";
 
 export const useActionsStore = create((set) => ({
     currentAction: ACTIONS.select,
-    tempAction: ACTIONS.select,
+    prevAction: ACTIONS.select,
     size: { width: 100, height: 75 },
     gridSize: 1,
     showGrid: true,
@@ -20,7 +20,7 @@ export const useActionsStore = create((set) => ({
     viewOnlyMode: false,
 
     setCurrentAction: (action) => set({ currentAction: action }),
-    setTempAction: (action) => set({ tempAction: action }),
+    setPrevAction: (action) => set({ prevAction: action }),
 
     setSize: (size) => set({ size }),
     setGridSize: (size) => set({ gridSize: size }),

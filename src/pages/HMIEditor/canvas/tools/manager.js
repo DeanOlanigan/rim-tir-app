@@ -41,7 +41,7 @@ export function createToolManager({ toolsMap, api }) {
         const next = toolsMap[name];
         if (!next) return;
         if (active) tempStack.push(active);
-        api.tools.setTempAction(active.name);
+        api.tools.setPrevAction(active.name);
         active = next;
         api.setCurrentAction(name);
         setCursor(active.cursor);
@@ -54,7 +54,7 @@ export function createToolManager({ toolsMap, api }) {
         if (!next) return;
         prev && prev.onExit && prev.onExit(next, ctx);
         active = next;
-        api.tools.setTempAction(prev.name);
+        api.tools.setPrevAction(prev.name);
         api.setCurrentAction(active.name);
         setCursor(active && active.cursor);
     };
