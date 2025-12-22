@@ -2,7 +2,6 @@ import { LuMousePointer2 } from "react-icons/lu";
 import { toWorld } from "../utils/coords";
 import Konva from "konva";
 import { ACTIONS } from "../../constants";
-import { isLineLikeType } from "../../utils";
 
 export function createSelectTool() {
     let start = { x: 0, y: 0 };
@@ -90,7 +89,7 @@ export function createSelectTool() {
             ctx.setSelectedIds(selectedIds);
         },
 
-        onDblClick(e, ctx) {
+        /* onDblClick(e, ctx) {
             if (e.evt.button !== 0) return;
             const stage = e.currentTarget;
             if (!stage) return;
@@ -100,7 +99,7 @@ export function createSelectTool() {
                     ctx.manager.setActive(ACTIONS.vertex);
                 }
             }
-        },
+        }, */
 
         cancel(ctx) {
             hideBox(ctx);

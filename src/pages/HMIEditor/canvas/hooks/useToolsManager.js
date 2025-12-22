@@ -14,7 +14,6 @@ import { useActionsStore } from "../../store/actions-store";
 import { useContextMenuStore } from "@/store/contextMenu-store";
 import { createStateApi } from "../utils/createStateApi";
 import { createDrawVariablePolygonTool } from "../tools/drawVariablePolygon";
-import { createVertexTool } from "../tools/vertexEditor";
 
 export function useToolsManager() {
     const managerRef = useRef(null);
@@ -44,7 +43,6 @@ export function useToolsManager() {
         apiRef.current = api;
         const toolsMap = {
             [ACTIONS.select]: createSelectTool(),
-            [ACTIONS.vertex]: createVertexTool(),
             [ACTIONS.hand]: createHandTool(),
             [ACTIONS.square]: createDrawRectTool(),
             [ACTIONS.polygon]: createDrawVariablePolygonTool(),
