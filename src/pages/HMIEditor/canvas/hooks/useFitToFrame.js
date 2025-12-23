@@ -1,14 +1,42 @@
 import { useCallback, useLayoutEffect } from "react";
 import { fitToFrame as fitToFrameService } from "../utils/zoomService";
-import { useActionsStore } from "../../store/actions-store";
 
-export function useFitToFrame(canvasRef, viewportW, viewportH, auto = true) {
-    const size = useActionsStore((state) => state.size);
+function getWorkAreaSize(nodesRef) {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    nodesRef.current.forEach((node) => {
+        minX = Math.min(minX, node.x());
+        minY = Math.min(minY, node.y());
+        maxX = Math.max(maxX, node.x() + node.width());
+        maxY = Math.max(maxY, node.y() + node.height());
+    });
+    return {
+        width: maxX - minX,
+        height: maxY - minY,
+    };
+}
+
+export function useFitToFrame(
+    canvasRef,
+    viewportW,
+    viewportH,
+    auto = true,
+    nodesRef,
+) {
     const fitToFrame = useCallback(() => {
         const stage = canvasRef.current;
         if (!stage || !viewportW || !viewportH) return;
-        fitToFrameService(stage, size.width, size.height, viewportW, viewportH);
-    }, [canvasRef, size, viewportW, viewportH]);
+        const workAreaSize = getWorkAreaSize(nodesRef);
+        fitToFrameService(
+            stage,
+            workAreaSize.width,
+            workAreaSize.height,
+            viewportW,
+            viewportH,
+        );
+    }, [canvasRef, viewportW, viewportH, nodesRef]);
 
     useLayoutEffect(() => {
         if (!auto) return;

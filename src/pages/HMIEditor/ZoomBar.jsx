@@ -6,7 +6,7 @@ import { setZoom, zoomByPercent } from "./canvas/utils/zoomService";
 import { getClampedWorkAreaAnchor } from "./canvas/utils/zoom";
 import { useFitToFrame } from "./canvas/hooks/useFitToFrame";
 
-export const ZoomBar = ({ canvasRef, width, height }) => {
+export const ZoomBar = ({ canvasRef, nodesRef, width, height }) => {
     const scale = useActionsStore((state) => state.scale);
     const size = useActionsStore((state) => state.size);
 
@@ -24,7 +24,7 @@ export const ZoomBar = ({ canvasRef, width, height }) => {
         setZoom(stage, scale, anchor);
     };
 
-    const fitToFrame = useFitToFrame(canvasRef, width, height, false);
+    const fitToFrame = useFitToFrame(canvasRef, width, height, false, nodesRef);
 
     return (
         <Group attached shadow={"md"} borderRadius={"l2"}>

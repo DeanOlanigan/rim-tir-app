@@ -44,7 +44,7 @@ export const HMICanvas = ({
         onDblClick: manager.handlers.onDblClick,
     };
 
-    useFitToFrame(canvasRef, width, height);
+    useFitToFrame(canvasRef, width, height, true, nodesRef);
     return (
         <Stage
             ref={canvasRef}

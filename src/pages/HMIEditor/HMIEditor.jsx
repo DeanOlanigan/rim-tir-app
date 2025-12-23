@@ -45,6 +45,7 @@ function HMIEditor() {
             <HStack position={"absolute"} left={2} bottom={2}>
                 <ZoomBar
                     canvasRef={tools.canvasRef}
+                    nodesRef={tools.nodesRef}
                     width={width}
                     height={height}
                 />
