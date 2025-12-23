@@ -34,7 +34,7 @@ function HMIEditor() {
                 top={"25%"}
                 transform={"translateY(-25%)"}
             >
-                <NodesTree />
+                <NodesTree api={tools.api} />
             </Box>
             <Box position={"absolute"} bottom={12} left={2}>
                 <DebugInfo />
