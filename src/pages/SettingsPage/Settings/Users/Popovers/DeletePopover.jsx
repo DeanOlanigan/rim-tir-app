@@ -13,9 +13,20 @@ import { useTableStore } from "../../SettingsStore/tablestore";
 
 export const DeletePopover = () => {
     const id = useEditStore((s) => s.selectedUser?.id);
+    const login = useEditStore((s) => s.selectedUser?.data?.login);
     const popoverOpen = useEditStore((s) => s.delete);
     const setOpen = useEditStore.getState().setPopoversOpen;
     const selectedUsers = useTableStore.getState().selectedRows;
+    const isSelected = selectedUsers.length > 1;
+
+    function handleDelete() {
+        const usersToDelete = isSelected ? selectedUsers : [id];
+        useTableStore.getState().deleteUsers(usersToDelete);
+        useEditStore.getState().setSelectedUser(undefined, {});
+        setOpen("delete", false);
+        useEditStore.getState().setMenuOpen(false);
+    }
+
     return (
         <Popover.Root
             size={"xs"}
@@ -24,6 +35,8 @@ export const DeletePopover = () => {
                 setOpen("delete", e.open);
             }}
             positioning={{ placement: "bottom" }}
+            lazyMount
+            unmountOnExit
         >
             <Popover.Trigger
                 cursor="pointer"
@@ -37,7 +50,8 @@ export const DeletePopover = () => {
                         <LuUserRoundX />
                     </Icon>
                     <Text fontSize={"xs"} margin={"4px"} fontWeight={"medium"}>
-                        Удалить
+                        Удалить{" "}
+                        {isSelected ? " множество пользователей" : ` ${login}`}
                     </Text>
                 </Group>
             </Popover.Trigger>
@@ -67,21 +81,17 @@ export const DeletePopover = () => {
                                 colorPalette={"red"}
                                 color={"red.600"}
                                 onClick={() => {
-                                    const usersToDelete =
-                                        selectedUsers.length > 0
-                                            ? selectedUsers
-                                            : [id];
-                                    useTableStore
-                                        .getState()
-                                        .deleteUsers(usersToDelete);
-                                    useEditStore
-                                        .getState()
-                                        .setSelectedUser(undefined, {});
-                                    setOpen("delete", false);
-                                    useEditStore.getState().setMenuOpen(false);
+                                    handleDelete();
                                 }}
                             >
                                 Удалить
+                            </Button>
+                            <Button
+                                size={"2xs"}
+                                variant={"outline"}
+                                onClick={() => setOpen("delete", false)}
+                            >
+                                Отменить
                             </Button>
                         </Popover.Footer>
                     </Popover.Content>

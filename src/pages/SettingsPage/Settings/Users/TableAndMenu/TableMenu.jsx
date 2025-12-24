@@ -1,13 +1,9 @@
-import { Menu, Text, VStack } from "@chakra-ui/react";
-import { UsersTable } from "./UsersTable";
+import { Menu, VStack } from "@chakra-ui/react";
 import { DeletePopover } from "../Popovers/DeletePopover";
 import { useEditStore } from "../../SettingsStore/user-edit-store";
 import { EditPopover } from "../Popovers/EditPopover";
-import { useTableStore } from "../../SettingsStore/tablestore";
 
-export const TableMenu = () => {
-    const login = useEditStore((s) => s.selectedUser?.data?.login);
-    const selectedUsers = useTableStore.getState().selectedRows;
+export const TableMenu = ({ children }) => {
     const menuOpen = useEditStore((s) => s.menuOpen);
     const setMenuOpen = useEditStore.getState().setMenuOpen;
     return (
@@ -22,17 +18,10 @@ export const TableMenu = () => {
             lazyMount
             skipAnimationOnMount
         >
-            <Menu.ContextTrigger>
-                <UsersTable />
-            </Menu.ContextTrigger>
+            <Menu.ContextTrigger>{children}</Menu.ContextTrigger>
             <Menu.Positioner>
                 <Menu.Content>
                     <VStack w={"100%"} alignItems={"flex-start"}>
-                        <Text fontSize="xs" fontWeight={"medium"}>
-                            {selectedUsers.length > 0
-                                ? `Выбрано пользователей: ${selectedUsers.length}`
-                                : `Пользователь ${login}`}
-                        </Text>
                         <Menu.Item asChild>
                             <EditPopover />
                         </Menu.Item>

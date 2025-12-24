@@ -4,4 +4,6 @@ export const QK = {
     logs: ["logs"],
     graphs: ["graphs"],
     journal: ["journal"],
+    roles: ["roles"],
+    users: ["users"],
 };

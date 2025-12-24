@@ -25,14 +25,26 @@ const fieldNames = {
 
 export const EditPopover = () => {
     const user = useEditStore((s) => s.tempUser?.data);
-    const login = user.login;
+    const login = useEditStore((s) => s.selectedUser?.data?.login);
     const id = useEditStore((s) => s.selectedUser?.id);
     const popoverOpen = useEditStore((s) => s.edit);
     const setOpen = useEditStore.getState().setPopoversOpen;
     const editTempUser = useEditStore.getState().editTempUser;
     const selectedUsers = useTableStore.getState().selectedRows;
     const setTemp = useEditStore.getState().setTempUser;
-    const isSelected = selectedUsers.length > 0 ? true : false;
+    const isSelected = selectedUsers.length > 1;
+
+    function getTargetUsers(selected, id) {
+        return isSelected ? selected : [id];
+    }
+
+    function handleEdit() {
+        const usersToEdit = getTargetUsers(selectedUsers, id);
+        useTableStore.getState().editUser(usersToEdit, user);
+        setOpen("edit", false);
+        useEditStore.getState().setMenuOpen(false);
+    }
+
     return (
         <Popover.Root
             open={popoverOpen}
@@ -41,6 +53,8 @@ export const EditPopover = () => {
                 setOpen("edit", e.open);
             }}
             positioning={{ placement: "right" }}
+            lazyMount
+            unmountOnExit
         >
             <Popover.Trigger
                 cursor="pointer"
@@ -59,6 +73,7 @@ export const EditPopover = () => {
                         alignSelf={"flex-start"}
                     >
                         Редактировать
+                        {isSelected ? " множество пользователей" : ` ${login}`}
                     </Text>
                 </Group>
             </Popover.Trigger>
@@ -118,14 +133,7 @@ export const EditPopover = () => {
                                 color={"fg.success"}
                                 colorPalette={"green"}
                                 onClick={() => {
-                                    const usersToEdit = isSelected
-                                        ? selectedUsers
-                                        : [id];
-                                    useTableStore
-                                        .getState()
-                                        .editUser(usersToEdit, user);
-                                    setOpen("edit", false);
-                                    useEditStore.getState().setMenuOpen(false);
+                                    handleEdit();
                                 }}
                             >
                                 <LuCheck />
