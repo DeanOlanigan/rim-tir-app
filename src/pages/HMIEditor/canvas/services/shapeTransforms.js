@@ -8,8 +8,6 @@ export function rotateNodeAroundCenter(api, id, angle) {
     const height = node.height();
     const size = { width, height };
 
-    // TODO проверить с линией. Возможно переписать с использованием transform
-
     return rotateNodeForStore(node, angle, { size });
 }
 

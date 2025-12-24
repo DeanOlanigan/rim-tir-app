@@ -3,25 +3,21 @@ import { LuZoomIn, LuZoomOut } from "react-icons/lu";
 import { useActionsStore } from "./store/actions-store";
 import { DEFAULT_MAX_ZOOM, DEFAULT_MIN_ZOOM } from "./constants";
 import { setZoom, zoomByPercent } from "./canvas/utils/zoomService";
-import { getClampedWorkAreaAnchor } from "./canvas/utils/zoom";
 import { useFitToFrame } from "./canvas/hooks/useFitToFrame";
 
 export const ZoomBar = ({ canvasRef, nodesRef, width, height }) => {
     const scale = useActionsStore((state) => state.scale);
-    const size = useActionsStore((state) => state.size);
 
     const handleZoom = (dir) => {
         const stage = canvasRef.current;
         if (!stage) return;
-        const anchor = getClampedWorkAreaAnchor(stage, size.width, size.height);
-        zoomByPercent(stage, dir, anchor);
+        zoomByPercent(stage, dir);
     };
 
     const handleScale = (scale) => {
         const stage = canvasRef.current;
         if (!stage) return;
-        const anchor = getClampedWorkAreaAnchor(stage, size.width, size.height);
-        setZoom(stage, scale, anchor);
+        setZoom(stage, scale);
     };
 
     const fitToFrame = useFitToFrame(canvasRef, width, height, false, nodesRef);
@@ -60,7 +56,7 @@ export const ZoomBar = ({ canvasRef, nodesRef, width, height }) => {
                                 </Menu.Item>
                             ))}
                             <Menu.Item value="reset" onClick={fitToFrame}>
-                                Масштаб по рабочей области
+                                Масштаб по содержимому
                             </Menu.Item>
                         </Menu.Content>
                     </Menu.Positioner>

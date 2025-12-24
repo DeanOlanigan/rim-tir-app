@@ -39,7 +39,7 @@ export const TensionBlock = ({ ids }) => {
                         </NumberInput.Scrubber>
                     }
                 >
-                    <NumberInput.Input />
+                    <NumberInput.Input placeholder="Mixed" />
                 </InputGroup>
             </NumberInput.Root>
         </Field.Root>

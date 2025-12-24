@@ -30,6 +30,7 @@ export function createDrawVariablePolygonTool() {
                 y: p.y,
                 radiusX: 0,
                 radiusY: 0,
+                sides: 6,
                 listening: false,
             });
 
@@ -86,6 +87,7 @@ export function createDrawVariablePolygonTool() {
                 y: box.top,
                 width: box.width,
                 height: box.height,
+                sides: 6,
             });
             ctx.manager.setActive(ACTIONS.select);
         },

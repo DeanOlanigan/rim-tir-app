@@ -10,10 +10,13 @@ import { DebugInfo } from "./DebugInfo";
 import { useToolsManager } from "./canvas/hooks/useToolsManager";
 import { NodesTree } from "./NodesTree";
 import { NodeSettings } from "./NodeSettings";
+import { useNodeStore } from "./store/node-store";
 
 function HMIEditor() {
     const { ref, width, height } = useThrottledResizeObserver(100);
     const tools = useToolsManager();
+
+    useNodeStore.getState().setSelectedIds([]);
 
     return (
         <Flex

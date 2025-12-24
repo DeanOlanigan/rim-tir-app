@@ -4,7 +4,6 @@ import { ACTIONS } from "../constants";
 export const useActionsStore = create((set) => ({
     currentAction: ACTIONS.select,
     prevAction: ACTIONS.select,
-    size: { width: 100, height: 75 },
     gridSize: 1,
     showGrid: true,
     snapToGrid: false,
@@ -22,7 +21,6 @@ export const useActionsStore = create((set) => ({
     setCurrentAction: (action) => set({ currentAction: action }),
     setPrevAction: (action) => set({ prevAction: action }),
 
-    setSize: (size) => set({ size }),
     setGridSize: (size) => set({ gridSize: size }),
     setShowGrid: (show) => set({ showGrid: show }),
     setSnap: (snapToGrid) => set({ snapToGrid }),

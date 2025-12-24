@@ -121,6 +121,7 @@ export function createToolManager({ toolsMap, api }) {
             active.onKeyUp?.call(active, e, ctx);
         },
         onWheel(e) {
+            if (active.name === ACTIONS.hand && pointerDown) return;
             e.evt.preventDefault();
             const stage = e.currentTarget;
             if (!stage) return;
@@ -153,6 +154,7 @@ export function createToolManager({ toolsMap, api }) {
         },
         onContextMenu(e) {
             e.evt.preventDefault();
+            if (active.name === ACTIONS.hand || pointerDown) return;
             const target = e.target;
             const parentGroups = target.findAncestors("Group");
             const id =
