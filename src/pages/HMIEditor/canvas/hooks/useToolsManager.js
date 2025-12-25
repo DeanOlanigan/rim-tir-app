@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { createToolManager } from "../tools/manager";
 import { createHandTool } from "../tools/hand";
 import { createSelectTool } from "../tools/select";
@@ -54,7 +54,7 @@ export function useToolsManager() {
         managerRef.current = createToolManager({ toolsMap, api });
     }
 
-    useEffect(() => {
+    /* useEffect(() => {
         const onKeyDown = (e) => managerRef.current.handlers.onKeyDown(e);
         const onKeyUp = (e) => managerRef.current.handlers.onKeyUp(e);
         window.addEventListener("keydown", onKeyDown, false);
@@ -63,7 +63,7 @@ export function useToolsManager() {
             window.removeEventListener("keydown", onKeyDown, false);
             window.removeEventListener("keyup", onKeyUp, false);
         };
-    }, []);
+    }, []); */
 
     return {
         manager: managerRef.current,

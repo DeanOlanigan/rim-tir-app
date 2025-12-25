@@ -36,6 +36,37 @@ export const HMICanvas = ({
         }
     }, [showHitRegions, nodesLayerRef, canvasRef]);
 
+    useEffect(() => {
+        const stage = canvasRef.current;
+        if (stage) {
+            stage
+                .container()
+                .addEventListener("keydown", manager.handlers.onKeyDown, false);
+            stage
+                .container()
+                .addEventListener("keyup", manager.handlers.onKeyUp, false);
+        }
+
+        return () => {
+            if (stage) {
+                stage
+                    .container()
+                    .removeEventListener(
+                        "keydown",
+                        manager.handlers.onKeyDown,
+                        false,
+                    );
+                stage
+                    .container()
+                    .removeEventListener(
+                        "keyup",
+                        manager.handlers.onKeyUp,
+                        false,
+                    );
+            }
+        };
+    }, [canvasRef, manager.handlers]);
+
     const handlers = {
         onPointerDown: manager.handlers.onPointerDown,
         onPointerMove: manager.handlers.onPointerMove,
@@ -47,10 +78,11 @@ export const HMICanvas = ({
     useFitToFrame(canvasRef, width, height, true, nodesRef);
     return (
         <Stage
+            tabIndex={0}
             ref={canvasRef}
             width={width}
             height={height}
-            style={{ background: bgColor }}
+            style={{ background: bgColor, outline: "none" }}
             {...(viewOnlyMode ? null : handlers)}
             onWheel={manager.handlers.onWheel}
         >
