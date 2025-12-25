@@ -55,6 +55,7 @@
         "react-hotkeys-hook": "^5.1.0",
         "react-icons": "^5.4.0",
         "react-konva": "^18.2.14",
+        "react-konva-utils": "^2.0.0",
         "react-resizable-panels": "^3.0.6",
         "react-router-dom": "^7.0.2",
         "throttleit": "^2.1.0",

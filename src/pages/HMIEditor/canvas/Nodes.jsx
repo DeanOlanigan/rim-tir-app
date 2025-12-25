@@ -5,6 +5,8 @@ import { ACTIONS, SHAPES } from "../constants";
 import { dragBound } from "./utils/dragBound";
 import { isHasRadius, round4 } from "../utils";
 import { VariablePolygon } from "./shapes/VariablePolygon.react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Html } from "react-konva-utils";
 
 function ellipseToKonva(p) {
     const cx = p.x + p.width / 2;
@@ -162,7 +164,10 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
             );
         }
         case SHAPES.text:
-            return <Text key={id} {...params} ref={registerRef} />;
+            //return <Text key={id} {...params} ref={registerRef} />;
+            return (
+                <TextWithEdit key={id} params={params} refReg={registerRef} />
+            );
         case SHAPES.line:
             return (
                 <Line
@@ -194,4 +199,154 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
         default:
             return null;
     }
+};
+
+const TextWithEdit = ({ params, refReg }) => {
+    const [text, setText] = useState(params.text);
+    const [isEditing, setIsEditing] = useState(false);
+    const textRef = useRef();
+
+    const handleTextChange = useCallback((newText) => {
+        setText(newText);
+    }, []);
+
+    const handleTextDblClick = useCallback(() => {
+        setIsEditing(true);
+    }, []);
+
+    return (
+        <>
+            <Text
+                ref={(el) => {
+                    refReg(el);
+                    if (el) textRef.current = el;
+                    else textRef.current = null;
+                }}
+                {...params}
+                text={text}
+                onDblClick={handleTextDblClick}
+                visible={!isEditing}
+            />
+            {isEditing && (
+                <TextEditor
+                    textNode={textRef.current}
+                    onChange={handleTextChange}
+                    onClose={() => {
+                        setIsEditing(false);
+                        useNodeStore.getState().updateNode(params.id, { text });
+                    }}
+                />
+            )}
+        </>
+    );
+};
+
+const TextEditor = (props) => {
+    return (
+        <Html>
+            <TextArea {...props} />
+        </Html>
+    );
+};
+
+const TextArea = ({ textNode, onClose, onChange }) => {
+    const textareaRef = useRef(null);
+
+    useEffect(() => {
+        if (!textareaRef.current) return;
+
+        const textarea = textareaRef.current;
+        //const stage = textNode.getStage();
+        const textPosition = textNode.position();
+        //const stageBox = stage.container().getBoundingClientRect();
+        const areaPosition = {
+            x: textPosition.x,
+            y: textPosition.y,
+        };
+
+        // Match styles with the text node
+        textarea.value = textNode.text();
+        textarea.style.position = "absolute";
+        textarea.style.top = `${areaPosition.y}px`;
+        textarea.style.left = `${areaPosition.x}px`;
+        textarea.style.width = `${textNode.width() - textNode.padding() * 2}px`;
+        textarea.style.height = `${
+            textNode.height() - textNode.padding() * 2 + 5
+        }px`;
+        textarea.style.fontSize = `${textNode.fontSize()}px`;
+        textarea.style.border = "none";
+        textarea.style.padding = "0px";
+        textarea.style.margin = "0px";
+        textarea.style.overflow = "hidden";
+        textarea.style.background = "none";
+        textarea.style.outline = "none";
+        textarea.style.resize = "none";
+        textarea.style.lineHeight = textNode.lineHeight();
+        textarea.style.fontFamily = textNode.fontFamily();
+        textarea.style.transformOrigin = "left top";
+        textarea.style.textAlign = textNode.align();
+        textarea.style.color = textNode.fill();
+
+        const rotation = textNode.rotation();
+        let transform = "";
+        if (rotation) {
+            transform += `rotateZ(${rotation}deg)`;
+        }
+        textarea.style.transform = transform;
+
+        textarea.style.height = "auto";
+        textarea.style.height = `${textarea.scrollHeight + 3}px`;
+
+        textarea.focus();
+
+        const handleOutsideClick = (e) => {
+            if (e.target !== textarea) {
+                onChange(textarea.value);
+                onClose();
+            }
+        };
+
+        // Add event listeners
+        const handleKeyDown = (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                onChange(textarea.value);
+                onClose();
+            }
+            if (e.key === "Escape") {
+                onClose();
+            }
+        };
+
+        const handleInput = () => {
+            const scale = textNode.getAbsoluteScale().x;
+            textarea.style.width = `${textNode.width() * scale}px`;
+            textarea.style.height = "auto";
+            textarea.style.height = `${
+                textarea.scrollHeight + textNode.fontSize()
+            }px`;
+        };
+
+        textarea.addEventListener("keydown", handleKeyDown);
+        textarea.addEventListener("input", handleInput);
+        setTimeout(() => {
+            window.addEventListener("click", handleOutsideClick);
+        });
+
+        return () => {
+            textarea.removeEventListener("keydown", handleKeyDown);
+            textarea.removeEventListener("input", handleInput);
+            window.removeEventListener("click", handleOutsideClick);
+        };
+    }, [textNode, onChange, onClose]);
+
+    return (
+        <textarea
+            ref={textareaRef}
+            style={{
+                minHeight: "1em",
+                position: "absolute",
+            }}
+        />
+    );
 };
