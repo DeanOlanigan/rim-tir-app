@@ -123,7 +123,7 @@ const SelectionRect = ({ id, nodesRef }) => {
     if (!kNode) return null;
 
     const bb = kNode.getClientRect({
-        relativeTo: kNode.parent,
+        relativeTo: kNode.getStage(),
         skipStroke: true,
         skipShadow: true,
     });

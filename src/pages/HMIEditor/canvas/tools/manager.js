@@ -160,8 +160,7 @@ export function createToolManager({ toolsMap, api }) {
             const id =
                 parentGroups[parentGroups.length - 1]?.id() || target.id();
             const selectedIds = api.getSelectedIds();
-            let ids = selectedIds;
-
+            let ids = id ? selectedIds : [];
             if (id && !selectedIds.includes(id)) {
                 api.setSelectedIds([id]);
                 ids = [id];

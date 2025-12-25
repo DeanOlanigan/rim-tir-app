@@ -34,6 +34,8 @@ export function createSelectTool() {
                 const isSelected = selectedIds.includes(clickedId);
                 if (!metaPressed && !isSelected) {
                     ctx.setSelectedIds([clickedId]);
+                } else if (!metaPressed && isSelected) {
+                    ctx.setSelectedIds([clickedId]);
                 } else if (metaPressed && isSelected) {
                     ctx.setSelectedIds(
                         selectedIds.filter((id) => id !== clickedId),
