@@ -113,7 +113,6 @@ export const UsersTable = () => {
                                     selectedRows.includes(row) ? "" : undefined
                                 }
                                 onContextMenu={() => {
-                                    console.log(live[row]);
                                     useEditStore
                                         .getState()
                                         .setSelectedUser(row, live[row]);

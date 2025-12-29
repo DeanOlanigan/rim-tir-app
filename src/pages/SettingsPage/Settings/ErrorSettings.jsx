@@ -7,7 +7,12 @@ export const ErrorSettings = () => {
     const navigate = useNavigate("/settings");
 
     const refetch = async () => {
-        await queryClient.refetchQueries(["settings", "license"]);
+        await queryClient.refetchQueries([
+            "settings",
+            "license",
+            "roles",
+            "users",
+        ]);
         navigate();
     };
 

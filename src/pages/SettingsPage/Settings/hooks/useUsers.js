@@ -7,6 +7,6 @@ export const useUsersHistory = () => {
         queryKey: [QK.users],
         queryFn: async () => getUsers(),
     });
-    console.log(q.data);
+
     return q.data;
 };
