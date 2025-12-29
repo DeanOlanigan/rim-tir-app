@@ -10,6 +10,8 @@ import {
 import { LuUserRoundX } from "react-icons/lu";
 import { useEditStore } from "../../SettingsStore/user-edit-store";
 import { useTableStore } from "../../SettingsStore/tablestore";
+import { handleDelete } from "./handleDelete";
+import { useUserDeleteMutation } from "../../hooks/useUserDeleteMutation";
 
 export const DeletePopover = () => {
     const id = useEditStore((s) => s.selectedUser?.id);
@@ -18,13 +20,12 @@ export const DeletePopover = () => {
     const setOpen = useEditStore.getState().setPopoversOpen;
     const selectedUsers = useTableStore.getState().selectedRows;
     const isSelected = selectedUsers.length > 1;
+    const deleteMutation = useUserDeleteMutation();
 
-    function handleDelete() {
-        const usersToDelete = isSelected ? selectedUsers : [id];
-        useTableStore.getState().deleteUsers(usersToDelete);
-        useEditStore.getState().setSelectedUser(undefined, {});
-        setOpen("delete", false);
-        useEditStore.getState().setMenuOpen(false);
+    function handleUsersDelete() {
+        const usersToDelete = selectedUsers.length > 1 ? selectedUsers : [id];
+        handleDelete(usersToDelete);
+        deleteMutation.mutate(usersToDelete);
     }
 
     return (
@@ -81,7 +82,7 @@ export const DeletePopover = () => {
                                 colorPalette={"red"}
                                 color={"red.600"}
                                 onClick={() => {
-                                    handleDelete();
+                                    handleUsersDelete();
                                 }}
                             >
                                 Удалить

@@ -14,6 +14,8 @@ import { useEditStore } from "../../SettingsStore/user-edit-store";
 import { LuCheck, LuUserPen, LuX } from "react-icons/lu";
 import { RoleSelector } from "../Roles/RoleSelector";
 import { useTableStore } from "../../SettingsStore/tablestore";
+import { toaster } from "@/components/ui/toaster";
+import { useUsersPutMutation } from "../../hooks/useUsersPutMutation";
 
 const fieldNames = {
     name: "Имя",
@@ -21,6 +23,12 @@ const fieldNames = {
     grandname: "Отчество",
     position: "Должность",
     role: "Роль",
+};
+
+const errors = {
+    EMPTY_FIELDS: "Все поля должны быть заполнены",
+    NOT_CYRILLIC_SYMBOLS:
+        "ФИО должно состоять только из кириллицы, Должность не должна включать в себя спец.символы",
 };
 
 export const EditPopover = () => {
@@ -33,14 +41,24 @@ export const EditPopover = () => {
     const selectedUsers = useTableStore.getState().selectedRows;
     const setTemp = useEditStore.getState().setTempUser;
     const isSelected = selectedUsers.length > 1;
-
+    const putMutation = useUsersPutMutation();
     function getTargetUsers(selected, id) {
         return isSelected ? selected : [id];
     }
 
     function handleEdit() {
         const usersToEdit = getTargetUsers(selectedUsers, id);
-        useTableStore.getState().editUser(usersToEdit, user);
+        try {
+            useTableStore.getState().editUser(usersToEdit, user);
+        } catch (err) {
+            toaster.create({
+                type: "error",
+                description: `Ошибка редактирования пользователя: ${errors[err.message]}`,
+                closable: true,
+            });
+            return;
+        }
+        putMutation.mutate({ ids: usersToEdit, newData: user });
         setOpen("edit", false);
         useEditStore.getState().setMenuOpen(false);
     }

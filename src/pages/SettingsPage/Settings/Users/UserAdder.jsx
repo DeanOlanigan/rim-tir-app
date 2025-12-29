@@ -1,9 +1,10 @@
 import { Field, IconButton, Input, Table } from "@chakra-ui/react";
 import { LuUserRoundPlus } from "react-icons/lu";
 import { RoleSelector } from "./Roles/RoleSelector";
-import { useTableStore } from "../SettingsStore/tablestore";
 import { useUserStore } from "../SettingsStore/user-add-store";
-import { toaster } from "@/components/ui/toaster";
+import { handleAdd } from "./handleAdd";
+import { useUserPostMutation } from "../hooks/useUserPostMutation";
+import { nanoid } from "nanoid";
 
 const inputs = [
     { id: "login", label: "логин" },
@@ -13,33 +14,16 @@ const inputs = [
     { id: "position", label: "должность" },
 ];
 
-const errors = {
-    EMPTY_FIELDS: "Все поля должны быть заполнены",
-    NOT_CYRILLIC_SYMBOLS: "ФИО должно состоять только из кириллицы",
-    NOT_UNIQUE_LOGIN: "Пользователь с таким логином уже существует",
-};
-
 export const UserAdder = ({ scrollToBottom }) => {
-    const addUser = useTableStore.getState().addUser;
     const makeUser = useUserStore.getState().makeUser;
     const newUser = useUserStore((s) => s.newUser);
-    const cleanUser = useUserStore.getState().cleanUser;
+    const postMutation = useUserPostMutation();
     const baseText = "Введите";
-    function handleAdd() {
-        try {
-            addUser(newUser);
-        } catch (error) {
-            console.log(error.message);
-            toaster.create({
-                type: "error",
-                description: `Ошибка добавления пользователя: ${errors[error.message]}`,
-                closable: true,
-            });
-            return;
-        }
 
-        setTimeout(() => scrollToBottom(), 0);
-        cleanUser();
+    function handleUserPost() {
+        const newId = nanoid();
+        const isCorrect = handleAdd(newId, newUser, scrollToBottom);
+        if (isCorrect) postMutation.mutate({ newId, newUser });
     }
 
     return (
@@ -49,8 +33,9 @@ export const UserAdder = ({ scrollToBottom }) => {
                     size={"xs"}
                     variant={"ghost"}
                     onClick={() => {
-                        handleAdd();
+                        handleUserPost();
                     }}
+                    loading={postMutation.isPending}
                 >
                     <LuUserRoundPlus />
                 </IconButton>
