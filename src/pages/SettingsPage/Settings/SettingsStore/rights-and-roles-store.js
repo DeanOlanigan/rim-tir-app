@@ -51,6 +51,8 @@ const defaultRoles = {
     },
 };
 
+const ROLE_NAME_REGEX = /^[\p{L}\d\s-]+$/u;
+
 export const useRightsAndRolesStore = create((set, get) => ({
     roles: defaultRoles,
 
@@ -65,7 +67,9 @@ export const useRightsAndRolesStore = create((set, get) => ({
     hasSameNameAdd: (newName) => {
         const checkRoles = get().roles;
         return Object.keys(checkRoles).some(
-            (id) => checkRoles[id].name.toLowerCase() === newName.toLowerCase(),
+            (id) =>
+                checkRoles[id].name.trim().toLowerCase() ===
+                newName.trim().toLowerCase(),
         );
     },
 
@@ -78,6 +82,12 @@ export const useRightsAndRolesStore = create((set, get) => ({
         );
     },
 
+    isValidRole: (roleName) => {
+        const trimName = roleName.trim();
+        if (!trimName) return;
+        return ROLE_NAME_REGEX.test(trimName);
+    },
+
     setSelectedRole: (selId, selName, selRights) =>
         set(() => ({
             selectedRole: { id: selId, name: selName, rights: selRights },
@@ -88,18 +98,21 @@ export const useRightsAndRolesStore = create((set, get) => ({
             selectedRole: { ...state.selectedRole, [field]: newData },
         })),
 
-    addRole: (newRole) =>
-        set((state) => {
-            if (get().hasSameNameAdd(newRole)) {
-                throw new Error("ROLE_ALREADY_EXISTS");
-            }
-            return {
-                roles: {
-                    ...state.roles,
-                    [nanoid()]: { name: newRole, rights: [] },
-                },
-            };
-        }),
+    addRole: (newRole) => {
+        if (get().hasSameNameAdd(newRole)) {
+            throw new Error("ROLE_ALREADY_EXISTS");
+        }
+        if (!get().isValidRole(newRole)) throw new Error("INVALID_ROLE_NAME");
+        const id = nanoid();
+        set((state) => ({
+            roles: {
+                ...state.roles,
+                [id]: { name: newRole, rights: [] },
+            },
+        }));
+
+        return id;
+    },
 
     delRole: (delId) =>
         set((state) => {
@@ -118,6 +131,8 @@ export const useRightsAndRolesStore = create((set, get) => ({
             const editedRole = { ...state.selectedRole };
             if (editedRole.id === undefined) throw new Error("NO_SELECTED");
             if (editedRole.name.length === 0) throw new Error("EMPTY_NAME");
+            if (!get().isValidRole(editedRole.name))
+                throw new Error("INVALID_ROLE_NAME");
             if (get().hasSameNameEdit(editedRole))
                 throw new Error("ROLE_ALREADY_EXISTS");
             return {
