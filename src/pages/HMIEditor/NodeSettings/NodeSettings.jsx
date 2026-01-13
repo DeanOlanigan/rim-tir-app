@@ -1,5 +1,4 @@
 import {
-    Box,
     Flex,
     Heading,
     HStack,
@@ -21,6 +20,7 @@ import { TypographyBlock } from "./Typography";
 import { ActionsBlock } from "./Actions";
 import { SHAPES, SHAPES_NAMES, SHAPES_WITH_SETTINGS } from "../constants";
 import { SkewBlock } from "./Skew";
+import { AdvancedSettings } from "./Advanced/AdvancedSettings";
 
 export const NodeSettings = ({ api }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
@@ -31,50 +31,60 @@ export const NodeSettings = ({ api }) => {
     );
     if (!types.every((type) => SHAPES_WITH_SETTINGS.has(type))) return null;
 
+    const isMultiple = selectedIds.length > 1;
+
+    const heading = isMultiple
+        ? `${selectedIds.length} selected`
+        : SHAPES_NAMES[types[0]];
+
     return (
         <Flex
             bg={"bg"}
-            w={"350px"}
+            w={"400px"}
             h={"100%"}
             p={"4"}
             borderRadius={"md"}
             shadow={"md"}
+            direction={"column"}
+            gap={2}
         >
+            <HStack w={"100%"} justify={"space-between"}>
+                <Heading size={"md"}>{heading}</Heading>
+                <ActionsBlock ids={selectedIds} api={api} types={types} />
+            </HStack>
             <Tabs.Root
-                variant={"subtle"}
+                variant={"line"}
                 defaultValue="base"
                 lazyMount
                 unmountOnExit
                 fitted
-                w={"full"}
+                w={"100%"}
+                h={"100%"}
                 display={"flex"}
                 flexDirection={"column"}
+                overflow={"hidden"}
+                size={"sm"}
             >
                 <Tabs.List>
                     <Tabs.Trigger value="base">Base settings</Tabs.Trigger>
                     <Tabs.Trigger value="advanced">Advanced</Tabs.Trigger>
                 </Tabs.List>
-                <Tabs.Content value="base" display={"flex"} overflow={"hidden"}>
-                    <Box overflow={"auto"}>
-                        <BaseSettings
-                            api={api}
-                            types={types}
-                            selectedIds={selectedIds}
-                        />
-                    </Box>
+                <Tabs.Content value="base" h={"100%"} overflow={"auto"} p={2}>
+                    <BaseSettings
+                        api={api}
+                        types={types}
+                        selectedIds={selectedIds}
+                    />
                 </Tabs.Content>
-                <Tabs.Content value="advanced">Advanced settings</Tabs.Content>
+                <Tabs.Content value="advanced" h={"100%"} p={2}>
+                    <AdvancedSettings />
+                </Tabs.Content>
             </Tabs.Root>
         </Flex>
     );
 };
 
 const BaseSettings = ({ api, types, selectedIds }) => {
-    const isMultiple = selectedIds.length > 1;
-    const heading = isMultiple
-        ? `${selectedIds.length} selected`
-        : SHAPES_NAMES[types[0]];
-
     const showCornerRadius = types.every(
         (type) => type === SHAPES.rect || type === SHAPES.polygon,
     );
@@ -89,10 +99,6 @@ const BaseSettings = ({ api, types, selectedIds }) => {
             w={"100%"}
             separator={<StackSeparator borderColor={"colorPalette.solid"} />}
         >
-            <HStack w={"100%"} justify={"space-between"}>
-                <Heading size={"md"}>{heading}</Heading>
-                <ActionsBlock ids={selectedIds} api={api} types={types} />
-            </HStack>
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Layers</Heading>
                 <Layers ids={selectedIds} />
