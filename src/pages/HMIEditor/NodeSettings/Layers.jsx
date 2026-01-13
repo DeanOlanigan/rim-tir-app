@@ -14,16 +14,32 @@ export const Layers = ({ ids }) => {
 
     return (
         <Group attached grow w={"100%"}>
-            <IconButton size={"xs"} onClick={() => handleMove("moveToTop")}>
+            <IconButton
+                variant={"outline"}
+                size={"xs"}
+                onClick={() => handleMove("moveToTop")}
+            >
                 <LuArrowUpFromLine />
             </IconButton>
-            <IconButton size={"xs"} onClick={() => handleMove("moveUp")}>
+            <IconButton
+                variant={"outline"}
+                size={"xs"}
+                onClick={() => handleMove("moveUp")}
+            >
                 <LuMoveUp />
             </IconButton>
-            <IconButton size={"xs"} onClick={() => handleMove("moveDown")}>
+            <IconButton
+                variant={"outline"}
+                size={"xs"}
+                onClick={() => handleMove("moveDown")}
+            >
                 <LuMoveDown />
             </IconButton>
-            <IconButton size={"xs"} onClick={() => handleMove("moveToBottom")}>
+            <IconButton
+                variant={"outline"}
+                size={"xs"}
+                onClick={() => handleMove("moveToBottom")}
+            >
                 <LuArrowDownFromLine />
             </IconButton>
         </Group>
