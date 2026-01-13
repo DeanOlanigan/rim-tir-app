@@ -11,8 +11,35 @@ import { useToolsManager } from "./canvas/hooks/useToolsManager";
 import { NodesTree } from "./NodesTree";
 import { NodeSettings } from "./NodeSettings";
 import { useNodeStore } from "./store/node-store";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useMonitoringLive } from "../MonitoringPage/store/mqtt-stream-store";
+import { useMqttLive } from "../MonitoringPage/useMqttLive";
+import { Loader } from "@/components/Loader";
+import { ErrorInformer } from "@/components/ErrorInformer";
+import { getConfiguration, QK } from "@/api";
 
 function HMIEditor() {
+    const { data, isLoading, isFetching, isError, error } = useQuery({
+        queryKey: QK.configuration,
+        queryFn: getConfiguration,
+    });
+    useEffect(() => {
+        if (!data) return;
+        useMonitoringLive.getState().clear();
+    }, [data]);
+
+    useMqttLive("monitoring/node/#");
+
+    if (isLoading) return <Loader text={"Загрузка данных"} />;
+    if (isError) return <ErrorInformer error={error} />;
+    if (isFetching) return <Loader text={"Обновление данных"} />;
+
+    return <HMIEditorContent />;
+}
+export default HMIEditor;
+
+const HMIEditorContent = () => {
     const { ref, width, height } = useThrottledResizeObserver(100);
     const tools = useToolsManager();
 
@@ -59,5 +86,4 @@ function HMIEditor() {
             </HStack>
         </Flex>
     );
-}
-export default HMIEditor;
+};
