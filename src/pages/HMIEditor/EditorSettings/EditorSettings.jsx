@@ -1,8 +1,11 @@
-import { IconButton, Popover, Portal, Stack } from "@chakra-ui/react";
+import { Group, IconButton, Popover, Portal, Stack } from "@chakra-ui/react";
 import { LuMenu } from "react-icons/lu";
 import { Checkboxes } from "./CheckBoxes";
 import { GridSize } from "./GridSize";
 import { Colors } from "./Colors";
+import { DownloadProject } from "./DownloadProject";
+import { OpenProject } from "./OpenProject";
+import { CloseProject } from "./CloseProject";
 
 export const EditorSettings = () => {
     return (
@@ -17,6 +20,11 @@ export const EditorSettings = () => {
                     <Popover.Content>
                         <Popover.Body>
                             <Stack>
+                                <Group>
+                                    <DownloadProject />
+                                    <OpenProject />
+                                    <CloseProject />
+                                </Group>
                                 <GridSize />
                                 <Checkboxes />
                                 <Colors />
