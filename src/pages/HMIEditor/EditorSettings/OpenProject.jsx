@@ -3,8 +3,17 @@ import { Button, FileUpload, useFileUpload } from "@chakra-ui/react";
 import { LuFile } from "react-icons/lu";
 import { useNodeStore } from "../store/node-store";
 import { validateProjectStructure } from "../projectSchema";
+import { useFitToFrame } from "../canvas/hooks/useFitToFrame";
 
-export const OpenProject = () => {
+export const OpenProject = ({ tools, width, height }) => {
+    const fitToFrame = useFitToFrame(
+        tools.canvasRef,
+        width,
+        height,
+        false,
+        tools.nodesRef,
+    );
+
     const fileUpload = useFileUpload({
         maxFiles: 1,
         accept: ["application/json"],
@@ -35,6 +44,8 @@ export const OpenProject = () => {
                     nodes: project.nodes,
                     selectedIds: [],
                 });
+
+                fitToFrame();
 
                 fileUpload.clearFiles();
             } catch (error) {

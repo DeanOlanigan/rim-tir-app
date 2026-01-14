@@ -7,7 +7,7 @@ import { DownloadProject } from "./DownloadProject";
 import { OpenProject } from "./OpenProject";
 import { CloseProject } from "./CloseProject";
 
-export const EditorSettings = () => {
+export const EditorSettings = ({ tools, width, height }) => {
     return (
         <Popover.Root size={"xs"} lazyMount unmountOnExit>
             <Popover.Trigger asChild>
@@ -22,7 +22,11 @@ export const EditorSettings = () => {
                             <Stack>
                                 <Group>
                                     <DownloadProject />
-                                    <OpenProject />
+                                    <OpenProject
+                                        tools={tools}
+                                        width={width}
+                                        height={height}
+                                    />
                                     <CloseProject />
                                 </Group>
                                 <GridSize />

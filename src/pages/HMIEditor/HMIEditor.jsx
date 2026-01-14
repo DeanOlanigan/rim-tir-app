@@ -56,7 +56,7 @@ const HMIEditorContent = () => {
             <ContextMenu />
             <HMICanvas {...tools} width={width} height={height} />
             <Box position={"absolute"} left={2} top={2}>
-                <EditorSettings />
+                <EditorSettings tools={tools} width={width} height={height} />
             </Box>
             <Box
                 position={"absolute"}
