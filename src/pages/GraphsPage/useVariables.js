@@ -12,6 +12,7 @@ export const useVariables = () => {
             const items = variables.map((v) => ({
                 label: v.name,
                 value: v.name,
+                id: v.id,
             }));
             return items;
         },

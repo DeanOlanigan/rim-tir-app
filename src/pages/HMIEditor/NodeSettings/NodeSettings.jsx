@@ -77,7 +77,11 @@ export const NodeSettings = ({ api }) => {
                     />
                 </Tabs.Content>
                 <Tabs.Content value="advanced" h={"100%"} p={2}>
-                    <AdvancedSettings />
+                    <AdvancedSettings
+                        api={api}
+                        types={types}
+                        selectedIds={selectedIds}
+                    />
                 </Tabs.Content>
             </Tabs.Root>
         </Flex>
