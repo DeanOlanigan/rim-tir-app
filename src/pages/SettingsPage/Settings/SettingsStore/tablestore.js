@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 const CYRILLIC_ONLY = /^[\p{Script=Cyrillic}\s]+$/u;
 const ROLE_NAME_REGEX = /^[\p{L}\d\s-]+$/u;
-const LOGIN_REGEX = /^(?![._-])[a-zA-Z0-9._-]{3,20}(?<![._-])$/;
+const LOGIN_REGEX = /^(?![._-])[a-zA-Z0-9._-]{1,20}(?<![._-])$/;
 
 export const useTableStore = create((set, get) => ({
     selectedRows: [],
@@ -46,7 +46,9 @@ export const useTableStore = create((set, get) => ({
             return {
                 live: {
                     ...state.live,
-                    [newId]: newUser,
+                    [newId]: {
+                        ...newUser,
+                    },
                 },
             };
         }),
@@ -64,8 +66,9 @@ export const useTableStore = create((set, get) => ({
             if (changeAll) {
                 if (!get().isUserValid(editedUser))
                     throw new Error("EMPTY_FIELDS");
-                if (!get().isCyrillicOnly(editedUser))
+                if (!get().isCyrillicOnly(editedUser)) {
                     throw new Error("NOT_CYRILLIC_SYMBOLS");
+                }
                 newLive[ids[0]] = editedUser;
                 return { live: newLive, selectedRows: [] };
             }
