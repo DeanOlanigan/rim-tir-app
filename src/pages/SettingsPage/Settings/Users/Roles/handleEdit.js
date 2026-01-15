@@ -1,13 +1,6 @@
 import { toaster } from "@/components/ui/toaster";
 import { useRightsAndRolesStore } from "../../SettingsStore/rights-and-roles-store";
-
-const errors = {
-    NO_SELECTED: "Выберите роль",
-    EMPTY_NAME: "Имя не может быть пустым",
-    ROLE_ALREADY_EXISTS: "Роль с таким именем уже существует",
-    INVALID_ROLE_NAME:
-        "В имени могут быть использованы только буквы латиницы и кириллицы, цифры, пробел и дефис",
-};
+import { errors } from "../errors";
 
 export function handleEdit() {
     try {

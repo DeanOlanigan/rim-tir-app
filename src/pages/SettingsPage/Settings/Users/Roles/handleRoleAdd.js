@@ -1,12 +1,6 @@
 import { toaster } from "@/components/ui/toaster";
 import { useRightsAndRolesStore } from "@/pages/SettingsPage/Settings/SettingsStore/rights-and-roles-store";
-
-const errors = {
-    ROLE_ALREADY_EXISTS:
-        "Ошибка добавления роли: Роль с таким именем уже существует",
-    INVALID_ROLE_NAME:
-        "В имени могут быть использованы только буквы латиницы и кириллицы, цифры, пробел и дефис",
-};
+import { errors } from "../errors";
 
 export function handleRoleAdd(newRoleRef) {
     if (!newRoleRef.current.value) return;

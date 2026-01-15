@@ -11,16 +11,29 @@ export const useEditStore = create((set) => ({
         data: {},
     },
 
+    editedPassword: "",
+
+    setNewPassword: (newPassword) =>
+        set(() => ({
+            editedPassword: newPassword,
+        })),
+
     setSelectedUser: (selectedId, selectedData) =>
         set(() => ({
-            selectedUser: { id: selectedId, data: selectedData },
+            selectedUser: {
+                id: selectedId,
+                data: { ...selectedData },
+            },
         })),
 
     setTempUser: (isOpen) =>
         set((state) => ({
             tempUser: isOpen
-                ? { ...state.selectedUser }
+                ? {
+                      ...state.selectedUser,
+                  }
                 : { id: undefined, data: {} },
+            editedPassword: "",
         })),
 
     editTempUser: (field, newData) =>
@@ -38,7 +51,11 @@ export const useEditStore = create((set) => ({
 
     open: false,
 
+    passwd: false,
+
     menuOpen: false,
+
+    setPasswdOpen: (isOpen) => set(() => ({ passwd: isOpen })),
 
     setMenuOpen: (isOpen) => set(() => ({ menuOpen: isOpen })),
 

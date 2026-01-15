@@ -16,6 +16,7 @@ import { RoleSelector } from "../Roles/RoleSelector";
 import { useTableStore } from "../../SettingsStore/tablestore";
 import { toaster } from "@/components/ui/toaster";
 import { useUsersPutMutation } from "../../hooks/useUsersPutMutation";
+import { errors } from "../errors";
 
 const fieldNames = {
     name: "Имя",
@@ -23,12 +24,6 @@ const fieldNames = {
     grandname: "Отчество",
     position: "Должность",
     role: "Роль",
-};
-
-const errors = {
-    EMPTY_FIELDS: "Все поля должны быть заполнены",
-    NOT_CYRILLIC_SYMBOLS:
-        "ФИО должно состоять только из кириллицы, Должность не должна включать в себя спец.символы",
 };
 
 export const EditPopover = () => {
@@ -42,6 +37,7 @@ export const EditPopover = () => {
     const setTemp = useEditStore.getState().setTempUser;
     const isSelected = selectedUsers.length > 1;
     const putMutation = useUsersPutMutation();
+
     function getTargetUsers(selected, id) {
         return isSelected ? selected : [id];
     }
@@ -101,7 +97,10 @@ export const EditPopover = () => {
                         <Fieldset.Root>
                             <Stack margin={"10px"}>
                                 <Fieldset.Legend>
-                                    Редактирование {login}
+                                    Редактирование
+                                    {isSelected
+                                        ? " множества пользователей"
+                                        : ` ${login}`}
                                 </Fieldset.Legend>
                                 <Fieldset.HelperText>
                                     Внесите нужные изменения
@@ -113,7 +112,11 @@ export const EditPopover = () => {
                                 paddingBottom={"5%"}
                             >
                                 {Object.keys(user).map((data) => {
-                                    if (data != "login" && data != "role") {
+                                    if (
+                                        data != "login" &&
+                                        data != "role" &&
+                                        data != "password"
+                                    ) {
                                         return (
                                             <Field.Root key={data}>
                                                 <Field.Label>
