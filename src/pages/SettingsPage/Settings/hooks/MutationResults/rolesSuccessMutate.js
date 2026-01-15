@@ -1,6 +1,6 @@
-import { QK } from "./queryKeys";
+import { QK } from "../../../../../api/queryKeys";
 import { toaster } from "@/components/ui/toaster";
-import { useRightsAndRolesStore } from "@/pages/SettingsPage/Settings/SettingsStore/rights-and-roles-store";
+import { useRightsAndRolesStore } from "../../SettingsStore/rights-and-roles-store";
 
 export function rolesSuccessMutate(queryClient, text) {
     queryClient.setQueryData([QK.roles], () => {

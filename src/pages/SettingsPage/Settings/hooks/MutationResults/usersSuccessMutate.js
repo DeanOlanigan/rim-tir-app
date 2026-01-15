@@ -1,6 +1,6 @@
-import { useTableStore } from "@/pages/SettingsPage/Settings/SettingsStore/tablestore";
-import { QK } from "./queryKeys";
+import { QK } from "../../../../../api/queryKeys";
 import { toaster } from "@/components/ui/toaster";
+import { useTableStore } from "../../SettingsStore/tablestore";
 
 export function usersSuccessMutate(queryClient, text) {
     queryClient.setQueryData([QK.users], () => {
