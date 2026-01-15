@@ -1,16 +1,16 @@
 import { apiv2 } from "@/api/baseUrl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { usersSuccessMutate } from "@/api/usersSuccessMutate";
-import { usersErrorMutate } from "@/api/usersErrorMutate";
+import { usersSuccessMutate } from "./MutationResults/usersSuccessMutate";
+import { usersErrorMutate } from "./MutationResults/usersErrorMutate";
 
 export const useUserPostMutation = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationKey: ["user-post"],
-        mutationFn: async ({ newId, newUser }) => {
+        mutationFn: async ({ newId, newUser, password }) => {
             const res = await apiv2.post(
                 "/addUser",
-                { id: newId, userData: newUser },
+                { id: newId, userData: { ...newUser, password: password } },
                 {
                     headers: { "Content-Type": "application/json" },
                 },

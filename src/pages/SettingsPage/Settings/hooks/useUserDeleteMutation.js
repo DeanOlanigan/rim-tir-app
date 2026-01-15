@@ -1,7 +1,7 @@
 import { apiv2 } from "@/api/baseUrl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { usersErrorMutate } from "@/api/usersErrorMutate";
-import { usersSuccessMutate } from "@/api/usersSuccessMutate";
+import { usersSuccessMutate } from "./MutationResults/usersSuccessMutate";
+import { usersErrorMutate } from "./MutationResults/usersErrorMutate";
 
 export const useUserDeleteMutation = () => {
     const queryClient = useQueryClient();

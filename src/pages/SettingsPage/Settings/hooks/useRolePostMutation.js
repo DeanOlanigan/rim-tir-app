@@ -1,7 +1,7 @@
 import { apiv2 } from "@/api/baseUrl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { rolesSuccessMutate } from "@/api/rolesSuccessMutate";
-import { rolesErrorMutate } from "@/api/rolesErrorMutate";
+import { rolesErrorMutate } from "./MutationResults/rolesErrorMutate";
+import { rolesSuccessMutate } from "./MutationResults/rolesSuccessMutate";
 
 export const useRolePostMutation = () => {
     const queryClient = useQueryClient();
