@@ -1,20 +1,22 @@
 import { toaster } from "@/components/ui/toaster";
 import { useTableStore } from "../SettingsStore/tablestore";
 import { useUserStore } from "../SettingsStore/user-add-store";
+import { errors } from "./errors";
+import { validatePassword } from "./validatePassword";
 
-const errors = {
-    EMPTY_FIELDS: "Все поля должны быть заполнены",
-    NOT_CYRILLIC_SYMBOLS:
-        "ФИО должно состоять только из кириллицы, Должность не должна включать в себя спец.символы",
-    NOT_UNIQUE_LOGIN: "Пользователь с таким логином уже существует",
-    INCORRECT_LOGIN: "Некорректный логин нового пользователя",
-};
-
-export function handleAdd(newId, newUser, scrollToBottom) {
+export function handleAdd(newId, newUser, password, scrollToBottom) {
     const addUser = useTableStore.getState().addUser;
     const cleanUser = useUserStore.getState().cleanUser;
+    const { isValid, errorsArr } = validatePassword(password);
+    if (!isValid) {
+        toaster.create({
+            type: "error",
+            description: `Некорректный пароль: ${errorsArr.join(", ")}`,
+        });
+        return;
+    }
     try {
-        addUser(newId, newUser);
+        addUser(newId, newUser, password);
     } catch (error) {
         toaster.create({
             type: "error",
