@@ -11,7 +11,7 @@ import { useRightsAndRolesStore } from "../../SettingsStore/rights-and-roles-sto
 import { LuPlus } from "react-icons/lu";
 import { useRef } from "react";
 import { useRolePostMutation } from "../../hooks/useRolePostMutation";
-import { handleRoleAdd } from "@/pages/SettingsPage/Settings/Users/Roles/handleRoleAdd";
+import { handleRoleAdd } from "./handleRoleAdd";
 import { DeleteRolePopover } from "./deleteRolePopover";
 
 export const RoleList = () => {

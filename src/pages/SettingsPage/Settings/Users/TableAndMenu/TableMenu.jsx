@@ -2,6 +2,7 @@ import { Menu, VStack } from "@chakra-ui/react";
 import { DeletePopover } from "../Popovers/DeletePopover";
 import { useEditStore } from "../../SettingsStore/user-edit-store";
 import { EditPopover } from "../Popovers/EditPopover";
+import { EditPassword } from "../Popovers/editPasswordPopover";
 
 export const TableMenu = ({ children }) => {
     const menuOpen = useEditStore((s) => s.menuOpen);
@@ -24,6 +25,9 @@ export const TableMenu = ({ children }) => {
                     <VStack w={"100%"} alignItems={"flex-start"}>
                         <Menu.Item asChild>
                             <EditPopover />
+                        </Menu.Item>
+                        <Menu.Item asChild>
+                            <EditPassword />
                         </Menu.Item>
                         <Menu.Item asChild>
                             <DeletePopover />

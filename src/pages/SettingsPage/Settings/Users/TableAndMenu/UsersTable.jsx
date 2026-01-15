@@ -1,12 +1,3 @@
-const tableColumns = [
-    { label: "Логин", value: "login" },
-    { label: "Фамилия", value: "surname" },
-    { label: "Имя", value: "name" },
-    { label: "Отчество", value: "grandname" },
-    { label: "Должность", value: "position" },
-    { label: "Роль", value: "role" },
-];
-
 import { Box, Checkbox, Table, Text } from "@chakra-ui/react";
 import { useTableStore } from "../../SettingsStore/tablestore";
 import { UserAdder } from "../UserAdder";
@@ -15,6 +6,15 @@ import { NoData } from "@/components/NoData";
 import { useEditStore } from "../../SettingsStore/user-edit-store";
 import { useRightsAndRolesStore } from "../../SettingsStore/rights-and-roles-store";
 import { useUsersHistory } from "../../hooks/useUsers";
+
+const tableColumns = [
+    { label: "Логин", value: "login" },
+    { label: "Фамилия", value: "surname" },
+    { label: "Имя", value: "name" },
+    { label: "Отчество", value: "grandname" },
+    { label: "Должность", value: "position" },
+    { label: "Роль", value: "role" },
+];
 
 export const UsersTable = () => {
     const setSelectedRows = useTableStore.getState().setSelectedRows;
@@ -136,6 +136,7 @@ export const UsersTable = () => {
                                 </Table.Cell>
                                 {Object?.keys(live[row]).map((key) => {
                                     const cellValue = live[row][key];
+                                    if (key === "password") return null;
                                     return (
                                         <Table.Cell
                                             key={key}
