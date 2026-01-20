@@ -44,6 +44,7 @@ export const OpenProject = ({ tools, width, height }) => {
                     nodes: project.nodes,
                     selectedIds: [],
                 });
+                useNodeStore.getState().rebuildVarIndex();
 
                 fitToFrame();
 

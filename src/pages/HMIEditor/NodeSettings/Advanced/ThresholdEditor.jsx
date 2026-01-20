@@ -1,32 +1,27 @@
 import {
     createListCollection,
-    Heading,
-    HStack,
-    IconButton,
-    Input,
+    NumberInput,
     Portal,
     Select,
-    VStack,
+    Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { LuPlus, LuTrash2 } from "react-icons/lu";
-import { ParamSet } from "./ParamSet";
+import { RuleList } from "./RuleList";
 
 const thresholdRange = createListCollection({
     items: [
-        { label: "lt", value: "below" },
-        { label: "gt", value: "above" },
-        { label: "Between", value: "between" },
+        { label: "lt", value: "lt" },
+        { label: "gt", value: "gt" },
+        { label: "btw", value: "between" },
     ],
 });
 
-const ThresholdRangeSelector = ({ range, setRange }) => {
+const ThresholdRangeSelector = ({ value, onChange }) => {
     return (
         <Select.Root
             size="xs"
-            width={"180px"}
-            value={[range]}
-            onValueChange={(e) => setRange(e.value[0])}
+            width={"100px"}
+            value={[value]}
+            onValueChange={(e) => onChange(e.value[0])}
             collection={thresholdRange}
             lazyMount
             unmountOnExit
@@ -60,41 +55,51 @@ const ThresholdRangeSelector = ({ range, setRange }) => {
     );
 };
 
-export const ThresholdEditor = ({ type }) => {
-    const [rules, setRules] = useState([]);
-    const [range, setRange] = useState("below");
-
+export const ThresholdEditor = (props) => {
     return (
-        <VStack align={"start"} w={"100%"}>
-            <HStack w={"100%"}>
-                <Heading size={"sm"} w={"100%"}>
-                    Threshold Editor
-                </Heading>
-                <IconButton
-                    variant={"outline"}
-                    size={"xs"}
-                    onClick={() => setRules([...rules, { id: Date.now() }])}
-                >
-                    <LuPlus />
-                </IconButton>
-            </HStack>
-            {rules.map((rule) => (
-                <HStack key={rule.id} w={"100%"}>
-                    <ThresholdRangeSelector range={range} setRange={setRange} />
-                    <Input w={"120px"} size={"xs"} /> &
-                    {range === "between" && <Input w={"120px"} size={"xs"} />}
-                    →<ParamSet type={type} />
-                    <IconButton
-                        variant={"outline"}
+        <RuleList
+            {...props}
+            title={"Threshold Editor"}
+            emptyText={"No rules defined. Value will fallback to static"}
+            createRule={() => ({ type: "lt", from: 0, to: 0 })}
+            renderInput={(rule, i, onChange) => (
+                <>
+                    <ThresholdRangeSelector
+                        value={rule.type ?? "lt"}
+                        onChange={(val) => onChange(i, "type", val)}
+                    />
+                    <NumberInput.Root
+                        w={"70px"}
                         size={"xs"}
-                        onClick={() =>
-                            setRules(rules.filter((r) => r.id !== rule.id))
+                        value={rule.from ?? ""}
+                        onValueChange={(e) =>
+                            onChange(i, "from", e.valueAsNumber)
                         }
                     >
-                        <LuTrash2 />
-                    </IconButton>
-                </HStack>
-            ))}
-        </VStack>
+                        <NumberInput.Control />
+                        <NumberInput.Input />
+                    </NumberInput.Root>
+
+                    {rule.type === "between" && (
+                        <>
+                            <Text fontSize="xs" color="fg.muted">
+                                &
+                            </Text>
+                            <NumberInput.Root
+                                w={"70px"}
+                                size={"xs"}
+                                value={rule.to ?? ""}
+                                onValueChange={(e) =>
+                                    onChange(i, "to", e.valueAsNumber)
+                                }
+                            >
+                                <NumberInput.Control />
+                                <NumberInput.Input />
+                            </NumberInput.Root>
+                        </>
+                    )}
+                </>
+            )}
+        />
     );
 };

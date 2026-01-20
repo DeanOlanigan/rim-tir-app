@@ -1,30 +1,61 @@
-import { ColorPicker, Input, parseColor } from "@chakra-ui/react";
-import { useState } from "react";
+import {
+    ColorPicker,
+    Input,
+    NumberInput,
+    parseColor,
+    Portal,
+} from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
-export const ParamSet = ({ type }) => {
+export const ParamSet = ({ type, value, onChange }) => {
     switch (type) {
         case "color":
-            return <ColorSetter />;
+            return <ColorSetter value={value} onChange={onChange} />;
         case "number":
-            return <Input w={"120px"} size={"xs"} />;
+            return (
+                <NumberInput.Root
+                    w={"120px"}
+                    size={"xs"}
+                    value={value ?? ""}
+                    onValueChange={(e) => onChange?.(e.valueAsNumber)}
+                >
+                    <NumberInput.Control />
+                    <NumberInput.Input />
+                </NumberInput.Root>
+            );
+        case "string":
+            return (
+                <Input
+                    w={"120px"}
+                    size={"xs"}
+                    value={value ?? ""}
+                    onChange={(e) => onChange?.(e.target.value)}
+                />
+            );
         default:
             return null;
     }
 };
 
-const ColorSetter = () => {
-    const [fill, setFill] = useState(parseColor("#ff0000"));
+const ColorSetter = ({ value, onChange }) => {
+    const [c, setC] = useState(parseColor(value ?? "#ff0000"));
 
-    const handleChangeColor = (fill) => {
-        setFill(fill);
-    };
+    useEffect(() => {
+        setC(parseColor(value ?? "#ff0000"));
+    }, [value]);
 
     return (
         <ColorPicker.Root
             size={"xs"}
-            value={fill}
-            onValueChange={(e) => handleChangeColor(e.value)}
-            //onValueChangeEnd={(e) => handleChangeColorEnd(e.valueAsString)}
+            value={c}
+            onValueChange={(e) => {
+                setC(e.value);
+            }}
+            onValueChangeEnd={(e) => {
+                const asString =
+                    e.valueAsString ?? e.value?.toString?.() ?? "#ff0000";
+                onChange?.(asString);
+            }}
             lazyMount
             unmountOnExit
         >
@@ -33,12 +64,14 @@ const ColorSetter = () => {
                 <ColorPicker.Trigger />
                 <ColorPicker.Input />
             </ColorPicker.Control>
-            <ColorPicker.Positioner>
-                <ColorPicker.Content>
-                    <ColorPicker.Area />
-                    <ColorPicker.Sliders />
-                </ColorPicker.Content>
-            </ColorPicker.Positioner>
+            <Portal>
+                <ColorPicker.Positioner>
+                    <ColorPicker.Content>
+                        <ColorPicker.Area />
+                        <ColorPicker.Sliders />
+                    </ColorPicker.Content>
+                </ColorPicker.Positioner>
+            </Portal>
         </ColorPicker.Root>
     );
 };

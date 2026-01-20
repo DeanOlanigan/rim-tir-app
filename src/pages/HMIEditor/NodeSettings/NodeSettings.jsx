@@ -42,7 +42,7 @@ export const NodeSettings = ({ api }) => {
             bg={"bg"}
             w={"400px"}
             h={"100%"}
-            p={"4"}
+            p={2}
             borderRadius={"md"}
             shadow={"md"}
             direction={"column"}
@@ -69,14 +69,14 @@ export const NodeSettings = ({ api }) => {
                     <Tabs.Trigger value="base">Base settings</Tabs.Trigger>
                     <Tabs.Trigger value="advanced">Advanced</Tabs.Trigger>
                 </Tabs.List>
-                <Tabs.Content value="base" h={"100%"} overflow={"auto"} p={2}>
+                <Tabs.Content value="base" h={"100%"} overflow={"auto"}>
                     <BaseSettings
                         api={api}
                         types={types}
                         selectedIds={selectedIds}
                     />
                 </Tabs.Content>
-                <Tabs.Content value="advanced" h={"100%"} p={2}>
+                <Tabs.Content value="advanced" flex={1} overflow={"hidden"}>
                     <AdvancedSettings
                         api={api}
                         types={types}

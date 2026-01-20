@@ -1,161 +1,119 @@
-import {
-    AbsoluteCenter,
-    Accordion,
-    Box,
-    Checkbox,
-    Combobox,
-    Heading,
-    HStack,
-    Portal,
-    Span,
-    StackSeparator,
-    Switch,
-    useFilter,
-    useListCollection,
-    VStack,
-} from "@chakra-ui/react";
-import { useAdvancedSettingsUi } from "./store";
-import { useVariables } from "@/pages/GraphsPage/useVariables";
-import { RuleTypeSelect } from "./RuleTypeSelect";
-import { ThresholdEditor } from "./ThresholdEditor";
-import { MapEditor } from "./MapEditor";
+import { Box, Flex, Heading, Switch, Text, VStack } from "@chakra-ui/react";
+import { VariableSelect } from "./VariableSelect";
+import { PARAMS_CONFIG } from "./params-config";
+import { AddParam } from "./AddParam";
+import { BindingCard } from "./BindingCard";
+import { useVariables } from "./use-variables";
+import { useNodeStore } from "../../store/node-store";
+import { getCommonSupportedProps } from "./shape-supported-props";
+import { useShallow } from "zustand/shallow";
+import { useActionsStore } from "../../store/actions-store";
 
-const PARAMS = [
-    { title: "Opacity", type: "number", value: "opacity" },
-    { title: "Fill", type: "color", value: "fill" },
-    { title: "Stroke", type: "color", value: "stroke" },
-    { title: "Stroke Width", type: "number", value: "strokeWidth" },
-];
+export const AdvancedSettings = ({ types, selectedIds }) => {
+    const { data: variables } = useVariables();
+    const bindingsItems = useNodeStore(
+        useShallow((s) => s.nodes[selectedIds[0]]?.bindings?.items || []),
+    );
+    const isLiveUpdate = useActionsStore((s) => s.isLiveUpdate);
+    const setLiveUpdates = useActionsStore((s) => s.setLiveUpdates);
 
-export const AdvancedSettings = ({ api, types, selectedIds }) => {
-    const { data } = useVariables();
-    console.log({ data, api, types, selectedIds });
+    const supportedProps = getCommonSupportedProps(types);
+
+    const activeProperties = bindingsItems.map((b) => b.property);
+    const availableParams = Object.keys(PARAMS_CONFIG).filter(
+        (p) => supportedProps.includes(p) && !activeProperties.includes(p),
+    );
+
+    const globalVariable = useNodeStore(
+        (s) => s.nodes[selectedIds[0]]?.bindings?.globalVarId,
+    );
 
     return (
-        <VStack
-            align={"start"}
-            pe={2}
-            w={"100%"}
-            separator={<StackSeparator borderColor={"colorPalette.solid"} />}
-        >
+        <VStack align={"start"} w={"100%"} h={"100%"} minH={0}>
+            {/* Глобальные настройки */}
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Global</Heading>
-                <VariableSelect variables={data} />
+                <VariableSelect
+                    variables={variables}
+                    value={globalVariable}
+                    onChange={(e) =>
+                        useNodeStore
+                            .getState()
+                            .setBindingGlobalVarId(selectedIds, e)
+                    }
+                />
+                <Flex
+                    justify="space-between"
+                    align="center"
+                    w="100%"
+                    p={2}
+                    borderWidth="1px"
+                    borderRadius="md"
+                    bg="bg.subtle"
+                >
+                    <VStack align="start" gap={0}>
+                        <Text fontSize="sm" fontWeight="medium">
+                            Live Updates
+                        </Text>
+                        <Text fontSize="xs" color="fg.muted">
+                            Enable MQTT data
+                        </Text>
+                    </VStack>
+                    <Switch.Root
+                        checked={isLiveUpdate}
+                        onCheckedChange={(e) => setLiveUpdates(e.checked)}
+                        size="sm"
+                    >
+                        <Switch.HiddenInput />
+                        <Switch.Control />
+                    </Switch.Root>
+                </Flex>
             </VStack>
-
-            <VStack align={"start"} w={"100%"}>
+            {/* Биндинги */}
+            <VStack align={"start"} w={"100%"} flex={1} minH={0}>
                 <Heading size={"md"}>Bindings</Heading>
-
-                <Accordion.Root collapsible>
-                    {PARAMS.map((param) => (
-                        <AccordionSettingItem
-                            key={param.value}
-                            value={param.value}
-                            title={param.title}
-                            type={param.type}
-                            variables={data}
-                        />
-                    ))}
-                </Accordion.Root>
+                <Flex
+                    direction={"column"}
+                    w={"100%"}
+                    minH={0}
+                    overflow={"auto"}
+                    gap={2}
+                    pe={2}
+                >
+                    {bindingsItems.map((binding) => {
+                        if (!PARAMS_CONFIG[binding.property]) return null;
+                        return (
+                            <BindingCard
+                                key={binding.id}
+                                binding={binding}
+                                config={PARAMS_CONFIG[binding.property]}
+                                variables={variables}
+                                isMultiple={selectedIds.length > 1}
+                                selectedIds={selectedIds}
+                                globalVariable={globalVariable}
+                            />
+                        );
+                    })}
+                    {bindingsItems.length === 0 && (
+                        <Box
+                            p={4}
+                            border="1px dashed"
+                            borderColor="border.emphasized"
+                            borderRadius="md"
+                            textAlign="center"
+                        >
+                            <Text fontSize="sm" color="gray.500">
+                                No active bindings
+                            </Text>
+                        </Box>
+                    )}
+                </Flex>
             </VStack>
+            {/* Кнопка добавления */}
+            <AddParam
+                selectedIds={selectedIds}
+                availableParams={availableParams}
+            />
         </VStack>
     );
-};
-
-const AccordionSettingItem = ({ value, title, type, variables }) => {
-    return (
-        <Accordion.Item value={value}>
-            <Box position={"relative"}>
-                <Accordion.ItemTrigger>
-                    <Accordion.ItemIndicator />
-                    <Span flex={"1"}>{title}</Span>
-                </Accordion.ItemTrigger>
-                <AbsoluteCenter axis={"vertical"} insetEnd={0}>
-                    <SettingEnabled />
-                </AbsoluteCenter>
-            </Box>
-            <Accordion.ItemContent>
-                <Accordion.ItemBody
-                    display={"flex"}
-                    flexDirection={"column"}
-                    gap={2}
-                >
-                    <GlobalVariableOverride variables={variables} />
-                    <RuleTypeSelect />
-                    <RulesBlock type={type} />
-                </Accordion.ItemBody>
-            </Accordion.ItemContent>
-        </Accordion.Item>
-    );
-};
-
-const GlobalVariableOverride = ({ variables }) => {
-    return (
-        <HStack>
-            <Checkbox.Root>
-                <Checkbox.HiddenInput />
-                <Checkbox.Control />
-                <Checkbox.Label>Override</Checkbox.Label>
-            </Checkbox.Root>
-            <VariableSelect variables={variables} />
-        </HStack>
-    );
-};
-
-const SettingEnabled = () => {
-    return (
-        <Switch.Root>
-            <Switch.HiddenInput />
-            <Switch.Control />
-            <Switch.Label>Enabled</Switch.Label>
-        </Switch.Root>
-    );
-};
-
-const VariableSelect = ({ variables }) => {
-    const { contains } = useFilter({ sensitivity: "base" });
-
-    const { collection, filter } = useListCollection({
-        initialItems: variables || [],
-        filter: contains,
-    });
-
-    return (
-        <Combobox.Root
-            collection={collection}
-            onInputValueChange={(e) => filter(e.inputValue)}
-            size={"xs"}
-            lazyMount
-            unmountOnExit
-        >
-            {/* <Combobox.Label>Variable</Combobox.Label> */}
-            <Combobox.Control>
-                <Combobox.Input placeholder="Select variable" />
-                <Combobox.IndicatorGroup>
-                    <Combobox.ClearTrigger />
-                    <Combobox.Trigger />
-                </Combobox.IndicatorGroup>
-            </Combobox.Control>
-            <Portal>
-                <Combobox.Positioner>
-                    <Combobox.Content>
-                        <Combobox.Empty>No items found</Combobox.Empty>
-                        {collection.items.map((item) => (
-                            <Combobox.Item key={item.value} item={item}>
-                                {item.label}
-                                <Combobox.ItemIndicator />
-                            </Combobox.Item>
-                        ))}
-                    </Combobox.Content>
-                </Combobox.Positioner>
-            </Portal>
-        </Combobox.Root>
-    );
-};
-
-const RulesBlock = ({ type }) => {
-    const ruleType = useAdvancedSettingsUi((state) => state.ruleType);
-    if (ruleType === "map") return <MapEditor type={type} />;
-    if (ruleType === "threshold") return <ThresholdEditor type={type} />;
-    return null;
 };

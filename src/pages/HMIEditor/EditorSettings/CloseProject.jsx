@@ -9,6 +9,7 @@ export const CloseProject = () => {
             rootIds: [],
             nodes: {},
             selectedIds: [],
+            varIndex: {},
         });
     };
 

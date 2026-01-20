@@ -7,16 +7,24 @@ import { SHAPES } from "../constants";
 export const useNodeStore = create(
     devtools(
         persist(
-            (set) => ({
+            (set, get) => ({
                 selectedIds: [],
                 nodes: {},
                 rootIds: [],
                 addNode: (node) =>
                     set((state) => {
                         const id = nanoid(12);
-                        const newNode = { ...node, id };
+                        const newNode = {
+                            ...node,
+                            id,
+                            bindings: {
+                                globalVarId: null,
+                                items: [],
+                            },
+                        };
+                        const nodes = { ...state.nodes, [id]: newNode };
                         return {
-                            nodes: { ...state.nodes, [id]: newNode },
+                            nodes,
                             rootIds: [...state.rootIds, id],
                             selectedIds: [id],
                         };
@@ -82,6 +90,68 @@ export const useNodeStore = create(
                         if (arraysEqual(prev, ids)) return state;
                         return { selectedIds: ids };
                     }),
+
+                varIndex: {},
+                rebuildVarIndex: () => {
+                    const { nodes } = get();
+                    const newVarIndex = {};
+                    Object.values(nodes).forEach((node) =>
+                        addNodeToIndex(newVarIndex, node),
+                    );
+                    set({ varIndex: newVarIndex });
+                },
+
+                setBindingGlobalVarId: (ids, varIdOrNull) => {
+                    set((s) => {
+                        const newNodes = { ...s.nodes };
+                        const newVarIndex = { ...s.varIndex };
+                        ids.forEach((id) => {
+                            const node = newNodes[id];
+                            if (!node) return;
+
+                            removeNodeFromIndex(newVarIndex, id);
+
+                            newNodes[id] = {
+                                ...node,
+                                bindings: {
+                                    ...node.bindings,
+                                    globalVarId: varIdOrNull,
+                                },
+                            };
+
+                            addNodeToIndex(newVarIndex, newNodes[id]);
+                        });
+                        return { nodes: newNodes, varIndex: newVarIndex };
+                    });
+                },
+
+                updateBinding: (nodeIds, property, changes) =>
+                    set((state) => {
+                        const newNodes = { ...state.nodes };
+                        const newIndex = { ...state.varIndex };
+
+                        nodeIds.forEach((id) => {
+                            updateBindingFunc(
+                                newNodes,
+                                newIndex,
+                                id,
+                                property,
+                                changes,
+                            );
+                        });
+
+                        return { nodes: newNodes, varIndex: newIndex };
+                    }),
+
+                removeBinding: (ids, property) => {
+                    set((s) => {
+                        const newNodes = { ...s.nodes };
+                        ids.forEach((id) => {
+                            removeBindingFunc(newNodes, id, property);
+                        });
+                        return { nodes: newNodes };
+                    });
+                },
             }),
             {
                 name: "hmi-node-store",
@@ -102,6 +172,7 @@ function deepDuplicate(ids, state, opts = {}) {
     } = opts;
 
     const newNodes = { ...state.nodes };
+    const newIndex = { ...state.varIndex };
     const newRootIds = [...state.rootIds];
     const newSelectedIds = [];
 
@@ -153,6 +224,7 @@ function deepDuplicate(ids, state, opts = {}) {
         } else {
             newNodes[newId] = baseClone;
         }
+        addNodeToIndex(newIndex, newNodes[newId]);
         return newId;
     }
 
@@ -166,18 +238,22 @@ function deepDuplicate(ids, state, opts = {}) {
         nodes: newNodes,
         rootIds: newRootIds,
         selectedIds: newSelectedIds,
+        varIndex: newIndex,
     };
 }
 
 function ungroup(ids, state) {
     let newRootIds = [...state.rootIds];
     const newNodes = { ...state.nodes };
+    const newIndex = { ...state.varIndex };
 
     const selectedIds = [];
 
     for (const id of ids) {
         const groupNode = state.nodes[id];
         if (!groupNode || groupNode.type !== SHAPES.group) continue;
+
+        removeNodeFromIndex(newIndex, id);
 
         const groupChildren = Array.isArray(groupNode.childrenIds)
             ? groupNode.childrenIds
@@ -210,6 +286,7 @@ function ungroup(ids, state) {
         rootIds: newRootIds,
         nodes: newNodes,
         selectedIds: selectedIds,
+        varIndex: newIndex,
     };
 }
 
@@ -244,6 +321,10 @@ function group(ids, bbox, state) {
         height: bbox.height,
         rotation: 0,
         childrenIds: [...ids],
+        bindings: {
+            globalVarId: null,
+            items: [],
+        },
     };
 
     const newRootIds = [...state.rootIds]
@@ -251,6 +332,9 @@ function group(ids, bbox, state) {
         .concat(groupId);
 
     const newNodes = { ...state.nodes };
+    const newIndex = { ...state.varIndex };
+
+    addNodeToIndex(newIndex, groupNode);
 
     for (const childId of ids) {
         const child = state.nodes[childId];
@@ -269,6 +353,7 @@ function group(ids, bbox, state) {
         rootIds: newRootIds,
         nodes: newNodes,
         selectedIds: [groupId],
+        varIndex: newIndex,
     };
 }
 
@@ -317,3 +402,85 @@ export const patchStoreRaf = (() => {
         }
     };
 })();
+
+function addNodeToIndex(index, node) {
+    const items = node.bindings?.items ?? [];
+    const globalVarId = node.bindings?.globalVarId;
+
+    items.forEach((b) => {
+        let varId;
+        if (b.enabled) varId = b.useGlobal ? globalVarId : b.varId;
+        if (varId) {
+            if (!index[varId]) index[varId] = [];
+            index[varId].push({
+                nodeId: node.id,
+                prop: b.property,
+                bindingId: b.id,
+            });
+        }
+    });
+}
+
+function removeNodeFromIndex(index, nodeId) {
+    for (const varId in index) {
+        index[varId] = index[varId].filter((b) => b.nodeId !== nodeId);
+        if (index[varId].length === 0) delete index[varId];
+    }
+}
+
+function updateBindingFunc(newNodes, newIndex, id, property, changes) {
+    const node = newNodes[id];
+    if (!node || !node.bindings) return;
+
+    removeNodeFromIndex(newIndex, id);
+
+    const newItems = [...node.bindings.items];
+    // Пытаемся найти биндинг с таким же property, а не id!
+    // Т.к. у разных нод id биндингов могут отличаться (или быть одинаковыми, как решишь),
+    // но логичнее искать по свойству (property: 'fill').
+
+    // ВАЖНО: Мы ищем биндинг по свойству, которое мы редактируем
+    // (changes должно содержать property, либо bindingId должен быть ключом свойства)
+
+    const index = newItems.findIndex((b) => b.property === property);
+
+    if (index !== -1) {
+        // Обновляем существующий
+        newItems[index] = {
+            ...newItems[index],
+            ...changes,
+        };
+    } else {
+        // Если у второго элемента не было такого биндинга - создаем
+        // (но тут нужно быть аккуратным с id)
+        newItems.push({
+            id: nanoid(12),
+            property,
+            enabled: true,
+            useGlobal: true,
+            mode: "map",
+            rules: [],
+            ...changes,
+        });
+    }
+
+    newNodes[id] = {
+        ...node,
+        bindings: { ...node.bindings, items: newItems },
+    };
+
+    addNodeToIndex(newIndex, newNodes[id]);
+}
+
+function removeBindingFunc(newNodes, id, property) {
+    const node = newNodes[id];
+    if (!node || !node.bindings) return;
+
+    newNodes[id] = {
+        ...node,
+        bindings: {
+            ...node.bindings,
+            items: node.bindings.items.filter((b) => b.property !== property),
+        },
+    };
+}

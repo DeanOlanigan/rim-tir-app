@@ -17,6 +17,7 @@ export const useActionsStore = create((set) => ({
     showHitRegions: false,
     showStartCoordMarker: true,
     viewOnlyMode: false,
+    isLiveUpdate: false,
 
     setCurrentAction: (action) => set({ currentAction: action }),
     setPrevAction: (action) => set({ prevAction: action }),
@@ -34,4 +35,5 @@ export const useActionsStore = create((set) => ({
     setShowHitRegions: (show) => set({ showHitRegions: show }),
     setShowStartCoordMarker: (show) => set({ showStartCoordMarker: show }),
     setViewOnlyMode: (mode) => set({ viewOnlyMode: mode }),
+    setLiveUpdates: (mode) => set({ isLiveUpdate: mode }),
 }));
