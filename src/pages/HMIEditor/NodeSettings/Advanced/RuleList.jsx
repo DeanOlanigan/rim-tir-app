@@ -17,6 +17,7 @@ import {
     useSensors,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 const getDefaultParamValue = (type) => {
     switch (type) {
@@ -116,6 +117,7 @@ export const RuleList = ({
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
+                modifiers={[restrictToVerticalAxis]}
                 onDragEnd={handleDragEnd}
             >
                 <SortableContext
