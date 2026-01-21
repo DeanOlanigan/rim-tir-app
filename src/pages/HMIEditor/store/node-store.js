@@ -21,6 +21,13 @@ export const useNodeStore = create(
                                 globalVarId: null,
                                 items: [],
                             },
+                            events: {
+                                onClick: [],
+                                onContextMenu: [],
+                                onDoubleClick: [],
+                                onMouseDown: [],
+                                onMouseUp: [],
+                            },
                         };
                         const nodes = { ...state.nodes, [id]: newNode };
                         return {
@@ -152,6 +159,103 @@ export const useNodeStore = create(
                         return { nodes: newNodes };
                     });
                 },
+
+                // 1. Добавить новое действие в конец списка
+                addNodeEventAction: (nodeId, eventType, action) =>
+                    set((state) => {
+                        const node = state.nodes[nodeId];
+                        if (!node) return state;
+
+                        const currentActions = node.events?.[eventType] || [];
+
+                        return {
+                            nodes: {
+                                ...state.nodes,
+                                [nodeId]: {
+                                    ...node,
+                                    events: {
+                                        ...node.events,
+                                        [eventType]: [
+                                            ...currentActions,
+                                            action,
+                                        ],
+                                    },
+                                },
+                            },
+                        };
+                    }),
+
+                // 2. Обновить конкретное действие (по actionId)
+                updateNodeEventAction: (nodeId, eventType, actionId, patch) =>
+                    set((state) => {
+                        const node = state.nodes[nodeId];
+                        if (!node) return state;
+
+                        const currentActions = node.events?.[eventType] || [];
+
+                        // Находим и обновляем нужное действие
+                        const newActions = currentActions.map((a) =>
+                            a.id === actionId ? { ...a, ...patch } : a,
+                        );
+
+                        return {
+                            nodes: {
+                                ...state.nodes,
+                                [nodeId]: {
+                                    ...node,
+                                    events: {
+                                        ...node.events,
+                                        [eventType]: newActions,
+                                    },
+                                },
+                            },
+                        };
+                    }),
+
+                // 3. Удалить действие
+                removeNodeEventAction: (nodeId, eventType, actionId) =>
+                    set((state) => {
+                        const node = state.nodes[nodeId];
+                        if (!node) return state;
+
+                        const currentActions = node.events?.[eventType] || [];
+
+                        return {
+                            nodes: {
+                                ...state.nodes,
+                                [nodeId]: {
+                                    ...node,
+                                    events: {
+                                        ...node.events,
+                                        [eventType]: currentActions.filter(
+                                            (a) => a.id !== actionId,
+                                        ),
+                                    },
+                                },
+                            },
+                        };
+                    }),
+
+                // 4. Перезаписать весь список действий для события
+                // (Используется для Drag-and-Drop сортировки)
+                setNodeEventActions: (nodeId, eventType, newActions) =>
+                    set((state) => {
+                        const node = state.nodes[nodeId];
+                        if (!node) return state;
+
+                        return {
+                            nodes: {
+                                ...state.nodes,
+                                [nodeId]: {
+                                    ...node,
+                                    events: {
+                                        ...node.events,
+                                        [eventType]: newActions,
+                                    },
+                                },
+                            },
+                        };
+                    }),
             }),
             {
                 name: "hmi-node-store",

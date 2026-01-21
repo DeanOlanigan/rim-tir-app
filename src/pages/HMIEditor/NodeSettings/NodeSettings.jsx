@@ -4,6 +4,7 @@ import { SelectedButtonsGroup } from "./SelectedButtonsGroup";
 import { SHAPES_NAMES, SHAPES_WITH_SETTINGS } from "../constants";
 import { BaseSettings } from "./Base";
 import { AdvancedSettings } from "./Advanced";
+import { ActionsSettings } from "./Actions";
 
 export const NodeSettings = ({ api }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
@@ -68,6 +69,18 @@ export const NodeSettings = ({ api }) => {
                 </Tabs.Content>
                 <Tabs.Content value="bindings" flex={1} overflow={"hidden"}>
                     <AdvancedSettings
+                        api={api}
+                        types={types}
+                        selectedIds={selectedIds}
+                    />
+                </Tabs.Content>
+                <Tabs.Content
+                    value="actions"
+                    h={"100%"}
+                    mt={2}
+                    overflow={"auto"}
+                >
+                    <ActionsSettings
                         api={api}
                         types={types}
                         selectedIds={selectedIds}
