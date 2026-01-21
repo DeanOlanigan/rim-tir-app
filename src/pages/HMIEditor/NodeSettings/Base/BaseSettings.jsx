@@ -1,0 +1,61 @@
+import { Heading, StackSeparator, VStack } from "@chakra-ui/react";
+import { SHAPES } from "../../constants";
+import { Layers } from "./Layers";
+import { PositionBlock } from "./Position";
+import { RotationBlock } from "./Rotation";
+import { DimensionsBlock } from "./Dimensions";
+import { SkewBlock } from "./Skew";
+import { OpacityBlock } from "./Opacity";
+import { CornerRadiusBlock } from "./CornerRadius";
+import { SidesBlock } from "./Sides";
+import { TypographyBlock } from "./Typography";
+import { FillBlock } from "./Fill";
+import { StrokeBlock } from "./Stroke";
+
+export const BaseSettings = ({ api, types, selectedIds }) => {
+    const showCornerRadius = types.every(
+        (type) => type === SHAPES.rect || type === SHAPES.polygon,
+    );
+    const showSides = types.every((type) => type === SHAPES.polygon);
+    const showTypography = types.every((type) => type === SHAPES.text);
+    const showFillStroke = types.every((type) => type !== SHAPES.group);
+
+    return (
+        <VStack
+            align={"start"}
+            p={2}
+            w={"100%"}
+            separator={<StackSeparator borderColor={"colorPalette.solid"} />}
+        >
+            <VStack align={"start"} w={"100%"}>
+                <Heading size={"md"}>Layers</Heading>
+                <Layers ids={selectedIds} />
+            </VStack>
+            <VStack align={"start"}>
+                <Heading size={"md"}>Position</Heading>
+                <PositionBlock ids={selectedIds} />
+                <RotationBlock ids={selectedIds} api={api} />
+            </VStack>
+            <VStack align={"start"} w={"100%"}>
+                <Heading size={"md"}>Layout</Heading>
+                <DimensionsBlock ids={selectedIds} api={api} />
+                <SkewBlock ids={selectedIds} />
+            </VStack>
+            <VStack align={"start"} w={"100%"}>
+                <Heading size={"md"}>Appearance</Heading>
+                <OpacityBlock ids={selectedIds} />
+                {showCornerRadius && (
+                    <CornerRadiusBlock ids={selectedIds} types={types} />
+                )}
+                {showSides && <SidesBlock ids={selectedIds} />}
+            </VStack>
+            {showTypography && <TypographyBlock ids={selectedIds} />}
+            {showFillStroke && (
+                <>
+                    <FillBlock ids={selectedIds} />
+                    <StrokeBlock ids={selectedIds} types={types} />
+                </>
+            )}
+        </VStack>
+    );
+};
