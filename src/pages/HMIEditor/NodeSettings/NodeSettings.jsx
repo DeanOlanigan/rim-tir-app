@@ -1,6 +1,6 @@
 import { Flex, Heading, HStack, Tabs } from "@chakra-ui/react";
 import { useNodeStore } from "../store/node-store";
-import { ActionsBlock } from "./Actions";
+import { SelectedButtonsGroup } from "./SelectedButtonsGroup";
 import { SHAPES_NAMES, SHAPES_WITH_SETTINGS } from "../constants";
 import { BaseSettings } from "./Base";
 import { AdvancedSettings } from "./Advanced";
@@ -35,7 +35,11 @@ export const NodeSettings = ({ api }) => {
                 <Heading size={"md"} ms={2}>
                     {heading}
                 </Heading>
-                <ActionsBlock ids={selectedIds} api={api} types={types} />
+                <SelectedButtonsGroup
+                    ids={selectedIds}
+                    api={api}
+                    types={types}
+                />
             </HStack>
             <Tabs.Root
                 variant={"line"}

@@ -10,7 +10,7 @@ import { round4 } from "../utils";
 import { useNodeStore } from "../store/node-store";
 import { SHAPES } from "../constants";
 
-export const ActionsBlock = ({ ids, api, types }) => {
+export const SelectedButtonsGroup = ({ ids, api, types }) => {
     const isMultiple = ids.length > 1;
     const showUngroup = types.some((type) => type === SHAPES.group);
 
