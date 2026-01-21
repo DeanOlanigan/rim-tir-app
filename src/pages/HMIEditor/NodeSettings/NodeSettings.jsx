@@ -40,7 +40,7 @@ export const NodeSettings = ({ api }) => {
     return (
         <Flex
             bg={"bg"}
-            w={"400px"}
+            w={"500px"}
             h={"100%"}
             p={2}
             borderRadius={"md"}
@@ -49,7 +49,9 @@ export const NodeSettings = ({ api }) => {
             gap={2}
         >
             <HStack w={"100%"} justify={"space-between"}>
-                <Heading size={"md"}>{heading}</Heading>
+                <Heading size={"md"} ms={2}>
+                    {heading}
+                </Heading>
                 <ActionsBlock ids={selectedIds} api={api} types={types} />
             </HStack>
             <Tabs.Root
@@ -66,17 +68,18 @@ export const NodeSettings = ({ api }) => {
                 size={"sm"}
             >
                 <Tabs.List>
-                    <Tabs.Trigger value="base">Base settings</Tabs.Trigger>
-                    <Tabs.Trigger value="advanced">Advanced</Tabs.Trigger>
+                    <Tabs.Trigger value="base">Base</Tabs.Trigger>
+                    <Tabs.Trigger value="bindings">Bindings</Tabs.Trigger>
+                    <Tabs.Trigger value="actions">Actions</Tabs.Trigger>
                 </Tabs.List>
-                <Tabs.Content value="base" h={"100%"} overflow={"auto"}>
+                <Tabs.Content value="base" h={"100%"} mt={2} overflow={"auto"}>
                     <BaseSettings
                         api={api}
                         types={types}
                         selectedIds={selectedIds}
                     />
                 </Tabs.Content>
-                <Tabs.Content value="advanced" flex={1} overflow={"hidden"}>
+                <Tabs.Content value="bindings" flex={1} overflow={"hidden"}>
                     <AdvancedSettings
                         api={api}
                         types={types}
@@ -99,7 +102,7 @@ const BaseSettings = ({ api, types, selectedIds }) => {
     return (
         <VStack
             align={"start"}
-            pe={2}
+            p={2}
             w={"100%"}
             separator={<StackSeparator borderColor={"colorPalette.solid"} />}
         >

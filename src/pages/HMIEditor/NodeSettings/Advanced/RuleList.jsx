@@ -178,6 +178,9 @@ const SortableRuleRow = ({
             borderRadius={"md"}
         >
             <Box
+                py={2}
+                focusVisibleRing={"outside"}
+                borderRadius={"l2"}
                 color={"fg.muted"}
                 cursor={"grab"}
                 _active={{ cursor: "grabbing" }}

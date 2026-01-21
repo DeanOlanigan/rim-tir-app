@@ -29,7 +29,7 @@ export const AdvancedSettings = ({ types, selectedIds }) => {
     );
 
     return (
-        <VStack align={"start"} w={"100%"} h={"100%"} minH={0}>
+        <VStack align={"start"} p={2} w={"100%"} h={"100%"} minH={0}>
             {/* Глобальные настройки */}
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>Global</Heading>
