@@ -1,5 +1,5 @@
 export const SHAPE_SUPPORTED_PROPS = {
-    rect: ["opacity", "fill", "stroke", "cornerRadius"],
+    rect: ["opacity", "fill", "stroke", "cornerRadius", "width", "height"],
     circle: ["opacity", "fill", "stroke"],
     ellipse: ["opacity", "fill", "stroke"],
     line: ["opacity", "stroke"],
