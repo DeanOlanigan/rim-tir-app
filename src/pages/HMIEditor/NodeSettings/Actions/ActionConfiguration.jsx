@@ -1,4 +1,4 @@
-import { Box, Field, Input, Stack, Textarea } from "@chakra-ui/react";
+import { Box, Field, HStack, Input, Stack, Textarea } from "@chakra-ui/react";
 
 export const ActionConfiguration = ({ action, onUpdate }) => {
     const handleChange = (key, value) => {
@@ -11,7 +11,7 @@ export const ActionConfiguration = ({ action, onUpdate }) => {
     // 1. WRITE_TAG
     if (action.type === "WRITE_TAG") {
         return (
-            <Stack gap={3}>
+            <HStack gap={2} w={"100%"}>
                 <Field.Root>
                     <Field.Label fontSize="sm">Tag ID</Field.Label>
                     <Input
@@ -30,14 +30,14 @@ export const ActionConfiguration = ({ action, onUpdate }) => {
                         placeholder="1"
                     />
                 </Field.Root>
-            </Stack>
+            </HStack>
         );
     }
 
     // 2. CONFIRMATION
     if (action.type === "CONFIRMATION") {
         return (
-            <Stack gap={3}>
+            <Stack gap={2} w={"100%"}>
                 <Field.Root>
                     <Field.Label fontSize="sm">Title</Field.Label>
                     <Input
@@ -64,7 +64,7 @@ export const ActionConfiguration = ({ action, onUpdate }) => {
     // 3. NAVIGATE
     if (action.type === "NAVIGATE") {
         return (
-            <Stack gap={3}>
+            <Stack gap={2} w={"100%"}>
                 <Field.Root>
                     <Field.Label fontSize="sm">Screen / URL</Field.Label>
                     <Input

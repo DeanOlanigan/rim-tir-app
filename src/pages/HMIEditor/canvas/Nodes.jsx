@@ -7,6 +7,7 @@ import { isHasRadius, round4 } from "../utils";
 import { VariablePolygon } from "./shapes/VariablePolygon.react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Html } from "react-konva-utils";
+import { useHandlers } from "./hooks/useHandlers";
 
 function ellipseToKonva(p) {
     const cx = p.x + p.width / 2;
@@ -117,6 +118,7 @@ const NodeWrapper = ({ ids, draggable, nodesRef }) => {
 
 const NodeInstance = ({ id, draggable, nodesRef }) => {
     const node = useNodeStore((state) => state.nodes[id]);
+    const handlers = useHandlers(node);
     if (!node) return null;
 
     const registerRef = (el) => {
@@ -128,6 +130,7 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
         ...node,
         ...common,
         draggable,
+        ...handlers,
     };
 
     switch (node.type) {

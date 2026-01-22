@@ -13,6 +13,7 @@ import { NodeSettings } from "./NodeSettings";
 import { useNodeStore } from "./store/node-store";
 import { useMqttValues } from "./useMqttValues";
 import { useEffect } from "react";
+import { confirmationDialog } from "./dialog";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -40,6 +41,7 @@ const HMIEditorContent = () => {
             direction={"column"}
             overflow={"hidden"}
         >
+            <confirmationDialog.Viewport />
             <ContextMenu />
             <HMICanvas {...tools} width={width} height={height} />
             <Box position={"absolute"} left={2} top={2}>
