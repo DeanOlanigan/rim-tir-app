@@ -164,10 +164,10 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
             );
         }
         case SHAPES.text:
-            //return <Text key={id} {...params} ref={registerRef} />;
-            return (
+            return <Text key={id} {...params} ref={registerRef} />;
+        /* return (
                 <TextWithEdit key={id} params={params} refReg={registerRef} />
-            );
+            ); */
         case SHAPES.line:
             return (
                 <Line
@@ -201,6 +201,7 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
     }
 };
 
+// eslint-disable-next-line
 const TextWithEdit = ({ params, refReg }) => {
     const [text, setText] = useState(params.text);
     const [isEditing, setIsEditing] = useState(false);
