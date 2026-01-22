@@ -1,7 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useActionsStore } from "./store/actions-store";
 import { useNodeStore } from "./store/node-store";
-import { useMonitoringLive } from "../MonitoringPage/store/mqtt-stream-store";
 
 export const DebugInfo = () => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -33,7 +32,6 @@ export const DebugInfo = () => {
                 bg={"bg.muted"}
                 borderRadius={"md"}
             >
-                <MqttTest />
                 <Text>Current action: {currentAction}</Text>
                 <Text>Prev action: {prevAction}</Text>
                 <Text>Selected nodes: {selectedIds.length}</Text>
@@ -55,20 +53,6 @@ const SelectedNodeInfo = ({ nodes, selectedIds }) => {
                 <Text key={key}>
                     {key}:{" "}
                     {Array.isArray(value) ? value.join(", ") : String(value)}
-                </Text>
-            ))}
-        </Box>
-    );
-};
-
-const MqttTest = () => {
-    const vars = useMonitoringLive((state) => state.latest);
-
-    return (
-        <Box>
-            {Array.from(vars.entries()).map(([key, value]) => (
-                <Text key={key}>
-                    {key}: {String(value.v)}
                 </Text>
             ))}
         </Box>
