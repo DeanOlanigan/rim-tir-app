@@ -119,6 +119,26 @@ const NodeWrapper = ({ ids, draggable, nodesRef }) => {
 const NodeInstance = ({ id, draggable, nodesRef }) => {
     const node = useNodeStore((state) => state.nodes[id]);
     const handlers = useHandlers(node);
+
+    const prevHandlersRef = useRef(handlers);
+    useEffect(() => {
+        if (!handlers || !prevHandlersRef.current) return;
+
+        // Пробегаемся по всем ключам (onClick, onPointerDown и т.д.)
+        Object.keys(handlers).forEach((key) => {
+            const isDifferent = prevHandlersRef.current[key] !== handlers[key];
+            if (isDifferent) {
+                console.warn(
+                    `⚠️ Handler changed: [${key}] for Node ${id}. \n` +
+                        `Это заставит React-Konva перерисовать слушатель.`,
+                );
+            }
+        });
+
+        // Сохраняем текущие для следующего сравнения
+        prevHandlersRef.current = handlers;
+    }, [handlers, id]);
+
     if (!node) return null;
 
     const registerRef = (el) => {

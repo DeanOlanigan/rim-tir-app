@@ -1,5 +1,6 @@
 import { toaster } from "@/components/ui/toaster";
 import { CONFIRMATION_DIALOG_ID, confirmationDialog } from "../../dialog";
+import { useCallback } from "react";
 
 export const useActionsRunner = () => {
     const executeSingleAction = async (action) => {
@@ -57,7 +58,7 @@ export const useActionsRunner = () => {
         }
     };
 
-    const runActions = async (actions) => {
+    const runActions = useCallback(async (actions) => {
         if (!actions || !Array.isArray(actions) || actions.length === 0) return;
 
         let errorMsg = null;
@@ -88,9 +89,7 @@ export const useActionsRunner = () => {
                 type: "success",
             });
         }
-    };
+    }, []);
 
-    return {
-        runActions,
-    };
+    return runActions;
 };
