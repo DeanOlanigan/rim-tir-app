@@ -4,7 +4,7 @@ import { useNodeStore } from "../../store/node-store";
 import { useActionsRunner } from "./useActionsRunner";
 
 export const useHandlers = (node) => {
-    const { runActions } = useActionsRunner();
+    const runActions = useActionsRunner();
 
     const nodeRef = useRef(node);
     nodeRef.current = node;

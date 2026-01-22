@@ -429,6 +429,13 @@ function group(ids, bbox, state) {
             globalVarId: null,
             items: [],
         },
+        events: {
+            onClick: [],
+            onContextMenu: [],
+            onDoubleClick: [],
+            onMouseDown: [],
+            onMouseUp: [],
+        },
     };
 
     const newRootIds = [...state.rootIds]
