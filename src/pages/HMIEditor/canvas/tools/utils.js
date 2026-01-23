@@ -9,6 +9,8 @@ export const snapPointToGrid = (p, gridSize, snapToGrid) => {
     };
 };
 
+// TODO подумать что должно лежать в сторе сразу после создания примитива,
+//  а где использовать значения по умолчанию
 export const BASE_PARAMS = {
     fill: "#c3c3c3",
     stroke: "#000000",
