@@ -34,8 +34,6 @@ export function createSelectTool() {
                 const isSelected = selectedIds.includes(clickedId);
                 if (!metaPressed && !isSelected) {
                     ctx.setSelectedIds([clickedId]);
-                } else if (!metaPressed && isSelected) {
-                    ctx.setSelectedIds([clickedId]);
                 } else if (metaPressed && isSelected) {
                     ctx.setSelectedIds(
                         selectedIds.filter((id) => id !== clickedId),
@@ -89,6 +87,22 @@ export function createSelectTool() {
             if (selected.length === 0) return;
             const selectedIds = selected.map((node) => node.attrs.id);
             ctx.setSelectedIds(selectedIds);
+        },
+
+        onClick(e, ctx) {
+            if (e.evt.button !== 0) return;
+
+            if (e.target.hasName("node")) {
+                const parentGroups = e.target.findAncestors("Group");
+                const clickedId =
+                    parentGroups[parentGroups.length - 1]?.id() ||
+                    e.target.id();
+
+                const metaPressed =
+                    e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
+
+                if (!metaPressed) ctx.setSelectedIds([clickedId]);
+            }
         },
 
         /* onDblClick(e, ctx) {

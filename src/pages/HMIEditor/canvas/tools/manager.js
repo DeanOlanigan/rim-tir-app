@@ -76,6 +76,9 @@ export function createToolManager({ toolsMap, api }) {
     const ctx = { ...api, manager };
 
     const handlers = {
+        onClick(e) {
+            active && active.onClick && active.onClick(e, ctx);
+        },
         onDblClick(e) {
             active && active.onDblClick && active.onDblClick(e, ctx);
         },

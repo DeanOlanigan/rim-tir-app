@@ -1,6 +1,5 @@
 import { useCallback, useRef } from "react";
 import { useActionsStore } from "../../store/actions-store";
-import { useNodeStore } from "../../store/node-store";
 import { useActionsRunner } from "./useActionsRunner";
 
 export const useHandlers = (node) => {
@@ -70,17 +69,7 @@ export const useHandlers = (node) => {
             if (!currentNode) return;
 
             const viewOnlyMode = useActionsStore.getState().viewOnlyMode;
-
-            if (!viewOnlyMode) {
-                const isMeta = e.evt.metaKey || e.evt.ctrlKey || e.evt.shiftKey;
-                const selectedIds = useNodeStore.getState().selectedIds;
-                const isSelected = selectedIds.includes(currentNode.id);
-
-                if (isSelected && !isMeta) {
-                    e.cancelBubble = true;
-                }
-                return;
-            }
+            if (!viewOnlyMode) return;
 
             if (currentNode.events?.onMouseDown?.length > 0) {
                 e.cancelBubble = true;
@@ -131,7 +120,7 @@ export const useHandlers = (node) => {
             ev.onMouseUp.length > 0
         ) {
             const stage = e.target.getStage();
-            stage.container().style.cursor = "pointer";
+            if (stage) stage.container().style.cursor = "pointer";
         }
     }, []);
 
@@ -140,7 +129,7 @@ export const useHandlers = (node) => {
         if (!viewOnlyMode) return;
 
         const stage = e.target.getStage();
-        stage.container().style.cursor = "default";
+        if (stage) stage.container().style.cursor = "default";
     }, []);
 
     return {
