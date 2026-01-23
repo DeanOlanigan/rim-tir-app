@@ -185,8 +185,8 @@ export const useNodeStore = create(
                         };
                     }),
 
-                // 2. Обновить конкретное действие (по actionId)
-                updateNodeEventAction: (nodeId, eventType, actionId, patch) =>
+                // 2. Обновить конкретное действие (по patch.id)
+                updateNodeEventAction: (nodeId, eventType, patch) =>
                     set((state) => {
                         const node = state.nodes[nodeId];
                         if (!node) return state;
@@ -195,7 +195,7 @@ export const useNodeStore = create(
 
                         // Находим и обновляем нужное действие
                         const newActions = currentActions.map((a) =>
-                            a.id === actionId ? { ...a, ...patch } : a,
+                            a.id === patch.id ? { ...a, ...patch } : a,
                         );
 
                         return {

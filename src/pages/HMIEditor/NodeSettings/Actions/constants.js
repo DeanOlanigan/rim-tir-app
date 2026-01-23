@@ -1,9 +1,9 @@
 export const EVENT_TYPES = [
-    { id: "onClick", label: "Click" },
-    { id: "onContextMenu", label: "Right click" },
-    { id: "onDoubleClick", label: "Double click" },
-    { id: "onMouseDown", label: "Mouse down" },
-    { id: "onMouseUp", label: "Mouse up" },
+    { type: "onClick", label: "Click" },
+    { type: "onContextMenu", label: "Right click" },
+    { type: "onDoubleClick", label: "Double click" },
+    { type: "onMouseDown", label: "Mouse down", disabled: true },
+    { type: "onMouseUp", label: "Mouse up", disabled: true },
 ];
 
 export const ACTION_TYPES = [

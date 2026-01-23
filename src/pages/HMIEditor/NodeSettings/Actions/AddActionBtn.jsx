@@ -4,7 +4,7 @@ import { Button, Menu, Portal } from "@chakra-ui/react";
 import { LuPlus } from "react-icons/lu";
 import { ACTION_TYPES } from "./constants";
 
-export const AddActionBtn = ({ actionId, mockState }) => {
+export const AddActionBtn = ({ eventType, selectedNode }) => {
     const handleAddAction = (actionType) => {
         const newEvent = {
             id: nanoid(12),
@@ -13,7 +13,7 @@ export const AddActionBtn = ({ actionId, mockState }) => {
         };
         useNodeStore
             .getState()
-            .addNodeEventAction(mockState.id, actionId, newEvent);
+            .addNodeEventAction(selectedNode.id, eventType, newEvent);
     };
 
     return (

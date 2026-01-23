@@ -10,10 +10,14 @@ export const ActionsSettings = ({ selectedIds }) => {
     return (
         <VStack align={"start"} p={2} w={"100%"}>
             <Accordion.Root collapsible multiple>
-                {EVENT_TYPES.map((action, index) => (
-                    <Accordion.Item key={index} value={action.id}>
+                {EVENT_TYPES.map((event, index) => (
+                    <Accordion.Item
+                        key={index}
+                        value={event.type}
+                        disabled={event.disabled}
+                    >
                         <Accordion.ItemTrigger px={2}>
-                            <Span flex="1">{action.label}</Span>
+                            <Span flex="1">{event.label}</Span>
                             <Accordion.ItemIndicator />
                         </Accordion.ItemTrigger>
                         <Accordion.ItemContent>
@@ -24,12 +28,12 @@ export const ActionsSettings = ({ selectedIds }) => {
                                 px={2}
                             >
                                 <ActionEvents
-                                    actionId={action.id}
-                                    mockState={selectedNode}
+                                    eventType={event.type}
+                                    selectedNode={selectedNode}
                                 />
                                 <AddActionBtn
-                                    actionId={action.id}
-                                    mockState={selectedNode}
+                                    eventType={event.type}
+                                    selectedNode={selectedNode}
                                 />
                             </Accordion.ItemBody>
                         </Accordion.ItemContent>

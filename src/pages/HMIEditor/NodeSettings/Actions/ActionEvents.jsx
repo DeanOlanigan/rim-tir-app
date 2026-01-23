@@ -15,8 +15,8 @@ import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { useNodeStore } from "../../store/node-store";
 import { ActionItem } from "./ActionItem";
 
-export const ActionEvents = ({ actionId, mockState }) => {
-    const data = mockState.events[actionId] || [];
+export const ActionEvents = ({ eventType, selectedNode }) => {
+    const actions = selectedNode.events[eventType] || [];
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -29,25 +29,25 @@ export const ActionEvents = ({ actionId, mockState }) => {
     const handleDelete = (id) => {
         useNodeStore
             .getState()
-            .removeNodeEventAction(mockState.id, actionId, id);
+            .removeNodeEventAction(selectedNode.id, eventType, id);
     };
 
     const handleDragEnd = ({ active, over }) => {
         if (!over || active.id === over.id) return;
 
-        const oldIndex = data.findIndex((e) => e.id === active.id);
-        const newIndex = data.findIndex((e) => e.id === over.id);
+        const oldIndex = actions.findIndex((e) => e.id === active.id);
+        const newIndex = actions.findIndex((e) => e.id === over.id);
 
-        const newOrder = arrayMove(data, oldIndex, newIndex);
+        const newOrder = arrayMove(actions, oldIndex, newIndex);
 
         useNodeStore
             .getState()
-            .setNodeEventActions(mockState.id, actionId, newOrder);
+            .setNodeEventActions(selectedNode.id, eventType, newOrder);
     };
 
     return (
         <>
-            {data.length === 0 && (
+            {actions.length === 0 && (
                 <Box
                     p={4}
                     border="1px dashed"
@@ -56,7 +56,7 @@ export const ActionEvents = ({ actionId, mockState }) => {
                     textAlign="center"
                 >
                     <Text fontSize="sm" color="gray.500">
-                        Нет событий
+                        Нет действий
                     </Text>
                 </Box>
             )}
@@ -67,15 +67,15 @@ export const ActionEvents = ({ actionId, mockState }) => {
                 onDragEnd={handleDragEnd}
             >
                 <SortableContext
-                    items={data.map((event) => event.id)}
+                    items={actions.map((action) => action.id)}
                     strategy={verticalListSortingStrategy}
                 >
-                    {data.map((event) => (
+                    {actions.map((action) => (
                         <ActionItem
-                            key={event.id}
-                            selectedNodeId={mockState.id}
-                            event={event}
-                            actionId={actionId}
+                            key={action.id}
+                            selectedNodeId={selectedNode.id}
+                            action={action}
+                            eventType={eventType}
                             onRemove={handleDelete}
                         />
                     ))}

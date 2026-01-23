@@ -6,7 +6,7 @@ import { useNodeStore } from "../../store/node-store";
 import { ActionConfiguration } from "./ActionConfiguration";
 import { ACTION_TYPES } from "./constants";
 
-export const ActionItem = ({ selectedNodeId, event, actionId, onRemove }) => {
+export const ActionItem = ({ selectedNodeId, action, eventType, onRemove }) => {
     const {
         attributes,
         listeners,
@@ -14,7 +14,7 @@ export const ActionItem = ({ selectedNodeId, event, actionId, onRemove }) => {
         transform,
         transition,
         isDragging,
-    } = useSortable({ id: event.id });
+    } = useSortable({ id: action.id });
 
     const style = {
         transform: CSS.Translate.toString(transform),
@@ -27,12 +27,7 @@ export const ActionItem = ({ selectedNodeId, event, actionId, onRemove }) => {
     const handleUpdate = (updatedAction) => {
         useNodeStore
             .getState()
-            .updateNodeEventAction(
-                selectedNodeId,
-                actionId,
-                updatedAction.id,
-                updatedAction,
-            );
+            .updateNodeEventAction(selectedNodeId, eventType, updatedAction);
     };
 
     return (
@@ -61,7 +56,7 @@ export const ActionItem = ({ selectedNodeId, event, actionId, onRemove }) => {
                     <LuGripVertical />
                 </Box>
                 <Text ms={2}>
-                    {ACTION_TYPES.find((a) => a.type === event.type).label}
+                    {ACTION_TYPES.find((a) => a.type === action.type).label}
                 </Text>
 
                 <Spacer />
@@ -71,14 +66,14 @@ export const ActionItem = ({ selectedNodeId, event, actionId, onRemove }) => {
                     size="xs"
                     color="fg.muted"
                     aria-label="Delete"
-                    onClick={() => onRemove(event.id)}
+                    onClick={() => onRemove(action.id)}
                 >
                     <LuTrash2 size={14} />
                 </IconButton>
             </Flex>
             {/* CONTENT */}
             <VStack align={"start"} p={2} w={"100%"}>
-                <ActionConfiguration action={event} onUpdate={handleUpdate} />
+                <ActionConfiguration action={action} onUpdate={handleUpdate} />
             </VStack>
         </Flex>
     );

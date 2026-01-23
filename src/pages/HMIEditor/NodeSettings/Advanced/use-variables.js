@@ -13,6 +13,8 @@ export const useVariables = () => {
                 label: v.name,
                 value: v.id,
                 id: v.id,
+                type: v.setting.type,
+                path: v.path,
             }));
             return items;
         },
