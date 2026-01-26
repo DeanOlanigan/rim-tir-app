@@ -1,13 +1,57 @@
 import { toaster } from "@/components/ui/toaster";
 import { CONFIRMATION_DIALOG_ID, confirmationDialog } from "../../dialog";
 import { useCallback } from "react";
+import { useMqttCore } from "@/utils/mqtt/mqtt-provider";
+import { useNodeStore } from "../../store/node-store";
+
+async function confirmationFunc(options) {
+    const isConfirmed = await confirmationDialog.open(CONFIRMATION_DIALOG_ID, {
+        title: options.title || "Confirmation",
+        message: options.message || "Are you sure?",
+        confirmationText: options.confirmationText || "OK",
+        cancelText: options.cancelText || "Cancel",
+    });
+
+    if (!isConfirmed) {
+        throw new Error("CANCELED_BY_USER");
+    }
+}
+
+function navigateFunc(options) {
+    const mode = options.mode || "PAGE";
+    const target = options.target;
+    if (!target) {
+        console.warn("Navigation targer is missing");
+        return;
+    }
+    if (mode === "PAGE") {
+        console.log(`[NAVIGATE] Internal switch to page ID: ${target}`);
+        const storeState = useNodeStore.getState();
+        if (storeState.pages[target]) {
+            useNodeStore.getState().setActivePage(target);
+        } else {
+            throw new Error(`Target page not found: ${target}`);
+        }
+    } else if (mode === "URL") {
+        console.log(`[NAVIGATE] External link: ${target}`);
+        window.open(
+            target || "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "_blank",
+        );
+    }
+}
 
 export const useActionsRunner = () => {
+    const { publish, connected } = useMqttCore();
     const executeSingleAction = async (action) => {
         const { type, options } = action;
 
         function sendCommand(varId, value) {
             console.log(`[MQTT] Write ${varId} = ${value}`);
+            const data = JSON.stringify({ v: value });
+            if (connected) {
+                publish(`commands/node/${varId}`, data);
+            }
         }
 
         switch (type) {
@@ -24,33 +68,11 @@ export const useActionsRunner = () => {
                 break;
             }
             case "CONFIRMATION": {
-                const isConfirmed = await confirmationDialog.open(
-                    CONFIRMATION_DIALOG_ID,
-                    {
-                        title: options.title || "Confirmation",
-                        message: options.message || "Are you sure?",
-                        confirmationText: options.confirmationText || "OK",
-                        cancelText: options.cancelText || "Cancel",
-                    },
-                );
-
-                if (!isConfirmed) {
-                    throw new Error("CANCELED_BY_USER");
-                }
+                await confirmationFunc(options);
                 break;
             }
             case "NAVIGATE": {
-                // const navigate = useNavigate(); // Если внутри Router
-                console.log(`Navigating to ${options.target}`);
-
-                window.open(
-                    options.target ||
-                        "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-                    "_blank",
-                );
-
-                // if (options.mode === 'new_tab') window.open(...)
-                // else navigate(options.target);
+                navigateFunc(options);
                 break;
             }
             default:
@@ -89,6 +111,7 @@ export const useActionsRunner = () => {
                 type: "success",
             });
         }
+        // TODO Убедиться в стабильности ссылки на функцию
     }, []);
 
     return runActions;
