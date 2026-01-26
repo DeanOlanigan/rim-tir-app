@@ -1,6 +1,6 @@
 import { Box, Field, HStack, Input, Stack, Textarea } from "@chakra-ui/react";
-import { useVariables } from "../Advanced/use-variables";
-import { VariableSelect } from "../Advanced/VariableSelect";
+import { useVariables } from "../use-variables";
+import { VariableSelect } from "../VariableSelect";
 
 export const ActionConfiguration = ({ action, onUpdate }) => {
     const handleChange = (key, value) => {

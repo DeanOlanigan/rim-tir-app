@@ -1,13 +1,13 @@
 import { Box, Flex, Heading, Switch, Text, VStack } from "@chakra-ui/react";
-import { VariableSelect } from "./VariableSelect";
 import { PARAMS_CONFIG } from "./params-config";
 import { AddParam } from "./AddParam";
 import { BindingCard } from "./BindingCard";
-import { useVariables } from "./use-variables";
 import { useNodeStore } from "../../store/node-store";
 import { getCommonSupportedProps } from "./shape-supported-props";
 import { useShallow } from "zustand/shallow";
 import { useActionsStore } from "../../store/actions-store";
+import { VariableSelect } from "../VariableSelect";
+import { useVariables } from "../use-variables";
 
 export const AdvancedSettings = ({ types, selectedIds }) => {
     const { data: variables } = useVariables();

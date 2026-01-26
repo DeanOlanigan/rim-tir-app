@@ -13,11 +13,11 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { LuLink, LuTrash2 } from "react-icons/lu";
-import { VariableSelect } from "./VariableSelect";
 import { useNodeStore } from "../../store/node-store";
 import { ThresholdEditor } from "./ThresholdEditor";
 import { MapEditor } from "./MapEditor";
 import { DirectEditor } from "./DirectEditor";
+import { VariableSelect } from "../VariableSelect";
 
 export const BindingCard = ({
     binding,
