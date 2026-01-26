@@ -1,50 +1,15 @@
-import { Box, HStack, Icon, IconButton, Text } from "@chakra-ui/react";
-import { useNodeStore } from "./store/node-store";
-import { useActionsStore } from "./store/actions-store";
-import { SHAPES_ICONS } from "./constants";
-import { flyToNode } from "./flyToNode";
+import { NodeToggleBtn } from "@/components/TreeView/NodeToggleBtn";
+import styles from "@/components/TreeView/TreeView.module.css";
+import { Flex, Heading, HStack, Icon, Input, Text } from "@chakra-ui/react";
+import clsx from "clsx";
 import { useEffect, useRef } from "react";
 import { Tree } from "react-arborist";
-import styles from "@/components/TreeView/TreeView.module.css";
-import clsx from "clsx";
-import { NodeToggleBtn } from "@/components/TreeView/NodeToggleBtn";
-import { LuEye, LuEyeOff } from "react-icons/lu";
-
-const useNodesData = () => {
-    const rootIds = useNodeStore((state) => state.rootIds);
-    if (rootIds.length === 0) return [];
-    function createRecursiveList(items) {
-        return items.map((id) => {
-            const node = useNodeStore.getState().nodes[id];
-            const res = {
-                id,
-                icon: SHAPES_ICONS[node.type],
-            };
-            if (node.childrenIds)
-                res.children = createRecursiveList(node.childrenIds);
-            return res;
-        });
-    }
-
-    return createRecursiveList(rootIds);
-};
-
-function toSet(ids) {
-    return new Set(ids);
-}
-
-function setEquals(a, b) {
-    if (a.size !== b.size) return false;
-    for (const v of a) if (!b.has(v)) return false;
-    return true;
-}
-
-function setDiff(a, b) {
-    // a \ b
-    const out = [];
-    for (const v of a) if (!b.has(v)) out.push(v);
-    return out;
-}
+import { useActionsStore } from "../store/actions-store";
+import { useNodeStore } from "../store/node-store";
+import { flyToNode } from "../flyToNode";
+import { IndentLines } from "@/components/TreeView/IndentLines";
+import { VisibleButton } from "./VisibleButton";
+import { setDiff, setEquals, toSet, useNodesData } from "./helpers";
 
 export const NodesTree = ({ api }) => {
     const data = useNodesData();
@@ -52,6 +17,7 @@ export const NodesTree = ({ api }) => {
     const tweenRef = useRef(null);
 
     const showNodesTree = useActionsStore((state) => state.showNodesTree);
+    const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
     const selectedIds = useNodeStore((state) => state.selectedIds);
 
     const syncRef = useRef(false);
@@ -80,7 +46,7 @@ export const NodesTree = ({ api }) => {
         });
     }, [selectedIds]);
 
-    if (!showNodesTree) return null;
+    if (!showNodesTree || viewOnlyMode) return null;
 
     const focusById = (id) => {
         const stage = api.getStage();
@@ -95,15 +61,34 @@ export const NodesTree = ({ api }) => {
         // или zoomToFit: true, чтобы еще и приблизить/отдалить
     };
 
+    const handleSelect = (nodes) => {
+        if (viewOnlyMode) return;
+        if (syncRef.current) return;
+        const tree = nodes[0]?.tree;
+        if (!tree) return;
+
+        const nextSet = tree.selectedIds;
+        if (setEquals(nextSet, toSet(useNodeStore.getState().selectedIds)))
+            return;
+
+        useNodeStore.getState().setSelectedIds(Array.from(nextSet));
+    };
+
+    const handleRename = (id, name) => {
+        useNodeStore.getState().updateNode(id, { name });
+    };
+
     return (
-        <Box
+        <Flex
             bg={"bg"}
             w={"250px"}
-            h={"250px"}
+            h={"100%"}
             borderRadius={"md"}
             shadow={"md"}
             p={2}
+            direction={"column"}
         >
+            <Heading size={"md"}>Nodes tree</Heading>
             <Tree
                 ref={treeRef}
                 data={data}
@@ -112,26 +97,9 @@ export const NodesTree = ({ api }) => {
                 overscanCount={2}
                 indent={16}
                 rowHeight={32}
-                onSelect={(nodes) => {
-                    if (syncRef.current) return;
-
-                    const tree = nodes[0]?.tree;
-                    if (!tree) return;
-
-                    const nextSet = tree.selectedIds;
-                    if (
-                        setEquals(
-                            nextSet,
-                            toSet(useNodeStore.getState().selectedIds),
-                        )
-                    )
-                        return;
-
-                    useNodeStore.getState().setSelectedIds(Array.from(nextSet));
-                }}
-                onRename={({ id, name }) =>
-                    useNodeStore.getState().updateNode(id, { name })
-                }
+                onSelect={handleSelect}
+                onRename={handleRename}
+                disableDrag
             >
                 {({ node, style, dragHandle }) => {
                     return (
@@ -157,30 +125,23 @@ export const NodesTree = ({ api }) => {
                                     />
                                     <HStack
                                         w={"100%"}
-                                        onDoubleClick={() => node.edit()}
+                                        onDoubleClick={() => {
+                                            if (viewOnlyMode) return;
+                                            node.edit();
+                                        }}
                                     >
                                         <ItemName node={node} />
                                     </HStack>
-                                    <VisibleBtn node={node} />
+                                    {!viewOnlyMode && (
+                                        <VisibleButton node={node} />
+                                    )}
                                 </HStack>
                             </HStack>
                         </div>
                     );
                 }}
             </Tree>
-        </Box>
-    );
-};
-
-const IndentLines = ({ paddingLeft }) => {
-    const indentSize = Number.parseFloat(`${paddingLeft || 0}`);
-
-    return (
-        <div className={styles.indentLines}>
-            {new Array(indentSize / 16).fill(0).map((_, index) => {
-                return <div key={index}></div>;
-            })}
-        </div>
+        </Flex>
     );
 };
 
@@ -200,10 +161,10 @@ const ItemName = ({ node }) => {
 
 const ItemNameEditor = ({ name, submit, reset }) => {
     return (
-        <input
+        <Input
+            size={"2xs"}
             autoFocus
             type="text"
-            size={"3xs"}
             defaultValue={name}
             onFocus={(e) => e.currentTarget.select()}
             onBlur={(e) => submit(e.currentTarget.value)}
@@ -212,31 +173,5 @@ const ItemNameEditor = ({ name, submit, reset }) => {
                 if (e.key === "Enter") submit(e.currentTarget.value);
             }}
         />
-    );
-};
-
-const VisibleBtn = ({ node }) => {
-    const isVisible = useNodeStore((state) => state.nodes[node.id].visible);
-
-    return (
-        <IconButton
-            display={{ base: "none", _groupHover: "flex" }}
-            size={"2xs"}
-            variant={"ghost"}
-            css={{
-                _icon: {
-                    width: "4",
-                    height: "4",
-                },
-            }}
-            onClick={(e) => {
-                useNodeStore
-                    .getState()
-                    .updateNode(node.id, { visible: !isVisible });
-                e.stopPropagation();
-            }}
-        >
-            {isVisible ? <LuEye /> : <LuEyeOff />}
-        </IconButton>
     );
 };
