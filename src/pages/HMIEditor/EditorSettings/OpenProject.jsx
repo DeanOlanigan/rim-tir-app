@@ -39,11 +39,7 @@ export const OpenProject = ({ tools, width, height }) => {
 
                 const project = res.value;
 
-                useNodeStore.setState({
-                    rootIds: project.rootIds,
-                    nodes: project.nodes,
-                    selectedIds: [],
-                });
+                useNodeStore.getState().open(project);
                 useNodeStore.getState().rebuildVarIndex();
 
                 fitToFrame();

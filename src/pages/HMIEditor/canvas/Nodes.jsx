@@ -96,7 +96,8 @@ const common = {
 export const Nodes = ({ nodesRef }) => {
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
     const currentAction = useActionsStore((state) => state.currentAction);
-    const rootIds = useNodeStore((state) => state.rootIds);
+    const activePageId = useNodeStore((s) => s.activePageId);
+    const rootIds = useNodeStore((s) => s.pages[activePageId]?.rootIds || []);
     return (
         <NodeWrapper
             ids={rootIds}

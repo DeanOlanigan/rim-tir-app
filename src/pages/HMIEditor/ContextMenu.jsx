@@ -14,6 +14,7 @@ export const ContextMenu = () => {
     const showGrid = useActionsStore((state) => state.showGrid);
     const debugMode = useActionsStore((state) => state.debugMode);
     const showNodesTree = useActionsStore((state) => state.showNodesTree);
+    const showPagesList = useActionsStore((state) => state.showPagesList);
 
     return (
         <Menu.Root
@@ -121,6 +122,18 @@ export const ContextMenu = () => {
                                     }
                                 >
                                     Show nodes tree
+                                    <Menu.ItemIndicator />
+                                </Menu.CheckboxItem>
+                                <Menu.CheckboxItem
+                                    value="showPagesList"
+                                    checked={showPagesList}
+                                    onCheckedChange={() =>
+                                        useActionsStore
+                                            .getState()
+                                            .setShowPagesList(!showPagesList)
+                                    }
+                                >
+                                    Show pages list
                                     <Menu.ItemIndicator />
                                 </Menu.CheckboxItem>
                             </Menu.ItemGroup>

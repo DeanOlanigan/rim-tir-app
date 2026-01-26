@@ -3,11 +3,33 @@ import Ajv from "ajv";
 const schema = {
     type: "object",
     additionalProperties: false,
-    required: ["kind", "schemaVersion", "rootIds", "nodes"],
+    required: ["kind", "schemaVersion", "pages", "activePageId", "nodes"],
     properties: {
         kind: { const: "HMIEditorProject" },
-        schemaVersion: { const: 1 },
-        rootIds: { type: "array", items: { type: "string" } },
+        schemaVersion: { const: 2 },
+        activePageId: { type: "string" },
+        pages: {
+            type: "object",
+            additionalProperties: {
+                type: "object",
+                required: ["id", "name", "rootIds"],
+                additionalProperties: true,
+                properties: {
+                    id: { type: "string" },
+                    name: { type: "string" },
+                    rootIds: {
+                        type: "array",
+                        items: { type: "string" },
+                    },
+                    type: {
+                        type: "string",
+                        enum: ["SCREEN", "LIBRARY"],
+                        nullable: true,
+                    },
+                    backgroundColor: { type: "string", nullable: true },
+                },
+            },
+        },
         nodes: {
             type: "object",
             additionalProperties: {

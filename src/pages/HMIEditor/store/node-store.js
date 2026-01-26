@@ -4,15 +4,142 @@ import { nanoid } from "nanoid";
 import { decomposeTR, isHasRadius, mul, nodeLocalMatrix } from "../utils";
 import { SHAPES } from "../constants";
 
+const defaultPageId = "page-1";
+const defaultPage = {
+    id: defaultPageId,
+    name: "Page 1",
+    rootIds: [],
+    type: "SCREEN",
+    backgroundColor: "#254e25ff",
+};
+const defaultPages = {
+    [defaultPageId]: defaultPage,
+};
+
 export const useNodeStore = create(
     devtools(
         persist(
             (set, get) => ({
+                // ---- UI делишки ----
                 selectedIds: [],
+                setSelectedIds: (ids) =>
+                    set((state) => {
+                        const prev = state.selectedIds;
+                        if (arraysEqual(prev, ids)) return state;
+                        return { selectedIds: ids };
+                    }),
+                close: () =>
+                    set(() => ({
+                        nodes: {},
+                        pages: defaultPages,
+                        activePageId: defaultPageId,
+                        selectedIds: [],
+                    })),
+                open: (project) =>
+                    set(() => ({
+                        nodes: project.nodes,
+                        pages: project.pages,
+                        activePageId: project.activePageId,
+                        selectedIds: [],
+                    })),
+
+                // ---- PAGES ----
+                activePageId: defaultPageId,
+                pages: defaultPages,
+                setActivePage: (pageId) =>
+                    set((state) => {
+                        const prev = state.activePageId;
+                        if (prev === pageId) return state;
+                        return { activePageId: pageId, selectedIds: [] };
+                    }),
+                addPage: (name = "New page", type = "SCREEN") =>
+                    set((state) => {
+                        const id = nanoid(12);
+                        return {
+                            pages: {
+                                ...state.pages,
+                                [id]: {
+                                    id,
+                                    name,
+                                    rootIds: [],
+                                    type,
+                                    backgroundColor: "#254e25ff",
+                                },
+                            },
+                            activePageId: id,
+                            selectedIds: [],
+                        };
+                    }),
+                updatePage: (pageId, patch) =>
+                    set((state) => ({
+                        pages: {
+                            ...state.pages,
+                            [pageId]: { ...state.pages[pageId], ...patch },
+                        },
+                    })),
+                removePage: (pageId) =>
+                    set((state) => {
+                        const page = state.pages[pageId];
+                        if (!page) return state;
+
+                        const nodesToDelete = [];
+                        page.rootIds.forEach((id) => {
+                            collectAllDescendants(
+                                id,
+                                state.nodes,
+                                nodesToDelete,
+                            );
+                        });
+
+                        const newNodes = { ...state.nodes };
+                        nodesToDelete.forEach((id) => delete newNodes[id]);
+
+                        const newPages = { ...state.pages };
+                        delete newPages[pageId];
+
+                        let newActiveId = state.activePageId;
+                        if (state.activePageId === pageId) {
+                            const remainingIds = Object.keys(newPages);
+                            newActiveId =
+                                remainingIds.length > 0
+                                    ? remainingIds[0]
+                                    : null;
+                        }
+
+                        if (!newActiveId) {
+                            const newId = "page-1";
+                            newPages[newId] = {
+                                id: newId,
+                                name: "Page 1",
+                                type: "SCREEN",
+                                rootIds: [],
+                                backgroundColor: "#254e25ff",
+                            };
+                            newActiveId = newId;
+                        }
+
+                        const newVarIndex = {};
+                        Object.values(newNodes).forEach((node) =>
+                            addNodeToIndex(newVarIndex, node),
+                        );
+
+                        return {
+                            pages: newPages,
+                            nodes: newNodes,
+                            activePageId: newActiveId,
+                            selectedIds: [],
+                            varIndex: newVarIndex,
+                        };
+                    }),
+
+                // ---- NODES ----
                 nodes: {},
-                rootIds: [],
                 addNode: (node) =>
                     set((state) => {
+                        const pageId = state.activePageId;
+                        const page = state.pages[pageId];
+                        if (!page) return state;
+
                         const id = nanoid(12);
                         const newNode = {
                             ...node,
@@ -30,38 +157,66 @@ export const useNodeStore = create(
                             },
                         };
                         const nodes = { ...state.nodes, [id]: newNode };
+                        const updatedPage = {
+                            ...page,
+                            rootIds: [...page.rootIds, id],
+                        };
+
                         return {
                             nodes,
-                            rootIds: [...state.rootIds, id],
+                            pages: { ...state.pages, [pageId]: updatedPage },
                             selectedIds: [id],
                         };
                     }),
-                setRootIds: (ids) => set(() => ({ rootIds: ids })),
                 removeNode: (id) =>
                     set((state) => {
+                        const pageId = state.activePageId;
+                        const page = state.pages[pageId];
+                        if (!page) return state;
+
                         const newNodes = { ...state.nodes };
                         delete newNodes[id];
-                        const newRootIds = state.rootIds.filter(
+
+                        const newRootIds = page.rootIds.filter(
                             (nid) => nid !== id,
                         );
+
                         return {
                             nodes: newNodes,
-                            rootIds: newRootIds,
+                            pages: {
+                                ...state.pages,
+                                [pageId]: {
+                                    ...page,
+                                    rootIds: newRootIds,
+                                },
+                            },
                             selectedIds: [],
                         };
                     }),
                 removeNodes: (ids) =>
                     set((state) => {
+                        const pageId = state.activePageId;
+                        const page = state.pages[pageId];
+                        if (!page) return state;
+
                         const newNodes = { ...state.nodes };
                         ids.forEach((id) => {
                             delete newNodes[id];
                         });
-                        const newRootIds = state.rootIds.filter(
+
+                        const newRootIds = page.rootIds.filter(
                             (nid) => !ids.includes(nid),
                         );
+
                         return {
                             nodes: newNodes,
-                            rootIds: newRootIds,
+                            pages: {
+                                ...state.pages,
+                                [pageId]: {
+                                    ...page,
+                                    rootIds: newRootIds,
+                                },
+                            },
                             selectedIds: [],
                         };
                     }),
@@ -84,6 +239,8 @@ export const useNodeStore = create(
                             }, {}),
                         },
                     })),
+
+                // ---- GROUPS ----
                 groupNodes: (ids, bbox) =>
                     set((state) => group(ids, bbox, state)),
                 ungroupNodes: (id) => set((state) => ungroup([id], state)),
@@ -91,13 +248,8 @@ export const useNodeStore = create(
                     set((state) => ungroup(ids, state)),
                 duplicateNodes: (ids) =>
                     set((state) => deepDuplicate(ids, state)),
-                setSelectedIds: (ids) =>
-                    set((state) => {
-                        const prev = state.selectedIds;
-                        if (arraysEqual(prev, ids)) return state;
-                        return { selectedIds: ids };
-                    }),
 
+                // ---- Создание индекса для константного поиска нужного примитива по его id ----
                 varIndex: {},
                 rebuildVarIndex: () => {
                     const { nodes } = get();
@@ -108,6 +260,7 @@ export const useNodeStore = create(
                     set({ varIndex: newVarIndex });
                 },
 
+                // ---- Экшены привязки значений переменных к параметрам примитивов ----
                 setBindingGlobalVarId: (ids, varIdOrNull) => {
                     set((s) => {
                         const newNodes = { ...s.nodes };
@@ -131,7 +284,6 @@ export const useNodeStore = create(
                         return { nodes: newNodes, varIndex: newVarIndex };
                     });
                 },
-
                 updateBinding: (nodeIds, property, changes) =>
                     set((state) => {
                         const newNodes = { ...state.nodes };
@@ -149,7 +301,6 @@ export const useNodeStore = create(
 
                         return { nodes: newNodes, varIndex: newIndex };
                     }),
-
                 removeBinding: (ids, property) => {
                     set((s) => {
                         const newNodes = { ...s.nodes };
@@ -160,6 +311,7 @@ export const useNodeStore = create(
                     });
                 },
 
+                // ---- Экшены привязки действий к примитивам ----
                 // 1. Добавить новое действие в конец списка
                 addNodeEventAction: (nodeId, eventType, action) =>
                     set((state) => {
@@ -184,7 +336,6 @@ export const useNodeStore = create(
                             },
                         };
                     }),
-
                 // 2. Обновить конкретное действие (по patch.id)
                 updateNodeEventAction: (nodeId, eventType, patch) =>
                     set((state) => {
@@ -211,7 +362,6 @@ export const useNodeStore = create(
                             },
                         };
                     }),
-
                 // 3. Удалить действие
                 removeNodeEventAction: (nodeId, eventType, actionId) =>
                     set((state) => {
@@ -235,7 +385,6 @@ export const useNodeStore = create(
                             },
                         };
                     }),
-
                 // 4. Перезаписать весь список действий для события
                 // (Используется для Drag-and-Drop сортировки)
                 setNodeEventActions: (nodeId, eventType, newActions) =>
@@ -261,7 +410,8 @@ export const useNodeStore = create(
                 name: "hmi-node-store",
                 partialize: (state) => ({
                     nodes: state.nodes,
-                    rootIds: state.rootIds,
+                    pages: state.pages,
+                    activePageId: state.activePageId,
                 }),
             },
         ),
@@ -270,6 +420,10 @@ export const useNodeStore = create(
 );
 
 function deepDuplicate(ids, state, opts = {}) {
+    const pageId = state.activePageId;
+    const page = state.pages[pageId];
+    if (!page) return state;
+
     const {
         offset = { x: 1, y: 1 }, // чуть сдвинуть копию, чтобы было видно
         groupType = SHAPES.group,
@@ -277,7 +431,7 @@ function deepDuplicate(ids, state, opts = {}) {
 
     const newNodes = { ...state.nodes };
     const newIndex = { ...state.varIndex };
-    const newRootIds = [...state.rootIds];
+    const newRootIds = [...page.rootIds];
     const newSelectedIds = [];
 
     const selected = new Set(ids);
@@ -340,14 +494,24 @@ function deepDuplicate(ids, state, opts = {}) {
 
     return {
         nodes: newNodes,
-        rootIds: newRootIds,
+        pages: {
+            ...state.pages,
+            [pageId]: {
+                ...page,
+                rootIds: newRootIds,
+            },
+        },
         selectedIds: newSelectedIds,
         varIndex: newIndex,
     };
 }
 
 function ungroup(ids, state) {
-    let newRootIds = [...state.rootIds];
+    const pageId = state.activePageId;
+    const page = state.pages[pageId];
+    if (!page) return state;
+
+    let newRootIds = [...page.rootIds];
     const newNodes = { ...state.nodes };
     const newIndex = { ...state.varIndex };
 
@@ -387,7 +551,13 @@ function ungroup(ids, state) {
     }
 
     return {
-        rootIds: newRootIds,
+        pages: {
+            ...state.pages,
+            [pageId]: {
+                ...page,
+                rootIds: newRootIds,
+            },
+        },
         nodes: newNodes,
         selectedIds: selectedIds,
         varIndex: newIndex,
@@ -413,6 +583,10 @@ function calcChildTransform(groupMatrix, child) {
 }
 
 function group(ids, bbox, state) {
+    const pageId = state.activePageId;
+    const page = state.pages[pageId];
+    if (!page) return state;
+
     const groupId = nanoid(12);
 
     const groupNode = {
@@ -438,7 +612,7 @@ function group(ids, bbox, state) {
         },
     };
 
-    const newRootIds = [...state.rootIds]
+    const newRootIds = [...page.rootIds]
         .filter((nid) => !ids.includes(nid))
         .concat(groupId);
 
@@ -461,7 +635,13 @@ function group(ids, bbox, state) {
     newNodes[groupId] = groupNode;
 
     return {
-        rootIds: newRootIds,
+        pages: {
+            ...state.pages,
+            [pageId]: {
+                ...page,
+                rootIds: newRootIds,
+            },
+        },
         nodes: newNodes,
         selectedIds: [groupId],
         varIndex: newIndex,
@@ -595,3 +775,16 @@ function removeBindingFunc(newNodes, id, property) {
         },
     };
 }
+
+const collectAllDescendants = (nodeId, nodes, acc = []) => {
+    acc.push(nodeId);
+    const node = nodes[nodeId];
+    if (node && node.type === "Group" && node.childrenIds) {
+        // Пример для группы
+        node.childrenIds.forEach((childId) =>
+            collectAllDescendants(childId, nodes, acc),
+        );
+    }
+    // Если у тебя другая структура вложенности, адаптируй этот обход
+    return acc;
+};

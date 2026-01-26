@@ -14,6 +14,7 @@ import { useNodeStore } from "./store/node-store";
 import { useMqttValues } from "./useMqttValues";
 import { useEffect } from "react";
 import { confirmationDialog } from "./dialog";
+import { Pages } from "./Pages/Pages";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -44,34 +45,32 @@ const HMIEditorContent = () => {
             <confirmationDialog.Viewport />
             <ContextMenu />
             <HMICanvas {...tools} width={width} height={height} />
-            <Box position={"absolute"} left={2} top={2}>
-                <EditorSettings tools={tools} width={width} height={height} />
-            </Box>
-            <Box
+            <Flex
                 position={"absolute"}
-                left={2}
-                top={"25%"}
-                transform={"translateY(-25%)"}
+                h={"100%"}
+                top={0}
+                left={0}
+                p={2}
+                direction={"column"}
+                gap={2}
             >
+                <EditorSettings tools={tools} width={width} height={height} />
+                <Pages />
                 <NodesTree api={tools.api} />
-            </Box>
-            <Box position={"absolute"} bottom={12} left={2}>
                 <DebugInfo />
-            </Box>
+            </Flex>
             <Box position={"absolute"} h={"100%"} top={0} right={0} p={2}>
                 <NodeSettings api={tools.api} />
             </Box>
-            <HStack position={"absolute"} left={2} bottom={2}>
+            <HStack position={"absolute"} bottom={2} alignSelf={"center"}>
                 <ZoomBar
                     canvasRef={tools.canvasRef}
                     nodesRef={tools.nodesRef}
                     width={width}
                     height={height}
                 />
-                <UndoRedoButtons />
-            </HStack>
-            <HStack position={"absolute"} bottom={2} alignSelf={"center"}>
                 <ToolBar manager={tools.manager} />
+                <UndoRedoButtons />
             </HStack>
         </Flex>
     );

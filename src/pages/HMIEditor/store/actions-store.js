@@ -19,6 +19,7 @@ export const useActionsStore = create((set) => ({
     showStartCoordMarker: true,
     viewOnlyMode: false,
     isLiveUpdate: false,
+    showPagesList: true,
 
     setCurrentAction: (action) => set({ currentAction: action }),
     setPrevAction: (action) => set({ prevAction: action }),
@@ -40,4 +41,5 @@ export const useActionsStore = create((set) => ({
         set({ viewOnlyMode: mode });
     },
     setLiveUpdates: (mode) => set({ isLiveUpdate: mode }),
+    setShowPagesList: (mode) => set({ showPagesList: mode }),
 }));

@@ -3,6 +3,11 @@ import { useActionsStore } from "../store/actions-store";
 
 const PARAMS = [
     { param: "snap", label: "Snap to grid", setter: "setSnap" },
+    {
+        param: "showPagesList",
+        label: "Show pages list",
+        setter: "setShowPagesList",
+    },
     { param: "showGrid", label: "Show grid", setter: "setShowGrid" },
     /* {
         param: "clampToArea",

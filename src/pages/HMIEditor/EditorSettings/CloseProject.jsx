@@ -5,12 +5,7 @@ import { AreYouShureDialog } from "@/components/AreYouShureDialog";
 
 export const CloseProject = () => {
     const closeHandler = () => {
-        useNodeStore.setState({
-            rootIds: [],
-            nodes: {},
-            selectedIds: [],
-            varIndex: {},
-        });
+        useNodeStore.getState().close();
     };
 
     return (

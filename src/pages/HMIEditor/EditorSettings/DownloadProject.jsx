@@ -6,7 +6,8 @@ function exportProject(state) {
     return {
         kind: "HMIEditorProject",
         schemaVersion: 1,
-        rootIds: state.rootIds,
+        activePageId: state.activePageId,
+        pages: state.pages,
         nodes: state.nodes,
     };
 }
