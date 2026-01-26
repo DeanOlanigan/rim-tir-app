@@ -55,6 +55,7 @@ export const useHandlers = (node) => {
             if (!viewOnlyMode) return;
 
             if (currentNode.events?.onContextMenu?.length > 0) {
+                e.evt.preventDefault();
                 e.cancelBubble = true;
                 console.log("Running context action for node:", currentNode.id);
                 runActions(currentNode.events.onContextMenu);

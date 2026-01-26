@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { ACTIONS } from "../constants";
+import { useNodeStore } from "./node-store";
 
 export const useActionsStore = create((set) => ({
     currentAction: ACTIONS.select,
@@ -34,6 +35,9 @@ export const useActionsStore = create((set) => ({
     setShowNodesTree: (show) => set({ showNodesTree: show }),
     setShowHitRegions: (show) => set({ showHitRegions: show }),
     setShowStartCoordMarker: (show) => set({ showStartCoordMarker: show }),
-    setViewOnlyMode: (mode) => set({ viewOnlyMode: mode }),
+    setViewOnlyMode: (mode) => {
+        useNodeStore.getState().setSelectedIds([]);
+        set({ viewOnlyMode: mode });
+    },
     setLiveUpdates: (mode) => set({ isLiveUpdate: mode }),
 }));

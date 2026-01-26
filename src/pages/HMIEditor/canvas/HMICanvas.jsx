@@ -20,7 +20,6 @@ export const HMICanvas = ({
 }) => {
     const bgColor = useActionsStore((state) => state.backgroundColor);
     const showHitRegions = useActionsStore((state) => state.showHitRegions);
-    const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
 
     useEffect(() => {
         if (showHitRegions) {
@@ -77,11 +76,10 @@ export const HMICanvas = ({
             width={width}
             height={height}
             style={{ background: bgColor, outline: "none" }}
-            {...(viewOnlyMode ? null : handlers)}
-            onWheel={manager.handlers.onWheel}
+            {...handlers}
         >
             <Layer ref={nodesLayerRef} name="nodesLayer">
-                <Nodes nodesRef={nodesRef} viewOnlyMode={viewOnlyMode} />
+                <Nodes nodesRef={nodesRef} />
             </Layer>
             <Layer name="staticLayer">
                 <Grid />

@@ -77,9 +77,11 @@ export function createToolManager({ toolsMap, api }) {
 
     const handlers = {
         onClick(e) {
+            if (api.ui.viewOnlyMode()) return;
             active && active.onClick && active.onClick(e, ctx);
         },
         onDblClick(e) {
+            if (api.ui.viewOnlyMode()) return;
             active && active.onDblClick && active.onDblClick(e, ctx);
         },
         onPointerDown(e) {
@@ -88,6 +90,8 @@ export function createToolManager({ toolsMap, api }) {
             if (e.evt.button === 1) {
                 pushTemp(ACTIONS.hand);
             }
+
+            if (api.ui.viewOnlyMode() && active.name !== ACTIONS.hand) return;
 
             active && active.onPointerDown && active.onPointerDown(e, ctx);
         },
@@ -102,6 +106,7 @@ export function createToolManager({ toolsMap, api }) {
             pointerDown = false;
         },
         onKeyDown(e) {
+            if (api.ui.viewOnlyMode()) return;
             if (e.code === "Escape") {
                 cancelActive();
                 pointerDown = false;
@@ -116,6 +121,7 @@ export function createToolManager({ toolsMap, api }) {
             active.onKeyDown?.call(active, e, ctx);
         },
         onKeyUp(e) {
+            if (api.ui.viewOnlyMode()) return;
             if (e.code === "Space" && tempSpaceActive) {
                 tempSpaceActive = false;
                 popTemp();
@@ -157,7 +163,12 @@ export function createToolManager({ toolsMap, api }) {
         },
         onContextMenu(e) {
             e.evt.preventDefault();
-            if (active.name === ACTIONS.hand || pointerDown) return;
+            if (
+                active.name === ACTIONS.hand ||
+                pointerDown ||
+                api.ui.viewOnlyMode()
+            )
+                return;
             const target = e.target;
             const parentGroups = target.findAncestors("Group");
             const id =

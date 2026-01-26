@@ -8,8 +8,9 @@ export const DebugInfo = () => {
     const prevAction = useActionsStore((state) => state.prevAction);
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const nodes = useNodeStore((state) => state.nodes);
+    const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
 
-    if (!debugMode) return null;
+    if (!debugMode || viewOnlyMode) return null;
 
     return (
         <Flex

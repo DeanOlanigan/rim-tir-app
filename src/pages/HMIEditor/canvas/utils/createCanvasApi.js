@@ -40,6 +40,7 @@ export function createCanvasApi({
             setPrevAction: stateApi.setPrevAction,
         },
         ui: {
+            viewOnlyMode: stateApi.getViewOnlyMode,
             updateContextMenu: stateApi.updateContextMenu,
         },
     };
@@ -57,6 +58,7 @@ export function createCanvasApi({
     api.getActiveAction = api.tools.getActiveAction;
     api.setCurrentAction = api.tools.setCurrentAction;
     api.updateContextMenu = api.ui.updateContextMenu;
+    api.viewOnlyMode = api.ui.viewOnlyMode;
 
     return api;
 }

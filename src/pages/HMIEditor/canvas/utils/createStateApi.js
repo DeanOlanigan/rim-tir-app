@@ -17,6 +17,7 @@ export function createStateApi(nodeStore, actionsStore, contextMenuStore) {
         actionsStore.getState().setPrevAction(action);
     const updateContextMenu = (type, data) =>
         contextMenuStore.getState().updateContext(type, data);
+    const getViewOnlyMode = () => actionsStore.getState().viewOnlyMode;
 
     return {
         getSelectedIds,
@@ -28,5 +29,6 @@ export function createStateApi(nodeStore, actionsStore, contextMenuStore) {
         getActiveAction,
         setPrevAction,
         updateContextMenu,
+        getViewOnlyMode,
     };
 }

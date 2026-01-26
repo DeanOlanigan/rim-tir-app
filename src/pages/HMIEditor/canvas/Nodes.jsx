@@ -5,7 +5,7 @@ import { ACTIONS, SHAPES } from "../constants";
 import { dragBound } from "./utils/dragBound";
 import { isHasRadius, round4 } from "../utils";
 import { VariablePolygon } from "./shapes/VariablePolygon.react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Html } from "react-konva-utils";
 import { useHandlers } from "./hooks/useHandlers";
 
@@ -93,7 +93,8 @@ const common = {
     },
 };
 
-export const Nodes = ({ nodesRef, viewOnlyMode }) => {
+export const Nodes = ({ nodesRef }) => {
+    const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
     const currentAction = useActionsStore((state) => state.currentAction);
     const rootIds = useNodeStore((state) => state.rootIds);
     return (
@@ -105,7 +106,7 @@ export const Nodes = ({ nodesRef, viewOnlyMode }) => {
     );
 };
 
-const NodeWrapper = ({ ids, draggable, nodesRef }) => {
+const NodeWrapper = memo(({ ids, draggable, nodesRef }) => {
     return ids.map((id) => (
         <NodeInstance
             key={id}
@@ -114,7 +115,8 @@ const NodeWrapper = ({ ids, draggable, nodesRef }) => {
             nodesRef={nodesRef}
         />
     ));
-};
+});
+NodeWrapper.displayName = "NodeWrapper";
 
 const NodeInstance = ({ id, draggable, nodesRef }) => {
     const node = useNodeStore((state) => state.nodes[id]);
