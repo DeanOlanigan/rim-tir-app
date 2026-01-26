@@ -9,11 +9,6 @@ const PARAMS = [
         label: "Background color",
         setter: "setBackgroundColor",
     },
-    {
-        param: "workAreaColor",
-        label: "Work area color",
-        setter: "setWorkAreaColor",
-    },
 ];
 
 export const Colors = () => {

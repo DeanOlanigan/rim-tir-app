@@ -9,11 +9,6 @@ const PARAMS = [
         setter: "setShowPagesList",
     },
     { param: "showGrid", label: "Show grid", setter: "setShowGrid" },
-    /* {
-        param: "clampToArea",
-        label: "Clamp to work area",
-        setter: "setClampToArea",
-    }, */
     {
         param: "showNodesTree",
         label: "Show nodes tree",
