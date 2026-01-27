@@ -86,6 +86,7 @@ export function createToolManager({ toolsMap, api }) {
         },
         onPointerDown(e) {
             pointerDown = true;
+            const stage = e.target.getStage();
 
             if (e.evt.button === 1) {
                 pushTemp(ACTIONS.hand);
@@ -94,8 +95,50 @@ export function createToolManager({ toolsMap, api }) {
             if (api.ui.viewOnlyMode() && active.name !== ACTIONS.hand) return;
 
             active && active.onPointerDown && active.onPointerDown(e, ctx);
+
+            const onGlobalMove = (evt) => {
+                stage.setPointersPositions(evt);
+
+                const syntheticEvent = {
+                    ...e,
+                    target: stage,
+                    currentTarget: stage,
+                    evt,
+                };
+
+                active &&
+                    active.onPointerMove &&
+                    active.onPointerMove(syntheticEvent, ctx);
+            };
+
+            const onGlobalUp = (evt) => {
+                stage.setPointersPositions(evt);
+
+                const syntheticEvent = {
+                    ...e,
+                    target: stage,
+                    currentTarget: stage,
+                    evt,
+                };
+
+                active &&
+                    active.onPointerUp &&
+                    active.onPointerUp(syntheticEvent, ctx);
+
+                if (e.evt.button === 1) {
+                    popTemp();
+                }
+
+                pointerDown = false;
+
+                window.removeEventListener("pointermove", onGlobalMove);
+                window.removeEventListener("pointerup", onGlobalUp);
+            };
+
+            window.addEventListener("pointermove", onGlobalMove);
+            window.addEventListener("pointerup", onGlobalUp);
         },
-        onPointerMove(e) {
+        /* onPointerMove(e) {
             active && active.onPointerMove && active.onPointerMove(e, ctx);
         },
         onPointerUp(e) {
@@ -104,7 +147,7 @@ export function createToolManager({ toolsMap, api }) {
                 popTemp();
             }
             pointerDown = false;
-        },
+        }, */
         onKeyDown(e) {
             if (api.ui.viewOnlyMode()) return;
             if (e.code === "Escape") {
