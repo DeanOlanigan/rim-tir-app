@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import { useActionsStore } from "./store/actions-store";
 import { useNodeStore } from "./store/node-store";
 
@@ -13,16 +13,10 @@ export const DebugInfo = () => {
     if (!debugMode || viewOnlyMode) return null;
 
     return (
-        <Flex
-            direction={"column"}
-            bg={"bg"}
-            w={"250px"}
-            h={"400px"}
-            borderRadius={"md"}
-            shadow={"md"}
-            p={2}
-        >
-            <Text fontWeight={"medium"}>DebugInfo</Text>
+        <Flex direction={"column"} h={"100%"}>
+            <Flex justify="space-between" align="center" mb={2}>
+                <Heading size={"md"}>DebugInfo</Heading>
+            </Flex>
 
             <Box
                 h={"100%"}

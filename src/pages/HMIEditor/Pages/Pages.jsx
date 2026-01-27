@@ -2,7 +2,6 @@ import {
     Flex,
     Heading,
     HStack,
-    Icon,
     IconButton,
     Menu,
     Portal,
@@ -41,25 +40,17 @@ export const Pages = () => {
     };
 
     return (
-        <Flex
-            bg={"bg"}
-            w={"250px"}
-            h={"100%"}
-            borderRadius={"md"}
-            shadow={"md"}
-            p={2}
-            direction={"column"}
-        >
+        <Flex direction={"column"} h={"100%"}>
             {/* --- HEADER --- */}
-            <Flex justify="space-between" align="center" mb={4}>
+            <Flex justify="space-between" align="center" mb={2}>
                 <Heading size={"md"}>Pages</Heading>
 
                 <Menu.Root>
                     <Menu.Trigger asChild>
                         <IconButton
-                            size="xs"
+                            size="2xs"
                             aria-label="Add page"
-                            variant="ghost"
+                            variant="solid"
                         >
                             <LuPlus />
                         </IconButton>
@@ -91,7 +82,6 @@ export const Pages = () => {
             <VStack align="stretch" gap={0} overflowY="auto" flex={1}>
                 {pagesList.map((page) => {
                     const isActive = page.id === activePageId;
-                    const isLibrary = page.type === "LIBRARY"; // Если ты внедрил флаг библиотеки
 
                     return (
                         <HStack
@@ -110,10 +100,6 @@ export const Pages = () => {
                             transition="all 0.2s"
                         >
                             <HStack spacing={3} overflow="hidden">
-                                {/* Иконка меняется, если это библиотека */}
-                                <Icon
-                                    as={isLibrary ? LuLibraryBig : LuStickyNote}
-                                />
                                 <Text
                                     fontSize="sm"
                                     fontWeight={

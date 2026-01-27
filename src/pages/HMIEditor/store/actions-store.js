@@ -18,6 +18,7 @@ export const useActionsStore = create((set) => ({
     viewOnlyMode: false,
     isLiveUpdate: false,
     showPagesList: true,
+    isUiExpanded: false,
 
     setCurrentAction: (action) => set({ currentAction: action }),
     setPrevAction: (action) => set({ prevAction: action }),
@@ -38,4 +39,5 @@ export const useActionsStore = create((set) => ({
     },
     setLiveUpdates: (mode) => set({ isLiveUpdate: mode }),
     setShowPagesList: (mode) => set({ showPagesList: mode }),
+    setIsUiExpanded: (mode) => set({ isUiExpanded: mode }),
 }));

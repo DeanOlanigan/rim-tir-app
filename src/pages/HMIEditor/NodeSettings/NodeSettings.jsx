@@ -1,4 +1,4 @@
-import { Flex, Heading, HStack, Tabs } from "@chakra-ui/react";
+import { Box, Flex, Heading, HStack, Tabs } from "@chakra-ui/react";
 import { useNodeStore } from "../store/node-store";
 import { SelectedButtonsGroup } from "./SelectedButtonsGroup";
 import { SHAPES_NAMES, SHAPES_WITH_SETTINGS } from "../constants";
@@ -22,71 +22,83 @@ export const NodeSettings = ({ api }) => {
         : SHAPES_NAMES[types[0]];
 
     return (
-        <Flex
-            bg={"bg"}
-            w={"500px"}
-            h={"100%"}
-            p={2}
-            borderRadius={"md"}
-            shadow={"md"}
-            direction={"column"}
-            gap={2}
-        >
-            <HStack w={"100%"} justify={"space-between"}>
-                <Heading size={"md"} ms={2}>
-                    {heading}
-                </Heading>
-                <SelectedButtonsGroup
-                    ids={selectedIds}
-                    api={api}
-                    types={types}
-                />
-            </HStack>
-            <Tabs.Root
-                variant={"line"}
-                defaultValue="base"
-                lazyMount
-                unmountOnExit
-                fitted
-                w={"100%"}
+        <Box h={"100%"} p={2}>
+            <Flex
+                bg={"bg"}
+                w={"500px"}
                 h={"100%"}
-                display={"flex"}
-                flexDirection={"column"}
-                overflow={"hidden"}
-                size={"sm"}
+                p={2}
+                borderRadius={"md"}
+                shadow={"md"}
+                direction={"column"}
+                gap={2}
             >
-                <Tabs.List>
-                    <Tabs.Trigger value="base">Base</Tabs.Trigger>
-                    <Tabs.Trigger value="bindings">Bindings</Tabs.Trigger>
-                    <Tabs.Trigger value="actions">Actions</Tabs.Trigger>
-                </Tabs.List>
-                <Tabs.Content value="base" h={"100%"} mt={2} overflow={"auto"}>
-                    <BaseSettings
+                <HStack w={"100%"} justify={"space-between"}>
+                    <Heading size={"md"} ms={2}>
+                        {heading}
+                    </Heading>
+                    <SelectedButtonsGroup
+                        ids={selectedIds}
                         api={api}
                         types={types}
-                        selectedIds={selectedIds}
                     />
-                </Tabs.Content>
-                <Tabs.Content value="bindings" flex={1} overflow={"hidden"}>
-                    <AdvancedSettings
-                        api={api}
-                        types={types}
-                        selectedIds={selectedIds}
-                    />
-                </Tabs.Content>
-                <Tabs.Content
-                    value="actions"
+                </HStack>
+                <Tabs.Root
+                    variant={"line"}
+                    defaultValue="base"
+                    lazyMount
+                    unmountOnExit
+                    fitted
+                    w={"100%"}
                     h={"100%"}
-                    mt={2}
-                    overflow={"auto"}
+                    display={"flex"}
+                    flexDirection={"column"}
+                    overflow={"hidden"}
+                    size={"sm"}
                 >
-                    <ActionsSettings
-                        api={api}
-                        types={types}
-                        selectedIds={selectedIds}
-                    />
-                </Tabs.Content>
-            </Tabs.Root>
-        </Flex>
+                    <Tabs.List>
+                        <Tabs.Trigger value="base">Base</Tabs.Trigger>
+                        <Tabs.Trigger value="bindings">Bindings</Tabs.Trigger>
+                        <Tabs.Trigger value="actions">Actions</Tabs.Trigger>
+                    </Tabs.List>
+                    <Tabs.Content
+                        value="base"
+                        h={"100%"}
+                        mt={2}
+                        overflow={"auto"}
+                    >
+                        <BaseSettings
+                            api={api}
+                            types={types}
+                            selectedIds={selectedIds}
+                        />
+                    </Tabs.Content>
+                    <Tabs.Content
+                        value="bindings"
+                        mt={2}
+                        flex={1}
+                        overflow={"hidden"}
+                    >
+                        <AdvancedSettings
+                            api={api}
+                            types={types}
+                            selectedIds={selectedIds}
+                        />
+                    </Tabs.Content>
+                    <Tabs.Content
+                        value="actions"
+                        h={"100%"}
+                        mt={2}
+                        overflow={"auto"}
+                    >
+                        <ActionsSettings
+                            api={api}
+                            types={types}
+                            selectedIds={selectedIds}
+                        />
+                    </Tabs.Content>
+                </Tabs.Root>
+            </Flex>
+        </Box>
     );
 };

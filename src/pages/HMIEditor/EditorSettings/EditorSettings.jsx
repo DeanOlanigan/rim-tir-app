@@ -11,7 +11,7 @@ export const EditorSettings = ({ tools, width, height }) => {
     return (
         <Popover.Root size={"xs"} lazyMount unmountOnExit>
             <Popover.Trigger asChild>
-                <IconButton size={"xs"} variant={"subtle"} shadow={"md"}>
+                <IconButton size={"xs"} variant={"ghost"}>
                     <LuMenu />
                 </IconButton>
             </Popover.Trigger>
