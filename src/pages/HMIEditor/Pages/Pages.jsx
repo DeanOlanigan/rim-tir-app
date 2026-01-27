@@ -14,7 +14,6 @@ import { LuLibraryBig, LuPlus, LuStickyNote, LuTrash2 } from "react-icons/lu";
 import { useActionsStore } from "../store/actions-store";
 
 export const Pages = () => {
-    const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
     const pages = useNodeStore((state) => state.pages);
     const activePageId = useNodeStore((state) => state.activePageId);
 
@@ -26,7 +25,7 @@ export const Pages = () => {
     const hoverBg = useColorModeValue("gray.100", "gray.700");
 
     const showPagesList = useActionsStore((state) => state.showPagesList);
-    if (!showPagesList || viewOnlyMode) return null;
+    if (!showPagesList) return null;
 
     const handleAddPage = (type) => {
         // Можно генерировать имя 'Page N', но пока просто дефолт

@@ -8,9 +8,8 @@ export const DebugInfo = () => {
     const prevAction = useActionsStore((state) => state.prevAction);
     const selectedIds = useNodeStore((state) => state.selectedIds);
     const nodes = useNodeStore((state) => state.nodes);
-    const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
 
-    if (!debugMode || viewOnlyMode) return null;
+    if (!debugMode) return null;
 
     return (
         <Flex direction={"column"} h={"100%"}>
