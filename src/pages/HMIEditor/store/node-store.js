@@ -15,11 +15,20 @@ const defaultPage = {
 const defaultPages = {
     [defaultPageId]: defaultPage,
 };
+const defaultProjectName = "New project";
 
 export const useNodeStore = create(
     devtools(
         persist(
             (set, get) => ({
+                // ---- PROJECT ----
+                projectName: defaultProjectName,
+                renameProject: (name) =>
+                    set((state) => {
+                        const prev = state.projectName;
+                        if (prev === name) return state;
+                        return { projectName: name };
+                    }),
                 // ---- UI делишки ----
                 selectedIds: [],
                 setSelectedIds: (ids) =>
