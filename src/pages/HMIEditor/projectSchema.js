@@ -3,10 +3,18 @@ import Ajv from "ajv";
 const schema = {
     type: "object",
     additionalProperties: false,
-    required: ["kind", "schemaVersion", "pages", "activePageId", "nodes"],
+    required: [
+        "kind",
+        "schemaVersion",
+        "projectName",
+        "activePageId",
+        "pages",
+        "nodes",
+    ],
     properties: {
         kind: { const: "HMIEditorProject" },
         schemaVersion: { const: 2 },
+        projectName: { type: "string" },
         activePageId: { type: "string" },
         pages: {
             type: "object",

@@ -5,7 +5,8 @@ import { useNodeStore } from "../store/node-store";
 function exportProject(state) {
     return {
         kind: "HMIEditorProject",
-        schemaVersion: 1,
+        schemaVersion: 2,
+        projectName: state.projectName,
         activePageId: state.activePageId,
         pages: state.pages,
         nodes: state.nodes,

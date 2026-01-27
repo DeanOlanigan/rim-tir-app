@@ -45,6 +45,11 @@ export const OpenProject = ({ tools, width, height }) => {
                 fitToFrame();
 
                 fileUpload.clearFiles();
+
+                toaster.create({
+                    type: "success",
+                    title: "Проект загружен",
+                });
             } catch (error) {
                 toaster.create({
                     type: "error",
