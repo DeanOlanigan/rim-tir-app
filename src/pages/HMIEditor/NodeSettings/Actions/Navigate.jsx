@@ -16,6 +16,9 @@ export const Navigate = ({ action, handleChange }) => {
     return (
         <Stack gap={2} w={"100%"}>
             <Tabs.Root
+                size={"sm"}
+                lazyMount
+                unmountOnExit
                 value={mode}
                 onValueChange={(e) => handleChange("mode", e.value)}
             >
@@ -59,6 +62,8 @@ const SelectPage = ({ target, handleChange }) => {
     return (
         <Select.Root
             size={"xs"}
+            lazyMount
+            unmountOnExit
             collection={collection}
             value={target ? [target] : []}
             onValueChange={(e) => handleChange("target", e.value[0])}

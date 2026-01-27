@@ -46,6 +46,7 @@ const ColorSetter = ({ value, onChange }) => {
 
     return (
         <ColorPicker.Root
+            maxW={"32px"}
             size={"xs"}
             value={c}
             onValueChange={(e) => {
@@ -62,7 +63,6 @@ const ColorSetter = ({ value, onChange }) => {
             <ColorPicker.HiddenInput />
             <ColorPicker.Control>
                 <ColorPicker.Trigger />
-                <ColorPicker.Input />
             </ColorPicker.Control>
             <Portal>
                 <ColorPicker.Positioner>

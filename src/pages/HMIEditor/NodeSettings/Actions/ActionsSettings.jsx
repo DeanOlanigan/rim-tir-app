@@ -9,7 +9,7 @@ export const ActionsSettings = ({ selectedIds }) => {
 
     return (
         <VStack align={"start"} p={2} w={"100%"}>
-            <Accordion.Root collapsible multiple>
+            <Accordion.Root collapsible multiple lazyMount unmountOnExit>
                 {EVENT_TYPES.map((event, index) => (
                     <Accordion.Item
                         key={index}
