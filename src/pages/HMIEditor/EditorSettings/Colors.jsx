@@ -4,11 +4,6 @@ import { useActionsStore } from "../store/actions-store";
 
 const PARAMS = [
     { param: "gridColor", label: "Grid color", setter: "setGridColor" },
-    {
-        param: "backgroundColor",
-        label: "Background color",
-        setter: "setBackgroundColor",
-    },
 ];
 
 export const Colors = () => {

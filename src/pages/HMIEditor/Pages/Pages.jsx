@@ -44,7 +44,7 @@ export const Pages = () => {
             <Flex justify="space-between" align="center" mb={2}>
                 <Heading size={"md"}>Pages</Heading>
 
-                <Menu.Root>
+                <Menu.Root positioning={{ placement: "bottom-end" }}>
                     <Menu.Trigger asChild>
                         <IconButton
                             size="2xs"
@@ -88,7 +88,6 @@ export const Pages = () => {
                             p={1}
                             ps={4}
                             borderRadius="md"
-                            cursor="pointer"
                             bg={isActive ? activeBg : "transparent"}
                             _hover={{ bg: isActive ? activeBg : hoverBg }}
                             onClick={() =>
@@ -98,7 +97,7 @@ export const Pages = () => {
                             className="group" // Для показа кнопки удаления при ховере
                             transition="all 0.2s"
                         >
-                            <HStack spacing={3} overflow="hidden">
+                            <HStack overflow="hidden">
                                 <Text
                                     fontSize="sm"
                                     fontWeight={
