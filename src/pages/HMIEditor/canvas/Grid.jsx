@@ -97,6 +97,7 @@ export const Grid = ({ clipSize }) => {
     const gridSize = useActionsStore((state) => state.gridSize);
     const showGrid = useActionsStore((state) => state.showGrid);
     const gridColor = useActionsStore((state) => state.gridColor);
+    const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
 
     const sceneFunc = useCallback(
         (ctx, shape) => {
@@ -106,7 +107,8 @@ export const Grid = ({ clipSize }) => {
     );
 
     return (
-        showGrid && (
+        showGrid &&
+        !viewOnlyMode && (
             <Shape
                 perfectDrawEnabled={false}
                 shadowForStrokeEnabled={false}
