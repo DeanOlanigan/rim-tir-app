@@ -1,31 +1,11 @@
-import {
-    Card,
-    Group,
-    Heading,
-    IconButton,
-    Input,
-    Text,
-    VStack,
-} from "@chakra-ui/react";
+import { Card, Group, Heading, Text, VStack } from "@chakra-ui/react";
 import { useRightsAndRolesStore } from "../../SettingsStore/rights-and-roles-store";
-import { LuPlus } from "react-icons/lu";
-import { useRef } from "react";
-import { useRolePostMutation } from "../../hooks/useRolePostMutation";
-import { handleRoleAdd } from "./handleRoleAdd";
 import { DeleteRolePopover } from "./deleteRolePopover";
+import { NewRoleAdder } from "./NewRoleAdder";
 
 export const RoleList = () => {
     const roles = useRightsAndRolesStore((s) => s.roles);
     const selRoleId = useRightsAndRolesStore((s) => s.selectedRole.id);
-    const newRoleRef = useRef(null);
-
-    const postMutation = useRolePostMutation();
-
-    function handlePostRole() {
-        const newRole = handleRoleAdd(newRoleRef);
-        if (!newRole) return;
-        postMutation.mutate(newRole);
-    }
 
     return (
         <VStack h="md" w="50%" align={"start"}>
@@ -68,25 +48,7 @@ export const RoleList = () => {
                     ))}
                 </Card.Body>
             </Card.Root>
-            <Text fontWeight={"500"} mt={"auto"}>
-                Добавление новой роли
-            </Text>
-            <Group attached w={"100%"}>
-                <Input
-                    ref={newRoleRef}
-                    size={"xs"}
-                    placeholder="Введите название новой роли"
-                />
-                <IconButton
-                    loading={postMutation.isPending}
-                    size={"xs"}
-                    onClick={() => {
-                        handlePostRole();
-                    }}
-                >
-                    <LuPlus />
-                </IconButton>
-            </Group>
+            <NewRoleAdder />
         </VStack>
     );
 };

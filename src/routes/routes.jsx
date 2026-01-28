@@ -12,7 +12,7 @@ import {
     settingsLoader,
 } from "./loaders";
 import { createBrowserRouter } from "react-router-dom";
-import { ErrorSettings } from "@/pages/SettingsPage/Settings/ErrorSettings";
+import { ErrorScreamer } from "@/components/Error/Error";
 
 const LoginPage =           lazy(() => import("@/pages/LoginPage/LoginPage")); // prettier-ignore
 const ConfigurationPage =   lazy(() => import("@/pages/ConfigurationPage/ConfigurationPage")); // prettier-ignore
@@ -66,8 +66,17 @@ export const routes = [
                                 path: "settings",
                                 loader: settingsLoader,
                                 errorElement: (
-                                    <ErrorSettings
-                                        text={"Ошибка загрузки настроек"}
+                                    <ErrorScreamer
+                                        text={
+                                            "Ошибка загрузки страницы настроек"
+                                        }
+                                        page={"/settings"}
+                                        keys={[
+                                            "settings",
+                                            "license",
+                                            "roles",
+                                            "users",
+                                        ]}
                                     />
                                 ),
                                 element: <SettingsPage />,

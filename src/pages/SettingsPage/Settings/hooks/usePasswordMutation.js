@@ -23,12 +23,12 @@ export const usePasswordMutation = () => {
             return res;
         },
         onSuccess: () => {
-            usersSuccessMutate(queryClient, "Пароль успешно изменен");
+            usersSuccessMutate(queryClient, "PUT_PSWD_SUC");
             useEditStore.getState().setNewPassword("");
             useEditStore.getState().setPasswdOpen(false);
         },
         onError: (err) => {
-            usersErrorMutate(err, queryClient, "изменении пароля");
+            usersErrorMutate(err, queryClient, "PUT_PSWD_ERR");
         },
     });
 };

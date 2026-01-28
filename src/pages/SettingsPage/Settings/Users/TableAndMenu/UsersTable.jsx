@@ -134,12 +134,11 @@ export const UsersTable = () => {
                                         <Checkbox.Control />
                                     </Checkbox.Root>
                                 </Table.Cell>
-                                {Object?.keys(live[row]).map((key) => {
-                                    const cellValue = live[row][key];
-                                    if (key === "password") return null;
+                                {tableColumns.map((key) => {
+                                    const cellValue = live[row][key.value];
                                     return (
                                         <Table.Cell
-                                            key={key}
+                                            key={key.value}
                                             textAlign="center"
                                             fontSize="sm"
                                             fontWeight="500"
@@ -147,7 +146,7 @@ export const UsersTable = () => {
                                             maxW={"100%"}
                                         >
                                             <Text truncate title={cellValue}>
-                                                {key === "role"
+                                                {key.value === "role"
                                                     ? roles[cellValue]?.name ||
                                                       "Без роли"
                                                     : cellValue}

@@ -11,8 +11,7 @@ export const useRoleDeleteMutation = () => {
             const res = await apiv2.delete(`roles/${id}`);
             return res;
         },
-        onSuccess: () =>
-            rolesSuccessMutate(queryClient, "Роль успешно удалена"),
-        onError: (err) => rolesErrorMutate(err, "удалении"),
+        onSuccess: () => rolesSuccessMutate(queryClient, "DELETE_ROLE_SUC"),
+        onError: (err) => rolesErrorMutate(err, queryClient, "DELETE_ERR"),
     });
 };

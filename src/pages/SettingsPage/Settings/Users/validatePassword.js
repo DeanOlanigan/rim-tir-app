@@ -1,4 +1,4 @@
-export function validatePassword(password) {
+export function validatePassword(password, repeatedPassword) {
     const errorsArr = [];
 
     if (password.length < 3) {
@@ -23,6 +23,10 @@ export function validatePassword(password) {
                 break;
             }
         }
+    }
+
+    if (password.trim() !== (repeatedPassword?.trim() || password.trim())) {
+        errorsArr.push("Пароли не совпадают");
     }
 
     return {

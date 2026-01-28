@@ -14,8 +14,7 @@ export const useRolePostMutation = () => {
             });
             return res;
         },
-        onSuccess: () =>
-            rolesSuccessMutate(queryClient, "Роль успешно добавлена"),
-        onError: (err) => rolesErrorMutate(err, "добавлении"),
+        onSuccess: () => rolesSuccessMutate(queryClient, "POST_ROLE_SUC"),
+        onError: (err) => rolesErrorMutate(err, queryClient, "POST_ERR"),
     });
 };

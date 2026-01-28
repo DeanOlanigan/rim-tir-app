@@ -1,9 +1,11 @@
 import {
+    Fieldset,
     Group,
     Icon,
     IconButton,
     Popover,
     Portal,
+    Stack,
     Text,
 } from "@chakra-ui/react";
 import { LuCheck, LuKeyRound, LuX } from "react-icons/lu";
@@ -20,16 +22,21 @@ export const EditPassword = () => {
     const editedPassword = useEditStore((s) => s.editedPassword);
     const setNewPassword = useEditStore.getState().setNewPassword;
     const setPasswdOpen = useEditStore.getState().setPasswdOpen;
+    const repeatedPassword = useEditStore((s) => s.repeatedPassword);
+    const setRepeatedPassword = useEditStore.getState().setRepeatedPassword;
     const putPassword = usePasswordMutation();
 
     function passwordChecker() {
         if (editedPassword.length === 0) return;
-        const { isValid, errorsArr } = validatePassword(editedPassword);
-        console.log(errorsArr);
+        const { isValid, errorsArr } = validatePassword(
+            editedPassword,
+            repeatedPassword,
+        );
+
         if (!isValid) {
             toaster.create({
                 type: "error",
-                description: `Некорректный пароль: ${errorsArr.join(", ")}`,
+                description: `Ошибка изменения пароля: ${errorsArr.join(", ")}`,
             });
         } else {
             putPassword.mutate({ userId, editedPassword });
@@ -39,7 +46,11 @@ export const EditPassword = () => {
     return (
         <Popover.Root
             open={passwd}
-            onOpenChange={(e) => setPasswdOpen(e.isOpen)}
+            onOpenChange={(e) => {
+                setPasswdOpen(e.isOpen);
+                setRepeatedPassword("");
+                setNewPassword("");
+            }}
             positioning={{ placement: "right" }}
             lazyMount
             unmountOnExit
@@ -67,15 +78,40 @@ export const EditPassword = () => {
             <Portal>
                 <Popover.Positioner>
                     <Popover.Content>
-                        <Group attached>
-                            <PasswordInput
-                                disabled={putPassword.isPending}
-                                value={editedPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                size="xs"
-                                borderRightRadius="0"
-                                placeholder="Введите новый пароль"
-                            />
+                        <Fieldset.Root>
+                            <Stack margin={"10px"}>
+                                <Fieldset.Legend>
+                                    Изменение пароля
+                                </Fieldset.Legend>
+                                <PasswordInput
+                                    disabled={putPassword.isPending}
+                                    value={editedPassword}
+                                    onChange={(e) =>
+                                        setNewPassword(e.target.value)
+                                    }
+                                    size="xs"
+                                    borderRightRadius="0"
+                                    placeholder="Введите новый пароль"
+                                />
+
+                                <PasswordInput
+                                    disabled={putPassword.isPending}
+                                    value={repeatedPassword}
+                                    onChange={(e) =>
+                                        setRepeatedPassword(e.target.value)
+                                    }
+                                    size="xs"
+                                    borderRightRadius="0"
+                                    placeholder="Повторите новый пароль"
+                                />
+                            </Stack>
+                        </Fieldset.Root>
+                        <Group
+                            attached
+                            paddingBottom={"10px"}
+                            paddingRight={"10px"}
+                            justifyContent={"flex-end"}
+                        >
                             <IconButton
                                 disabled={putPassword.isPending}
                                 loading={putPassword.isPending}

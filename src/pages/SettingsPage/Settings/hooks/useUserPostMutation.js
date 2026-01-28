@@ -17,8 +17,7 @@ export const useUserPostMutation = () => {
             );
             return res;
         },
-        onSuccess: () =>
-            usersSuccessMutate(queryClient, "Пользователь успешно создан"),
-        onError: (err) => usersErrorMutate(err, queryClient, "удалении"),
+        onSuccess: () => usersSuccessMutate(queryClient, "POST_USER_SUC"),
+        onError: (err) => usersErrorMutate(err, queryClient, "POST_USER_ERR"),
     });
 };

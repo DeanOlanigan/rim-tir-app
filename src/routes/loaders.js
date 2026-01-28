@@ -24,11 +24,11 @@ export async function settingsLoader() {
             retry: false,
         }),
         queryClient.prefetchQuery({
-            queryKey: [QK.users],
+            queryKey: QK.users,
             queryFn: async () => getUsers(),
         }),
         queryClient.prefetchQuery({
-            queryKey: [QK.roles],
+            queryKey: QK.roles,
             queryFn: async () => getRoles(),
         }),
     ]);

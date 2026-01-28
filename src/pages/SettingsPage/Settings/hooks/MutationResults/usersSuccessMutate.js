@@ -1,14 +1,15 @@
 import { QK } from "../../../../../api/queryKeys";
 import { toaster } from "@/components/ui/toaster";
 import { useTableStore } from "../../SettingsStore/tablestore";
+import { CK } from "./crudKeys";
 
-export function usersSuccessMutate(queryClient, text) {
-    queryClient.setQueryData([QK.users], () => {
+export function usersSuccessMutate(queryClient, crudKey) {
+    queryClient.setQueryData(QK.users, () => {
         return useTableStore.getState().live;
     });
     toaster.create({
         type: "success",
-        description: text,
+        description: CK[crudKey],
         closable: true,
     });
 }

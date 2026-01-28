@@ -12,8 +12,7 @@ export const useUserDeleteMutation = () => {
             const res = await apiv2.delete(`/deleteUsers?ids=${idsQuery}`);
             return res;
         },
-        onSuccess: () =>
-            usersSuccessMutate(queryClient, "Удаление прошло успешно"),
-        onError: (err) => usersErrorMutate(err, queryClient, "удалении"),
+        onSuccess: () => usersSuccessMutate(queryClient, "DELETE_USER_SUC"),
+        onError: (err) => usersErrorMutate(err, queryClient, "DELETE_USER_ERR"),
     });
 };

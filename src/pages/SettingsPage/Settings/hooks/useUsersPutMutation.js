@@ -15,8 +15,7 @@ export const useUsersPutMutation = () => {
             });
             return res;
         },
-        onSuccess: () =>
-            usersSuccessMutate(queryClient, "Изменения успешно применены"),
-        onError: (err) => usersErrorMutate(err, queryClient, "редактировании"),
+        onSuccess: () => usersSuccessMutate(queryClient, "PUT_USER_SUC"),
+        onError: (err) => usersErrorMutate(err, queryClient, "PUT_ERR"),
     });
 };

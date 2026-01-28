@@ -13,6 +13,13 @@ export const useEditStore = create((set) => ({
 
     editedPassword: "",
 
+    repeatedPassword: "",
+
+    setRepeatedPassword: (newRepeat) =>
+        set(() => ({
+            repeatedPassword: newRepeat,
+        })),
+
     setNewPassword: (newPassword) =>
         set(() => ({
             editedPassword: newPassword,

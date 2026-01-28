@@ -2,9 +2,9 @@ import { toaster } from "@/components/ui/toaster";
 import { useRightsAndRolesStore } from "@/pages/SettingsPage/Settings/SettingsStore/rights-and-roles-store";
 import { errors } from "../errors";
 
-export function handleRoleAdd(newRoleRef) {
-    if (!newRoleRef.current.value) return;
-    const newName = newRoleRef.current.value;
+export function handleRoleAdd({ newRoleName, setNewName }) {
+    if (!newRoleName) return;
+    const newName = newRoleName;
     let newId;
     try {
         newId = useRightsAndRolesStore.getState().addRole(newName);
@@ -16,7 +16,7 @@ export function handleRoleAdd(newRoleRef) {
         });
         return;
     }
-    newRoleRef.current.value = "";
+    setNewName("");
     const newRole = {
         id: newId,
         name: newName,

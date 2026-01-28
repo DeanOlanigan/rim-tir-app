@@ -11,8 +11,7 @@ export const useRolePutMutation = () => {
             const res = await apiv2.put("/editRoles", editedRole);
             return res;
         },
-        onSuccess: () =>
-            rolesSuccessMutate(queryClient, "Роль успешно изменена"),
-        onError: (err) => rolesErrorMutate(err, "изменении"),
+        onSuccess: () => rolesSuccessMutate(queryClient, "PUT_ROLE_SUC"),
+        onError: (err) => rolesErrorMutate(err, queryClient, "PUT_ERR"),
     });
 };
