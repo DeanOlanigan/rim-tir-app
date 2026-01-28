@@ -4,12 +4,12 @@ import { ContextMenu } from "./ContextMenu";
 import { ToolBar } from "./ToolBar";
 import { HMICanvas } from "./canvas/HMICanvas";
 import { useToolsManager } from "./canvas/hooks/useToolsManager";
-import { NodeSettings } from "./NodeSettings";
 import { useNodeStore } from "./store/node-store";
 import { useMqttValues } from "./useMqttValues";
 import { useEffect } from "react";
 import { confirmationDialog } from "./dialog";
 import { LeftPanel } from "./LeftPanel";
+import { RightPanel } from "./RightPanel/RightPanel";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -59,7 +59,7 @@ const HMIEditorContent = () => {
                 p={2}
                 pointerEvents={"none"}
             >
-                <NodeSettings api={tools.api} />
+                <RightPanel api={tools.api} />
             </Box>
             <HStack position={"absolute"} bottom={2} alignSelf={"center"}>
                 <ToolBar manager={tools.manager} />

@@ -6,6 +6,7 @@ import HMITransformer from "./HMITransformer";
 import { Nodes } from "./Nodes";
 import { useEffect } from "react";
 import { LineTransformer } from "./LineTransformer";
+import { useNodeStore } from "../store/node-store";
 
 export const HMICanvas = ({
     manager,
@@ -18,7 +19,9 @@ export const HMICanvas = ({
     width,
     height,
 }) => {
-    const bgColor = useActionsStore((state) => state.backgroundColor);
+    const bgColor = useNodeStore(
+        (state) => state.pages[state.activePageId].backgroundColor,
+    );
     const showHitRegions = useActionsStore((state) => state.showHitRegions);
 
     useEffect(() => {
