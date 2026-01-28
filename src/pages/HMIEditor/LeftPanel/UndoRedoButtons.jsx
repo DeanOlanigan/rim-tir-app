@@ -1,6 +1,6 @@
 import { Group, IconButton } from "@chakra-ui/react";
 import { LuRedo, LuUndo } from "react-icons/lu";
-import { useActionsStore } from "./store/actions-store";
+import { useActionsStore } from "../store/actions-store";
 
 export const UndoRedoButtons = () => {
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);

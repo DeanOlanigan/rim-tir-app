@@ -39,7 +39,7 @@ export const Pages = () => {
     };
 
     return (
-        <Flex direction={"column"} h={"100%"}>
+        <Flex direction={"column"} h={"100%"} minH={0}>
             {/* --- HEADER --- */}
             <Flex justify="space-between" align="center" mb={2}>
                 <Heading size={"md"}>Pages</Heading>

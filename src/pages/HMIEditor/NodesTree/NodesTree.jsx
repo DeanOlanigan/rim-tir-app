@@ -80,11 +80,17 @@ export const NodesTree = ({ api }) => {
     };
 
     return (
-        <Flex direction={"column"} h={"100%"}>
+        <Flex direction={"column"} h={"100%"} minH={0}>
             <Flex justify="space-between" align="center" mb={2}>
                 <Heading size={"md"}>Nodes tree</Heading>
             </Flex>
-            <Flex flex={1} ref={ref}>
+            <Flex
+                w={"100%"}
+                h={"100%"}
+                minH={0}
+                position={"relative"}
+                ref={ref}
+            >
                 <Tree
                     ref={treeRef}
                     data={data}
