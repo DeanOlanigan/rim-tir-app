@@ -17,7 +17,9 @@ export const deg2rad = (deg) => (deg * Math.PI) / 180;
 
 export function layerShift(ids, dir) {
     const store = useNodeStore.getState();
-    const rootIds = store.rootIds;
+    const activePageId = store.activePageId;
+    const rootIds = store.pages[activePageId]?.rootIds || [];
+    const updatePage = store.updatePage;
 
     const moveIds = Array.isArray(ids) ? ids : [ids];
 
@@ -54,7 +56,7 @@ export function layerShift(ids, dir) {
         default:
             break;
     }
-    store.setRootIds(rest);
+    updatePage(activePageId, { rootIds: rest });
 }
 
 export function mul(A, B) {
