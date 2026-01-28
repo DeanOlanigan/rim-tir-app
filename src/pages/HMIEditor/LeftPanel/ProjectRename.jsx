@@ -17,7 +17,7 @@ export const ProjectRename = () => {
                 if (next) useNodeStore.getState().renameProject(next);
             }}
             submitMode="both"
-            activationMode="dblclick"
+            activationMode="click"
             selectOnFocus
             required
             maxLength={80}

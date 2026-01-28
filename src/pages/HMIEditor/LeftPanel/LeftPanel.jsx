@@ -1,9 +1,8 @@
-import { Box, Flex, HStack, Spacer } from "@chakra-ui/react";
+import { Box, Flex, Spacer } from "@chakra-ui/react";
 import { useActionsStore } from "../store/actions-store";
 import { MinimizedPanel } from "./MinimizedPanel";
 import { ExpandedPanel } from "./ExpandedPanel";
-import { ZoomBar } from "./ZoomBar";
-import { UndoRedoButtons } from "./UndoRedoButtons";
+import { ZoomUndoBlock } from "./ZoomUndoBlock";
 
 export const LeftPanel = ({ tools, width, height }) => {
     const isUiExpanded = useActionsStore((state) => state.isUiExpanded);
@@ -14,13 +13,21 @@ export const LeftPanel = ({ tools, width, height }) => {
     return (
         <Flex h={"100%"} minH={0} gap={1} direction={"column"}>
             {isMinimized ? (
-                <Box pointerEvents={"auto"}>
-                    <MinimizedPanel
+                <>
+                    <Box pointerEvents={"auto"}>
+                        <MinimizedPanel
+                            tools={tools}
+                            width={width}
+                            height={height}
+                        />
+                    </Box>
+                    <Spacer />
+                    <ZoomUndoBlock
                         tools={tools}
                         width={width}
                         height={height}
                     />
-                </Box>
+                </>
             ) : (
                 <Flex h={"100%"} minH={0} pointerEvents={"auto"}>
                     <ExpandedPanel
@@ -30,20 +37,6 @@ export const LeftPanel = ({ tools, width, height }) => {
                     />
                 </Flex>
             )}
-            <Spacer />
-            <HStack>
-                <Box pointerEvents={"auto"}>
-                    <ZoomBar
-                        canvasRef={tools.canvasRef}
-                        nodesRef={tools.nodesRef}
-                        width={width}
-                        height={height}
-                    />
-                </Box>
-                <Box pointerEvents={"auto"}>
-                    <UndoRedoButtons />
-                </Box>
-            </HStack>
         </Flex>
     );
 };

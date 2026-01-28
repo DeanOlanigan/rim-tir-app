@@ -6,6 +6,7 @@ import { Pages } from "../Pages/Pages";
 import { NodesTree } from "../NodesTree";
 import { EditorSettings } from "../EditorSettings";
 import { DebugInfo } from "./DebugInfo";
+import { ZoomUndoBlock } from "./ZoomUndoBlock";
 
 export const ExpandedPanel = ({ tools, width, height }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -37,6 +38,7 @@ export const ExpandedPanel = ({ tools, width, height }) => {
                     <LuPanelRight />
                 </IconButton>
             </HStack>
+
             <ProjectRename />
 
             <Tabs.Root
@@ -87,6 +89,7 @@ export const ExpandedPanel = ({ tools, width, height }) => {
                     </Tabs.Content>
                 )}
             </Tabs.Root>
+            <ZoomUndoBlock tools={tools} width={width} height={height} />
         </VStack>
     );
 };
