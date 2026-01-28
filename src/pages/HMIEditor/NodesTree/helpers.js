@@ -2,8 +2,7 @@ import { SHAPES_ICONS } from "../constants";
 import { useNodeStore } from "../store/node-store";
 
 export const useNodesData = () => {
-    const activePageId = useNodeStore((s) => s.activePageId);
-    const rootIds = useNodeStore((s) => s.pages[activePageId]?.rootIds || []);
+    const rootIds = useNodeStore((s) => s.pages[s.activePageId]?.rootIds || []);
     if (rootIds.length === 0) return [];
     function createRecursiveList(items) {
         return items.map((id) => {

@@ -66,16 +66,15 @@ export const NodesTree = ({ api }) => {
     const handleSelect = (nodes) => {
         if (syncRef.current) return;
         const tree = nodes[0]?.tree;
-        if (!tree) return;
 
-        const nextSet = tree.selectedIds;
+        const nextSet = tree ? tree.selectedIds : new Set();
         if (setEquals(nextSet, toSet(useNodeStore.getState().selectedIds)))
             return;
 
         useNodeStore.getState().setSelectedIds(Array.from(nextSet));
     };
 
-    const handleRename = (id, name) => {
+    const handleRename = ({ id, name }) => {
         useNodeStore.getState().updateNode(id, { name });
     };
 
