@@ -2,8 +2,8 @@ import { toaster } from "@/components/ui/toaster";
 import { Button, FileUpload, useFileUpload } from "@chakra-ui/react";
 import { LuFile } from "react-icons/lu";
 import { useNodeStore } from "../store/node-store";
-import { validateProjectStructure } from "../projectSchema";
 import { useFitToFrame } from "../canvas/hooks/useFitToFrame";
+import { validateProjectStructure } from "./projectSchema";
 
 export const OpenProject = ({ tools, width, height }) => {
     const fitToFrame = useFitToFrame(

@@ -3,9 +3,7 @@ import { LuMenu } from "react-icons/lu";
 import { Checkboxes } from "./CheckBoxes";
 import { GridSize } from "./GridSize";
 import { Colors } from "./Colors";
-import { DownloadProject } from "./DownloadProject";
-import { OpenProject } from "./OpenProject";
-import { CloseProject } from "./CloseProject";
+import { CloseProject, DownloadProject, OpenProject } from "../ProjectOps";
 
 export const EditorSettings = ({ tools, width, height }) => {
     return (
