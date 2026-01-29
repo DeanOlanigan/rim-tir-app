@@ -5,6 +5,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import sonarjs from "eslint-plugin-sonarjs";
 import pluginQuery from "@tanstack/eslint-plugin-query";
+import prettier from "eslint-config-prettier/flat";
 
 export default [
     ...pluginQuery.configs["flat/recommended"],
@@ -46,4 +47,5 @@ export default [
         },
     },
     sonarjs.configs.recommended,
+    prettier,
 ];

@@ -4,7 +4,7 @@ export const rightsSample = {
     children: [
         {
             id: "confPage",
-            name: `Страница "Конфигурация"`,
+            name: 'Страница "Конфигурация"',
             disabled: false,
             children: [
                 {
@@ -176,7 +176,7 @@ export const rightsSample = {
 
         {
             id: "monitorPage",
-            name: `Страница "Мониторинг"`,
+            name: 'Страница "Мониторинг"',
             disabled: false,
             children: [
                 {
@@ -206,7 +206,7 @@ export const rightsSample = {
 
         {
             id: "logPage",
-            name: `Страница "Логирование"`,
+            name: 'Страница "Логирование"',
             disabled: false,
             children: [
                 { id: "lookLog", name: "Просмотр страницы", disabled: false },
@@ -220,7 +220,7 @@ export const rightsSample = {
 
         {
             id: "journPage",
-            name: `Страница "Журналирование"`,
+            name: 'Страница "Журналирование"',
             disabled: false,
             children: [
                 { id: "lookJourn", name: "Просмотр страницы", disabled: false },
@@ -234,7 +234,7 @@ export const rightsSample = {
 
         {
             id: "graphsPage",
-            name: `Страница "Графики"`,
+            name: 'Страница "Графики"',
             disabled: false,
             children: [
                 {
@@ -247,7 +247,7 @@ export const rightsSample = {
 
         {
             id: "settingsPage",
-            name: `Страница "Настройки"`,
+            name: 'Страница "Настройки"',
             disabled: false,
             children: [
                 {
@@ -257,17 +257,17 @@ export const rightsSample = {
                 },
                 {
                     id: "webServSettings",
-                    name: `Настройка "WebСервера"`,
+                    name: 'Настройка "WebСервера"',
                     disabled: false,
                 },
                 {
                     id: "logSettings",
-                    name: `Настройка "Лог-файлов"`,
+                    name: 'Настройка "Лог-файлов"',
                     disabled: false,
                 },
                 {
                     id: "journSettings",
-                    name: `Настройка "Журналов"`,
+                    name: 'Настройка "Журналов"',
                     disabled: false,
                     children: [
                         {
