@@ -52,7 +52,7 @@ export const JournalSettings = () => {
                                                 editSettings(
                                                     e.value,
                                                     "size",
-                                                    journal.name
+                                                    journal.name,
                                                 );
                                             }}
                                             w="100%"
@@ -91,7 +91,7 @@ export const JournalSettings = () => {
                                                 editSettings(
                                                     e.value,
                                                     "files",
-                                                    journal.name
+                                                    journal.name,
                                                 );
                                             }}
                                             w="100%"
@@ -115,7 +115,7 @@ export const JournalSettings = () => {
                                             editSettings(
                                                 e.checked,
                                                 "archive",
-                                                journal.name
+                                                journal.name,
                                             );
                                         }}
                                     >

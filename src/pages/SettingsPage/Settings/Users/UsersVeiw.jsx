@@ -1,11 +1,22 @@
-import { Card, Heading, HStack, IconButton, Text } from "@chakra-ui/react";
-import { UsersTable } from "./UsersTable";
-import { LuUserRoundPlus } from "react-icons/lu";
+import { Card, Heading, HStack, Text } from "@chakra-ui/react";
+import { TableMenu } from "./TableAndMenu/TableMenu";
+import { UsersTable } from "./TableAndMenu/UsersTable";
+import { RoleEditorAndAdder } from "./Roles/RoleEditorAndAdder";
+import { useUsersHistory } from "../hooks/useUsers";
+import { useRoles } from "../hooks/useRoles";
+import { useEffect } from "react";
 import { useTableStore } from "../SettingsStore/tablestore";
-import { RoleCreator } from "./Roles/RoleCreator";
+import { useRightsAndRolesStore } from "../SettingsStore/rights-and-roles-store";
 
 export const UsersView = () => {
-    const { setIsAdding, isAdding } = useTableStore();
+    const dataUsers = useUsersHistory();
+    const dataRoles = useRoles();
+
+    useEffect(() => {
+        useTableStore.getState().hydrate(dataUsers);
+        useRightsAndRolesStore.getState().setRoles(dataRoles);
+    }, [dataUsers, dataRoles]);
+
     return (
         <>
             <Heading paddingBottom={"2"}>Редактор пользователей</Heading>
@@ -20,21 +31,13 @@ export const UsersView = () => {
                         Создание пользователя, ролей и их редактирование
                     </Text>
                     <HStack justifyContent={"flex-end"}>
-                        <IconButton
-                            variant={isAdding ? "solid" : "outline"}
-                            size="sm"
-                            w="50px"
-                            onClick={() => {
-                                setIsAdding();
-                            }}
-                        >
-                            <LuUserRoundPlus />
-                        </IconButton>
-                        <RoleCreator />
+                        <RoleEditorAndAdder />
                     </HStack>
                 </Card.Header>
                 <Card.Body>
-                    <UsersTable />
+                    <TableMenu>
+                        <UsersTable />
+                    </TableMenu>
                 </Card.Body>
             </Card.Root>
         </>

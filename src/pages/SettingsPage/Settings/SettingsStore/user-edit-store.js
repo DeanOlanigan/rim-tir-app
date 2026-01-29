@@ -1,44 +1,70 @@
 import { create } from "zustand";
 
-const Roles = [
-    {
-        label: "Админ",
-        value: "admin",
-        rights: [
-            { label: "Все права", value: "allrights" },
-        ],
+export const useEditStore = create((set) => ({
+    selectedUser: {
+        id: undefined,
+        data: {},
     },
-    {
-        label: "Водолаз",
-        value: "vodolaz",
-        rights: [
-            { label: "Доступ к журналированию", value: "journ-view"},
-            { label: "Доступ к логам", value: "log-view" },
-        ],
-    },
-    {
-        label: "Работяга",
-        value: "worker",
-        rights: [
-            { label: "Доступ к конфигурации", value: "conf-view" },
-            { label: "Редактирование данных в мониторинге", value: "monitor-edit" },
-            { label: "Доступ к графикам", value: "graph" },
-            { label: "Доступ к журналированию", value: "journ-view"},
-        ],
-    },
-    {
-        label: "В шоке",
-        value: "shoked",
-        rights: [
-            { label: "Доступ к конфигурации", value: "conf-view" },
-        ],
-    },
-];
 
-export const useEditStore = create(
-    (set) => ({
-        roles: Roles,
-        createRole: (newRole) => set((state) => ({roles: {...state.roles, newRole}})),
-        editedUsers: [{}],
-        setEditedUsers: (newEditedUsers) => set(() => ({editedUsers: newEditedUsers}))
-    }));
+    tempUser: {
+        id: undefined,
+        data: {},
+    },
+
+    editedPassword: "",
+
+    repeatedPassword: "",
+
+    setRepeatedPassword: (newRepeat) =>
+        set(() => ({
+            repeatedPassword: newRepeat,
+        })),
+
+    setNewPassword: (newPassword) =>
+        set(() => ({
+            editedPassword: newPassword,
+        })),
+
+    setSelectedUser: (selectedId, selectedData) =>
+        set(() => ({
+            selectedUser: {
+                id: selectedId,
+                data: { ...selectedData },
+            },
+        })),
+
+    setTempUser: (isOpen) =>
+        set((state) => ({
+            tempUser: isOpen
+                ? {
+                      ...state.selectedUser,
+                  }
+                : { id: undefined, data: {} },
+            editedPassword: "",
+        })),
+
+    editTempUser: (field, newData) =>
+        set((state) => ({
+            tempUser: {
+                ...state.tempUser,
+                data: {
+                    ...state.tempUser.data,
+                    [field]: newData,
+                },
+            },
+        })),
+
+    delete: false,
+
+    open: false,
+
+    passwd: false,
+
+    menuOpen: false,
+
+    setPasswdOpen: (isOpen) => set(() => ({ passwd: isOpen })),
+
+    setMenuOpen: (isOpen) => set(() => ({ menuOpen: isOpen })),
+
+    setPopoversOpen: (popover, isOpen) => set(() => ({ [popover]: isOpen })),
+}));

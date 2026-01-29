@@ -1,59 +1,89 @@
-import { Field, IconButton, Input, Table } from "@chakra-ui/react";
+import { Field, Group, IconButton, Input, Table } from "@chakra-ui/react";
 import { LuUserRoundPlus } from "react-icons/lu";
 import { RoleSelector } from "./Roles/RoleSelector";
-import { useTableStore } from "../SettingsStore/tablestore";
 import { useUserStore } from "../SettingsStore/user-add-store";
+import { handleAdd } from "./handleAdd";
+import { useUserPostMutation } from "../hooks/useUserPostMutation";
+import { nanoid } from "nanoid";
 
 const inputs = [
-    { id: "login", label: "логин" },
     { id: "surname", label: "фамилию" },
     { id: "name", label: "имя" },
     { id: "grandname", label: "отчество" },
     { id: "position", label: "должность" },
 ];
 
-export const UserAdder = () => {
-    const addUser = useTableStore((s) => s.addUser);
-    const { newUser, makeUser, isUserValid, cleanUser } = useUserStore();
+export const UserAdder = ({ scrollToBottom }) => {
+    const makeUser = useUserStore.getState().makeUser;
+    const makePassword = useUserStore.getState().makePassword;
+    const newUser = useUserStore((s) => s.newUser);
+    const password = useUserStore((s) => s.password);
+    const postMutation = useUserPostMutation();
     const baseText = "Введите";
-    const valid = isUserValid();
+
+    function handleUserPost() {
+        const newId = nanoid();
+
+        const isCorrect = handleAdd(newId, newUser, password, scrollToBottom);
+        if (isCorrect) postMutation.mutate({ newId, newUser, password });
+    }
+
     return (
-        <Table.Body>
-            <Table.Row>
-                <Table.Cell padding={"-1.5"}>
-                    <IconButton
-                        title={valid ? "" : "Заполните все поля"}
-                        disabled={!valid}
-                        size={"xs"}
-                        variant={"ghost"}
-                        onClick={() => {
-                            addUser(newUser);
-                            cleanUser();
-                        }}
-                    >
-                        <LuUserRoundPlus />
-                    </IconButton>
+        <Table.Row>
+            <Table.Cell padding={"4px"}>
+                <IconButton
+                    size={"xs"}
+                    variant={"ghost"}
+                    onClick={() => {
+                        handleUserPost();
+                    }}
+                    loading={postMutation.isPending}
+                >
+                    <LuUserRoundPlus />
+                </IconButton>
+            </Table.Cell>
+            <Table.Cell padding={"4px"}>
+                <Group attached>
+                    <Field.Root invalid={!newUser.login}>
+                        <Input
+                            value={newUser.login}
+                            size="xs"
+                            placeholder={`Логин`}
+                            onChange={(e) => {
+                                makeUser(["login", e.target.value]);
+                            }}
+                            borderRightRadius={"0"}
+                        />
+                    </Field.Root>
+                    <Field.Root invalid={!password}>
+                        <Input
+                            value={password}
+                            type="password"
+                            size="xs"
+                            borderLeftRadius="0"
+                            placeholder="Пароль"
+                            onChange={(e) => {
+                                makePassword(e.target.value);
+                            }}
+                        />
+                    </Field.Root>
+                </Group>
+            </Table.Cell>
+            {inputs.map((input) => (
+                <Table.Cell key={input.id} padding={"4px"} fontWeight={"500"}>
+                    <Field.Root invalid={!newUser[input.id]}>
+                        <Input
+                            value={newUser[input.id]}
+                            size="xs"
+                            placeholder={`${baseText} ${input.label}`}
+                            onChange={(e) => {
+                                makeUser([input.id, e.target.value]);
+                            }}
+                        />
+                    </Field.Root>
                 </Table.Cell>
-                {inputs.map((input) => (
-                    <Table.Cell
-                        key={input.id}
-                        padding={"4px"}
-                        fontWeight={"500"}
-                    >
-                        <Field.Root invalid={!newUser[input.id]}>
-                            <Input
-                                value={newUser[input.id]}
-                                size="xs"
-                                placeholder={`${baseText} ${input.label}`}
-                                onChange={(e) =>
-                                    makeUser([input.id, e.target.value])
-                                }
-                            />
-                        </Field.Root>
-                    </Table.Cell>
-                ))}
-                <RoleSelector />
-            </Table.Row>
-        </Table.Body>
+            ))}
+            <RoleSelector isEditing={false} />
+        </Table.Row>
     );
 };
