@@ -1,0 +1,74 @@
+import {
+    Button,
+    Highlight,
+    IconButton,
+    Popover,
+    Portal,
+    Text,
+} from "@chakra-ui/react";
+import { useRoleDeleteMutation } from "../../hooks/useRoleDeleteMutation";
+import { useRightsAndRolesStore } from "../../SettingsStore/rights-and-roles-store";
+import { useTableStore } from "../../SettingsStore/tablestore";
+import { LuX } from "react-icons/lu";
+
+export const DeleteRolePopover = ({ id }) => {
+    const deleteRoleMutation = useRoleDeleteMutation();
+
+    function handleDelete() {
+        useRightsAndRolesStore.getState().delRole(id);
+        deleteRoleMutation.mutate(id);
+        useTableStore.getState().filterDeletedRole(id);
+    }
+
+    return (
+        <Popover.Root>
+            <Popover.Trigger>
+                <IconButton
+                    size={"2xs"}
+                    variant={"ghost"}
+                    colorPalette={"red"}
+                    borderLeftRadius={"0"}
+                >
+                    <LuX />
+                </IconButton>
+            </Popover.Trigger>
+            <Portal>
+                <Popover.Positioner>
+                    <Popover.Content>
+                        <Popover.Arrow />
+                        <Popover.Body>
+                            <Text fontWeight={"medium"}>
+                                <Highlight
+                                    query={["НЕЛЬЗЯ БУДЕТ ОТМЕНИТЬ"]}
+                                    styles={{
+                                        px: 0.5,
+                                        borderRadius: "4px",
+                                        color: "fg.error",
+                                    }}
+                                >
+                                    Вы уверены? Последствия этого действия
+                                    НЕЛЬЗЯ БУДЕТ ОТМЕНИТЬ!
+                                </Highlight>
+                            </Text>
+                        </Popover.Body>
+                        <Popover.Footer justifyContent={"right"}>
+                            <Button
+                                loading={deleteRoleMutation.isPending}
+                                size={"2xs"}
+                                variant={"outline"}
+                                colorPalette={"red"}
+                                color={"red.600"}
+                                onClick={() => handleDelete()}
+                            >
+                                Удалить
+                            </Button>
+                            <Button size={"2xs"} variant={"outline"}>
+                                Отменить
+                            </Button>
+                        </Popover.Footer>
+                    </Popover.Content>
+                </Popover.Positioner>
+            </Portal>
+        </Popover.Root>
+    );
+};
