@@ -1,0 +1,27 @@
+import { Button, Heading, VStack } from "@chakra-ui/react";
+import { RoleTree } from "./RoleTree";
+import { InputField } from "./InputField";
+import { useRolePutMutation } from "../../hooks/useRolePutMutation";
+import { handleEdit } from "./handleEdit";
+import { useRightsAndRolesStore } from "../../SettingsStore/rights-and-roles-store";
+
+export const RoleEditor = () => {
+    const putMutation = useRolePutMutation();
+
+    function handlePutRole() {
+        const isAllRights = handleEdit();
+        if (!isAllRights) return;
+        putMutation.mutate(useRightsAndRolesStore.getState().selectedRole);
+    }
+
+    return (
+        <VStack w={"50%"} h="md" align="start">
+            <Heading>Редактирование роли</Heading>
+            <InputField />
+            <RoleTree />
+            <Button w={"100%"} mt={"auto"} onClick={() => handlePutRole()}>
+                Применить
+            </Button>
+        </VStack>
+    );
+};

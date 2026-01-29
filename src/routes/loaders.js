@@ -1,3 +1,8 @@
+import { QK } from "@/api";
+import { apiv2 } from "@/api/baseUrl";
+import { getRoles } from "@/api/getRoles";
+import { getUsers } from "@/api/getUsers";
+import { queryClient } from "@/queryClients";
 import { configuratorConfig } from "@/store/configurator-config";
 
 export async function monitoringLoader() {
@@ -5,6 +10,28 @@ export async function monitoringLoader() {
         await import("@/utils/configurationParser");
     await ensureConfiguratorConfig();
     return null;
+}
+
+export async function settingsLoader() {
+    return await Promise.all([
+        queryClient.prefetchQuery({
+            queryKey: ["settings"],
+            queryFn: async () => {
+                const res = await apiv2.get("/settings");
+                await new Promise((res) => setTimeout(res, 1000));
+                return res.data;
+            },
+            retry: false,
+        }),
+        queryClient.prefetchQuery({
+            queryKey: QK.users,
+            queryFn: async () => getUsers(),
+        }),
+        queryClient.prefetchQuery({
+            queryKey: QK.roles,
+            queryFn: async () => getRoles(),
+        }),
+    ]);
 }
 
 export async function configurationLoader() {
