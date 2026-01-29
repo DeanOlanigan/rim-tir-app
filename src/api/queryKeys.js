@@ -7,5 +7,6 @@ export const QK = {
     roles: ["roles"],
     users: ["users"],
     settings: ["settings"],
-    license: ["license"]
+    license: ["license"],
+    getLicense: ["getLicense"],
 };

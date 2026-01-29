@@ -11,9 +11,10 @@ import {
 } from "@chakra-ui/react";
 
 import { LuCheck, LuSend, LuTriangleAlert } from "react-icons/lu";
-import { useLicense } from "./Settings/hooks/useLicense";
+import { useLicenseCheck } from "./Settings/hooks/useLicenseCheck";
 import { useEffect, useState } from "react";
 import { useLicenseMutation } from "./Settings/hooks/useLicenseMutation";
+import { useLicense } from "./Settings/hooks/useLicense";
 
 function checkDate(endDate, setIsKeyEnd) {
     const today = new Date();
@@ -27,14 +28,14 @@ function checkDate(endDate, setIsKeyEnd) {
 }
 
 export const License = () => {
-    const { data } = useLicense("Vryd3q7NQ3BLOOpIuGYsW");
+    const { data: uuid } = useLicense(); 
+    const { data } = useLicenseCheck(uuid);
     const [isKeyEnd, setIsKeyEnd] = useState(false);
-
     useEffect(() => checkDate(data.endDate, setIsKeyEnd), [data.endDate]);
 
     const licenseMutation = useLicenseMutation(
         setIsKeyEnd,
-        "Vryd3q7NQ3BLOOpIuGYsW"
+        uuid
     );
 
     return (
@@ -52,7 +53,7 @@ export const License = () => {
                             <Field.Label>
                                 Ваш универсальный уникальный идентификатор
                             </Field.Label>
-                            <Text>Vryd3q7NQ3BLOOpIuGYsW</Text>
+                            <Text>{uuid}</Text>
                         </Field.Root>
                         {data.isActive && !isKeyEnd ? (
                             <KeyIsActive />
@@ -61,7 +62,7 @@ export const License = () => {
                                 <Field.Label>
                                     Ввод ключа для активации ПО
                                 </Field.Label>
-                                <KeyInput licenseMutation={licenseMutation} />
+                                <KeyInput licenseMutation={licenseMutation} uuid={uuid} />
                             </Field.Root>
                         )}
                     </HStack>
@@ -82,7 +83,7 @@ export const License = () => {
         </>
     );
 };
-const KeyInput = ({ licenseMutation }) => {
+const KeyInput = ({ licenseMutation, uuid }) => {
     const [key, setKey] = useState("");
     return (
         <Group attached w={"100%"}>
@@ -98,7 +99,7 @@ const KeyInput = ({ licenseMutation }) => {
                 variant={"plain"}
                 onClick={() =>
                     licenseMutation.mutate({
-                        uuid: "Vryd3q7NQ3BLOOpIuGYsW",
+                        uuid: uuid,
                         key: `${key}`,
                     })
                 }
