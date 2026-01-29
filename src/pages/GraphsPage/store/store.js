@@ -74,8 +74,8 @@ export const useGraphStore = create(
                 endDate: state.endDate,
                 type: state.type,
             }),
-        }
-    )
+        },
+    ),
 );
 
 export const useColor = (id) =>

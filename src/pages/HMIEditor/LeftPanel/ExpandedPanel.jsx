@@ -1,0 +1,95 @@
+import { Box, HStack, IconButton, Tabs, VStack } from "@chakra-ui/react";
+import { useActionsStore } from "../store/actions-store";
+import { LuPanelRight } from "react-icons/lu";
+import { ProjectRename } from "./ProjectRename";
+import { Pages } from "../Pages/Pages";
+import { NodesTree } from "../NodesTree";
+import { EditorSettings } from "../EditorSettings";
+import { DebugInfo } from "./DebugInfo";
+import { ZoomUndoBlock } from "./ZoomUndoBlock";
+
+export const ExpandedPanel = ({ tools, width, height }) => {
+    const debugMode = useActionsStore((state) => state.debugMode);
+
+    return (
+        <VStack
+            bg={"bg"}
+            borderRadius={"md"}
+            shadow={"md"}
+            align={"stretch"}
+            w={"300px"}
+            h={"100%"}
+            minH={0}
+            p={3}
+        >
+            <HStack justify={"space-between"}>
+                <EditorSettings tools={tools} width={width} height={height} />
+                <IconButton
+                    size={"xs"}
+                    variant={"ghost"}
+                    onClick={() =>
+                        useActionsStore
+                            .getState()
+                            .setIsUiExpanded(
+                                !useActionsStore.getState().isUiExpanded,
+                            )
+                    }
+                >
+                    <LuPanelRight />
+                </IconButton>
+            </HStack>
+
+            <ProjectRename />
+
+            <Tabs.Root
+                variant={"line"}
+                defaultValue="file"
+                lazyMount
+                unmountOnExit
+                fitted
+                display={"flex"}
+                flexDirection={"column"}
+                h={"100%"}
+                minH={0}
+                size={"sm"}
+            >
+                <Tabs.List>
+                    <Tabs.Trigger value="file">File</Tabs.Trigger>
+                    <Tabs.Trigger value="assets" disabled>
+                        Assets
+                    </Tabs.Trigger>
+                    {debugMode && (
+                        <Tabs.Trigger value="debug">Debug</Tabs.Trigger>
+                    )}
+                </Tabs.List>
+                <Tabs.Content
+                    value="file"
+                    display={"flex"}
+                    flexDirection={"column"}
+                    h={"100%"}
+                    minH={0}
+                >
+                    <Box flexShrink={0} h={"40%"}>
+                        <Pages />
+                    </Box>
+                    <Box flex={1} minH={0} position={"relative"}>
+                        <NodesTree api={tools.api} />
+                    </Box>
+                </Tabs.Content>
+                <Tabs.Content value="assets"></Tabs.Content>
+                {debugMode && (
+                    <Tabs.Content
+                        value="debug"
+                        display={"flex"}
+                        flexDirection={"column"}
+                        h={"100%"}
+                        minH={0}
+                    >
+                        <DebugInfo />
+                    </Tabs.Content>
+                )}
+            </Tabs.Root>
+            <ZoomUndoBlock tools={tools} width={width} height={height} />
+        </VStack>
+    );
+};

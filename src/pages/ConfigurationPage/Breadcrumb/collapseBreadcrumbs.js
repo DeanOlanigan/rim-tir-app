@@ -7,11 +7,10 @@ export function collapseBreadcrumbs(items, maxLength, focusIndex, edgeCount) {
     const focus = Math.max(0, Math.min(focusIndex ?? n - 1, n - 1));
     const edges = Math.max(
         1,
-        Math.min(edgeCount ?? 1, Math.floor(maxLength / 3))
+        Math.min(edgeCount ?? 1, Math.floor(maxLength / 3)),
     );
 
     // Базовый скелет: всегда держим левый/правый «край»
-    const leftEdgeEnd = edges - 1; // индекс последнего слева, включительно
     const rightEdgeStart = n - edges; // индекс первого справа, включительно
 
     // Сколько позиций остаётся на «окно» вокруг фокуса
@@ -20,7 +19,7 @@ export function collapseBreadcrumbs(items, maxLength, focusIndex, edgeCount) {
     const reservedForEllipses = 2; // максимум, по одному с каждой стороны
     const availableForWindow = Math.max(
         0,
-        maxLength - reservedForEdges - reservedForEllipses
+        maxLength - reservedForEdges - reservedForEllipses,
     );
 
     if (availableForWindow <= 0) {
@@ -37,7 +36,7 @@ export function collapseBreadcrumbs(items, maxLength, focusIndex, edgeCount) {
     let windowStart = Math.max(edges, focus - half);
     let windowEnd = Math.min(
         rightEdgeStart - 1,
-        windowStart + availableForWindow - 1
+        windowStart + availableForWindow - 1,
     );
 
     // Если упёрлись справа — подвинем окно влево; если слева — вправо

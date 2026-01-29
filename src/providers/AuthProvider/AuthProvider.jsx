@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { AuthContext } from "./AuthContext";
 
+// eslint-disable-next-line
 const checkAuth = () => {
     const sessionExpirationTime = localStorage.getItem(
-        "session_expiration_time"
+        "session_expiration_time",
     );
     const csrf = localStorage.getItem("csrf");
     if (sessionExpirationTime && csrf) {
@@ -14,7 +15,7 @@ const checkAuth = () => {
 function AuthProvider({ children }) {
     const [isAuthenticated, setIsAuthenticated] = useState(true);
     const [sessionExpirationTime, setSessionExpirationTime] = useState(
-        localStorage.getItem("session_expiration_time")
+        localStorage.getItem("session_expiration_time"),
     );
     const [sessionTimeLeft, setSessionTimeLeft] = useState(0);
 
@@ -64,12 +65,12 @@ function AuthProvider({ children }) {
             let sessionExpirationTime = clientCurrentTime + sessionTimeLeft;
             console.log(
                 "extendSession sessionExpirationTime",
-                sessionExpirationTime
+                sessionExpirationTime,
             );
             setSessionExpirationTime(sessionExpirationTime);
             localStorage.setItem(
                 "session_expiration_time",
-                sessionExpirationTime
+                sessionExpirationTime,
             );
             return true;
         } else {

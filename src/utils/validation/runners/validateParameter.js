@@ -18,7 +18,7 @@ function validateRules(rules, context, nodeId, inputParam, draft) {
             group.find(
                 (rule) =>
                     rule.workIf &&
-                    checkDependencies(rule.workIf, context, nodeId)
+                    checkDependencies(rule.workIf, context, nodeId),
             ) ?? group.find((rule) => !rule.workIf);
 
         if (!matched) continue;

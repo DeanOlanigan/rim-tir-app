@@ -43,22 +43,13 @@ export const DebouncedEditor = memo(function DebouncedEditor({
         }
 
         (async () => {
-            const monaco = await import(
-                "monaco-editor/esm/vs/editor/editor.api"
-            );
+            const monaco =
+                await import("monaco-editor/esm/vs/editor/editor.api");
             await Promise.all([
-                import(
-                    "monaco-editor/esm/vs/editor/contrib/suggest/browser/suggestController"
-                ),
-                import(
-                    "monaco-editor/esm/vs/editor/contrib/snippet/browser/snippetController2"
-                ),
-                import(
-                    "monaco-editor/esm/vs/editor/contrib/suggest/browser/suggest"
-                ),
-                import(
-                    "monaco-editor/esm/vs/basic-languages/lua/lua.contribution"
-                ),
+                import("monaco-editor/esm/vs/editor/contrib/suggest/browser/suggestController"),
+                import("monaco-editor/esm/vs/editor/contrib/snippet/browser/snippetController2"),
+                import("monaco-editor/esm/vs/editor/contrib/suggest/browser/suggest"),
+                import("monaco-editor/esm/vs/basic-languages/lua/lua.contribution"),
             ]);
             loader.config({ monaco });
             await loader.init();
@@ -94,12 +85,12 @@ export const DebouncedEditor = memo(function DebouncedEditor({
         const { markers, varsToHighlight } = luaAstParse(
             luaExpression,
             varIdsByName,
-            id
+            id,
         );
         monacoRef.current.editor.setModelMarkers(model, "lua", markers);
         decorationIdRef.current = editorRef.current.deltaDecorations(
             decorationIdRef.current,
-            createVariableDecorations(varsToHighlight)
+            createVariableDecorations(varsToHighlight),
         );
     }, [luaExpression, varIdsByName, id]);
 
@@ -114,12 +105,12 @@ export const DebouncedEditor = memo(function DebouncedEditor({
         const { markers, varsToHighlight } = luaAstParse(
             code,
             varIdsByName,
-            id
+            id,
         );
         monaco.editor.setModelMarkers(editor.getModel(), "lua", markers);
         decorationIdRef.current = editor.deltaDecorations(
             decorationIdRef.current,
-            createVariableDecorations(varsToHighlight)
+            createVariableDecorations(varsToHighlight),
         );
     }
 

@@ -5,7 +5,7 @@ function valueResolver(context, value) {
     switch (context.type) {
         case "enum": {
             const enumVal = context.enumValues.find(
-                (val) => val.value === value
+                (val) => val.value === value,
             );
             return enumVal.value;
         }

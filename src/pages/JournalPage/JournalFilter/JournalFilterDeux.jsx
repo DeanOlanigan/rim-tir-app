@@ -1,4 +1,10 @@
-import { Accordion, Span, Collapsible, IconButton, Card } from "@chakra-ui/react";
+import {
+    Accordion,
+    Span,
+    Collapsible,
+    IconButton,
+    Card,
+} from "@chakra-ui/react";
 import { ArchiveFilter } from "./ArchiveFilter";
 import { VariablesChoser } from "./VariablesChoser";
 import { MessageTypes } from "./MessageTypes";
@@ -13,17 +19,21 @@ export const JournalFilterDeux = () => {
     return (
         <Collapsible.Root>
             <Collapsible.Trigger>
-                <IconButton 
-                    onClick={() => setIsOpen(!isOpen)} 
-                    size={"xs"} 
-                    top={"10"} 
+                <IconButton
+                    onClick={() => setIsOpen(!isOpen)}
+                    size={"xs"}
+                    top={"10"}
                     left={isOpen ? "-6" : "5"}
                     transition={"left 0.5s ease"}
                 >
-                    <LuArrowLeft style={{
-                        transform: isOpen ? "rotate(180deg)" : "rotate(360deg)",
-                        transition: "transform 0.4s ease"
-                    }}/>
+                    <LuArrowLeft
+                        style={{
+                            transform: isOpen
+                                ? "rotate(180deg)"
+                                : "rotate(360deg)",
+                            transition: "transform 0.4s ease",
+                        }}
+                    />
                 </IconButton>
             </Collapsible.Trigger>
             <Collapsible.Content>
@@ -37,8 +47,8 @@ export const JournalFilterDeux = () => {
                     animationDuration={"slow"}
                     animationStyle={{
                         _open: "scale-fade-in",
-                        _closed: "scale-fade-out"
-                    }}  
+                        _closed: "scale-fade-out",
+                    }}
                 >
                     <Card.Header borderBottom={"2px solid #e2e8f0"}>
                         <Card.Title>Фильтры</Card.Title>
@@ -83,7 +93,10 @@ export const JournalFilterDeux = () => {
                             </Accordion.Item>
                         </Accordion.Root>
                         <VariablesChoser />
-                        <Card.Footer justifyContent={"space-between"} padding={"3"}>
+                        <Card.Footer
+                            justifyContent={"space-between"}
+                            padding={"3"}
+                        >
                             <FilterControls />
                         </Card.Footer>
                     </Card.Body>

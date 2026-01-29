@@ -7,11 +7,12 @@ export const useVariables = () => {
         queryFn: getConfiguration,
         select: (state) => {
             const variables = Object.values(state.settings).filter(
-                (node) => node.type === "variable" && node.setting.graph
+                (node) => node.type === "variable" && node.setting.graph,
             );
             const items = variables.map((v) => ({
                 label: v.name,
                 value: v.name,
+                id: v.id,
             }));
             return items;
         },

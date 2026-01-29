@@ -67,7 +67,7 @@ export const useValidationStore = create(
                 };
             });
         },
-    }))
+    })),
 );
 
 /* function rebuildById(errorsMap) {

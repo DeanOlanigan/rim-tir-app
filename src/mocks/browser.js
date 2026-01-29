@@ -6,5 +6,5 @@ import { mqttPassThrough } from "./mqttHandler";
 export const worker = setupWorker(
     ...handlers,
     ...wsHandlers,
-    ...mqttPassThrough
+    ...mqttPassThrough,
 );

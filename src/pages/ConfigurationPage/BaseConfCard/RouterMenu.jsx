@@ -9,7 +9,7 @@ import {
     useStopTirMutation,
     useUploadConfigurationMutation,
 } from "@/hooks/useMutation";
-import { AreYouShureDialog } from "../Dialogs/AreYouShure";
+import { AreYouShureDialog } from "@/components/AreYouShureDialog";
 
 export const RouterMenu = () => {
     const errorsTreeSize = useValidationStore((state) => state.errorsTree.size);

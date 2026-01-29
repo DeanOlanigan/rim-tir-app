@@ -34,7 +34,7 @@ export function pasteNodeUtil(ctx, treeType, parentId, initialClipboard) {
             clipboard,
             treeType,
             gen.newSettings,
-            nextSettings
+            nextSettings,
         );
         useValidationStore.getState().clearErrors(idsSet);
         nextSettings = removeAndUnbindSettingsUtil(nextSettings, idsSet);

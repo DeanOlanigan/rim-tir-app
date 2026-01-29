@@ -48,7 +48,7 @@ const initialState = {
         [TREE_TYPES.receive]: baseNodeInit(TREE_TYPES.receive, "Прием"),
         [TREE_TYPES.variables]: baseNodeInit(
             TREE_TYPES.variables,
-            "Переменные"
+            "Переменные",
         ),
     },
     // Id выбранных узлов
@@ -128,7 +128,7 @@ export const useVariablesStore = create()(
                     const newSettings = editSettingUtil(
                         state.settings,
                         nodeId,
-                        updateData
+                        updateData,
                     );
 
                     let draft = new ErrorDraft();
@@ -158,13 +158,13 @@ export const useVariablesStore = create()(
                 set((state) => {
                     let newSettings = unbindVariableUtil(
                         state.settings,
-                        nodeId
+                        nodeId,
                     );
                     if (variableId) {
                         newSettings = bindVariableUtil(
                             newSettings,
                             nodeId,
-                            variableId
+                            variableId,
                         );
                     }
 
@@ -187,7 +187,7 @@ export const useVariablesStore = create()(
                     [treeType]: addNodeUtil(
                         state[treeType],
                         parentId,
-                        newNodes
+                        newNodes,
                     ),
                 })),
 
@@ -197,7 +197,7 @@ export const useVariablesStore = create()(
                     const newSettings = renameNodeSettingUtil(
                         state.settings,
                         nodeId,
-                        name
+                        name,
                     );
 
                     const nodeType = newSettings[nodeId].type;
@@ -232,7 +232,7 @@ export const useVariablesStore = create()(
                     const newSettings = setIgnoreUtil(
                         state.settings,
                         ids,
-                        value
+                        value,
                     );
                     const idsSet = getIdsSetNormalizedContext(newSettings, ids);
 
@@ -260,7 +260,7 @@ export const useVariablesStore = create()(
             toggleIgnore: (ids) => {
                 const { settings } = get();
                 const allIgnored = ids.every(
-                    (id) => settings[id]?.isIgnored === true
+                    (id) => settings[id]?.isIgnored === true,
                 );
                 get().setIgnore(ids, !allIgnored);
             },
@@ -271,7 +271,7 @@ export const useVariablesStore = create()(
                         treeType,
                         state.settings,
                         ids,
-                        false
+                        false,
                     );
                     if (!payload) return state;
                     return { clipboard: payload };
@@ -283,8 +283,8 @@ export const useVariablesStore = create()(
                         state,
                         treeType,
                         parentId,
-                        initialState.clipboard
-                    )
+                        initialState.clipboard,
+                    ),
                 );
 
                 const state = get().settings;
@@ -298,7 +298,7 @@ export const useVariablesStore = create()(
                         treeType,
                         state.settings,
                         ids,
-                        true
+                        true,
                     );
                     if (!payload) return state;
                     return { clipboard: payload };
@@ -313,7 +313,7 @@ export const useVariablesStore = create()(
                     [targetKey]: removeNodeUtil(state[targetKey], idsSet),
                     settings: removeAndUnbindSettingsUtil(
                         state.settings,
-                        idsSet
+                        idsSet,
                     ),
                     info: { ...state.info, ts: Date.now() },
                 }));
@@ -330,13 +330,13 @@ export const useVariablesStore = create()(
                         state[targetKey],
                         dragIds,
                         parentId,
-                        index
+                        index,
                     ),
                     settings: moveSettingUtil(
                         state.settings,
                         dragIds,
                         parentId,
-                        index
+                        index,
                     ),
                     info: { ...state.info, ts: Date.now() },
                 }));
@@ -353,11 +353,11 @@ export const useVariablesStore = create()(
             partialize: (state) =>
                 Object.fromEntries(
                     Object.entries(state).filter(
-                        ([key]) => !["selectedIds", "clipboard"].includes(key)
-                    )
+                        ([key]) => !["selectedIds", "clipboard"].includes(key),
+                    ),
                 ),
-        }
-    )
+        },
+    ),
 );
 
 export const rehydrateSettings = () => useVariablesStore.persist.rehydrate();

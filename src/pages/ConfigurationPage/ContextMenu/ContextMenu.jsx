@@ -5,7 +5,7 @@ import { ContextMenuList } from "./ContextMenuList";
 export const ContextMenu = () => {
     const { updateContext } = useContextMenuStore.getState();
     const { apiPath, x, y, visible } = useContextMenuStore(
-        (state) => state.cfg
+        (state) => state.cfg,
     );
 
     return (

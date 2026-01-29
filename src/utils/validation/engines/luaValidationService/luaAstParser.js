@@ -39,7 +39,7 @@ export function luaAstParse(code, varIdsByName, id) {
                 addMarker(
                     markers,
                     fn,
-                    "Объявление функций разрешено только через delay"
+                    "Объявление функций разрешено только через delay",
                 );
             }
         }

@@ -122,7 +122,7 @@ const Lightning = ({
             if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
                 console.error(
                     "Shader compile error:",
-                    gl.getShaderInfoLog(shader)
+                    gl.getShaderInfoLog(shader),
                 );
                 gl.deleteShader(shader);
                 return null;
@@ -132,11 +132,11 @@ const Lightning = ({
 
         const vertexShader = compileShader(
             vertexShaderSource,
-            gl.VERTEX_SHADER
+            gl.VERTEX_SHADER,
         );
         const fragmentShader = compileShader(
             fragmentShaderSource,
-            gl.FRAGMENT_SHADER
+            gl.FRAGMENT_SHADER,
         );
         if (!vertexShader || !fragmentShader) return;
 
@@ -148,7 +148,7 @@ const Lightning = ({
         if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
             console.error(
                 "Program linking error:",
-                gl.getProgramInfoLog(program)
+                gl.getProgramInfoLog(program),
             );
             return;
         }
@@ -167,7 +167,7 @@ const Lightning = ({
 
         const iResolutionLocation = gl.getUniformLocation(
             program,
-            "iResolution"
+            "iResolution",
         );
         const iTimeLocation = gl.getUniformLocation(program, "iTime");
         const uHueLocation = gl.getUniformLocation(program, "uHue");

@@ -44,7 +44,7 @@ export const VariablesManager = () => {
 
 const AddVarButton = ({ isFetching, isError, data }) => {
     const varLength = useGraphStore(
-        (state) => Object.keys(state.variables).length
+        (state) => Object.keys(state.variables).length,
     );
     const { addVariable } = useGraphStore.getState();
     const handleClick = () => {

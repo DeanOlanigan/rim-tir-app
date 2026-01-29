@@ -24,7 +24,7 @@ export const useLogStream = create((set) => ({
                     level: "status",
                     message: "Поставлено на паузу",
                 }),
-                MAX_ROWS
+                MAX_ROWS,
             ),
         })),
 
@@ -38,7 +38,7 @@ export const useLogStream = create((set) => ({
                     level: "status",
                     message: "Возобновлено",
                 }),
-                MAX_ROWS
+                MAX_ROWS,
             ),
             paused: [],
         })),
@@ -54,5 +54,5 @@ export const useLogStream = create((set) => ({
 
 export const useFilteredLogs = (filterSet) =>
     useLogStream(
-        useShallow((state) => state.live.filter((r) => filterSet.has(r.level)))
+        useShallow((state) => state.live.filter((r) => filterSet.has(r.level))),
     );

@@ -38,7 +38,7 @@ function formatOverloadSignature(name, overload) {
     const parts = [];
     const fixedCount = Math.max(
         overload.arities?.[0] ?? 0,
-        overload.minArgs ?? overload.args?.length ?? 0
+        overload.minArgs ?? overload.args?.length ?? 0,
     );
 
     for (let i = 0; i < fixedCount; i++) {
@@ -112,7 +112,7 @@ export function checkCallExpression(node, markers, varSet) {
         addMarker(
             markers,
             callee.target,
-            `Функцию ${callee.name} нужно вызывать как ${callee.name}(...), а не как метод объекта`
+            `Функцию ${callee.name} нужно вызывать как ${callee.name}(...), а не как метод объекта`,
         );
         return;
     }
@@ -121,7 +121,7 @@ export function checkCallExpression(node, markers, varSet) {
         addMarker(
             markers,
             callee.target,
-            `Вызов запрещённой функции: ${callee.name}`
+            `Вызов запрещённой функции: ${callee.name}`,
         );
         return;
     }
@@ -139,7 +139,7 @@ export function checkCallExpression(node, markers, varSet) {
         addMarker(
             markers,
             node,
-            `Неверное число аргументов у ${callee.name}. Ожидается: ${variants}`
+            `Неверное число аргументов у ${callee.name}. Ожидается: ${variants}`,
         );
         return;
     }
@@ -161,7 +161,7 @@ export function checkCallExpression(node, markers, varSet) {
                 e.node,
                 `Аргумент #${e.index + 1} функции ${
                     callee.name
-                } имеет неверный тип. Ожидается: ${readable}`
+                } имеет неверный тип. Ожидается: ${readable}`,
             );
         }
     }

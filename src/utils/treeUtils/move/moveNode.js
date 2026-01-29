@@ -3,7 +3,7 @@ export function moveNodesUtil(state, dragIds, parentId, index) {
 
     const { nodes: updatedNodes, extracted } = extractNodesAtOnce(
         state,
-        dragIdsSet
+        dragIdsSet,
     );
 
     const sameParentCount = extracted.reduce(
@@ -13,7 +13,7 @@ export function moveNodesUtil(state, dragIds, parentId, index) {
             }
             return count;
         },
-        0
+        0,
     );
 
     if (sameParentCount > 0) {
@@ -52,7 +52,7 @@ function insertNodes(nodes, parentId, nodesToInsert, index) {
                     node.children,
                     parentId,
                     nodesToInsert,
-                    index
+                    index,
                 ),
             };
         }

@@ -15,7 +15,7 @@ const FilterData = (live, selectedGroups, selectedMessages) => {
 export const useFilterData = (live, selectedGroups, selectedMessages) => {
     const FilteredData = useMemo(
         () => FilterData(live, selectedGroups, selectedMessages),
-        [live, selectedGroups, selectedMessages]
+        [live, selectedGroups, selectedMessages],
     );
     return FilteredData;
 };

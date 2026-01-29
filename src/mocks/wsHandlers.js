@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/pseudo-random */
 import { ws } from "msw";
 
 const apiWs = ws.link("ws://192.168.1.1:8800");
@@ -10,9 +11,7 @@ function send(client, obj) {
 function makeStats() {
     return {
         time: Date.now(),
-        // eslint-disable-next-line sonarjs/pseudo-random
         cpu: Math.round(5 + Math.random() * 30),
-        // eslint-disable-next-line sonarjs/pseudo-random
         ram: Math.floor(30 + Math.random() * 40),
     };
 }
@@ -68,7 +67,9 @@ export const wsHandlers = [
             if (info.protocols[1] !== TOKEN) {
                 try {
                     client.close(1008, "invalid token");
-                } catch {}
+                } catch {
+                    return;
+                }
                 return;
             }
         }

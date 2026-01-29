@@ -7,7 +7,7 @@ const navItems = [
     { name: "Логирование", path: "log" },
     { name: "Журналирование", path: "journal" },
     { name: "Графики", path: "graph" },
-    { name: "Тест", path: "test" },
+    { name: "Редактор HMI", path: "HMIEditor" },
 ];
 
 function Navigation() {

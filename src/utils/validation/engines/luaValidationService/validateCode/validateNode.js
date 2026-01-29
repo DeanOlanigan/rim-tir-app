@@ -57,7 +57,7 @@ function checkForbiddenConstructs(node, markers) {
         addMarker(
             markers,
             node,
-            MESSAGES[node.type] ?? "Запрещённая конструкция"
+            MESSAGES[node.type] ?? "Запрещённая конструкция",
         );
     }
 }

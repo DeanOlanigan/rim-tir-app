@@ -21,7 +21,7 @@ export const EditorBreadcrumb = ({ id, color, maxLength = 8 }) => {
         breadcrumbs,
         maxLength,
         breadcrumbs.length - 1,
-        2
+        2,
     );
 
     return (
