@@ -54,7 +54,7 @@ export const Updates = () => {
         setDown,
         setLogs,
         isDown,
-        fileUpload
+        fileUpload,
     );
 
     const { data, isError, error } = useUpdatesLogs(isDown);
@@ -77,7 +77,7 @@ export const Updates = () => {
                 fileUpload.clearFiles();
             }
         }
-    }, [data]);
+    }, [data, fileUpload]);
 
     return (
         <>
