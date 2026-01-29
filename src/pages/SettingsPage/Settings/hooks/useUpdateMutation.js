@@ -17,8 +17,7 @@ export const useUpdateMutation = (setDown, setLogs, isDown, fileUpload) => {
         },
         onError: (err) => {
             if (axios.isAxiosError(err)) {
-                const status =
-                    err?.response?.status || err?.message;
+                const status = err?.response?.status || err?.message;
                 const code =
                     err?.response?.data?.error?.code ||
                     err?.response?.data?.error ||
@@ -28,11 +27,9 @@ export const useUpdateMutation = (setDown, setLogs, isDown, fileUpload) => {
                 ]);
                 setDown(false);
             } else {
-                setLogs([
-                    "Неизвестная ошибка при установке обновления",
-                ]);
+                setLogs(["Неизвестная ошибка при установке обновления"]);
                 setDown(false);
             }
         },
-    });  
+    });
 };

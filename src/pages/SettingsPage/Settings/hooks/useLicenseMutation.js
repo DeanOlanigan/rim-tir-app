@@ -17,7 +17,7 @@ export const useLicenseMutation = (setIsKeyEnd, uuid) => {
                 if (!oldData) return { isActive: false };
                 return {
                     ...oldData,
-                    isActive: true
+                    isActive: true,
                 };
             });
             setIsKeyEnd(false);
@@ -28,14 +28,14 @@ export const useLicenseMutation = (setIsKeyEnd, uuid) => {
                 const status = err.response?.data?.error || err.message;
                 const code = err.response?.status || err.code;
                 toaster.create({
-                    description: "Ошибка при активации ПО: " + `${status} ${code}`,
+                    description:
+                        "Ошибка при активации ПО: " + `${status} ${code}`,
                     type: "error",
                     closable: true,
                 });
             } else {
                 toaster.create({
-                    description:
-                        "Неизвестная ошибка при применении настроек",
+                    description: "Неизвестная ошибка при применении настроек",
                     type: "error",
                     closable: true,
                 });

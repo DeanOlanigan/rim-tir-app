@@ -15,7 +15,7 @@ export const useSettingsMutation = (settings) => {
                 title: "New Settings",
             });
             return res;
-        }, 
+        },
         onSuccess: () => {
             toaster.create({
                 description: "Настройки успешно применены!",
@@ -30,19 +30,21 @@ export const useSettingsMutation = (settings) => {
                 const code = err.response?.data?.error?.code || err?.code;
                 toaster.create({
                     description:
-                        "Ошибка при применении настроек: " + `${status} ${code}`,
+                        "Ошибка при применении настроек: " +
+                        `${status} ${code}`,
                     type: "error",
                     closable: true,
                 });
             } else {
                 toaster.create({
-                    description:
-                        "Неизвестная ошибка при применении настроек",
+                    description: "Неизвестная ошибка при применении настроек",
                     type: "error",
                     closable: true,
                 });
             }
-            useSettingStore.getState().setSettings(queryClient.getQueryData(QK.settings));
+            useSettingStore
+                .getState()
+                .setSettings(queryClient.getQueryData(QK.settings));
         },
     });
 };

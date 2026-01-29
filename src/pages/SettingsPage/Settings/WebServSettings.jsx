@@ -51,7 +51,7 @@ export const ServerSettings = () => {
                                         editSettings(
                                             e.value,
                                             "port",
-                                            "WebServer"
+                                            "WebServer",
                                         );
                                     }}
                                 >
@@ -73,7 +73,7 @@ export const ServerSettings = () => {
                                         editSettings(
                                             e.target.value,
                                             "time",
-                                            "WebServer"
+                                            "WebServer",
                                         );
                                     }}
                                 />

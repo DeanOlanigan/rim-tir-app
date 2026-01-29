@@ -28,15 +28,12 @@ function checkDate(endDate, setIsKeyEnd) {
 }
 
 export const License = () => {
-    const { data: uuid } = useLicense(); 
+    const { data: uuid } = useLicense();
     const { data } = useLicenseCheck(uuid);
     const [isKeyEnd, setIsKeyEnd] = useState(false);
     useEffect(() => checkDate(data.endDate, setIsKeyEnd), [data.endDate]);
 
-    const licenseMutation = useLicenseMutation(
-        setIsKeyEnd,
-        uuid
-    );
+    const licenseMutation = useLicenseMutation(setIsKeyEnd, uuid);
 
     return (
         <>
@@ -62,7 +59,10 @@ export const License = () => {
                                 <Field.Label>
                                     Ввод ключа для активации ПО
                                 </Field.Label>
-                                <KeyInput licenseMutation={licenseMutation} uuid={uuid} />
+                                <KeyInput
+                                    licenseMutation={licenseMutation}
+                                    uuid={uuid}
+                                />
                             </Field.Root>
                         )}
                     </HStack>
