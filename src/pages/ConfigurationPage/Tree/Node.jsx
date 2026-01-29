@@ -13,13 +13,13 @@ export const Node = ({ node, style, dragHandle, tree }) => {
     const { updateContext } = useContextMenuStore.getState();
 
     const isIgnored = useVariablesStore(
-        (state) => state.settings[node.id]?.isIgnored
+        (state) => state.settings[node.id]?.isIgnored,
     );
     const isIgnoredAccessor = useVariablesStore((state) =>
-        hasIgnoreAccessor(state.settings, node.id)
+        hasIgnoreAccessor(state.settings, node.id),
     );
     const isCutted = useVariablesStore(
-        (state) => state.clipboard.cut && state.clipboard.ids.has(node.id)
+        (state) => state.clipboard.cut && state.clipboard.ids.has(node.id),
     );
 
     const handleContextMenu = (e) => {

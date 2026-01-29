@@ -96,7 +96,7 @@ export const MenuItem = ({
                         console.warn(
                             "[context menu] unknown action:",
                             item.action,
-                            item
+                            item,
                         );
                         return;
                     }

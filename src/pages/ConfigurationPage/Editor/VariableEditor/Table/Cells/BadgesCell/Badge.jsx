@@ -67,7 +67,7 @@ export const Badge = ({ id, param, childrenParams, isEditing }) => {
                             (param) => ({
                                 value: settings[id].setting[param],
                                 key: param,
-                            })
+                            }),
                         )}
                         id={id}
                     />
@@ -148,7 +148,7 @@ const ChildParamViewer = ({ params }) => {
                     <ChildEnumViewer key={index} param={param} />
                 ) : (
                     param.value
-                )
+                ),
             )}
         </HStack>
     );

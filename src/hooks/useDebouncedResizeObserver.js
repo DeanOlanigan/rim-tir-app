@@ -12,9 +12,9 @@ export function useDebouncedResizeObserver(wait = 150) {
                     setSize({ width, height });
                 },
                 wait,
-                false // trailing = false означает, что вызов произойдёт после паузы
+                false, // trailing = false означает, что вызов произойдёт после паузы
             ),
-        [wait]
+        [wait],
     );
 
     const { ref } = useResizeObserver({ onResize });

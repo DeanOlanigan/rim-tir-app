@@ -3,9 +3,9 @@ import { downloadStateAsXml } from "@/utils/xml/storeToXml";
 import { CreateConfigDialog } from "../Dialogs/CreateConfigDialog"; // ?
 import { ConfigurationUploader } from "../ConfigurationUploader"; // ?
 import { ConfInfoEdit } from "../Dialogs/ConfInfoEdit";
-import { AreYouShureDialog } from "../Dialogs/AreYouShure";
 import { useVariablesStore } from "@/store/variables-store";
 import { useValidationStore } from "@/store/validation-store";
+import { AreYouShureDialog } from "@/components/AreYouShureDialog";
 
 export const ConfMenu = () => {
     return (

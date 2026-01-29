@@ -28,7 +28,7 @@ export function moveSettingUtil(settings, dragIds, parentId, index) {
 
         if (parent && updatedSettings[parent]?.children) {
             const filteredChildren = updatedSettings[parent].children.filter(
-                (child) => child !== dragId
+                (child) => child !== dragId,
             );
 
             updatedSettings = {

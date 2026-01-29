@@ -27,7 +27,7 @@ export function validateAll(settings, configuratorConfig) {
         varIdsByName,
         depGraphById,
         settings,
-        draft
+        draft,
     );
 
     console.log("ALL VALIDATION DRAFT", draft, performance.now() - t0);

@@ -13,6 +13,12 @@ export const useContextMenuStore = create()((set) => ({
         y: 0,
         visible: false,
     },
+    sch: {
+        apiPath: null,
+        x: 0,
+        y: 0,
+        visible: false,
+    },
     updateContext: (type, data) =>
         set((state) => {
             const next = { ...state[type], ...data };

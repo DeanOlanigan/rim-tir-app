@@ -35,7 +35,7 @@ function addMenuForFolder(
     node,
     context,
     nodeByPathEl,
-    allowedContext
+    allowedContext,
 ) {
     if (nodeByPathEl.parentPath === "#") {
         for (const node of baseNodes) {
@@ -61,13 +61,13 @@ function addMenuForFolder(
 
     for (const type of typesSet) {
         const sibling = parentNode.children.find(
-            (child) => child.node === type
+            (child) => child.node === type,
         );
         if (sibling)
             pushMenuElem(
                 sibling,
                 context,
-                nodeByPathEl.parentPath + "/" + type
+                nodeByPathEl.parentPath + "/" + type,
             );
     }
 }
@@ -85,7 +85,7 @@ function pushMenuElem(node, menu, path) {
                 name: node?.icon,
                 color: node?.color,
             },
-        })
+        }),
     );
 }
 
@@ -105,7 +105,7 @@ function buildMenu(data, nodeByPath, context) {
                         el,
                         menu[path],
                         nodeByPath[path],
-                        context
+                        context,
                     );
                 }
                 pushMenuElem(el, menu[key], path);

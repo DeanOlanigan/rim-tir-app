@@ -4,7 +4,7 @@ export function adjustLinksAfterCut(
     clipboard,
     targetTreeType,
     genSettings,
-    nextSettings
+    nextSettings,
 ) {
     const src = clipboard.type;
     const dst = targetTreeType;

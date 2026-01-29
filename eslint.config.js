@@ -9,7 +9,7 @@ import prettier from "eslint-config-prettier/flat";
 
 export default [
     ...pluginQuery.configs["flat/recommended"],
-    { ignores: ["dist", "src/components/ui"] },
+    { ignores: ["dist", "src/components/ui", "public"] },
     {
         files: ["**/*.{js,jsx}"],
         languageOptions: {
@@ -47,5 +47,10 @@ export default [
         },
     },
     sonarjs.configs.recommended,
+    {
+        rules: {
+            "sonarjs/todo-tag": "warn",
+        },
+    },
     prettier,
 ];

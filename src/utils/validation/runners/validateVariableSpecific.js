@@ -12,7 +12,7 @@ export function revalidateVars(newSettings, draft = new ErrorDraft()) {
         varIdsByName,
         depGraphById,
         newSettings,
-        draft
+        draft,
     );
     return draft;
 }
@@ -22,7 +22,7 @@ export function validateVariableSpecific(
     varIdsByName,
     depGraphById,
     settings,
-    draft
+    draft,
 ) {
     for (const id of varNameById.keys()) {
         const node = settings[id];
@@ -34,13 +34,13 @@ export function validateVariableSpecific(
         const { markers, varsToCheckCycle } = luaAstParse(
             expr,
             varIdsByName,
-            id
+            id,
         );
         draft.set(
             id,
             "luaExpression",
             "code",
-            markers.map((m) => m.message)
+            markers.map((m) => m.message),
         );
         addToDepGraph(varsToCheckCycle, depGraphById, varIdsByName, id);
     }

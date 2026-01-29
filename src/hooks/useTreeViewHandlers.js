@@ -17,7 +17,7 @@ export function useTreeViewHandlers(treeType) {
     const { updateContext } = useContextMenuStore.getState();
     const api = useTreeRegistry(
         useCallback((s) => s.apis["config"]?.[treeType] ?? null, [treeType]),
-        Object.is
+        Object.is,
     );
 
     const settingType =
@@ -29,7 +29,7 @@ export function useTreeViewHandlers(treeType) {
         ({ id, name }) => {
             renameNode(id, name);
         },
-        [renameNode]
+        [renameNode],
     );
     const handleCreateNode = useCallback(
         ({ parentId, type }) => {
@@ -40,7 +40,7 @@ export function useTreeViewHandlers(treeType) {
             for (let i = 0; i < type.times; i++) {
                 const { treeNode, flatNode } = initDefaultDataByPath(
                     type.path,
-                    trueParentId
+                    trueParentId,
                 );
                 flatNode.rootId = treeType;
                 treeNodes.push(treeNode);
@@ -49,7 +49,7 @@ export function useTreeViewHandlers(treeType) {
             addNode(treeType, trueParentId, treeNodes);
             createSetting(flatNodes);
         },
-        [addNode, createSetting, treeType]
+        [addNode, createSetting, treeType],
     );
     const handleDeleteNode = useCallback(
         ({ ids }) => {
@@ -60,14 +60,14 @@ export function useTreeViewHandlers(treeType) {
             }
             api.deselectAll();
         },
-        [removeNode, treeType, api]
+        [removeNode, treeType, api],
     );
     const handleMoveNode = useCallback(
         ({ dragIds, parentId, index }) => {
             console.log("handleMoveNode", dragIds, parentId, index);
             moveNode(treeType, dragIds, parentId, index);
         },
-        [moveNode, treeType]
+        [moveNode, treeType],
     );
     const handleContextMenu = useCallback(
         (e) => {
@@ -83,7 +83,7 @@ export function useTreeViewHandlers(treeType) {
                 visible: true,
             });
         },
-        [api, updateContext]
+        [api, updateContext],
     );
     const handleSelect = useCallback(() => {
         if (!api) return;
@@ -95,11 +95,11 @@ export function useTreeViewHandlers(treeType) {
         // оставлять только один выбранный узел, если типы разные
         if (api?.selectedIds?.size > 1) {
             const selectedNodes = Array.from(api?.selectedIds).map((id) =>
-                api?.get(id)
+                api?.get(id),
             );
             const firstPath = selectedNodes[0].data.path;
             const isSamePath = selectedNodes.every(
-                (node) => node.data.path === firstPath
+                (node) => node.data.path === firstPath,
             );
             if (!isSamePath) {
                 const lastNodeId = selectedNodes[selectedNodes.length - 1].id;
@@ -114,7 +114,7 @@ export function useTreeViewHandlers(treeType) {
     const handleDisableDrop = useCallback(({ parentNode, dragNodes }) => {
         if (!parentNode || dragNodes.length === 0) return true;
         const isDragNodesTypeSame = dragNodes.every(
-            (node) => node.data.path === dragNodes[0].data.path
+            (node) => node.data.path === dragNodes[0].data.path,
         );
         if (!isDragNodesTypeSame) return true;
         const dragParentType = getParentType({

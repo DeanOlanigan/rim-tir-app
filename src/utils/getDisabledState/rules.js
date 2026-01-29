@@ -16,7 +16,7 @@ export function sameMeaningPath(ctx, parentId) {
     const focusedNodePath =
         ctx.settings[parentId].type === NODE_TYPES.folder
             ? getParentPath(ctx.settings, parentId)
-            : ctx.settings[parentId].path ?? "#";
+            : (ctx.settings[parentId].path ?? "#");
     const meaningNodePath =
         getMeaningNode(ctx.settings, ctx.clipboard.roots[0])?.path ?? null;
     return meaningNodePath && focusedNodePath === meaningNodePath;

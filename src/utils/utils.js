@@ -55,7 +55,7 @@ export function initDefaultDataByPath(path, parentId) {
     flatNode.setting = {};
     if (nodePaths[path].settings)
         Object.entries(nodePaths[path].settings).map(
-            ([key, value]) => (flatNode.setting[key] = value.default)
+            ([key, value]) => (flatNode.setting[key] = value.default),
         );
     return { treeNode, flatNode };
 }

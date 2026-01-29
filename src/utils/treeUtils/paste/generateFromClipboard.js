@@ -3,7 +3,7 @@ import { nanoid } from "nanoid";
 export function generateFromClipboard(
     clipboard,
     targetParentId,
-    targetTreeType
+    targetTreeType,
 ) {
     if (!clipboard?.normalized) return null;
     const norm = clipboard.normalized;
@@ -24,7 +24,7 @@ export function generateFromClipboard(
         const oldParentId = src.parentId ?? null;
         const isRootOfFragment = !oldParentId || !norm[oldParentId];
         const newParentId = isRootOfFragment
-            ? targetParentId ?? null
+            ? (targetParentId ?? null)
             : idMap.get(oldParentId);
 
         const remappedChildren = src.children?.map((c) => idMap.get(c)) ?? [];
@@ -52,7 +52,7 @@ export function generateFromClipboard(
     }
 
     const tree = roots.map((oldRootId) =>
-        buildNested(idMap.get(oldRootId), byId, childrenMap)
+        buildNested(idMap.get(oldRootId), byId, childrenMap),
     );
 
     return { tree, newSettings };

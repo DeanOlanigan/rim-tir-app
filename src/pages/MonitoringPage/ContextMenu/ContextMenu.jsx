@@ -10,7 +10,7 @@ import { infoDialog, signalEditDialog } from "../setValue/dialog";
 export const ContextMenu = () => {
     const { updateContext } = useContextMenuStore.getState();
     const { apiPath, x, y, visible } = useContextMenuStore(
-        (state) => state.mnt
+        (state) => state.mnt,
     );
     const settings = useSettingsFromCache();
     const nodeId = apiPath?.focusedNode?.id;
@@ -27,7 +27,7 @@ export const ContextMenu = () => {
             settings,
             nodeId,
             "monitoring",
-            Object.values(TREE_TYPES)
+            Object.values(TREE_TYPES),
         );
     };
 

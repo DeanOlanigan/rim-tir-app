@@ -47,7 +47,7 @@ export const useCreateTable = (filtreColon, filtredData) => {
                     );
                 },
             })),
-        [filtreColon]
+        [filtreColon],
     );
 
     const table = useReactTable({
@@ -69,7 +69,7 @@ export const HeaderCell = ({ header }) => {
 
     const content = flexRender(
         header.column.columnDef.header,
-        header.getContext()
+        header.getContext(),
     );
 
     return (
@@ -112,7 +112,7 @@ export const TableData = ({ virtualRows, rows }) => {
                             >
                                 {flexRender(
                                     cell.column.columnDef.cell,
-                                    cell.getContext()
+                                    cell.getContext(),
                                 )}
                             </td>
                         ))}

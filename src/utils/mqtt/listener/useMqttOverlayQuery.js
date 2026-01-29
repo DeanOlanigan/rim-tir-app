@@ -45,7 +45,7 @@ export function useMqttOverlayQuery(params) {
                     console.log(
                         "%c[MQTT] unsubscribe error",
                         mqttListenerStyle,
-                        err
+                        err,
                     );
             });
             mqttClient.off("message", handler);

@@ -125,7 +125,7 @@ export function MqttProvider({ url, opt, children }) {
             subscribe,
             connected,
         }),
-        [publish, subscribe, connected]
+        [publish, subscribe, connected],
     );
 
     return <MqttCtx.Provider value={api}>{children}</MqttCtx.Provider>;

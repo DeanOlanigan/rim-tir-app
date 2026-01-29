@@ -8,7 +8,7 @@ function useSelectedIds(type) {
 
 function useNodesByIds(ids) {
     return useVariablesStore(
-        useShallow((s) => ids.map((id) => s.settings[id]))
+        useShallow((s) => ids.map((id) => s.settings[id])),
     );
 }
 
@@ -42,7 +42,7 @@ function useVariablesCollectionMemo(currentOwnerId) {
                         usedIn: map,
                     };
                 }),
-        [settings, rootId, currentOwnerId]
+        [settings, rootId, currentOwnerId],
     );
 }
 

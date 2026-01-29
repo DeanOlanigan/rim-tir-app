@@ -33,7 +33,7 @@ export function useMqttLive(subTopic) {
                         flush();
                     }, 100);
                 }
-            }
+            },
         );
 
         return () => {

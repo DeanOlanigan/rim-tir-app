@@ -32,7 +32,7 @@ export function patchReactArborist() {
                     if (content.includes(replaceBefore)) {
                         const newContent = content.replace(
                             new RegExp(replaceBefore, "g"),
-                            replaceAfter
+                            replaceAfter,
                         );
                         fs.writeFileSync(filePath, newContent);
                         console.log(`Patched ${filePath}`);

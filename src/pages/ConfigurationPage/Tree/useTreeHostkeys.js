@@ -32,7 +32,7 @@ export function useTreeHostkeys(api) {
                     useVariablesStore.getState().toggleIgnore(ids);
                 }
             }
-        }
+        },
     );
     return hkref;
 }

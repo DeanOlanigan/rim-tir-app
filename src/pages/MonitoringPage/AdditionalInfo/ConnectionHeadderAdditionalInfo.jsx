@@ -59,7 +59,7 @@ export const ConnectionHeadderAdditionalInfo = ({ id }) => {
                                                 >
                                                     {valueResolver(
                                                         config.settings[key],
-                                                        value
+                                                        value,
                                                     )}
                                                 </Text>
                                             </Box>

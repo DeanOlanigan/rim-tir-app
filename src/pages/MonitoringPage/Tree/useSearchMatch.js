@@ -36,7 +36,7 @@ export const useSearchMatch = () => {
             const nameLower = aliasIndex.get(key);
             return !!nameLower && nameLower.includes(term.toLowerCase());
         },
-        [aliasIndex]
+        [aliasIndex],
     );
 
     return searchMatch;

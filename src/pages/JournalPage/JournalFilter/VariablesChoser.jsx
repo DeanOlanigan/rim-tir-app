@@ -16,7 +16,7 @@ const useVariables = () => {
         queryFn: getConfiguration,
         select: (state) => {
             const variables = Object.values(state.settings).filter(
-                (node) => node.type === "variable" && node.setting.archive
+                (node) => node.type === "variable" && node.setting.archive,
             );
             const items = variables.map((v) => ({
                 label: v.name,

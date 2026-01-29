@@ -12,6 +12,6 @@ export function requiredValidator({ nodeId, param, rule, context, draft }) {
         nodeId,
         param,
         VALIDATOR.REQUIRED,
-        res ? [] : [rule.message || "Обязательное поле"]
+        res ? [] : [rule.message || "Обязательное поле"],
     );
 }
