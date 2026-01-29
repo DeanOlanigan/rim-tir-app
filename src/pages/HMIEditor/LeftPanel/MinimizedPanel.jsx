@@ -3,6 +3,7 @@ import { useNodeStore } from "../store/node-store";
 import { useActionsStore } from "../store/actions-store";
 import { LuPanelRight } from "react-icons/lu";
 import { EditorSettings } from "../EditorSettings";
+import { BetterMenu } from "../EditorSettings/BetterMenu";
 
 export const MinimizedPanel = ({ tools, width, height }) => {
     const activePage = useNodeStore((state) => state.pages[state.activePageId]);
@@ -17,6 +18,7 @@ export const MinimizedPanel = ({ tools, width, height }) => {
             borderRadius={"md"}
             shadow={"md"}
         >
+            <BetterMenu tools={tools} width={width} height={height} />
             <EditorSettings tools={tools} width={width} height={height} />
             <Button
                 flex={1}
