@@ -9,15 +9,16 @@ import { useEffect } from "react";
 
 export const Settings = () => {
     const { data: settings } = useSettings();
-    const setSet = useSettingStore.getState().setSettings;
 
-    useEffect(() => setSet(settings));
+    useEffect(() => {
+        useSettingStore.getState().setSettings(settings);
+    }, [settings]);
 
     return (
         <Stack gap="3">
-            <ServerSettings settings={settings?.WebServer} />
-            <LogSettings settings={settings?.Logs} />
-            <JournalSettings settings={settings?.Journals} />
+            <ServerSettings />
+            <LogSettings />
+            <JournalSettings />
             <SendButton />
         </Stack>
     );

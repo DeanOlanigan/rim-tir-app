@@ -1,17 +1,17 @@
-import { Button, IconButton } from "@chakra-ui/react";
+import { Button, IconButton, Group } from "@chakra-ui/react";
 import { useSettingStore } from "./Settings/SettingsStore/settings-store";
 import { useSettingsMutation } from "./Settings/hooks/useSettingsMutation";
-import { queryClient } from "@/queryClients";
 import { LuRotateCcw } from "react-icons/lu";
-import { Group } from "react-konva";
+import { QK } from "@/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const SendButton = () => {
     const settings = useSettingStore((s) => s.settings);
-    const setSettings = useSettingStore.getState().setSettings;
-    const settingsMutation = useSettingsMutation(queryClient, settings);
+    const settingsMutation = useSettingsMutation(settings);
+    const client = useQueryClient();
 
     const disabled =
-        JSON.stringify(queryClient.getQueryData(["settings"])) ===
+        JSON.stringify(client.getQueryData(["settings"])) ===
         JSON.stringify(settings);
 
     return (
@@ -21,17 +21,17 @@ export const SendButton = () => {
                 loading={settingsMutation.isPending}
                 onClick={() => settingsMutation.mutate()}
                 w={"95%"}
-                borderRightRadius="0"
             >
                 {disabled ? "Нет изменений" : "Применить изменения"}
             </Button>
             <IconButton
                 w="5%"
-                borderLeftRadius="0"
                 disabled={disabled}
                 title={disabled ? "Нечего сбрасывать" : "Сбросить"}
                 onClick={() =>
-                    setSettings(queryClient.getQueryData(["settings"]))
+                    useSettingStore
+                        .getState()
+                        .setSettings(client.getQueryData(QK.settings))
                 }
             >
                 <LuRotateCcw />

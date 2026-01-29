@@ -1,6 +1,4 @@
 
-
-
 export const useData = (data) => {
     if (!data) return [];
     const returnData = data.live.filter((u) => {

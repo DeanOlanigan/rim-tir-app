@@ -57,7 +57,14 @@ export const Updates = () => {
         fileUpload
     );
 
-    const { data } = useUpdatesLogs(isDown);
+    const { data, isError, error } = useUpdatesLogs(isDown);
+
+    useEffect(() => {
+        if (isError) {
+            setLogs(["Ошибка при установке обновления: ", error]);
+            setDown(false);
+        }
+    }, [isError, error]);
 
     useEffect(() => {
         if (data?.message) {

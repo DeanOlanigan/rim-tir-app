@@ -6,4 +6,6 @@ export const QK = {
     journal: ["journal"],
     roles: ["roles"],
     users: ["users"],
+    settings: ["settings"],
+    license: ["license"]
 };
