@@ -1,11 +1,11 @@
 import { toaster } from "@/components/ui/toaster";
-import { CONFIRMATION_DIALOG_ID, confirmationDialog } from "../../dialog";
 import { useCallback } from "react";
 import { useMqttCore } from "@/utils/mqtt/mqtt-provider";
 import { useNodeStore } from "../../store/node-store";
+import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 
 async function confirmationFunc(options) {
-    const isConfirmed = await confirmationDialog.open(CONFIRMATION_DIALOG_ID, {
+    const isConfirmed = await confirmDialog.open(CONFIRM_DIALOG_ID, {
         title: options.title || "Confirmation",
         message: options.message || "Are you sure?",
         confirmationText: options.confirmationText || "OK",

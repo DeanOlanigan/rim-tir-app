@@ -7,9 +7,10 @@ import { useToolsManager } from "./canvas/hooks/useToolsManager";
 import { useNodeStore } from "./store/node-store";
 import { useMqttValues } from "./useMqttValues";
 import { useEffect } from "react";
-import { confirmationDialog } from "./dialog";
+import { editGridDialog } from "./editGridDialog";
 import { LeftPanel } from "./LeftPanel";
 import { RightPanel } from "./RightPanel/RightPanel";
+import { confirmDialog } from "@/components/confirmDialog";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -37,7 +38,8 @@ const HMIEditorContent = () => {
             direction={"column"}
             overflow={"hidden"}
         >
-            <confirmationDialog.Viewport />
+            <editGridDialog.Viewport />
+            <confirmDialog.Viewport />
             <ContextMenu />
             <HMICanvas {...tools} width={width} height={height} />
             <Flex

@@ -9,7 +9,7 @@ import {
     useStopTirMutation,
     useUploadConfigurationMutation,
 } from "@/hooks/useMutation";
-import { AreYouShureDialog } from "@/components/AreYouShureDialog";
+import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 
 export const RouterMenu = () => {
     const errorsTreeSize = useValidationStore((state) => state.errorsTree.size);
@@ -30,7 +30,7 @@ export const RouterMenu = () => {
     };
 
     return (
-        <Menu.Root size={"sm"} closeOnSelect={false}>
+        <Menu.Root size={"sm"}>
             <Menu.Trigger asChild>
                 <Button variant="surface" size="2xs">
                     Роутер
@@ -48,28 +48,27 @@ export const RouterMenu = () => {
                                 ? "Отправка..."
                                 : "Отправить конфигурацию"}
                         </Menu.Item>
-                        <AreYouShureDialog
-                            onAccept={() => refreshM.mutate()}
-                            header={"Получить конфигурацию?"}
-                            message={
-                                "Получение конфигурации с сервера приведет к потере данных на этой странице."
-                            }
+                        <Menu.Item
+                            value="new-file"
+                            disabled={refreshM.isPending || sync}
+                            onClick={(e) => {
+                                if (sync) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                } else {
+                                    confirmDialog.open(CONFIRM_DIALOG_ID, {
+                                        onAccept: () => refreshM.mutate(),
+                                        title: "Получить конфигурацию?",
+                                        message:
+                                            "Получение конфигурации с сервера приведет к потере данных на этой странице.",
+                                    });
+                                }
+                            }}
                         >
-                            <Menu.Item
-                                value="new-file"
-                                disabled={refreshM.isPending || sync}
-                                onClick={(e) => {
-                                    if (sync) {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                    }
-                                }}
-                            >
-                                {refreshM.isPending
-                                    ? "Обновление..."
-                                    : "Получить конфигурацию"}
-                            </Menu.Item>
-                        </AreYouShureDialog>
+                            {refreshM.isPending
+                                ? "Обновление..."
+                                : "Получить конфигурацию"}
+                        </Menu.Item>
                         <Menu.Item
                             value="start"
                             onClick={() => startM.mutate()}

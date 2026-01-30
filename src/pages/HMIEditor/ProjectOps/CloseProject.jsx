@@ -1,7 +1,7 @@
 import { IconButton } from "@chakra-ui/react";
 import { useNodeStore } from "../store/node-store";
 import { LuX } from "react-icons/lu";
-import { AreYouShureDialog } from "@/components/AreYouShureDialog";
+import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 
 export const CloseProject = () => {
     const closeHandler = () => {
@@ -9,14 +9,18 @@ export const CloseProject = () => {
     };
 
     return (
-        <AreYouShureDialog
-            onAccept={closeHandler}
-            header={"Закрыть проект?"}
-            message={"Все несохранённые данные будут потеряны."}
+        <IconButton
+            size={"xs"}
+            variant={"surface"}
+            onClick={() =>
+                confirmDialog.open(CONFIRM_DIALOG_ID, {
+                    onAccept: closeHandler,
+                    title: "Закрыть проект?",
+                    message: "Все несохранённые данные будут потеряны.",
+                })
+            }
         >
-            <IconButton size={"xs"} variant={"surface"}>
-                <LuX />
-            </IconButton>
-        </AreYouShureDialog>
+            <LuX />
+        </IconButton>
     );
 };

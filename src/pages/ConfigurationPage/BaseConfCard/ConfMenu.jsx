@@ -1,11 +1,14 @@
 import { Button, Menu, Portal } from "@chakra-ui/react";
 import { downloadStateAsXml } from "@/utils/xml/storeToXml";
-import { CreateConfigDialog } from "../Dialogs/CreateConfigDialog"; // ?
 import { ConfigurationUploader } from "../ConfigurationUploader"; // ?
-import { ConfInfoEdit } from "../Dialogs/ConfInfoEdit";
+import {
+    CONF_INFO_EDIT_DIALOG_ID,
+    configurationInfoDialog,
+    MODE,
+} from "../Dialogs/configurationInfoDialog";
 import { useVariablesStore } from "@/store/variables-store";
 import { useValidationStore } from "@/store/validation-store";
-import { AreYouShureDialog } from "@/components/AreYouShureDialog";
+import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 
 export const ConfMenu = () => {
     return (
@@ -18,36 +21,58 @@ export const ConfMenu = () => {
             <Portal>
                 <Menu.Positioner>
                     <Menu.Content>
-                        <CreateConfigDialog>
-                            <Menu.Item value="new-file" closeOnSelect={false}>
-                                Создать...
-                            </Menu.Item>
-                        </CreateConfigDialog>
+                        <Menu.Item
+                            value="new-file"
+                            onClick={() =>
+                                configurationInfoDialog.open(
+                                    CONF_INFO_EDIT_DIALOG_ID,
+                                    {
+                                        mode: MODE.CREATE,
+                                    },
+                                )
+                            }
+                        >
+                            Создать...
+                        </Menu.Item>
+
                         <ConfigurationUploader>
-                            <Menu.Item value="new-txt" closeOnSelect={false}>
-                                Открыть...
-                            </Menu.Item>
+                            <Menu.Item value="new-txt">Открыть...</Menu.Item>
                         </ConfigurationUploader>
-                        <ConfInfoEdit>
-                            <Menu.Item value="rename" closeOnSelect={false}>
-                                Редактировать
-                            </Menu.Item>
-                        </ConfInfoEdit>
+                        <Menu.Item
+                            value="rename"
+                            onClick={() =>
+                                configurationInfoDialog.open(
+                                    CONF_INFO_EDIT_DIALOG_ID,
+                                    {
+                                        mode: MODE.EDIT,
+                                    },
+                                )
+                            }
+                        >
+                            Редактировать
+                        </Menu.Item>
                         <Menu.Item value="new-win" onClick={downloadStateAsXml}>
                             Сохранить
                         </Menu.Item>
-                        <AreYouShureDialog
-                            onAccept={() => {
-                                useVariablesStore.getState().resetState();
-                                useValidationStore.getState().clearErrors();
-                            }}
-                            header={"Закрыть конфигурацию?"}
-                            message={"Все данные будут потеряны."}
+                        <Menu.Item
+                            value="export"
+                            onClick={() =>
+                                confirmDialog.open(CONFIRM_DIALOG_ID, {
+                                    onAccept: () => {
+                                        useVariablesStore
+                                            .getState()
+                                            .resetState();
+                                        useValidationStore
+                                            .getState()
+                                            .clearErrors();
+                                    },
+                                    title: "Закрыть конфигурацию?",
+                                    message: "Все данные будут потеряны.",
+                                })
+                            }
                         >
-                            <Menu.Item value="export" closeOnSelect={false}>
-                                Закрыть
-                            </Menu.Item>
-                        </AreYouShureDialog>
+                            Закрыть
+                        </Menu.Item>
                     </Menu.Content>
                 </Menu.Positioner>
             </Portal>

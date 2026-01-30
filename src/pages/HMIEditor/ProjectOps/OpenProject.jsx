@@ -1,11 +1,10 @@
 import { toaster } from "@/components/ui/toaster";
-import { Button, FileUpload, useFileUpload } from "@chakra-ui/react";
-import { LuFile } from "react-icons/lu";
+import { FileUpload, useFileUpload } from "@chakra-ui/react";
 import { useNodeStore } from "../store/node-store";
 import { useFitToFrame } from "../canvas/hooks/useFitToFrame";
 import { validateProjectStructure } from "./projectSchema";
 
-export const OpenProject = ({ tools, width, height }) => {
+export const OpenProject = ({ children, tools, width, height }) => {
     const fitToFrame = useFitToFrame(
         tools.canvasRef,
         width,
@@ -74,12 +73,7 @@ export const OpenProject = ({ tools, width, height }) => {
     return (
         <FileUpload.RootProvider value={fileUpload}>
             <FileUpload.HiddenInput />
-            <FileUpload.Trigger asChild>
-                <Button size={"xs"} variant={"surface"} w={"100%"}>
-                    <LuFile />
-                    Open project
-                </Button>
-            </FileUpload.Trigger>
+            <FileUpload.Trigger asChild>{children}</FileUpload.Trigger>
         </FileUpload.RootProvider>
     );
 };

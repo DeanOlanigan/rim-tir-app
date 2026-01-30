@@ -1,5 +1,4 @@
-import { Button, DownloadTrigger } from "@chakra-ui/react";
-import { LuDownload } from "react-icons/lu";
+import { DownloadTrigger } from "@chakra-ui/react";
 import { useNodeStore } from "../store/node-store";
 
 function exportProject(state) {
@@ -19,7 +18,7 @@ const data = async () => {
     return JSON.stringify(project, null, 2);
 };
 
-export const DownloadProject = () => {
+export const DownloadProject = ({ children }) => {
     return (
         <DownloadTrigger
             data={data}
@@ -27,10 +26,7 @@ export const DownloadProject = () => {
             mimeType="application/json"
             asChild
         >
-            <Button size={"xs"} variant={"surface"}>
-                <LuDownload />
-                Download project
-            </Button>
+            {children}
         </DownloadTrigger>
     );
 };

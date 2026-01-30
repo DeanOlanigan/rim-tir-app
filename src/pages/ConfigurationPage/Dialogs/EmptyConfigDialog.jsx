@@ -8,10 +8,14 @@ import {
     Highlight,
 } from "@chakra-ui/react";
 import { useRef } from "react";
-import { CreateConfigDialog } from "./CreateConfigDialog";
 import { ConfigurationUploader } from "../ConfigurationUploader";
 import { useVariablesStore } from "@/store/variables-store";
 import { useRefreshConfigurationMutation } from "@/hooks/useMutation";
+import {
+    configurationInfoDialog,
+    CONF_INFO_EDIT_DIALOG_ID,
+    MODE,
+} from "../Dialogs/configurationInfoDialog";
 
 export const EmptyConfigDialog = () => {
     const info = useVariablesStore((state) => state.info);
@@ -78,11 +82,19 @@ export const EmptyConfigDialog = () => {
                                 >
                                     Синхронизировать
                                 </Button>
-                                <CreateConfigDialog>
-                                    <Button size={"xs"} ref={ref}>
-                                        Создать конфигурацию
-                                    </Button>
-                                </CreateConfigDialog>
+
+                                <Button
+                                    size={"xs"}
+                                    ref={ref}
+                                    onClick={() =>
+                                        configurationInfoDialog.open(
+                                            CONF_INFO_EDIT_DIALOG_ID,
+                                            { mode: MODE.CREATE },
+                                        )
+                                    }
+                                >
+                                    Создать конфигурацию
+                                </Button>
                             </Group>
                         </Dialog.Footer>
                         <Dialog.CloseTrigger asChild>

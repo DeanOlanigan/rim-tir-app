@@ -1,120 +1,134 @@
-import { Box, Icon, IconButton, Menu, Portal } from "@chakra-ui/react";
-import {
-    LuCheck,
-    LuChevronRight,
-    LuEye,
-    LuFile,
-    LuFolder,
-    LuMenu,
-    LuSave,
-    LuSettings,
-} from "react-icons/lu";
+import { Box, IconButton, Menu, Portal } from "@chakra-ui/react";
+import { LuChevronRight, LuMenu } from "react-icons/lu";
+import { useNodeStore } from "../store/node-store";
+import { useActionsStore } from "../store/actions-store";
+import { EDIT_GRID_DIALOG_ID, editGridDialog } from "../dialog";
+import { DownloadProject, OpenProject } from "../ProjectOps";
+import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 
-const menuConfig = [
-    {
-        label: "Project",
-        value: "project",
-        type: "group",
-        icon: <LuFile />,
-        children: [
-            {
-                label: "New...",
-                value: "new",
-                type: "command",
-                command: () => console.log("New"),
-            },
-            {
-                label: "Open...",
-                value: "open",
-                type: "command",
-                icon: <LuFolder />,
-                command: () => console.log("Open"),
-            },
-            {
-                label: "Close...",
-                value: "close",
-                type: "command",
-                icon: <LuFolder />,
-                command: () => console.log("Close"),
-            },
-            {
-                label: "Download...",
-                value: "download",
-                type: "command",
-                icon: <LuSave />,
-                command: () => console.log("Download"),
-            },
-        ],
-    },
-    {
-        label: "View",
-        value: "view-options",
-        type: "group",
-        icon: <LuEye />,
-        children: [
-            {
-                label: "Snap to Grid",
-                value: "snap-to-grid",
-                type: "toggle",
-                isChecked: false,
-                command: () => console.log("Toggle Snap"),
-            },
-            {
-                label: "Show Grid",
-                value: "show-grid",
-                type: "toggle",
-                isChecked: true,
-                command: () => console.log("Toggle Grid"),
-            },
-            {
-                label: "Show Hit Regions",
-                value: "show-hit-regions",
-                type: "toggle",
-                isChecked: false,
-                command: () => console.log("Toggle Hits"),
-            },
-            {
-                label: "Show Start Coord Marker",
-                value: "show-start-coord-marker",
-                type: "toggle",
-                isChecked: true,
-                command: () => console.log("Toggle Start Coord Marker"),
-            },
-        ],
-    },
-    {
-        label: "Editor",
-        value: "editor",
-        type: "group",
-        icon: <LuSettings />,
-        children: [
-            {
-                label: "Debug Mode",
-                value: "debug-mode",
-                type: "toggle",
-                isChecked: true,
-                command: () => console.log("Toggle Debug"),
-            },
-            {
-                label: "View Only Mode",
-                value: "view-only-mode",
-                type: "toggle",
-                isChecked: false,
-                command: () => console.log("Toggle ViewOnly"),
-            },
-            {
-                label: "Edit Grid...",
-                value: "edit-grid",
-                type: "modal",
-                command: () => console.log("Edit Grid"),
-            },
-        ],
-    },
-];
+export const BetterMenu = ({ tools, width, height }) => {
+    const debugMode = useActionsStore((state) => state.debugMode);
+    const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
+    const showGrid = useActionsStore((state) => state.showGrid);
+    const snapToGrid = useActionsStore((state) => state.snapToGrid);
+    const showHitRegions = useActionsStore((state) => state.showHitRegions);
+    const showStartCoordMarker = useActionsStore(
+        (state) => state.showStartCoordMarker,
+    );
 
-export const BetterMenu = () => {
+    const menuConfig = [
+        {
+            label: "Project",
+            value: "project",
+            type: "group",
+            children: [
+                {
+                    label: "Open...",
+                    value: "open",
+                    type: "wrapper",
+                    wrapper: OpenProject,
+                    wrapperProps: { tools, width, height },
+                },
+                {
+                    label: "Close...",
+                    value: "close",
+                    type: "command",
+                    command: () =>
+                        confirmDialog.open(CONFIRM_DIALOG_ID, {
+                            onAccept: () => {
+                                useNodeStore.getState().close();
+                            },
+                            title: "Закрыть проект?",
+                            message: "Все несохранённые данные будут потеряны.",
+                        }),
+                },
+                {
+                    label: "Download...",
+                    value: "download",
+                    type: "wrapper",
+                    wrapper: DownloadProject,
+                },
+            ],
+        },
+        {
+            label: "View",
+            value: "view-options",
+            type: "group",
+            children: [
+                {
+                    label: "Snap to Grid",
+                    value: "snap-to-grid",
+                    type: "checkbox",
+                    isChecked: snapToGrid,
+                    command: () =>
+                        useActionsStore.getState().setSnapToGrid(!snapToGrid),
+                },
+                {
+                    label: "Show Grid",
+                    value: "show-grid",
+                    type: "checkbox",
+                    isChecked: showGrid,
+                    command: () =>
+                        useActionsStore.getState().setShowGrid(!showGrid),
+                },
+                {
+                    label: "Show Hit Regions",
+                    value: "show-hit-regions",
+                    type: "checkbox",
+                    isChecked: showHitRegions,
+                    command: () =>
+                        useActionsStore
+                            .getState()
+                            .setShowHitRegions(!showHitRegions),
+                },
+                {
+                    label: "Show Start Coord Marker",
+                    value: "show-start-coord-marker",
+                    type: "checkbox",
+                    isChecked: showStartCoordMarker,
+                    command: () =>
+                        useActionsStore
+                            .getState()
+                            .setShowStartCoordMarker(!showStartCoordMarker),
+                },
+            ],
+        },
+        {
+            label: "Editor",
+            value: "editor",
+            type: "group",
+            children: [
+                {
+                    label: "Debug Mode",
+                    value: "debug-mode",
+                    type: "checkbox",
+                    isChecked: debugMode,
+                    command: () =>
+                        useActionsStore.getState().setDebugMode(!debugMode),
+                },
+                {
+                    label: "View Only Mode",
+                    value: "view-only-mode",
+                    type: "checkbox",
+                    isChecked: viewOnlyMode,
+                    command: () =>
+                        useActionsStore
+                            .getState()
+                            .setViewOnlyMode(!viewOnlyMode),
+                },
+                { type: "divider" },
+                {
+                    label: "Edit Grid...",
+                    value: "edit-grid",
+                    type: "command",
+                    command: () => editGridDialog.open(EDIT_GRID_DIALOG_ID),
+                },
+            ],
+        },
+    ];
+
     return (
-        <Menu.Root size={"sm"}>
+        <Menu.Root size={"sm"} unmountOnExit lazyMount>
             <Menu.Trigger asChild>
                 <IconButton size={"xs"} variant={"ghost"}>
                     <LuMenu />
@@ -140,8 +154,13 @@ const MenuItem = ({ item }) => {
 
     if (item.children && item.children.length > 0) {
         return (
-            <Menu.Root positioning={{ placement: "right-start", gutter: 2 }}>
-                <Menu.TriggerItem>
+            <Menu.Root
+                unmountOnExit
+                lazyMount
+                size={"sm"}
+                positioning={{ placement: "right-start", gutter: 2 }}
+            >
+                <Menu.TriggerItem ps={8}>
                     <Box flex={1}>{item.label}</Box>
                     <LuChevronRight />
                 </Menu.TriggerItem>
@@ -158,12 +177,41 @@ const MenuItem = ({ item }) => {
         );
     }
 
+    if (item.type === "checkbox") {
+        return (
+            <Menu.CheckboxItem
+                checked={item.isChecked}
+                onCheckedChange={item.command}
+                value={item.value}
+            >
+                <Menu.ItemIndicator />
+                {item.label}
+            </Menu.CheckboxItem>
+        );
+    }
+
+    if (item.type === "wrapper") {
+        const WrapperComponent = item.wrapper;
+        return (
+            <WrapperComponent {...(item.wrapperProps || {})}>
+                <Menu.Item value={item.value} ps={8}>
+                    {item.label}
+                </Menu.Item>
+            </WrapperComponent>
+        );
+    }
+
+    if (item.command) {
+        return (
+            <Menu.Item value={item.value} onClick={item.command} ps={8}>
+                {item.label}
+            </Menu.Item>
+        );
+    }
+
     return (
-        <Menu.Item value={item.value} icon={item.icon} onClick={item.command}>
+        <Menu.Item value={item.value} onClick={item.command} ps={8}>
             {item.label}
-            {item.isChecked && (
-                <Icon as={LuCheck} boxSize={3} ml={2} color="purple.500" />
-            )}
         </Menu.Item>
     );
 };
