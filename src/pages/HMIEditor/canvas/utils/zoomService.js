@@ -15,19 +15,7 @@ export function setZoom(stage, scale, pointer) {
     updateUiScale(nextScale);
 }
 
-export function fitToFrame(
-    stage,
-    workspaceW,
-    workspaceH,
-    viewportW,
-    viewportH,
-) {
-    const nextScale = fitStageToWork(
-        stage,
-        workspaceW,
-        workspaceH,
-        viewportW,
-        viewportH,
-    );
+export function fitToFrame(stage, workArea, viewportW, viewportH) {
+    const nextScale = fitStageToWork(stage, workArea, viewportW, viewportH);
     updateUiScale(nextScale);
 }

@@ -18,8 +18,8 @@ function getWorkAreaSize(nodesRef) {
 
         const x = node.x();
         const y = node.y();
-        const w = node.width();
-        const h = node.height();
+        const w = node.width() * (node.scaleX?.() ?? 1);
+        const h = node.height() * (node.scaleY?.() ?? 1);
 
         minX = Math.min(minX, x);
         minY = Math.min(minY, y);
@@ -35,6 +35,8 @@ function getWorkAreaSize(nodesRef) {
     if (!Number.isFinite(width) || !Number.isFinite(height)) return null;
 
     return {
+        x: minX,
+        y: minY,
         width: Math.max(width, 1),
         height: Math.max(height, 1),
     };
@@ -50,21 +52,15 @@ export function useFitToFrame(
     const fitToFrame = useCallback(() => {
         const stage = canvasRef.current;
         if (!stage || !viewportW || !viewportH) return;
-        const workAreaSize = getWorkAreaSize(nodesRef);
+        const workArea = getWorkAreaSize(nodesRef);
 
-        if (!workAreaSize) {
+        if (!workArea) {
             stage.scale({ x: 1, y: 1 });
             stage.position({ x: viewportW / 2, y: viewportH / 2 });
             return;
         }
 
-        fitToFrameService(
-            stage,
-            workAreaSize.width,
-            workAreaSize.height,
-            viewportW,
-            viewportH,
-        );
+        fitToFrameService(stage, workArea, viewportW, viewportH);
     }, [canvasRef, viewportW, viewportH, nodesRef]);
 
     useLayoutEffect(() => {

@@ -53,18 +53,19 @@ export function calcFitScale(workspaceW, workspaceH, viewportW, viewportH) {
     return round4(clamp(scale, DEFAULT_MIN_ZOOM, DEFAULT_MAX_ZOOM));
 }
 
-export function fitStageToWork(
-    stage,
-    workspaceW,
-    workspaceH,
-    viewportW,
-    viewportH,
-) {
-    const scale = calcFitScale(workspaceW, workspaceH, viewportW, viewportH);
+export function fitStageToWork(stage, worksArea, viewportW, viewportH) {
+    const scale = calcFitScale(
+        worksArea.width,
+        worksArea.height,
+        viewportW,
+        viewportH,
+    );
     stage.scale({ x: scale, y: scale });
-    const x = (viewportW - workspaceW * scale) / 2;
-    const y = (viewportH - workspaceH * scale) / 2;
-    stage.position({ x: x || 0, y: y || 0 });
+    const newX =
+        -worksArea.x * scale + (viewportW - worksArea.width * scale) / 2;
+    const newY =
+        -worksArea.y * scale + (viewportH - worksArea.height * scale) / 2;
+    stage.position({ x: newX || 0, y: newY || 0 });
     return scale;
 }
 
