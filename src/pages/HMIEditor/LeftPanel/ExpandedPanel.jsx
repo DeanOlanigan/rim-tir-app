@@ -4,7 +4,7 @@ import { LuPanelRight } from "react-icons/lu";
 import { ProjectRename } from "./ProjectRename";
 import { Pages } from "../Pages/Pages";
 import { NodesTree } from "../NodesTree";
-import { EditorSettings } from "../EditorSettings";
+import { EditorMenu } from "../EditorSettings";
 import { DebugInfo } from "./DebugInfo";
 import { ZoomUndoBlock } from "./ZoomUndoBlock";
 
@@ -23,7 +23,7 @@ export const ExpandedPanel = ({ tools, width, height }) => {
             p={3}
         >
             <HStack justify={"space-between"}>
-                <EditorSettings tools={tools} width={width} height={height} />
+                <EditorMenu tools={tools} width={width} height={height} />
                 <IconButton
                     size={"xs"}
                     variant={"ghost"}

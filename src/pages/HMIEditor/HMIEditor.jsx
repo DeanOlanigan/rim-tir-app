@@ -11,6 +11,9 @@ import { editGridDialog } from "./editGridDialog";
 import { LeftPanel } from "./LeftPanel";
 import { RightPanel } from "./RightPanel/RightPanel";
 import { confirmDialog } from "@/components/confirmDialog";
+import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "./ProjectManager";
+import { useProjectLoader } from "./useProjectLoader";
+import { Loader } from "@/components/Loader";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -19,16 +22,28 @@ export default HMIEditor;
 
 const HMIEditorContent = () => {
     const { ref, width, height } = useThrottledResizeObserver(100);
+
+    const { isLoading, project } = useProjectLoader();
+
     const tools = useToolsManager();
     useMqttValues("monitoring/node/#", tools);
 
     useEffect(() => {
-        useNodeStore.getState().setSelectedIds([]);
-        useNodeStore.getState().rebuildVarIndex();
+        if (!project) {
+            openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, {
+                tools,
+                width,
+                height,
+            });
+            useNodeStore.getState().setSelectedIds([]);
+            useNodeStore.getState().rebuildVarIndex();
+        }
         return () => {
             useNodeStore.getState().setSelectedIds([]);
         };
-    }, []);
+    }, [project, tools, width, height]);
+
+    if (isLoading) return <Loader text={"Загрузка проекта..."} />;
 
     return (
         <Flex
@@ -38,6 +53,7 @@ const HMIEditorContent = () => {
             direction={"column"}
             overflow={"hidden"}
         >
+            <openProjectDialog.Viewport />
             <editGridDialog.Viewport />
             <confirmDialog.Viewport />
             <ContextMenu />

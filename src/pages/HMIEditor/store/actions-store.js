@@ -15,7 +15,7 @@ export const useActionsStore = create((set) => ({
     showNodesTree: true,
     showHitRegions: false,
     showStartCoordMarker: true,
-    viewOnlyMode: false,
+    viewOnlyMode: true,
     isLiveUpdate: false,
     showPagesList: true,
     isUiExpanded: false,

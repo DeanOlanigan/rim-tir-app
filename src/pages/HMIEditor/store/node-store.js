@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 import { nanoid } from "nanoid";
 import { decomposeTR, isHasRadius, mul, nodeLocalMatrix } from "../utils";
 import { SHAPES } from "../constants";
@@ -19,411 +19,401 @@ const defaultProjectName = "New project";
 
 export const useNodeStore = create(
     devtools(
-        persist(
-            (set, get) => ({
-                // ---- PROJECT ----
-                projectName: defaultProjectName,
-                renameProject: (name) =>
-                    set((state) => {
-                        const prev = state.projectName;
-                        if (prev === name) return state;
-                        return { projectName: name };
-                    }),
-                // ---- UI делишки ----
-                selectedIds: [],
-                setSelectedIds: (ids) =>
-                    set((state) => {
-                        const prev = state.selectedIds;
-                        if (arraysEqual(prev, ids)) return state;
-                        return { selectedIds: ids };
-                    }),
-                close: () =>
-                    set(() => ({
-                        nodes: {},
-                        pages: defaultPages,
-                        activePageId: defaultPageId,
-                        selectedIds: [],
-                    })),
-                open: (project) =>
-                    set(() => ({
-                        nodes: project.nodes,
-                        pages: project.pages,
-                        activePageId: project.activePageId,
-                        selectedIds: [],
-                    })),
+        (set, get) => ({
+            // ---- META ----
+            meta: {
+                mode: "new",
+                filename: "untitled",
+                isDirty: false,
+            },
+            makeDirty: () =>
+                set((state) => ({
+                    meta: { ...state.meta, isDirty: true },
+                })),
+            // ---- PROJECT ----
+            projectName: defaultProjectName,
+            renameProject: (name) =>
+                set((state) => {
+                    const prev = state.projectName;
+                    if (prev === name) return state;
+                    return { projectName: name };
+                }),
+            // ---- UI делишки ----
+            selectedIds: [],
+            setSelectedIds: (ids) =>
+                set((state) => {
+                    const prev = state.selectedIds;
+                    if (arraysEqual(prev, ids)) return state;
+                    return { selectedIds: ids };
+                }),
+            close: () =>
+                set(() => ({
+                    projectName: defaultProjectName,
+                    nodes: {},
+                    pages: defaultPages,
+                    activePageId: defaultPageId,
+                    selectedIds: [],
+                    meta: { mode: "new", filename: "untitled", isDirty: false },
+                })),
+            open: (project, mode = "new", filename = "untitled") =>
+                set(() => ({
+                    projectName: project.projectName,
+                    nodes: project.nodes,
+                    pages: project.pages,
+                    activePageId: project.activePageId,
+                    selectedIds: [],
+                    meta: { mode, filename, isDirty: false },
+                })),
 
-                // ---- PAGES ----
-                activePageId: defaultPageId,
-                pages: defaultPages,
-                setActivePage: (pageId) =>
-                    set((state) => {
-                        const prev = state.activePageId;
-                        if (prev === pageId) return state;
-                        return { activePageId: pageId, selectedIds: [] };
-                    }),
-                addPage: (name = "New page", type = "SCREEN") =>
-                    set((state) => {
-                        const id = nanoid(12);
-                        return {
-                            pages: {
-                                ...state.pages,
-                                [id]: {
-                                    id,
-                                    name,
-                                    rootIds: [],
-                                    type,
-                                    backgroundColor: "#254e25ff",
-                                },
-                            },
-                            activePageId: id,
-                            selectedIds: [],
-                        };
-                    }),
-                updatePage: (pageId, patch) =>
-                    set((state) => ({
+            // ---- PAGES ----
+            activePageId: defaultPageId,
+            pages: defaultPages,
+            setActivePage: (pageId) =>
+                set((state) => {
+                    const prev = state.activePageId;
+                    if (prev === pageId) return state;
+                    return { activePageId: pageId, selectedIds: [] };
+                }),
+            addPage: (name = "New page", type = "SCREEN") =>
+                set((state) => {
+                    const id = nanoid(12);
+                    return {
                         pages: {
                             ...state.pages,
-                            [pageId]: { ...state.pages[pageId], ...patch },
-                        },
-                    })),
-                removePage: (pageId) =>
-                    set((state) => {
-                        const page = state.pages[pageId];
-                        if (!page) return state;
-
-                        const nodesToDelete = [];
-                        page.rootIds.forEach((id) => {
-                            collectAllDescendants(
+                            [id]: {
                                 id,
-                                state.nodes,
-                                nodesToDelete,
-                            );
-                        });
-
-                        const newNodes = { ...state.nodes };
-                        nodesToDelete.forEach((id) => delete newNodes[id]);
-
-                        const newPages = { ...state.pages };
-                        delete newPages[pageId];
-
-                        let newActiveId = state.activePageId;
-                        if (state.activePageId === pageId) {
-                            const remainingIds = Object.keys(newPages);
-                            newActiveId =
-                                remainingIds.length > 0
-                                    ? remainingIds[0]
-                                    : null;
-                        }
-
-                        if (!newActiveId) {
-                            const newId = "page-1";
-                            newPages[newId] = {
-                                id: newId,
-                                name: "Page 1",
-                                type: "SCREEN",
+                                name,
                                 rootIds: [],
+                                type,
                                 backgroundColor: "#254e25ff",
-                            };
-                            newActiveId = newId;
-                        }
-
-                        const newVarIndex = {};
-                        Object.values(newNodes).forEach((node) =>
-                            addNodeToIndex(newVarIndex, node),
-                        );
-
-                        return {
-                            pages: newPages,
-                            nodes: newNodes,
-                            activePageId: newActiveId,
-                            selectedIds: [],
-                            varIndex: newVarIndex,
-                        };
-                    }),
-
-                // ---- NODES ----
-                nodes: {},
-                addNode: (node) =>
-                    set((state) => {
-                        const pageId = state.activePageId;
-                        const page = state.pages[pageId];
-                        if (!page) return state;
-
-                        const id = nanoid(12);
-                        const newNode = {
-                            ...node,
-                            id,
-                            bindings: {
-                                globalVarId: null,
-                                items: [],
                             },
-                            events: {
-                                onClick: [],
-                                onContextMenu: [],
-                                onDoubleClick: [],
-                                onMouseDown: [],
-                                onMouseUp: [],
-                            },
-                        };
-                        const nodes = { ...state.nodes, [id]: newNode };
-                        const updatedPage = {
-                            ...page,
-                            rootIds: [...page.rootIds, id],
-                        };
-
-                        return {
-                            nodes,
-                            pages: { ...state.pages, [pageId]: updatedPage },
-                            selectedIds: [id],
-                        };
-                    }),
-                removeNode: (id) =>
-                    set((state) => {
-                        const pageId = state.activePageId;
-                        const page = state.pages[pageId];
-                        if (!page) return state;
-
-                        const newNodes = { ...state.nodes };
-                        delete newNodes[id];
-
-                        const newRootIds = page.rootIds.filter(
-                            (nid) => nid !== id,
-                        );
-
-                        return {
-                            nodes: newNodes,
-                            pages: {
-                                ...state.pages,
-                                [pageId]: {
-                                    ...page,
-                                    rootIds: newRootIds,
-                                },
-                            },
-                            selectedIds: [],
-                        };
-                    }),
-                removeNodes: (ids) =>
-                    set((state) => {
-                        const pageId = state.activePageId;
-                        const page = state.pages[pageId];
-                        if (!page) return state;
-
-                        const newNodes = { ...state.nodes };
-                        ids.forEach((id) => {
-                            delete newNodes[id];
-                        });
-
-                        const newRootIds = page.rootIds.filter(
-                            (nid) => !ids.includes(nid),
-                        );
-
-                        return {
-                            nodes: newNodes,
-                            pages: {
-                                ...state.pages,
-                                [pageId]: {
-                                    ...page,
-                                    rootIds: newRootIds,
-                                },
-                            },
-                            selectedIds: [],
-                        };
-                    }),
-                updateNode: (id, patch) =>
-                    set((state) => ({
-                        nodes: {
-                            ...state.nodes,
-                            [id]: { ...state.nodes[id], ...patch },
                         },
-                    })),
-                updateNodes: (ids, patchesById) =>
-                    set((state) => ({
-                        nodes: {
-                            ...state.nodes,
-                            ...ids.reduce((acc, id) => {
-                                const patch = patchesById[id];
-                                if (!patch) return acc;
-                                acc[id] = { ...state.nodes[id], ...patch };
-                                return acc;
-                            }, {}),
-                        },
-                    })),
+                        activePageId: id,
+                        selectedIds: [],
+                    };
+                }),
+            updatePage: (pageId, patch) =>
+                set((state) => ({
+                    pages: {
+                        ...state.pages,
+                        [pageId]: { ...state.pages[pageId], ...patch },
+                    },
+                })),
+            removePage: (pageId) =>
+                set((state) => {
+                    const page = state.pages[pageId];
+                    if (!page) return state;
 
-                // ---- GROUPS ----
-                groupNodes: (ids, bbox) =>
-                    set((state) => group(ids, bbox, state)),
-                ungroupNodes: (id) => set((state) => ungroup([id], state)),
-                ungroupMultipleNodes: (ids) =>
-                    set((state) => ungroup(ids, state)),
-                duplicateNodes: (ids) =>
-                    set((state) => deepDuplicate(ids, state)),
+                    const nodesToDelete = [];
+                    page.rootIds.forEach((id) => {
+                        collectAllDescendants(id, state.nodes, nodesToDelete);
+                    });
 
-                // ---- Создание индекса для константного поиска нужного примитива по его id ----
-                varIndex: {},
-                rebuildVarIndex: () => {
-                    const { nodes } = get();
+                    const newNodes = { ...state.nodes };
+                    nodesToDelete.forEach((id) => delete newNodes[id]);
+
+                    const newPages = { ...state.pages };
+                    delete newPages[pageId];
+
+                    let newActiveId = state.activePageId;
+                    if (state.activePageId === pageId) {
+                        const remainingIds = Object.keys(newPages);
+                        newActiveId =
+                            remainingIds.length > 0 ? remainingIds[0] : null;
+                    }
+
+                    if (!newActiveId) {
+                        const newId = "page-1";
+                        newPages[newId] = {
+                            id: newId,
+                            name: "Page 1",
+                            type: "SCREEN",
+                            rootIds: [],
+                            backgroundColor: "#254e25ff",
+                        };
+                        newActiveId = newId;
+                    }
+
                     const newVarIndex = {};
-                    Object.values(nodes).forEach((node) =>
+                    Object.values(newNodes).forEach((node) =>
                         addNodeToIndex(newVarIndex, node),
                     );
-                    set({ varIndex: newVarIndex });
-                },
 
-                // ---- Экшены привязки значений переменных к параметрам примитивов ----
-                setBindingGlobalVarId: (ids, varIdOrNull) => {
-                    set((s) => {
-                        const newNodes = { ...s.nodes };
-                        const newVarIndex = { ...s.varIndex };
-                        ids.forEach((id) => {
-                            const node = newNodes[id];
-                            if (!node) return;
-
-                            removeNodeFromIndex(newVarIndex, id);
-
-                            newNodes[id] = {
-                                ...node,
-                                bindings: {
-                                    ...node.bindings,
-                                    globalVarId: varIdOrNull,
-                                },
-                            };
-
-                            addNodeToIndex(newVarIndex, newNodes[id]);
-                        });
-                        return { nodes: newNodes, varIndex: newVarIndex };
-                    });
-                },
-                updateBinding: (nodeIds, property, changes) =>
-                    set((state) => {
-                        const newNodes = { ...state.nodes };
-                        const newIndex = { ...state.varIndex };
-
-                        nodeIds.forEach((id) => {
-                            updateBindingFunc(
-                                newNodes,
-                                newIndex,
-                                id,
-                                property,
-                                changes,
-                            );
-                        });
-
-                        return { nodes: newNodes, varIndex: newIndex };
-                    }),
-                removeBinding: (ids, property) => {
-                    set((s) => {
-                        const newNodes = { ...s.nodes };
-                        ids.forEach((id) => {
-                            removeBindingFunc(newNodes, id, property);
-                        });
-                        return { nodes: newNodes };
-                    });
-                },
-
-                // ---- Экшены привязки действий к примитивам ----
-                // 1. Добавить новое действие в конец списка
-                addNodeEventAction: (nodeId, eventType, action) =>
-                    set((state) => {
-                        const node = state.nodes[nodeId];
-                        if (!node) return state;
-
-                        const currentActions = node.events?.[eventType] || [];
-
-                        return {
-                            nodes: {
-                                ...state.nodes,
-                                [nodeId]: {
-                                    ...node,
-                                    events: {
-                                        ...node.events,
-                                        [eventType]: [
-                                            ...currentActions,
-                                            action,
-                                        ],
-                                    },
-                                },
-                            },
-                        };
-                    }),
-                // 2. Обновить конкретное действие (по patch.id)
-                updateNodeEventAction: (nodeId, eventType, patch) =>
-                    set((state) => {
-                        const node = state.nodes[nodeId];
-                        if (!node) return state;
-
-                        const currentActions = node.events?.[eventType] || [];
-
-                        // Находим и обновляем нужное действие
-                        const newActions = currentActions.map((a) =>
-                            a.id === patch.id ? { ...a, ...patch } : a,
-                        );
-
-                        return {
-                            nodes: {
-                                ...state.nodes,
-                                [nodeId]: {
-                                    ...node,
-                                    events: {
-                                        ...node.events,
-                                        [eventType]: newActions,
-                                    },
-                                },
-                            },
-                        };
-                    }),
-                // 3. Удалить действие
-                removeNodeEventAction: (nodeId, eventType, actionId) =>
-                    set((state) => {
-                        const node = state.nodes[nodeId];
-                        if (!node) return state;
-
-                        const currentActions = node.events?.[eventType] || [];
-
-                        return {
-                            nodes: {
-                                ...state.nodes,
-                                [nodeId]: {
-                                    ...node,
-                                    events: {
-                                        ...node.events,
-                                        [eventType]: currentActions.filter(
-                                            (a) => a.id !== actionId,
-                                        ),
-                                    },
-                                },
-                            },
-                        };
-                    }),
-                // 4. Перезаписать весь список действий для события
-                // (Используется для Drag-and-Drop сортировки)
-                setNodeEventActions: (nodeId, eventType, newActions) =>
-                    set((state) => {
-                        const node = state.nodes[nodeId];
-                        if (!node) return state;
-
-                        return {
-                            nodes: {
-                                ...state.nodes,
-                                [nodeId]: {
-                                    ...node,
-                                    events: {
-                                        ...node.events,
-                                        [eventType]: newActions,
-                                    },
-                                },
-                            },
-                        };
-                    }),
-            }),
-            {
-                name: "hmi-node-store",
-                partialize: (state) => ({
-                    nodes: state.nodes,
-                    pages: state.pages,
-                    activePageId: state.activePageId,
+                    return {
+                        pages: newPages,
+                        nodes: newNodes,
+                        activePageId: newActiveId,
+                        selectedIds: [],
+                        varIndex: newVarIndex,
+                    };
                 }),
+
+            // ---- NODES ----
+            nodes: {},
+            addNode: (node) =>
+                set((state) => {
+                    const pageId = state.activePageId;
+                    const page = state.pages[pageId];
+                    if (!page) return state;
+
+                    const id = nanoid(12);
+                    const newNode = {
+                        ...node,
+                        id,
+                        bindings: {
+                            globalVarId: null,
+                            items: [],
+                        },
+                        events: {
+                            onClick: [],
+                            onContextMenu: [],
+                            onDoubleClick: [],
+                            onMouseDown: [],
+                            onMouseUp: [],
+                        },
+                    };
+                    const nodes = { ...state.nodes, [id]: newNode };
+                    const updatedPage = {
+                        ...page,
+                        rootIds: [...page.rootIds, id],
+                    };
+
+                    return {
+                        nodes,
+                        pages: { ...state.pages, [pageId]: updatedPage },
+                        selectedIds: [id],
+                    };
+                }),
+            removeNode: (id) =>
+                set((state) => {
+                    const pageId = state.activePageId;
+                    const page = state.pages[pageId];
+                    if (!page) return state;
+
+                    const newNodes = { ...state.nodes };
+                    delete newNodes[id];
+
+                    const newRootIds = page.rootIds.filter((nid) => nid !== id);
+
+                    return {
+                        nodes: newNodes,
+                        pages: {
+                            ...state.pages,
+                            [pageId]: {
+                                ...page,
+                                rootIds: newRootIds,
+                            },
+                        },
+                        selectedIds: [],
+                    };
+                }),
+            removeNodes: (ids) =>
+                set((state) => {
+                    const pageId = state.activePageId;
+                    const page = state.pages[pageId];
+                    if (!page) return state;
+
+                    const newNodes = { ...state.nodes };
+                    ids.forEach((id) => {
+                        delete newNodes[id];
+                    });
+
+                    const newRootIds = page.rootIds.filter(
+                        (nid) => !ids.includes(nid),
+                    );
+
+                    return {
+                        nodes: newNodes,
+                        pages: {
+                            ...state.pages,
+                            [pageId]: {
+                                ...page,
+                                rootIds: newRootIds,
+                            },
+                        },
+                        selectedIds: [],
+                    };
+                }),
+            updateNode: (id, patch) =>
+                set((state) => ({
+                    nodes: {
+                        ...state.nodes,
+                        [id]: { ...state.nodes[id], ...patch },
+                    },
+                })),
+            updateNodes: (ids, patchesById) =>
+                set((state) => ({
+                    nodes: {
+                        ...state.nodes,
+                        ...ids.reduce((acc, id) => {
+                            const patch = patchesById[id];
+                            if (!patch) return acc;
+                            acc[id] = { ...state.nodes[id], ...patch };
+                            return acc;
+                        }, {}),
+                    },
+                })),
+
+            // ---- GROUPS ----
+            groupNodes: (ids, bbox) => set((state) => group(ids, bbox, state)),
+            ungroupNodes: (id) => set((state) => ungroup([id], state)),
+            ungroupMultipleNodes: (ids) => set((state) => ungroup(ids, state)),
+            duplicateNodes: (ids) => set((state) => deepDuplicate(ids, state)),
+
+            // ---- Создание индекса для константного поиска нужного примитива по его id ----
+            varIndex: {},
+            rebuildVarIndex: () => {
+                const { nodes } = get();
+                const newVarIndex = {};
+                Object.values(nodes).forEach((node) =>
+                    addNodeToIndex(newVarIndex, node),
+                );
+                set({ varIndex: newVarIndex });
             },
-        ),
+
+            // ---- Экшены привязки значений переменных к параметрам примитивов ----
+            setBindingGlobalVarId: (ids, varIdOrNull) => {
+                set((s) => {
+                    const newNodes = { ...s.nodes };
+                    const newVarIndex = { ...s.varIndex };
+                    ids.forEach((id) => {
+                        const node = newNodes[id];
+                        if (!node) return;
+
+                        removeNodeFromIndex(newVarIndex, id);
+
+                        newNodes[id] = {
+                            ...node,
+                            bindings: {
+                                ...node.bindings,
+                                globalVarId: varIdOrNull,
+                            },
+                        };
+
+                        addNodeToIndex(newVarIndex, newNodes[id]);
+                    });
+                    return { nodes: newNodes, varIndex: newVarIndex };
+                });
+            },
+            updateBinding: (nodeIds, property, changes) =>
+                set((state) => {
+                    const newNodes = { ...state.nodes };
+                    const newIndex = { ...state.varIndex };
+
+                    nodeIds.forEach((id) => {
+                        updateBindingFunc(
+                            newNodes,
+                            newIndex,
+                            id,
+                            property,
+                            changes,
+                        );
+                    });
+
+                    return { nodes: newNodes, varIndex: newIndex };
+                }),
+            removeBinding: (ids, property) => {
+                set((s) => {
+                    const newNodes = { ...s.nodes };
+                    ids.forEach((id) => {
+                        removeBindingFunc(newNodes, id, property);
+                    });
+                    return { nodes: newNodes };
+                });
+            },
+
+            // ---- Экшены привязки действий к примитивам ----
+            // 1. Добавить новое действие в конец списка
+            addNodeEventAction: (nodeId, eventType, action) =>
+                set((state) => {
+                    const node = state.nodes[nodeId];
+                    if (!node) return state;
+
+                    const currentActions = node.events?.[eventType] || [];
+
+                    return {
+                        nodes: {
+                            ...state.nodes,
+                            [nodeId]: {
+                                ...node,
+                                events: {
+                                    ...node.events,
+                                    [eventType]: [...currentActions, action],
+                                },
+                            },
+                        },
+                    };
+                }),
+            // 2. Обновить конкретное действие (по patch.id)
+            updateNodeEventAction: (nodeId, eventType, patch) =>
+                set((state) => {
+                    const node = state.nodes[nodeId];
+                    if (!node) return state;
+
+                    const currentActions = node.events?.[eventType] || [];
+
+                    // Находим и обновляем нужное действие
+                    const newActions = currentActions.map((a) =>
+                        a.id === patch.id ? { ...a, ...patch } : a,
+                    );
+
+                    return {
+                        nodes: {
+                            ...state.nodes,
+                            [nodeId]: {
+                                ...node,
+                                events: {
+                                    ...node.events,
+                                    [eventType]: newActions,
+                                },
+                            },
+                        },
+                    };
+                }),
+            // 3. Удалить действие
+            removeNodeEventAction: (nodeId, eventType, actionId) =>
+                set((state) => {
+                    const node = state.nodes[nodeId];
+                    if (!node) return state;
+
+                    const currentActions = node.events?.[eventType] || [];
+
+                    return {
+                        nodes: {
+                            ...state.nodes,
+                            [nodeId]: {
+                                ...node,
+                                events: {
+                                    ...node.events,
+                                    [eventType]: currentActions.filter(
+                                        (a) => a.id !== actionId,
+                                    ),
+                                },
+                            },
+                        },
+                    };
+                }),
+            // 4. Перезаписать весь список действий для события
+            // (Используется для Drag-and-Drop сортировки)
+            setNodeEventActions: (nodeId, eventType, newActions) =>
+                set((state) => {
+                    const node = state.nodes[nodeId];
+                    if (!node) return state;
+
+                    return {
+                        nodes: {
+                            ...state.nodes,
+                            [nodeId]: {
+                                ...node,
+                                events: {
+                                    ...node.events,
+                                    [eventType]: newActions,
+                                },
+                            },
+                        },
+                    };
+                }),
+        }),
         { name: "node-store" },
     ),
 );

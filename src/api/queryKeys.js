@@ -9,4 +9,5 @@ export const QK = {
     settings: ["settings"],
     license: ["license"],
     getLicense: ["getLicense"],
+    hmiProjects: ["hmiProjects"],
 };

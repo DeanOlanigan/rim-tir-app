@@ -2,11 +2,12 @@ import { Box, IconButton, Menu, Portal } from "@chakra-ui/react";
 import { LuChevronRight, LuMenu } from "react-icons/lu";
 import { useNodeStore } from "../store/node-store";
 import { useActionsStore } from "../store/actions-store";
-import { EDIT_GRID_DIALOG_ID, editGridDialog } from "../dialog";
-import { DownloadProject, OpenProject } from "../ProjectOps";
+import { DownloadProject } from "../ProjectOps";
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
+import { EDIT_GRID_DIALOG_ID, editGridDialog } from "../editGridDialog";
+import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "../ProjectManager";
 
-export const BetterMenu = ({ tools, width, height }) => {
+export const EditorMenu = ({ tools, width, height }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
     const showGrid = useActionsStore((state) => state.showGrid);
@@ -23,11 +24,15 @@ export const BetterMenu = ({ tools, width, height }) => {
             type: "group",
             children: [
                 {
-                    label: "Open...",
-                    value: "open",
-                    type: "wrapper",
-                    wrapper: OpenProject,
-                    wrapperProps: { tools, width, height },
+                    label: "Project manager...",
+                    value: "project-manager",
+                    type: "command",
+                    command: () =>
+                        openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, {
+                            tools,
+                            width,
+                            height,
+                        }),
                 },
                 {
                     label: "Close...",
@@ -41,6 +46,12 @@ export const BetterMenu = ({ tools, width, height }) => {
                             title: "Закрыть проект?",
                             message: "Все несохранённые данные будут потеряны.",
                         }),
+                },
+                {
+                    label: "Import to server...",
+                    value: "import-to-server",
+                    type: "command",
+                    command: () => {},
                 },
                 {
                     label: "Download...",
