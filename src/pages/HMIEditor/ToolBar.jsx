@@ -65,6 +65,7 @@ export const ToolBar = ({ manager }) => {
         <RadioCard.Root
             size={"md"}
             variant={"subtle"}
+            borderRadius={"l2"}
             shadow={"md"}
             value={action}
             onValueChange={(e) => manager.setActive(e.value)}

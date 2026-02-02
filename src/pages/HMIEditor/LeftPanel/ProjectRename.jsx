@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNodeStore } from "../store/node-store";
 import { Editable } from "@chakra-ui/react";
 
@@ -6,6 +6,10 @@ export const ProjectRename = () => {
     const projectName = useNodeStore((state) => state.projectName);
 
     const [name, setName] = useState(projectName);
+
+    useEffect(() => {
+        setName(projectName);
+    }, [projectName]);
 
     return (
         <Editable.Root

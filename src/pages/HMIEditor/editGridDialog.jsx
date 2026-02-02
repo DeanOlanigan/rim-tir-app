@@ -5,7 +5,6 @@ import {
     createOverlay,
     Dialog,
     Field,
-    Flex,
     NumberInput,
     parseColor,
     Portal,
@@ -72,72 +71,72 @@ export const editGridDialog = createOverlay((props) => {
                             <Dialog.Header>
                                 <Dialog.Title>Настройки сетки</Dialog.Title>
                             </Dialog.Header>
-                            <Dialog.Body>
-                                <Flex direction={"column"} gap={4}>
-                                    {/* --- Размер сетки --- */}
-                                    <Field.Root invalid={!!errors.gridSize}>
-                                        <Field.Label>Размер сетки</Field.Label>
-                                        <Controller
-                                            control={control}
-                                            name="gridSize"
-                                            render={({ field }) => (
-                                                <NumberInput.Root
-                                                    size="xs"
-                                                    w="100%"
-                                                    min={1}
-                                                    max={100}
-                                                    value={field.value}
-                                                    onValueChange={(e) =>
-                                                        field.onChange(
-                                                            e.valueAsNumber,
-                                                        )
-                                                    }
-                                                >
-                                                    <NumberInput.Control />
-                                                    <NumberInput.Input />
-                                                </NumberInput.Root>
-                                            )}
-                                        />
-                                        <Field.ErrorText>
-                                            {errors.gridSize?.message}
-                                        </Field.ErrorText>
-                                    </Field.Root>
-                                    {/* --- Цвет сетки --- */}
-                                    <Field.Root invalid={!!errors.gridColor}>
-                                        <Controller
-                                            control={control}
-                                            name="gridColor"
-                                            render={({ field }) => (
-                                                <ColorPicker.Root
-                                                    size="xs"
-                                                    value={parseColor(
-                                                        field.value,
-                                                    )}
-                                                    onValueChange={(e) =>
-                                                        field.onChange(
-                                                            e.valueAsString,
-                                                        )
-                                                    }
-                                                >
-                                                    <ColorPicker.HiddenInput />
-                                                    <ColorPicker.Label>
-                                                        Цвет линий
-                                                    </ColorPicker.Label>
-                                                    <ColorPicker.Control>
-                                                        <ColorPicker.Trigger />
-                                                        <ColorPicker.Input />
-                                                    </ColorPicker.Control>
-                                                    <ColorPicker.Positioner>
-                                                        <ColorPicker.Content>
-                                                            <ColorPicker.Area />
-                                                            <ColorPicker.Sliders />
-                                                        </ColorPicker.Content>
-                                                    </ColorPicker.Positioner>
-                                                </ColorPicker.Root>
-                                            )}
-                                        />
-                                    </Field.Root>
-                                </Flex>
+                            <Dialog.Body
+                                display={"flex"}
+                                flexDirection={"column"}
+                                gap={4}
+                            >
+                                {/* --- Размер сетки --- */}
+                                <Field.Root invalid={!!errors.gridSize}>
+                                    <Field.Label>Размер сетки</Field.Label>
+                                    <Controller
+                                        control={control}
+                                        name="gridSize"
+                                        render={({ field }) => (
+                                            <NumberInput.Root
+                                                size="xs"
+                                                w="100%"
+                                                min={1}
+                                                max={100}
+                                                value={field.value}
+                                                onValueChange={(e) =>
+                                                    field.onChange(
+                                                        e.valueAsNumber,
+                                                    )
+                                                }
+                                            >
+                                                <NumberInput.Control />
+                                                <NumberInput.Input />
+                                            </NumberInput.Root>
+                                        )}
+                                    />
+                                    <Field.ErrorText>
+                                        {errors.gridSize?.message}
+                                    </Field.ErrorText>
+                                </Field.Root>
+                                {/* --- Цвет сетки --- */}
+                                <Field.Root invalid={!!errors.gridColor}>
+                                    <Controller
+                                        control={control}
+                                        name="gridColor"
+                                        render={({ field }) => (
+                                            <ColorPicker.Root
+                                                size="xs"
+                                                value={parseColor(field.value)}
+                                                onValueChange={(e) =>
+                                                    field.onChange(
+                                                        e.valueAsString,
+                                                    )
+                                                }
+                                            >
+                                                <ColorPicker.HiddenInput />
+                                                <ColorPicker.Label>
+                                                    Цвет линий
+                                                </ColorPicker.Label>
+                                                <ColorPicker.Control>
+                                                    <ColorPicker.Trigger />
+                                                    <ColorPicker.Input />
+                                                </ColorPicker.Control>
+                                                <ColorPicker.Positioner>
+                                                    <ColorPicker.Content>
+                                                        <ColorPicker.Area />
+                                                        <ColorPicker.Sliders />
+                                                    </ColorPicker.Content>
+                                                </ColorPicker.Positioner>
+                                            </ColorPicker.Root>
+                                        )}
+                                    />
+                                </Field.Root>
                             </Dialog.Body>
                             <Dialog.Footer>
                                 <Button

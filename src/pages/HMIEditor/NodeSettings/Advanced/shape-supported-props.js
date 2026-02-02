@@ -2,9 +2,10 @@ export const SHAPE_SUPPORTED_PROPS = {
     rect: ["opacity", "fill", "stroke", "cornerRadius", "width", "height"],
     circle: ["opacity", "fill", "stroke"],
     ellipse: ["opacity", "fill", "stroke"],
-    line: ["opacity", "stroke"],
-    arrow: ["opacity", "stroke"],
+    line: ["opacity", "fill", "stroke"],
+    arrow: ["opacity", "fill", "stroke"],
     text: ["opacity", "fill", "stroke", "text"],
+    polygon: ["opacity", "fill", "stroke"],
     group: ["opacity"],
 };
 
