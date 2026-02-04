@@ -13,8 +13,6 @@ export const ContextMenu = () => {
     } = useContextMenuStore((state) => state.sch);
     const showGrid = useActionsStore((state) => state.showGrid);
     const debugMode = useActionsStore((state) => state.debugMode);
-    const showNodesTree = useActionsStore((state) => state.showNodesTree);
-    const showPagesList = useActionsStore((state) => state.showPagesList);
 
     return (
         <Menu.Root
@@ -110,30 +108,6 @@ export const ContextMenu = () => {
                                     }
                                 >
                                     Debug mode
-                                    <Menu.ItemIndicator />
-                                </Menu.CheckboxItem>
-                                <Menu.CheckboxItem
-                                    value="showNodesTree"
-                                    checked={showNodesTree}
-                                    onCheckedChange={() =>
-                                        useActionsStore
-                                            .getState()
-                                            .setShowNodesTree(!showNodesTree)
-                                    }
-                                >
-                                    Show nodes tree
-                                    <Menu.ItemIndicator />
-                                </Menu.CheckboxItem>
-                                <Menu.CheckboxItem
-                                    value="showPagesList"
-                                    checked={showPagesList}
-                                    onCheckedChange={() =>
-                                        useActionsStore
-                                            .getState()
-                                            .setShowPagesList(!showPagesList)
-                                    }
-                                >
-                                    Show pages list
                                     <Menu.ItemIndicator />
                                 </Menu.CheckboxItem>
                             </Menu.ItemGroup>
