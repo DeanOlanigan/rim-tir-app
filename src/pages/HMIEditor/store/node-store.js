@@ -596,6 +596,8 @@ function group(ids, bbox, state) {
         y: bbox.y,
         width: bbox.width,
         height: bbox.height,
+        opacity: 1,
+        visible: true,
         rotation: 0,
         childrenIds: [...ids],
         bindings: {
