@@ -6,6 +6,7 @@ import { setZoom, zoomByPercent } from "./canvas/utils/zoomService";
 import { useNodeStore } from "./store/node-store";
 import { calcBBox, layerShift } from "./utils";
 import { useFitToFrame } from "./canvas/hooks/useFitToFrame";
+import { EDIT_GRID_DIALOG_ID, editGridDialog } from "./editGridDialog";
 
 export function useEditorHotkeys(tools) {
     const fitToFrame = useFitToFrame({
@@ -37,6 +38,9 @@ export function useEditorHotkeys(tools) {
         useActionsStore
             .getState()
             .setShowGrid(!useActionsStore.getState().showGrid),
+    );
+    useHotkeys(HOTKEYS.openGridDialog.hotkey, () =>
+        editGridDialog.open(EDIT_GRID_DIALOG_ID),
     );
     // Open project
     useHotkeys(

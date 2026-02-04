@@ -150,6 +150,7 @@ export const EditorMenu = ({ tools }) => {
                     value: "edit-grid",
                     type: "command",
                     command: () => editGridDialog.open(EDIT_GRID_DIALOG_ID),
+                    hotkey: HOTKEYS.openGridDialog.keyLabel,
                 },
             ],
         },

@@ -76,6 +76,7 @@ export const HOTKEYS = {
     arrowTool: { hotkey: "shift+l", keyLabel: "Shift+L" },
     textTool: { hotkey: "t", keyLabel: "T" },
     toggleGrid: { hotkey: "shift+g", keyLabel: "Shift+G" },
+    openGridDialog: { hotkey: "ctrl+shift+g", keyLabel: "Ctrl+Shift+G" },
     openProject: { hotkey: "ctrl+p", keyLabel: "Ctrl+P" },
     toggleViewOnly: { hotkey: "shift+v", keyLabel: "Shift+V" },
     zoomPlus: { hotkey: "ctrl+equal, ctrl+add", keyLabel: "Ctrl++" },
