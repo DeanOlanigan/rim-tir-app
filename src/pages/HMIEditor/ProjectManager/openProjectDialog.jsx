@@ -1,4 +1,3 @@
-import { apiv2 } from "@/api/baseUrl";
 import { getProjects } from "@/api/hmi";
 import {
     CloseButton,
@@ -12,16 +11,21 @@ import { LuCloudUpload, LuPlus } from "react-icons/lu";
 import { toaster } from "@/components/ui/toaster";
 import { useFitToFrame } from "../canvas/hooks/useFitToFrame";
 import { applyProjectData } from "../ProjectOps/applyProjectData";
-import { useNodeStore } from "../store/node-store";
 import { OpenProject } from "../ProjectOps";
 import { ProjectCard } from "./ProjectCard";
 import { ActionCard } from "./ActionCard";
 import { useActionsStore } from "../store/actions-store";
+import { useNavigate } from "react-router-dom";
+import { useDeleteProjectMutation } from "../mutations";
+import { useNodeStore } from "../store/node-store";
 
 export const OPEN_PROJECT_DIALOG_ID = "OPEN_PROJECT_DIALOG_ID";
 
 export const openProjectDialog = createOverlay((props) => {
     const { onOpenChange, ...rest } = props;
+
+    const navigate = useNavigate();
+    const deleteMutation = useDeleteProjectMutation();
 
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
 
@@ -30,13 +34,11 @@ export const openProjectDialog = createOverlay((props) => {
         queryFn: getProjects,
     });
 
-    const fitToFrame = useFitToFrame(
-        rest.tools.canvasRef,
-        rest.width,
-        rest.height,
-        false,
-        rest.tools.nodesRef,
-    );
+    const fitToFrame = useFitToFrame({
+        canvasRef: rest.tools.canvasRef,
+        auto: false,
+        nodesRef: rest.tools.nodesRef,
+    });
 
     const applyProject = (rawProjectData, successMessage, mode, filename) => {
         console.log(mode, filename);
@@ -46,23 +48,12 @@ export const openProjectDialog = createOverlay((props) => {
     };
 
     const handleOpenServerProject = async (filename) => {
-        try {
-            const response = await apiv2.get(`/hmi/project/${filename}`);
-            const projectData = response.data.data;
-            applyProject(
-                projectData,
-                `Проект "${filename}" загружен`,
-                "server",
-                filename,
-            );
-        } catch (err) {
-            console.error("Error loading project from server:", err);
-            toaster.create({
-                type: "error",
-                title: "Не удалось загрузить проект",
-                description: err?.message ?? "Неизвестная ошибка",
-            });
-        }
+        navigate(`?project=${filename}`);
+        onOpenChange?.({ open: false });
+        toaster.create({
+            type: "success",
+            title: "Проект загружен",
+        });
     };
 
     const handleOpenLocalProject = (projectData, filename) => {
@@ -79,6 +70,8 @@ export const openProjectDialog = createOverlay((props) => {
 
         fitToFrame();
 
+        navigate(`/HMIEditor`);
+
         toaster.create({
             type: "success",
             title: "Создан новый проект",
@@ -88,20 +81,7 @@ export const openProjectDialog = createOverlay((props) => {
     };
 
     const handleDeleteServerProject = async (filename) => {
-        try {
-            await apiv2.delete(`/hmi/project/${filename}`);
-            toaster.create({
-                type: "success",
-                title: "Проект удален",
-            });
-        } catch (err) {
-            console.error("Error deleting project from server:", err);
-            toaster.create({
-                type: "error",
-                title: "Не удалось удалить проект",
-                description: err?.message ?? "Неизвестная ошибка",
-            });
-        }
+        deleteMutation.mutate(filename);
     };
 
     return (

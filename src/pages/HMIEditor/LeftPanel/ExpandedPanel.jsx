@@ -8,7 +8,7 @@ import { EditorMenu } from "../EditorSettings";
 import { DebugInfo } from "./DebugInfo";
 import { ZoomUndoBlock } from "./ZoomUndoBlock";
 
-export const ExpandedPanel = ({ tools, width, height }) => {
+export const ExpandedPanel = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
 
     return (
@@ -23,7 +23,7 @@ export const ExpandedPanel = ({ tools, width, height }) => {
             p={3}
         >
             <HStack justify={"space-between"}>
-                <EditorMenu tools={tools} width={width} height={height} />
+                <EditorMenu tools={tools} />
                 <IconButton
                     size={"xs"}
                     variant={"ghost"}
@@ -89,7 +89,7 @@ export const ExpandedPanel = ({ tools, width, height }) => {
                     </Tabs.Content>
                 )}
             </Tabs.Root>
-            <ZoomUndoBlock tools={tools} width={width} height={height} />
+            <ZoomUndoBlock tools={tools} />
         </VStack>
     );
 };

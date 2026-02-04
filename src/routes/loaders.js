@@ -2,6 +2,7 @@ import { QK } from "@/api";
 import { apiv2 } from "@/api/baseUrl";
 import { getRoles } from "@/api/getRoles";
 import { getUsers } from "@/api/getUsers";
+import { getProject } from "@/api/hmi";
 import { queryClient } from "@/queryClients";
 import { configuratorConfig } from "@/store/configurator-config";
 
@@ -60,4 +61,16 @@ export async function configurationLoader() {
     useValidationStore.getState().applyDraft2(draft);
 
     return null;
+}
+
+export async function hmiEditorLoader({ request }) {
+    const url = new URL(request.url);
+    const project = url.searchParams.get("project");
+
+    if (!project) return null;
+
+    return queryClient.ensureQueryData({
+        queryKey: ["hmiProject", project],
+        queryFn: () => getProject(project),
+    });
 }

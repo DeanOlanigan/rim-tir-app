@@ -1,5 +1,4 @@
 import { Box, Flex, HStack } from "@chakra-ui/react";
-import { useThrottledResizeObserver } from "@/hooks/useThrottledResizeObserver";
 import { ContextMenu } from "./ContextMenu";
 import { ToolBar } from "./ToolBar";
 import { HMICanvas } from "./canvas/HMICanvas";
@@ -12,8 +11,9 @@ import { LeftPanel } from "./LeftPanel";
 import { RightPanel } from "./RightPanel/RightPanel";
 import { confirmDialog } from "@/components/confirmDialog";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "./ProjectManager";
-import { useProjectLoader } from "./useProjectLoader";
-import { Loader } from "@/components/Loader";
+import { useLoaderData } from "react-router-dom";
+import { useEditorHotkeys } from "./useEditorHotkeys";
+import { useHMICanvasResize } from "./useHMICanvasResize";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -21,29 +21,29 @@ function HMIEditor() {
 export default HMIEditor;
 
 const HMIEditorContent = () => {
-    const { ref, width, height } = useThrottledResizeObserver(100);
-
-    const { isLoading, project } = useProjectLoader();
-
+    const { ref } = useHMICanvasResize();
     const tools = useToolsManager();
     useMqttValues("monitoring/node/#", tools);
 
-    useEffect(() => {
-        if (!project) {
-            openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, {
-                tools,
-                width,
-                height,
-            });
-            useNodeStore.getState().setSelectedIds([]);
-            useNodeStore.getState().rebuildVarIndex();
-        }
-        return () => {
-            useNodeStore.getState().setSelectedIds([]);
-        };
-    }, [project, tools, width, height]);
+    useEditorHotkeys(tools);
 
-    if (isLoading) return <Loader text={"Загрузка проекта..."} />;
+    const project = useLoaderData();
+
+    useEffect(() => {
+        const store = useNodeStore.getState();
+        if (project?.data) {
+            store.open(
+                project.data,
+                "server",
+                project.data.projectName + ".json",
+            );
+        } else {
+            openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, { tools });
+        }
+        store.rebuildVarIndex();
+        store.setSelectedIds([]);
+        return () => store.setSelectedIds([]);
+    }, [project, tools]);
 
     return (
         <Flex
@@ -57,7 +57,7 @@ const HMIEditorContent = () => {
             <editGridDialog.Viewport />
             <confirmDialog.Viewport />
             <ContextMenu />
-            <HMICanvas {...tools} width={width} height={height} />
+            <HMICanvas {...tools} />
             <Flex
                 position={"absolute"}
                 h={"100%"}
@@ -67,7 +67,7 @@ const HMIEditorContent = () => {
                 p={2}
                 direction={"column"}
             >
-                <LeftPanel tools={tools} width={width} height={height} />
+                <LeftPanel tools={tools} />
             </Flex>
             <Box
                 position={"absolute"}

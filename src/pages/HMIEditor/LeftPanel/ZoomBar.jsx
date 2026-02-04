@@ -5,7 +5,7 @@ import { setZoom, zoomByPercent } from "../canvas/utils/zoomService";
 import { useFitToFrame } from "../canvas/hooks/useFitToFrame";
 import { DEFAULT_MAX_ZOOM, DEFAULT_MIN_ZOOM } from "../constants";
 
-export const ZoomBar = ({ canvasRef, nodesRef, width, height }) => {
+export const ZoomBar = ({ canvasRef, nodesRef }) => {
     const scale = useActionsStore((state) => state.scale);
 
     const handleZoom = (dir) => {
@@ -20,7 +20,7 @@ export const ZoomBar = ({ canvasRef, nodesRef, width, height }) => {
         setZoom(stage, scale);
     };
 
-    const fitToFrame = useFitToFrame(canvasRef, width, height, false, nodesRef);
+    const fitToFrame = useFitToFrame({ canvasRef, auto: false, nodesRef });
 
     return (
         <Group attached shadow={"md"} borderRadius={"l2"}>

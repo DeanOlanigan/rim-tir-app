@@ -4,9 +4,10 @@ import { useActionsStore } from "../store/actions-store";
 import { LuPanelRight } from "react-icons/lu";
 import { EditorMenu } from "../EditorSettings";
 
-export const MinimizedPanel = ({ tools, width, height }) => {
+export const MinimizedPanel = ({ tools }) => {
     const activePage = useNodeStore((state) => state.pages[state.activePageId]);
     const projectName = useNodeStore((state) => state.projectName);
+    const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
 
     return (
         <Flex
@@ -17,7 +18,7 @@ export const MinimizedPanel = ({ tools, width, height }) => {
             borderRadius={"md"}
             shadow={"md"}
         >
-            <EditorMenu tools={tools} width={width} height={height} />
+            <EditorMenu tools={tools} />
             <Button
                 flex={1}
                 size={"xs"}
@@ -31,6 +32,7 @@ export const MinimizedPanel = ({ tools, width, height }) => {
                         )
                 }
                 justifyContent={"space-between"}
+                disabled={viewOnlyMode}
             >
                 <Heading truncate size={"sm"}>
                     {projectName}

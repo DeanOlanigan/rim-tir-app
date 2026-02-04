@@ -1,14 +1,9 @@
-import { apiv2 } from "@/api/baseUrl";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useNodeStore } from "./store/node-store";
 import { toaster } from "@/components/ui/toaster";
-
-async function fetchProjec(filename) {
-    const { data } = await apiv2.get(`/hmi/project/${filename}`);
-    return data;
-}
+import { getProject } from "@/api/hmi";
 
 export const useProjectLoader = () => {
     const [searchParams] = useSearchParams();
@@ -16,7 +11,7 @@ export const useProjectLoader = () => {
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ["hmiProject", project],
-        queryFn: () => fetchProjec(project),
+        queryFn: () => getProject(project),
         enabled: !!project,
         refetchOnWindowFocus: false,
         retry: 1,

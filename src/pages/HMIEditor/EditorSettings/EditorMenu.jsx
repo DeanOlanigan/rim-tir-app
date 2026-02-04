@@ -6,8 +6,9 @@ import { DownloadProject } from "../ProjectOps";
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 import { EDIT_GRID_DIALOG_ID, editGridDialog } from "../editGridDialog";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "../ProjectManager";
+import { useSaveProjectMutation } from "../mutations";
 
-export const EditorMenu = ({ tools, width, height }) => {
+export const EditorMenu = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
     const showGrid = useActionsStore((state) => state.showGrid);
@@ -16,6 +17,8 @@ export const EditorMenu = ({ tools, width, height }) => {
     const showStartCoordMarker = useActionsStore(
         (state) => state.showStartCoordMarker,
     );
+
+    const saveMutation = useSaveProjectMutation();
 
     const menuConfig = [
         {
@@ -30,8 +33,6 @@ export const EditorMenu = ({ tools, width, height }) => {
                     command: () =>
                         openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, {
                             tools,
-                            width,
-                            height,
                         }),
                 },
                 {
@@ -51,7 +52,19 @@ export const EditorMenu = ({ tools, width, height }) => {
                     label: "Import to server...",
                     value: "import-to-server",
                     type: "command",
-                    command: () => {},
+                    command: () => {
+                        const state = useNodeStore.getState();
+                        const project = {
+                            kind: "HMIEditorProject",
+                            schemaVersion: 2,
+                            projectName: state.projectName,
+                            activePageId: state.activePageId,
+                            pages: state.pages,
+                            nodes: state.nodes,
+                        };
+                        const filename = state.projectName + ".json";
+                        saveMutation.mutate({ filename, project });
+                    },
                 },
                 {
                     label: "Download...",

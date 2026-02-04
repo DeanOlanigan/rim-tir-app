@@ -4,7 +4,7 @@ import { MinimizedPanel } from "./MinimizedPanel";
 import { ExpandedPanel } from "./ExpandedPanel";
 import { ZoomUndoBlock } from "./ZoomUndoBlock";
 
-export const LeftPanel = ({ tools, width, height }) => {
+export const LeftPanel = ({ tools }) => {
     const isUiExpanded = useActionsStore((state) => state.isUiExpanded);
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
 
@@ -15,26 +15,14 @@ export const LeftPanel = ({ tools, width, height }) => {
             {isMinimized ? (
                 <>
                     <Box pointerEvents={"auto"}>
-                        <MinimizedPanel
-                            tools={tools}
-                            width={width}
-                            height={height}
-                        />
+                        <MinimizedPanel tools={tools} />
                     </Box>
                     <Spacer />
-                    <ZoomUndoBlock
-                        tools={tools}
-                        width={width}
-                        height={height}
-                    />
+                    <ZoomUndoBlock tools={tools} />
                 </>
             ) : (
                 <Flex h={"100%"} minH={0} pointerEvents={"auto"}>
-                    <ExpandedPanel
-                        tools={tools}
-                        width={width}
-                        height={height}
-                    />
+                    <ExpandedPanel tools={tools} />
                 </Flex>
             )}
         </Flex>

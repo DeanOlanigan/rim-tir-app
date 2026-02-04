@@ -42,26 +42,20 @@ function getWorkAreaSize(nodesRef) {
     };
 }
 
-export function useFitToFrame(
-    canvasRef,
-    viewportW,
-    viewportH,
-    auto = true,
-    nodesRef,
-) {
+export function useFitToFrame({ canvasRef, auto = true, nodesRef }) {
     const fitToFrame = useCallback(() => {
         const stage = canvasRef.current;
-        if (!stage || !viewportW || !viewportH) return;
+        if (!stage) return;
         const workArea = getWorkAreaSize(nodesRef);
 
         if (!workArea) {
             stage.scale({ x: 1, y: 1 });
-            stage.position({ x: viewportW / 2, y: viewportH / 2 });
+            stage.position({ x: stage.width() / 2, y: stage.height() / 2 });
             return;
         }
 
-        fitToFrameService(stage, workArea, viewportW, viewportH);
-    }, [canvasRef, viewportW, viewportH, nodesRef]);
+        fitToFrameService(stage, workArea, stage.width(), stage.height());
+    }, [canvasRef, nodesRef]);
 
     useLayoutEffect(() => {
         if (!auto) return;

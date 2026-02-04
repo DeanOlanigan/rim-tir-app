@@ -6,7 +6,7 @@ import {
     LuTrash2,
     LuX,
 } from "react-icons/lu";
-import { round4 } from "../utils";
+import { calcBBox } from "../utils";
 import { useNodeStore } from "../store/node-store";
 import { SHAPES } from "../constants";
 
@@ -68,16 +68,3 @@ const Ungroup = ({ ids }) => {
         </IconButton>
     );
 };
-
-function calcBBox(nodes) {
-    const minX = round4(Math.min(...nodes.map((n) => n.x)));
-    const minY = round4(Math.min(...nodes.map((n) => n.y)));
-    const maxX = Math.max(...nodes.map((n) => n.x + n.width));
-    const maxY = Math.max(...nodes.map((n) => n.y + n.height));
-    return {
-        x: minX,
-        y: minY,
-        width: round4(maxX - minX),
-        height: round4(maxY - minY),
-    };
-}

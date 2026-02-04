@@ -165,3 +165,16 @@ export function clampVal(v, eps = 1e-3) {
     if (Math.abs(v) < eps) return v < 0 ? -eps : eps;
     return v;
 }
+
+export function calcBBox(nodes) {
+    const minX = round4(Math.min(...nodes.map((n) => n.x)));
+    const minY = round4(Math.min(...nodes.map((n) => n.y)));
+    const maxX = Math.max(...nodes.map((n) => n.x + n.width));
+    const maxY = Math.max(...nodes.map((n) => n.y + n.height));
+    return {
+        x: minX,
+        y: minY,
+        width: round4(maxX - minX),
+        height: round4(maxY - minY),
+    };
+}

@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect } from "react";
+import { useMemo } from "react";
 import throttle from "throttleit";
 import useResizeObserver from "use-resize-observer";
+import { useActionsStore } from "./store/actions-store";
 
-export function useThrottledResizeObserver(wait = 150) {
-    const [size, setSize] = useState({ width: 100, height: 100 });
-
+export function useHMICanvasResize(wait = 150) {
     const onResize = useMemo(
         () =>
             throttle(({ width, height }) => {
-                setSize({ width, height });
+                useActionsStore.getState().setCanvasSize({ width, height });
             }, wait),
         [wait],
     );
@@ -19,5 +19,5 @@ export function useThrottledResizeObserver(wait = 150) {
 
     const { ref } = useResizeObserver({ onResize });
 
-    return { ref, ...size };
+    return { ref };
 }

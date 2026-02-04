@@ -16,13 +16,12 @@ export const HMICanvas = ({
     nodesRef,
     selectionBoxRef,
     transformerRef,
-    width,
-    height,
 }) => {
     const bgColor = useNodeStore(
         (state) => state.pages[state.activePageId].backgroundColor,
     );
     const showHitRegions = useActionsStore((state) => state.showHitRegions);
+    const canvasSize = useActionsStore((state) => state.canvasSize);
 
     useEffect(() => {
         if (showHitRegions) {
@@ -71,13 +70,13 @@ export const HMICanvas = ({
 
     const handlers = manager.handlers;
 
-    useFitToFrame(canvasRef, width, height, true, nodesRef);
+    useFitToFrame({ canvasRef, nodesRef });
     return (
         <Stage
             tabIndex={0}
             ref={canvasRef}
-            width={width}
-            height={height}
+            width={canvasSize.width}
+            height={canvasSize.height}
             style={{ background: bgColor, outline: "none" }}
             {...handlers}
         >
