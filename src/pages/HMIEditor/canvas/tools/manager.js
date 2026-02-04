@@ -1,4 +1,5 @@
 import { ACTIONS } from "../../constants";
+import { useNodeStore } from "../../store/node-store";
 import { zoomByPercent } from "../utils/zoomService";
 
 export function createToolManager({ toolsMap, api }) {
@@ -138,18 +139,18 @@ export function createToolManager({ toolsMap, api }) {
             window.addEventListener("pointermove", onGlobalMove);
             window.addEventListener("pointerup", onGlobalUp);
         },
-        /* onPointerMove(e) {
-            active && active.onPointerMove && active.onPointerMove(e, ctx);
-        },
-        onPointerUp(e) {
-            active && active.onPointerUp && active.onPointerUp(e, ctx);
-            if (e.evt.button === 1) {
-                popTemp();
-            }
-            pointerDown = false;
-        }, */
         onKeyDown(e) {
             if (api.ui.viewOnlyMode()) return;
+
+            if (
+                ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(
+                    e.code,
+                )
+            ) {
+                arrowKeysHandler(e, api);
+                return;
+            }
+
             if (e.code === "Escape") {
                 cancelActive();
                 pointerDown = false;
@@ -236,4 +237,26 @@ export function createToolManager({ toolsMap, api }) {
     manager.handlers = handlers;
 
     return manager;
+}
+
+function arrowKeysHandler(e, api) {
+    const selectedIds = api.getSelectedIds();
+    if (selectedIds.length > 0) {
+        e.preventDefault();
+        const step = e.shiftKey ? 10 : 1;
+        let dx = 0;
+        let dy = 0;
+        if (e.code === "ArrowLeft") dx = -step;
+        if (e.code === "ArrowRight") dx = step;
+        if (e.code === "ArrowUp") dy = -step;
+        if (e.code === "ArrowDown") dy = step;
+
+        const store = useNodeStore.getState();
+        const patches = {};
+        selectedIds.forEach((id) => {
+            const node = store.nodes[id];
+            patches[id] = { x: node.x + dx, y: node.y + dy };
+        });
+        store.updateNodes(selectedIds, patches);
+    }
 }
