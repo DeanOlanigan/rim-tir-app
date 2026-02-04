@@ -1,6 +1,6 @@
 import { Group, Icon, RadioCard } from "@chakra-ui/react";
 import { useActionsStore } from "./store/actions-store";
-import { ACTIONS } from "./constants";
+import { ACTIONS, HOTKEYS } from "./constants";
 import {
     LuCircle,
     LuHand,
@@ -17,16 +17,19 @@ const TOOLS_LIST = [
         name: ACTIONS.select,
         label: "Select",
         icon: LuMousePointer2,
+        hotkey: HOTKEYS.selectTool.hotkey,
     },
     {
         name: ACTIONS.hand,
         label: "Hand",
         icon: LuHand,
+        hotkey: HOTKEYS.handTool.hotkey,
     },
     {
         name: ACTIONS.square,
         label: "Draw Rectangle",
         icon: LuSquare,
+        hotkey: HOTKEYS.squareTool.hotkey,
     },
     {
         name: ACTIONS.polygon,
@@ -42,16 +45,19 @@ const TOOLS_LIST = [
         name: ACTIONS.text,
         label: "Text",
         icon: LuType,
+        hotkey: HOTKEYS.textTool.hotkey,
     },
     {
         name: ACTIONS.line,
         label: "Draw line",
         icon: LuSlash,
+        hotkey: HOTKEYS.lineTool.hotkey,
     },
     {
         name: ACTIONS.arrow,
         label: "Draw arrow",
         icon: LuMoveUpRight,
+        hotkey: HOTKEYS.arrowTool.hotkey,
     },
 ];
 

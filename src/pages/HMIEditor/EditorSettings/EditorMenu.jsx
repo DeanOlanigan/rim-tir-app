@@ -7,6 +7,7 @@ import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 import { EDIT_GRID_DIALOG_ID, editGridDialog } from "../editGridDialog";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "../ProjectManager";
 import { useSaveProjectMutation } from "../mutations";
+import { HOTKEYS } from "../constants";
 
 export const EditorMenu = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -34,6 +35,7 @@ export const EditorMenu = ({ tools }) => {
                         openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, {
                             tools,
                         }),
+                    hotkey: HOTKEYS.openProject.keyLabel,
                 },
                 {
                     label: "Close...",
@@ -94,6 +96,7 @@ export const EditorMenu = ({ tools }) => {
                     isChecked: showGrid,
                     command: () =>
                         useActionsStore.getState().setShowGrid(!showGrid),
+                    hotkey: HOTKEYS.toggleGrid.keyLabel,
                 },
                 {
                     label: "Show Hit Regions",
@@ -139,6 +142,7 @@ export const EditorMenu = ({ tools }) => {
                         useActionsStore
                             .getState()
                             .setViewOnlyMode(!viewOnlyMode),
+                    hotkey: HOTKEYS.toggleViewOnly.keyLabel,
                 },
                 { type: "divider" },
                 {
@@ -209,7 +213,12 @@ const MenuItem = ({ item }) => {
                 value={item.value}
             >
                 <Menu.ItemIndicator />
-                {item.label}
+                <Box flex={1}>{item.label}</Box>
+                {item.hotkey && (
+                    <Menu.ItemCommand size={"sm"}>
+                        {item.hotkey}
+                    </Menu.ItemCommand>
+                )}
             </Menu.CheckboxItem>
         );
     }
@@ -219,7 +228,12 @@ const MenuItem = ({ item }) => {
         return (
             <WrapperComponent {...(item.wrapperProps || {})}>
                 <Menu.Item value={item.value} ps={8}>
-                    {item.label}
+                    <Box flex={1}>{item.label}</Box>
+                    {item.hotkey && (
+                        <Menu.ItemCommand size={"sm"}>
+                            {item.hotkey}
+                        </Menu.ItemCommand>
+                    )}
                 </Menu.Item>
             </WrapperComponent>
         );
@@ -228,14 +242,22 @@ const MenuItem = ({ item }) => {
     if (item.command) {
         return (
             <Menu.Item value={item.value} onClick={item.command} ps={8}>
-                {item.label}
+                <Box flex={1}>{item.label}</Box>
+                {item.hotkey && (
+                    <Menu.ItemCommand size={"sm"}>
+                        {item.hotkey}
+                    </Menu.ItemCommand>
+                )}
             </Menu.Item>
         );
     }
 
     return (
         <Menu.Item value={item.value} onClick={item.command} ps={8}>
-            {item.label}
+            <Box flex={1}>{item.label}</Box>
+            {item.hotkey && (
+                <Menu.ItemCommand size={"sm"}>{item.hotkey}</Menu.ItemCommand>
+            )}
         </Menu.Item>
     );
 };

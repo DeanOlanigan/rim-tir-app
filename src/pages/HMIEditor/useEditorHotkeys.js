@@ -1,7 +1,7 @@
 import { useHotkeys } from "react-hotkeys-hook";
 import { useActionsStore } from "./store/actions-store";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "./ProjectManager";
-import { ACTIONS } from "./constants";
+import { ACTIONS, HOTKEYS } from "./constants";
 import { setZoom, zoomByPercent } from "./canvas/utils/zoomService";
 import { useNodeStore } from "./store/node-store";
 import { calcBBox, layerShift } from "./utils";
@@ -14,53 +14,69 @@ export function useEditorHotkeys(tools) {
         nodesRef: tools.nodesRef,
     });
     // Switch tools
-    useHotkeys("v", () => tools.manager.setActive(ACTIONS.select));
-    useHotkeys("h", () => tools.manager.setActive(ACTIONS.hand));
-    useHotkeys("r", () => tools.manager.setActive(ACTIONS.square));
-    useHotkeys("l", () => tools.manager.setActive(ACTIONS.line));
-    useHotkeys("shift+l", () => tools.manager.setActive(ACTIONS.arrow));
-    useHotkeys("t", () => tools.manager.setActive(ACTIONS.text));
+    useHotkeys(HOTKEYS.selectTool.hotkey, () =>
+        tools.manager.setActive(ACTIONS.select),
+    );
+    useHotkeys(HOTKEYS.handTool.hotkey, () =>
+        tools.manager.setActive(ACTIONS.hand),
+    );
+    useHotkeys(HOTKEYS.squareTool.hotkey, () =>
+        tools.manager.setActive(ACTIONS.square),
+    );
+    useHotkeys(HOTKEYS.lineTool.hotkey, () =>
+        tools.manager.setActive(ACTIONS.line),
+    );
+    useHotkeys(HOTKEYS.arrowTool.hotkey, () =>
+        tools.manager.setActive(ACTIONS.arrow),
+    );
+    useHotkeys(HOTKEYS.textTool.hotkey, () =>
+        tools.manager.setActive(ACTIONS.text),
+    );
     // Toggle grid
-    useHotkeys("shift+g", () =>
+    useHotkeys(HOTKEYS.toggleGrid.hotkey, () =>
         useActionsStore
             .getState()
             .setShowGrid(!useActionsStore.getState().showGrid),
     );
     // Open project
     useHotkeys(
-        "ctrl+p",
+        HOTKEYS.openProject.hotkey,
         () => openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, { tools }),
         { preventDefault: true },
     );
     // Toggle view only
-    useHotkeys("shift+v", () =>
+    useHotkeys(HOTKEYS.toggleViewOnly.hotkey, () =>
         useActionsStore
             .getState()
             .setViewOnlyMode(!useActionsStore.getState().viewOnlyMode),
     );
     // Zoom
     useHotkeys(
-        "ctrl+equal, ctrl+add",
+        HOTKEYS.zoomPlus.hotkey,
         () => zoomByPercent(tools.api.getStage(), 1),
         { preventDefault: true },
     );
     useHotkeys(
-        "ctrl+minus, ctrl+subtract",
+        HOTKEYS.zoomMinus.hotkey,
         () => zoomByPercent(tools.api.getStage(), -1),
         { preventDefault: true },
     );
-    useHotkeys("ctrl+0", () => setZoom(tools.api.getStage(), 1));
-    useHotkeys("shift+1", () => fitToFrame());
-    useHotkeys("shift+2", () => console.log("Zoom to selection"));
+    useHotkeys(HOTKEYS.zoomReset.hotkey, () =>
+        setZoom(tools.api.getStage(), 1),
+    );
+    useHotkeys(HOTKEYS.fitToFrame.hotkey, () => fitToFrame());
+    useHotkeys(HOTKEYS.zoomToSelection.hotkey, () =>
+        console.log("Zoom to selection"),
+    );
     // Delete
-    useHotkeys("backspace, delete", () => {
+    useHotkeys(HOTKEYS.delete.hotkey, () => {
         const store = useNodeStore.getState();
         if (store.selectedIds.length === 0) return;
         store.removeNodes(store.selectedIds);
     });
     // Duplicate
     useHotkeys(
-        "ctrl+d",
+        HOTKEYS.duplicate.hotkey,
         () => {
             const store = useNodeStore.getState();
             if (store.selectedIds.length === 0) return;
@@ -69,24 +85,24 @@ export function useEditorHotkeys(tools) {
         { preventDefault: true },
     );
     // Layer
-    useHotkeys("bracketright", () => {
+    useHotkeys(HOTKEYS.moveToTop.hotkey, () => {
         const store = useNodeStore.getState();
         layerShift(store.selectedIds, "moveToTop");
     });
-    useHotkeys("bracketleft", () => {
+    useHotkeys(HOTKEYS.moveToBottom.hotkey, () => {
         const store = useNodeStore.getState();
         layerShift(store.selectedIds, "moveToBottom");
     });
-    useHotkeys("ctrl+bracketright", () => {
+    useHotkeys(HOTKEYS.moveDown.hotkey, () => {
         const store = useNodeStore.getState();
         layerShift(store.selectedIds, "moveDown");
     });
-    useHotkeys("ctrl+bracketleft", () => {
+    useHotkeys(HOTKEYS.moveUp.hotkey, () => {
         const store = useNodeStore.getState();
         layerShift(store.selectedIds, "moveUp");
     });
     // Minimize UI
-    useHotkeys("ctrl+shift+backslash", () => {
+    useHotkeys(HOTKEYS.minimizeUi.hotkey, () => {
         const viewOnlyMode = useActionsStore.getState().viewOnlyMode;
         if (viewOnlyMode) return;
         useActionsStore
@@ -94,7 +110,7 @@ export function useEditorHotkeys(tools) {
             .setIsUiExpanded(!useActionsStore.getState().isUiExpanded);
     });
     // Pages
-    useHotkeys("pagedown", () => {
+    useHotkeys(HOTKEYS.pageDown.hotkey, () => {
         const activePageId = useNodeStore.getState().activePageId;
         const pages = useNodeStore.getState().pages;
         const pageIds = Object.keys(pages);
@@ -102,7 +118,7 @@ export function useEditorHotkeys(tools) {
         if (nextIndex >= pageIds.length) return;
         useNodeStore.getState().setActivePage(pageIds[nextIndex]);
     });
-    useHotkeys("pageup", () => {
+    useHotkeys(HOTKEYS.pageUp.hotkey, () => {
         const activePageId = useNodeStore.getState().activePageId;
         const pages = useNodeStore.getState().pages;
         const pageIds = Object.keys(pages);
@@ -112,7 +128,7 @@ export function useEditorHotkeys(tools) {
     });
     // Selection
     useHotkeys(
-        "ctrl+a",
+        HOTKEYS.selectAll.hotkey,
         () => {
             const store = useNodeStore.getState();
             store.setSelectedIds(
@@ -121,13 +137,13 @@ export function useEditorHotkeys(tools) {
         },
         { preventDefault: true },
     );
-    useHotkeys("esc", () => {
+    useHotkeys(HOTKEYS.deselectAll.hotkey, () => {
         const store = useNodeStore.getState();
         store.setSelectedIds([]);
     });
     // Group
     useHotkeys(
-        "ctrl+g",
+        HOTKEYS.group.hotkey,
         () => {
             const stage = tools.api.getStage();
             const store = useNodeStore.getState();
@@ -144,7 +160,7 @@ export function useEditorHotkeys(tools) {
         { preventDefault: true },
     );
     useHotkeys(
-        "ctrl+shift+g",
+        HOTKEYS.ungroup.hotkey,
         () => {
             const store = useNodeStore.getState();
             if (store.selectedIds.length === 0) return;
