@@ -24,28 +24,49 @@ export const useActionsStore = create(
             isUiExpanded: false,
             canvasSize: { width: 0, height: 0 },
 
-            setCurrentAction: (action) => set({ currentAction: action }),
-            setPrevAction: (action) => set({ prevAction: action }),
+            setCurrentAction: (action) =>
+                set({ currentAction: action }, undefined, "setCurrentAction"),
+            setPrevAction: (action) =>
+                set({ prevAction: action }, undefined, "setPrevAction"),
 
-            setGridSize: (size) => set({ gridSize: size }),
-            setShowGrid: (show) => set({ showGrid: show }),
-            setSnap: (snapToGrid) => set({ snapToGrid }),
-            setScale: (scale) => set({ scale }),
-            setBackgroundColor: (color) => set({ backgroundColor: color }),
-            setGridColor: (color) => set({ gridColor: color }),
-            setDebugMode: (mode) => set({ debugMode: mode }),
-            setShowNodesTree: (show) => set({ showNodesTree: show }),
-            setShowHitRegions: (show) => set({ showHitRegions: show }),
+            setGridSize: (size) =>
+                set({ gridSize: size }, undefined, "setGridSize"),
+            setShowGrid: (show) =>
+                set({ showGrid: show }, undefined, "setShowGrid"),
+            setSnap: (snapToGrid) => set({ snapToGrid }, undefined, "setSnap"),
+            setScale: (scale) => set({ scale }, undefined, "setScale"),
+            setBackgroundColor: (color) =>
+                set(
+                    { backgroundColor: color },
+                    undefined,
+                    "setBackgroundColor",
+                ),
+            setGridColor: (color) =>
+                set({ gridColor: color }, undefined, "setGridColor"),
+            setDebugMode: (mode) =>
+                set({ debugMode: mode }, undefined, "setDebugMode"),
+            setShowNodesTree: (show) =>
+                set({ showNodesTree: show }, undefined, "setShowNodesTree"),
+            setShowHitRegions: (show) =>
+                set({ showHitRegions: show }, undefined, "setShowHitRegions"),
             setShowStartCoordMarker: (show) =>
-                set({ showStartCoordMarker: show }),
+                set(
+                    { showStartCoordMarker: show },
+                    undefined,
+                    "setShowStartCoordMarker",
+                ),
             setViewOnlyMode: (mode) => {
                 useNodeStore.getState().setSelectedIds([]);
-                set({ viewOnlyMode: mode });
+                set({ viewOnlyMode: mode }, undefined, "setViewOnlyMode");
             },
-            setLiveUpdates: (mode) => set({ isLiveUpdate: mode }),
-            setShowPagesList: (mode) => set({ showPagesList: mode }),
-            setIsUiExpanded: (mode) => set({ isUiExpanded: mode }),
-            setCanvasSize: (size) => set({ canvasSize: size }),
+            setLiveUpdates: (mode) =>
+                set({ isLiveUpdate: mode }, undefined, "setLiveUpdates"),
+            setShowPagesList: (mode) =>
+                set({ showPagesList: mode }, undefined, "setShowPagesList"),
+            setIsUiExpanded: (mode) =>
+                set({ isUiExpanded: mode }, undefined, "setIsUiExpanded"),
+            setCanvasSize: (size) =>
+                set({ canvasSize: size }, undefined, "setCanvasSize"),
         }),
         {
             name: "actions-store",

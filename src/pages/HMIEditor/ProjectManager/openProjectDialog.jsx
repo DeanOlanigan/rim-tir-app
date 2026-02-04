@@ -18,6 +18,7 @@ import { useActionsStore } from "../store/actions-store";
 import { useNavigate } from "react-router-dom";
 import { useDeleteProjectMutation } from "../mutations";
 import { useNodeStore } from "../store/node-store";
+import { handleActionWithGuard } from "../utils";
 
 export const OPEN_PROJECT_DIALOG_ID = "OPEN_PROJECT_DIALOG_ID";
 
@@ -40,44 +41,55 @@ export const openProjectDialog = createOverlay((props) => {
         nodesRef: rest.tools.nodesRef,
     });
 
-    const applyProject = (rawProjectData, successMessage, mode, filename) => {
-        console.log(mode, filename);
-        applyProjectData(rawProjectData, successMessage, mode, filename);
-        fitToFrame();
-        onOpenChange?.({ open: false });
-    };
+    const handleOpenServerProject = (filename) => {
+        handleActionWithGuard(() => {
+            navigate(`?project=${filename}`);
 
-    const handleOpenServerProject = async (filename) => {
-        navigate(`?project=${filename}`);
-        onOpenChange?.({ open: false });
-        toaster.create({
-            type: "success",
-            title: "Проект загружен",
+            onOpenChange?.({ open: false });
+            toaster.create({
+                type: "success",
+                title: "Проект загружен",
+            });
         });
     };
 
     const handleOpenLocalProject = (projectData, filename) => {
-        applyProject(
-            projectData,
-            "Проект загружен из локального файла",
-            "local",
-            filename,
-        );
+        handleActionWithGuard(() => {
+            navigate("/HMIEditor", { replace: true });
+
+            try {
+                applyProjectData(projectData, "local", filename);
+            } catch (err) {
+                console.error("Error applying project data:", err);
+                toaster.create({
+                    type: "error",
+                    title: "Произошла ошибка",
+                    description: err?.message ?? "Неизвестная ошибка",
+                });
+            }
+            fitToFrame();
+
+            onOpenChange?.({ open: false });
+            toaster.create({
+                type: "success",
+                title: "Проект загружен из локального файла",
+            });
+        });
     };
 
     const handleCreateNewProject = () => {
-        useNodeStore.getState().close();
+        handleActionWithGuard(() => {
+            navigate("/HMIEditor");
 
-        fitToFrame();
+            useNodeStore.getState().close();
+            fitToFrame();
 
-        navigate(`/HMIEditor`);
-
-        toaster.create({
-            type: "success",
-            title: "Создан новый проект",
+            onOpenChange?.({ open: false });
+            toaster.create({
+                type: "success",
+                title: "Создан новый проект",
+            });
         });
-
-        onOpenChange?.({ open: false });
     };
 
     const handleDeleteServerProject = async (filename) => {

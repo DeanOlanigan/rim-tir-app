@@ -32,18 +32,27 @@ const HMIEditorContent = () => {
     useEffect(() => {
         const store = useNodeStore.getState();
         if (project?.data) {
-            store.open(
-                project.data,
-                "server",
-                project.data.projectName + ".json",
-            );
-        } else {
-            openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, { tools });
+            if (store.meta.filename !== project.data.projectName + ".json") {
+                store.open(
+                    project.data,
+                    "server",
+                    project.data.projectName + ".json",
+                );
+                store.rebuildVarIndex();
+                store.setSelectedIds([]);
+            }
         }
-        store.rebuildVarIndex();
-        store.setSelectedIds([]);
-        return () => store.setSelectedIds([]);
-    }, [project, tools]);
+    }, [project]);
+
+    useEffect(() => {
+        const store = useNodeStore.getState();
+
+        if (!project && store.meta.mode === "new" && !store.meta.isDirty) {
+            setTimeout(() => {
+                openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, { tools });
+            }, 0);
+        }
+    }, []);
 
     return (
         <Flex

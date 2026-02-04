@@ -1,3 +1,4 @@
+import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 import { SHAPES } from "./constants";
 import { useNodeStore } from "./store/node-store";
 
@@ -178,3 +179,19 @@ export function calcBBox(nodes) {
         height: round4(maxY - minY),
     };
 }
+
+export const handleActionWithGuard = (actionCallback) => {
+    const isDirty = useNodeStore.getState().meta.isDirty;
+
+    if (isDirty) {
+        confirmDialog.open(CONFIRM_DIALOG_ID, {
+            onAccept: () => {
+                actionCallback();
+            },
+            title: "Вы уверены?",
+            message: "Есть несохраненные изменения. Продолжить?",
+        });
+    } else {
+        actionCallback();
+    }
+};
