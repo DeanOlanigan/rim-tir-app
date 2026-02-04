@@ -1,8 +1,9 @@
-import { Badge, Button, Flex, Heading } from "@chakra-ui/react";
+import { Badge, Button, Flex, Heading, HStack } from "@chakra-ui/react";
 import { useNodeStore } from "../store/node-store";
 import { useActionsStore } from "../store/actions-store";
 import { LuPanelRight } from "react-icons/lu";
 import { EditorMenu } from "../EditorSettings";
+import { DirtyInformer } from "./DirtyInformer";
 
 export const MinimizedPanel = ({ tools }) => {
     const activePage = useNodeStore((state) => state.pages[state.activePageId]);
@@ -18,7 +19,10 @@ export const MinimizedPanel = ({ tools }) => {
             borderRadius={"md"}
             shadow={"md"}
         >
-            <EditorMenu tools={tools} />
+            <HStack>
+                <EditorMenu tools={tools} />
+                <DirtyInformer />
+            </HStack>
             <Button
                 flex={1}
                 size={"xs"}

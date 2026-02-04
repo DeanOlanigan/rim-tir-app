@@ -7,6 +7,7 @@ import { NodesTree } from "../NodesTree";
 import { EditorMenu } from "../EditorSettings";
 import { DebugInfo } from "./DebugInfo";
 import { ZoomUndoBlock } from "./ZoomUndoBlock";
+import { DirtyInformer } from "./DirtyInformer";
 
 export const ExpandedPanel = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -23,7 +24,10 @@ export const ExpandedPanel = ({ tools }) => {
             p={3}
         >
             <HStack justify={"space-between"}>
-                <EditorMenu tools={tools} />
+                <HStack>
+                    <EditorMenu tools={tools} />
+                    <DirtyInformer />
+                </HStack>
                 <IconButton
                     size={"xs"}
                     variant={"ghost"}
