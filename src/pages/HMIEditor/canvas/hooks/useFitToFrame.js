@@ -3,7 +3,7 @@ import { fitToFrame as fitToFrameService } from "../utils/zoomService";
 
 function getWorkAreaSize(nodesRef) {
     const nodes = nodesRef?.current;
-    if (!nodes) return null;
+    if (!nodes || nodes.size === 0) return null;
 
     let hasAny = false;
 
@@ -16,15 +16,15 @@ function getWorkAreaSize(nodesRef) {
         if (!node) return;
         hasAny = true;
 
-        const x = node.x();
-        const y = node.y();
-        const w = node.width() * (node.scaleX?.() ?? 1);
-        const h = node.height() * (node.scaleY?.() ?? 1);
-
-        minX = Math.min(minX, x);
-        minY = Math.min(minY, y);
-        maxX = Math.max(maxX, x + w);
-        maxY = Math.max(maxY, y + h);
+        const rect = node.getClientRect({
+            skipShadow: true,
+            skipStroke: true,
+            relativeTo: node.getStage(),
+        });
+        minX = Math.min(minX, rect.x);
+        minY = Math.min(minY, rect.y);
+        maxX = Math.max(maxX, rect.x + rect.width);
+        maxY = Math.max(maxY, rect.y + rect.height);
     });
 
     if (!hasAny) return null;
