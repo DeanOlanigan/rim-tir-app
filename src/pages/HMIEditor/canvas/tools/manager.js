@@ -1,4 +1,5 @@
 import { ACTIONS } from "../../constants";
+import { useActionsStore } from "../../store/actions-store";
 import { useNodeStore } from "../../store/node-store";
 import { zoomByPercent } from "../utils/zoomService";
 
@@ -243,7 +244,9 @@ function arrowKeysHandler(e, api) {
     const selectedIds = api.getSelectedIds();
     if (selectedIds.length > 0) {
         e.preventDefault();
-        const step = e.shiftKey ? 10 : 1;
+        const { gridSize, snapToGrid } = useActionsStore.getState();
+        let step = e.shiftKey ? 10 : 1;
+        if (snapToGrid) step = step * gridSize;
         let dx = 0;
         let dy = 0;
         if (e.code === "ArrowLeft") dx = -step;

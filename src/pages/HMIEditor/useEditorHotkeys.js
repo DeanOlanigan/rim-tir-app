@@ -39,6 +39,11 @@ export function useEditorHotkeys(tools) {
             .getState()
             .setShowGrid(!useActionsStore.getState().showGrid),
     );
+    useHotkeys(HOTKEYS.snapToGrid.hotkey, () => {
+        useActionsStore
+            .getState()
+            .setSnapToGrid(!useActionsStore.getState().snapToGrid);
+    });
     useHotkeys(HOTKEYS.openGridDialog.hotkey, () =>
         editGridDialog.open(EDIT_GRID_DIALOG_ID),
     );

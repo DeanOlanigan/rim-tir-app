@@ -33,7 +33,8 @@ export const useActionsStore = create(
                 set({ gridSize: size }, undefined, "setGridSize"),
             setShowGrid: (show) =>
                 set({ showGrid: show }, undefined, "setShowGrid"),
-            setSnap: (snapToGrid) => set({ snapToGrid }, undefined, "setSnap"),
+            setSnapToGrid: (snapToGrid) =>
+                set({ snapToGrid }, undefined, "setSnap"),
             setScale: (scale) => set({ scale }, undefined, "setScale"),
             setBackgroundColor: (color) =>
                 set(
