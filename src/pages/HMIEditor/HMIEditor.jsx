@@ -14,6 +14,7 @@ import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "./ProjectManager";
 import { useLoaderData } from "react-router-dom";
 import { useEditorHotkeys } from "./useEditorHotkeys";
 import { useHMICanvasResize } from "./useHMICanvasResize";
+import { fit } from "./utils";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -21,12 +22,12 @@ function HMIEditor() {
 export default HMIEditor;
 
 const HMIEditorContent = () => {
+    console.log("RENDER EDITOR");
     const { ref } = useHMICanvasResize();
     const tools = useToolsManager();
     useMqttValues("monitoring/node/#", tools);
 
     useEditorHotkeys(tools);
-
     const project = useLoaderData();
 
     useEffect(() => {
@@ -40,9 +41,12 @@ const HMIEditorContent = () => {
                 );
                 store.rebuildVarIndex();
                 store.setSelectedIds([]);
+                setTimeout(() => {
+                    fit(tools.canvasRef, tools.nodesRef);
+                }, 0);
             }
         }
-    }, [project]);
+    }, [project, tools.nodesRef, tools.canvasRef]);
 
     useEffect(() => {
         const store = useNodeStore.getState();

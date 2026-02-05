@@ -3,11 +3,12 @@ import { LuChevronRight, LuMenu } from "react-icons/lu";
 import { useNodeStore } from "../store/node-store";
 import { useActionsStore } from "../store/actions-store";
 import { DownloadProject } from "../ProjectOps";
-import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 import { EDIT_GRID_DIALOG_ID, editGridDialog } from "../editGridDialog";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "../ProjectManager";
 import { useSaveProjectMutation } from "../mutations";
 import { HOTKEYS } from "../constants";
+import { fit, handleActionWithGuard } from "../utils";
+import { useNavigate } from "react-router-dom";
 
 export const EditorMenu = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -18,7 +19,7 @@ export const EditorMenu = ({ tools }) => {
     const showStartCoordMarker = useActionsStore(
         (state) => state.showStartCoordMarker,
     );
-
+    const navigate = useNavigate();
     const saveMutation = useSaveProjectMutation();
 
     const menuConfig = [
@@ -42,12 +43,10 @@ export const EditorMenu = ({ tools }) => {
                     value: "close",
                     type: "command",
                     command: () =>
-                        confirmDialog.open(CONFIRM_DIALOG_ID, {
-                            onAccept: () => {
-                                useNodeStore.getState().close();
-                            },
-                            title: "Закрыть проект?",
-                            message: "Все несохранённые данные будут потеряны.",
+                        handleActionWithGuard(() => {
+                            navigate("/HMIEditor");
+                            useNodeStore.getState().close();
+                            fit(tools.canvasRef, tools.nodesRef);
                         }),
                 },
                 {

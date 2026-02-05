@@ -1,11 +1,14 @@
 import Konva from "konva";
 import { useActionsStore } from "./store/actions-store";
+import { getWorkAreaSize } from "./utils";
 
 /**
- * Плавно "подлетает" к ноде: центрирует её во вьюпорте.
- * Опционально может подобрать scale так, чтобы нода влезла (zoomToFit).
+ * Плавно "подлетает" к ноде или набору нод: центрирует их во вьюпорте.
+ * nodeOrNodes — либо Konva.Node, либо массив Konva.Node.
+ * opts:
+ *  - duration, padding, zoomToFit, minScale, maxScale, easing, tweenRef
  */
-export function flyToNode(stage, node, opts) {
+export function flyToNode(stage, target, opts) {
     const {
         duration = 0.35,
         padding = 0,
@@ -16,24 +19,32 @@ export function flyToNode(stage, node, opts) {
         tweenRef,
     } = opts ?? {};
 
-    if (!stage || !node) return;
+    if (!stage || !target) return;
 
     // Остановить предыдущую анимацию, если была
     if (tweenRef?.current) {
-        tweenRef.current.destroy();
+        tweenRef.current.destroy?.();
         tweenRef.current = null;
     }
 
-    // bounding box ноды в "экранных" координатах (с учетом текущего pan/zoom stage)
-    const r = node.getClientRect({ skipTransform: false });
+    let nodesRef;
 
-    // Переведем центр этого rect в "мировые" координаты (stage-local),
-    // используя инверсию абсолютного трансформа stage.
-    const inv = stage.getAbsoluteTransform().copy().invert();
-    const centerWorld = inv.point({
-        x: r.x + r.width / 2,
-        y: r.y + r.height / 2,
-    });
+    if (target.current?.size !== undefined) {
+        // это уже nodesRef
+        nodesRef = target;
+    } else {
+        // это node или node[]
+        const set = new Set(Array.isArray(target) ? target : [target]);
+        nodesRef = { current: set };
+    }
+
+    const rect = getWorkAreaSize(nodesRef);
+    if (!rect) return;
+
+    const centerWorld = {
+        x: rect.x + rect.width / 2,
+        y: rect.y + rect.height / 2,
+    };
 
     const viewportW = stage.width();
     const viewportH = stage.height();
@@ -41,8 +52,8 @@ export function flyToNode(stage, node, opts) {
     const currentScale = stage.scaleX(); // предполагаем uniform scale
 
     // Если нужен zoom-to-fit — оценим размеры ноды в world по текущему scale
-    const worldW = r.width / currentScale;
-    const worldH = r.height / currentScale;
+    const worldW = rect.width / currentScale;
+    const worldH = rect.height / currentScale;
 
     let nextScale = currentScale;
     if (zoomToFit) {
@@ -92,7 +103,7 @@ export function flyToNode(stage, node, opts) {
             stage.off(".flySync");
             if (rafId) cancelAnimationFrame(rafId);
 
-            tween.destroy();
+            tween.destroy?.();
             if (tweenRef) tweenRef.current = null;
         },
     });

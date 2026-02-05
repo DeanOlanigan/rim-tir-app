@@ -9,7 +9,6 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { LuCloudUpload, LuPlus } from "react-icons/lu";
 import { toaster } from "@/components/ui/toaster";
-import { useFitToFrame } from "../canvas/hooks/useFitToFrame";
 import { applyProjectData } from "../ProjectOps/applyProjectData";
 import { OpenProject } from "../ProjectOps";
 import { ProjectCard } from "./ProjectCard";
@@ -18,7 +17,7 @@ import { useActionsStore } from "../store/actions-store";
 import { useNavigate } from "react-router-dom";
 import { useDeleteProjectMutation } from "../mutations";
 import { useNodeStore } from "../store/node-store";
-import { handleActionWithGuard } from "../utils";
+import { fit, handleActionWithGuard } from "../utils";
 
 export const OPEN_PROJECT_DIALOG_ID = "OPEN_PROJECT_DIALOG_ID";
 
@@ -33,12 +32,6 @@ export const openProjectDialog = createOverlay((props) => {
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ["hmiProjects"],
         queryFn: getProjects,
-    });
-
-    const fitToFrame = useFitToFrame({
-        canvasRef: rest.tools.canvasRef,
-        auto: false,
-        nodesRef: rest.tools.nodesRef,
     });
 
     const handleOpenServerProject = (filename) => {
@@ -67,7 +60,7 @@ export const openProjectDialog = createOverlay((props) => {
                     description: err?.message ?? "Неизвестная ошибка",
                 });
             }
-            fitToFrame();
+            fit(rest.tools.canvasRef, rest.tools.nodesRef);
 
             onOpenChange?.({ open: false });
             toaster.create({
@@ -82,7 +75,7 @@ export const openProjectDialog = createOverlay((props) => {
             navigate("/HMIEditor");
 
             useNodeStore.getState().close();
-            fitToFrame();
+            fit(rest.tools.canvasRef, rest.tools.nodesRef);
 
             onOpenChange?.({ open: false });
             toaster.create({

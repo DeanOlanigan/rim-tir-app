@@ -1,6 +1,5 @@
 import { Layer, Rect, Stage, Star } from "react-konva";
 import { Grid } from "./Grid";
-import { useFitToFrame } from "./hooks/useFitToFrame";
 import { useActionsStore } from "../store/actions-store";
 import HMITransformer from "./HMITransformer";
 import { Nodes } from "./Nodes";
@@ -70,7 +69,6 @@ export const HMICanvas = ({
 
     const handlers = manager.handlers;
 
-    useFitToFrame({ canvasRef, nodesRef });
     return (
         <Stage
             tabIndex={0}

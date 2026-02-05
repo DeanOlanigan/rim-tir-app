@@ -4,16 +4,13 @@ import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "./ProjectManager";
 import { ACTIONS, HOTKEYS } from "./constants";
 import { setZoom, zoomByPercent } from "./canvas/utils/zoomService";
 import { useNodeStore } from "./store/node-store";
-import { calcBBox, layerShift } from "./utils";
-import { useFitToFrame } from "./canvas/hooks/useFitToFrame";
+import { calcBBox, layerShift, fit } from "./utils";
 import { EDIT_GRID_DIALOG_ID, editGridDialog } from "./editGridDialog";
+import { flyToNode } from "./flyToNode";
+import { useRef } from "react";
 
 export function useEditorHotkeys(tools) {
-    const fitToFrame = useFitToFrame({
-        canvasRef: tools.canvasRef,
-        auto: false,
-        nodesRef: tools.nodesRef,
-    });
+    const hotkeyTweenRef = useRef(null);
     // Switch tools
     useHotkeys(HOTKEYS.selectTool.hotkey, () =>
         tools.manager.setActive(ACTIONS.select),
@@ -73,10 +70,21 @@ export function useEditorHotkeys(tools) {
     useHotkeys(HOTKEYS.zoomReset.hotkey, () =>
         setZoom(tools.api.getStage(), 1),
     );
-    useHotkeys(HOTKEYS.fitToFrame.hotkey, () => fitToFrame());
-    useHotkeys(HOTKEYS.zoomToSelection.hotkey, () =>
-        console.log("Zoom to selection"),
+    useHotkeys(HOTKEYS.fitToFrame.hotkey, () =>
+        fit(tools.canvasRef, tools.nodesRef),
     );
+    useHotkeys(HOTKEYS.zoomToSelection.hotkey, () => {
+        const stage = tools.api.getStage();
+        const selectedIds = useNodeStore.getState().selectedIds;
+        const konvaNodes = tools.nodesRef.current;
+        if (selectedIds.length === 0 || !konvaNodes) return;
+        const selectedNodes = selectedIds.map((id) => konvaNodes.get(id));
+        flyToNode(stage, selectedNodes, {
+            hotkeyTweenRef,
+            zoomToFit: true,
+            duration: 0.35,
+        });
+    });
     // Delete
     useHotkeys(HOTKEYS.delete.hotkey, () => {
         const store = useNodeStore.getState();
