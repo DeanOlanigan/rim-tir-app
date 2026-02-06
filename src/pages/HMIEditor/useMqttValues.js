@@ -1,7 +1,7 @@
 import { useMqttCore } from "@/utils/mqtt/mqtt-provider";
 import { useEffect } from "react";
 import { useNodeStore } from "./store/node-store";
-import { resolveBinding } from "./store/bindings-resolver";
+import { resolveBinding } from "./bindings-resolver";
 import { useActionsStore } from "./store/actions-store";
 
 export function useMqttValues(subTopic, api) {

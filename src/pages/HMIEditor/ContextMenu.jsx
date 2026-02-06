@@ -2,7 +2,7 @@ import { useContextMenuStore } from "@/store/contextMenu-store";
 import { Menu, Portal } from "@chakra-ui/react";
 import { useNodeStore } from "./store/node-store";
 import { useActionsStore } from "./store/actions-store";
-import { layerShift } from "./utils";
+import { LAYERS_OPS } from "./constants";
 
 export const ContextMenu = () => {
     const {
@@ -44,26 +44,52 @@ export const ContextMenu = () => {
                             <Menu.ItemGroup>
                                 <Menu.Item
                                     value="moveToTop"
-                                    onClick={() => layerShift(ids, "moveToTop")}
+                                    onClick={() =>
+                                        useNodeStore
+                                            .getState()
+                                            .reorderLayers(
+                                                ids,
+                                                LAYERS_OPS.moveToTop,
+                                            )
+                                    }
                                 >
                                     Move to top
                                 </Menu.Item>
                                 <Menu.Item
                                     value="moveUp"
-                                    onClick={() => layerShift(ids, "moveUp")}
+                                    onClick={() =>
+                                        useNodeStore
+                                            .getState()
+                                            .reorderLayers(
+                                                ids,
+                                                LAYERS_OPS.moveUp,
+                                            )
+                                    }
                                 >
                                     Move up
                                 </Menu.Item>
                                 <Menu.Item
                                     value="moveDown"
-                                    onClick={() => layerShift(ids, "moveDown")}
+                                    onClick={() =>
+                                        useNodeStore
+                                            .getState()
+                                            .reorderLayers(
+                                                ids,
+                                                LAYERS_OPS.moveDown,
+                                            )
+                                    }
                                 >
                                     Move down
                                 </Menu.Item>
                                 <Menu.Item
                                     value="moveToBottom"
                                     onClick={() =>
-                                        layerShift(ids, "moveToBottom")
+                                        useNodeStore
+                                            .getState()
+                                            .reorderLayers(
+                                                ids,
+                                                LAYERS_OPS.moveToBottom,
+                                            )
                                     }
                                 >
                                     Move to bottom

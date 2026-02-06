@@ -1,10 +1,10 @@
 import { useHotkeys } from "react-hotkeys-hook";
 import { useActionsStore } from "./store/actions-store";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "./ProjectManager";
-import { ACTIONS, HOTKEYS } from "./constants";
+import { ACTIONS, HOTKEYS, LAYERS_OPS } from "./constants";
 import { setZoom, zoomByPercent } from "./canvas/utils/zoomService";
 import { useNodeStore } from "./store/node-store";
-import { calcBBox, layerShift, fit } from "./utils";
+import { calcBBox, fitNodesToFrame } from "./utils";
 import { EDIT_GRID_DIALOG_ID, editGridDialog } from "./editGridDialog";
 import { flyToNode } from "./flyToNode";
 import { useRef } from "react";
@@ -71,7 +71,7 @@ export function useEditorHotkeys(tools) {
         setZoom(tools.api.getStage(), 1),
     );
     useHotkeys(HOTKEYS.fitToFrame.hotkey, () =>
-        fit(tools.canvasRef, tools.nodesRef),
+        fitNodesToFrame(tools.canvasRef, tools.nodesRef),
     );
     useHotkeys(HOTKEYS.zoomToSelection.hotkey, () => {
         const stage = tools.api.getStage();
@@ -104,19 +104,27 @@ export function useEditorHotkeys(tools) {
     // Layer
     useHotkeys(HOTKEYS.moveToTop.hotkey, () => {
         const store = useNodeStore.getState();
-        layerShift(store.selectedIds, "moveToTop");
+        useNodeStore
+            .getState()
+            .reorderLayers(store.selectedIds, LAYERS_OPS.moveToTop);
     });
     useHotkeys(HOTKEYS.moveToBottom.hotkey, () => {
         const store = useNodeStore.getState();
-        layerShift(store.selectedIds, "moveToBottom");
+        useNodeStore
+            .getState()
+            .reorderLayers(store.selectedIds, LAYERS_OPS.moveToBottom);
     });
     useHotkeys(HOTKEYS.moveDown.hotkey, () => {
         const store = useNodeStore.getState();
-        layerShift(store.selectedIds, "moveDown");
+        useNodeStore
+            .getState()
+            .reorderLayers(store.selectedIds, LAYERS_OPS.moveDown);
     });
     useHotkeys(HOTKEYS.moveUp.hotkey, () => {
         const store = useNodeStore.getState();
-        layerShift(store.selectedIds, "moveUp");
+        useNodeStore
+            .getState()
+            .reorderLayers(store.selectedIds, LAYERS_OPS.moveUp);
     });
     // Minimize UI
     useHotkeys(HOTKEYS.minimizeUi.hotkey, () => {

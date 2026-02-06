@@ -5,11 +5,12 @@ import {
     LuMoveDown,
     LuMoveUp,
 } from "react-icons/lu";
-import { layerShift } from "../../utils";
+import { useNodeStore } from "../../store/node-store";
+import { LAYERS_OPS } from "../../constants";
 
 export const Layers = ({ ids }) => {
     const handleMove = (dir) => {
-        layerShift(ids, dir);
+        useNodeStore.getState().reorderLayers(ids, dir);
     };
 
     return (
@@ -17,28 +18,28 @@ export const Layers = ({ ids }) => {
             <IconButton
                 variant={"outline"}
                 size={"xs"}
-                onClick={() => handleMove("moveToTop")}
+                onClick={() => handleMove(LAYERS_OPS.moveToTop)}
             >
                 <LuArrowUpFromLine />
             </IconButton>
             <IconButton
                 variant={"outline"}
                 size={"xs"}
-                onClick={() => handleMove("moveUp")}
+                onClick={() => handleMove(LAYERS_OPS.moveUp)}
             >
                 <LuMoveUp />
             </IconButton>
             <IconButton
                 variant={"outline"}
                 size={"xs"}
-                onClick={() => handleMove("moveDown")}
+                onClick={() => handleMove(LAYERS_OPS.moveDown)}
             >
                 <LuMoveDown />
             </IconButton>
             <IconButton
                 variant={"outline"}
                 size={"xs"}
-                onClick={() => handleMove("moveToBottom")}
+                onClick={() => handleMove(LAYERS_OPS.moveToBottom)}
             >
                 <LuArrowDownFromLine />
             </IconButton>

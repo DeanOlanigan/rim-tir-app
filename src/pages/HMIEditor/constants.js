@@ -89,8 +89,8 @@ export const HOTKEYS = {
     duplicate: { hotkey: "ctrl+d", keyLabel: "Ctrl+D" },
     moveToTop: { hotkey: "bracketright", keyLabel: "]" },
     moveToBottom: { hotkey: "bracketleft", keyLabel: "[" },
-    moveDown: { hotkey: "ctrl+bracketright", keyLabel: "Ctrl+]" },
-    moveUp: { hotkey: "ctrl+bracketleft", keyLabel: "Ctrl+[" },
+    moveDown: { hotkey: "ctrl+bracketleft", keyLabel: "Ctrl+[" },
+    moveUp: { hotkey: "ctrl+bracketright", keyLabel: "Ctrl+]" },
     minimizeUi: { hotkey: "ctrl+shift+backslash", keyLabel: "Ctrl+Shift+\\" },
     pageUp: { hotkey: "pageup", keyLabel: "PageUp" },
     pageDown: { hotkey: "pagedown", keyLabel: "PageDown" },
@@ -98,4 +98,10 @@ export const HOTKEYS = {
     deselectAll: { hotkey: "esc", keyLabel: "Esc" },
     group: { hotkey: "ctrl+g", keyLabel: "Ctrl+G" },
     ungroup: { hotkey: "ctrl+shift+g", keyLabel: "Ctrl+Shift+G" },
+};
+export const LAYERS_OPS = {
+    moveUp: "moveUp",
+    moveDown: "moveDown",
+    moveToTop: "moveToTop",
+    moveToBottom: "moveToBottom",
 };

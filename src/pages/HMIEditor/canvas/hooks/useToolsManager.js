@@ -54,17 +54,6 @@ export function useToolsManager() {
         managerRef.current = createToolManager({ toolsMap, api });
     }
 
-    /* useEffect(() => {
-        const onKeyDown = (e) => managerRef.current.handlers.onKeyDown(e);
-        const onKeyUp = (e) => managerRef.current.handlers.onKeyUp(e);
-        window.addEventListener("keydown", onKeyDown, false);
-        window.addEventListener("keyup", onKeyUp, false);
-        return () => {
-            window.removeEventListener("keydown", onKeyDown, false);
-            window.removeEventListener("keyup", onKeyUp, false);
-        };
-    }, []); */
-
     return {
         manager: managerRef.current,
         canvasRef,

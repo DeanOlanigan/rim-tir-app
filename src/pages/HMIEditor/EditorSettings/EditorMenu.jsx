@@ -7,8 +7,8 @@ import { EDIT_GRID_DIALOG_ID, editGridDialog } from "../editGridDialog";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "../ProjectManager";
 import { useSaveProjectMutation } from "../mutations";
 import { HOTKEYS } from "../constants";
-import { fit, handleActionWithGuard } from "../utils";
 import { useNavigate } from "react-router-dom";
+import { handleActionWithGuard, fitNodesToFrame } from "../utils";
 
 export const EditorMenu = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -43,11 +43,17 @@ export const EditorMenu = ({ tools }) => {
                     value: "close",
                     type: "command",
                     command: () =>
-                        handleActionWithGuard(() => {
-                            navigate("/HMIEditor");
-                            useNodeStore.getState().close();
-                            fit(tools.canvasRef, tools.nodesRef);
-                        }),
+                        handleActionWithGuard(
+                            useNodeStore.getState().meta.isDirty,
+                            () => {
+                                navigate("/HMIEditor");
+                                useNodeStore.getState().close();
+                                fitNodesToFrame(
+                                    tools.canvasRef,
+                                    tools.nodesRef,
+                                );
+                            },
+                        ),
                 },
                 {
                     label: "Import to server...",

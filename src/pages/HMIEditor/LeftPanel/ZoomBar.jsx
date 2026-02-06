@@ -3,7 +3,7 @@ import { LuZoomIn, LuZoomOut } from "react-icons/lu";
 import { useActionsStore } from "../store/actions-store";
 import { setZoom, zoomByPercent } from "../canvas/utils/zoomService";
 import { DEFAULT_MAX_ZOOM, DEFAULT_MIN_ZOOM, HOTKEYS } from "../constants";
-import { fit } from "../utils";
+import { fitNodesToFrame } from "../utils";
 
 export const ZoomBar = ({ canvasRef, nodesRef }) => {
     const scale = useActionsStore((state) => state.scale);
@@ -55,7 +55,9 @@ export const ZoomBar = ({ canvasRef, nodesRef }) => {
                             ))}
                             <Menu.Item
                                 value="reset"
-                                onClick={() => fit(canvasRef, nodesRef)}
+                                onClick={() =>
+                                    fitNodesToFrame(canvasRef, nodesRef)
+                                }
                             >
                                 <Box flex={1}>Масштаб по содержимому</Box>
                                 <Menu.ItemCommand>

@@ -35,13 +35,14 @@ export const ProjectCard = ({ project, onClick, onDelete }) => {
                     <LuTrash2 />
                 </IconButton>
             </Float>
-            <Float placement={"top-start"}>
-                <Icon
-                    as={LuStar}
-                    color={"yellow.400"}
-                    fill={"yellow.400"}
-                    size={"lg"}
-                />
+            <Float placement={"top-start"} offset={4}>
+                <IconButton
+                    size={"2xs"}
+                    variant={"ghost"}
+                    colorPalette={"yellow"}
+                >
+                    <Icon as={LuStar} fill={"transparent"} />
+                </IconButton>
             </Float>
             <Box
                 bg="gray.100"

@@ -17,7 +17,7 @@ import { useActionsStore } from "../store/actions-store";
 import { useNavigate } from "react-router-dom";
 import { useDeleteProjectMutation } from "../mutations";
 import { useNodeStore } from "../store/node-store";
-import { fit, handleActionWithGuard } from "../utils";
+import { fitNodesToFrame, handleActionWithGuard } from "../utils";
 
 export const OPEN_PROJECT_DIALOG_ID = "OPEN_PROJECT_DIALOG_ID";
 
@@ -35,7 +35,7 @@ export const openProjectDialog = createOverlay((props) => {
     });
 
     const handleOpenServerProject = (filename) => {
-        handleActionWithGuard(() => {
+        handleActionWithGuard(useNodeStore.getState().meta.isDirty, () => {
             navigate(`?project=${filename}`);
 
             onOpenChange?.({ open: false });
@@ -47,7 +47,7 @@ export const openProjectDialog = createOverlay((props) => {
     };
 
     const handleOpenLocalProject = (projectData, filename) => {
-        handleActionWithGuard(() => {
+        handleActionWithGuard(useNodeStore.getState().meta.isDirty, () => {
             navigate("/HMIEditor", { replace: true });
 
             try {
@@ -60,7 +60,7 @@ export const openProjectDialog = createOverlay((props) => {
                     description: err?.message ?? "Неизвестная ошибка",
                 });
             }
-            fit(rest.tools.canvasRef, rest.tools.nodesRef);
+            fitNodesToFrame(rest.tools.canvasRef, rest.tools.nodesRef);
 
             onOpenChange?.({ open: false });
             toaster.create({
@@ -71,11 +71,11 @@ export const openProjectDialog = createOverlay((props) => {
     };
 
     const handleCreateNewProject = () => {
-        handleActionWithGuard(() => {
+        handleActionWithGuard(useNodeStore.getState().meta.isDirty, () => {
             navigate("/HMIEditor");
 
             useNodeStore.getState().close();
-            fit(rest.tools.canvasRef, rest.tools.nodesRef);
+            fitNodesToFrame(rest.tools.canvasRef, rest.tools.nodesRef);
 
             onOpenChange?.({ open: false });
             toaster.create({

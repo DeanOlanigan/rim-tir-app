@@ -14,7 +14,7 @@ import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "./ProjectManager";
 import { useLoaderData } from "react-router-dom";
 import { useEditorHotkeys } from "./useEditorHotkeys";
 import { useHMICanvasResize } from "./useHMICanvasResize";
-import { fit } from "./utils";
+import { fitNodesToFrame } from "./utils";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -42,7 +42,7 @@ const HMIEditorContent = () => {
                 store.rebuildVarIndex();
                 store.setSelectedIds([]);
                 setTimeout(() => {
-                    fit(tools.canvasRef, tools.nodesRef);
+                    fitNodesToFrame(tools.canvasRef, tools.nodesRef);
                 }, 0);
             }
         }
