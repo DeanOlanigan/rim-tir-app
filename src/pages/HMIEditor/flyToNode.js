@@ -11,7 +11,7 @@ import { getWorkAreaSize } from "./utils";
 export function flyToNode(stage, target, opts) {
     const {
         duration = 0.35,
-        padding = 0,
+        padding = 250,
         zoomToFit = false,
         minScale = 0.1,
         maxScale = 30,
@@ -52,15 +52,14 @@ export function flyToNode(stage, target, opts) {
     const currentScale = stage.scaleX(); // предполагаем uniform scale
 
     // Если нужен zoom-to-fit — оценим размеры ноды в world по текущему scale
-    const worldW = rect.width / currentScale;
-    const worldH = rect.height / currentScale;
+    const worldW = rect.width;
+    const worldH = rect.height;
 
     let nextScale = currentScale;
     if (zoomToFit) {
-        const s = Math.min(
-            viewportW / (worldW + padding * 2),
-            viewportH / (worldH + padding * 2),
-        );
+        const scaleW = (viewportW - padding * 2) / worldW;
+        const scaleH = (viewportH - padding * 2) / worldH;
+        const s = Math.min(scaleW, scaleH);
         nextScale = Math.max(minScale, Math.min(maxScale, s));
     }
 
