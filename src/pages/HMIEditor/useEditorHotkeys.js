@@ -189,7 +189,7 @@ export function useEditorHotkeys(tools) {
         () => {
             const store = useNodeStore.getState();
             if (store.selectedIds.length === 0) return;
-            store.ungroupMultipleNodes(store.selectedIds);
+            store.ungroupNodes(store.selectedIds);
         },
         { preventDefault: true },
     );

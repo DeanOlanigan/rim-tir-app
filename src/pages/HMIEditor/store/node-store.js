@@ -13,15 +13,15 @@ import { createUiSlice } from "./slices/ui-slice";
 export const useNodeStore = create(
     devtools(
         (set, get) => ({
-            ...createActionsSlice(set),
-            ...createBindingsSlice(set),
-            ...createGroupsSlice(set),
+            ...createActionsSlice(set, get),
+            ...createBindingsSlice(set, get),
+            ...createGroupsSlice(set, get),
             ...createIndexSlice(set, get),
-            ...createMetaSlice(set),
-            ...createNodesSlice(set),
-            ...createPagesSlice(set),
-            ...createProjectSlice(set),
-            ...createUiSlice(set),
+            ...createMetaSlice(set, get),
+            ...createNodesSlice(set, get),
+            ...createPagesSlice(set, get),
+            ...createProjectSlice(set, get),
+            ...createUiSlice(set, get),
         }),
         { name: "node-store" },
     ),

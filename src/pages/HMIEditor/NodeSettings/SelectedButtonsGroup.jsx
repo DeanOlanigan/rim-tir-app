@@ -59,7 +59,7 @@ const GroupSelected = ({ ids, api }) => {
 
 const Ungroup = ({ ids }) => {
     const handleUngroup = () => {
-        useNodeStore.getState().ungroupMultipleNodes(ids);
+        useNodeStore.getState().ungroupNodes(ids);
     };
 
     return (

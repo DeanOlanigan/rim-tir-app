@@ -3,7 +3,7 @@ import { groupNodesService } from "../services/groupService";
 import { ungroupNodesService } from "../services/ungroupService";
 import { withDirty } from "../utils/withDirty";
 
-export const createGroupsSlice = (set) => {
+export const createGroupsSlice = (set, get) => {
     const dirty = withDirty(set);
 
     return {
@@ -14,18 +14,14 @@ export const createGroupsSlice = (set) => {
                 "groups/groupNodes",
             ),
         ),
-        ungroupNodes: dirty("groups/ungroupNodes", (id) =>
-            set(
-                (state) => ungroupNodesService(state, [id]),
-                undefined,
-                "groups/ungroupNodes",
-            ),
+        ungroupNode: dirty("groups/ungroupNode", (id) =>
+            get().ungroupNodes([id]),
         ),
-        ungroupMultipleNodes: dirty("groups/ungroupMultipleNodes", (ids) =>
+        ungroupNodes: dirty("groups/ungroupNodes", (ids) =>
             set(
                 (state) => ungroupNodesService(state, ids),
                 undefined,
-                "groups/ungroupMultipleNodes",
+                "groups/ungroupNodes",
             ),
         ),
         duplicateNodes: dirty("groups/duplicateNodes", (ids) =>

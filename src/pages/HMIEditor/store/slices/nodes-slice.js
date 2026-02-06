@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import { withDirty } from "../utils/withDirty";
 import { reorderLayersService } from "../services/reorderLayersService";
 
-export const createNodesSlice = (set) => {
+export const createNodesSlice = (set, get) => {
     const dirty = withDirty(set);
 
     return {
@@ -47,34 +47,7 @@ export const createNodesSlice = (set) => {
             ),
         ),
 
-        removeNode: dirty("nodes/removeNode", (id) =>
-            set(
-                (state) => {
-                    const pageId = state.activePageId;
-                    const page = state.pages[pageId];
-                    if (!page) return state;
-
-                    const newNodes = { ...state.nodes };
-                    delete newNodes[id];
-
-                    const newRootIds = page.rootIds.filter((nid) => nid !== id);
-
-                    return {
-                        nodes: newNodes,
-                        pages: {
-                            ...state.pages,
-                            [pageId]: {
-                                ...page,
-                                rootIds: newRootIds,
-                            },
-                        },
-                        selectedIds: [],
-                    };
-                },
-                undefined,
-                "nodes/removeNode",
-            ),
-        ),
+        removeNode: dirty("nodes/removeNode", (id) => get().removeNodes([id])),
 
         removeNodes: dirty("nodes/removeNodes", (ids) =>
             set(
