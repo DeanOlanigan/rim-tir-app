@@ -1,6 +1,6 @@
 import { withDirty } from "../utils/withDirty";
 
-export const createActionsSlice = (set) => {
+export const createNodeEventsSlice = (set) => {
     const dirty = withDirty(set);
 
     return {

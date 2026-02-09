@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { createMetaSlice } from "./slices/meta-slice";
 import { createProjectSlice } from "./slices/project-slice";
-import { createActionsSlice } from "./slices/actions-slice";
+import { createNodeEventsSlice } from "./slices/node-events-slice";
 import { createBindingsSlice } from "./slices/bindings-slice";
 import { createGroupsSlice } from "./slices/groups-slice";
 import { createIndexSlice } from "./slices/index-slice";
@@ -13,7 +13,7 @@ import { createUiSlice } from "./slices/ui-slice";
 export const useNodeStore = create(
     devtools(
         (set, get) => ({
-            ...createActionsSlice(set, get),
+            ...createNodeEventsSlice(set, get),
             ...createBindingsSlice(set, get),
             ...createGroupsSlice(set, get),
             ...createIndexSlice(set, get),
