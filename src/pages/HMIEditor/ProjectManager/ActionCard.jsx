@@ -1,17 +1,24 @@
 import { Card, Icon, Text } from "@chakra-ui/react";
+import { useOpeningState } from "./useOpeningState";
 
 export const ActionCard = ({ icon, title, subTitle, onClick, ...props }) => {
+    const { isOpening: isDisabled } = useOpeningState();
+
+    const style = {
+        opacity: isDisabled ? 0.4 : 1,
+        cursor: isDisabled ? "not-allowed" : "pointer",
+        _hover: isDisabled
+            ? {}
+            : { bg: "colorPalette.500/10", borderColor: "colorPalette.500" },
+        onClick: isDisabled ? () => {} : onClick,
+    };
+
     return (
         <Card.Root
             variant="outline"
             borderStyle="dashed"
-            cursor="pointer"
             h={"full"}
-            _hover={{
-                bg: "colorPalette.500/10",
-                borderColor: "colorPalette.500",
-            }}
-            onClick={onClick}
+            {...style}
             {...props} // Важно для проброса рефов из FileUpload
         >
             <Card.Body

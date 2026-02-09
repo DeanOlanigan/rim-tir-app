@@ -34,6 +34,7 @@ const HMIEditorContent = () => {
             openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, { tools });
         }
         fitNodesToFrame(tools.canvasRef, tools.nodesRef);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

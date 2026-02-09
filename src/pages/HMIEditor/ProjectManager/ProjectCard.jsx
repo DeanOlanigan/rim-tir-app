@@ -10,49 +10,51 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import { LuMonitor, LuStar, LuTrash2 } from "react-icons/lu";
-import { useMutationState } from "@tanstack/react-query";
+import { LuMonitor, LuTrash2 } from "react-icons/lu";
+import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
+import { useOpeningState } from "./useOpeningState";
 
 export const ProjectCard = ({ project, onClick, onDelete }) => {
-    const openingMutation = useMutationState({
-        filters: {
-            mutationKey: ["openHmiProject"],
-            status: "pending",
-        },
-        select: (m) => m.state.variables,
-    });
-    const isOpening = openingMutation.includes(project.value);
+    const { isOpening, openingMutation } = useOpeningState();
+    const isCurrentOpenning = openingMutation.includes(project.value);
+    const isDisabled = isOpening && !isCurrentOpenning;
+
+    const style = {
+        opacity: isDisabled ? 0.4 : 1,
+        cursor: isDisabled ? "not-allowed" : "pointer",
+        _hover: isDisabled
+            ? {}
+            : { borderColor: "colorPalette.500", shadow: "sm" },
+        onClick: isDisabled ? () => {} : () => onClick(project.value),
+        className: isDisabled ? "" : "group",
+    };
 
     return (
         <Card.Root
             variant="outline"
-            cursor="pointer"
-            _hover={{ borderColor: "colorPalette.500", shadow: "sm" }}
-            onClick={() => onClick(project.value)}
+            {...style}
             position={"relative"}
             overflow="hidden"
-            className="group"
         >
             <Float offset={4}>
                 <IconButton
                     size={"2xs"}
                     display={{ base: "none", _groupHover: "flex" }}
                     variant={"subtle"}
-                    onClick={(e) => {
+                    onClick={async (e) => {
                         e.stopPropagation();
+                        const isConfirmed = await confirmDialog.open(
+                            CONFIRM_DIALOG_ID,
+                            {
+                                title: "Confirmation",
+                                message: "Are you sure?",
+                            },
+                        );
+                        if (!isConfirmed) return;
                         onDelete(project.value);
                     }}
                 >
                     <LuTrash2 />
-                </IconButton>
-            </Float>
-            <Float placement={"top-start"} offset={4}>
-                <IconButton
-                    size={"2xs"}
-                    variant={"ghost"}
-                    colorPalette={"yellow"}
-                >
-                    <Icon as={LuStar} fill={"transparent"} />
                 </IconButton>
             </Float>
             <Box
@@ -62,7 +64,7 @@ export const ProjectCard = ({ project, onClick, onDelete }) => {
                 alignItems="center"
                 justifyContent="center"
             >
-                {isOpening ? (
+                {isCurrentOpenning ? (
                     <Spinner color={"colorPalette.500"} />
                 ) : (
                     <Icon as={LuMonitor} boxSize="8" color="gray.400" />

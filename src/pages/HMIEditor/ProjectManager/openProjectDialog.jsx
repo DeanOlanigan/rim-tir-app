@@ -1,105 +1,12 @@
-import { getProjects } from "@/api/hmi";
-import {
-    CloseButton,
-    createOverlay,
-    Dialog,
-    Portal,
-    SimpleGrid,
-} from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
-import { LuCloudUpload, LuPlus } from "react-icons/lu";
-import { toaster } from "@/components/ui/toaster";
-import { applyProjectData } from "../ProjectOps/applyProjectData";
-import { OpenProject } from "../ProjectOps";
-import { ProjectCard } from "./ProjectCard";
-import { ActionCard } from "./ActionCard";
-import { useActionsStore } from "../store/actions-store";
-import { useNavigate } from "react-router-dom";
-import { useDeleteProjectMutation, useOpenProjectMutation } from "../mutations";
-import { useNodeStore } from "../store/node-store";
-import { fitNodesToFrame, handleActionWithGuard } from "../utils";
-import { QK } from "@/api";
+import { CloseButton, createOverlay, Dialog, Portal } from "@chakra-ui/react";
+import { ProjectCardList } from "./ProjectCardList";
+import { useOpeningState } from "./useOpeningState";
 
 export const OPEN_PROJECT_DIALOG_ID = "OPEN_PROJECT_DIALOG_ID";
 
 export const openProjectDialog = createOverlay((props) => {
     const { onOpenChange, ...rest } = props;
-
-    const navigate = useNavigate();
-    const deleteMutation = useDeleteProjectMutation();
-    const openProjectMutation = useOpenProjectMutation();
-
-    const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
-
-    const { data, isLoading, isError, error } = useQuery({
-        queryKey: QK.hmiProjects,
-        queryFn: getProjects,
-    });
-
-    const handleOpenServerProject = (filename) => {
-        handleActionWithGuard(
-            useNodeStore.getState().meta.isDirty,
-            async () => {
-                openProjectMutation.mutate(filename, {
-                    onSuccess: () => {
-                        navigate(`?project=${filename}`, { replace: true });
-                        fitNodesToFrame(
-                            rest.tools.canvasRef,
-                            rest.tools.nodesRef,
-                        );
-                        onOpenChange?.({ open: false });
-                        toaster.create({
-                            type: "success",
-                            title: "Проект загружен из сервера",
-                        });
-                    },
-                });
-            },
-        );
-    };
-
-    const handleOpenLocalProject = (projectData, filename) => {
-        handleActionWithGuard(useNodeStore.getState().meta.isDirty, () => {
-            navigate("/HMIEditor", { replace: true });
-
-            try {
-                applyProjectData(projectData, "local", filename);
-            } catch (err) {
-                console.error("Error applying project data:", err);
-                toaster.create({
-                    type: "error",
-                    title: "Произошла ошибка",
-                    description: err?.message ?? "Неизвестная ошибка",
-                });
-            }
-            fitNodesToFrame(rest.tools.canvasRef, rest.tools.nodesRef);
-
-            onOpenChange?.({ open: false });
-            toaster.create({
-                type: "success",
-                title: "Проект загружен из локального файла",
-            });
-        });
-    };
-
-    const handleCreateNewProject = () => {
-        handleActionWithGuard(useNodeStore.getState().meta.isDirty, () => {
-            navigate("/HMIEditor", { replace: true });
-
-            useNodeStore.getState().close();
-            fitNodesToFrame(rest.tools.canvasRef, rest.tools.nodesRef);
-
-            onOpenChange?.({ open: false });
-            toaster.create({
-                type: "success",
-                title: "Создан новый проект",
-            });
-        });
-    };
-
-    const handleDeleteServerProject = async (filename) => {
-        deleteMutation.mutate(filename);
-    };
+    const { openingMutation } = useOpeningState();
 
     return (
         <Dialog.Root
@@ -109,57 +16,31 @@ export const openProjectDialog = createOverlay((props) => {
             placement={"center"}
             lazyMount
             unmountOnExit
+            closeOnInteractOutside={openingMutation.length === 0}
+            closeOnEscape={openingMutation.length === 0}
         >
             <Portal>
                 <Dialog.Backdrop />
                 <Dialog.Positioner>
                     <Dialog.Content h={"50vh"}>
-                        <Dialog.CloseTrigger asChild>
-                            <CloseButton size={"xs"} />
-                        </Dialog.CloseTrigger>
+                        {openingMutation.length === 0 && (
+                            <Dialog.CloseTrigger asChild>
+                                <CloseButton size={"xs"} />
+                            </Dialog.CloseTrigger>
+                        )}
                         <Dialog.Header>
                             <Dialog.Title>Менеджер проектов</Dialog.Title>
-                            <Dialog.Description>
-                                {data?.data
-                                    ? `${data.data.length} проектов на сервере`
-                                    : "Загрузка проектов..."}
-                            </Dialog.Description>
                         </Dialog.Header>
-                        <Dialog.Body overflowY={"auto"}>
-                            <SimpleGrid columns={[1, 2, 3, 4]} gap={4}>
-                                {isLoading && <div>Загрузка проектов...</div>}
-                                {isError && (
-                                    <div>
-                                        Ошибка загрузки проектов:{" "}
-                                        {error.message}
-                                    </div>
-                                )}
-                                {!isLoading &&
-                                    data?.data?.map((project) => (
-                                        <ProjectCard
-                                            key={project.value}
-                                            project={project}
-                                            onClick={handleOpenServerProject}
-                                            onDelete={handleDeleteServerProject}
-                                        />
-                                    ))}
-                                <OpenProject
-                                    onProjectLoad={handleOpenLocalProject}
-                                >
-                                    <ActionCard
-                                        icon={LuCloudUpload}
-                                        title={"Открыть с ПК"}
-                                        subTitle={"Выберите .json файл"}
-                                    />
-                                </OpenProject>
-                                {!viewOnlyMode && (
-                                    <ActionCard
-                                        icon={LuPlus}
-                                        title={"Новый проект"}
-                                        onClick={handleCreateNewProject}
-                                    />
-                                )}
-                            </SimpleGrid>
+                        <Dialog.Body
+                            overflowY={"auto"}
+                            display={"flex"}
+                            flexDirection={"column"}
+                            gap={2}
+                        >
+                            <ProjectCardList
+                                tools={rest.tools}
+                                onOpenChange={onOpenChange}
+                            />
                         </Dialog.Body>
                         <Dialog.Footer></Dialog.Footer>
                     </Dialog.Content>
