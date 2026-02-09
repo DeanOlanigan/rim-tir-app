@@ -12,12 +12,7 @@ import { useVariablesStore } from "@/store/variables-store";
 import { configuratorConfig } from "@/store/configurator-config";
 import { validateAll } from "@/utils/validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { isAxiosError } from "axios";
-
-function messageFromError(err) {
-    if (isAxiosError(err)) return err.response?.data?.message ?? err.message;
-    return err.message ?? "Произошла ошибка";
-}
+import { messageFromError } from "@/utils/utils";
 
 export function useStartTirMutation() {
     return useMutation({

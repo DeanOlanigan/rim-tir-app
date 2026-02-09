@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { configuratorConfig } from "@/store/configurator-config";
 import { CONN_STATUS, NODE_TYPES } from "@/config/constants";
+import { isAxiosError } from "axios";
 
 export const getStartDate = () => {
     const startDate = new Date();
@@ -163,4 +164,9 @@ export function arraysEqual(a, b) {
         if (a[i] !== b[i]) return false;
     }
     return true;
+}
+
+export function messageFromError(err) {
+    if (isAxiosError(err)) return err.response?.data?.message ?? err.message;
+    return err.message ?? "Произошла ошибка";
 }
