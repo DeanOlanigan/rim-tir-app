@@ -8,7 +8,6 @@ import {
 import { AuthGate } from "./guards";
 import {
     configurationLoader,
-    hmiEditorLoader,
     monitoringLoader,
     settingsLoader,
 } from "./loaders";
@@ -53,7 +52,6 @@ export const routes = [
                             },
                             {
                                 path: "HMIEditor",
-                                loader: hmiEditorLoader,
                                 element: <HMIEditor />,
                             },
                         ],

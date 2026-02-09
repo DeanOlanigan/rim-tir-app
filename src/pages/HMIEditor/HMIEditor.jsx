@@ -8,9 +8,12 @@ import { editGridDialog } from "./editGridDialog";
 import { LeftPanel } from "./LeftPanel";
 import { RightPanel } from "./RightPanel/RightPanel";
 import { confirmDialog } from "@/components/confirmDialog";
-import { openProjectDialog } from "./ProjectManager";
+import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "./ProjectManager";
 import { useEditorHotkeys } from "./useEditorHotkeys";
 import { useHMICanvasResize } from "./useHMICanvasResize";
+import { useEffect } from "react";
+import { useNodeStore } from "./store/node-store";
+import { fitNodesToFrame } from "./utils";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -24,35 +27,14 @@ const HMIEditorContent = () => {
     useMqttValues("monitoring/node/#", tools);
 
     useEditorHotkeys(tools);
-    //const project = useLoaderData();
 
-    /* useEffect(() => {
+    useEffect(() => {
         const store = useNodeStore.getState();
-        if (project?.data) {
-            if (store.meta.filename !== project.data.projectName + ".json") {
-                store.open(
-                    project.data,
-                    "server",
-                    project.data.projectName + ".json",
-                );
-                store.rebuildVarIndex();
-                store.setSelectedIds([]);
-                setTimeout(() => {
-                    fitNodesToFrame(tools.canvasRef, tools.nodesRef);
-                }, 0);
-            }
+        if (store.meta.mode === "new" && !store.meta.isDirty) {
+            openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, { tools });
         }
-    }, [project, tools.nodesRef, tools.canvasRef]); */
-
-    /* useEffect(() => {
-        const store = useNodeStore.getState();
-
-        if (!project && store.meta.mode === "new" && !store.meta.isDirty) {
-            setTimeout(() => {
-                openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, { tools });
-            }, 0);
-        }
-    }, []); */
+        fitNodesToFrame(tools.canvasRef, tools.nodesRef);
+    }, []);
 
     return (
         <Flex
