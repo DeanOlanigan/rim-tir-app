@@ -12,7 +12,6 @@ export const useActionsStore = create(
             showGrid: true,
             snapToGrid: false,
             scale: 1,
-            backgroundColor: "#254e25ff",
             gridColor: "#9b9b9bff",
             debugMode: true,
             showNodesTree: true,
@@ -36,12 +35,6 @@ export const useActionsStore = create(
             setSnapToGrid: (snapToGrid) =>
                 set({ snapToGrid }, undefined, "setSnap"),
             setScale: (scale) => set({ scale }, undefined, "setScale"),
-            setBackgroundColor: (color) =>
-                set(
-                    { backgroundColor: color },
-                    undefined,
-                    "setBackgroundColor",
-                ),
             setGridColor: (color) =>
                 set({ gridColor: color }, undefined, "setGridColor"),
             setDebugMode: (mode) =>
