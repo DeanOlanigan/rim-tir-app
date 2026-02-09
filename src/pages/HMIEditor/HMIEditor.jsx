@@ -3,18 +3,14 @@ import { ContextMenu } from "./ContextMenu";
 import { ToolBar } from "./ToolBar";
 import { HMICanvas } from "./canvas/HMICanvas";
 import { useToolsManager } from "./canvas/hooks/useToolsManager";
-import { useNodeStore } from "./store/node-store";
 import { useMqttValues } from "./useMqttValues";
-import { useEffect } from "react";
 import { editGridDialog } from "./editGridDialog";
 import { LeftPanel } from "./LeftPanel";
 import { RightPanel } from "./RightPanel/RightPanel";
 import { confirmDialog } from "@/components/confirmDialog";
-import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "./ProjectManager";
-import { useLoaderData } from "react-router-dom";
+import { openProjectDialog } from "./ProjectManager";
 import { useEditorHotkeys } from "./useEditorHotkeys";
 import { useHMICanvasResize } from "./useHMICanvasResize";
-import { fitNodesToFrame } from "./utils";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -28,9 +24,9 @@ const HMIEditorContent = () => {
     useMqttValues("monitoring/node/#", tools);
 
     useEditorHotkeys(tools);
-    const project = useLoaderData();
+    //const project = useLoaderData();
 
-    useEffect(() => {
+    /* useEffect(() => {
         const store = useNodeStore.getState();
         if (project?.data) {
             if (store.meta.filename !== project.data.projectName + ".json") {
@@ -46,9 +42,9 @@ const HMIEditorContent = () => {
                 }, 0);
             }
         }
-    }, [project, tools.nodesRef, tools.canvasRef]);
+    }, [project, tools.nodesRef, tools.canvasRef]); */
 
-    useEffect(() => {
+    /* useEffect(() => {
         const store = useNodeStore.getState();
 
         if (!project && store.meta.mode === "new" && !store.meta.isDirty) {
@@ -56,7 +52,7 @@ const HMIEditorContent = () => {
                 openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, { tools });
             }, 0);
         }
-    }, []);
+    }, []); */
 
     return (
         <Flex

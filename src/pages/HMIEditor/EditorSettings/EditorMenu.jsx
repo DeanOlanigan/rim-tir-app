@@ -7,8 +7,6 @@ import { EDIT_GRID_DIALOG_ID, editGridDialog } from "../editGridDialog";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "../ProjectManager";
 import { useSaveProjectMutation } from "../mutations";
 import { HOTKEYS } from "../constants";
-import { useNavigate } from "react-router-dom";
-import { handleActionWithGuard, fitNodesToFrame } from "../utils";
 
 export const EditorMenu = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -19,7 +17,6 @@ export const EditorMenu = ({ tools }) => {
     const showStartCoordMarker = useActionsStore(
         (state) => state.showStartCoordMarker,
     );
-    const navigate = useNavigate();
     const saveMutation = useSaveProjectMutation();
 
     const menuConfig = [
@@ -37,23 +34,6 @@ export const EditorMenu = ({ tools }) => {
                             tools,
                         }),
                     hotkey: HOTKEYS.openProject.keyLabel,
-                },
-                {
-                    label: "Close...",
-                    value: "close",
-                    type: "command",
-                    command: () =>
-                        handleActionWithGuard(
-                            useNodeStore.getState().meta.isDirty,
-                            () => {
-                                navigate("/HMIEditor");
-                                useNodeStore.getState().close();
-                                fitNodesToFrame(
-                                    tools.canvasRef,
-                                    tools.nodesRef,
-                                );
-                            },
-                        ),
                 },
                 {
                     label: "Import to server...",

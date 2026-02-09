@@ -15,9 +15,10 @@ import { ProjectCard } from "./ProjectCard";
 import { ActionCard } from "./ActionCard";
 import { useActionsStore } from "../store/actions-store";
 import { useNavigate } from "react-router-dom";
-import { useDeleteProjectMutation } from "../mutations";
+import { useDeleteProjectMutation, useOpenProjectMutation } from "../mutations";
 import { useNodeStore } from "../store/node-store";
 import { fitNodesToFrame, handleActionWithGuard } from "../utils";
+import { QK } from "@/api";
 
 export const OPEN_PROJECT_DIALOG_ID = "OPEN_PROJECT_DIALOG_ID";
 
@@ -26,24 +27,35 @@ export const openProjectDialog = createOverlay((props) => {
 
     const navigate = useNavigate();
     const deleteMutation = useDeleteProjectMutation();
+    const openProjectMutation = useOpenProjectMutation();
 
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
 
     const { data, isLoading, isError, error } = useQuery({
-        queryKey: ["hmiProjects"],
+        queryKey: QK.hmiProjects,
         queryFn: getProjects,
     });
 
     const handleOpenServerProject = (filename) => {
-        handleActionWithGuard(useNodeStore.getState().meta.isDirty, () => {
-            navigate(`?project=${filename}`);
-
-            onOpenChange?.({ open: false });
-            toaster.create({
-                type: "success",
-                title: "Проект загружен",
-            });
-        });
+        handleActionWithGuard(
+            useNodeStore.getState().meta.isDirty,
+            async () => {
+                openProjectMutation.mutate(filename, {
+                    onSuccess: () => {
+                        navigate(`?project=${filename}`, { replace: true });
+                        fitNodesToFrame(
+                            rest.tools.canvasRef,
+                            rest.tools.nodesRef,
+                        );
+                        onOpenChange?.({ open: false });
+                        toaster.create({
+                            type: "success",
+                            title: "Проект загружен из сервера",
+                        });
+                    },
+                });
+            },
+        );
     };
 
     const handleOpenLocalProject = (projectData, filename) => {
@@ -72,7 +84,7 @@ export const openProjectDialog = createOverlay((props) => {
 
     const handleCreateNewProject = () => {
         handleActionWithGuard(useNodeStore.getState().meta.isDirty, () => {
-            navigate("/HMIEditor");
+            navigate("/HMIEditor", { replace: true });
 
             useNodeStore.getState().close();
             fitNodesToFrame(rest.tools.canvasRef, rest.tools.nodesRef);

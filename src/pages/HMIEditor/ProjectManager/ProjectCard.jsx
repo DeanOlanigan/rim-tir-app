@@ -6,12 +6,23 @@ import {
     HStack,
     Icon,
     IconButton,
+    Spinner,
     Text,
     VStack,
 } from "@chakra-ui/react";
 import { LuMonitor, LuStar, LuTrash2 } from "react-icons/lu";
+import { useMutationState } from "@tanstack/react-query";
 
 export const ProjectCard = ({ project, onClick, onDelete }) => {
+    const openingMutation = useMutationState({
+        filters: {
+            mutationKey: ["openHmiProject"],
+            status: "pending",
+        },
+        select: (m) => m.state.variables,
+    });
+    const isOpening = openingMutation.includes(project.value);
+
     return (
         <Card.Root
             variant="outline"
@@ -51,7 +62,11 @@ export const ProjectCard = ({ project, onClick, onDelete }) => {
                 alignItems="center"
                 justifyContent="center"
             >
-                <Icon as={LuMonitor} boxSize="8" color="gray.400" />
+                {isOpening ? (
+                    <Spinner color={"colorPalette.500"} />
+                ) : (
+                    <Icon as={LuMonitor} boxSize="8" color="gray.400" />
+                )}
             </Box>
             <Card.Body p="3">
                 <VStack align="start" gap="1">
