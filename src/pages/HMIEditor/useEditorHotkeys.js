@@ -193,4 +193,18 @@ export function useEditorHotkeys(tools) {
         },
         { preventDefault: true },
     );
+    useHotkeys(HOTKEYS.copy.hotkey, () => {
+        useNodeStore.getState().copyToClipboard();
+    });
+    useHotkeys(HOTKEYS.cut.hotkey, () => {
+        useNodeStore.getState().cutToClipboard();
+    });
+    useHotkeys(HOTKEYS.paste.hotkey, () => {
+        const store = useNodeStore.getState();
+        const snapToGrid = useActionsStore.getState().snapToGrid;
+        const gridSize = useActionsStore.getState().gridSize;
+        const grid = snapToGrid ? gridSize : 1;
+        const pos = tools.api.getStage().getRelativePointerPosition();
+        store.pasteFromClipboard(pos.x, pos.y, grid);
+    });
 }

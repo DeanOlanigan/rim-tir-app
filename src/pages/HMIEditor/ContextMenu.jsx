@@ -4,7 +4,7 @@ import { useNodeStore } from "./store/node-store";
 import { useActionsStore } from "./store/actions-store";
 import { HOTKEYS, LAYERS_OPS, LOCALE } from "./constants";
 
-export const ContextMenu = () => {
+export const ContextMenu = ({ tools }) => {
     const {
         apiPath: ids,
         x,
@@ -43,6 +43,34 @@ export const ContextMenu = () => {
                         {ids && ids.length > 0 ? (
                             <Menu.ItemGroup>
                                 <Menu.Item
+                                    value="cut"
+                                    onClick={() =>
+                                        useNodeStore.getState().cutToClipboard()
+                                    }
+                                    ps={8}
+                                >
+                                    {LOCALE.cut}
+                                    <Menu.ItemCommand size={"xs"}>
+                                        {HOTKEYS.cut.keyLabel}
+                                    </Menu.ItemCommand>
+                                </Menu.Item>
+                                <Menu.Item
+                                    value="copy"
+                                    onClick={() =>
+                                        useNodeStore
+                                            .getState()
+                                            .copyToClipboard()
+                                    }
+                                    ps={8}
+                                >
+                                    {LOCALE.copy}
+                                    <Menu.ItemCommand size={"xs"}>
+                                        {HOTKEYS.copy.keyLabel}
+                                    </Menu.ItemCommand>
+                                </Menu.Item>
+                                <PasteMenuItem tools={tools} />
+                                <Menu.Separator />
+                                <Menu.Item
                                     value="moveToTop"
                                     onClick={() =>
                                         useNodeStore
@@ -52,6 +80,7 @@ export const ContextMenu = () => {
                                                 LAYERS_OPS.moveToTop,
                                             )
                                     }
+                                    ps={8}
                                 >
                                     {LOCALE.moveToTop}
                                     <Menu.ItemCommand size={"xs"}>
@@ -68,6 +97,7 @@ export const ContextMenu = () => {
                                                 LAYERS_OPS.moveUp,
                                             )
                                     }
+                                    ps={8}
                                 >
                                     {LOCALE.moveUp}
                                     <Menu.ItemCommand size={"xs"}>
@@ -84,6 +114,7 @@ export const ContextMenu = () => {
                                                 LAYERS_OPS.moveDown,
                                             )
                                     }
+                                    ps={8}
                                 >
                                     {LOCALE.moveDown}
                                     <Menu.ItemCommand size={"xs"}>
@@ -100,12 +131,14 @@ export const ContextMenu = () => {
                                                 LAYERS_OPS.moveToBottom,
                                             )
                                     }
+                                    ps={8}
                                 >
                                     {LOCALE.moveToBottom}
                                     <Menu.ItemCommand size={"xs"}>
                                         {HOTKEYS.moveToBottom.keyLabel}
                                     </Menu.ItemCommand>
                                 </Menu.Item>
+                                <Menu.Separator />
                                 <Menu.Item
                                     value="delete"
                                     color="fg.error"
@@ -118,6 +151,7 @@ export const ContextMenu = () => {
                                             .getState()
                                             .removeNodes(ids);
                                     }}
+                                    ps={8}
                                 >
                                     {LOCALE.delete}
                                     <Menu.ItemCommand size={"xs"}>
@@ -127,6 +161,8 @@ export const ContextMenu = () => {
                             </Menu.ItemGroup>
                         ) : (
                             <Menu.ItemGroup>
+                                <PasteMenuItem tools={tools} />
+                                <Menu.Separator />
                                 <Menu.CheckboxItem
                                     value="showGrid"
                                     checked={showGrid}
@@ -160,5 +196,26 @@ export const ContextMenu = () => {
                 </Menu.Positioner>
             </Portal>
         </Menu.Root>
+    );
+};
+
+const PasteMenuItem = ({ tools }) => {
+    return (
+        <Menu.Item
+            value="paste"
+            onClick={() => {
+                const snapToGrid = useActionsStore.getState().snapToGrid;
+                const gridSize = useActionsStore.getState().gridSize;
+                const grid = snapToGrid ? gridSize : 1;
+                const pos = tools.api.getStage().getRelativePointerPosition();
+                useNodeStore.getState().pasteFromClipboard(pos.x, pos.y, grid);
+            }}
+            ps={8}
+        >
+            {LOCALE.paste}
+            <Menu.ItemCommand size={"xs"}>
+                {HOTKEYS.paste.keyLabel}
+            </Menu.ItemCommand>
+        </Menu.Item>
     );
 };

@@ -170,3 +170,7 @@ export function messageFromError(err) {
     if (isAxiosError(err)) return err.response?.data?.message ?? err.message;
     return err.message ?? "Произошла ошибка";
 }
+
+export async function writeTextToClipboard(text) {
+    await navigator.clipboard.writeText(text);
+}

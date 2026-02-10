@@ -1,11 +1,5 @@
 import { Group, IconButton } from "@chakra-ui/react";
-import {
-    LuClipboardCopy,
-    LuGroup,
-    LuLayers2,
-    LuTrash2,
-    LuX,
-} from "react-icons/lu";
+import { LuGroup, LuLayers2, LuTrash2, LuX } from "react-icons/lu";
 import { calcBBox } from "../utils";
 import { useNodeStore } from "../store/node-store";
 import { SHAPES } from "../constants";
@@ -26,9 +20,6 @@ export const SelectedButtonsGroup = ({ ids, api, types }) => {
         <Group>
             {showUngroup && <Ungroup ids={ids} />}
             {isMultiple && <GroupSelected ids={ids} api={api} />}
-            <IconButton size={"xs"} disabled>
-                <LuClipboardCopy />
-            </IconButton>
             <IconButton size={"xs"} onClick={handleDuplicate}>
                 <LuLayers2 />
             </IconButton>

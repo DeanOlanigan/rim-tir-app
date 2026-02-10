@@ -48,7 +48,7 @@ const HMIEditorContent = () => {
             <openProjectDialog.Viewport />
             <editGridDialog.Viewport />
             <confirmDialog.Viewport />
-            <ContextMenu />
+            <ContextMenu tools={tools} />
             <HMICanvas {...tools} />
             <Flex
                 position={"absolute"}
