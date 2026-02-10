@@ -3,6 +3,7 @@ import { useNodeStore } from "../../store/node-store";
 import { Button, Menu, Portal } from "@chakra-ui/react";
 import { LuPlus } from "react-icons/lu";
 import { ACTION_TYPES } from "./constants";
+import { LOCALE } from "../../constants";
 
 export const AddActionBtn = ({ eventType, selectedNode }) => {
     const handleAddAction = (actionType) => {
@@ -30,7 +31,7 @@ export const AddActionBtn = ({ eventType, selectedNode }) => {
                     color="fg.muted"
                     w="100%"
                 >
-                    <LuPlus size={16} /> Add action
+                    <LuPlus size={16} /> {LOCALE.addAction}
                 </Button>
             </Menu.Trigger>
             <Portal>

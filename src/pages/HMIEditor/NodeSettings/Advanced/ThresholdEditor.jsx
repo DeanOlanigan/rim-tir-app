@@ -6,12 +6,13 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { RuleList } from "./RuleList";
+import { LOCALE } from "../../constants";
 
 const thresholdRange = createListCollection({
     items: [
-        { label: "lt", value: "lt" },
-        { label: "gt", value: "gt" },
-        { label: "btw", value: "between" },
+        { label: LOCALE.lessThan, value: "lt" },
+        { label: LOCALE.greaterThan, value: "gt" },
+        { label: LOCALE.between, value: "between" },
     ],
 });
 
@@ -29,7 +30,7 @@ const ThresholdRangeSelector = ({ value, onChange }) => {
             <Select.HiddenSelect />
             <Select.Control>
                 <Select.Trigger>
-                    <Select.ValueText placeholder="Select type" />
+                    <Select.ValueText />
                 </Select.Trigger>
                 <Select.IndicatorGroup>
                     <Select.Indicator />
@@ -59,8 +60,8 @@ export const ThresholdEditor = (props) => {
     return (
         <RuleList
             {...props}
-            title={"Threshold Editor"}
-            emptyText={"No rules defined. Value will fallback to static"}
+            title={LOCALE.thresholdEditor}
+            emptyText={LOCALE.noRulesSet}
             createRule={() => ({ type: "lt", from: 0, to: 0 })}
             renderInput={(rule, i, onChange) => (
                 <>

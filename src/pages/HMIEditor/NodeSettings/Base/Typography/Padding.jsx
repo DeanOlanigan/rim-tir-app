@@ -2,6 +2,7 @@ import { Field, InputGroup, NumberInput } from "@chakra-ui/react";
 import { TbLineHeight } from "react-icons/tb";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const PaddingBlock = ({ ids }) => {
     const paddings = useNodesByIds(ids, "padding");
@@ -18,7 +19,7 @@ export const PaddingBlock = ({ ids }) => {
 
     return (
         <Field.Root>
-            <Field.Label>Padding</Field.Label>
+            <Field.Label>{LOCALE.padding}</Field.Label>
             <NumberInput.Root
                 size={"xs"}
                 min={0}

@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { useNodeStore } from "./store/node-store";
 import { useEffect, useState } from "react";
+import { LOCALE } from "./constants";
 
 export const ProjectSettings = () => {
     return (
@@ -33,14 +34,14 @@ export const ProjectSettings = () => {
                 }
             >
                 <VStack align={"start"} w={"100%"}>
-                    <Heading size={"md"}>Page background color</Heading>
+                    <Heading size={"md"}>{LOCALE.pageBackground}</Heading>
                     <ColorComp param={"backgroundColor"} />
                 </VStack>
                 <VStack align={"start"} w={"100%"}>
-                    <Heading size={"md"}>Variables</Heading>
+                    <Heading size={"md"}>{LOCALE.variables}</Heading>
                 </VStack>
                 <VStack align={"start"} w={"100%"}>
-                    <Heading size={"md"}>Styles</Heading>
+                    <Heading size={"md"}>{LOCALE.styles}</Heading>
                 </VStack>
             </VStack>
         </Flex>
@@ -52,7 +53,7 @@ const Header = () => {
     return (
         <HStack w={"100%"} justify={"space-between"} h={"32px"}>
             <Heading size={"md"} ms={2}>
-                {projectName} settings
+                {LOCALE.projectSettings}: {projectName}
             </Heading>
         </HStack>
     );

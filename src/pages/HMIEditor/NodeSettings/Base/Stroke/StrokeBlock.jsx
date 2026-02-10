@@ -5,9 +5,10 @@ import { StrokeWeightBlock } from "./StrokeWeightBlock";
 import { LineJoinBlock } from "./LineJoinBlock";
 import { LineCapBlock } from "./LineCapBlock";
 import { CloseBlock } from "./CloseBlock";
-import { BezierBlock } from "./BezierBlock";
+//import { BezierBlock } from "./BezierBlock";
 import { TensionBlock } from "./TensionBlock";
 import { isLineLikeType } from "@/pages/HMIEditor/utils";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const StrokeBlock = ({ ids, types }) => {
     const isMultiple = ids.length > 1;
@@ -16,7 +17,7 @@ export const StrokeBlock = ({ ids, types }) => {
 
     return (
         <VStack align={"start"} w={"100%"}>
-            <Heading size={"md"}>Stroke</Heading>
+            <Heading size={"md"}>{LOCALE.stroke}</Heading>
             <StrokeColorSolidBlock ids={ids} />
             <StrokeWeightBlock ids={ids} />
             <HStack w={"100%"} justify={"space-between"}>
@@ -29,7 +30,7 @@ export const StrokeBlock = ({ ids, types }) => {
                     <TensionBlock ids={ids} />
                     <VStack>
                         <CloseBlock ids={ids} />
-                        <BezierBlock ids={ids} />
+                        {/* <BezierBlock ids={ids} /> */}
                     </VStack>
                 </HStack>
             )}

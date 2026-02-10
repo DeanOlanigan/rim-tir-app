@@ -10,11 +10,12 @@ import { PaddingBlock } from "./Padding";
 import { TextDecorationBlock } from "./TextDecoration";
 import { TextStyleBlock } from "./TextStyle";
 import { TextInputBlock } from "./TextInput";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const TypographyBlock = ({ ids }) => {
     return (
         <VStack align={"start"} w={"100%"}>
-            <Heading size={"md"}>Typography</Heading>
+            <Heading size={"md"}>{LOCALE.typography}</Heading>
             <FontSizeBlock ids={ids} />
             <TextInputBlock ids={ids} />
             <HStack w={"100%"} justify={"space-between"}>

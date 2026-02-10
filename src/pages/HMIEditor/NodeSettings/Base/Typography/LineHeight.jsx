@@ -2,6 +2,7 @@ import { Field, InputGroup, NumberInput } from "@chakra-ui/react";
 import { TbLineHeight } from "react-icons/tb";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const LineHeightBlock = ({ ids }) => {
     const lineHeights = useNodesByIds(ids, "lineHeight");
@@ -18,7 +19,7 @@ export const LineHeightBlock = ({ ids }) => {
 
     return (
         <Field.Root>
-            <Field.Label>Line Height</Field.Label>
+            <Field.Label>{LOCALE.lineHeight}</Field.Label>
             <NumberInput.Root
                 size={"xs"}
                 min={0}

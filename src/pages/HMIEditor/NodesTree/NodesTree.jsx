@@ -11,6 +11,7 @@ import { IndentLines } from "@/components/TreeView/IndentLines";
 import { VisibleButton } from "./VisibleButton";
 import { setDiff, setEquals, toSet, useNodesData } from "./helpers";
 import { useThrottledResizeObserver } from "@/hooks/useThrottledResizeObserver";
+import { LOCALE } from "../constants";
 
 export const NodesTree = ({ api }) => {
     const data = useNodesData();
@@ -81,7 +82,7 @@ export const NodesTree = ({ api }) => {
     return (
         <Flex direction={"column"} h={"100%"} minH={0}>
             <Flex justify="space-between" align="center" mb={2}>
-                <Heading size={"md"}>Nodes tree</Heading>
+                <Heading size={"md"}>{LOCALE.nodesTree}</Heading>
             </Flex>
             <Flex
                 w={"100%"}

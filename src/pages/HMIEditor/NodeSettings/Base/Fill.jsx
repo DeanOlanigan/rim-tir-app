@@ -1,11 +1,12 @@
 import { ColorPicker, Heading, parseColor, VStack } from "@chakra-ui/react";
 import { sameCheck, useNodesByIds } from "../utils";
 import { patchStoreRaf } from "../../store/node-store";
+import { LOCALE } from "../../constants";
 
 export const FillBlock = ({ ids }) => {
     return (
         <VStack align={"start"} w={"100%"}>
-            <Heading size={"md"}>Fill</Heading>
+            <Heading size={"md"}>{LOCALE.fill}</Heading>
             <FillColorSolid ids={ids} />
         </VStack>
     );

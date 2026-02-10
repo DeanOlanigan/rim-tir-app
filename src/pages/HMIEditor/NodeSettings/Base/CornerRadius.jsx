@@ -16,7 +16,7 @@ import {
 } from "react-icons/rx";
 import { LuMaximize } from "react-icons/lu";
 import { sameCheck, useNodesByIds } from "../utils";
-import { SHAPES } from "../../constants";
+import { LOCALE, SHAPES } from "../../constants";
 import { patchStoreRaf } from "../../store/node-store";
 
 const CORNER_ICONS = [
@@ -176,7 +176,7 @@ export const CornerRadiusBlock = ({ ids, types }) => {
 
     return (
         <Fieldset.Root>
-            <Fieldset.Legend>Corner radius</Fieldset.Legend>
+            <Fieldset.Legend>{LOCALE.cornerRadius}</Fieldset.Legend>
             <Fieldset.Content mt={1}>
                 <Group>
                     <NumberInput.Root
@@ -197,7 +197,7 @@ export const CornerRadiusBlock = ({ ids, types }) => {
                                 </NumberInput.Scrubber>
                             }
                         >
-                            <NumberInput.Input placeholder="Mixed" />
+                            <NumberInput.Input placeholder={LOCALE.mixed} />
                         </InputGroup>
                     </NumberInput.Root>
                     <Slider.Root
@@ -252,7 +252,9 @@ export const CornerRadiusBlock = ({ ids, types }) => {
                                             </NumberInput.Scrubber>
                                         }
                                     >
-                                        <NumberInput.Input placeholder="Mixed" />
+                                        <NumberInput.Input
+                                            placeholder={LOCALE.mixed}
+                                        />
                                     </InputGroup>
                                 </NumberInput.Root>
                             );

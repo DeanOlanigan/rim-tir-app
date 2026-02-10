@@ -2,6 +2,7 @@ import { Button, HStack, Icon, Menu, Portal, Text } from "@chakra-ui/react";
 import { LuPlus } from "react-icons/lu";
 import { PARAMS_CONFIG } from "./params-config";
 import { useNodeStore } from "../../store/node-store";
+import { LOCALE } from "../../constants";
 
 export const AddParam = ({ selectedIds, availableParams }) => {
     return (
@@ -20,10 +21,10 @@ export const AddParam = ({ selectedIds, availableParams }) => {
                     w="100%"
                 >
                     {availableParams.length === 0 ? (
-                        "All properties added"
+                        LOCALE.allPropertiesAdded
                     ) : (
                         <>
-                            <LuPlus size={16} /> Add Property Binding
+                            <LuPlus size={16} /> {LOCALE.addPropertyBinding}
                         </>
                     )}
                 </Button>

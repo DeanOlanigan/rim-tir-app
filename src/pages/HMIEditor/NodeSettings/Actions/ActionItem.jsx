@@ -64,7 +64,7 @@ export const ActionItem = ({ selectedNodeId, action, eventType, onRemove }) => {
                 <IconButton
                     variant="ghost"
                     size="xs"
-                    color="fg.muted"
+                    colorPalette={"red"}
                     aria-label="Delete"
                     onClick={() => onRemove(action.id)}
                 >

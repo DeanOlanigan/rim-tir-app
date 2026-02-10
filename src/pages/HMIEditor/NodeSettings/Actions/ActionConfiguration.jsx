@@ -3,6 +3,7 @@ import { Navigate } from "./Navigate";
 import { ToggleTag } from "./ToggleTag";
 import { Confirmation } from "./Confirmation";
 import { WriteTag } from "./WriteTag";
+import { LOCALE } from "../../constants";
 
 export const ActionConfiguration = ({ action, onUpdate }) => {
     const handleChange = (key, value) => {
@@ -33,7 +34,7 @@ export const ActionConfiguration = ({ action, onUpdate }) => {
 
     return (
         <Box color="gray.500" fontSize="sm">
-            No settings for this type.
+            {LOCALE.noSettingsForThisType}
         </Box>
     );
 };

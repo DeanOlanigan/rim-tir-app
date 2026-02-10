@@ -8,6 +8,7 @@ import {
 import { LuBold, LuItalic } from "react-icons/lu";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 // [ ] Можно добавить обработку font weight
 // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font#formal_syntax
@@ -42,7 +43,7 @@ export const TextStyleBlock = ({ ids }) => {
                 value={fontStyle?.split(" ")}
                 onValueChange={handleChange}
             >
-                <Fieldset.Legend>Text style</Fieldset.Legend>
+                <Fieldset.Legend>{LOCALE.textStyle}</Fieldset.Legend>
                 <Group attached>
                     {items.map((item) => (
                         <CheckboxCard.Root

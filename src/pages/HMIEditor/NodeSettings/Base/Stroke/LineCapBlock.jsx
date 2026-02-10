@@ -2,6 +2,7 @@ import { Field, SegmentGroup } from "@chakra-ui/react";
 import { TbCapProjecting, TbCapRounded, TbCapStraight } from "react-icons/tb";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const LineCapBlock = ({ ids }) => {
     const lineCaps = useNodesByIds(ids, "lineCap");
@@ -17,7 +18,7 @@ export const LineCapBlock = ({ ids }) => {
 
     return (
         <Field.Root>
-            <Field.Label>Line Cap</Field.Label>
+            <Field.Label>{LOCALE.lineCap}</Field.Label>
             <SegmentGroup.Root
                 size={"xs"}
                 value={lineCap}

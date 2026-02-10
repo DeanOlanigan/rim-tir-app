@@ -1,6 +1,7 @@
 import { Switch } from "@chakra-ui/react";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const EllipsisBlock = ({ ids }) => {
     const ellipsises = useNodesByIds(ids, "ellipsis");
@@ -21,7 +22,7 @@ export const EllipsisBlock = ({ ids }) => {
             onCheckedChange={(e) => onChange(e.checked)}
         >
             <Switch.HiddenInput />
-            <Switch.Label>Ellipsis</Switch.Label>
+            <Switch.Label>{LOCALE.ellipsis}</Switch.Label>
             <Switch.Control>
                 <Switch.Thumb />
             </Switch.Control>

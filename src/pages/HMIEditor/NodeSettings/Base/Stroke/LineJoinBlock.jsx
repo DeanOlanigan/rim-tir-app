@@ -2,6 +2,7 @@ import { Field, SegmentGroup } from "@chakra-ui/react";
 import { TbJoinBevel, TbJoinRound, TbJoinStraight } from "react-icons/tb";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const LineJoinBlock = ({ ids }) => {
     const lineJoins = useNodesByIds(ids, "lineJoin");
@@ -17,7 +18,7 @@ export const LineJoinBlock = ({ ids }) => {
 
     return (
         <Field.Root>
-            <Field.Label>Line Join</Field.Label>
+            <Field.Label>{LOCALE.lineJoin}</Field.Label>
             <SegmentGroup.Root
                 size={"xs"}
                 value={lineJoin}

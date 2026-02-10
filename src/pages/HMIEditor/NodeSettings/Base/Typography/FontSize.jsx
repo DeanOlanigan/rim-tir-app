@@ -2,6 +2,7 @@ import { Field, InputGroup, NumberInput } from "@chakra-ui/react";
 import { RxFontSize } from "react-icons/rx";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const FontSizeBlock = ({ ids }) => {
     const fontSizes = useNodesByIds(ids, "fontSize");
@@ -18,7 +19,7 @@ export const FontSizeBlock = ({ ids }) => {
 
     return (
         <Field.Root>
-            <Field.Label>Font Size</Field.Label>
+            <Field.Label>{LOCALE.fontSize}</Field.Label>
             <NumberInput.Root
                 size={"xs"}
                 min={1}

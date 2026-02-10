@@ -6,7 +6,7 @@ import { DownloadProject } from "../ProjectOps";
 import { EDIT_GRID_DIALOG_ID, editGridDialog } from "../editGridDialog";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "../ProjectManager";
 import { useSaveProjectMutation } from "../mutations";
-import { HOTKEYS } from "../constants";
+import { HOTKEYS, LOCALE } from "../constants";
 
 export const EditorMenu = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -21,12 +21,12 @@ export const EditorMenu = ({ tools }) => {
 
     const menuConfig = [
         {
-            label: "Project",
+            label: LOCALE.project,
             value: "project",
             type: "group",
             children: [
                 {
-                    label: "Project manager...",
+                    label: `${LOCALE.projectManager}...`,
                     value: "project-manager",
                     type: "command",
                     command: () =>
@@ -36,7 +36,7 @@ export const EditorMenu = ({ tools }) => {
                     hotkey: HOTKEYS.openProject.keyLabel,
                 },
                 {
-                    label: "Import to server...",
+                    label: LOCALE.importToServer,
                     value: "import-to-server",
                     type: "command",
                     command: () => {
@@ -54,7 +54,7 @@ export const EditorMenu = ({ tools }) => {
                     },
                 },
                 {
-                    label: "Download...",
+                    label: `${LOCALE.download}...`,
                     value: "download",
                     type: "wrapper",
                     wrapper: DownloadProject,
@@ -62,12 +62,12 @@ export const EditorMenu = ({ tools }) => {
             ],
         },
         {
-            label: "View",
+            label: LOCALE.view,
             value: "view-options",
             type: "group",
             children: [
                 {
-                    label: "Snap to Grid",
+                    label: LOCALE.snapToGrid,
                     value: "snap-to-grid",
                     type: "checkbox",
                     isChecked: snapToGrid,
@@ -75,7 +75,7 @@ export const EditorMenu = ({ tools }) => {
                         useActionsStore.getState().setSnapToGrid(!snapToGrid),
                 },
                 {
-                    label: "Show Grid",
+                    label: LOCALE.toggleGrid,
                     value: "show-grid",
                     type: "checkbox",
                     isChecked: showGrid,
@@ -84,7 +84,7 @@ export const EditorMenu = ({ tools }) => {
                     hotkey: HOTKEYS.toggleGrid.keyLabel,
                 },
                 {
-                    label: "Show Hit Regions",
+                    label: LOCALE.showHitRegions,
                     value: "show-hit-regions",
                     type: "checkbox",
                     isChecked: showHitRegions,
@@ -94,7 +94,7 @@ export const EditorMenu = ({ tools }) => {
                             .setShowHitRegions(!showHitRegions),
                 },
                 {
-                    label: "Show Start Coord Marker",
+                    label: LOCALE.showStartCoordMarker,
                     value: "show-start-coord-marker",
                     type: "checkbox",
                     isChecked: showStartCoordMarker,
@@ -106,12 +106,12 @@ export const EditorMenu = ({ tools }) => {
             ],
         },
         {
-            label: "Editor",
+            label: LOCALE.editor,
             value: "editor",
             type: "group",
             children: [
                 {
-                    label: "Debug Mode",
+                    label: LOCALE.debugMode,
                     value: "debug-mode",
                     type: "checkbox",
                     isChecked: debugMode,
@@ -119,7 +119,7 @@ export const EditorMenu = ({ tools }) => {
                         useActionsStore.getState().setDebugMode(!debugMode),
                 },
                 {
-                    label: "View Only Mode",
+                    label: LOCALE.toggleViewOnly,
                     value: "view-only-mode",
                     type: "checkbox",
                     isChecked: viewOnlyMode,
@@ -131,7 +131,7 @@ export const EditorMenu = ({ tools }) => {
                 },
                 { type: "divider" },
                 {
-                    label: "Edit Grid...",
+                    label: `${LOCALE.gridEditor}...`,
                     value: "edit-grid",
                     type: "command",
                     command: () => editGridDialog.open(EDIT_GRID_DIALOG_ID),

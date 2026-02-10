@@ -1,6 +1,7 @@
 import { CloseButton, createOverlay, Dialog, Portal } from "@chakra-ui/react";
 import { ProjectCardList } from "./ProjectCardList";
 import { useOpeningState } from "./useOpeningState";
+import { LOCALE } from "../constants";
 
 export const OPEN_PROJECT_DIALOG_ID = "OPEN_PROJECT_DIALOG_ID";
 
@@ -29,7 +30,7 @@ export const openProjectDialog = createOverlay((props) => {
                             </Dialog.CloseTrigger>
                         )}
                         <Dialog.Header>
-                            <Dialog.Title>Менеджер проектов</Dialog.Title>
+                            <Dialog.Title>{LOCALE.projectManager}</Dialog.Title>
                         </Dialog.Header>
                         <Dialog.Body
                             overflowY={"auto"}

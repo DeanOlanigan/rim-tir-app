@@ -14,11 +14,12 @@ import { useEffect } from "react";
 import z from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LOCALE } from "./constants";
 
 export const EDIT_GRID_DIALOG_ID = "EDIT_GRID_DIALOG_ID";
 
 const gridSchema = z.object({
-    gridSize: z.number().min(1, "Размер сетки должен быть не менее 1"),
+    gridSize: z.number().min(1, LOCALE.gridSizeError),
     gridColor: z.string(),
 });
 
@@ -69,7 +70,9 @@ export const editGridDialog = createOverlay((props) => {
                         </Dialog.CloseTrigger>
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <Dialog.Header>
-                                <Dialog.Title>Настройки сетки</Dialog.Title>
+                                <Dialog.Title>
+                                    {LOCALE.openGridDialog}
+                                </Dialog.Title>
                             </Dialog.Header>
                             <Dialog.Body
                                 display={"flex"}
@@ -78,7 +81,7 @@ export const editGridDialog = createOverlay((props) => {
                             >
                                 {/* --- Размер сетки --- */}
                                 <Field.Root invalid={!!errors.gridSize}>
-                                    <Field.Label>Размер сетки</Field.Label>
+                                    <Field.Label>{LOCALE.gridSize}</Field.Label>
                                     <Controller
                                         control={control}
                                         name="gridSize"
@@ -121,7 +124,7 @@ export const editGridDialog = createOverlay((props) => {
                                             >
                                                 <ColorPicker.HiddenInput />
                                                 <ColorPicker.Label>
-                                                    Цвет линий
+                                                    {LOCALE.gridColor}
                                                 </ColorPicker.Label>
                                                 <ColorPicker.Control>
                                                     <ColorPicker.Trigger />
@@ -144,11 +147,11 @@ export const editGridDialog = createOverlay((props) => {
                                     size="xs"
                                     disabled={!isDirty}
                                 >
-                                    Применить
+                                    {LOCALE.apply}
                                 </Button>
                                 <Dialog.ActionTrigger asChild>
                                     <Button variant="ghost" size="xs">
-                                        Отмена
+                                        {LOCALE.cancel}
                                     </Button>
                                 </Dialog.ActionTrigger>
                             </Dialog.Footer>

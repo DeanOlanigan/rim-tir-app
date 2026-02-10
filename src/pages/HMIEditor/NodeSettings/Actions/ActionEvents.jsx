@@ -14,6 +14,7 @@ import {
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { useNodeStore } from "../../store/node-store";
 import { ActionItem } from "./ActionItem";
+import { LOCALE } from "../../constants";
 
 export const ActionEvents = ({ eventType, selectedNode }) => {
     const actions = selectedNode.events[eventType] || [];
@@ -56,7 +57,7 @@ export const ActionEvents = ({ eventType, selectedNode }) => {
                     textAlign="center"
                 >
                     <Text fontSize="sm" color="gray.500">
-                        Нет действий
+                        {LOCALE.noActions}
                     </Text>
                 </Box>
             )}

@@ -7,6 +7,7 @@ import {
 } from "react-icons/lu";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const TextAlignHBlock = ({ ids }) => {
     const aligns = useNodesByIds(ids, "align");
@@ -22,7 +23,7 @@ export const TextAlignHBlock = ({ ids }) => {
 
     return (
         <Field.Root>
-            <Field.Label>Horizontal align</Field.Label>
+            <Field.Label>{LOCALE.alignH}</Field.Label>
             <SegmentGroup.Root
                 size={"xs"}
                 value={align}

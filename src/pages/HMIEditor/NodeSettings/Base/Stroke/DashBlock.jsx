@@ -7,12 +7,13 @@ import {
 } from "@chakra-ui/react";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 const lineTypes = createListCollection({
     items: [
-        { label: "Mixed", value: "mixed", disabled: true },
-        { label: "Solid", value: "solid" },
-        { label: "Dashed", value: "dashed" },
+        { label: LOCALE.mixed, value: "mixed", disabled: true },
+        { label: LOCALE.solid, value: "solid" },
+        { label: LOCALE.dashed, value: "dashed" },
     ],
 });
 
@@ -91,7 +92,7 @@ export const DashBlock = ({ ids }) => {
                 unmountOnExit
             >
                 <Select.HiddenSelect />
-                <Select.Label>Dash</Select.Label>
+                <Select.Label>{LOCALE.dash}</Select.Label>
                 <Select.Control>
                     <Select.Trigger>
                         <Select.ValueText />
@@ -116,7 +117,7 @@ export const DashBlock = ({ ids }) => {
             {dashEnabled === "dashed" && (
                 <>
                     <Field.Root orientation="horizontal">
-                        <Field.Label>Dash</Field.Label>
+                        <Field.Label>{LOCALE.dash}</Field.Label>
                         <NumberInput.Root
                             size={"xs"}
                             flex={1}
@@ -130,7 +131,7 @@ export const DashBlock = ({ ids }) => {
                         </NumberInput.Root>
                     </Field.Root>
                     <Field.Root orientation="horizontal">
-                        <Field.Label>Gap</Field.Label>
+                        <Field.Label>{LOCALE.gap}</Field.Label>
                         <NumberInput.Root
                             size={"xs"}
                             flex={1}

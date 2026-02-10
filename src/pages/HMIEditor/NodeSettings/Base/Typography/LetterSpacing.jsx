@@ -2,6 +2,7 @@ import { Field, InputGroup, NumberInput } from "@chakra-ui/react";
 import { TbLineHeight } from "react-icons/tb";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const LetterSpacingBlock = ({ ids }) => {
     const letterSpacings = useNodesByIds(ids, "letterSpacing");
@@ -18,7 +19,7 @@ export const LetterSpacingBlock = ({ ids }) => {
 
     return (
         <Field.Root>
-            <Field.Label>Letter Spacing</Field.Label>
+            <Field.Label>{LOCALE.letterSpacing}</Field.Label>
             <NumberInput.Root
                 size={"xs"}
                 min={0}

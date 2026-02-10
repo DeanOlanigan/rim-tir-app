@@ -1,3 +1,4 @@
+import { LOCALE } from "@/pages/HMIEditor/constants";
 import {
     Button,
     CloseButton,
@@ -12,8 +13,8 @@ export const confirmDialog = createOverlay((props) => {
     const {
         title,
         message,
-        confirmationText = "Применить",
-        cancelText = "Отмена",
+        confirmationText = LOCALE.apply,
+        cancelText = LOCALE.cancel,
         onAccept = () => {},
         onCancel = () => {},
         ...rest

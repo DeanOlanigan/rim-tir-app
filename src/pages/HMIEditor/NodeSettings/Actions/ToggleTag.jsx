@@ -1,6 +1,7 @@
 import { Field, HStack } from "@chakra-ui/react";
 import { useVariables } from "../use-variables";
 import { VariableSelect } from "../VariableSelect";
+import { LOCALE } from "../../constants";
 
 export const ToggleTag = ({ action, handleChange }) => {
     const { data: variables } = useVariables();
@@ -8,7 +9,7 @@ export const ToggleTag = ({ action, handleChange }) => {
     return (
         <HStack gap={2} w={"100%"}>
             <Field.Root>
-                <Field.Label fontSize="sm">Variable</Field.Label>
+                <Field.Label fontSize="sm">{LOCALE.variable}</Field.Label>
                 <VariableSelect
                     variables={variables}
                     value={action.options.varId}

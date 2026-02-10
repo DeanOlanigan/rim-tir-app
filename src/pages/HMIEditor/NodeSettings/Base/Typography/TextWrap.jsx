@@ -1,6 +1,7 @@
 import { Field, SegmentGroup } from "@chakra-ui/react";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const TextWrapBlock = ({ ids }) => {
     const words = useNodesByIds(ids, "wrap");
@@ -16,7 +17,7 @@ export const TextWrapBlock = ({ ids }) => {
 
     return (
         <Field.Root>
-            <Field.Label>Wrap</Field.Label>
+            <Field.Label>{LOCALE.textWrap}</Field.Label>
             <SegmentGroup.Root
                 size={"xs"}
                 value={word}

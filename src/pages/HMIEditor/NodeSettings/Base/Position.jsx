@@ -1,6 +1,7 @@
 import { Fieldset, Group, InputGroup, NumberInput } from "@chakra-ui/react";
 import { patchStoreRaf } from "../../store/node-store";
 import { sameCheck, useNodesByIds } from "../utils";
+import { LOCALE } from "../../constants";
 
 function updateAxis(ids, value, axis) {
     let val = Number.isNaN(value) ? 0 : value;
@@ -14,7 +15,7 @@ function updateAxis(ids, value, axis) {
 export const PositionBlock = ({ ids }) => {
     return (
         <Fieldset.Root>
-            <Fieldset.Legend>Position</Fieldset.Legend>
+            <Fieldset.Legend>{LOCALE.position}</Fieldset.Legend>
             <Fieldset.Content mt={1}>
                 <Group>
                     <PositionAxis ids={ids} axis="x" label="X" />

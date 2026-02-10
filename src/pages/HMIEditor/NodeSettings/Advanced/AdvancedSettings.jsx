@@ -8,6 +8,7 @@ import { useShallow } from "zustand/shallow";
 import { useActionsStore } from "../../store/actions-store";
 import { VariableSelect } from "../VariableSelect";
 import { useVariables } from "../use-variables";
+import { LOCALE } from "../../constants";
 
 export const AdvancedSettings = ({ types, selectedIds }) => {
     const { data: variables } = useVariables();
@@ -32,7 +33,7 @@ export const AdvancedSettings = ({ types, selectedIds }) => {
         <VStack align={"start"} p={2} w={"100%"} h={"100%"} minH={0}>
             {/* Глобальные настройки */}
             <VStack align={"start"} w={"100%"}>
-                <Heading size={"md"}>Global</Heading>
+                <Heading size={"md"}>{LOCALE.globalVar}</Heading>
                 <VariableSelect
                     variables={variables}
                     value={globalVariable}
@@ -53,10 +54,10 @@ export const AdvancedSettings = ({ types, selectedIds }) => {
                 >
                     <VStack align="start" gap={0}>
                         <Text fontSize="sm" fontWeight="medium">
-                            Live Updates
+                            {LOCALE.liveUpdates}
                         </Text>
                         <Text fontSize="xs" color="fg.muted">
-                            Enable MQTT data
+                            {LOCALE.enableMqttData}
                         </Text>
                     </VStack>
                     <Switch.Root
@@ -71,7 +72,7 @@ export const AdvancedSettings = ({ types, selectedIds }) => {
             </VStack>
             {/* Биндинги */}
             <VStack align={"start"} w={"100%"} flex={1} minH={0}>
-                <Heading size={"md"}>Bindings</Heading>
+                <Heading size={"md"}>{LOCALE.bindings}</Heading>
                 <Flex
                     direction={"column"}
                     w={"100%"}
@@ -103,7 +104,7 @@ export const AdvancedSettings = ({ types, selectedIds }) => {
                             textAlign="center"
                         >
                             <Text fontSize="sm" color="gray.500">
-                                No active bindings
+                                {LOCALE.noActiveBindings}
                             </Text>
                         </Box>
                     )}

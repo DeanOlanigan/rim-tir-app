@@ -11,6 +11,7 @@ import { patchStoreRaf, useNodeStore } from "../../store/node-store";
 import { collectSelectionDimensions, useNodesByIds } from "../utils";
 import { isLineLikeType } from "../../utils";
 import { changeLineDim } from "../../canvas/services/shapeTransforms";
+import { LOCALE } from "../../constants";
 
 /**
  * Если вдруг ты в будущем будешь уметь менять тип фигуры
@@ -72,7 +73,7 @@ export const DimensionsBlock = ({ ids, api }) => {
 
     return (
         <Fieldset.Root>
-            <Fieldset.Legend>Dimensions</Fieldset.Legend>
+            <Fieldset.Legend>{LOCALE.dimensions}</Fieldset.Legend>
             <Fieldset.Content mt={1}>
                 <Group>
                     <DimensionInput

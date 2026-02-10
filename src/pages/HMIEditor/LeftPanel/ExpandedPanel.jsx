@@ -8,6 +8,7 @@ import { EditorMenu } from "../EditorSettings";
 import { DebugInfo } from "./DebugInfo";
 import { ZoomUndoBlock } from "./ZoomUndoBlock";
 import { DirtyInformer } from "./DirtyInformer";
+import { LOCALE } from "../constants";
 
 export const ExpandedPanel = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -58,12 +59,14 @@ export const ExpandedPanel = ({ tools }) => {
                 size={"sm"}
             >
                 <Tabs.List>
-                    <Tabs.Trigger value="file">File</Tabs.Trigger>
+                    <Tabs.Trigger value="file">{LOCALE.file}</Tabs.Trigger>
                     <Tabs.Trigger value="assets" disabled>
-                        Assets
+                        {LOCALE.assets}
                     </Tabs.Trigger>
                     {debugMode && (
-                        <Tabs.Trigger value="debug">Debug</Tabs.Trigger>
+                        <Tabs.Trigger value="debug">
+                            {LOCALE.debug}
+                        </Tabs.Trigger>
                     )}
                 </Tabs.List>
                 <Tabs.Content

@@ -12,6 +12,7 @@ import { useNodeStore } from "../store/node-store";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import { LuLibraryBig, LuPlus, LuStickyNote, LuTrash2 } from "react-icons/lu";
 import { useActionsStore } from "../store/actions-store";
+import { LOCALE } from "../constants";
 
 export const Pages = () => {
     const pages = useNodeStore((state) => state.pages);
@@ -42,7 +43,7 @@ export const Pages = () => {
         <Flex direction={"column"} h={"100%"} minH={0}>
             {/* --- HEADER --- */}
             <Flex justify="space-between" align="center" mb={2}>
-                <Heading size={"md"}>Pages</Heading>
+                <Heading size={"md"}>{LOCALE.pages}</Heading>
 
                 <Menu.Root positioning={{ placement: "bottom-end" }}>
                     <Menu.Trigger asChild>
@@ -62,14 +63,14 @@ export const Pages = () => {
                                     onClick={() => handleAddPage("SCREEN")}
                                 >
                                     <LuStickyNote />
-                                    New page
+                                    {LOCALE.newPage}
                                 </Menu.Item>
                                 <Menu.Item
                                     value="new-library-page"
                                     onClick={() => handleAddPage("LIBRARY")}
                                 >
                                     <LuLibraryBig />
-                                    New library
+                                    {LOCALE.newLib}
                                 </Menu.Item>
                             </Menu.Content>
                         </Menu.Positioner>

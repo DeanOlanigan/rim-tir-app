@@ -9,6 +9,7 @@ import {
 import { LuArrowRightLeft, LuEye, LuEyeClosed } from "react-icons/lu";
 import { useNodesByIds } from "../utils";
 import { patchStoreRaf } from "../../store/node-store";
+import { LOCALE } from "../../constants";
 
 export const OpacityBlock = ({ ids }) => {
     const op = useNodesByIds(ids, "opacity");
@@ -39,7 +40,7 @@ export const OpacityBlock = ({ ids }) => {
 
     return (
         <Fieldset.Root>
-            <Fieldset.Legend>Opacity</Fieldset.Legend>
+            <Fieldset.Legend>{LOCALE.opacity}</Fieldset.Legend>
             <Fieldset.Content mt={1}>
                 <Group>
                     <NumberInput.Root

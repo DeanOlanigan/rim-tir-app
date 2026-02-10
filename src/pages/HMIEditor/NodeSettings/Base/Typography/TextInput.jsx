@@ -1,6 +1,7 @@
 import { Field, Textarea } from "@chakra-ui/react";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const TextInputBlock = ({ ids }) => {
     const texts = useNodesByIds(ids, "text");
@@ -16,7 +17,7 @@ export const TextInputBlock = ({ ids }) => {
 
     return (
         <Field.Root>
-            <Field.Label>Text</Field.Label>
+            <Field.Label>{LOCALE.text}</Field.Label>
             <Textarea
                 size={"xs"}
                 minHeight={"8"}

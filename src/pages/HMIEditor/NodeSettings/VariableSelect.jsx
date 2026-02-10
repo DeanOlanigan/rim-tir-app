@@ -4,6 +4,7 @@ import {
     useFilter,
     useListCollection,
 } from "@chakra-ui/react";
+import { LOCALE } from "../constants";
 
 export const VariableSelect = ({ variables, value, onChange, disabled }) => {
     const { contains } = useFilter({ sensitivity: "base" });
@@ -25,7 +26,7 @@ export const VariableSelect = ({ variables, value, onChange, disabled }) => {
             unmountOnExit
         >
             <Combobox.Control>
-                <Combobox.Input placeholder="Select variable" />
+                <Combobox.Input placeholder={LOCALE.selectVariable} />
                 <Combobox.IndicatorGroup>
                     <Combobox.ClearTrigger />
                     <Combobox.Trigger />
@@ -34,7 +35,7 @@ export const VariableSelect = ({ variables, value, onChange, disabled }) => {
             <Portal>
                 <Combobox.Positioner>
                     <Combobox.Content>
-                        <Combobox.Empty>No items found</Combobox.Empty>
+                        <Combobox.Empty>{LOCALE.noItemsFound}</Combobox.Empty>
                         {collection.items.map((item) => (
                             <Combobox.Item key={item.value} item={item}>
                                 {item.label}

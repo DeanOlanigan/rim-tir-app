@@ -1,6 +1,7 @@
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import { useActionsStore } from "../store/actions-store";
 import { useNodeStore } from "../store/node-store";
+import { LOCALE } from "../constants";
 
 export const DebugInfo = () => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -14,7 +15,7 @@ export const DebugInfo = () => {
     return (
         <Flex direction={"column"} h={"100%"} minH={0}>
             <Flex justify="space-between" align="center" mb={2}>
-                <Heading size={"md"}>DebugInfo</Heading>
+                <Heading size={"md"}>{LOCALE.debugInfo}</Heading>
             </Flex>
 
             <Box
@@ -26,10 +27,18 @@ export const DebugInfo = () => {
                 bg={"bg.muted"}
                 borderRadius={"md"}
             >
-                <Text>Current action: {currentAction}</Text>
-                <Text>Prev action: {prevAction}</Text>
-                <Text>Selected nodes: {selectedIds.length}</Text>
-                <Text>Nodes: {Object.keys(nodes).length}</Text>
+                <Text>
+                    {LOCALE.currentTool}: {currentAction}
+                </Text>
+                <Text>
+                    {LOCALE.prevTool}: {prevAction}
+                </Text>
+                <Text>
+                    {LOCALE.selectedNodes}: {selectedIds.length}
+                </Text>
+                <Text>
+                    {LOCALE.nodes}: {Object.keys(nodes).length}
+                </Text>
                 {selectedIds.length > 0 && (
                     <SelectedNodeInfo nodes={nodes} selectedIds={selectedIds} />
                 )}
@@ -39,7 +48,8 @@ export const DebugInfo = () => {
 };
 
 const SelectedNodeInfo = ({ nodes, selectedIds }) => {
-    if (selectedIds.length > 1) return <Text>Multiple nodes selected</Text>;
+    if (selectedIds.length > 1)
+        return <Text>{LOCALE.multipleNodesSelected}</Text>;
 
     return (
         <Box>

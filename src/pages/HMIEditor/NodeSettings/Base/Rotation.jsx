@@ -15,6 +15,7 @@ import { RxAngle } from "react-icons/rx";
 import { sameCheck, useNodesByIds } from "../utils";
 import { rotateNodeAroundCenter } from "../../canvas/services/shapeTransforms";
 import { patchStoreRaf } from "../../store/node-store";
+import { LOCALE } from "../../constants";
 
 function toDegIn0To360Range(deg) {
     return ((deg % 360) + 360) % 360;
@@ -53,7 +54,7 @@ export const RotationBlock = ({ ids, api }) => {
 
     return (
         <Fieldset.Root>
-            <Fieldset.Legend>Rotation</Fieldset.Legend>
+            <Fieldset.Legend>{LOCALE.rotation}</Fieldset.Legend>
             <Fieldset.Content mt={1}>
                 <Flex justify={"space-between"}>
                     <NumberInput.Root

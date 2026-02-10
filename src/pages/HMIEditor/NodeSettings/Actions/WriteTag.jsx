@@ -1,6 +1,7 @@
 import { Field, HStack, Input } from "@chakra-ui/react";
 import { useVariables } from "../use-variables";
 import { VariableSelect } from "../VariableSelect";
+import { LOCALE } from "../../constants";
 
 export const WriteTag = ({ action, handleChange }) => {
     const { data: variables } = useVariables();
@@ -8,7 +9,7 @@ export const WriteTag = ({ action, handleChange }) => {
     return (
         <HStack gap={2} w={"100%"}>
             <Field.Root>
-                <Field.Label fontSize="sm">Variable</Field.Label>
+                <Field.Label fontSize="sm">{LOCALE.variable}</Field.Label>
                 <VariableSelect
                     variables={variables}
                     value={action.options.varId}
@@ -16,7 +17,7 @@ export const WriteTag = ({ action, handleChange }) => {
                 />
             </Field.Root>
             <Field.Root>
-                <Field.Label fontSize="sm">Value</Field.Label>
+                <Field.Label fontSize="sm">{LOCALE.value}</Field.Label>
                 <Input
                     size={"xs"}
                     value={action.options.value || ""}

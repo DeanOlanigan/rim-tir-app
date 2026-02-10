@@ -2,7 +2,12 @@ import { Box, Button, Group, IconButton, Menu, Portal } from "@chakra-ui/react";
 import { LuZoomIn, LuZoomOut } from "react-icons/lu";
 import { useActionsStore } from "../store/actions-store";
 import { setZoom, zoomByPercent } from "../canvas/utils/zoomService";
-import { DEFAULT_MAX_ZOOM, DEFAULT_MIN_ZOOM, HOTKEYS } from "../constants";
+import {
+    DEFAULT_MAX_ZOOM,
+    DEFAULT_MIN_ZOOM,
+    HOTKEYS,
+    LOCALE,
+} from "../constants";
 import { fitNodesToFrame } from "../utils";
 
 export const ZoomBar = ({ canvasRef, nodesRef }) => {
@@ -59,7 +64,7 @@ export const ZoomBar = ({ canvasRef, nodesRef }) => {
                                     fitNodesToFrame(canvasRef, nodesRef)
                                 }
                             >
-                                <Box flex={1}>Масштаб по содержимому</Box>
+                                <Box flex={1}>{LOCALE.fitToFrame}</Box>
                                 <Menu.ItemCommand>
                                     {HOTKEYS.fitToFrame.keyLabel}
                                 </Menu.ItemCommand>

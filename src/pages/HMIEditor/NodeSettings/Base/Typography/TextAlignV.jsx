@@ -3,6 +3,7 @@ import { LuArrowDownToLine, LuArrowUpToLine } from "react-icons/lu";
 import { BsArrowsCollapse } from "react-icons/bs";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const TextAlignVBlock = ({ ids }) => {
     const verticalAligns = useNodesByIds(ids, "verticalAlign");
@@ -18,7 +19,7 @@ export const TextAlignVBlock = ({ ids }) => {
 
     return (
         <Field.Root>
-            <Field.Label>Vertical align</Field.Label>
+            <Field.Label>{LOCALE.alignV}</Field.Label>
             <SegmentGroup.Root
                 size={"xs"}
                 value={verticalAlign}

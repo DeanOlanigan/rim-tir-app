@@ -1,10 +1,11 @@
 import { LuDroplet, LuEye, LuRuler, LuSquare, LuType } from "react-icons/lu";
+import { LOCALE } from "../../constants";
 
 export const PARAMS_CONFIG = {
-    opacity: { label: "Opacity", icon: LuEye, type: "number" },
-    fill: { label: "Fill", icon: LuDroplet, type: "color" },
-    stroke: { label: "Stroke", icon: LuSquare, type: "color" },
-    text: { label: "Text Content", icon: LuType, type: "string" },
-    width: { label: "Width", icon: LuRuler, type: "number" },
-    height: { label: "Height", icon: LuRuler, type: "number" },
+    opacity: { label: LOCALE.opacity, icon: LuEye, type: "number" },
+    fill: { label: LOCALE.fill, icon: LuDroplet, type: "color" },
+    stroke: { label: LOCALE.stroke, icon: LuSquare, type: "color" },
+    text: { label: LOCALE.text, icon: LuType, type: "string" },
+    width: { label: LOCALE.width, icon: LuRuler, type: "number" },
+    height: { label: LOCALE.height, icon: LuRuler, type: "number" },
 };

@@ -2,7 +2,7 @@ import { useContextMenuStore } from "@/store/contextMenu-store";
 import { Menu, Portal } from "@chakra-ui/react";
 import { useNodeStore } from "./store/node-store";
 import { useActionsStore } from "./store/actions-store";
-import { LAYERS_OPS } from "./constants";
+import { HOTKEYS, LAYERS_OPS, LOCALE } from "./constants";
 
 export const ContextMenu = () => {
     const {
@@ -53,7 +53,10 @@ export const ContextMenu = () => {
                                             )
                                     }
                                 >
-                                    Move to top
+                                    {LOCALE.moveToTop}
+                                    <Menu.ItemCommand size={"xs"}>
+                                        {HOTKEYS.moveToTop.keyLabel}
+                                    </Menu.ItemCommand>
                                 </Menu.Item>
                                 <Menu.Item
                                     value="moveUp"
@@ -66,7 +69,10 @@ export const ContextMenu = () => {
                                             )
                                     }
                                 >
-                                    Move up
+                                    {LOCALE.moveUp}
+                                    <Menu.ItemCommand size={"xs"}>
+                                        {HOTKEYS.moveUp.keyLabel}
+                                    </Menu.ItemCommand>
                                 </Menu.Item>
                                 <Menu.Item
                                     value="moveDown"
@@ -79,7 +85,10 @@ export const ContextMenu = () => {
                                             )
                                     }
                                 >
-                                    Move down
+                                    {LOCALE.moveDown}
+                                    <Menu.ItemCommand size={"xs"}>
+                                        {HOTKEYS.moveDown.keyLabel}
+                                    </Menu.ItemCommand>
                                 </Menu.Item>
                                 <Menu.Item
                                     value="moveToBottom"
@@ -92,7 +101,10 @@ export const ContextMenu = () => {
                                             )
                                     }
                                 >
-                                    Move to bottom
+                                    {LOCALE.moveToBottom}
+                                    <Menu.ItemCommand size={"xs"}>
+                                        {HOTKEYS.moveToBottom.keyLabel}
+                                    </Menu.ItemCommand>
                                 </Menu.Item>
                                 <Menu.Item
                                     value="delete"
@@ -107,7 +119,10 @@ export const ContextMenu = () => {
                                             .removeNodes(ids);
                                     }}
                                 >
-                                    Delete
+                                    {LOCALE.delete}
+                                    <Menu.ItemCommand size={"xs"}>
+                                        {HOTKEYS.delete.keyLabel}
+                                    </Menu.ItemCommand>
                                 </Menu.Item>
                             </Menu.ItemGroup>
                         ) : (
@@ -121,8 +136,11 @@ export const ContextMenu = () => {
                                             .setShowGrid(!showGrid)
                                     }
                                 >
-                                    Show grid
+                                    {LOCALE.toggleGrid}
                                     <Menu.ItemIndicator />
+                                    <Menu.ItemCommand size={"xs"}>
+                                        {HOTKEYS.toggleGrid.keyLabel}
+                                    </Menu.ItemCommand>
                                 </Menu.CheckboxItem>
                                 <Menu.CheckboxItem
                                     value="debugMode"
@@ -133,7 +151,7 @@ export const ContextMenu = () => {
                                             .setDebugMode(!debugMode)
                                     }
                                 >
-                                    Debug mode
+                                    {LOCALE.debugMode}
                                     <Menu.ItemIndicator />
                                 </Menu.CheckboxItem>
                             </Menu.ItemGroup>

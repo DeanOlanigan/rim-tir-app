@@ -1,10 +1,11 @@
 import { Field, HStack, Input, Stack, Textarea } from "@chakra-ui/react";
+import { LOCALE } from "../../constants";
 
 export const Confirmation = ({ action, handleChange }) => {
     return (
         <Stack gap={2} w={"100%"}>
             <Field.Root>
-                <Field.Label fontSize="sm">Title</Field.Label>
+                <Field.Label fontSize="sm">{LOCALE.title}</Field.Label>
                 <Input
                     size={"xs"}
                     value={action.options.title || ""}
@@ -13,7 +14,7 @@ export const Confirmation = ({ action, handleChange }) => {
                 />
             </Field.Root>
             <Field.Root>
-                <Field.Label fontSize="sm">Message</Field.Label>
+                <Field.Label fontSize="sm">{LOCALE.message}</Field.Label>
                 <Textarea
                     size={"xs"}
                     resize="none"
@@ -24,7 +25,9 @@ export const Confirmation = ({ action, handleChange }) => {
             </Field.Root>
             <HStack>
                 <Field.Root>
-                    <Field.Label fontSize="sm">Confirm</Field.Label>
+                    <Field.Label fontSize="sm">
+                        {LOCALE.confirmationText}
+                    </Field.Label>
                     <Input
                         size={"xs"}
                         value={action.options.confirmationText || ""}
@@ -35,7 +38,7 @@ export const Confirmation = ({ action, handleChange }) => {
                     />
                 </Field.Root>
                 <Field.Root>
-                    <Field.Label fontSize="sm">Cancel</Field.Label>
+                    <Field.Label fontSize="sm">{LOCALE.cancelText}</Field.Label>
                     <Input
                         size={"xs"}
                         value={action.options.cancelText || ""}

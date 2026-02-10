@@ -1,5 +1,5 @@
 import { Heading, StackSeparator, VStack } from "@chakra-ui/react";
-import { SHAPES } from "../../constants";
+import { LOCALE, SHAPES } from "../../constants";
 import { Layers } from "./Layers";
 import { PositionBlock } from "./Position";
 import { RotationBlock } from "./Rotation";
@@ -28,21 +28,21 @@ export const BaseSettings = ({ api, types, selectedIds }) => {
             separator={<StackSeparator borderColor={"colorPalette.solid"} />}
         >
             <VStack align={"start"} w={"100%"}>
-                <Heading size={"md"}>Layers</Heading>
+                <Heading size={"md"}>{LOCALE.layers}</Heading>
                 <Layers ids={selectedIds} />
             </VStack>
             <VStack align={"start"}>
-                <Heading size={"md"}>Position</Heading>
+                <Heading size={"md"}>{LOCALE.position}</Heading>
                 <PositionBlock ids={selectedIds} />
                 <RotationBlock ids={selectedIds} api={api} />
             </VStack>
             <VStack align={"start"} w={"100%"}>
-                <Heading size={"md"}>Layout</Heading>
+                <Heading size={"md"}>{LOCALE.layout}</Heading>
                 <DimensionsBlock ids={selectedIds} api={api} />
                 <SkewBlock ids={selectedIds} />
             </VStack>
             <VStack align={"start"} w={"100%"}>
-                <Heading size={"md"}>Appearance</Heading>
+                <Heading size={"md"}>{LOCALE.appearance}</Heading>
                 <OpacityBlock ids={selectedIds} />
                 {showCornerRadius && (
                     <CornerRadiusBlock ids={selectedIds} types={types} />

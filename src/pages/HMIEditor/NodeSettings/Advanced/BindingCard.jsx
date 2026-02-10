@@ -18,6 +18,7 @@ import { ThresholdEditor } from "./ThresholdEditor";
 import { MapEditor } from "./MapEditor";
 import { DirectEditor } from "./DirectEditor";
 import { VariableSelect } from "../VariableSelect";
+import { LOCALE } from "../../constants";
 
 export const BindingCard = ({
     binding,
@@ -32,8 +33,7 @@ export const BindingCard = ({
     const isOverride = !binding.useGlobal;
 
     const globalVarName =
-        variables?.find((v) => v.value === globalVariable)?.label ||
-        "Global Variable";
+        variables?.find((v) => v.value === globalVariable)?.label || "";
     const fallbackValue = useNodeStore(
         (s) => s.nodes[selectedIds[0]]?.[binding.property],
     );
@@ -86,8 +86,8 @@ export const BindingCard = ({
                     <IconButton
                         variant="ghost"
                         size="xs"
-                        color="fg.muted"
                         aria-label="Delete"
+                        colorPalette={"red"}
                         onClick={remove}
                     >
                         <LuTrash2 size={14} />
@@ -109,10 +109,12 @@ export const BindingCard = ({
                             >
                                 <Checkbox.HiddenInput />
                                 <Checkbox.Control />
-                                <Checkbox.Label>Override</Checkbox.Label>
+                                <Checkbox.Label>
+                                    {LOCALE.override}
+                                </Checkbox.Label>
                             </Checkbox.Root>
                             <Text fontSize="xs" color="fg.muted">
-                                Source:
+                                {LOCALE.source}:
                             </Text>
                             {isOverride ? (
                                 // Режим Override: Выбираем локальную переменную
@@ -140,11 +142,11 @@ export const BindingCard = ({
                                     <LuLink size={12} />
                                     {globalVariable ? (
                                         <Text truncate>
-                                            Inherited: {globalVarName}
+                                            {LOCALE.inherited}: {globalVarName}
                                         </Text>
                                     ) : (
                                         <Badge size="xs" colorPalette="yellow">
-                                            Not Set
+                                            {LOCALE.notSet}
                                         </Badge>
                                     )}
                                 </Flex>
@@ -164,21 +166,21 @@ export const BindingCard = ({
                     >
                         <Tabs.List w="100%">
                             <Tabs.Trigger value="direct" flex={1}>
-                                Direct
+                                {LOCALE.bindingDirectTab}
                             </Tabs.Trigger>
                             <Tabs.Trigger value="map" flex={1}>
-                                Map
+                                {LOCALE.bindingMapTab}
                             </Tabs.Trigger>
                             <Tabs.Trigger value="threshold" flex={1}>
-                                Threshold
+                                {LOCALE.bindingThresholdTab}
                             </Tabs.Trigger>
                         </Tabs.List>
 
                         <Box>
                             <Tabs.Content value="direct">
                                 <Text fontSize="xs" color="fg.muted" mb={2}>
-                                    Value from variable will be directly applied
-                                    to <b>{config.label}</b>.
+                                    {LOCALE.bindingDirectTabDesc}{" "}
+                                    <b>{config.label}</b>.
                                 </Text>
                                 {/* DirectEditor Component here */}
                                 <DirectEditor config={config} />
@@ -186,9 +188,7 @@ export const BindingCard = ({
 
                             <Tabs.Content value="map">
                                 <Text fontSize="xs" color="fg.muted" mb={2}>
-                                    Map discrete values (0, 1) to specific
-                                    visual params. First rule has the highest
-                                    priority.
+                                    {LOCALE.bindingMapTabDesc}
                                 </Text>
                                 {/* MapEditor Component here */}
                                 <MapEditor
@@ -200,9 +200,7 @@ export const BindingCard = ({
 
                             <Tabs.Content value="threshold">
                                 <Text fontSize="xs" color="fg.muted" mb={2}>
-                                    Map continuous values (0, 1) to specific
-                                    visual params. First rule has the highest
-                                    priority.
+                                    {LOCALE.bindingThresholdTabDesc}
                                 </Text>
                                 {/* ThresholdEditor Component here */}
                                 <ThresholdEditor
@@ -217,7 +215,7 @@ export const BindingCard = ({
                     {/* 3. FALLBACK */}
                     <HStack gap={2} justify="space-between">
                         <Text fontSize="xs" color="fg.muted">
-                            Fallback / Default:
+                            {LOCALE.fallback}:
                         </Text>
                         {config.type === "color" ? (
                             <Badge variant={"outline"}>
@@ -232,7 +230,7 @@ export const BindingCard = ({
                         )}
                         {isMultiple && (
                             <Text fontSize={"xs"} color={"fg.error"}>
-                                Multiple objects selected
+                                {LOCALE.multipleObjectsSelected}
                             </Text>
                         )}
                     </HStack>

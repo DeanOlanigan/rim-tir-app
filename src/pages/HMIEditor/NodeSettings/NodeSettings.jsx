@@ -1,13 +1,16 @@
 import { Flex, Heading, HStack, Tabs } from "@chakra-ui/react";
 import { useNodeStore } from "../store/node-store";
 import { SelectedButtonsGroup } from "./SelectedButtonsGroup";
-import { SHAPES_NAMES, SHAPES_WITH_SETTINGS } from "../constants";
+import { LOCALE, SHAPES_WITH_SETTINGS } from "../constants";
 import { BaseSettings } from "./Base";
 import { AdvancedSettings } from "./Advanced";
 import { ActionsSettings } from "./Actions";
 
 export const NodeSettings = ({ api }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
+    const selectedName = useNodeStore(
+        (state) => state.nodes[selectedIds[0]]?.name,
+    );
     if (!selectedIds.length) return null;
 
     const types = selectedIds.map(
@@ -18,8 +21,8 @@ export const NodeSettings = ({ api }) => {
     const isMultiple = selectedIds.length > 1;
 
     const heading = isMultiple
-        ? `${selectedIds.length} selected`
-        : SHAPES_NAMES[types[0]];
+        ? `${LOCALE.selected}: ${selectedIds.length}`
+        : selectedName;
 
     return (
         <Flex
@@ -57,9 +60,13 @@ export const NodeSettings = ({ api }) => {
                 size={"sm"}
             >
                 <Tabs.List>
-                    <Tabs.Trigger value="base">Base</Tabs.Trigger>
-                    <Tabs.Trigger value="bindings">Bindings</Tabs.Trigger>
-                    <Tabs.Trigger value="actions">Actions</Tabs.Trigger>
+                    <Tabs.Trigger value="base">{LOCALE.base}</Tabs.Trigger>
+                    <Tabs.Trigger value="bindings">
+                        {LOCALE.bindings}
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="actions">
+                        {LOCALE.actions}
+                    </Tabs.Trigger>
                 </Tabs.List>
                 <Tabs.Content value="base" h={"100%"} mt={2} overflow={"auto"}>
                     <BaseSettings

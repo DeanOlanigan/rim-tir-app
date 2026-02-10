@@ -8,6 +8,7 @@ import {
 import { MdLineWeight } from "react-icons/md";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const StrokeWeightBlock = ({ ids }) => {
     const strokeWidths = useNodesByIds(ids, "strokeWidth");
@@ -25,7 +26,7 @@ export const StrokeWeightBlock = ({ ids }) => {
 
     return (
         <Fieldset.Root>
-            <Fieldset.Legend>Weight</Fieldset.Legend>
+            <Fieldset.Legend>{LOCALE.strokeWidth}</Fieldset.Legend>
             <Fieldset.Content mt={1}>
                 <Group>
                     <NumberInput.Root

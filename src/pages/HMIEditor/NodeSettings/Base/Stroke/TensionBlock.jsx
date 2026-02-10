@@ -2,6 +2,7 @@ import { Field, InputGroup, NumberInput } from "@chakra-ui/react";
 import { LuSpline } from "react-icons/lu";
 import { sameCheck, useNodesByIds } from "../../utils";
 import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const TensionBlock = ({ ids }) => {
     const tensions = useNodesByIds(ids, "tension");
@@ -18,7 +19,7 @@ export const TensionBlock = ({ ids }) => {
 
     return (
         <Field.Root>
-            <Field.Label>Tension</Field.Label>
+            <Field.Label>{LOCALE.tension}</Field.Label>
             <NumberInput.Root
                 size={"xs"}
                 allowOverflow={false}
@@ -39,7 +40,7 @@ export const TensionBlock = ({ ids }) => {
                         </NumberInput.Scrubber>
                     }
                 >
-                    <NumberInput.Input placeholder="Mixed" />
+                    <NumberInput.Input placeholder={LOCALE.mixed} />
                 </InputGroup>
             </NumberInput.Root>
         </Field.Root>

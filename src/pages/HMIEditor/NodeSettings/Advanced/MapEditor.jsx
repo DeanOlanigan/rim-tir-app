@@ -1,12 +1,13 @@
 import { Input } from "@chakra-ui/react";
 import { RuleList } from "./RuleList";
+import { LOCALE } from "../../constants";
 
 export const MapEditor = (props) => {
     return (
         <RuleList
             {...props}
-            title={"Map Editor"}
-            emptyText={"No rules defined. Value will fallback to static"}
+            title={LOCALE.mapEditor}
+            emptyText={LOCALE.noRulesSet}
             createRule={() => ({ from: "" })}
             renderInput={(rule, i, onChange) => (
                 <Input

@@ -8,6 +8,7 @@ import { LuCloudUpload, LuPlus } from "react-icons/lu";
 import { OpenProject } from "../ProjectOps";
 import { ProjectCard } from "./ProjectCard";
 import { useProjectManager } from "./useProjectManager";
+import { LOCALE } from "../constants";
 
 export const ProjectCardList = ({ tools, onOpenChange }) => {
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
@@ -28,7 +29,7 @@ export const ProjectCardList = ({ tools, onOpenChange }) => {
                 <Alert.Root status="error">
                     <Alert.Indicator />
                     <Alert.Content>
-                        <Alert.Title>Ошибка загрузки проектов</Alert.Title>
+                        <Alert.Title>{LOCALE.projectsLoadingError}</Alert.Title>
                         <Alert.Description>{error.message}</Alert.Description>
                     </Alert.Content>
                 </Alert.Root>
@@ -37,12 +38,11 @@ export const ProjectCardList = ({ tools, onOpenChange }) => {
                 <Alert.Root
                     borderStartWidth="3px"
                     borderStartColor="colorPalette.600"
-                    title="Загрузка проектов"
                 >
                     <Alert.Indicator>
                         <Spinner size="sm" />
                     </Alert.Indicator>
-                    <Alert.Title>Загрузка проектов</Alert.Title>
+                    <Alert.Title>{LOCALE.projectsLoading}</Alert.Title>
                 </Alert.Root>
             )}
             <SimpleGrid columns={[1, 2, 3, 4]} gap={4}>
@@ -58,14 +58,14 @@ export const ProjectCardList = ({ tools, onOpenChange }) => {
                 <OpenProject onProjectLoad={handleOpenLocalProject}>
                     <ActionCard
                         icon={LuCloudUpload}
-                        title={"Открыть с ПК"}
-                        subTitle={"Выберите .json файл"}
+                        title={LOCALE.openFromPC}
+                        subTitle={LOCALE.openFromPCDesc}
                     />
                 </OpenProject>
                 {!viewOnlyMode && (
                     <ActionCard
                         icon={LuPlus}
-                        title={"Новый проект"}
+                        title={LOCALE.newProject}
                         onClick={handleCreateNewProject}
                     />
                 )}
