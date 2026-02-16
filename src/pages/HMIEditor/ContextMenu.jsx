@@ -18,6 +18,7 @@ export const ContextMenu = ({ tools }) => {
         visible,
     } = useContextMenuStore((state) => state.sch);
     const showGrid = useActionsStore((state) => state.showGrid);
+    const showRulers = useActionsStore((state) => state.showRulers);
     const debugMode = useActionsStore((state) => state.debugMode);
 
     return (
@@ -180,6 +181,21 @@ export const ContextMenu = ({ tools }) => {
                                     <Menu.ItemIndicator />
                                     <Menu.ItemCommand size={"xs"}>
                                         {HOTKEYS.toggleGrid.keyLabel}
+                                    </Menu.ItemCommand>
+                                </Menu.CheckboxItem>
+                                <Menu.CheckboxItem
+                                    value="showRulers"
+                                    checked={showRulers}
+                                    onCheckedChange={() =>
+                                        useActionsStore
+                                            .getState()
+                                            .setShowRulers(!showRulers)
+                                    }
+                                >
+                                    {LOCALE.toggleRulers}
+                                    <Menu.ItemIndicator />
+                                    <Menu.ItemCommand size={"xs"}>
+                                        {HOTKEYS.toggleRulers.keyLabel}
                                     </Menu.ItemCommand>
                                 </Menu.CheckboxItem>
                                 <Menu.CheckboxItem

@@ -58,7 +58,6 @@ const HMIEditorContent = () => {
                 top={0}
                 left={0}
                 pointerEvents={"none"}
-                p={2}
                 direction={"column"}
             >
                 <LeftPanel tools={tools} />
@@ -68,7 +67,6 @@ const HMIEditorContent = () => {
                 h={"100%"}
                 top={0}
                 right={0}
-                p={2}
                 pointerEvents={"none"}
             >
                 <RightPanel api={tools.api} />

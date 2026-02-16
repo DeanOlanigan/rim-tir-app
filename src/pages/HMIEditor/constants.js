@@ -77,6 +77,7 @@ export const HOTKEYS = {
     textTool: { hotkey: "t", keyLabel: "T" },
     snapToGrid: { hotkey: "ctrl+shift+quote", keyLabel: "Ctrl+Shift+'" },
     toggleGrid: { hotkey: "ctrl+quote", keyLabel: "Shift+'" },
+    toggleRulers: { hotkey: "shift+r", keyLabel: "Shift+R" },
     openGridDialog: { hotkey: "ctrl+alt+quote", keyLabel: "Ctrl+Alt+'" },
     openProject: { hotkey: "ctrl+p", keyLabel: "Ctrl+P" },
     toggleViewOnly: { hotkey: "shift+v", keyLabel: "Shift+V" },
@@ -108,12 +109,28 @@ export const LAYERS_OPS = {
     moveToTop: "moveToTop",
     moveToBottom: "moveToBottom",
 };
+// Rulers
+export const RULERS_THICKNESS = 20;
+export const RULERS_FONT_SIZE = 10;
+export const RULERS_TICK_SIZE = 4;
+export const RULERS_TEXT_OFFSET = 6;
+export const RULERS_BG_COLOR_DARK = "#000";
+export const RULERS_BG_COLOR_LIGHT = "#fff";
+export const RULERS_TEXT_COLOR_DARK = "#666";
+export const RULERS_TEXT_COLOR_LIGHT = "#555";
+export const RULERS_LINE_COLOR_DARK = "#555";
+export const RULERS_LINE_COLOR_LIGHT = "#666";
+export const RULERS_BORDER_COLOR_DARK = "#999";
+export const RULERS_BORDER_COLOR_LIGHT = "#ccc";
+// Clipboard
 export const CLIPBOARD_TYPE = "rimtir/clipboard";
 export const CLIPBOARD_TYPE_VERSION = 1;
+// Arrow keys
 export const MOVE_PRIMITIVE_STRENGTH = 1;
 export const ALT_MOVE_PRIMITIVE_STRENGTH = 10;
 export const MOVE_CANVAS_STRENGTH = 50;
 export const ALT_MOVE_CANVAS_STRENGTH = 100;
+// Locale
 export const LOCALE = {
     moveToTop: "На передний план",
     moveToBottom: "На задний план",
@@ -137,6 +154,7 @@ export const LOCALE = {
     pageDown: "Вниз",
     snapToGrid: "Прикрепить к сетке",
     toggleGrid: "Переключить сетку",
+    toggleRulers: "Переключить линейки",
     openGridDialog: "Настройки сетки",
     gridSize: "Размер сетки",
     gridSizeError: "Размер сетки должен быть не менее 1",

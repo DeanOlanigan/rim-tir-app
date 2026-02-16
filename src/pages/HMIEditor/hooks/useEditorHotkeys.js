@@ -51,6 +51,12 @@ export function useEditorHotkeys(tools) {
     useHotkeys(HOTKEYS.openGridDialog.hotkey, () =>
         editGridDialog.open(EDIT_GRID_DIALOG_ID),
     );
+    // Toggle rulers
+    useHotkeys(HOTKEYS.toggleRulers.hotkey, () => {
+        useActionsStore
+            .getState()
+            .setShowRulers(!useActionsStore.getState().showRulers);
+    });
     // Open project
     useHotkeys(
         HOTKEYS.openProject.hotkey,

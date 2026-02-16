@@ -21,6 +21,7 @@ export const useActionsStore = create(
             showPagesList: true,
             isUiExpanded: false,
             canvasSize: { width: 0, height: 0 },
+            showRulers: false,
 
             setCurrentAction: (action) =>
                 set({ currentAction: action }, undefined, "setCurrentAction"),
@@ -59,6 +60,8 @@ export const useActionsStore = create(
                 set({ isUiExpanded: mode }, undefined, "setIsUiExpanded"),
             setCanvasSize: (size) =>
                 set({ canvasSize: size }, undefined, "setCanvasSize"),
+            setShowRulers: (mode) =>
+                set({ showRulers: mode }, undefined, "setShowRulers"),
         }),
         {
             name: "actions-store",

@@ -8,6 +8,7 @@ import { useNodeStore } from "../store/node-store";
 import { useToggleHitRegion } from "./hooks/useToggleHitRegion";
 import { useStageKeyboard } from "./hooks/useStageKeyboard";
 import { StartCoords } from "./StartCoords";
+import { Ruler } from "./Ruler";
 
 export const HMICanvas = ({
     manager,
@@ -66,6 +67,7 @@ export const HMICanvas = ({
                     canvasRef={canvasRef}
                     overviewRef={overviewLayerRef}
                 />
+                <Ruler />
             </Layer>
         </Stage>
     );

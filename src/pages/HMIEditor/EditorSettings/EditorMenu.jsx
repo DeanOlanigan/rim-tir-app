@@ -13,6 +13,7 @@ export const EditorMenu = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
     const showGrid = useActionsStore((state) => state.showGrid);
+    const showRulers = useActionsStore((state) => state.showRulers);
     const snapToGrid = useActionsStore((state) => state.snapToGrid);
     const showHitRegions = useActionsStore((state) => state.showHitRegions);
     const showStartCoordMarker = useActionsStore(
@@ -83,6 +84,15 @@ export const EditorMenu = ({ tools }) => {
                     command: () =>
                         useActionsStore.getState().setShowGrid(!showGrid),
                     hotkey: HOTKEYS.toggleGrid.keyLabel,
+                },
+                {
+                    label: LOCALE.toggleRulers,
+                    value: "show-rulers",
+                    type: "checkbox",
+                    isChecked: useActionsStore.getState().showRulers,
+                    command: () =>
+                        useActionsStore.getState().setShowRulers(!showRulers),
+                    hotkey: HOTKEYS.toggleRulers.keyLabel,
                 },
                 {
                     label: LOCALE.showHitRegions,
