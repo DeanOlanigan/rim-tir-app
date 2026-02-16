@@ -7,7 +7,7 @@ import { collectSubtreeNodes, getTopLevelSelectedIds } from "../nodes";
 export function buildPayload({ nodes, selectedIds, pageRootIds }) {
     if (!selectedIds.length) return null;
 
-    const top = getTopLevelSelectedIds(nodes, selectedIds);
+    const top = getTopLevelSelectedIds(nodes, selectedIds, pageRootIds);
     const topSet = new Set(top);
     const rootIds =
         Array.isArray(pageRootIds) && pageRootIds.length

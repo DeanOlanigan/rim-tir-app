@@ -1,9 +1,9 @@
 import { buildParentOf } from "./buildParentOf";
 
-export function getTopLevelSelectedIds(nodes, selectedIds) {
+export function getTopLevelSelectedIds(nodes, selectedIds, rootIds) {
     const selectedSet = new Set(selectedIds);
 
-    const parentOf = buildParentOf(nodes);
+    const parentOf = buildParentOf(nodes, rootIds);
 
     return selectedIds.filter((id) => {
         let cur = parentOf[id];
