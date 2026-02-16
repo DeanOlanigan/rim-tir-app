@@ -10,5 +10,5 @@ export const applyProjectData = (rawProjectData, mode, filename) => {
 
     const store = useNodeStore.getState();
     store.open(validProject, mode, filename);
-    store.rebuildVarIndex();
+    store.rebuildIndexes();
 };

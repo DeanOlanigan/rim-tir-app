@@ -1,4 +1,10 @@
-import { ACTIONS } from "../../constants";
+import {
+    ACTIONS,
+    ALT_MOVE_CANVAS_STRENGTH,
+    ALT_MOVE_PRIMITIVE_STRENGTH,
+    MOVE_CANVAS_STRENGTH,
+    MOVE_PRIMITIVE_STRENGTH,
+} from "../../constants";
 import { useActionsStore } from "../../store/actions-store";
 import { useNodeStore } from "../../store/node-store";
 import { zoomByPercent } from "../utils/zoomService";
@@ -243,23 +249,48 @@ export function createToolManager({ toolsMap, api }) {
 function arrowKeysHandler(e, api) {
     const selectedIds = api.getSelectedIds();
     if (selectedIds.length > 0) {
-        e.preventDefault();
-        const { gridSize, snapToGrid } = useActionsStore.getState();
-        let step = e.shiftKey ? 10 : 1;
-        if (snapToGrid) step = step * gridSize;
-        let dx = 0;
-        let dy = 0;
-        if (e.code === "ArrowLeft") dx = -step;
-        if (e.code === "ArrowRight") dx = step;
-        if (e.code === "ArrowUp") dy = -step;
-        if (e.code === "ArrowDown") dy = step;
-
-        const store = useNodeStore.getState();
-        const patches = {};
-        selectedIds.forEach((id) => {
-            const node = store.nodes[id];
-            patches[id] = { x: node.x + dx, y: node.y + dy };
-        });
-        store.updateNodes(selectedIds, patches);
+        movePrimitive(e, selectedIds);
+    } else {
+        moveCanvas(e, api);
     }
+}
+
+function movePrimitive(e, selectedIds) {
+    e.preventDefault();
+    const { gridSize, snapToGrid } = useActionsStore.getState();
+    let step = e.shiftKey
+        ? ALT_MOVE_PRIMITIVE_STRENGTH
+        : MOVE_PRIMITIVE_STRENGTH;
+    if (snapToGrid) step = step * gridSize;
+    let dx = 0;
+    let dy = 0;
+    if (e.code === "ArrowLeft") dx = -step;
+    if (e.code === "ArrowRight") dx = step;
+    if (e.code === "ArrowUp") dy = -step;
+    if (e.code === "ArrowDown") dy = step;
+
+    const store = useNodeStore.getState();
+    const patches = {};
+    selectedIds.forEach((id) => {
+        const node = store.nodes[id];
+        patches[id] = { x: node.x + dx, y: node.y + dy };
+    });
+    store.updateNodes(selectedIds, patches);
+}
+
+function moveCanvas(e, api) {
+    e.preventDefault();
+    const stage = api.getStage();
+    let step = e.shiftKey ? ALT_MOVE_CANVAS_STRENGTH : MOVE_CANVAS_STRENGTH;
+    let dx = 0;
+    let dy = 0;
+    if (e.code === "ArrowLeft") dx = step;
+    if (e.code === "ArrowRight") dx = -step;
+    if (e.code === "ArrowUp") dy = step;
+    if (e.code === "ArrowDown") dy = -step;
+    stage.position({
+        x: stage.x() + dx,
+        y: stage.y() + dy,
+    });
+    stage.batchDraw();
 }

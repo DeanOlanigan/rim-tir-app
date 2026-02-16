@@ -43,7 +43,7 @@ export const ActionEvents = ({ eventType, selectedNode }) => {
 
         useNodeStore
             .getState()
-            .setNodeEventActions(selectedNode.id, eventType, newOrder);
+            .reorderNodeEventActions(selectedNode.id, eventType, newOrder);
     };
 
     return (

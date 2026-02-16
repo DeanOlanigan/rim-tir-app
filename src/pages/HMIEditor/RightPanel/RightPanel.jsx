@@ -1,5 +1,5 @@
 import { NodeSettings } from "../NodeSettings";
-import { ProjectSettings } from "../ProjectSettings";
+import { ProjectSettings } from "./ProjectSettings";
 import { useActionsStore } from "../store/actions-store";
 import { useNodeStore } from "../store/node-store";
 

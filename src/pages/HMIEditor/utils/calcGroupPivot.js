@@ -1,3 +1,4 @@
+import { isHasRadius } from "./geometry";
 import { getNodeLocalTransformMatrix } from "./getNodeLocalTransformMatrix";
 
 export function calcGroupAABBCenter(nodesList) {
@@ -42,7 +43,7 @@ export function calcGroupAABBCenter(nodesList) {
         // Ellipse: (0,0) -> Center.
 
         const corners = [];
-        if (node.type === "ellipse" || node.type === "polygon") {
+        if (isHasRadius(node.type)) {
             // Локальные углы относительно центра
             const hw = w / 2;
             const hh = h / 2;

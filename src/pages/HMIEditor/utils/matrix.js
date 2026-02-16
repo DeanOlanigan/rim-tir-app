@@ -44,3 +44,12 @@ export function inv(M) {
         f: (M.b * M.e - M.a * M.f) * id,
     };
 }
+
+export const I = { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
+
+export function applyToPoint(M, x, y) {
+    return {
+        x: M.a * x + M.c * y + M.e,
+        y: M.b * x + M.d * y + M.f,
+    };
+}

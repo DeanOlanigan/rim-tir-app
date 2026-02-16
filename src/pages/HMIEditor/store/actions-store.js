@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { ACTIONS } from "../constants";
-import { useNodeStore } from "./node-store";
 import { devtools } from "zustand/middleware";
 
 export const useActionsStore = create(
@@ -50,7 +49,6 @@ export const useActionsStore = create(
                     "setShowStartCoordMarker",
                 ),
             setViewOnlyMode: (mode) => {
-                useNodeStore.getState().setSelectedIds([]);
                 set({ viewOnlyMode: mode }, undefined, "setViewOnlyMode");
             },
             setLiveUpdates: (mode) =>

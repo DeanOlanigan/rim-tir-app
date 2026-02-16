@@ -15,7 +15,7 @@ export function createGroupNode(id, bbox, childrenIds) {
         childrenIds,
         bindings: {
             globalVarId: null,
-            items: [],
+            byProp: {},
         },
         events: {
             onClick: [],

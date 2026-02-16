@@ -1,22 +1,7 @@
-import throttle from "throttleit";
 import { useNodeStore } from "../store/node-store";
 import { useShallow } from "zustand/shallow";
-import debounce from "debounce";
 import { isLineLikeType } from "../utils";
 import { getLineRect } from "../canvas/services/shapeTransforms";
-
-function patchStoreNode(id, patch) {
-    useNodeStore.getState().updateNode(id, patch);
-}
-
-function patchStoreNodes(ids, patchesById) {
-    useNodeStore.getState().updateNodes(ids, patchesById);
-}
-
-export const patchNodeThrottled = throttle(patchStoreNode, 20);
-export const patchNodesThrottled = throttle(patchStoreNodes, 20);
-export const patchNodeDebounced = debounce(patchStoreNode, 200);
-export const patchNodesDebounced = debounce(patchStoreNodes, 200);
 
 export function useNodesByIds(ids, param) {
     return useNodeStore(useShallow((s) => ids.map((id) => s.nodes[id][param])));

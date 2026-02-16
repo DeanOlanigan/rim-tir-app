@@ -1,21 +1,18 @@
-import { withDirty } from "../utils/withDirty";
-import { defaultProjectName } from "../constants";
+import {
+    closeProjectCommand,
+    openProjectCommand,
+    renameProjectCommand,
+} from "../commands";
 
-export const createProjectSlice = (set) => {
-    const dirty = withDirty(set);
-
+export const createProjectSlice = (api) => {
     return {
-        projectName: defaultProjectName,
+        projectName: "New project",
 
-        renameProject: dirty("project/renameProject", (name) =>
-            set(
-                (state) => {
-                    if (state.projectName === name) return state;
-                    return { projectName: name };
-                },
-                undefined,
-                "project/renameProject",
-            ),
-        ),
+        renameProject: (name) => renameProjectCommand(api, name),
+
+        close: () => closeProjectCommand(api),
+
+        open: (project, mode, filename) =>
+            openProjectCommand(api, project, mode, filename),
     };
 };

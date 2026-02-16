@@ -1,5 +1,5 @@
-export { addNodeToIndex } from "./addNodeToindex";
-export { rebuildVarIndexFromNodes } from "./rebuildVarIndexFromNodes";
-export { removeBindingFunc } from "./removeBindingFunc";
-export { removeNodeFromIndex } from "./removeNodeFromIndex";
-export { updateBindingFunc } from "./updateBindingFunc";
+export * from "./unindexNodesCOW";
+export * from "./upsertBindingByProp";
+export * from "./reindexNodeCOW";
+export * from "./removeBindingByProp";
+export * from "./buildIndexesFromNodes";

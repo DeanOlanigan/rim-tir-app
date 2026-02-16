@@ -3,14 +3,14 @@ import { ContextMenu } from "./ContextMenu";
 import { ToolBar } from "./ToolBar";
 import { HMICanvas } from "./canvas/HMICanvas";
 import { useToolsManager } from "./canvas/hooks/useToolsManager";
-import { useMqttValues } from "./useMqttValues";
+import { useMqttValues } from "./hooks/useMqttValues";
 import { editGridDialog } from "./editGridDialog";
 import { LeftPanel } from "./LeftPanel";
 import { RightPanel } from "./RightPanel/RightPanel";
 import { confirmDialog } from "@/components/confirmDialog";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "./ProjectManager";
-import { useEditorHotkeys } from "./useEditorHotkeys";
-import { useHMICanvasResize } from "./useHMICanvasResize";
+import { useEditorHotkeys } from "./hooks/useEditorHotkeys";
+import { useHMICanvasResize } from "./hooks/useHMICanvasResize";
 import { useEffect } from "react";
 import { useNodeStore } from "./store/node-store";
 import { fitNodesToFrame } from "./utils";
@@ -33,7 +33,9 @@ const HMIEditorContent = () => {
         if (store.meta.mode === "new" && !store.meta.isDirty) {
             openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, { tools });
         }
-        fitNodesToFrame(tools.canvasRef, tools.nodesRef);
+        setTimeout(() => {
+            fitNodesToFrame(tools.canvasRef, tools.nodesRef);
+        }, 100);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

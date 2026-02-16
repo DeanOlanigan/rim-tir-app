@@ -1,5 +1,6 @@
 import { SHAPES } from "@/pages/HMIEditor/constants";
 import { nanoid } from "nanoid";
+import { getTopLevelSelectedIds } from "./getTopLevelSelectedIds";
 
 export function duplicateSubtrees(nodes, ids, opts = {}) {
     const { offset = { x: 1, y: 1 }, groupType = SHAPES.group } = opts;
@@ -8,17 +9,8 @@ export function duplicateSubtrees(nodes, ids, opts = {}) {
     const newRootIds = [];
     const newSelectedIds = [];
 
-    const selected = new Set(ids);
-
     // На всякий случай, если в ids будут id, которые уже есть в выбранной группе
-    const topLevelIds = ids.filter((id) => {
-        let cur = nodes[id]?.parentId;
-        while (cur) {
-            if (selected.has(cur)) return false;
-            cur = nodes[cur]?.parentId;
-        }
-        return true;
-    });
+    const topLevelIds = getTopLevelSelectedIds(nodes, ids);
 
     function cloneSubTree(oldId, applyOffset) {
         const oldNode = nodes[oldId];

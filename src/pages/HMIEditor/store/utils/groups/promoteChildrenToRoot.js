@@ -3,15 +3,15 @@ import { calcChildTransform } from "../geometry/calcChildTransform";
 import { removeRootId } from "./removeRootId";
 import { getNodeLocalTransformMatrix } from "@/pages/HMIEditor/utils/getNodeLocalTransformMatrix";
 
-export function promoteChildrenToRoot({ nodes, rootIds, groupNode }) {
+// nodes - копия state.nodes
+export function promoteChildrenToRoot({ newNodes, newRootIds, groupNode }) {
     const G = getNodeLocalTransformMatrix(groupNode);
 
-    let newNodes = { ...nodes };
-    let newRootIds = removeRootId(rootIds, groupNode.id);
+    newRootIds = removeRootId(newRootIds, groupNode.id);
     const promotedIds = [];
 
     for (const childId of groupNode.childrenIds ?? []) {
-        const child = nodes[childId];
+        const child = newNodes[childId];
         if (!child) continue;
 
         const { x, y, rotation } = calcChildTransform(G, child);

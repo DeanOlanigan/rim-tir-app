@@ -1,5 +1,5 @@
-import { SHAPES } from "@/pages/HMIEditor/constants";
 import { matTR } from "./matrix";
+import { isHasRadius } from "./geometry";
 
 export function getNodeLocalTransformMatrix(node) {
     const x = node.x ?? 0;
@@ -7,12 +7,7 @@ export function getNodeLocalTransformMatrix(node) {
     const rot = node.rotation ?? 0;
 
     // ellipse: в сторе x/y = top-left bbox, а в konva x/y = center
-    if (node.type === SHAPES.ellipse) {
-        const w = node.width ?? 0;
-        const h = node.height ?? 0;
-        return matTR(x + w / 2, y + h / 2, rot);
-    }
-    if (node.type === SHAPES.polygon) {
+    if (isHasRadius(node.type)) {
         const w = node.width ?? 0;
         const h = node.height ?? 0;
         return matTR(x + w / 2, y + h / 2, rot);

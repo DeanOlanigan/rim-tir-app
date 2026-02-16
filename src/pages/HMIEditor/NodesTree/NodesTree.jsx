@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 import { Tree } from "react-arborist";
 import { useActionsStore } from "../store/actions-store";
 import { useNodeStore } from "../store/node-store";
-import { flyToNode } from "../flyToNode";
+import { flyToNode } from "../utils/flyToNode";
 import { IndentLines } from "@/components/TreeView/IndentLines";
 import { VisibleButton } from "./VisibleButton";
 import { setDiff, setEquals, toSet, useNodesData } from "./helpers";

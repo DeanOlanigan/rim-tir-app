@@ -108,6 +108,12 @@ export const LAYERS_OPS = {
     moveToTop: "moveToTop",
     moveToBottom: "moveToBottom",
 };
+export const CLIPBOARD_TYPE = "rimtir/clipboard";
+export const CLIPBOARD_TYPE_VERSION = 1;
+export const MOVE_PRIMITIVE_STRENGTH = 1;
+export const ALT_MOVE_PRIMITIVE_STRENGTH = 10;
+export const MOVE_CANVAS_STRENGTH = 50;
+export const ALT_MOVE_CANVAS_STRENGTH = 100;
 export const LOCALE = {
     moveToTop: "На передний план",
     moveToBottom: "На задний план",

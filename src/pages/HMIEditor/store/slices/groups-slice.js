@@ -1,35 +1,11 @@
-import { duplicateNodesService } from "../services/duplicateNodesService";
-import { groupNodesService } from "../services/groupService";
-import { ungroupNodesService } from "../services/ungroupService";
-import { withDirty } from "../utils/withDirty";
+import { groupNodesCommand, ungroupNodesCommand } from "../commands";
 
-export const createGroupsSlice = (set, get) => {
-    const dirty = withDirty(set);
-
+// TODO Реализовать nested группировку/разгруппировку
+// TODO Разобраться с порядком слоев при разгруппировке
+export const createGroupsSlice = (api) => {
     return {
-        groupNodes: dirty("groups/groupNodes", (ids, bbox) =>
-            set(
-                (state) => groupNodesService(state, ids, bbox),
-                undefined,
-                "groups/groupNodes",
-            ),
-        ),
-        ungroupNode: dirty("groups/ungroupNode", (id) =>
-            get().ungroupNodes([id]),
-        ),
-        ungroupNodes: dirty("groups/ungroupNodes", (ids) =>
-            set(
-                (state) => ungroupNodesService(state, ids),
-                undefined,
-                "groups/ungroupNodes",
-            ),
-        ),
-        duplicateNodes: dirty("groups/duplicateNodes", (ids) =>
-            set(
-                (state) => duplicateNodesService(state, ids),
-                undefined,
-                "groups/duplicateNodes",
-            ),
-        ),
+        groupNodes: (ids, bbox) => groupNodesCommand(api, ids, bbox),
+        ungroupNode: (id) => ungroupNodesCommand(api, [id]),
+        ungroupNodes: (ids) => ungroupNodesCommand(api, ids),
     };
 };

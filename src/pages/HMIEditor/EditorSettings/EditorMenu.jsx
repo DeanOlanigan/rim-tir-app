@@ -7,6 +7,7 @@ import { EDIT_GRID_DIALOG_ID, editGridDialog } from "../editGridDialog";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "../ProjectManager";
 import { useSaveProjectMutation } from "../mutations";
 import { HOTKEYS, LOCALE } from "../constants";
+import { toggleViewOnlyModeAction } from "../actions/toggleViewOnlyModeAction";
 
 export const EditorMenu = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -123,10 +124,7 @@ export const EditorMenu = ({ tools }) => {
                     value: "view-only-mode",
                     type: "checkbox",
                     isChecked: viewOnlyMode,
-                    command: () =>
-                        useActionsStore
-                            .getState()
-                            .setViewOnlyMode(!viewOnlyMode),
+                    command: () => toggleViewOnlyModeAction(tools),
                     hotkey: HOTKEYS.toggleViewOnly.keyLabel,
                 },
                 { type: "divider" },

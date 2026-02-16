@@ -3,6 +3,12 @@ import { Menu, Portal } from "@chakra-ui/react";
 import { useNodeStore } from "./store/node-store";
 import { useActionsStore } from "./store/actions-store";
 import { HOTKEYS, LAYERS_OPS, LOCALE } from "./constants";
+import {
+    copySelection,
+    cutSelection,
+    getPasteData,
+    pasteFromClipboard,
+} from "./actions/clipboardActions";
 
 export const ContextMenu = ({ tools }) => {
     const {
@@ -45,7 +51,7 @@ export const ContextMenu = ({ tools }) => {
                                 <Menu.Item
                                     value="cut"
                                     onClick={() =>
-                                        useNodeStore.getState().cutToClipboard()
+                                        cutSelection(useNodeStore.getState())
                                     }
                                     ps={8}
                                 >
@@ -57,9 +63,7 @@ export const ContextMenu = ({ tools }) => {
                                 <Menu.Item
                                     value="copy"
                                     onClick={() =>
-                                        useNodeStore
-                                            .getState()
-                                            .copyToClipboard()
+                                        copySelection(useNodeStore.getState())
                                     }
                                     ps={8}
                                 >
@@ -204,11 +208,12 @@ const PasteMenuItem = ({ tools }) => {
         <Menu.Item
             value="paste"
             onClick={() => {
-                const snapToGrid = useActionsStore.getState().snapToGrid;
-                const gridSize = useActionsStore.getState().gridSize;
-                const grid = snapToGrid ? gridSize : 1;
-                const pos = tools.api.getStage().getRelativePointerPosition();
-                useNodeStore.getState().pasteFromClipboard(pos.x, pos.y, grid);
+                const { store, worldX, worldY, gridSize } = getPasteData(tools);
+                pasteFromClipboard(store, {
+                    worldX,
+                    worldY,
+                    gridSize,
+                });
             }}
             ps={8}
         >

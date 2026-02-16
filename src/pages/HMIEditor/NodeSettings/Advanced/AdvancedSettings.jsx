@@ -13,14 +13,14 @@ import { LOCALE } from "../../constants";
 export const AdvancedSettings = ({ types, selectedIds }) => {
     const { data: variables } = useVariables();
     const bindingsItems = useNodeStore(
-        useShallow((s) => s.nodes[selectedIds[0]]?.bindings?.items || []),
+        useShallow((s) => s.nodes[selectedIds[0]]?.bindings?.byProp || {}),
     );
     const isLiveUpdate = useActionsStore((s) => s.isLiveUpdate);
     const setLiveUpdates = useActionsStore((s) => s.setLiveUpdates);
 
     const supportedProps = getCommonSupportedProps(types);
 
-    const activeProperties = bindingsItems.map((b) => b.property);
+    const activeProperties = Object.keys(bindingsItems);
     const availableParams = Object.keys(PARAMS_CONFIG).filter(
         (p) => supportedProps.includes(p) && !activeProperties.includes(p),
     );
@@ -81,21 +81,23 @@ export const AdvancedSettings = ({ types, selectedIds }) => {
                     gap={2}
                     pe={2}
                 >
-                    {bindingsItems.map((binding) => {
-                        if (!PARAMS_CONFIG[binding.property]) return null;
-                        return (
-                            <BindingCard
-                                key={binding.id}
-                                binding={binding}
-                                config={PARAMS_CONFIG[binding.property]}
-                                variables={variables}
-                                isMultiple={selectedIds.length > 1}
-                                selectedIds={selectedIds}
-                                globalVariable={globalVariable}
-                            />
-                        );
-                    })}
-                    {bindingsItems.length === 0 && (
+                    {Object.entries(bindingsItems).map(
+                        ([property, binding]) => {
+                            if (!PARAMS_CONFIG[property]) return null;
+                            return (
+                                <BindingCard
+                                    key={property}
+                                    binding={binding}
+                                    config={PARAMS_CONFIG[property]}
+                                    variables={variables}
+                                    isMultiple={selectedIds.length > 1}
+                                    selectedIds={selectedIds}
+                                    globalVariable={globalVariable}
+                                />
+                            );
+                        },
+                    )}
+                    {Object.keys(bindingsItems).length === 0 && (
                         <Box
                             p={4}
                             border="1px dashed"

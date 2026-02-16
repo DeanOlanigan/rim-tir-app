@@ -1,71 +1,23 @@
-import { nanoid } from "nanoid";
-import { withDirty } from "../utils/withDirty";
-import { defaultPageId, defaultPages } from "../constants";
-import { removePageService } from "../services/pageService";
+import { createDefaultPages } from "../fabrics";
+import {
+    addPageCommand,
+    removePageCommand,
+    setActiveCommand,
+    updatePageCommand,
+} from "../commands";
 
-export const createPagesSlice = (set) => {
-    const dirty = withDirty(set);
-
+export const createPagesSlice = (api) => {
     return {
-        activePageId: defaultPageId,
-        pages: defaultPages,
+        activePageId: "page-1",
+        pages: createDefaultPages(),
 
-        setActivePage: (pageId) =>
-            set(
-                (state) => {
-                    if (state.activePageId === pageId) return state;
-                    return { activePageId: pageId, selectedIds: [] };
-                },
-                undefined,
-                "pages/setActivePage",
-            ),
+        setActivePage: (pageId) => setActiveCommand(api, pageId),
 
-        addPage: dirty("pages/addPage", (name = "New page", type = "SCREEN") =>
-            set(
-                (state) => {
-                    const id = nanoid(12);
+        addPage: (name, type) => addPageCommand(api, name, type),
 
-                    return {
-                        pages: {
-                            ...state.pages,
-                            [id]: {
-                                id,
-                                name,
-                                rootIds: [],
-                                type,
-                                backgroundColor: "#254e25ff",
-                            },
-                        },
-                        activePageId: id,
-                        selectedIds: [],
-                    };
-                },
-                undefined,
-                "pages/addPage",
-            ),
-        ),
+        updatePage: (pageId, pagePatch) =>
+            updatePageCommand(api, pageId, pagePatch),
 
-        updatePage: dirty("pages/updatePage", (pageId, patch) =>
-            set(
-                (state) => ({
-                    pages: {
-                        ...state.pages,
-                        [pageId]: { ...state.pages[pageId], ...patch },
-                    },
-                }),
-                undefined,
-                "pages/updatePage",
-            ),
-        ),
-
-        removePage: dirty("pages/removePage", (pageId) =>
-            set(
-                (state) => {
-                    return removePageService(state, pageId);
-                },
-                undefined,
-                "pages/removePage",
-            ),
-        ),
+        removePage: (pageId) => removePageCommand(api, pageId),
     };
 };

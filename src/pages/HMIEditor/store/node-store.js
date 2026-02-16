@@ -5,24 +5,25 @@ import { createProjectSlice } from "./slices/project-slice";
 import { createNodeEventsSlice } from "./slices/node-events-slice";
 import { createBindingsSlice } from "./slices/bindings-slice";
 import { createGroupsSlice } from "./slices/groups-slice";
-import { createIndexSlice } from "./slices/index-slice";
 import { createNodesSlice } from "./slices/nodes-slice";
 import { createPagesSlice } from "./slices/pages-slice";
 import { createUiSlice } from "./slices/ui-slice";
 
 export const useNodeStore = create(
     devtools(
-        (set, get) => ({
-            ...createNodeEventsSlice(set, get),
-            ...createBindingsSlice(set, get),
-            ...createGroupsSlice(set, get),
-            ...createIndexSlice(set, get),
-            ...createMetaSlice(set, get),
-            ...createNodesSlice(set, get),
-            ...createPagesSlice(set, get),
-            ...createProjectSlice(set, get),
-            ...createUiSlice(set, get),
-        }),
+        (set, get) => {
+            const api = { set, get };
+            return {
+                ...createNodeEventsSlice(api),
+                ...createBindingsSlice(api),
+                ...createGroupsSlice(api),
+                ...createMetaSlice(api),
+                ...createNodesSlice(api),
+                ...createPagesSlice(api),
+                ...createProjectSlice(api),
+                ...createUiSlice(api),
+            };
+        },
         { name: "node-store" },
     ),
 );
@@ -41,13 +42,26 @@ export const patchStoreRaf = (() => {
         const ids = Array.from(queuedIds);
         const patchById = queuedPatch;
 
-        queuedIds = new Set();
-        queuedPatch = {};
-        frame = null;
-        useNodeStore.getState().updateNodes(ids, patchById);
+        try {
+            useNodeStore.getState().updateNodesRaf(ids, patchById);
+            queuedIds = new Set();
+            queuedPatch = {};
+            frame = null;
+        } catch (e) {
+            frame = null;
+            throw e;
+        } finally {
+            queuedIds = new Set();
+            queuedPatch = {};
+            frame = null;
+        }
     };
 
-    return (ids, patchById) => {
+    const schedule = () => {
+        if (!frame) frame = requestAnimationFrame(flush);
+    };
+
+    const fn = (ids, patchById) => {
         ids.forEach((id) => {
             queuedIds.add(id);
             queuedPatch[id] = {
@@ -55,9 +69,21 @@ export const patchStoreRaf = (() => {
                 ...(patchById[id] || {}),
             };
         });
-
-        if (!frame) {
-            frame = requestAnimationFrame(flush);
-        }
+        schedule();
     };
+
+    fn.flushNow = () => {
+        if (frame) cancelAnimationFrame(frame);
+        frame = null;
+        flush();
+    };
+
+    fn.cancel = () => {
+        if (frame) cancelAnimationFrame(frame);
+        frame = null;
+        queuedIds = new Set();
+        queuedPatch = {};
+    };
+
+    return fn;
 })();

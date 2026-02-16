@@ -39,5 +39,5 @@ export function collectSubtreeIds(rootIds, nodes) {
         }
     }
 
-    return Array.from(result);
+    return result;
 }

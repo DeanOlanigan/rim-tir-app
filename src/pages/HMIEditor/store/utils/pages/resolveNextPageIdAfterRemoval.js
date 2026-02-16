@@ -1,5 +1,3 @@
-import { createDefaultPage } from "./createDefaultPage";
-
 export function resolveNextPageIdAfterRemoval(
     pages,
     removedPageId,
@@ -8,10 +6,7 @@ export function resolveNextPageIdAfterRemoval(
     let newActiveId = currentActiveId;
     if (currentActiveId === removedPageId) {
         const remainingIds = Object.keys(pages);
-        newActiveId = remainingIds.length > 0 ? remainingIds[0] : null;
-    }
-    if (!newActiveId) {
-        newActiveId = createDefaultPage();
+        newActiveId = remainingIds.length > 0 ? remainingIds[0].id : null;
     }
     return newActiveId;
 }

@@ -1,8 +1,19 @@
+import { buildParentOf } from "./buildParentOf";
+
 export function getTopLevelSelectedIds(nodes, selectedIds) {
     const selectedSet = new Set(selectedIds);
 
+    const parentOf = buildParentOf(nodes);
+
     return selectedIds.filter((id) => {
-        const parentId = nodes[id]?.parentId;
-        return !parentId || !selectedSet.has(parentId);
+        let cur = parentOf[id];
+        const guard = new Set();
+        while (cur) {
+            if (selectedSet.has(cur)) return false;
+            if (guard.has(cur)) break;
+            guard.add(cur);
+            cur = parentOf[cur];
+        }
+        return true;
     });
 }
