@@ -1,4 +1,4 @@
-import { Box, Flex, HStack } from "@chakra-ui/react";
+import { Box, Flex, HStack, IconButton } from "@chakra-ui/react";
 import { ContextMenu } from "./ContextMenu";
 import { ToolBar } from "./ToolBar";
 import { HMICanvas } from "./canvas/HMICanvas";
@@ -14,6 +14,8 @@ import { useHMICanvasResize } from "./hooks/useHMICanvasResize";
 import { useEffect } from "react";
 import { useNodeStore } from "./store/node-store";
 import { fitNodesToFrame } from "./utils";
+import { HELP_DIALOG_ID, helpDialog } from "./helpDialog";
+import { FaQuestion } from "react-icons/fa6";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -50,6 +52,7 @@ const HMIEditorContent = () => {
             <openProjectDialog.Viewport />
             <editGridDialog.Viewport />
             <confirmDialog.Viewport />
+            <helpDialog.Viewport />
             <ContextMenu tools={tools} />
             <HMICanvas {...tools} />
             <Flex
@@ -71,6 +74,17 @@ const HMIEditorContent = () => {
             >
                 <RightPanel api={tools.api} />
             </Box>
+            <IconButton
+                position={"absolute"}
+                bottom={4}
+                right={4}
+                size={"sm"}
+                p={2}
+                variant={"subtle"}
+                as={FaQuestion}
+                rounded={"full"}
+                onClick={() => helpDialog.open(HELP_DIALOG_ID)}
+            />
             <HStack position={"absolute"} bottom={2} alignSelf={"center"}>
                 <ToolBar manager={tools.manager} />
             </HStack>
