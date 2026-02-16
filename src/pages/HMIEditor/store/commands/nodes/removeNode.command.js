@@ -2,6 +2,7 @@ import { unindexNodesCOW } from "../../utils/bindings";
 import { collectSubtreeIds } from "../../utils/nodes";
 import { runCommand } from "../runCommand";
 
+// TODO: добавить обработку случая удаления последнего элемента в группе
 export const removeNodesCommand = (api, ids) => {
     runCommand(api, "cmd/nodes/removeNodes", (state) => {
         // page guard

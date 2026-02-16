@@ -142,12 +142,15 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
         prevHandlersRef.current = handlers;
     }, [handlers, id]);
 
-    if (!node) return null;
+    const registerRef = useCallback(
+        (el) => {
+            if (el) nodesRef.current.set(id, el);
+            else nodesRef.current.delete(id);
+        },
+        [id, nodesRef],
+    );
 
-    const registerRef = (el) => {
-        if (el) nodesRef.current.set(id, el);
-        else nodesRef.current.delete(id);
-    };
+    if (!node) return null;
 
     const params = {
         ...node,

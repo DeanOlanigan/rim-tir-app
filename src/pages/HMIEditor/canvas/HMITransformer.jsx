@@ -65,13 +65,22 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
 
         if (
             selectedIds.length === 1 &&
+            nodes[selectedIds[0]] &&
             isLineLikeType(nodes[selectedIds[0]].type)
         ) {
             transformer.nodes([]);
             return;
         }
 
-        const instances = selectedIds.map((id) => nodesRef.current.get(id));
+        const instances = selectedIds
+            .map((id) => nodesRef.current.get(id))
+            .filter(Boolean);
+
+        if (instances.length !== selectedIds.length) {
+            transformer.nodes([]);
+            return;
+        }
+
         transformer.nodes(instances);
     }, [selectedIds, nodesRef, transformerRef]);
 

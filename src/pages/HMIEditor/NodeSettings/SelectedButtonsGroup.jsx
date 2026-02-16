@@ -31,12 +31,14 @@ export const SelectedButtonsGroup = ({ ids, api, types }) => {
 };
 
 const GroupSelected = ({ ids, api }) => {
-    const stage = api.canvas.getStage();
     const nodes = api.canvas.getNodes();
     const handleGroup = () => {
-        const gcl = ids.map((id) =>
-            nodes.get(id).getClientRect({ relativeTo: stage }),
-        );
+        const gcl = ids.map((id) => {
+            const node = nodes.get(id);
+            return node.getClientRect({
+                relativeTo: node.getParent(),
+            });
+        });
         const bbox = calcBBox(gcl);
         useNodeStore.getState().groupNodes(ids, bbox);
     };
