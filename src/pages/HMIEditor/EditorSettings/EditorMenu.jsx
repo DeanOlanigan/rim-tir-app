@@ -60,6 +60,7 @@ export const EditorMenu = ({ tools }) => {
                     value: "download",
                     type: "wrapper",
                     wrapper: DownloadProject,
+                    wrapperProps: { tools },
                 },
             ],
         },
