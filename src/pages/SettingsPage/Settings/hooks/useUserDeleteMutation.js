@@ -13,6 +13,6 @@ export const useUserDeleteMutation = () => {
             return res;
         },
         onSuccess: () => usersSuccessMutate(queryClient, "DELETE_USER_SUC"),
-        onError: (err) => usersErrorMutate(err, queryClient, "DELETE_USER_ERR"),
+        onError: (err) => usersErrorMutate(err, queryClient, "DELETE_ERR"),
     });
 };

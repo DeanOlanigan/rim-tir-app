@@ -16,12 +16,12 @@ export const LogSettings = () => {
     const editSettings = useSettingStore.getState().editSettings;
     return (
         <>
-            <Heading paddingBottom={"2"}>Лог файлы</Heading>
+            <Heading paddingBottom={"2"}>Лог-файлы</Heading>
             <Card.Root variant={"elevated"}>
                 <Card.Body>
                     <Fieldset.Root>
                         <Fieldset.Legend>
-                            <Text fontSize={"lg"}>Параметры Лог-Файлов</Text>
+                            <Text fontSize={"lg"}>Параметры Лог-файлов</Text>
                         </Fieldset.Legend>
                         <Fieldset.Content>
                             <Field.Root
