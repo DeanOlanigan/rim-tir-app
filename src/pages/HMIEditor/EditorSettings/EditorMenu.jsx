@@ -6,7 +6,7 @@ import { DownloadProject } from "../ProjectOps";
 import { EDIT_GRID_DIALOG_ID, editGridDialog } from "../editGridDialog";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "../ProjectManager";
 import { useSaveProjectMutation } from "../mutations";
-import { HOTKEYS, LOCALE } from "../constants";
+import { HOTKEYS, LOCALE, SCHEMA_VERSION } from "../constants";
 import { toggleViewOnlyModeAction } from "../actions/toggleViewOnlyModeAction";
 
 export const EditorMenu = ({ tools }) => {
@@ -45,7 +45,7 @@ export const EditorMenu = ({ tools }) => {
                         const state = useNodeStore.getState();
                         const project = {
                             kind: "HMIEditorProject",
-                            schemaVersion: 2,
+                            schemaVersion: SCHEMA_VERSION,
                             projectName: state.projectName,
                             activePageId: state.activePageId,
                             pages: state.pages,

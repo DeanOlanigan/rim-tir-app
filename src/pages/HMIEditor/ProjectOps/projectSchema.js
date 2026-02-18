@@ -1,4 +1,5 @@
 import Ajv from "ajv";
+import { SCHEMA_VERSION } from "../constants";
 
 const schema = {
     type: "object",
@@ -13,7 +14,7 @@ const schema = {
     ],
     properties: {
         kind: { const: "HMIEditorProject" },
-        schemaVersion: { const: 2 },
+        schemaVersion: { const: SCHEMA_VERSION },
         projectName: { type: "string" },
         activePageId: { type: "string" },
         pages: {
@@ -43,9 +44,10 @@ const schema = {
             additionalProperties: {
                 type: "object",
                 additionalProperties: true,
-                required: ["id", "type", "name"],
+                required: ["id", "type", "name", "parentId"],
                 properties: {
                     id: { type: "string" },
+                    parentId: { type: "string", nullable: true },
                     type: { type: "string" },
                     name: { type: "string" },
                     x: { type: "number", nullable: true },

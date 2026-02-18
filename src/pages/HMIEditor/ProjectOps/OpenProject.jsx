@@ -1,19 +1,43 @@
 import { toaster } from "@/components/ui/toaster";
 import { FileUpload, useFileUpload } from "@chakra-ui/react";
+import { parseProjectPackage } from "./parseProjectPackage";
+import { MAX_ARCHIVE_FILE_SIZE, MAX_ARCHIVE_FILES } from "../constants";
+
+const ACCEPT = [".tir-project", ".json"];
+
+const errorMessages = {
+    TOO_MANY_FILES: "Слишком много файлов (максимум 1)",
+    FILE_INVALID_TYPE:
+        "Неподдерживаемый тип файла (поддерживаются: .tir-project, .json)",
+    FILE_TOO_LARGE: "Слишком большой файл (максимум 15MB)",
+    FILE_TOO_SMALL: "Слишком малый файл",
+    FILE_INVALID: "Некорректный файл",
+    FILE_EXISTS: "Файл уже существует",
+};
 
 export const OpenProject = ({ children, onProjectLoad }) => {
     const fileUpload = useFileUpload({
-        maxFiles: 1,
-        accept: ["application/json"],
-        maxFileSize: 15 * 1024 * 1024,
+        maxFiles: MAX_ARCHIVE_FILES,
+        maxFileSize: MAX_ARCHIVE_FILE_SIZE,
+        validate: (file) => {
+            const name = (file.name ?? "").toLowerCase();
+            const ok = ACCEPT.some((ext) => name.endsWith(ext));
+            return ok ? null : ["FILE_INVALID_TYPE"];
+        },
         async onFileAccept(details) {
             const file = details.files[0];
             if (!file) return;
 
             try {
-                const text = await file.text();
-                const json = JSON.parse(text);
-                onProjectLoad(json, file.name);
+                const name = (file?.name ?? "").toLowerCase();
+                if (name.endsWith(".tir-project")) {
+                    const { project } = await parseProjectPackage(file);
+                    onProjectLoad(project, file.name);
+                } else {
+                    const text = await file.text();
+                    const json = JSON.parse(text);
+                    onProjectLoad(json, file.name);
+                }
             } catch (error) {
                 toaster.create({
                     type: "error",
@@ -25,13 +49,15 @@ export const OpenProject = ({ children, onProjectLoad }) => {
             }
         },
         async onFileReject(details) {
-            toaster.create({
-                type: "error",
-                title: "Файл не загружен",
-                description: details?.files
-                    ?.flatMap((f) => f.errors || [])
-                    .join(", "),
-            });
+            details.files.forEach((f) =>
+                toaster.create({
+                    type: "error",
+                    title: f.file.name,
+                    description: f.errors
+                        .map((e) => errorMessages[e])
+                        .join(", "),
+                }),
+            );
             fileUpload.clearFiles();
         },
     });

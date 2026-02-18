@@ -108,6 +108,30 @@ export const LAYERS_OPS = {
     moveToTop: "moveToTop",
     moveToBottom: "moveToBottom",
 };
+// THUMBNAIL
+export const THUMBNAIL_TARGET_WIDTH = 256;
+export const THUMBNAIL_TARGET_HEIGHT = 144;
+export const THUMBNAIL_PADDING = 20;
+export const THUMB_SPEC = {
+    path: "thumbnail.png",
+    mime: "image/png",
+    width: THUMBNAIL_TARGET_WIDTH,
+    height: THUMBNAIL_TARGET_HEIGHT,
+};
+// Project
+export const SCHEMA_VERSION = 3;
+export const MAX_ARCHIVE_FILES = 1;
+export const MAX_ARCHIVE_FILE_SIZE = 15 * 1024 * 1024;
+export const MAX_PROJECT_FILE_SIZE = 5 * 1024 * 1024;
+export const MAX_THUMB_FILE_SIZE = 5 * 1024 * 1024;
+export const MAX_INFLATED_TOTAL_BYTES = 30 * 1024 * 1024;
+export const MAX_FILES_IN_ARCHIVE = 16;
+export const ALLOWED_PATHS = new Set([
+    "manifest.json",
+    "manifest.sha256",
+    "project.json",
+    "thumbnail.png",
+]);
 // Rulers
 export const RULERS_THICKNESS = 20;
 export const RULERS_FONT_SIZE = 10;
