@@ -46,7 +46,7 @@ export const removeNodesCommand = (api, ids) => {
             initialQueue: parentsToFix,
             deleteSet,
         });
-        newNodes = cascadeResult.newNodes;
+        newNodes = cascadeResult.nodes;
         newRootIds = cascadeResult.rootIds;
         const extraDeleted = cascadeResult.extraDeleted;
 

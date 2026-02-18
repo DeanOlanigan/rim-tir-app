@@ -83,6 +83,7 @@ const HMIEditorContent = () => {
                 variant={"subtle"}
                 as={FaQuestion}
                 rounded={"full"}
+                shadow={"md"}
                 onClick={() => helpDialog.open(HELP_DIALOG_ID)}
             />
             <HStack position={"absolute"} bottom={2} alignSelf={"center"}>

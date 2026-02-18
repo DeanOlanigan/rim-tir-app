@@ -9,6 +9,8 @@ export const LeftPanel = ({ tools }) => {
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
     const showRulers = useActionsStore((state) => state.showRulers);
 
+    const shifted = showRulers && !viewOnlyMode;
+
     const isMinimized = !isUiExpanded || viewOnlyMode;
 
     return (
@@ -17,8 +19,8 @@ export const LeftPanel = ({ tools }) => {
             minH={0}
             gap={1}
             direction={"column"}
-            pt={showRulers ? 8 : 2}
-            pl={showRulers ? 8 : 2}
+            pt={shifted ? 8 : 2}
+            pl={shifted ? 8 : 2}
             pb={2}
             transition={"padding 0.2s ease-in-out"}
         >

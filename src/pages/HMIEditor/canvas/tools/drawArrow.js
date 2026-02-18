@@ -25,6 +25,7 @@ export function createDrawArrowTool() {
 
             start = p;
             draft = new Konva.Arrow({
+                ...BASE_PARAMS,
                 points: [p.x, p.y, p.x, p.y],
                 strokeWidth: 1,
                 pointerLength: 10,
@@ -79,6 +80,7 @@ export function createDrawArrowTool() {
                 pointerLength: 10,
                 pointerWidth: 10,
                 strokeWidth: 1,
+                stroke: "#000000",
             });
             ctx.manager.setActive(ACTIONS.select);
         },

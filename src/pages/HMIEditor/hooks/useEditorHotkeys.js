@@ -15,6 +15,7 @@ import {
     pasteFromClipboard,
 } from "../actions/clipboardActions";
 import { toggleViewOnlyModeAction } from "../actions/toggleViewOnlyModeAction";
+import { HELP_DIALOG_ID, helpDialog } from "../helpDialog";
 
 export function useEditorHotkeys(tools) {
     const hotkeyTweenRef = useRef(null);
@@ -218,4 +219,12 @@ export function useEditorHotkeys(tools) {
             gridSize,
         });
     });
+    // help
+    useHotkeys(
+        HOTKEYS.helpDialog.hotkey,
+        () => {
+            helpDialog.open(HELP_DIALOG_ID);
+        },
+        { useKey: true },
+    );
 }

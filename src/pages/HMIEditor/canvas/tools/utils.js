@@ -11,6 +11,7 @@ export const snapPointToGrid = (p, gridSize, snapToGrid) => {
 
 export const BASE_PARAMS = {
     fill: "#c3c3c3",
+    stroke: "#000000",
     fillAfterStrokeEnabled: true,
     shadowForStrokeEnabled: false,
 };

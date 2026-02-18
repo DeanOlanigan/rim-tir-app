@@ -101,6 +101,7 @@ export const HOTKEYS = {
     copy: { hotkey: "ctrl+c", keyLabel: "Ctrl+C" },
     cut: { hotkey: "ctrl+x", keyLabel: "Ctrl+X" },
     paste: { hotkey: "ctrl+v", keyLabel: "Ctrl+V" },
+    helpDialog: { hotkey: "?", keyLabel: "?" },
 };
 export const LAYERS_OPS = {
     moveUp: "moveUp",

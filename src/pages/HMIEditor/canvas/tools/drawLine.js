@@ -75,6 +75,7 @@ export function createDrawLineTool() {
                 y: info.y1,
                 points: [0, 0, info.dx, info.dy],
                 strokeWidth: 1,
+                stroke: "#000000",
             });
             ctx.manager.setActive(ACTIONS.select);
         },

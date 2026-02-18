@@ -12,8 +12,8 @@ export const addNodeCommand = (api, node) => {
         // create node
         const id = nanoid(12);
         const newNode = {
-            ...node,
             ...createDefaultNode(id),
+            ...node,
         };
 
         // update page rootIds
