@@ -1,3 +1,3 @@
 export const createMetaSlice = () => ({
-    meta: { mode: "new", filename: "untitled", isDirty: false },
+    meta: { mode: "new", filename: "untitled", isDirty: false, treeRev: 0 },
 });

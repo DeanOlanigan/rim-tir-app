@@ -1,23 +1,29 @@
-import { SHAPES_ICONS } from "../constants";
+import { useMemo } from "react";
 import { useNodeStore } from "../store/node-store";
 
 export const useNodesData = () => {
-    const rootIds = useNodeStore((s) => s.pages[s.activePageId]?.rootIds || []);
-    if (rootIds.length === 0) return [];
-    function createRecursiveList(items) {
-        return items.map((id) => {
-            const node = useNodeStore.getState().nodes[id];
-            const res = {
-                id,
-                icon: SHAPES_ICONS[node.type],
-            };
-            if (node.childrenIds)
-                res.children = createRecursiveList(node.childrenIds);
-            return res;
-        });
-    }
+    const activePageId = useNodeStore((s) => s.activePageId);
+    const rootIds = useNodeStore((s) => s.pages[activePageId]?.rootIds || []);
+    const treeRev = useNodeStore((s) => s.meta.treeRev || 0);
 
-    return createRecursiveList(rootIds);
+    return useMemo(() => {
+        if (rootIds.length === 0) return [];
+        const nodes = useNodeStore.getState().nodes;
+
+        const build = (ids) =>
+            ids.map((id) => {
+                const n = nodes[id];
+                const item = { id };
+
+                const kids = n?.childrenIds;
+                if (Array.isArray(kids) && kids.length) {
+                    item.children = build(kids);
+                }
+                return item;
+            });
+
+        return build(rootIds);
+    }, [activePageId, treeRev, rootIds]);
 };
 
 export function toSet(ids) {

@@ -1,5 +1,8 @@
-import { arraysEqual } from "@/utils/utils";
-import { reorderRootIds } from "../../utils/nodes";
+import {
+    buildReorderResponse,
+    calculateReorderChanges,
+    groupNodesByParent,
+} from "../../utils/nodes";
 import { runCommand } from "../runCommand";
 
 export const reorderLayersCommand = (api, ids, dir) => {
@@ -8,22 +11,27 @@ export const reorderLayersCommand = (api, ids, dir) => {
         const page = state.pages[pageId];
         if (!page) return null;
 
-        const newRootIds = reorderRootIds(page.rootIds, ids, dir);
-        if (arraysEqual(newRootIds, page.rootIds)) return null;
+        // 1) группируем выбранные id по parentId
+        // parentId|null -> string[]
+        const byParent = groupNodesByParent(ids, state.nodes);
+        if (byParent.size === 0) return null;
 
-        const patch = {
-            pages: {
-                ...state.pages,
-                [pageId]: {
-                    ...page,
-                    rootIds: newRootIds,
-                },
-            },
-        };
+        // 2) для каждого родителя делаем reorder внутри его контейнера
+        const changes = calculateReorderChanges({
+            byParent,
+            stateNodes: state.nodes,
+            currentRootIds: page.rootIds ?? [],
+            dir,
+        });
+        if (!changes) return null;
 
-        return {
-            patch,
-            dirty: true,
-        };
+        // 3. Формируем объект ответа
+        return buildReorderResponse({
+            state,
+            pageId,
+            page,
+            newRootIds: changes.newRootIds,
+            nodesPatch: changes.nodesPatch,
+        });
     });
 };

@@ -13,7 +13,7 @@ export const openProjectCommand = (
 
         const next = {
             ...createInitial(),
-            meta: { mode, filename, isDirty: false },
+            meta: { mode, filename, isDirty: false, treeRev: 0 },
             nodes: project.nodes,
             activePageId: project.activePageId,
             pages: project.pages,

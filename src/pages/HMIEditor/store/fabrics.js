@@ -1,3 +1,5 @@
+import { SHAPES } from "@/pages/HMIEditor/constants";
+
 export const createDefaultPages = () => {
     return {
         "page-1": {
@@ -18,6 +20,7 @@ export const createInitial = () => {
             mode: "new",
             filename: "untitled",
             isDirty: false,
+            treeRev: 0,
         },
         nodes: {},
         activePageId: "page-1",
@@ -38,11 +41,10 @@ export const createInitial = () => {
 export function createDefaultNode(id) {
     return {
         id,
+        parentId: null,
         fill: "#c3c3c3",
         stroke: "#000000",
         strokeWidth: 0,
-        fillAfterStrokeEnabled: true, // [ ]  ?
-        shadowForStrokeEnabled: false, // ?
         lineJoin: "miter",
         lineCap: "butt",
         dashEnabled: false,
@@ -51,6 +53,34 @@ export function createDefaultNode(id) {
         visible: true,
         rotation: 0,
         bindings: { globalVarId: null, byProp: {} },
+        events: {
+            onClick: [],
+            onContextMenu: [],
+            onDoubleClick: [],
+            onMouseDown: [],
+            onMouseUp: [],
+        },
+    };
+}
+
+export function createGroupNode(id, bbox, childrenIds, parentId = null) {
+    return {
+        id,
+        parentId,
+        type: SHAPES.group,
+        name: "Группа",
+        x: bbox.x,
+        y: bbox.y,
+        width: bbox.width,
+        height: bbox.height,
+        opacity: 1,
+        visible: true,
+        rotation: 0,
+        childrenIds,
+        bindings: {
+            globalVarId: null,
+            byProp: {},
+        },
         events: {
             onClick: [],
             onContextMenu: [],

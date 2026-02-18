@@ -40,7 +40,7 @@ export function createToolManager({ toolsMap, api }) {
             active.onEnter(prev, ctx);
         }
         api.setCurrentAction(name);
-        if (active.name !== ACTIONS.select && active.name !== ACTIONS.vertex) {
+        if (active.name !== ACTIONS.select) {
             api.setSelectedIds([]);
         }
     };

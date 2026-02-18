@@ -12,7 +12,7 @@ export const useActionsStore = create(
             snapToGrid: false,
             scale: 1,
             gridColor: "#9b9b9bff",
-            debugMode: true,
+            debugMode: false,
             showNodesTree: true,
             showHitRegions: false,
             showStartCoordMarker: true,
@@ -21,7 +21,7 @@ export const useActionsStore = create(
             showPagesList: true,
             isUiExpanded: false,
             canvasSize: { width: 0, height: 0 },
-            showRulers: false,
+            showRulers: true,
 
             setCurrentAction: (action) =>
                 set({ currentAction: action }, undefined, "setCurrentAction"),

@@ -25,7 +25,6 @@ export function createDrawArrowTool() {
 
             start = p;
             draft = new Konva.Arrow({
-                ...BASE_PARAMS,
                 points: [p.x, p.y, p.x, p.y],
                 strokeWidth: 1,
                 pointerLength: 10,

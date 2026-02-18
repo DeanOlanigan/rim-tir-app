@@ -4,15 +4,12 @@ import {
 } from "@/pages/HMIEditor/constants";
 import { collectSubtreeNodes, getTopLevelSelectedIds } from "../nodes";
 
-export function buildPayload({ nodes, selectedIds, pageRootIds }) {
+export function buildPayload({ nodes, selectedIds }) {
     if (!selectedIds.length) return null;
 
-    const top = getTopLevelSelectedIds(nodes, selectedIds, pageRootIds);
-    const topSet = new Set(top);
-    const rootIds =
-        Array.isArray(pageRootIds) && pageRootIds.length
-            ? pageRootIds.filter((id) => topSet.has(id))
-            : top;
+    // корни копируемых поддеревьев
+    const rootIds = getTopLevelSelectedIds(nodes, selectedIds);
+    if (!rootIds.length) return null;
 
     const nodesSnapshot = collectSubtreeNodes(rootIds, nodes);
 
@@ -23,5 +20,5 @@ export function buildPayload({ nodes, selectedIds, pageRootIds }) {
         rootIds,
     };
 
-    return { payload, rootIds };
+    return payload;
 }

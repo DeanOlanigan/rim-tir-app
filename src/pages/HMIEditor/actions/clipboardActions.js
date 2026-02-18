@@ -4,17 +4,15 @@ import { useActionsStore } from "../store/actions-store";
 import { buildPayload, parseClipboardPayload } from "../store/utils/clipboard";
 
 export const copySelection = async (store) => {
-    const { selectedIds, nodes, pages, activePageId } = store;
+    const { selectedIds, nodes } = store;
     if (!selectedIds.length) return;
-    const pageRootIds = pages[activePageId]?.rootIds ?? [];
 
-    const res = buildPayload({
+    const payload = buildPayload({
         nodes,
         selectedIds,
-        pageRootIds,
     });
-    if (!res) return;
-    const json = JSON.stringify(res.payload);
+    if (!payload) return;
+    const json = JSON.stringify(payload);
 
     try {
         await writeTextToClipboard(json);
@@ -26,18 +24,16 @@ export const copySelection = async (store) => {
 
 export const cutSelection = async (store) => {
     // 1. Snapshot (фиксируем, ЧТО удалять)
-    const { selectedIds, nodes, pages, activePageId } = store;
+    const { selectedIds, nodes } = store;
     if (!selectedIds.length) return;
-    const pageRootIds = pages[activePageId]?.rootIds ?? [];
 
     // 2. Prepare Data
-    const res = buildPayload({
+    const payload = buildPayload({
         nodes,
         selectedIds,
-        pageRootIds,
     });
-    if (!res) return;
-    const json = JSON.stringify(res.payload);
+    if (!payload) return;
+    const json = JSON.stringify(payload);
 
     try {
         // 3. Async Effect
@@ -45,7 +41,7 @@ export const cutSelection = async (store) => {
 
         // 4. Sync State Mutation (вызываем примитив стора)
         // Используем сохраненные selectedIds, чтобы избежать гонки состояний
-        store.removeNodes(res.rootIds);
+        store.removeNodes(payload.rootIds);
     } catch (e) {
         console.error("Cut failed", e);
     }

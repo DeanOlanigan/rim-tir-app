@@ -78,7 +78,6 @@ export function createDrawPolygonTool() {
             if (!box) return;
 
             ctx.addNode({
-                ...BASE_PARAMS,
                 type: SHAPES.polygon,
                 name: "Polygon",
                 x: box.centerX,

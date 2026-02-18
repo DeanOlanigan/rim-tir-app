@@ -17,8 +17,10 @@ export function runCommand(storeApi, actionName, build, opts) {
                 return state;
             }
 
+            // Policy
             nextState = applyDirty(nextState, res);
             nextState = applySelection(state, nextState, res);
+            nextState = applyTreeRev(nextState, res);
 
             return nextState;
         },
@@ -71,4 +73,18 @@ const applySelection = (prev, next, res) => {
         default:
             return next;
     }
+};
+
+const applyTreeRev = (next, res) => {
+    if (res.tree) {
+        return {
+            ...next,
+            meta: {
+                ...next.meta,
+                treeRev: next.meta.treeRev + 1,
+            },
+        };
+    }
+
+    return next;
 };

@@ -43,6 +43,8 @@ function move(node) {
 
 const common = {
     name: "node",
+    fillAfterStrokeEnabled: true,
+    shadowForStrokeEnabled: false,
     dragBoundFunc(pos) {
         const { gridSize, snapToGrid } = useActionsStore.getState();
         const stage = this.getStage();

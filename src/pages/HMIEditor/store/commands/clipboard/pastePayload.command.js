@@ -9,6 +9,7 @@ export const pastePayloadCommand = (api, payload, placement) => {
         return {
             patch: res.patch,
             dirty: true,
+            tree: true,
             selection: "set",
             selectedIds: res.insertedRootIds,
         };

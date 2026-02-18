@@ -2,6 +2,8 @@ import { buildPayload } from "../../utils/clipboard";
 import { buildInsertPatch } from "../clipboard/buildInsertPatch";
 import { runCommand } from "../runCommand";
 
+// TODO: При дублировании узла, который находится внутри группы, он вставляется в корень,
+// а нужно внутрь текущей группы + рекурсивно обновить все группы с помощью аффинных преобразований
 export const duplicateNodesCommand = (api, ids, opts = {}) => {
     const gridSize = opts.gridSize ?? 1;
     const step = gridSize > 1 ? gridSize : 10;
@@ -13,14 +15,13 @@ export const duplicateNodesCommand = (api, ids, opts = {}) => {
         const page = state.pages[pageId];
         if (!page) return null;
 
-        const build = buildPayload({
+        const payload = buildPayload({
             nodes: state.nodes,
             selectedIds: ids,
-            pageRootIds: page.rootIds,
         });
-        if (!build.payload) return null;
+        if (!payload) return null;
 
-        const res = buildInsertPatch(state, build.payload, {
+        const res = buildInsertPatch(state, payload, {
             kind: "offset",
             dx,
             dy,
@@ -31,6 +32,7 @@ export const duplicateNodesCommand = (api, ids, opts = {}) => {
         return {
             patch: res.patch,
             dirty: true,
+            tree: true,
             selection: "set",
             selectedIds: res.insertedRootIds,
         };

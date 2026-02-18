@@ -31,6 +31,7 @@ export const addNodeCommand = (api, node) => {
         return {
             patch,
             dirty: true,
+            tree: true,
             selection: "set",
             selectedIds: [id],
         };

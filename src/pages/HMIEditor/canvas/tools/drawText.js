@@ -108,7 +108,6 @@ export function createDrawTextTool() {
             if (!box) return;
 
             ctx.addNode({
-                ...BASE_PARAMS,
                 type: SHAPES.text,
                 name: "Text",
                 x: box.left,

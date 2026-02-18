@@ -15,6 +15,15 @@ export function prepareInsertFromPayload(payload, placement) {
     const newRootIds = payload.rootIds.map((id) => idMap[id]).filter(Boolean);
     if (!newRootIds.length) return null;
 
+    // корни вставки всегда в root => parentId = null
+    for (const rid of newRootIds) {
+        const n = newNodes[rid];
+        if (!n) continue;
+        if ((n.parentId ?? null) !== null) {
+            newNodes[rid] = { ...n, parentId: null };
+        }
+    }
+
     const gridSize = placement?.gridSize ?? 1;
 
     if (placement?.kind === "point") {

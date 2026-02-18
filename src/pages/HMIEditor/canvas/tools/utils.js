@@ -9,21 +9,10 @@ export const snapPointToGrid = (p, gridSize, snapToGrid) => {
     };
 };
 
-// TODO подумать что должно лежать в сторе сразу после создания примитива,
-//  а где использовать значения по умолчанию
 export const BASE_PARAMS = {
     fill: "#c3c3c3",
-    stroke: "#000000",
-    strokeWidth: 0,
     fillAfterStrokeEnabled: true,
     shadowForStrokeEnabled: false,
-    lineJoin: "miter",
-    lineCap: "butt",
-    dashEnabled: false,
-    dash: [0, 0],
-    opacity: 1,
-    visible: true,
-    rotation: 0,
 };
 
 export function getSnappedWorldPointer(stage, ctx) {

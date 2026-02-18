@@ -105,18 +105,6 @@ export function createSelectTool() {
             }
         },
 
-        /* onDblClick(e, ctx) {
-            if (e.evt.button !== 0) return;
-            const stage = e.currentTarget;
-            if (!stage) return;
-            if (e.target.hasName("node")) {
-                const type = e.target.attrs.type;
-                if (isLineLikeType(type)) {
-                    ctx.manager.setActive(ACTIONS.vertex);
-                }
-            }
-        }, */
-
         cancel(ctx) {
             hideBox(ctx);
             start = { x: 0, y: 0 };

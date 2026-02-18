@@ -13,11 +13,15 @@ export function rehydrateClipboardNodes(nodes) {
         const cloned = structuredClone(node);
 
         cloned.id = newId;
+
         if (cloned.childrenIds) {
             cloned.childrenIds = cloned.childrenIds
                 .map((id) => idMap[id])
                 .filter(Boolean);
         }
+
+        const oldPid = cloned.parentId ?? null;
+        cloned.parentId = oldPid ? (idMap[oldPid] ?? null) : null;
 
         if (cloned.bindings) {
             cloned.bindings.globalVarId = null;

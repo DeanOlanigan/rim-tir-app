@@ -80,7 +80,6 @@ export function createDrawVariablePolygonTool() {
             if (!box) return;
 
             ctx.addNode({
-                ...BASE_PARAMS,
                 type: SHAPES.polygon,
                 name: "Variable Polygon",
                 x: box.left,

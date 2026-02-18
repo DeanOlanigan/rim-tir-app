@@ -69,7 +69,6 @@ export function createDrawLineTool() {
             if (!info) return;
 
             ctx.addNode({
-                ...BASE_PARAMS,
                 type: SHAPES.line,
                 name: "Line",
                 x: info.x1,

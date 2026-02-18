@@ -1,5 +1,8 @@
 import { runCommand } from "../runCommand";
 
+// TODO: При перемещении узла, который находится внутри группы,
+// нужно рекурсивно обновить координаты и размеры групп с помощью аффинных преобразований
+
 function update(ids, patchesById, nodes) {
     const updates = {};
     let hasChanges = false;

@@ -20,7 +20,8 @@ export function reorderRootIds(rootIds, moveIds, dir) {
     if (orderedIds.length === 0) return rootIds.slice();
 
     // Остальные элементы (неподвижные)
-    const rest = rootIds.filter((id) => !orderedIds.includes(id));
+    const orderedSet = new Set(orderedIds);
+    const rest = rootIds.filter((id) => !orderedSet.has(id));
 
     switch (dir) {
         case LAYERS_OPS.moveToTop:

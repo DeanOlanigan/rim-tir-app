@@ -11,7 +11,7 @@ import { IndentLines } from "@/components/TreeView/IndentLines";
 import { VisibleButton } from "./VisibleButton";
 import { setDiff, setEquals, toSet, useNodesData } from "./helpers";
 import { useThrottledResizeObserver } from "@/hooks/useThrottledResizeObserver";
-import { LOCALE } from "../constants";
+import { LOCALE, SHAPES_ICONS } from "../constants";
 
 export const NodesTree = ({ api }) => {
     const data = useNodesData();
@@ -125,10 +125,10 @@ export const NodesTree = ({ api }) => {
                                                 isOpen={node.isOpen}
                                             />
                                         )}
-                                        <Icon
-                                            as={node.data.icon}
+                                        <NodeIcon
+                                            nodeId={node.id}
                                             onDoubleClick={() =>
-                                                focusById(node.data.id)
+                                                focusById(node.id)
                                             }
                                         />
                                         <HStack
@@ -180,4 +180,11 @@ const ItemNameEditor = ({ name, submit, reset }) => {
             }}
         />
     );
+};
+
+const NodeIcon = ({ nodeId, onDoubleClick }) => {
+    const type = useNodeStore((s) => s.nodes[nodeId]?.type);
+    const IconCmp = SHAPES_ICONS[type];
+
+    return <Icon as={IconCmp} onDoubleClick={onDoubleClick} />;
 };

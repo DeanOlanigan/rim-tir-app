@@ -1,11 +1,12 @@
 import { nanoid } from "nanoid";
 import { runCommand } from "../runCommand";
-import { createGroupNode } from "../../utils/groups";
-import { buildParentOf } from "../../utils/nodes/buildParentOf";
-import { pruneNestedSelection } from "../../utils/groups/pruneNestedSelection";
-import { replaceChildrenWithGroup } from "../../utils/groups/replaceChildrenWithGroup";
-import { getNodeLocalTransformMatrix, inv } from "@/pages/HMIEditor/utils";
-import { calcChildTransform } from "../../utils/geometry";
+import { createGroupNode } from "../../fabrics";
+import {
+    createGroupPatch,
+    reparentChildrenToGroup,
+    replaceChildrenWithGroup,
+    validateAndGetContext,
+} from "../../utils/groups";
 
 export const groupNodesCommand = (api, ids, bbox) => {
     runCommand(api, "cmd/groups/groupNodes", (state) => {
@@ -13,30 +14,22 @@ export const groupNodesCommand = (api, ids, bbox) => {
         const page = state.pages[pageId];
         if (!page) return null;
 
-        const parentMap = buildParentOf(state.nodes, page.rootIds);
-        const flat = pruneNestedSelection(ids, parentMap);
-        if (flat.length < 2) return null;
+        // 1. Валидация и получение контекста (parentId, flatIds)
+        const context = validateAndGetContext(ids, state.nodes);
+        if (!context) return null;
+        const { flatIds, parentId } = context;
 
-        const parentId = parentMap[flat[0]] ?? null;
-        for (const id of flat) {
-            if ((parentMap[id] ?? null) !== parentId) return null;
-        }
+        // 2. Получение текущего списка детей контейнера
+        const containerIds =
+            parentId === null
+                ? (page.rootIds ?? [])
+                : (state.nodes[parentId]?.childrenIds ?? []);
 
-        let newNodes = { ...state.nodes };
-
-        const container = parentId
-            ? {
-                  kind: "group",
-                  parentId,
-                  ids: state.nodes[parentId]?.childrenIds ?? [],
-              }
-            : { kind: "root", ids: page.rootIds ?? [] };
-
+        // 3. Создание группы и определение порядка
         const groupId = nanoid(12);
-
         const replaced = replaceChildrenWithGroup(
-            container.ids,
-            flat,
+            containerIds,
+            flatIds,
             groupId,
             "max",
         );
@@ -44,53 +37,30 @@ export const groupNodesCommand = (api, ids, bbox) => {
 
         const { nextContainerIds, orderedChildIds } = replaced;
 
-        const groupNode = createGroupNode(groupId, bbox, orderedChildIds);
+        // 4. Создание объекта новой группы
+        const groupNode = createGroupNode(
+            groupId,
+            bbox,
+            orderedChildIds,
+            parentId,
+        );
 
-        const G = getNodeLocalTransformMatrix(groupNode);
-        const invG = inv(G);
-        if (!invG) return null;
+        // 5. Пересчет координат детей
+        const newNodes = reparentChildrenToGroup({
+            nodes: state.nodes,
+            groupNode,
+            childIds: orderedChildIds,
+        });
+        if (!newNodes) return null;
 
-        for (const childId of orderedChildIds) {
-            const child = newNodes[childId];
-            if (!child) continue;
-            const { x, y, rotation } = calcChildTransform(invG, child);
-            newNodes[childId] = { ...child, x, y, rotation };
-        }
-
-        newNodes[groupId] = groupNode;
-
-        if (!parentId) {
-            const patch = {
-                pages: {
-                    ...state.pages,
-                    [pageId]: {
-                        ...page,
-                        rootIds: nextContainerIds,
-                    },
-                },
-                nodes: newNodes,
-            };
-            return {
-                patch,
-                dirty: true,
-                selection: "set",
-                selectedIds: [groupId],
-            };
-        } else {
-            const parent = newNodes[parentId];
-            newNodes[parentId] = {
-                ...parent,
-                childrenIds: nextContainerIds,
-            };
-            const patch = {
-                nodes: newNodes,
-            };
-            return {
-                patch,
-                dirty: true,
-                selection: "set",
-                selectedIds: [groupId],
-            };
-        }
+        return createGroupPatch({
+            state,
+            pageId,
+            page,
+            parentId,
+            nextContainerIds,
+            newNodes,
+            groupId,
+        });
     });
 };

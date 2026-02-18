@@ -79,7 +79,6 @@ export function createDrawEllipseTool() {
             if (!box) return;
 
             ctx.addNode({
-                ...BASE_PARAMS,
                 type: SHAPES.ellipse,
                 name: "Ellipse",
                 x: box.left,

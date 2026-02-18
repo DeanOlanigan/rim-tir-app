@@ -81,7 +81,6 @@ export function createDrawRectTool() {
             if (!box) return;
 
             ctx.addNode({
-                ...BASE_PARAMS,
                 type: SHAPES.rect,
                 name: "Rectangle",
                 x: box.left,
