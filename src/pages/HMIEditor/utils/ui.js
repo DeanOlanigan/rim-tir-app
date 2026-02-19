@@ -18,3 +18,17 @@ export const handleActionWithGuard = (isDirty, actionCallback, opts = {}) => {
         actionCallback();
     }
 };
+
+export const splitKeyLabel = (label) => {
+    if (!label) return [];
+    if (label.includes("+")) {
+        return label
+            .split("+")
+            .map((part) => part.trim())
+            .filter(Boolean);
+    }
+    return label
+        .split(" ")
+        .map((part) => part.trim())
+        .filter(Boolean);
+};

@@ -8,6 +8,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { HOTKEYS, LOCALE } from "./constants";
+import { splitKeyLabel } from "./utils";
 
 const EXTRA_LOCALE = {
     selectTool: "Инструмент: Выбор",
@@ -161,7 +162,9 @@ const HotkeyRow = ({ actionKey }) => {
                 {getActionTitle(actionKey)}
             </Text>
             <HStack>
-                <Kbd>{config.keyLabel}</Kbd>
+                {splitKeyLabel(config.keyLabel).map((key) => (
+                    <Kbd key={key}>{key}</Kbd>
+                ))}
             </HStack>
         </HStack>
     );
