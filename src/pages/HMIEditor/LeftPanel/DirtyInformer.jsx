@@ -8,7 +8,7 @@ export const DirtyInformer = () => {
     const dirty = useNodeStore((s) => s.meta.isDirty);
     return (
         dirty && (
-            <Tooltip content={LOCALE.unsavedChanges}>
+            <Tooltip showArrow content={LOCALE.unsavedChanges}>
                 <Icon as={LuBadgeAlert} color="red.500" size={"md"} />
             </Tooltip>
         )

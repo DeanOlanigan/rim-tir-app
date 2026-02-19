@@ -1,9 +1,19 @@
-import { Badge, Button, Flex, Heading, HStack } from "@chakra-ui/react";
+import {
+    Badge,
+    Button,
+    Flex,
+    Heading,
+    HStack,
+    Kbd,
+    Text,
+} from "@chakra-ui/react";
 import { useNodeStore } from "../store/node-store";
 import { useActionsStore } from "../store/actions-store";
-import { LuPanelRight } from "react-icons/lu";
+import { LuPanelLeft } from "react-icons/lu";
 import { EditorMenu } from "../EditorSettings";
 import { DirtyInformer } from "./DirtyInformer";
+import { HOTKEYS } from "../constants";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export const MinimizedPanel = ({ tools }) => {
     const activePage = useNodeStore((state) => state.pages[state.activePageId]);
@@ -23,27 +33,39 @@ export const MinimizedPanel = ({ tools }) => {
                 <EditorMenu tools={tools} />
                 <DirtyInformer />
             </HStack>
-            <Button
-                flex={1}
-                size={"xs"}
-                variant={"ghost"}
-                gap={4}
-                onClick={() =>
-                    useActionsStore
-                        .getState()
-                        .setIsUiExpanded(
-                            !useActionsStore.getState().isUiExpanded,
-                        )
+            <Tooltip
+                showArrow
+                content={
+                    <Text>
+                        Развернуть панель{" "}
+                        <Kbd variant={"plain"} size={"sm"}>
+                            {HOTKEYS.minimizeUi.keyLabel}
+                        </Kbd>
+                    </Text>
                 }
-                justifyContent={"space-between"}
-                disabled={viewOnlyMode}
             >
-                <Heading truncate size={"sm"}>
-                    {projectName}
-                </Heading>
-                <Badge variant={"solid"}>{activePage.name}</Badge>
-                <LuPanelRight />
-            </Button>
+                <Button
+                    flex={1}
+                    size={"xs"}
+                    variant={"ghost"}
+                    gap={4}
+                    onClick={() =>
+                        useActionsStore
+                            .getState()
+                            .setIsUiExpanded(
+                                !useActionsStore.getState().isUiExpanded,
+                            )
+                    }
+                    justifyContent={"space-between"}
+                    disabled={viewOnlyMode}
+                >
+                    <Heading truncate size={"sm"}>
+                        {projectName}
+                    </Heading>
+                    <Badge variant={"solid"}>{activePage.name}</Badge>
+                    <LuPanelLeft />
+                </Button>
+            </Tooltip>
         </Flex>
     );
 };

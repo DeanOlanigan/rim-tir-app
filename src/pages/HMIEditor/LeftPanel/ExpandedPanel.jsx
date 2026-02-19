@@ -1,6 +1,14 @@
-import { Box, HStack, IconButton, Tabs, VStack } from "@chakra-ui/react";
+import {
+    Box,
+    HStack,
+    IconButton,
+    Kbd,
+    Tabs,
+    Text,
+    VStack,
+} from "@chakra-ui/react";
 import { useActionsStore } from "../store/actions-store";
-import { LuPanelRight } from "react-icons/lu";
+import { LuPanelLeft } from "react-icons/lu";
 import { ProjectRename } from "./ProjectRename";
 import { Pages } from "../Pages/Pages";
 import { NodesTree } from "../NodesTree";
@@ -8,7 +16,8 @@ import { EditorMenu } from "../EditorSettings";
 import { DebugInfo } from "./DebugInfo";
 import { ZoomUndoBlock } from "./ZoomUndoBlock";
 import { DirtyInformer } from "./DirtyInformer";
-import { LOCALE } from "../constants";
+import { HOTKEYS, LOCALE } from "../constants";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export const ExpandedPanel = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -29,19 +38,31 @@ export const ExpandedPanel = ({ tools }) => {
                     <EditorMenu tools={tools} />
                     <DirtyInformer />
                 </HStack>
-                <IconButton
-                    size={"xs"}
-                    variant={"ghost"}
-                    onClick={() =>
-                        useActionsStore
-                            .getState()
-                            .setIsUiExpanded(
-                                !useActionsStore.getState().isUiExpanded,
-                            )
+                <Tooltip
+                    showArrow
+                    content={
+                        <Text>
+                            Свернуть панель{" "}
+                            <Kbd variant={"plain"} size={"sm"}>
+                                {HOTKEYS.minimizeUi.keyLabel}
+                            </Kbd>
+                        </Text>
                     }
                 >
-                    <LuPanelRight />
-                </IconButton>
+                    <IconButton
+                        size={"xs"}
+                        variant={"ghost"}
+                        onClick={() =>
+                            useActionsStore
+                                .getState()
+                                .setIsUiExpanded(
+                                    !useActionsStore.getState().isUiExpanded,
+                                )
+                        }
+                    >
+                        <LuPanelLeft />
+                    </IconButton>
+                </Tooltip>
             </HStack>
 
             <ProjectRename />
