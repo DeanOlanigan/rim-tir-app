@@ -1,13 +1,18 @@
 import {
     createListCollection,
     Field,
-    NumberInput,
+    Group,
     Portal,
     Select,
 } from "@chakra-ui/react";
-import { sameCheck, useNodesByIds } from "../../utils";
-import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import {
+    applyPatch,
+    isFiniteValue,
+    sameCheck,
+    useNodesByIds,
+} from "../../utils";
 import { LOCALE } from "@/pages/HMIEditor/constants";
+import { CommittedNumberInput } from "../../CommittedNumberInput";
 
 const lineTypes = createListCollection({
     items: [
@@ -17,68 +22,102 @@ const lineTypes = createListCollection({
     ],
 });
 
+function isValidDashArray(d) {
+    return (
+        Array.isArray(d) &&
+        d.length === 2 &&
+        isFiniteValue(d[0]) &&
+        isFiniteValue(d[1])
+    );
+}
+
+function normalizeDashPart(x, fallback = 4) {
+    return isFiniteValue(x) ? x : fallback;
+}
+
 function resolveDash(dashes) {
     if (!Array.isArray(dashes) || dashes.length === 0) {
-        return { mixed: true, value: [0, 0] };
+        return { mixed: true, value: [undefined, undefined] };
     }
 
-    const [a, b] = dashes[0] ?? [];
+    const first = dashes[0];
+    const hasFirst = isValidDashArray(first);
+    const a = hasFirst ? first[0] : undefined;
+    const b = hasFirst ? first[1] : undefined;
+
     const same = dashes.every(
-        (d) => Array.isArray(d) && d.length === 2 && d[0] === a && d[1] === b,
+        (d) => isValidDashArray(d) && d[0] === a && d[1] === b,
     );
 
     return {
         mixed: !same,
-        value: same ? [a, b] : [a ?? 0, b ?? 0],
+        value: [a, b],
     };
 }
 
 export const DashBlock = ({ ids }) => {
-    const allDashEnabled = useNodesByIds(ids, "dashEnabled");
-    let dashEnabled = sameCheck(allDashEnabled);
+    const idsKey = ids.join("|");
 
-    switch (dashEnabled) {
+    const allDashEnabled = useNodesByIds(ids, "dashEnabled");
+    let dashEnabledSame = sameCheck(allDashEnabled);
+
+    switch (dashEnabledSame) {
         case true:
-            dashEnabled = "dashed";
+            dashEnabledSame = "dashed";
             break;
         case false:
-            dashEnabled = "solid";
+            dashEnabledSame = "solid";
             break;
         default:
-            dashEnabled = "mixed";
+            dashEnabledSame = "mixed";
             break;
     }
 
     const dashes = useNodesByIds(ids, "dash");
-    const { mixed: dashMixed, value: dash } = resolveDash(dashes);
+    const { mixed: dashMixed, value: dashBase } = resolveDash(dashes);
+
+    const dashUi0 = dashMixed ? null : normalizeDashPart(dashBase[0], 0);
+    const dashUi1 = dashMixed ? null : normalizeDashPart(dashBase[1], 0);
 
     const handleTypeChange = (e) => {
         const value = e.value[0];
-        if (value === "solid") dashEnabled = false;
-        if (value === "dashed") dashEnabled = true;
+
+        if (value !== "solid" && value !== "dashed") return;
+        const nextEnabled = value === "dashed";
+
         const patch = {};
-        ids.forEach((id) => {
-            patch[id] = { dashEnabled };
+        ids.forEach((id, idx) => {
+            const p = { dashEnabled: nextEnabled };
+
+            if (nextEnabled) {
+                const d = dashes[idx];
+                if (!isValidDashArray(d)) {
+                    p.dash = [4, 4];
+                }
+            }
+
+            patch[id] = p;
         });
-        patchStoreRaf(ids, patch);
+
+        applyPatch(ids, patch, true);
     };
 
-    const handleDashChange = (value, index) => {
-        const val = Number.isNaN(value) ? 0 : value;
-        const next = [...dash];
+    const buildDashPatch = (index, rawNumber) => {
+        const val = Number.isNaN(rawNumber) ? 0 : rawNumber;
+        const target = Math.max(val, 0);
 
-        if (dashMixed) {
-            next[0] ??= 4;
-            next[1] ??= 4;
-        }
+        const base0 = dashMixed ? 4 : normalizeDashPart(dashBase[0], 4);
+        const base1 = dashMixed ? 4 : normalizeDashPart(dashBase[1], 4);
 
-        next[index] = val;
+        const next = [base0, base1];
+        next[index] = target;
 
         const patch = {};
         ids.forEach((id) => {
             patch[id] = { dash: next };
         });
-        patchStoreRaf(ids, patch);
+
+        return patch;
     };
 
     return (
@@ -86,7 +125,7 @@ export const DashBlock = ({ ids }) => {
             <Select.Root
                 size={"xs"}
                 collection={lineTypes}
-                value={[dashEnabled]}
+                value={[dashEnabledSame]}
                 onValueChange={handleTypeChange}
                 lazyMount
                 unmountOnExit
@@ -114,37 +153,43 @@ export const DashBlock = ({ ids }) => {
                     </Select.Positioner>
                 </Portal>
             </Select.Root>
-            {dashEnabled === "dashed" && (
-                <>
-                    <Field.Root orientation="horizontal">
+            {dashEnabledSame === "dashed" && (
+                <Group>
+                    <Field.Root>
                         <Field.Label>{LOCALE.dash}</Field.Label>
-                        <NumberInput.Root
-                            size={"xs"}
-                            flex={1}
-                            value={dash[0]}
-                            onValueChange={(e) =>
-                                handleDashChange(e.valueAsNumber, 0)
+                        <CommittedNumberInput
+                            key={`dash:${idsKey}:a`}
+                            uiValue={dashUi0}
+                            label={"D"}
+                            placeholder={LOCALE.mixed}
+                            step={1}
+                            min={0}
+                            onScrub={(n) =>
+                                applyPatch(ids, buildDashPatch(0, n), false)
                             }
-                        >
-                            <NumberInput.Control />
-                            <NumberInput.Input />
-                        </NumberInput.Root>
+                            onCommit={(n) =>
+                                applyPatch(ids, buildDashPatch(0, n), true)
+                            }
+                        />
                     </Field.Root>
-                    <Field.Root orientation="horizontal">
+                    <Field.Root>
                         <Field.Label>{LOCALE.gap}</Field.Label>
-                        <NumberInput.Root
-                            size={"xs"}
-                            flex={1}
-                            value={dash[1]}
-                            onValueChange={(e) =>
-                                handleDashChange(e.valueAsNumber, 1)
+                        <CommittedNumberInput
+                            key={`dash:${idsKey}:b`}
+                            uiValue={dashUi1}
+                            label={"G"}
+                            placeholder={LOCALE.mixed}
+                            step={1}
+                            min={0}
+                            onScrub={(n) =>
+                                applyPatch(ids, buildDashPatch(1, n), false)
                             }
-                        >
-                            <NumberInput.Control />
-                            <NumberInput.Input />
-                        </NumberInput.Root>
+                            onCommit={(n) =>
+                                applyPatch(ids, buildDashPatch(1, n), true)
+                            }
+                        />
                     </Field.Root>
-                </>
+                </Group>
             )}
         </>
     );

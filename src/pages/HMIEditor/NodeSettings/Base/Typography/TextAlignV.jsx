@@ -2,7 +2,7 @@ import { Field, SegmentGroup } from "@chakra-ui/react";
 import { LuArrowDownToLine, LuArrowUpToLine } from "react-icons/lu";
 import { BsArrowsCollapse } from "react-icons/bs";
 import { sameCheck, useNodesByIds } from "../../utils";
-import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { useNodeStore } from "@/pages/HMIEditor/store/node-store";
 import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const TextAlignVBlock = ({ ids }) => {
@@ -14,7 +14,8 @@ export const TextAlignVBlock = ({ ids }) => {
         ids.forEach((id) => {
             patch[id] = { verticalAlign: e.value };
         });
-        patchStoreRaf(ids, patch);
+
+        useNodeStore.getState().updateNodes(ids, patch);
     };
 
     return (

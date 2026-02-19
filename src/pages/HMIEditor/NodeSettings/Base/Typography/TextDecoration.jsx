@@ -7,7 +7,7 @@ import {
 } from "@chakra-ui/react";
 import { LuStrikethrough, LuUnderline } from "react-icons/lu";
 import { sameCheck, useNodesByIds } from "../../utils";
-import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { useNodeStore } from "@/pages/HMIEditor/store/node-store";
 import { LOCALE } from "@/pages/HMIEditor/constants";
 
 const items = [
@@ -31,7 +31,8 @@ export const TextDecorationBlock = ({ ids }) => {
         ids.forEach((id) => {
             patch[id] = { textDecoration: str };
         });
-        patchStoreRaf(ids, patch);
+
+        useNodeStore.getState().updateNodes(ids, patch);
     };
 
     return (

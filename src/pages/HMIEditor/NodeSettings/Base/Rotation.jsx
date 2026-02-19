@@ -1,39 +1,54 @@
-import {
-    Fieldset,
-    Flex,
-    Group,
-    IconButton,
-    InputGroup,
-    NumberInput,
-} from "@chakra-ui/react";
+import { Fieldset, Flex, Group, IconButton } from "@chakra-ui/react";
 import {
     LuFlipHorizontal2,
     LuFlipVertical2,
     LuRotateCwSquare,
 } from "react-icons/lu";
 import { RxAngle } from "react-icons/rx";
-import { sameCheck, useNodesByIds } from "../utils";
+import { applyPatch, isFiniteValue, sameCheck, useNodesByIds } from "../utils";
 import { rotateNodeAroundCenter } from "../../canvas/services/shapeTransforms";
-import { patchStoreRaf } from "../../store/node-store";
 import { LOCALE } from "../../constants";
+import { CommittedNumberInput } from "../CommittedNumberInput";
 
 function toDegIn0To360Range(deg) {
     return ((deg % 360) + 360) % 360;
 }
 
-export const RotationBlock = ({ ids, api }) => {
-    const rot = useNodesByIds(ids, "rotation");
-    const r = sameCheck(rot);
+function buildRotationPatch(ids, api, angle) {
+    const val = Number.isNaN(angle) ? 0 : angle;
+    const next = toDegIn0To360Range(val);
 
-    const handleRotation = (angle) => {
-        const val = Number.isNaN(angle) ? 0 : angle;
-        const next = toDegIn0To360Range(val);
+    const patch = {};
+    ids.forEach((id) => {
+        patch[id] = rotateNodeAroundCenter(api, id, next);
+    });
+
+    return patch;
+}
+
+export const RotationBlock = ({ ids, api }) => {
+    const rotArr = useNodesByIds(ids, "rotation");
+    const rSame = sameCheck(rotArr);
+
+    const idsKey = ids.join("|");
+    const uiValue =
+        typeof rSame === "number" && Number.isFinite(rSame) ? rSame : null;
+
+    const rotateTo = (angle, undoable) => {
+        const patch = buildRotationPatch(ids, api, angle);
+        applyPatch(ids, patch, undoable);
+    };
+
+    const rotateByDelta = (delta, undoable) => {
         const patch = {};
-        ids.forEach((id) => {
+        ids.forEach((id, idx) => {
+            const curRaw = rotArr[idx];
+            const cur = isFiniteValue(curRaw) ? curRaw : 0;
+            const next = toDegIn0To360Range(cur + delta);
             patch[id] = rotateNodeAroundCenter(api, id, next);
         });
 
-        patchStoreRaf(ids, patch);
+        applyPatch(ids, patch, undoable);
     };
 
     // TODO сделать синхронизацию со стором
@@ -57,30 +72,22 @@ export const RotationBlock = ({ ids, api }) => {
             <Fieldset.Legend>{LOCALE.rotation}</Fieldset.Legend>
             <Fieldset.Content mt={1}>
                 <Flex justify={"space-between"}>
-                    <NumberInput.Root
-                        size={"xs"}
-                        value={r}
-                        onValueChange={(e) => handleRotation(e.valueAsNumber)}
-                    >
-                        <NumberInput.Control />
-                        <InputGroup
-                            startElementProps={{
-                                pointerEvents: "auto",
-                            }}
-                            startElement={
-                                <NumberInput.Scrubber>
-                                    <RxAngle />
-                                </NumberInput.Scrubber>
-                            }
-                        >
-                            <NumberInput.Input />
-                        </InputGroup>
-                    </NumberInput.Root>
+                    <CommittedNumberInput
+                        key={`rot:${idsKey}`}
+                        uiValue={uiValue}
+                        label={<RxAngle />}
+                        placeholder={LOCALE.mixed}
+                        step={1}
+                        min={0}
+                        max={360}
+                        onScrub={(n) => rotateTo(n, false)}
+                        onCommit={(n) => rotateTo(n, true)}
+                    />
                     <Group attached>
                         <IconButton
                             size={"xs"}
                             variant={"outline"}
-                            onClick={() => handleRotation(r + 90)}
+                            onClick={() => rotateByDelta(90, true)}
                         >
                             <LuRotateCwSquare />
                         </IconButton>

@@ -49,6 +49,8 @@ export function createDefaultNode(id) {
         lineCap: "butt",
         dashEnabled: false,
         dash: [0, 0],
+        skewX: 0,
+        skewY: 0,
         opacity: 1,
         visible: true,
         rotation: 0,

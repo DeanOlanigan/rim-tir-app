@@ -1,45 +1,19 @@
-import { Field, InputGroup, NumberInput } from "@chakra-ui/react";
+import { Field } from "@chakra-ui/react";
 import { RxFontSize } from "react-icons/rx";
-import { sameCheck, useNodesByIds } from "../../utils";
-import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
 import { LOCALE } from "@/pages/HMIEditor/constants";
+import { PropertyInput } from "../../PropertyInput";
 
 export const FontSizeBlock = ({ ids }) => {
-    const fontSizes = useNodesByIds(ids, "fontSize");
-    const fontSize = sameCheck(fontSizes);
-
-    const handleChange = (value) => {
-        const val = Number.isNaN(value) ? 0 : value;
-        const patch = {};
-        ids.forEach((id) => {
-            patch[id] = { fontSize: val };
-        });
-        patchStoreRaf(ids, patch);
-    };
-
     return (
         <Field.Root>
             <Field.Label>{LOCALE.fontSize}</Field.Label>
-            <NumberInput.Root
-                size={"xs"}
+            <PropertyInput
+                ids={ids}
+                property="fontSize"
+                label={<RxFontSize size={16} />}
                 min={1}
-                value={fontSize}
-                onValueChange={(e) => handleChange(e.valueAsNumber)}
-            >
-                <NumberInput.Control />
-                <InputGroup
-                    startElementProps={{
-                        pointerEvents: "auto",
-                    }}
-                    startElement={
-                        <NumberInput.Scrubber>
-                            <RxFontSize size={16} />
-                        </NumberInput.Scrubber>
-                    }
-                >
-                    <NumberInput.Input />
-                </InputGroup>
-            </NumberInput.Root>
+                step={1}
+            />
         </Field.Root>
     );
 };

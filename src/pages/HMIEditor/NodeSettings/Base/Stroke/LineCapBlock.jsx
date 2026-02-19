@@ -1,7 +1,7 @@
 import { Field, SegmentGroup } from "@chakra-ui/react";
 import { TbCapProjecting, TbCapRounded, TbCapStraight } from "react-icons/tb";
 import { sameCheck, useNodesByIds } from "../../utils";
-import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { useNodeStore } from "@/pages/HMIEditor/store/node-store";
 import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const LineCapBlock = ({ ids }) => {
@@ -13,7 +13,8 @@ export const LineCapBlock = ({ ids }) => {
         ids.forEach((id) => {
             patch[id] = { lineCap: e.value };
         });
-        patchStoreRaf(ids, patch);
+
+        useNodeStore.getState().updateNodes(ids, patch);
     };
 
     return (

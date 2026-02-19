@@ -1,12 +1,4 @@
-import {
-    Fieldset,
-    Group,
-    IconButton,
-    InputGroup,
-    NumberInput,
-    SimpleGrid,
-    Slider,
-} from "@chakra-ui/react";
+import { Fieldset, Group, IconButton, SimpleGrid } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import {
     RxCornerBottomLeft,
@@ -15,9 +7,9 @@ import {
     RxCornerTopRight,
 } from "react-icons/rx";
 import { LuMaximize } from "react-icons/lu";
-import { sameCheck, useNodesByIds } from "../utils";
+import { applyPatch, sameCheck, useNodesByIds } from "../utils";
 import { LOCALE, SHAPES } from "../../constants";
-import { patchStoreRaf } from "../../store/node-store";
+import { CommittedNumberInput } from "../CommittedNumberInput";
 
 const CORNER_ICONS = [
     RxCornerTopLeft,
@@ -44,6 +36,7 @@ function areAllEqual(arr) {
     return arr.every((v) => v === first);
 }
 
+// UI порядок: [tl, tr, bl, br]
 function fromRectCornerRadiusStore(value) {
     if (Array.isArray(value)) {
         const [tl = 0, tr = 0, br = 0, bl = 0] = value;
@@ -53,11 +46,13 @@ function fromRectCornerRadiusStore(value) {
     return [v, v, v, v];
 }
 
+// Store порядок: [tl, tr, br, bl]
 function toRectCornerRadiusStore([tl, tr, bl, br]) {
     return [tl, tr, br, bl];
 }
 
 export const CornerRadiusBlock = ({ ids, types }) => {
+    const idsKey = ids.join("|");
     const rawCornerRadiuses = useNodesByIds(ids, "cornerRadius");
 
     const allRects = useMemo(
@@ -65,6 +60,7 @@ export const CornerRadiusBlock = ({ ids, types }) => {
         [types],
     );
 
+    // 1) униформное значение на ноду (для rect: только если все 4 угла равны)
     const uniformPerNode = useMemo(
         () =>
             ids.map((_, idx) => {
@@ -86,6 +82,7 @@ export const CornerRadiusBlock = ({ ids, types }) => {
         [ids, types, rawCornerRadiuses],
     );
 
+    // "" означает mixed в UI
     const uniformValue = useMemo(() => {
         if (!uniformPerNode.length) return "";
         const first = uniformPerNode[0];
@@ -93,6 +90,7 @@ export const CornerRadiusBlock = ({ ids, types }) => {
         return uniformPerNode.every((v) => v === first) ? first : "";
     }, [uniformPerNode]);
 
+    // 2) rect-only: углы по каждой ноде в UI порядке [tl,tr,bl,br]
     const rectCornersByNode = useMemo(() => {
         if (!allRects) return [];
         return rawCornerRadiuses.map((cr) => fromRectCornerRadiusStore(cr));
@@ -123,13 +121,22 @@ export const CornerRadiusBlock = ({ ids, types }) => {
 
     const [showMixed, setShowMixed] = useState(initialShowMixed);
 
+    // ВАЖНО: сброс showMixed при смене выделения (а не при каждом патче во время scrub)
+    useEffect(() => {
+        setShowMixed(initialShowMixed);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [idsKey]);
+
     useEffect(() => {
         if (!allRects && showMixed) setShowMixed(false);
     }, [allRects, showMixed]);
 
-    const patchUniformAll = (raw) => {
+    // ---- PATCH BUILDERS ----
+
+    const buildUniformPatch = (raw) => {
         const v = normalizeNumber(raw);
         const patch = {};
+
         ids.forEach((id, idx) => {
             const t = types[idx];
             if (t === SHAPES.rect) {
@@ -140,15 +147,18 @@ export const CornerRadiusBlock = ({ ids, types }) => {
                 patch[id] = { cornerRadius: v };
             }
         });
-        patchStoreRaf(ids, patch);
+
+        return patch;
     };
 
-    const patchMixedRectAll = (cornerIndex, raw) => {
-        if (!allRects) return;
-        const v = normalizeNumber(raw);
+    const baseRectCorners = sameRectCorners ??
+        rectCornersByNode[0] ?? [0, 0, 0, 0];
 
-        const base = sameRectCorners ?? rectCornersByNode[0] ?? [0, 0, 0, 0];
-        const next = [...base];
+    const buildMixedRectPatch = (cornerIndex, raw) => {
+        if (!allRects) return null;
+
+        const v = normalizeNumber(raw);
+        const next = [...baseRectCorners];
         next[cornerIndex] = v;
 
         const patch = {};
@@ -158,61 +168,49 @@ export const CornerRadiusBlock = ({ ids, types }) => {
                 patch[id] = { cornerRadius: toRectCornerRadiusStore(next) };
             }
         });
-        patchStoreRaf(ids, patch);
+
+        return patch;
     };
 
     const toggleMixed = () => {
         if (!allRects) return;
+
         setShowMixed((prev) => {
             const next = !prev;
+
             if (!next) {
-                const base = sameRectCorners ??
-                    rectCornersByNode[0] ?? [0, 0, 0, 0];
-                patchUniformAll(base[0] ?? 0);
+                const base = baseRectCorners;
+                const patch = buildUniformPatch(base[0] ?? 0);
+                applyPatch(ids, patch, true);
             }
+
             return next;
         });
     };
+
+    const uniformUiValue =
+        typeof uniformValue === "number" ? uniformValue : null;
 
     return (
         <Fieldset.Root>
             <Fieldset.Legend>{LOCALE.cornerRadius}</Fieldset.Legend>
             <Fieldset.Content mt={1}>
                 <Group>
-                    <NumberInput.Root
-                        size={"xs"}
+                    <CommittedNumberInput
+                        key={`cr:uniform:${idsKey}`}
+                        uiValue={uniformUiValue}
+                        label={<LuMaximize />}
+                        placeholder={LOCALE.mixed}
+                        step={1}
                         min={0}
                         max={100}
-                        value={uniformValue}
-                        onValueChange={(e) => patchUniformAll(e.valueAsNumber)}
-                    >
-                        <NumberInput.Control />
-                        <InputGroup
-                            startElementProps={{
-                                pointerEvents: "auto",
-                            }}
-                            startElement={
-                                <NumberInput.Scrubber>
-                                    <LuMaximize />
-                                </NumberInput.Scrubber>
-                            }
-                        >
-                            <NumberInput.Input placeholder={LOCALE.mixed} />
-                        </InputGroup>
-                    </NumberInput.Root>
-                    <Slider.Root
-                        size={"sm"}
-                        w={"100%"}
-                        value={[uniformValue === "" ? 0 : (uniformValue ?? 0)]}
-                        onValueChange={(e) => patchUniformAll(e.value[0])}
-                    >
-                        <Slider.Control>
-                            <Slider.Track>
-                                <Slider.Range />
-                            </Slider.Track>
-                            <Slider.Thumbs />
-                        </Slider.Control>
-                    </Slider.Root>
+                        onScrub={(n) =>
+                            applyPatch(ids, buildUniformPatch(n), false)
+                        }
+                        onCommit={(n) =>
+                            applyPatch(ids, buildUniformPatch(n), true)
+                        }
+                    />
                     {allRects && (
                         <IconButton
                             size={"xs"}
@@ -227,36 +225,32 @@ export const CornerRadiusBlock = ({ ids, types }) => {
                     <SimpleGrid columns={2} gap={2} mt={2}>
                         {perCornerValues.map((value, index) => {
                             const Icon = CORNER_ICONS[index];
+                            const ui = typeof value === "number" ? value : null;
+
                             return (
-                                <NumberInput.Root
-                                    key={index}
-                                    size={"xs"}
+                                <CommittedNumberInput
+                                    key={`cr:${idsKey}:${index}`}
+                                    uiValue={ui}
+                                    label={<Icon />}
+                                    placeholder={LOCALE.mixed}
+                                    step={1}
                                     min={0}
                                     max={100}
-                                    value={value}
-                                    onValueChange={(e) =>
-                                        patchMixedRectAll(
-                                            index,
-                                            e.valueAsNumber,
+                                    onScrub={(n) =>
+                                        applyPatch(
+                                            ids,
+                                            buildMixedRectPatch(index, n),
+                                            false,
                                         )
                                     }
-                                >
-                                    <NumberInput.Control />
-                                    <InputGroup
-                                        startElementProps={{
-                                            pointerEvents: "auto",
-                                        }}
-                                        startElement={
-                                            <NumberInput.Scrubber>
-                                                <Icon />
-                                            </NumberInput.Scrubber>
-                                        }
-                                    >
-                                        <NumberInput.Input
-                                            placeholder={LOCALE.mixed}
-                                        />
-                                    </InputGroup>
-                                </NumberInput.Root>
+                                    onCommit={(n) =>
+                                        applyPatch(
+                                            ids,
+                                            buildMixedRectPatch(index, n),
+                                            true,
+                                        )
+                                    }
+                                />
                             );
                         })}
                     </SimpleGrid>

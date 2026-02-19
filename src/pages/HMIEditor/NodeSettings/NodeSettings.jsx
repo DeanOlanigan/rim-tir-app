@@ -8,21 +8,13 @@ import { ActionsSettings } from "./Actions";
 
 export const NodeSettings = ({ api }) => {
     const selectedIds = useNodeStore((state) => state.selectedIds);
-    const selectedName = useNodeStore(
-        (state) => state.nodes[selectedIds[0]]?.name,
-    );
     if (!selectedIds.length) return null;
 
     const types = selectedIds.map(
-        (id) => api.canvas.getNodes().get(id).attrs.type,
+        (id) => useNodeStore.getState().nodes[id]?.type,
     );
+    if (types.some((t) => !t)) return null;
     if (!types.every((type) => SHAPES_WITH_SETTINGS.has(type))) return null;
-
-    const isMultiple = selectedIds.length > 1;
-
-    const heading = isMultiple
-        ? `${LOCALE.selected}: ${selectedIds.length}`
-        : selectedName;
 
     return (
         <Flex
@@ -36,16 +28,7 @@ export const NodeSettings = ({ api }) => {
             gap={2}
             pointerEvents={"auto"}
         >
-            <HStack w={"100%"} justify={"space-between"}>
-                <Heading size={"md"} ms={2}>
-                    {heading}
-                </Heading>
-                <SelectedButtonsGroup
-                    ids={selectedIds}
-                    api={api}
-                    types={types}
-                />
-            </HStack>
+            <NodeSettingsHeader ids={selectedIds} api={api} types={types} />
             <Tabs.Root
                 variant={"line"}
                 defaultValue="base"
@@ -101,5 +84,23 @@ export const NodeSettings = ({ api }) => {
                 </Tabs.Content>
             </Tabs.Root>
         </Flex>
+    );
+};
+
+const NodeSettingsHeader = ({ ids, api, types }) => {
+    const isMultiple = ids.length > 1;
+    const selectedName = useNodeStore((state) =>
+        isMultiple ? null : state.nodes[ids[0]]?.name,
+    );
+    const heading = isMultiple
+        ? `${LOCALE.selected}: ${ids.length}`
+        : selectedName;
+    return (
+        <HStack w={"100%"} justify={"space-between"}>
+            <Heading size={"md"} ms={2}>
+                {heading}
+            </Heading>
+            <SelectedButtonsGroup ids={ids} api={api} types={types} />
+        </HStack>
     );
 };

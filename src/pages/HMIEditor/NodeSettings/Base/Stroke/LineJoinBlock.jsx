@@ -1,7 +1,7 @@
 import { Field, SegmentGroup } from "@chakra-ui/react";
 import { TbJoinBevel, TbJoinRound, TbJoinStraight } from "react-icons/tb";
 import { sameCheck, useNodesByIds } from "../../utils";
-import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { useNodeStore } from "@/pages/HMIEditor/store/node-store";
 import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const LineJoinBlock = ({ ids }) => {
@@ -13,7 +13,8 @@ export const LineJoinBlock = ({ ids }) => {
         ids.forEach((id) => {
             patch[id] = { lineJoin: e.value };
         });
-        patchStoreRaf(ids, patch);
+
+        useNodeStore.getState().updateNodes(ids, patch);
     };
 
     return (

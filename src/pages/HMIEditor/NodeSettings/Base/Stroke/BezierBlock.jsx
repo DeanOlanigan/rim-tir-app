@@ -1,6 +1,6 @@
 import { Switch } from "@chakra-ui/react";
 import { sameCheck, useNodesByIds } from "../../utils";
-import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { useNodeStore } from "@/pages/HMIEditor/store/node-store";
 
 export const BezierBlock = ({ ids }) => {
     const allBezier = useNodesByIds(ids, "bezier");
@@ -11,7 +11,7 @@ export const BezierBlock = ({ ids }) => {
         ids.forEach((id) => {
             patch[id] = { bezier: value };
         });
-        patchStoreRaf(ids, patch);
+        useNodeStore.getState().updateNodes(ids, patch);
     };
 
     return (

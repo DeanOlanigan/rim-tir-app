@@ -1,17 +1,17 @@
-import {
-    Fieldset,
-    Group,
-    IconButton,
-    InputGroup,
-    NumberInput,
-} from "@chakra-ui/react";
-import { useState } from "react";
+import { Fieldset, Group, IconButton } from "@chakra-ui/react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { LuProportions } from "react-icons/lu";
-import { patchStoreRaf, useNodeStore } from "../../store/node-store";
-import { collectSelectionDimensions, useNodesByIds } from "../utils";
+import { useNodeStore } from "../../store/node-store";
+import {
+    applyPatch,
+    collectSelectionDimensions,
+    isFiniteValue,
+    useNodesByIds,
+} from "../utils";
 import { isLineLikeType } from "../../utils";
 import { changeLineDim } from "../../canvas/services/shapeTransforms";
 import { LOCALE } from "../../constants";
+import { CommittedNumberInput } from "../CommittedNumberInput";
 
 /**
  * Если вдруг ты в будущем будешь уметь менять тип фигуры
@@ -25,8 +25,11 @@ function getType(id) {
 }
 
 export const DimensionsBlock = ({ ids, api }) => {
+    const idsKey = ids.join("|");
+
     const widths = useNodesByIds(ids, "width");
     const heights = useNodesByIds(ids, "height");
+
     const { width, height } = collectSelectionDimensions(
         api,
         ids,
@@ -37,8 +40,56 @@ export const DimensionsBlock = ({ ids, api }) => {
 
     const [aspectRatio, setAspectRatio] = useState(false);
 
-    const handleChangeDim = (value, type) => {
-        const val = Number.isNaN(value) ? 0 : value;
+    const uiWidth =
+        typeof width === "number" && isFiniteValue(width) ? width : null;
+    const uiHeight =
+        typeof height === "number" && isFiniteValue(height) ? height : null;
+
+    const ratioSessionRaf = useRef({
+        key: null,
+        ratiosById: null,
+    });
+
+    const sessionKey = useMemo(
+        () => `${idsKey}:${aspectRatio ? 1 : 0}`,
+        [idsKey, aspectRatio],
+    );
+
+    useEffect(() => {
+        ratioSessionRaf.current.key = sessionKey;
+        ratioSessionRaf.current.ratiosById = null;
+    }, [sessionKey]);
+
+    const ensureRatios = () => {
+        if (!aspectRatio) return null;
+
+        const ref = ratioSessionRaf.current;
+        if (ref.key === sessionKey && ref.ratiosById) return ref.ratiosById;
+
+        const ratios = {};
+        ids.forEach((id, idx) => {
+            const t = getType(id);
+            if (isLineLikeType(t)) return; // для линий ratio внутри changeLineDim
+            const prevW = widths[idx];
+            const prevH = heights[idx];
+            const r =
+                isFiniteValue(prevW) && isFiniteValue(prevH) && prevH > 0
+                    ? prevW / prevH
+                    : 1;
+            ratios[id] = r;
+        });
+
+        ref.key = sessionKey;
+        ref.ratiosById = ratios;
+        return ratios;
+    };
+
+    const buildPatch = (dimType, rawNumber) => {
+        const val = Number.isNaN(rawNumber) ? 0 : rawNumber;
+        const target = Math.max(val, 0);
+
+        const ratios = ensureRatios();
+
         const patch = {};
 
         ids.forEach((id) => {
@@ -46,45 +97,65 @@ export const DimensionsBlock = ({ ids, api }) => {
             const isLineLike = isLineLikeType(t);
 
             if (isLineLike) {
-                const res = changeLineDim(api, id, type, aspectRatio, val);
+                const res = changeLineDim(api, id, dimType, aspectRatio, val);
                 if (res) patch[id] = res;
-            } else {
-                if (aspectRatio) {
-                    const target = Math.max(val, 0);
+                return;
+            }
+
+            if (aspectRatio) {
+                const r = ratios?.[id] ?? 1;
+                if (dimType === "width") {
                     patch[id] = {
                         width: target,
-                        height: target,
+                        height: r !== 0 ? target / r : target,
                     };
                 } else {
-                    const target = Math.max(val, 0);
-                    patch[id] = {
-                        [type]: target,
-                    };
+                    patch[id] = { width: target * r, height: target };
                 }
+            } else {
+                patch[id] = {
+                    [dimType]: target,
+                };
             }
         });
 
-        patchStoreRaf(ids, patch);
+        return patch;
     };
 
-    const toggleAspectRatio = () => {
-        setAspectRatio((prev) => !prev);
-    };
+    const toggleAspectRatio = () => setAspectRatio((prev) => !prev);
 
     return (
         <Fieldset.Root>
             <Fieldset.Legend>{LOCALE.dimensions}</Fieldset.Legend>
             <Fieldset.Content mt={1}>
                 <Group>
-                    <DimensionInput
-                        value={width}
+                    <CommittedNumberInput
+                        key={`dim:w:${sessionKey}`}
+                        uiValue={uiWidth}
                         label="W"
-                        onChange={(v) => handleChangeDim(v, "width")}
+                        placeholder={LOCALE.mixed}
+                        step={1}
+                        min={0}
+                        onScrub={(n) =>
+                            applyPatch(ids, buildPatch("width", n), false)
+                        }
+                        onCommit={(n) =>
+                            applyPatch(ids, buildPatch("width", n), true)
+                        }
                     />
-                    <DimensionInput
-                        value={height}
+                    <CommittedNumberInput
+                        key={`dim:h:${sessionKey}`}
+                        uiValue={uiHeight}
                         label="H"
-                        onChange={(v) => handleChangeDim(v, "height")}
+                        placeholder={LOCALE.mixed}
+                        step={1}
+                        min={0}
+                        onScrub={(n) =>
+                            applyPatch(ids, buildPatch("height", n), false)
+                        }
+                        onCommit={(n) =>
+                            applyPatch(ids, buildPatch("height", n), true)
+                        }
                     />
                     <IconButton
                         size={"xs"}
@@ -96,28 +167,5 @@ export const DimensionsBlock = ({ ids, api }) => {
                 </Group>
             </Fieldset.Content>
         </Fieldset.Root>
-    );
-};
-
-const DimensionInput = ({ value, label, onChange }) => {
-    return (
-        <NumberInput.Root
-            size={"xs"}
-            min={0}
-            value={value}
-            onValueChange={(e) => onChange(e.valueAsNumber)}
-        >
-            <NumberInput.Control />
-            <InputGroup
-                startElementProps={{
-                    pointerEvents: "auto",
-                }}
-                startElement={
-                    <NumberInput.Scrubber>{label}</NumberInput.Scrubber>
-                }
-            >
-                <NumberInput.Input />
-            </InputGroup>
-        </NumberInput.Root>
     );
 };

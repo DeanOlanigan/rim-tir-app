@@ -31,7 +31,7 @@ export const BaseSettings = ({ api, types, selectedIds }) => {
                 <Heading size={"md"}>{LOCALE.layers}</Heading>
                 <Layers ids={selectedIds} />
             </VStack>
-            <VStack align={"start"}>
+            <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>{LOCALE.position}</Heading>
                 <PositionBlock ids={selectedIds} />
                 <RotationBlock ids={selectedIds} api={api} />

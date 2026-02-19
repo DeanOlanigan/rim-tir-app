@@ -6,7 +6,7 @@ import {
     LuAlignRight,
 } from "react-icons/lu";
 import { sameCheck, useNodesByIds } from "../../utils";
-import { patchStoreRaf } from "@/pages/HMIEditor/store/node-store";
+import { useNodeStore } from "@/pages/HMIEditor/store/node-store";
 import { LOCALE } from "@/pages/HMIEditor/constants";
 
 export const TextAlignHBlock = ({ ids }) => {
@@ -18,7 +18,8 @@ export const TextAlignHBlock = ({ ids }) => {
         ids.forEach((id) => {
             patch[id] = { align: e.value };
         });
-        patchStoreRaf(ids, patch);
+
+        useNodeStore.getState().updateNodes(ids, patch);
     };
 
     return (
