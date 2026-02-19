@@ -29,14 +29,20 @@ export function useEditorHotkeys(tools) {
     useHotkeys(HOTKEYS.squareTool.hotkey, () =>
         tools.manager.setActive(ACTIONS.square),
     );
+    useHotkeys(HOTKEYS.polygonTool.hotkey, () =>
+        tools.manager.setActive(ACTIONS.polygon),
+    );
+    useHotkeys(HOTKEYS.ellipseTool.hotkey, () =>
+        tools.manager.setActive(ACTIONS.ellipse),
+    );
+    useHotkeys(HOTKEYS.textTool.hotkey, () =>
+        tools.manager.setActive(ACTIONS.text),
+    );
     useHotkeys(HOTKEYS.lineTool.hotkey, () =>
         tools.manager.setActive(ACTIONS.line),
     );
     useHotkeys(HOTKEYS.arrowTool.hotkey, () =>
         tools.manager.setActive(ACTIONS.arrow),
-    );
-    useHotkeys(HOTKEYS.textTool.hotkey, () =>
-        tools.manager.setActive(ACTIONS.text),
     );
     // Toggle grid
     useHotkeys(HOTKEYS.toggleGrid.hotkey, () =>
