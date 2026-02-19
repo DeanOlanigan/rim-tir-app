@@ -1,6 +1,7 @@
-import { Group, Icon, RadioCard } from "@chakra-ui/react";
+import { Button, HStack, Icon, Kbd, Text } from "@chakra-ui/react";
 import { useActionsStore } from "./store/actions-store";
 import { ACTIONS, HOTKEYS } from "./constants";
+import { Tooltip } from "@/components/ui/tooltip";
 import {
     LuCircle,
     LuHand,
@@ -15,77 +16,95 @@ import {
 const TOOLS_LIST = [
     {
         name: ACTIONS.select,
-        label: "Select",
+        label: "Выбор",
         icon: LuMousePointer2,
-        hotkey: HOTKEYS.selectTool.hotkey,
+        keyLabel: HOTKEYS.selectTool.keyLabel,
     },
     {
         name: ACTIONS.hand,
-        label: "Hand",
+        label: "Рука",
         icon: LuHand,
-        hotkey: HOTKEYS.handTool.hotkey,
+        keyLabel: HOTKEYS.handTool.keyLabel,
     },
     {
         name: ACTIONS.square,
-        label: "Draw Rectangle",
+        label: "Прямоугольник",
         icon: LuSquare,
-        hotkey: HOTKEYS.squareTool.hotkey,
+        keyLabel: HOTKEYS.squareTool.keyLabel,
     },
     {
         name: ACTIONS.polygon,
-        label: "Draw Polygon",
+        label: "Полигон",
         icon: LuHexagon,
+        keyLabel: HOTKEYS.polygonTool.keyLabel,
     },
     {
         name: ACTIONS.ellipse,
-        label: "Draw ellipse",
+        label: "Эллипс",
         icon: LuCircle,
+        keyLabel: HOTKEYS.ellipseTool.keyLabel,
     },
     {
         name: ACTIONS.text,
-        label: "Text",
+        label: "Текст",
         icon: LuType,
-        hotkey: HOTKEYS.textTool.hotkey,
+        keyLabel: HOTKEYS.textTool.keyLabel,
     },
     {
         name: ACTIONS.line,
-        label: "Draw line",
+        label: "Линия",
         icon: LuSlash,
-        hotkey: HOTKEYS.lineTool.hotkey,
+        keyLabel: HOTKEYS.lineTool.keyLabel,
     },
     {
         name: ACTIONS.arrow,
-        label: "Draw arrow",
+        label: "Стрелка",
         icon: LuMoveUpRight,
-        hotkey: HOTKEYS.arrowTool.hotkey,
+        keyLabel: HOTKEYS.arrowTool.keyLabel,
     },
 ];
 
 export const ToolBar = ({ manager }) => {
-    const action = useActionsStore((state) => state.currentAction);
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
 
     if (viewOnlyMode) return null;
 
     return (
-        <RadioCard.Root
-            size={"md"}
-            variant={"subtle"}
-            borderRadius={"l2"}
+        <HStack
+            gap={1}
+            p={2}
+            bg={"bg.subtle"}
+            borderRadius={"xl"}
             shadow={"md"}
-            value={action}
-            onValueChange={(e) => manager.setActive(e.value)}
         >
-            <Group attached>
-                {TOOLS_LIST.map((action) => (
-                    <RadioCard.Item key={action.name} value={action.name}>
-                        <RadioCard.ItemHiddenInput />
-                        <RadioCard.ItemControl>
-                            <Icon size={"sm"} as={action.icon} />
-                        </RadioCard.ItemControl>
-                    </RadioCard.Item>
-                ))}
-            </Group>
-        </RadioCard.Root>
+            {TOOLS_LIST.map((tool) => (
+                <ToolButton key={tool.name} tool={tool} manager={manager} />
+            ))}
+        </HStack>
+    );
+};
+
+const ToolButton = ({ tool, manager }) => {
+    const action = useActionsStore((state) => state.currentAction);
+    const isActive = action === tool.name;
+    return (
+        <Tooltip
+            showArrow
+            openDelay={1000}
+            content={
+                <Text>
+                    {tool.label} <Kbd variant={"plain"}>{tool.keyLabel}</Kbd>
+                </Text>
+            }
+        >
+            <Button
+                aria-label={tool.label}
+                variant={isActive ? "subtle" : "ghost"}
+                size={"md"}
+                onClick={() => manager.setActive(tool.name)}
+            >
+                <Icon size={"md"} as={tool.icon} />
+            </Button>
+        </Tooltip>
     );
 };
