@@ -6,7 +6,6 @@ export const rebuildIndexCommand = (api) => {
         const patch = buildIndexesFromNodes(state.nodes);
         return {
             patch,
-            dirty: false,
         };
     });
 };

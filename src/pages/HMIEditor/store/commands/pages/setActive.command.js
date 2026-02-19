@@ -7,7 +7,6 @@ export const setActiveCommand = (api, id) => {
             patch: {
                 activePageId: id,
             },
-            dirty: false,
             selection: "clear",
         };
     });
