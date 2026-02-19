@@ -1,41 +1,58 @@
 [role="treeitem"]:has(.node) {
     user-select: none;
-    /* border: 2px solid transparent; */
-    /* border-radius: var(--chakra-radii-sm); */
+    border-radius: var(--chakra-radii-md);
 }
 
 /* фокус */
 [role="treeitem"]:has(.node):focus-visible {
-    /* background-color: var(--chakra-colors-bg-emphasized); */
     outline: 1px solid var(--chakra-colors-border-inverted);
     outline-offset: -1px;
 }
 
 /* Выбранныей узел + фокус */
 [role="treeitem"][aria-selected="true"]:has(.node):focus-visible {
-    background-color: var(--chakra-colors-bg-emphasized);
+    background-color: var(--chakra-colors-color-palette-muted);
     outline: 1px solid var(--chakra-colors-border-inverted);
     outline-offset: -1px;
 }
 
 /* ховер на узле */
 [role="treeitem"]:has(.node):hover {
-    background-color: var(--chakra-colors-bg-info);
+    background-color: var(--chakra-colors-bg-emphasized);
 }
 
 /* Выбранныей узел + ховер] */
 [role="treeitem"][aria-selected="true"]:has(.node):hover {
-    background-color: var(--chakra-colors-bg-success);
+    background-color: var(--chakra-colors-color-palette-emphasized);
 }
 
 /* Выбранные узлы*/
 [role="treeitem"][aria-selected="true"]:has(.node) {
-    background-color: var(--chakra-colors-bg-emphasized);
+    background-color: var(--chakra-colors-color-palette-subtle);
     font-weight: var(--chakra-font-weights-medium);
 }
 
+[role="treeitem"][aria-selected="true"]:has(.node:global(.isSelected)) {
+    border-radius: 0;
+}
+
+[role="treeitem"][aria-selected="true"]:has(.node:global(.isSelectedStart)) {
+    border-radius: 8px 8px 0 0;
+}
+
+[role="treeitem"][aria-selected="true"]:has(.node:global(.isSelectedEnd)) {
+    border-radius: 0 0 8px 8px;
+}
+
+[role="treeitem"][aria-selected="true"]:has(
+        .node:global(.isSelectedStart.isSelectedEnd)
+    ) {
+    border-radius: 8px;
+}
+
 [role="treeitem"]:has(.node:global(.willReceiveDrop)) {
-    border: 2px solid var(--chakra-colors-border-inverted);
+    outline: 2px solid var(--chakra-colors-color-palette-solid);
+    outline-offset: -2px;
 }
 
 .node {
@@ -47,7 +64,6 @@
     padding-right: 0.5rem;
     margin-left: 1rem;
     justify-content: space-between;
-    /* border-bottom: var(--chakra-borders-sm) var(--chakra-colors-border); */
 }
 
 .tree:hover .indentLines {

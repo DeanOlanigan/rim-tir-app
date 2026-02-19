@@ -9,7 +9,6 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { useNodeStore } from "../store/node-store";
-import { useColorModeValue } from "@/components/ui/color-mode";
 import { LuLibraryBig, LuPlus, LuStickyNote, LuTrash2 } from "react-icons/lu";
 import { useActionsStore } from "../store/actions-store";
 import { LOCALE } from "../constants";
@@ -20,10 +19,6 @@ export const Pages = () => {
 
     // Преобразуем объект pages в массив для рендеринга
     const pagesList = Object.values(pages);
-
-    // Цвета для активного и неактивного состояния
-    const activeBg = useColorModeValue("blue.100", "blue.900");
-    const hoverBg = useColorModeValue("gray.100", "gray.700");
 
     const showPagesList = useActionsStore((state) => state.showPagesList);
     if (!showPagesList) return null;
@@ -43,7 +38,9 @@ export const Pages = () => {
         <Flex direction={"column"} h={"100%"} minH={0}>
             {/* --- HEADER --- */}
             <Flex justify="space-between" align="center" mb={2}>
-                <Heading size={"md"}>{LOCALE.pages}</Heading>
+                <Heading size={"md"} userSelect={"none"}>
+                    {LOCALE.pages}
+                </Heading>
 
                 <Menu.Root positioning={{ placement: "bottom-end" }}>
                     <Menu.Trigger asChild>
@@ -89,21 +86,26 @@ export const Pages = () => {
                             p={1}
                             ps={4}
                             borderRadius="md"
-                            bg={isActive ? activeBg : "transparent"}
-                            _hover={{ bg: isActive ? activeBg : hoverBg }}
+                            bg={
+                                isActive ? "colorPalette.subtle" : "transparent"
+                            }
+                            _hover={{
+                                bg: isActive
+                                    ? "colorPalette.emphasized"
+                                    : "bg.emphasized",
+                            }}
                             onClick={() =>
                                 useNodeStore.getState().setActivePage(page.id)
                             }
                             justify="space-between"
                             className="group" // Для показа кнопки удаления при ховере
                             transition="all 0.2s"
+                            userSelect={"none"}
                         >
                             <HStack overflow="hidden">
                                 <Text
                                     fontSize="sm"
-                                    fontWeight={
-                                        isActive ? "semibold" : "normal"
-                                    }
+                                    fontWeight={isActive ? "medium" : "normal"}
                                     isTruncated
                                 >
                                     {page.name}

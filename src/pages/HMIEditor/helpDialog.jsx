@@ -32,7 +32,7 @@ export const helpDialog = createOverlay((props) => {
                         <Dialog.Header>
                             <Dialog.Title>Справка</Dialog.Title>
                         </Dialog.Header>
-                        <Dialog.Body h={"100%"} p={0} overflow={"hidden"}>
+                        <Dialog.Body h={"100%"} p={2} overflow={"hidden"}>
                             <Tabs.Root
                                 defaultValue="hotkeys"
                                 lazyMount
@@ -53,6 +53,7 @@ export const helpDialog = createOverlay((props) => {
                                     value="hotkeys"
                                     flex={1}
                                     overflow={"auto"}
+                                    mt={2}
                                     p={6}
                                 >
                                     <HotkeyHelp />
@@ -61,6 +62,7 @@ export const helpDialog = createOverlay((props) => {
                                     value="help"
                                     flex="1"
                                     overflowY="auto"
+                                    mt={2}
                                     p={6}
                                 >
                                     <VStack align="start" spacing={4}>
