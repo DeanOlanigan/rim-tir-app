@@ -69,6 +69,25 @@ const HOTKEY_GROUPS = [
             "pageUp",
             "pageDown",
         ],
+        rows: [
+            {
+                label: (
+                    <>
+                        Перемещать холст стрелками (<Kbd>Shift</Kbd> — быстрее)
+                    </>
+                ),
+                keyLabels: ["↑", "↓", "←", "→"],
+            },
+            {
+                label: (
+                    <>
+                        Перемещать выделенные фигуры стрелками (<Kbd>Shift</Kbd>{" "}
+                        — быстрее)
+                    </>
+                ),
+                keyLabels: ["↑", "↓", "←", "→"],
+            },
+        ],
     },
     {
         title: EXTRA_LOCALE.categoryArrange,
@@ -96,13 +115,14 @@ export const HotkeyHelp = () => {
                     key={group.title}
                     title={group.title}
                     keys={group.keys}
+                    rows={group.rows}
                 />
             ))}
         </SimpleGrid>
     );
 };
 
-export const HotkeyGroup = ({ title, keys }) => (
+export const HotkeyGroup = ({ title, keys, rows }) => (
     <Box>
         <Heading
             size="xs"
@@ -116,6 +136,9 @@ export const HotkeyGroup = ({ title, keys }) => (
         <VStack align="stretch">
             {keys.map((key) => (
                 <HotkeyRow key={key} actionKey={key} />
+            ))}
+            {rows?.map((row) => (
+                <CustomHotkeyRow key={row.keyLabels.join("-")} {...row} />
             ))}
         </VStack>
     </Box>
@@ -139,6 +162,28 @@ const HotkeyRow = ({ actionKey }) => {
             </Text>
             <HStack>
                 <Kbd>{config.keyLabel}</Kbd>
+            </HStack>
+        </HStack>
+    );
+};
+
+const CustomHotkeyRow = ({ label, keyLabels }) => {
+    return (
+        <HStack
+            justify="space-between"
+            width="100%"
+            py={1}
+            borderBottomWidth="1px"
+            borderColor="border.emphasized"
+            _last={{ borderBottom: "none" }}
+        >
+            <Text fontSize="sm" color="fg.subtle">
+                {label}
+            </Text>
+            <HStack>
+                {keyLabels.map((keyLabel) => (
+                    <Kbd key={keyLabel}>{keyLabel}</Kbd>
+                ))}
             </HStack>
         </HStack>
     );
