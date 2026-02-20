@@ -72,6 +72,7 @@ const HOTKEY_GROUPS = [
         ],
         rows: [
             {
+                type: "moveCanvas",
                 label: (
                     <>
                         Перемещать холст стрелками (<Kbd>Shift</Kbd> — быстрее)
@@ -80,6 +81,7 @@ const HOTKEY_GROUPS = [
                 keyLabels: ["↑", "↓", "←", "→"],
             },
             {
+                type: "moveSelection",
                 label: (
                     <>
                         Перемещать выделенные фигуры стрелками (<Kbd>Shift</Kbd>{" "}
@@ -139,7 +141,7 @@ export const HotkeyGroup = ({ title, keys, rows }) => (
                 <HotkeyRow key={key} actionKey={key} />
             ))}
             {rows?.map((row) => (
-                <CustomHotkeyRow key={row.keyLabels.join("-")} {...row} />
+                <CustomHotkeyRow key={row.type} {...row} />
             ))}
         </VStack>
     </Box>
