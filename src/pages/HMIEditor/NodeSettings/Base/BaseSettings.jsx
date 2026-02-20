@@ -34,7 +34,7 @@ export const BaseSettings = ({ api, types, selectedIds }) => {
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>{LOCALE.position}</Heading>
                 <PositionBlock ids={selectedIds} />
-                <RotationBlock ids={selectedIds} api={api} />
+                <RotationBlock ids={selectedIds} />
             </VStack>
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>{LOCALE.layout}</Heading>
