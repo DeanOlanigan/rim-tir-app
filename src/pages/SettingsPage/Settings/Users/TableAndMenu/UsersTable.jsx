@@ -145,7 +145,14 @@ export const UsersTable = () => {
                                             padding="4px"
                                             maxW={"100%"}
                                         >
-                                            <Text truncate title={cellValue}>
+                                            <Text
+                                                truncate
+                                                title={
+                                                    key.value === "role"
+                                                        ? roles[cellValue]?.name
+                                                        : cellValue
+                                                }
+                                            >
                                                 {key.value === "role"
                                                     ? roles[cellValue]?.name ||
                                                       "Без роли"
