@@ -6,13 +6,6 @@ import { aabbOfTransformedBounds } from "../geometry/aabbOfTransformedBounds";
 const EPS = 1e-6;
 const near0 = (v) => Math.abs(v) < EPS;
 
-function rotateVec(deg, x, y) {
-    const r = (deg * Math.PI) / 180;
-    const c = Math.cos(r);
-    const s = Math.sin(r);
-    return { x: c * x - s * y, y: s * x + c * y };
-}
-
 export function recalcGroupBBoxCOW(nodes, groupId) {
     const g = nodes[groupId];
     if (!g || g.type !== SHAPES.group) return nodes;
@@ -99,9 +92,8 @@ function calculateNewGroupGeometry(groupNode, bounds) {
     const width = bounds.maxX - bounds.minX;
     const height = bounds.maxY - bounds.minY;
 
-    // Сдвигаем группу в parent-space с учётом rotation (origin у группы — top-left)
-    const rot = groupNode.rotation ?? 0;
-    const dv = rotateVec(rot, dx, dy);
+    const M = getNodeLocalTransformMatrix(groupNode);
+    const dv = { x: M.a * dx + M.c * dy, y: M.b * dx + M.d * dy };
 
     const newGroupNode = {
         ...groupNode,

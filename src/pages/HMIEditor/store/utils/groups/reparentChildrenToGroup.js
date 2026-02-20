@@ -18,7 +18,8 @@ export function reparentChildrenToGroup({ nodes, groupNode, childIds }) {
         const child = newNodes[childId];
         if (!child) continue;
 
-        const { x, y, rotation } = calcChildTransform(invG, child);
+        const { x, y, rotation, skewX, skewY, scaleX, scaleY } =
+            calcChildTransform(invG, child);
 
         newNodes[childId] = {
             ...child,
@@ -26,6 +27,10 @@ export function reparentChildrenToGroup({ nodes, groupNode, childIds }) {
             x,
             y,
             rotation,
+            skewX,
+            skewY,
+            scaleX,
+            scaleY,
         };
     }
 
