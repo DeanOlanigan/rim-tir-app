@@ -4,7 +4,7 @@ import {
     getValidGroupIds,
     groupGroupsByParent,
     processContainerUngrouping,
-    recalcGroupsUpwardsCOW,
+    recalcGroupsUpwardsDraft,
     updateParentNode,
 } from "../../utils/groups";
 
@@ -57,7 +57,7 @@ export const ungroupNodesCommand = (api, ids) => {
 
         // 4. Пересчет размеров родительских групп (если разгруппировали внутри другой группы)
         if (affectedGroups.size) {
-            newNodes = recalcGroupsUpwardsCOW(newNodes, affectedGroups);
+            recalcGroupsUpwardsDraft(newNodes, affectedGroups);
         }
 
         // 5. Формирование финального патча

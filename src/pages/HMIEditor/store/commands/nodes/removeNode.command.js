@@ -1,5 +1,5 @@
 import { unindexNodesCOW } from "../../utils/bindings";
-import { recalcGroupsUpwardsCOW } from "../../utils/groups";
+import { recalcGroupsUpwardsDraft } from "../../utils/groups";
 import {
     collectAffectedGroups,
     collectParentsToFix,
@@ -53,7 +53,7 @@ export const removeNodesCommand = (api, ids) => {
         // 6) пересчет размеров и положения затронутых групп через аффинные преобразования
         const affectedGroups = collectAffectedGroups(parentsToFix, newNodes);
         if (affectedGroups.size) {
-            newNodes = recalcGroupsUpwardsCOW(newNodes, affectedGroups);
+            recalcGroupsUpwardsDraft(newNodes, affectedGroups);
         }
 
         // 7) разиндексация (нужно учесть и extraDeleted)

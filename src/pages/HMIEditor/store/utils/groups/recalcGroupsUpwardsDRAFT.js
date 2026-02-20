@@ -1,5 +1,5 @@
 import { SHAPES } from "@/pages/HMIEditor/constants";
-import { recalcGroupBBoxCOW } from "./recalcGroupBBoxCOW";
+import { recalcGroupBBoxDraft } from "./recalcGroupBBoxDRAFT";
 
 function collectAncestors(nodes, startIds) {
     const set = new Set();
@@ -33,16 +33,16 @@ function depthOf(nodes, id, memo) {
     return d;
 }
 
-export function recalcGroupsUpwardsCOW(nodes, startGroupIds) {
+export function recalcGroupsUpwardsDraft(nodes, startGroupIds) {
     const ids = collectAncestors(nodes, startGroupIds);
-    if (ids.length === 0) return nodes;
+    if (ids.length === 0) return false;
 
     const memo = new Map();
     ids.sort((a, b) => depthOf(nodes, b, memo) - depthOf(nodes, a, memo));
 
-    let out = nodes;
+    let changed = false;
     for (const gid of ids) {
-        out = recalcGroupBBoxCOW(out, gid);
+        if (recalcGroupBBoxDraft(nodes, gid)) changed = true;
     }
-    return out;
+    return changed;
 }

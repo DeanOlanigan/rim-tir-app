@@ -6,9 +6,9 @@ import { aabbOfTransformedBounds } from "../geometry/aabbOfTransformedBounds";
 const EPS = 1e-6;
 const near0 = (v) => Math.abs(v) < EPS;
 
-export function recalcGroupBBoxCOW(nodes, groupId) {
+export function recalcGroupBBoxDraft(nodes, groupId) {
     const g = nodes[groupId];
-    if (!g || g.type !== SHAPES.group) return nodes;
+    if (!g || g.type !== SHAPES.group) return false;
 
     const kids = g.childrenIds ?? [];
     if (kids.length === 0) {
@@ -16,21 +16,23 @@ export function recalcGroupBBoxCOW(nodes, groupId) {
     }
 
     const bounds = calculateContentBounds(nodes, kids);
-    if (!bounds) return nodes;
+    if (!bounds) return false;
 
     const geometry = calculateNewGroupGeometry(g, bounds);
     const { newGroupNode, shift, hasChanges } = geometry;
 
-    if (!hasChanges) return nodes;
+    if (!hasChanges) return false;
 
     // COW: клонируем nodes только если реально меняем
-    let newNodes = { ...nodes, [groupId]: newGroupNode };
+    //let newNodes = { ...nodes, [groupId]: newGroupNode };
+
+    nodes[groupId] = newGroupNode;
 
     if (shift.dx !== 0 || shift.dy !== 0) {
-        newNodes = shiftChildren(newNodes, kids, shift.dx, shift.dy);
+        shiftChildren(nodes, kids, shift.dx, shift.dy);
     }
 
-    return newNodes;
+    return true;
 }
 
 /**
@@ -43,12 +45,10 @@ function handleEmptyGroup(nodes, groupNode) {
     const w = groupNode.width ?? 0;
     const h = groupNode.height ?? 0;
 
-    if (w === 0 && h === 0) return nodes;
+    if (near0(w) && near0(h)) return false;
 
-    return {
-        ...nodes,
-        [groupNode.id]: { ...groupNode, width: 0, height: 0 },
-    };
+    nodes[groupNode.id] = { ...groupNode, width: 0, height: 0 };
+    return true;
 }
 
 /**

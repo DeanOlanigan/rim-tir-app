@@ -1,12 +1,11 @@
 export * from "./addRootId";
 export * from "./makeChildrenLocal";
-export * from "./promoteChildrenToRoot";
 export * from "./pruneNestedSelection";
 export * from "./removeRootId";
 export * from "./replaceChildrenWithGroup";
 export * from "./replaceGroupWithChildren";
 export * from "./replaceRootsWithGroup";
-export * from "./recalcGroupsUpwardsCOW";
+export * from "./recalcGroupsUpwardsDRAFT";
 
 export * from "./reparentChildrenToGroup";
 export * from "./createGroupPatch";
