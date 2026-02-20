@@ -24,17 +24,22 @@ export const rightsSample = {
                         },
                         {
                             id: "COMPORTget",
-                            name: "Создание Comport",
+                            name: "Создание COM-порта",
                             disabled: false,
                         },
                         {
                             id: "IEC-104get",
-                            name: "Создание IEC-104",
+                            name: "Создание IEC 60870-5-104",
                             disabled: false,
                         },
                         {
-                            id: "Modbusget",
-                            name: "Создание Modbus",
+                            id: "ModbusRTUget",
+                            name: "Создание Modbus-RTU",
+                            disabled: false,
+                        },
+                        {
+                            id: "ModbusTCPget",
+                            name: "Создание Modbus-TCP",
                             disabled: false,
                         },
                     ],
@@ -51,17 +56,22 @@ export const rightsSample = {
                         },
                         {
                             id: "COMPORTgive",
-                            name: "Создание Comport",
+                            name: "Создание COM-порта",
                             disabled: false,
                         },
                         {
                             id: "IEC-104give",
-                            name: "Создание IEC-104",
+                            name: "Создание IEC 60870-5-104",
                             disabled: false,
                         },
                         {
-                            id: "Modbusgive",
-                            name: "Создание Modbus",
+                            id: "ModbusRTUgive",
+                            name: "Создание Modbus-RTU",
+                            disabled: false,
+                        },
+                        {
+                            id: "ModbusTCPgive",
+                            name: "Создание Modbus-TCP",
                             disabled: false,
                         },
                     ],
@@ -103,11 +113,11 @@ export const rightsSample = {
                                 },
                                 {
                                     id: "chooseVar",
-                                    name: "Выбор типа",
+                                    name: "Выбор типа данных",
                                 },
                                 {
                                     id: "descriptVar",
-                                    name: "Описание",
+                                    name: "Изменение описания",
                                 },
                             ],
                         },
@@ -125,7 +135,7 @@ export const rightsSample = {
                             children: [
                                 {
                                     id: "sendConf",
-                                    name: "Отправка конфигурации",
+                                    name: "Отправка конфигурации на сервер",
                                     disabled: false,
                                 },
                             ],
@@ -212,7 +222,7 @@ export const rightsSample = {
                 { id: "lookLog", name: "Просмотр страницы", disabled: false },
                 {
                     id: "downloadLog",
-                    name: "Скачивание логов",
+                    name: "Скачивание лог-файлов",
                     disabled: false,
                 },
             ],
@@ -257,7 +267,7 @@ export const rightsSample = {
                 },
                 {
                     id: "webServSettings",
-                    name: 'Настройка "WebСервера"',
+                    name: 'Настройка "Web-Сервера"',
                     disabled: false,
                 },
                 {

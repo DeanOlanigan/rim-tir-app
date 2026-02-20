@@ -6,7 +6,8 @@ export const useUpdatesLogs = (enabled) => {
         queryKey: ["update"],
         queryFn: async () => {
             const res = await apiv2.get("/checkUpdate");
-            if (res.data?.error) throw new Error("ОШИКБА");
+            if (res.data?.error)
+                throw new Error("Ошибка при получении статуса обновления");
             return res.data;
         },
         refetchInterval: 5000,

@@ -18,6 +18,6 @@ export const useUserPostMutation = () => {
             return res;
         },
         onSuccess: () => usersSuccessMutate(queryClient, "POST_USER_SUC"),
-        onError: (err) => usersErrorMutate(err, queryClient, "POST_USER_ERR"),
+        onError: (err) => usersErrorMutate(err, queryClient, "POST_ERR"),
     });
 };
