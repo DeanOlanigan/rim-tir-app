@@ -20,7 +20,7 @@ export const ungroupNodesCommand = (api, ids) => {
 
         // 2. Группировка по родителям (чтобы обрабатывать контейнеры раздельно)
         // grouping by parent container (root=null or groupId)
-        const byParent = groupGroupsByParent(groupIds, newNodes);
+        const byParent = groupGroupsByParent(groupIds, state.nodes);
 
         let newNodes = { ...state.nodes };
         let newRootIds = [...(page.rootIds ?? [])];
@@ -44,11 +44,11 @@ export const ungroupNodesCommand = (api, ids) => {
             });
 
             // Применяем изменения
-            newNodes = result.newNodes; // Обновленные ноды (с пересчитанными детьми)
-            nextSelection.push(...result.nextSelection);
+            newNodes = result.nodes; // Обновленные ноды (с пересчитанными детьми)
+            nextSelection.push(...result.newChildIds);
 
             if (parentId === null) {
-                newRootIds = result.newRootIds;
+                newRootIds = result.containerIds;
             } else {
                 updateParentNode(newNodes, parentId, result.containerIds);
                 affectedGroups.add(parentId);
