@@ -86,6 +86,7 @@ const PageName = ({
                 fontSize="sm"
                 fontWeight={isActive ? "medium" : "normal"}
                 isTruncated
+                ps={4}
             >
                 {name}
             </Text>
@@ -94,7 +95,17 @@ const PageName = ({
 
     return (
         <Input
+            h={"2rem"}
             size={"2xs"}
+            border={"none"}
+            outlineWidth={"2px"}
+            outlineOffset={"-2px"}
+            ps={4}
+            fontSize={"sm"}
+            fontWeight={"medium"}
+            _selection={{
+                bg: "bg.emphasized",
+            }}
             autoFocus
             value={editingName}
             onClick={(e) => e.stopPropagation()}
@@ -183,8 +194,7 @@ const PageRow = ({
     return (
         <>
             <HStack
-                p={1}
-                ps={4}
+                h={"2rem"}
                 borderRadius="md"
                 bg={isActive ? "colorPalette.subtle" : "transparent"}
                 _hover={{
@@ -198,24 +208,22 @@ const PageRow = ({
                 onContextMenu={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    onSelect(page.id);
                     setMenuState({ open: true, x: e.clientX, y: e.clientY });
                 }}
                 justify="space-between"
                 transition="all 0.2s"
                 userSelect={isEditing ? "text" : "none"}
+                p={0}
             >
-                <HStack overflow="hidden" minW={0} flex={1}>
-                    <PageName
-                        isActive={isActive}
-                        isEditing={isEditing}
-                        name={page.name}
-                        editingName={editingName}
-                        onEditingNameChange={onEditingNameChange}
-                        onCommitRename={onCommitRename}
-                        onCancelRename={onCancelRename}
-                    />
-                </HStack>
+                <PageName
+                    isActive={isActive}
+                    isEditing={isEditing}
+                    name={page.name}
+                    editingName={editingName}
+                    onEditingNameChange={onEditingNameChange}
+                    onCommitRename={onCommitRename}
+                    onCancelRename={onCancelRename}
+                />
             </HStack>
 
             <PageRowContextMenu
@@ -268,7 +276,6 @@ export const Pages = () => {
         const page = pages[id];
         if (!page) return;
 
-        useNodeStore.getState().setActivePage(id);
         setEditingPageId(id);
         setEditingName(page.name);
     };

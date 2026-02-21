@@ -20,11 +20,11 @@ export const StrokeBlock = ({ ids, types }) => {
             <Heading size={"md"}>{LOCALE.stroke}</Heading>
             <StrokeColorSolidBlock ids={ids} />
             <StrokeWeightBlock ids={ids} />
+            <DashBlock ids={ids} />
             <HStack w={"100%"} justify={"space-between"}>
                 <LineJoinBlock ids={ids} />
                 <LineCapBlock ids={ids} />
             </HStack>
-            <DashBlock ids={ids} />
             {showLineSpecifics && (
                 <HStack justify={"space-between"} w={"100%"}>
                     <TensionBlock ids={ids} />

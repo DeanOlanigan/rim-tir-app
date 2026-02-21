@@ -43,76 +43,83 @@ function navigateFunc(options) {
 
 export const useActionsRunner = () => {
     const { publish, connected } = useMqttCore();
-    const executeSingleAction = async (action) => {
-        const { type, options } = action;
+    const executeSingleAction = useCallback(
+        async (action) => {
+            const { type, options } = action;
 
-        function sendCommand(varId, value) {
-            console.log(`[MQTT] Write ${varId} = ${value}`);
-            const data = JSON.stringify({ v: value });
-            if (connected) {
-                publish(`commands/node/${varId}`, data);
-            }
-        }
-
-        switch (type) {
-            case "WRITE_TAG": {
-                if (!options.varId) throw new Error("Tag ID is required");
-                if (!options.value) throw new Error("Value is required");
-                sendCommand(options.varId, options.value);
-                break;
-            }
-            case "TOGGLE_TAG": {
-                const currentVal = 0;
-                const newVal = currentVal === 0 ? 1 : 0;
-                sendCommand(options.varId, newVal);
-                break;
-            }
-            case "CONFIRMATION": {
-                await confirmationFunc(options);
-                break;
-            }
-            case "NAVIGATE": {
-                navigateFunc(options);
-                break;
-            }
-            default:
-                break;
-        }
-    };
-
-    const runActions = useCallback(async (actions) => {
-        if (!actions || !Array.isArray(actions) || actions.length === 0) return;
-
-        let errorMsg = null;
-        for (const action of actions) {
-            try {
-                await executeSingleAction(action);
-            } catch (error) {
-                if (error.message === "CANCELED_BY_USER") {
-                    console.log("ACTION CHAIN STOPPED BY USER");
-                    errorMsg = "Цепочка действий прервана пользователем";
-                } else {
-                    console.error("ACTION CHAIN ERROR", error);
-                    errorMsg = error.message;
+            function sendCommand(varId, value) {
+                console.log(`[MQTT] Write ${varId} = ${value}`);
+                const data = JSON.stringify({ v: value });
+                if (connected) {
+                    publish(`commands/node/${varId}`, data);
                 }
-                break;
             }
-        }
 
-        if (errorMsg) {
-            toaster.create({
-                title: "Произошла ошибка",
-                description: errorMsg,
-                type: "error",
-            });
-        } else {
-            toaster.create({
-                title: "Действия выполнены",
-                type: "success",
-            });
-        }
-        // TODO Убедиться в стабильности ссылки на функцию
-    }, []);
+            switch (type) {
+                case "WRITE_TAG": {
+                    if (!options.varId) throw new Error("Tag ID is required");
+                    if (options?.value === undefined)
+                        throw new Error("Value is required");
+                    sendCommand(options.varId, options.value);
+                    break;
+                }
+                case "TOGGLE_TAG": {
+                    const currentVal = 0;
+                    const newVal = currentVal === 0 ? 1 : 0;
+                    sendCommand(options.varId, newVal);
+                    break;
+                }
+                case "CONFIRMATION": {
+                    await confirmationFunc(options);
+                    break;
+                }
+                case "NAVIGATE": {
+                    navigateFunc(options);
+                    break;
+                }
+                default:
+                    break;
+            }
+        },
+        [publish, connected],
+    );
+
+    const runActions = useCallback(
+        async (actions) => {
+            if (!actions || !Array.isArray(actions) || actions.length === 0)
+                return;
+
+            let errorMsg = null;
+            for (const action of actions) {
+                try {
+                    await executeSingleAction(action);
+                } catch (error) {
+                    if (error.message === "CANCELED_BY_USER") {
+                        console.log("ACTION CHAIN STOPPED BY USER");
+                        errorMsg = "Цепочка действий прервана пользователем";
+                    } else {
+                        console.error("ACTION CHAIN ERROR", error);
+                        errorMsg = error.message;
+                    }
+                    break;
+                }
+            }
+
+            if (errorMsg) {
+                toaster.create({
+                    title: "Произошла ошибка",
+                    description: errorMsg,
+                    type: "error",
+                });
+            } else {
+                toaster.create({
+                    title: "Действия выполнены",
+                    type: "success",
+                });
+            }
+        },
+        [executeSingleAction],
+    );
 
     return runActions;
 };

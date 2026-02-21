@@ -65,11 +65,13 @@ export const CommittedNumberInput = ({
         lastValidStringRef.current = baseStr;
 
         setInnerValue(baseStr);
+        // eslint-disable-next-line
     }, [contextKey]); // важно: именно смена selection/property
 
     // Синхронизация извне, если мы не редактируем сами
     useEffect(() => {
-        if (touchedRef.current || scrubbingRef.current) return;
+        // не трогаем поле только если есть незакоммиченные локальные правки
+        if (!committedRef.current || scrubbingRef.current) return;
 
         lastNumberRef.current = uiValue ?? null;
         lastValidNumberRef.current = uiValue ?? null;
@@ -80,6 +82,7 @@ export const CommittedNumberInput = ({
 
     const revert = useCallback(() => {
         committedRef.current = true;
+        touchedRef.current = false;
         setInnerValue(lastValidStringRef.current ?? "");
         lastNumberRef.current = lastValidNumberRef.current ?? null;
         targetRef.current = null; // сессия редактирования завершена
@@ -101,6 +104,7 @@ export const CommittedNumberInput = ({
         }
 
         committedRef.current = true;
+        touchedRef.current = false;
         lastValidNumberRef.current = n;
         lastValidStringRef.current = String(n);
 

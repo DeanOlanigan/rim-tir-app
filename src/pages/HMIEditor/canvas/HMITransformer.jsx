@@ -45,6 +45,7 @@ function transformEndHandler(nodes) {
             patchesById[id] = res;
         }
     }
+    patchStoreRaf.flushNow();
     useNodeStore.getState().updateNodes(ids, patchesById);
 }
 

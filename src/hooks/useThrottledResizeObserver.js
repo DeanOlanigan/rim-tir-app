@@ -3,7 +3,7 @@ import throttle from "throttleit";
 import useResizeObserver from "use-resize-observer";
 
 export function useThrottledResizeObserver(wait = 150) {
-    const [size, setSize] = useState({ width: 100, height: 100 });
+    const [size, setSize] = useState({ width: 0, height: 0 });
 
     const onResize = useMemo(
         () =>

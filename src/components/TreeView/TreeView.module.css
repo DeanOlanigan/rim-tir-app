@@ -5,15 +5,15 @@
 
 /* фокус */
 [role="treeitem"]:has(.node):focus-visible {
-    outline: 1px solid var(--chakra-colors-border-inverted);
-    outline-offset: -1px;
+    outline: 2px solid var(--chakra-colors-color-palette-focus-ring);
+    outline-offset: -2px;
 }
 
 /* Выбранныей узел + фокус */
 [role="treeitem"][aria-selected="true"]:has(.node):focus-visible {
     background-color: var(--chakra-colors-color-palette-muted);
-    outline: 1px solid var(--chakra-colors-border-inverted);
-    outline-offset: -1px;
+    outline: 2px solid var(--chakra-colors-color-palette-focus-ring);
+    outline-offset: -2px;
 }
 
 /* ховер на узле */
@@ -37,17 +37,17 @@
 }
 
 [role="treeitem"][aria-selected="true"]:has(.node:global(.isSelectedStart)) {
-    border-radius: 8px 8px 0 0;
+    border-radius: var(--chakra-radii-md) var(--chakra-radii-md) 0 0;
 }
 
 [role="treeitem"][aria-selected="true"]:has(.node:global(.isSelectedEnd)) {
-    border-radius: 0 0 8px 8px;
+    border-radius: 0 0 var(--chakra-radii-md) var(--chakra-radii-md);
 }
 
 [role="treeitem"][aria-selected="true"]:has(
         .node:global(.isSelectedStart.isSelectedEnd)
     ) {
-    border-radius: 8px;
+    border-radius: var(--chakra-radii-md);
 }
 
 [role="treeitem"]:has(.node:global(.willReceiveDrop)) {

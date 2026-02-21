@@ -131,7 +131,7 @@ export const DimensionsBlock = ({ ids, api }) => {
                 <Group>
                     <CommittedNumberInput
                         key={`dim:w:${sessionKey}`}
-                        uiValue={uiWidth}
+                        uiValue={Math.abs(uiWidth)}
                         label="W"
                         placeholder={LOCALE.mixed}
                         step={1}
@@ -145,7 +145,7 @@ export const DimensionsBlock = ({ ids, api }) => {
                     />
                     <CommittedNumberInput
                         key={`dim:h:${sessionKey}`}
-                        uiValue={uiHeight}
+                        uiValue={Math.abs(uiHeight)}
                         label="H"
                         placeholder={LOCALE.mixed}
                         step={1}

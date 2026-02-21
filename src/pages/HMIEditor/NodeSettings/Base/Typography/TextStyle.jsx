@@ -10,9 +10,6 @@ import { sameCheck, useNodesByIds } from "../../utils";
 import { useNodeStore } from "@/pages/HMIEditor/store/node-store";
 import { LOCALE } from "@/pages/HMIEditor/constants";
 
-// [ ] Можно добавить обработку font weight
-// https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/font#formal_syntax
-
 const items = [
     {
         value: "bold",

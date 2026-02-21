@@ -3,8 +3,6 @@ import { isFiniteValue, sameCheck, useNodesByIds } from "./utils";
 import { patchStoreRaf, useNodeStore } from "../store/node-store";
 import { CommittedNumberInput } from "./CommittedNumberInput";
 
-// TODO Трансформация через трансформер после комиита из компонента не отображается
-
 // Дефолтные трансформеры, если не переданы пропсы (1 к 1)
 const identity = (v) => v;
 

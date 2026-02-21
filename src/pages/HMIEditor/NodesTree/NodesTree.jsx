@@ -9,9 +9,11 @@ import { useNodeStore } from "../store/node-store";
 import { flyToNode } from "../utils/flyToNode";
 import { IndentLines } from "@/components/TreeView/IndentLines";
 import { VisibleButton } from "./VisibleButton";
-import { setDiff, setEquals, toSet, useNodesData } from "./helpers";
+import { setEquals, toSet, useNodesData } from "./helpers";
 import { useThrottledResizeObserver } from "@/hooks/useThrottledResizeObserver";
 import { LOCALE, SHAPES_ICONS } from "../constants";
+
+// TODO доделать перехват фокуса при создании фигуры
 
 export const NodesTree = ({ api }) => {
     const data = useNodesData();
@@ -21,33 +23,31 @@ export const NodesTree = ({ api }) => {
     const showNodesTree = useActionsStore((state) => state.showNodesTree);
     const selectedIds = useNodeStore((state) => state.selectedIds);
 
-    const syncRef = useRef(false);
+    const isReadyRef = useRef(false);
+    const isSyncingRef = useRef(false);
 
     const { ref, width, height } = useThrottledResizeObserver(100);
 
     useEffect(() => {
+        if (!showNodesTree) return;
         const tree = treeRef.current;
         if (!tree) return;
-        const treeSet = tree.selectedIds;
 
-        const selectedSet = toSet(selectedIds);
+        isReadyRef.current = false;
+        isSyncingRef.current = true;
 
-        if (setEquals(treeSet, selectedSet)) return;
-
-        syncRef.current = true;
-
-        const removed = setDiff(treeSet, selectedSet);
-        for (const id of removed) tree.deselect(id);
-        const added = setDiff(selectedSet, treeSet);
-        for (const id of added) tree.selectMulti(id);
-
-        if (selectedIds.length)
+        tree.deselectAll();
+        if (selectedIds.length) {
+            tree.select(selectedIds[0]);
+            for (let i = 1; i < selectedIds.length; i++) {
+                tree.selectMulti(selectedIds[i]);
+            }
             tree.scrollTo(selectedIds[selectedIds.length - 1]);
+        }
 
-        queueMicrotask(() => {
-            syncRef.current = false;
-        });
-    }, [selectedIds]);
+        isSyncingRef.current = false;
+        isReadyRef.current = true;
+    }, [selectedIds, showNodesTree]);
 
     if (!showNodesTree) return null;
 
@@ -65,14 +65,21 @@ export const NodesTree = ({ api }) => {
     };
 
     const handleSelect = (nodes) => {
-        if (syncRef.current) return;
-        const tree = nodes[0]?.tree;
+        if (!isReadyRef.current) return;
+        if (isSyncingRef.current) return;
 
-        const nextSet = tree ? tree.selectedIds : new Set();
-        if (setEquals(nextSet, toSet(useNodeStore.getState().selectedIds)))
+        const tree = nodes[0]?.tree;
+        if (!tree) return;
+
+        if (
+            setEquals(
+                tree.selectedIds,
+                toSet(useNodeStore.getState().selectedIds),
+            )
+        )
             return;
 
-        useNodeStore.getState().setSelectedIds(Array.from(nextSet));
+        useNodeStore.getState().setSelectedIds(Array.from(tree.selectedIds));
     };
 
     const handleRename = ({ id, name }) => {
@@ -93,61 +100,63 @@ export const NodesTree = ({ api }) => {
                 position={"relative"}
                 ref={ref}
             >
-                <Tree
-                    ref={treeRef}
-                    data={data}
-                    width={width}
-                    height={height}
-                    overscanCount={2}
-                    indent={16}
-                    rowHeight={32}
-                    onSelect={handleSelect}
-                    onRename={handleRename}
-                    disableDrag
-                >
-                    {({ node, style, dragHandle }) => {
-                        return (
-                            <div
-                                ref={dragHandle}
-                                style={style}
-                                className={clsx(
-                                    styles.node,
-                                    node.state,
-                                    "group",
-                                )}
-                            >
-                                <HStack w={"100%"}>
-                                    <IndentLines
-                                        paddingLeft={style.paddingLeft}
-                                    />
+                {width === 0 && height === 0 ? null : (
+                    <Tree
+                        ref={treeRef}
+                        data={data}
+                        width={width}
+                        height={height}
+                        overscanCount={2}
+                        indent={16}
+                        rowHeight={32}
+                        onSelect={handleSelect}
+                        onRename={handleRename}
+                        disableDrag
+                    >
+                        {({ node, style, dragHandle }) => {
+                            return (
+                                <div
+                                    ref={dragHandle}
+                                    style={style}
+                                    className={clsx(
+                                        styles.node,
+                                        node.state,
+                                        "group",
+                                    )}
+                                >
                                     <HStack w={"100%"}>
-                                        {!node.isLeaf && (
-                                            <NodeToggleBtn
-                                                toggle={() => node.toggle()}
-                                                isOpen={node.isOpen}
-                                            />
-                                        )}
-                                        <NodeIcon
-                                            nodeId={node.id}
-                                            onDoubleClick={() =>
-                                                focusById(node.id)
-                                            }
+                                        <IndentLines
+                                            paddingLeft={style.paddingLeft}
                                         />
-                                        <HStack
-                                            w={"100%"}
-                                            onDoubleClick={() => {
-                                                node.edit();
-                                            }}
-                                        >
-                                            <ItemName node={node} />
+                                        <HStack w={"100%"}>
+                                            {!node.isLeaf && (
+                                                <NodeToggleBtn
+                                                    toggle={() => node.toggle()}
+                                                    isOpen={node.isOpen}
+                                                />
+                                            )}
+                                            <NodeIcon
+                                                nodeId={node.id}
+                                                onDoubleClick={() =>
+                                                    focusById(node.id)
+                                                }
+                                            />
+                                            <HStack
+                                                w={"100%"}
+                                                onDoubleClick={() => {
+                                                    node.edit();
+                                                }}
+                                            >
+                                                <ItemName node={node} />
+                                            </HStack>
+                                            <VisibleButton node={node} />
                                         </HStack>
-                                        <VisibleButton node={node} />
                                     </HStack>
-                                </HStack>
-                            </div>
-                        );
-                    }}
-                </Tree>
+                                </div>
+                            );
+                        }}
+                    </Tree>
+                )}
             </Flex>
         </Flex>
     );
