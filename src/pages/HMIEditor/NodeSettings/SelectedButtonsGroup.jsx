@@ -3,6 +3,7 @@ import { LuGroup, LuLayers2, LuTrash2, LuX } from "react-icons/lu";
 import { calcBBox } from "../utils";
 import { useNodeStore } from "../store/node-store";
 import { SHAPES } from "../constants";
+import { useActionsStore } from "../store/actions-store";
 
 export const SelectedButtonsGroup = ({ ids, api, types }) => {
     const isMultiple = ids.length > 1;
@@ -13,7 +14,9 @@ export const SelectedButtonsGroup = ({ ids, api, types }) => {
     };
 
     const handleDuplicate = () => {
-        useNodeStore.getState().duplicateNodes(ids);
+        const gridSize = useActionsStore.getState().gridSize;
+        const scale = useActionsStore.getState().scale;
+        useNodeStore.getState().duplicateNodes(ids, { gridSize, scale });
     };
 
     return (

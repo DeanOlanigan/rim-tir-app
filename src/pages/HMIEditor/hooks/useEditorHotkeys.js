@@ -114,8 +114,10 @@ export function useEditorHotkeys(tools) {
         HOTKEYS.duplicate.hotkey,
         () => {
             const store = useNodeStore.getState();
+            const gridSize = useActionsStore.getState().gridSize;
+            const scale = useActionsStore.getState().scale;
             if (store.selectedIds.length === 0) return;
-            store.duplicateNodes(store.selectedIds);
+            store.duplicateNodes(store.selectedIds, { gridSize, scale });
         },
         { preventDefault: true },
     );

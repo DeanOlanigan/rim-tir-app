@@ -2,13 +2,26 @@ import { buildPayload } from "../../utils/clipboard";
 import { buildInsertPatch } from "../clipboard/buildInsertPatch";
 import { runCommand } from "../runCommand";
 
-// TODO: При дублировании узла, который находится внутри группы, он вставляется в корень,
-// а нужно внутрь текущей группы + рекурсивно обновить все группы с помощью аффинных преобразований
+function computeWorldOffsetFromScreenPx({ screenPx, scale, gridSize }) {
+    const rawWorld = screenPx / scale;
+
+    // с сеткой: минимум 1 клетка и кратность gridSize
+    const cells = Math.max(1, Math.ceil(rawWorld / gridSize));
+    return cells * gridSize;
+}
+
 export const duplicateNodesCommand = (api, ids, opts = {}) => {
+    const scale = opts.scale ?? 1;
     const gridSize = opts.gridSize ?? 1;
-    const step = gridSize > 1 ? gridSize : 10;
-    const dx = opts.dx ?? step;
-    const dy = opts.dy ?? step;
+
+    const defaultWorldStep = computeWorldOffsetFromScreenPx({
+        screenPx: 10,
+        scale,
+        gridSize,
+    });
+
+    const dx = opts.dx ?? defaultWorldStep;
+    const dy = opts.dy ?? defaultWorldStep;
 
     runCommand(api, "cmd/nodes/duplicateNodes", (state) => {
         const pageId = state.activePageId;
@@ -21,12 +34,16 @@ export const duplicateNodesCommand = (api, ids, opts = {}) => {
         });
         if (!payload) return null;
 
-        const res = buildInsertPatch(state, payload, {
-            kind: "offset",
-            dx,
-            dy,
-            gridSize,
-        });
+        const res = buildInsertPatch(
+            state,
+            payload,
+            { kind: "offset", dx, dy, gridSize },
+            {
+                respectRootParent: true,
+                insertStrategy: "after",
+                recalcGroups: true,
+            },
+        );
         if (!res) return null;
 
         return {

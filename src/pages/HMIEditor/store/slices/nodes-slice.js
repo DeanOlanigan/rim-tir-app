@@ -32,6 +32,6 @@ export const createNodesSlice = (api) => {
         pastePayload: (payload, placement) =>
             pastePayloadCommand(api, payload, placement),
 
-        duplicateNodes: (ids) => duplicateNodesCommand(api, ids),
+        duplicateNodes: (ids, opts) => duplicateNodesCommand(api, ids, opts),
     };
 };
