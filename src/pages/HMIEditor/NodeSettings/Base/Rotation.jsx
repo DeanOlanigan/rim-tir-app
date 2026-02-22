@@ -10,11 +10,16 @@ import { LOCALE } from "../../constants";
 import { CommittedNumberInput } from "../CommittedNumberInput";
 import {
     applyToPoint,
+    calcGroupAABBCenter,
+    decomposeTRKS,
     getNodeLocalTransformMatrix,
     isHasRadius,
+    mul,
     round4,
 } from "../../utils";
 import { useNodeStore } from "../../store/node-store";
+
+// TODO Проверить отражения, разобраться со Scale в сторе
 
 function toDegIn0To360Range(deg) {
     return ((deg % 360) + 360) % 360;
@@ -59,23 +64,25 @@ export const RotationBlock = ({ ids }) => {
         applyPatch(ids, patch, undoable);
     };
 
-    // TODO сделать синхронизацию со стором
     const flipHorizontal = () => {
+        const nodesList = ids.map((id) => useNodeStore.getState().nodes[id]);
+        const pivotWorld = calcGroupAABBCenter(nodesList);
         const patch = {};
         ids.forEach((id) => {
             const n = useNodeStore.getState().nodes[id];
-            patch[id] = flipNodeAroundCenterStore(n, "x");
+            patch[id] = flipNodeAroundWorldAxis(n, "x", { pivotWorld });
         });
 
         applyPatch(ids, patch, true);
     };
 
-    // TODO сделать синхронизацию со стором
     const flipVertical = () => {
+        const nodesList = ids.map((id) => useNodeStore.getState().nodes[id]);
+        const pivotWorld = calcGroupAABBCenter(nodesList);
         const patch = {};
         ids.forEach((id) => {
             const n = useNodeStore.getState().nodes[id];
-            patch[id] = flipNodeAroundCenterStore(n, "y");
+            patch[id] = flipNodeAroundWorldAxis(n, "y", { pivotWorld });
         });
 
         applyPatch(ids, patch, true);
@@ -109,6 +116,7 @@ export const RotationBlock = ({ ids }) => {
                             size={"xs"}
                             variant={"outline"}
                             onClick={flipHorizontal}
+                            disabled
                         >
                             <LuFlipHorizontal2 />
                         </IconButton>
@@ -116,6 +124,7 @@ export const RotationBlock = ({ ids }) => {
                             size={"xs"}
                             variant={"outline"}
                             onClick={flipVertical}
+                            disabled
                         >
                             <LuFlipVertical2 />
                         </IconButton>
@@ -164,43 +173,57 @@ function rotateNodeAroundCenterStore(node, nextAngle, opts = {}) {
     };
 }
 
-function normalizeScale(v, fallback = 1) {
-    const n = typeof v === "number" && Number.isFinite(v) ? v : fallback;
-    // если вдруг где-то оказался 0/NaN — считаем что 1, иначе "флип" бессмысленен
-    if (!Number.isFinite(n) || n === 0) return fallback;
-    return n;
+function getWorldPivotForNode(node, opts = {}) {
+    const anchor = getLocalAnchorForRotation(node, opts.size); // твоя функция
+    const M = getNodeLocalTransformMatrix(node);
+    return applyToPoint(M, anchor.x, anchor.y);
 }
 
-function flipNodeAroundCenterStore(node, axis /* "x" | "y" */, opts = {}) {
+/**
+ * axis:
+ *  - "x" => Flip Horizontal (mirror по мировому X: отражаем относительно вертикальной линии)
+ *  - "y" => Flip Vertical   (mirror по мировому Y: отражаем относительно горизонтальной линии)
+ */
+function flipNodeAroundWorldAxis(node, axis /*"x"|"y"*/, opts = {}) {
     if (!node) return null;
 
-    const anchor = getLocalAnchorForRotation(node, opts.size);
-
+    // 1) local->world
     const M1 = getNodeLocalTransformMatrix(node);
-    const pBefore = applyToPoint(M1, anchor.x, anchor.y);
 
-    const sx = normalizeScale(node.scaleX, 1);
-    const sy = normalizeScale(node.scaleY, 1);
+    // 2) pivot в world (можно переопределить общим pivot для выделения)
+    const pivot = opts.pivotWorld ?? getWorldPivotForNode(node, opts);
 
-    const node2 = {
-        ...node,
-        scaleX: axis === "x" ? -sx : sx,
-        scaleY: axis === "y" ? -sy : sy,
-    };
+    // 3) отражение в world
+    const F =
+        axis === "x"
+            ? { a: -1, b: 0, c: 0, d: 1, e: 2 * pivot.x, f: 0 } // Flip Horizontal
+            : { a: 1, b: 0, c: 0, d: -1, e: 0, f: 2 * pivot.y }; // Flip Vertical
 
-    const M2 = getNodeLocalTransformMatrix(node2);
-    const pAfter = applyToPoint(M2, anchor.x, anchor.y);
+    // 4) новое local->world после отражения (ВАЖНО: слева)
+    const M2 = mul(F, M1);
 
-    const dx = pBefore.x - pAfter.x;
-    const dy = pBefore.y - pAfter.y;
+    // 5) обратно в TRKS (в твоём порядке T*R*K*S)
+    const dec = decomposeTRKS(M2);
+
+    // 6) поправка ellipse-like: у тебя в матрице T(x+w/2, y+h/2),
+    // а в сторе x/y = top-left bbox
+    let xStore = dec.x;
+    let yStore = dec.y;
+
+    if (isHasRadius(node.type)) {
+        const w = node.width ?? 0;
+        const h = node.height ?? 0;
+        xStore = dec.x - w / 2;
+        yStore = dec.y - h / 2;
+    }
 
     return {
-        x: round4((node.x ?? 0) + dx),
-        y: round4((node.y ?? 0) + dy),
-        rotation: round4(node.rotation ?? 0),
-        skewX: node.skewX ?? 0,
-        skewY: node.skewY ?? 0,
-        scaleX: round4(node2.scaleX ?? 1),
-        scaleY: round4(node2.scaleY ?? 1),
+        x: round4(xStore),
+        y: round4(yStore),
+        rotation: round4(dec.rotation ?? 0),
+        skewX: round4(dec.skewX ?? 0),
+        skewY: round4(dec.skewY ?? 0),
+        scaleX: round4(dec.scaleX ?? 1),
+        scaleY: round4(dec.scaleY ?? 1),
     };
 }
