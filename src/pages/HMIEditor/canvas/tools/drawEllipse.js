@@ -14,6 +14,7 @@ export function createDrawEllipseTool() {
         label: "Draw ellipse",
         icon: LuCircle,
         cursor: "crosshair",
+        oneShot: true,
 
         onPointerDown(e, ctx) {
             if (e.evt.button !== 0) return;
@@ -86,7 +87,6 @@ export function createDrawEllipseTool() {
                 width: box.width,
                 height: box.height,
             });
-            ctx.manager.setActive(ACTIONS.select);
         },
 
         cancel() {

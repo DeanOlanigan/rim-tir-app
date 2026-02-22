@@ -14,6 +14,7 @@ export function createDrawVariablePolygonTool() {
         label: "Draw Variable Polygon",
         icon: LuHexagon,
         cursor: "crosshair",
+        oneShot: true,
 
         onPointerDown(e, ctx) {
             if (e.evt.button !== 0) return;
@@ -88,7 +89,6 @@ export function createDrawVariablePolygonTool() {
                 height: box.height,
                 sides: 6,
             });
-            ctx.manager.setActive(ACTIONS.select);
         },
 
         cancel() {

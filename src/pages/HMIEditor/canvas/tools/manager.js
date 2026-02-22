@@ -30,15 +30,12 @@ export function createToolManager({ toolsMap, api }) {
         }
 
         const prev = active;
-        if (prev && prev.onExit) {
-            prev.onExit(next, ctx);
-        }
+        prev?.onExit?.(next, ctx);
 
         active = next;
         setCursor(active.cursor);
-        if (active.onEnter) {
-            active.onEnter(prev, ctx);
-        }
+        active.onEnter?.(prev, ctx);
+
         api.setCurrentAction(name);
         if (active.name !== ACTIONS.select) {
             api.setSelectedIds([]);
@@ -49,26 +46,48 @@ export function createToolManager({ toolsMap, api }) {
         const next = toolsMap[name];
         if (!next) return;
         if (active) tempStack.push(active);
+
         api.tools.setPrevAction(active.name);
+
         active = next;
         api.setCurrentAction(name);
         setCursor(active.cursor);
-        active.onEnter && active.onEnter(null, ctx);
+        active.onEnter?.(null, ctx);
     };
 
     const popTemp = () => {
         const prev = active;
         const next = tempStack.pop() || null;
         if (!next) return;
-        prev && prev.onExit && prev.onExit(next, ctx);
+
+        prev?.onExit?.(next, ctx);
         active = next;
+
         api.tools.setPrevAction(prev.name);
         api.setCurrentAction(active.name);
         setCursor(active && active.cursor);
     };
 
     const cancelActive = () => {
-        active && active.cancel && active.cancel(ctx);
+        active?.cancel?.(ctx);
+    };
+
+    const shouldKeepToolAfterDraw = () => !!useActionsStore.getState().lockTool;
+
+    const maybeAutoResetAfterCommit = () => {
+        // не трогаем временные инструменты (Space/MB3 hand)
+        if (tempStack.length > 0) return;
+
+        // сбрасываем только one-shot инструменты (рисовалки)
+        if (!active?.oneShot) return;
+
+        // если закреплено — не сбрасываем
+        if (shouldKeepToolAfterDraw()) return;
+
+        // уже в Select — ничего не делаем
+        if (active.name === ACTIONS.select) return;
+
+        setActive(ACTIONS.select);
     };
 
     const manager = {
@@ -81,18 +100,26 @@ export function createToolManager({ toolsMap, api }) {
         toolsMap,
     };
 
-    const ctx = { ...api, manager };
+    const ctx = {
+        ...api,
+        manager,
+        addNode: (payload, ...rest) => {
+            api.addNode(payload, ...rest);
+            maybeAutoResetAfterCommit();
+        },
+    };
 
     const handlers = {
         onClick(e) {
             if (api.ui.viewOnlyMode()) return;
-            active && active.onClick && active.onClick(e, ctx);
+            active?.onClick?.(e, ctx);
         },
         onDblClick(e) {
             if (api.ui.viewOnlyMode()) return;
-            active && active.onDblClick && active.onDblClick(e, ctx);
+            active?.onDblClick?.(e, ctx);
         },
         onPointerDown(e) {
+            useActionsStore.getState().setFocusOwner("canvas");
             pointerDown = true;
             const stage = e.target.getStage();
 
@@ -102,7 +129,7 @@ export function createToolManager({ toolsMap, api }) {
 
             if (api.ui.viewOnlyMode() && active.name !== ACTIONS.hand) return;
 
-            active && active.onPointerDown && active.onPointerDown(e, ctx);
+            active?.onPointerDown?.(e, ctx);
 
             const onGlobalMove = (evt) => {
                 stage.setPointersPositions(evt);
@@ -114,9 +141,7 @@ export function createToolManager({ toolsMap, api }) {
                     evt,
                 };
 
-                active &&
-                    active.onPointerMove &&
-                    active.onPointerMove(syntheticEvent, ctx);
+                active?.onPointerMove?.(syntheticEvent, ctx);
             };
 
             const onGlobalUp = (evt) => {
@@ -129,9 +154,7 @@ export function createToolManager({ toolsMap, api }) {
                     evt,
                 };
 
-                active &&
-                    active.onPointerUp &&
-                    active.onPointerUp(syntheticEvent, ctx);
+                active?.onPointerUp?.(syntheticEvent, ctx);
 
                 if (e.evt.button === 1) {
                     popTemp();

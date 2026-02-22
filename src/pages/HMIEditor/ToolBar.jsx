@@ -76,6 +76,7 @@ export const ToolBar = ({ manager }) => {
             bg={"bg.subtle"}
             borderRadius={"xl"}
             shadow={"md"}
+            pointerEvents={"auto"}
         >
             {TOOLS_LIST.map((tool) => (
                 <ToolButton key={tool.name} tool={tool} manager={manager} />

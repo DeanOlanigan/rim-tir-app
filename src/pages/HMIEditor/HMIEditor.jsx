@@ -1,4 +1,4 @@
-import { Box, Flex, HStack } from "@chakra-ui/react";
+import { Box, Flex, Grid } from "@chakra-ui/react";
 import { ContextMenu } from "./ContextMenu";
 import { ToolBar } from "./ToolBar";
 import { HMICanvas } from "./canvas/HMICanvas";
@@ -16,6 +16,7 @@ import { useNodeStore } from "./store/node-store";
 import { fitNodesToFrame } from "./utils";
 import { helpDialog } from "./helpDialog";
 import { HelpButton } from "./HelpButton";
+import { KeepToolAfterDrawButton } from "./KeepToolAfterDrawButton";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -23,7 +24,6 @@ function HMIEditor() {
 export default HMIEditor;
 
 const HMIEditorContent = () => {
-    console.log("RENDER EDITOR");
     const { ref } = useHMICanvasResize();
     const tools = useToolsManager();
     useMqttValues("monitoring/node/#", tools);
@@ -75,9 +75,25 @@ const HMIEditorContent = () => {
                 <RightPanel api={tools.api} />
             </Box>
             <HelpButton />
-            <HStack position={"absolute"} bottom={2} alignSelf={"center"}>
-                <ToolBar manager={tools.manager} />
-            </HStack>
+            <Box
+                position={"absolute"}
+                left={0}
+                right={0}
+                bottom={2}
+                pointerEvents={"none"}
+            >
+                <Grid
+                    templateColumns={"1fr auto 1fr"}
+                    alignItems={"center"}
+                    gap={4}
+                >
+                    <Box pointerEvents="auto" justifySelf="end">
+                        <KeepToolAfterDrawButton />
+                    </Box>
+                    <ToolBar manager={tools.manager} />
+                    <Box />
+                </Grid>
+            </Box>
         </Flex>
     );
 };

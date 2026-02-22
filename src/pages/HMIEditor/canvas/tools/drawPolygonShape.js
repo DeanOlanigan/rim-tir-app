@@ -20,6 +20,7 @@ export function createDrawPolygonShapeTool() {
         label: "Draw Polygon",
         icon: LuHexagon,
         cursor: "crosshair",
+        oneShot: true,
 
         onPointerDown(e, ctx) {
             if (e.evt.button !== 0) return;
@@ -110,7 +111,6 @@ export function createDrawPolygonShapeTool() {
                 sides,
                 cornerRadius: 0,
             });
-            ctx.manager.setActive(ACTIONS.select);
         },
 
         cancel() {

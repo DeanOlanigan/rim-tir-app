@@ -22,6 +22,7 @@ export const useActionsStore = create(
             isUiExpanded: false,
             canvasSize: { width: 0, height: 0 },
             showRulers: true,
+            lockTool: false,
 
             setCurrentAction: (action) =>
                 set({ currentAction: action }, undefined, "setCurrentAction"),
@@ -62,6 +63,12 @@ export const useActionsStore = create(
                 set({ canvasSize: size }, undefined, "setCanvasSize"),
             setShowRulers: (mode) =>
                 set({ showRulers: mode }, undefined, "setShowRulers"),
+            toggleLockTool: () =>
+                set(
+                    (s) => ({ lockTool: !s.lockTool }),
+                    undefined,
+                    "toggleLockTool",
+                ),
         }),
         {
             name: "actions-store",

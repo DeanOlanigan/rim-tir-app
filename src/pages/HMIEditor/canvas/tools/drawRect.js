@@ -14,6 +14,7 @@ export function createDrawRectTool() {
         label: "Draw Rectangle",
         icon: LuSquare,
         cursor: "crosshair",
+        oneShot: true,
 
         onPointerDown(e, ctx) {
             if (e.evt.button !== 0) return;
@@ -89,7 +90,6 @@ export function createDrawRectTool() {
                 height: box.height,
                 cornerRadius: 0,
             });
-            ctx.manager.setActive(ACTIONS.select);
         },
 
         cancel() {

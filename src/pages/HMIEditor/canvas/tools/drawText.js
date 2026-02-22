@@ -14,6 +14,7 @@ export function createDrawTextTool() {
         label: "Text",
         icon: LuType,
         cursor: "crosshair",
+        oneShot: true,
 
         onPointerDown(e, ctx) {
             if (e.evt.button !== 0) return;
@@ -126,7 +127,6 @@ export function createDrawTextTool() {
                 textDecoration: "",
                 fontStyle: "normal",
             });
-            ctx.manager.setActive(ACTIONS.select);
         },
 
         cancel() {

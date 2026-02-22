@@ -14,6 +14,7 @@ export function createDrawArrowTool() {
         label: "Draw arrow",
         icon: LuMoveUpRight,
         cursor: "crosshair",
+        oneShot: true,
 
         onPointerDown(e, ctx) {
             if (e.evt.button !== 0) return;
@@ -82,7 +83,6 @@ export function createDrawArrowTool() {
                 strokeWidth: 1,
                 stroke: "#000000",
             });
-            ctx.manager.setActive(ACTIONS.select);
         },
 
         cancel() {

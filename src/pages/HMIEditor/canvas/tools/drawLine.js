@@ -14,6 +14,7 @@ export function createDrawLineTool() {
         label: "Draw line",
         icon: LuSlash,
         cursor: "crosshair",
+        oneShot: true,
 
         onPointerDown(e, ctx) {
             if (e.evt.button !== 0) return;
@@ -77,7 +78,6 @@ export function createDrawLineTool() {
                 strokeWidth: 1,
                 stroke: "#000000",
             });
-            ctx.manager.setActive(ACTIONS.select);
         },
 
         cancel() {
