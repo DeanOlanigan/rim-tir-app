@@ -1,10 +1,12 @@
 import {
+    Box,
     ColorPicker,
     Flex,
     Heading,
     HStack,
     parseColor,
     StackSeparator,
+    Text,
     VStack,
 } from "@chakra-ui/react";
 import { useNodeStore } from "../store/node-store";
@@ -39,9 +41,11 @@ export const ProjectSettings = () => {
                 </VStack>
                 <VStack align={"start"} w={"100%"}>
                     <Heading size={"md"}>{LOCALE.variables}</Heading>
+                    <InDev />
                 </VStack>
                 <VStack align={"start"} w={"100%"}>
                     <Heading size={"md"}>{LOCALE.styles}</Heading>
+                    <InDev />
                 </VStack>
             </VStack>
         </Flex>
@@ -94,5 +98,22 @@ const ColorComp = ({ param }) => {
                 </ColorPicker.Content>
             </ColorPicker.Positioner>
         </ColorPicker.Root>
+    );
+};
+
+const InDev = () => {
+    return (
+        <Box
+            w={"100%"}
+            p={4}
+            border="1px dashed"
+            borderColor="border.emphasized"
+            borderRadius="md"
+            textAlign="center"
+        >
+            <Text fontSize="sm" color="gray.500">
+                В разработке
+            </Text>
+        </Box>
     );
 };

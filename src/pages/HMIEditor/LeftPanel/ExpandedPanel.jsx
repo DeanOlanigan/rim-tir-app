@@ -81,9 +81,11 @@ export const ExpandedPanel = ({ tools }) => {
             >
                 <Tabs.List>
                     <Tabs.Trigger value="file">{LOCALE.file}</Tabs.Trigger>
-                    <Tabs.Trigger value="assets" disabled>
-                        {LOCALE.assets}
-                    </Tabs.Trigger>
+                    <Tooltip showArrow content={"В разработке"}>
+                        <Tabs.Trigger value="assets" disabled>
+                            {LOCALE.assets}
+                        </Tabs.Trigger>
+                    </Tooltip>
                     {debugMode && (
                         <Tabs.Trigger value="debug">
                             {LOCALE.debug}
