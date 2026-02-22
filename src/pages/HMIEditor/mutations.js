@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { applyProjectData } from "./ProjectOps/applyProjectData";
 import { messageFromError } from "@/utils/utils";
 import { useNodeStore } from "./store/node-store";
+import { parseProjectPackage } from "./ProjectOps/parseProjectPackage";
 
 export function useDeleteProjectMutation() {
     const q = useQueryClient();
@@ -33,8 +34,26 @@ export function useOpenProjectMutation() {
     return useMutation({
         mutationKey: ["openHmiProject"],
         mutationFn: getProject,
-        onSuccess: (data) => {
-            applyProjectData(data.data, "server", `${data.data.filename}.json`);
+        onSuccess: async (blob, filename) => {
+            try {
+                const { project } = await parseProjectPackage(blob);
+
+                applyProjectData(project, "server", `${filename}.json`);
+
+                toaster.create({
+                    title: "Проект успешно загружен",
+                    description: "Проект успешно загружен и распакован",
+                    type: "success",
+                });
+            } catch (error) {
+                console.error("Error applying project data:", error);
+                toaster.create({
+                    title: "Произошла ошибка",
+                    description:
+                        error.message || "Не удалось прочитать архив проекта",
+                    type: "error",
+                });
+            }
         },
         onError: (err) => {
             toaster.create({

@@ -23,7 +23,7 @@ export const openProjectDialog = createOverlay((props) => {
             <Portal>
                 <Dialog.Backdrop />
                 <Dialog.Positioner>
-                    <Dialog.Content h={"50vh"}>
+                    <Dialog.Content h={"60vh"}>
                         {openingMutation.length === 0 && (
                             <Dialog.CloseTrigger asChild>
                                 <CloseButton size={"xs"} />

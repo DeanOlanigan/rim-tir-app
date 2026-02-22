@@ -1,8 +1,17 @@
 import { Card, Icon, Text } from "@chakra-ui/react";
 import { useOpeningState } from "./useOpeningState";
 
-export const ActionCard = ({ icon, title, subTitle, onClick, ...props }) => {
-    const { isOpening: isDisabled } = useOpeningState();
+export const ActionCard = ({
+    icon,
+    title,
+    subTitle,
+    onClick,
+    disabled,
+    ...props
+}) => {
+    const { isOpening } = useOpeningState();
+
+    const isDisabled = isOpening || disabled;
 
     const style = {
         opacity: isDisabled ? 0.4 : 1,

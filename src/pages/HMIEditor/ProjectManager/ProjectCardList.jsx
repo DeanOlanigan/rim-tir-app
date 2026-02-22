@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useActionsStore } from "../store/actions-store";
 import { getProjects } from "@/api/hmi";
 import { QK } from "@/api";
-import { Alert, SimpleGrid, Spinner } from "@chakra-ui/react";
+import { Alert, Heading, SimpleGrid, Spinner, VStack } from "@chakra-ui/react";
 import { ActionCard } from "./ActionCard";
 import { LuCloudUpload, LuPlus } from "react-icons/lu";
 import { OpenProject } from "../ProjectOps";
@@ -45,31 +45,37 @@ export const ProjectCardList = ({ tools, onOpenChange }) => {
                     <Alert.Title>{LOCALE.projectsLoading}</Alert.Title>
                 </Alert.Root>
             )}
-            <SimpleGrid columns={[1, 2, 3, 4]} gap={4}>
-                {!isLoading &&
-                    data?.data?.map((project) => (
-                        <ProjectCard
-                            key={project.value}
-                            project={project}
-                            onClick={handleOpenServerProject}
-                            onDelete={handleDeleteServerProject}
+            <VStack align={"start"}>
+                <Heading size={"md"}>Действия</Heading>
+                <SimpleGrid columns={[1, 2, 3, 4]} gap={4}>
+                    <OpenProject onProjectLoad={handleOpenLocalProject}>
+                        <ActionCard
+                            icon={LuCloudUpload}
+                            title={LOCALE.openFromPC}
+                            subTitle={LOCALE.openFromPCDesc}
                         />
-                    ))}
-                <OpenProject onProjectLoad={handleOpenLocalProject}>
-                    <ActionCard
-                        icon={LuCloudUpload}
-                        title={LOCALE.openFromPC}
-                        subTitle={LOCALE.openFromPCDesc}
-                    />
-                </OpenProject>
-                {!viewOnlyMode && (
+                    </OpenProject>
+
                     <ActionCard
                         icon={LuPlus}
                         title={LOCALE.newProject}
+                        disabled={viewOnlyMode}
                         onClick={handleCreateNewProject}
                     />
-                )}
-            </SimpleGrid>
+                </SimpleGrid>
+                <Heading size={"md"}>Проекты</Heading>
+                <SimpleGrid columns={[1, 2, 3, 4]} gap={4}>
+                    {!isLoading &&
+                        data?.data?.map((project) => (
+                            <ProjectCard
+                                key={project.value}
+                                project={project}
+                                onClick={handleOpenServerProject}
+                                onDelete={handleDeleteServerProject}
+                            />
+                        ))}
+                </SimpleGrid>
+            </VStack>
         </>
     );
 };

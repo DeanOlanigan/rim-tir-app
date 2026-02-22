@@ -6,7 +6,9 @@ export async function getProjects() {
 }
 
 export async function getProject(filename) {
-    const { data } = await apiv2.get(`/hmi/project/${filename}`);
+    const { data } = await apiv2.get(`/hmi/project/${filename}`, {
+        responseType: "blob",
+    });
     return data;
 }
 
