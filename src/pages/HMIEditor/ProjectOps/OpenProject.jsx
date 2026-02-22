@@ -3,7 +3,7 @@ import { FileUpload, useFileUpload } from "@chakra-ui/react";
 import { parseProjectPackage } from "./parseProjectPackage";
 import { MAX_ARCHIVE_FILE_SIZE, MAX_ARCHIVE_FILES } from "../constants";
 
-const ACCEPT = [".tir-project", ".json"];
+const ACCEPT = [".tir-project"];
 
 const errorMessages = {
     TOO_MANY_FILES: "Слишком много файлов (максимум 1)",

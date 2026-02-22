@@ -25,26 +25,6 @@ export const ProjectCardList = ({ tools, onOpenChange }) => {
 
     return (
         <>
-            {isError && (
-                <Alert.Root status="error">
-                    <Alert.Indicator />
-                    <Alert.Content>
-                        <Alert.Title>{LOCALE.projectsLoadingError}</Alert.Title>
-                        <Alert.Description>{error.message}</Alert.Description>
-                    </Alert.Content>
-                </Alert.Root>
-            )}
-            {isLoading && (
-                <Alert.Root
-                    borderStartWidth="3px"
-                    borderStartColor="colorPalette.600"
-                >
-                    <Alert.Indicator>
-                        <Spinner size="sm" />
-                    </Alert.Indicator>
-                    <Alert.Title>{LOCALE.projectsLoading}</Alert.Title>
-                </Alert.Root>
-            )}
             <VStack align={"start"}>
                 <Heading size={"md"}>Действия</Heading>
                 <SimpleGrid columns={[1, 2, 3, 4]} gap={4}>
@@ -55,7 +35,6 @@ export const ProjectCardList = ({ tools, onOpenChange }) => {
                             subTitle={LOCALE.openFromPCDesc}
                         />
                     </OpenProject>
-
                     <ActionCard
                         icon={LuPlus}
                         title={LOCALE.newProject}
@@ -64,6 +43,30 @@ export const ProjectCardList = ({ tools, onOpenChange }) => {
                     />
                 </SimpleGrid>
                 <Heading size={"md"}>Проекты</Heading>
+                {isError && (
+                    <Alert.Root status="error">
+                        <Alert.Indicator />
+                        <Alert.Content>
+                            <Alert.Title>
+                                {LOCALE.projectsLoadingError}
+                            </Alert.Title>
+                            <Alert.Description>
+                                {error.message}
+                            </Alert.Description>
+                        </Alert.Content>
+                    </Alert.Root>
+                )}
+                {isLoading && (
+                    <Alert.Root
+                        borderStartWidth="3px"
+                        borderStartColor="colorPalette.600"
+                    >
+                        <Alert.Indicator>
+                            <Spinner size="sm" />
+                        </Alert.Indicator>
+                        <Alert.Title>{LOCALE.projectsLoading}</Alert.Title>
+                    </Alert.Root>
+                )}
                 <SimpleGrid columns={[1, 2, 3, 4]} gap={4}>
                     {!isLoading &&
                         data?.data?.map((project) => (

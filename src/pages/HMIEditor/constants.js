@@ -332,6 +332,6 @@ export const LOCALE = {
     projectSavedAsError: "Ошибка сохранения проекта как",
     projectDeleted: "Проект удален",
     openFromPC: "Открыть с ПК",
-    openFromPCDesc: "Выберите .json файл",
+    openFromPCDesc: "Выберите .tir-project файл",
     newProject: "Новый проект",
 };

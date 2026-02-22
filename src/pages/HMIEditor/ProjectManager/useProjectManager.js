@@ -31,8 +31,10 @@ export function useProjectManager(tools, onOpenChange) {
         guard(() => {
             //navigate("/HMIEditor", { replace: true });
 
+            const name = filename.split(".tir-project")[0];
+
             try {
-                applyProjectData(projectData, "local", filename);
+                applyProjectData(projectData, "local", name);
                 fitNodesToFrame(tools.canvasRef, tools.nodesRef);
                 toaster.create({
                     type: "success",

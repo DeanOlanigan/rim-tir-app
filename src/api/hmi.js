@@ -25,3 +25,11 @@ export async function saveProject({ filename, project }) {
     );
     return res;
 }
+
+export async function renameProject({ oldName, newName }) {
+    const safeOldName = encodeURIComponent(oldName);
+    const { data } = await apiv2.patch(`/hmi/project/${safeOldName}/rename`, {
+        newName,
+    });
+    return data;
+}

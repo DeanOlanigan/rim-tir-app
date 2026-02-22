@@ -1,10 +1,14 @@
 import { QK } from "@/api";
-import { deleteProject, getProject, saveProject } from "@/api/hmi";
+import {
+    deleteProject,
+    getProject,
+    renameProject,
+    saveProject,
+} from "@/api/hmi";
 import { toaster } from "@/components/ui/toaster";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { applyProjectData } from "./ProjectOps/applyProjectData";
 import { messageFromError } from "@/utils/utils";
-import { useNodeStore } from "./store/node-store";
 import { parseProjectPackage } from "./ProjectOps/parseProjectPackage";
 
 export function useDeleteProjectMutation() {
@@ -38,7 +42,7 @@ export function useOpenProjectMutation() {
             try {
                 const { project } = await parseProjectPackage(blob);
 
-                applyProjectData(project, "server", `${filename}.json`);
+                applyProjectData(project, "server", filename);
 
                 toaster.create({
                     title: "Проект успешно загружен",
@@ -72,7 +76,6 @@ export function useSaveProjectMutation() {
         mutationFn: saveProject,
         onSuccess: () => {
             q.invalidateQueries({ queryKey: QK.hmiProjects });
-            useNodeStore.getState().markAsImportedToServer();
             toaster.create({
                 title: "Проект сохранен",
                 description: "Проект успешно сохранен",
@@ -85,6 +88,17 @@ export function useSaveProjectMutation() {
                 description: messageFromError(err),
                 type: "error",
             });
+        },
+    });
+}
+
+export function useRenameProjectOnServerMutation() {
+    const q = useQueryClient();
+    return useMutation({
+        mutationKey: ["renameHmiProject"],
+        mutationFn: renameProject,
+        onSuccess: () => {
+            q.invalidateQueries({ queryKey: QK.hmiProjects });
         },
     });
 }

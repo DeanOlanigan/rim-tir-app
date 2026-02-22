@@ -1,11 +1,13 @@
 import {
     Box,
     Card,
+    Center,
     Float,
     FormatByte,
     HStack,
     Icon,
     IconButton,
+    Image,
     Spinner,
     Text,
     VStack,
@@ -18,6 +20,20 @@ export const ProjectCard = ({ project, onClick, onDelete }) => {
     const { isOpening, openingMutation } = useOpeningState();
     const isCurrentOpenning = openingMutation.includes(project.value);
     const isDisabled = isOpening && !isCurrentOpenning;
+
+    const thumbnailURL = `${import.meta.env.VITE_HTTP_HOST}${project.thumbnail}`;
+    const Thumbnail = project.thumbnail ? (
+        <Image
+            src={thumbnailURL}
+            alt={project.label}
+            fit={"cover"}
+            w={"full"}
+            h={"full"}
+            fallback={<Icon as={LuMonitor} boxSize="8" color="fg" />}
+        />
+    ) : (
+        <Icon as={LuMonitor} boxSize="8" color="fg" />
+    );
 
     const style = {
         opacity: isDisabled ? 0.4 : 1,
@@ -41,13 +57,14 @@ export const ProjectCard = ({ project, onClick, onDelete }) => {
                     size={"2xs"}
                     display={{ base: "none", _groupHover: "flex" }}
                     variant={"subtle"}
+                    colorPalette={"red"}
                     onClick={async (e) => {
                         e.stopPropagation();
                         const isConfirmed = await confirmDialog.open(
                             CONFIRM_DIALOG_ID,
                             {
-                                title: "Confirmation",
-                                message: "Are you sure?",
+                                title: "Удаление проекта",
+                                message: `Вы уверены, что хотите удалить ${project.label}?`,
                             },
                         );
                         if (!isConfirmed) return;
@@ -58,16 +75,22 @@ export const ProjectCard = ({ project, onClick, onDelete }) => {
                 </IconButton>
             </Float>
             <Box
-                bg="gray.100"
-                h="100px"
+                bg="bg"
+                w="144px"
+                h="81px"
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
+                borderBottomWidth="1px"
+                position={"relative"}
             >
-                {isCurrentOpenning ? (
-                    <Spinner color={"colorPalette.500"} />
-                ) : (
-                    <Icon as={LuMonitor} boxSize="8" color="gray.400" />
+                {Thumbnail}
+                {isCurrentOpenning && (
+                    <Box pos={"absolute"} inset={0} bg={"bg/80"}>
+                        <Center h={"full"}>
+                            <Spinner color={"colorPalette.500"} />
+                        </Center>
+                    </Box>
                 )}
             </Box>
             <Card.Body p="3">
