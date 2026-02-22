@@ -1,5 +1,6 @@
 import {
     closeProjectCommand,
+    markAsImportedToServerCommand,
     openProjectCommand,
     renameProjectCommand,
 } from "../commands";
@@ -14,5 +15,7 @@ export const createProjectSlice = (api) => {
 
         open: (project, mode, filename) =>
             openProjectCommand(api, project, mode, filename),
+
+        markAsImportedToServer: () => markAsImportedToServerCommand(api),
     };
 };

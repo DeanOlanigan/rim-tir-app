@@ -15,7 +15,7 @@ import { NodesTree } from "../NodesTree";
 import { EditorMenu } from "../EditorSettings";
 import { DebugInfo } from "./DebugInfo";
 import { ZoomUndoBlock } from "./ZoomUndoBlock";
-import { DirtyInformer } from "./DirtyInformer";
+import { ProjectStatusInformer } from "./ProjectStatusInformer";
 import { HOTKEYS, LOCALE } from "../constants";
 import { Tooltip } from "@/components/ui/tooltip";
 
@@ -36,7 +36,7 @@ export const ExpandedPanel = ({ tools }) => {
             <HStack justify={"space-between"}>
                 <HStack>
                     <EditorMenu tools={tools} />
-                    <DirtyInformer />
+                    <ProjectStatusInformer />
                 </HStack>
                 <Tooltip
                     showArrow

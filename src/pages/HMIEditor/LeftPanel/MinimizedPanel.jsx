@@ -11,7 +11,7 @@ import { useNodeStore } from "../store/node-store";
 import { useActionsStore } from "../store/actions-store";
 import { LuPanelLeft } from "react-icons/lu";
 import { EditorMenu } from "../EditorSettings";
-import { DirtyInformer } from "./DirtyInformer";
+import { ProjectStatusInformer } from "./ProjectStatusInformer";
 import { HOTKEYS } from "../constants";
 import { Tooltip } from "@/components/ui/tooltip";
 
@@ -31,7 +31,7 @@ export const MinimizedPanel = ({ tools }) => {
         >
             <HStack>
                 <EditorMenu tools={tools} />
-                <DirtyInformer />
+                <ProjectStatusInformer />
             </HStack>
             <Tooltip
                 showArrow

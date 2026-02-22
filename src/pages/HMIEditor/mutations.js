@@ -4,6 +4,7 @@ import { toaster } from "@/components/ui/toaster";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { applyProjectData } from "./ProjectOps/applyProjectData";
 import { messageFromError } from "@/utils/utils";
+import { useNodeStore } from "./store/node-store";
 
 export function useDeleteProjectMutation() {
     const q = useQueryClient();
@@ -48,9 +49,11 @@ export function useOpenProjectMutation() {
 export function useSaveProjectMutation() {
     const q = useQueryClient();
     return useMutation({
+        mutationKey: ["saveHmiProject"],
         mutationFn: saveProject,
         onSuccess: () => {
             q.invalidateQueries({ queryKey: QK.hmiProjects });
+            useNodeStore.getState().markAsImportedToServer();
             toaster.create({
                 title: "Проект сохранен",
                 description: "Проект успешно сохранен",

@@ -15,6 +15,7 @@ export * from "./pages/updatePage.command";
 export * from "./project/close.command";
 export * from "./project/open.command";
 export * from "./project/rename.command";
+export * from "./project/markAsImportedToServer.command";
 export * from "./events/reorder.command";
 export * from "./events/add.command";
 export * from "./events/remove.command";

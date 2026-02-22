@@ -14,7 +14,7 @@ export function runCommand(storeApi, actionName, build, opts) {
             } else if (res.patch) {
                 nextState = merge ? { ...state, ...res.patch } : res.patch;
             } else {
-                return state;
+                nextState = state;
             }
 
             // Policy
