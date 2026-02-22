@@ -13,6 +13,7 @@ import { setEquals, toSet, useNodesData } from "./helpers";
 import { useThrottledResizeObserver } from "@/hooks/useThrottledResizeObserver";
 import { LOCALE, SHAPES_ICONS } from "../constants";
 import { useArboristSelectionSync } from "./useArboristSelectionSync";
+import { useContextMenuStore } from "@/store/contextMenu-store";
 
 export const NodesTree = ({ api }) => {
     const data = useNodesData();
@@ -73,6 +74,17 @@ export const NodesTree = ({ api }) => {
         useNodeStore.getState().updateNode(id, { name });
     };
 
+    const handleContextMenu = (e, id) => {
+        e.preventDefault();
+        e.stopPropagation();
+        useContextMenuStore.getState().updateContext("sch", {
+            x: e.clientX,
+            y: e.clientY,
+            apiPath: [id],
+            visible: true,
+        });
+    };
+
     return (
         <Flex
             direction={"column"}
@@ -111,6 +123,9 @@ export const NodesTree = ({ api }) => {
                             return (
                                 <div
                                     ref={dragHandle}
+                                    onContextMenu={(e) =>
+                                        handleContextMenu(e, node.id)
+                                    }
                                     style={style}
                                     className={clsx(
                                         styles.node,
