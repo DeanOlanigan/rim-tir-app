@@ -1,13 +1,12 @@
 import { Box, IconButton, Menu, Portal } from "@chakra-ui/react";
 import { LuChevronRight, LuMenu } from "react-icons/lu";
-import { useNodeStore } from "../store/node-store";
 import { useActionsStore } from "../store/actions-store";
 import { DownloadProject } from "../ProjectOps";
 import { EDIT_GRID_DIALOG_ID, editGridDialog } from "../editGridDialog";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "../ProjectManager";
-import { useSaveProjectMutation } from "../mutations";
-import { HOTKEYS, LOCALE, SCHEMA_VERSION } from "../constants";
+import { HOTKEYS, LOCALE } from "../constants";
 import { toggleViewOnlyModeAction } from "../actions/toggleViewOnlyModeAction";
+import { useImportToServerAction } from "../hooks/useImportToServerAction";
 
 export const EditorMenu = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -19,7 +18,7 @@ export const EditorMenu = ({ tools }) => {
     const showStartCoordMarker = useActionsStore(
         (state) => state.showStartCoordMarker,
     );
-    const saveMutation = useSaveProjectMutation();
+    const importToServer = useImportToServerAction();
 
     const menuConfig = [
         {
@@ -42,18 +41,9 @@ export const EditorMenu = ({ tools }) => {
                     value: "import-to-server",
                     type: "command",
                     command: () => {
-                        const state = useNodeStore.getState();
-                        const project = {
-                            kind: "HMIEditorProject",
-                            schemaVersion: SCHEMA_VERSION,
-                            projectName: state.projectName,
-                            activePageId: state.activePageId,
-                            pages: state.pages,
-                            nodes: state.nodes,
-                        };
-                        const filename = state.projectName + ".json";
-                        saveMutation.mutate({ filename, project });
+                        importToServer(tools);
                     },
+                    hotkey: HOTKEYS.importToServer.keyLabel,
                 },
                 {
                     label: `${LOCALE.download}...`,

@@ -104,6 +104,7 @@ export const HOTKEYS = {
     cut: { hotkey: "ctrl+x", keyLabel: "Ctrl+X" },
     paste: { hotkey: "ctrl+v", keyLabel: "Ctrl+V" },
     helpDialog: { hotkey: "?", keyLabel: "?" },
+    importToServer: { hotkey: "ctrl+s", keyLabel: "Ctrl+S" },
 };
 export const LAYERS_OPS = {
     moveUp: "moveUp",

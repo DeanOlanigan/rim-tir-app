@@ -16,9 +16,11 @@ import {
 } from "../actions/clipboardActions";
 import { toggleViewOnlyModeAction } from "../actions/toggleViewOnlyModeAction";
 import { HELP_DIALOG_ID, helpDialog } from "../helpDialog";
+import { useImportToServerAction } from "./useImportToServerAction";
 
 export function useEditorHotkeys(tools) {
     const hotkeyTweenRef = useRef(null);
+    const importToServer = useImportToServerAction();
     // Switch tools
     useHotkeys(HOTKEYS.selectTool.hotkey, () =>
         tools.manager.setActive(ACTIONS.select),
@@ -70,6 +72,9 @@ export function useEditorHotkeys(tools) {
         () => openProjectDialog.open(OPEN_PROJECT_DIALOG_ID, { tools }),
         { preventDefault: true },
     );
+    useHotkeys(HOTKEYS.importToServer.hotkey, () => importToServer(tools), {
+        preventDefault: true,
+    });
     // Toggle view only
     useHotkeys(HOTKEYS.toggleViewOnly.hotkey, () =>
         toggleViewOnlyModeAction(tools),
