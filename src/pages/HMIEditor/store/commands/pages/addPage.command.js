@@ -13,7 +13,7 @@ export const addPageCommand = (api, name = "New page", type = "SCREEN") => {
                     name,
                     rootIds: [],
                     type,
-                    backgroundColor: "#254e25ff",
+                    backgroundColor: "#1E1E1E",
                 },
             },
             activePageId: id,

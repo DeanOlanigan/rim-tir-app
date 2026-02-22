@@ -7,7 +7,7 @@ export const createDefaultPages = () => {
             name: "Page 1",
             type: "SCREEN",
             rootIds: [],
-            backgroundColor: "#254e25ff",
+            backgroundColor: "#1E1E1E",
         },
     };
 };
@@ -24,13 +24,14 @@ export const createInitial = () => {
         },
         nodes: {},
         activePageId: "page-1",
+        pageIdWithThumb: "page-1",
         pages: {
             "page-1": {
                 id: "page-1",
                 name: "Page 1",
                 rootIds: [],
                 type: "SCREEN",
-                backgroundColor: "#254e25ff",
+                backgroundColor: "#1E1E1E",
             },
         },
         projectName: "New project",

@@ -122,7 +122,7 @@ export const THUMB_SPEC = {
     height: THUMBNAIL_TARGET_HEIGHT,
 };
 // Project
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 export const MAX_ARCHIVE_FILES = 1;
 export const MAX_ARCHIVE_FILE_SIZE = 15 * 1024 * 1024;
 export const MAX_PROJECT_FILE_SIZE = 5 * 1024 * 1024;

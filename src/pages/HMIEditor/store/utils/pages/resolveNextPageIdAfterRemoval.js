@@ -3,10 +3,7 @@ export function resolveNextPageIdAfterRemoval(
     removedPageId,
     currentActiveId,
 ) {
-    let newActiveId = currentActiveId;
-    if (currentActiveId === removedPageId) {
-        const remainingIds = Object.keys(pages);
-        newActiveId = remainingIds.length > 0 ? remainingIds[0].id : null;
-    }
-    return newActiveId;
+    if (currentActiveId !== removedPageId) return currentActiveId;
+    const remainingIds = Object.keys(pages);
+    return remainingIds.length > 0 ? remainingIds[0] : null;
 }

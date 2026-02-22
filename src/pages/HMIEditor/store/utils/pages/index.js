@@ -1,3 +1,4 @@
-export { getPageNodeIds } from "./getPageNodeIds";
-export { removePageById } from "./removePageById";
-export { resolveNextPageIdAfterRemoval } from "./resolveNextPageIdAfterRemoval";
+export * from "./getPageNodeIds";
+export * from "./removePageById";
+export * from "./resolveNextPageIdAfterRemoval";
+export * from "./resolveNextThumbPageId";

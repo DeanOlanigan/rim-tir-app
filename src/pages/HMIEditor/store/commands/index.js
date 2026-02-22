@@ -11,6 +11,7 @@ export * from "./nodes/updateNode.commands";
 export * from "./pages/addPage.command";
 export * from "./pages/removePage.command";
 export * from "./pages/setActive.command";
+export * from "./pages/setPageWithThumb.command";
 export * from "./pages/updatePage.command";
 export * from "./project/close.command";
 export * from "./project/open.command";

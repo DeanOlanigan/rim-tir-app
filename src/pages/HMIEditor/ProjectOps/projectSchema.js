@@ -9,6 +9,7 @@ const schema = {
         "schemaVersion",
         "projectName",
         "activePageId",
+        "pageIdWithThumb",
         "pages",
         "nodes",
     ],
@@ -17,6 +18,7 @@ const schema = {
         schemaVersion: { const: SCHEMA_VERSION },
         projectName: { type: "string" },
         activePageId: { type: "string" },
+        pageIdWithThumb: { type: "string" },
         pages: {
             type: "object",
             additionalProperties: {

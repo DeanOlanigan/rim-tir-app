@@ -1,6 +1,6 @@
 import JSZip from "jszip";
 import { SCHEMA_VERSION, THUMB_SPEC } from "@/pages/HMIEditor/constants";
-import { generateThumbnail } from "./generateThumbnail";
+import { renderPageToBlobOffscreen } from "./generateThumbnail";
 import { sha256Blob, sha256Text, stableStringify } from "./utils";
 
 function exportProject(state) {
@@ -9,6 +9,7 @@ function exportProject(state) {
         schemaVersion: SCHEMA_VERSION,
         projectName: state.projectName,
         activePageId: state.activePageId,
+        pageIdWithThumb: state.pageIdWithThumb,
         pages: state.pages,
         nodes: state.nodes,
     };
@@ -20,7 +21,7 @@ function exportProject(state) {
  */
 export async function buildProjectPackage({ state, tools }) {
     const project = exportProject(state);
-    const bgColor = state.pages[state.activePageId].backgroundColor;
+    const thumbPageId = project.pageIdWithThumb ?? project.activePageId;
 
     // 1) project.json bytes/hash
     const projectJson = JSON.stringify(project, null, 2);
@@ -32,7 +33,10 @@ export async function buildProjectPackage({ state, tools }) {
         const nodesLayer = tools?.api?.getNodesLayer?.();
         const nodesRef = tools?.nodesRef;
         if (nodesLayer && nodesRef) {
-            thumbBlob = await generateThumbnail(nodesLayer, nodesRef, bgColor);
+            thumbBlob = await renderPageToBlobOffscreen({
+                state,
+                pageId: thumbPageId,
+            });
         }
     } catch (e) {
         console.error("Thumbnail generation failed:", e);

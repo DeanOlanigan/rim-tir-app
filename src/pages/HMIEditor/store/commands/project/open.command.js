@@ -16,6 +16,7 @@ export const openProjectCommand = (
             meta: { mode, filename, isDirty: false, treeRev: 0 },
             nodes: project.nodes,
             activePageId: project.activePageId,
+            pageIdWithThumb: project.pageIdWithThumb,
             pages: project.pages,
             projectName: project.projectName,
             varIndex,

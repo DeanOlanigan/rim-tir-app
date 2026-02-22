@@ -1,7 +1,7 @@
 import { fitToFrame } from "../canvas/utils/zoomService";
 
-export function getWorkAreaSize(nodesRef) {
-    const nodes = nodesRef?.current;
+export function getWorkAreaSize({ nodesRef, konvaNodes }) {
+    const nodes = nodesRef?.current || konvaNodes;
     if (!nodes || nodes.size === 0) return null;
 
     let hasAny = false;
@@ -44,7 +44,7 @@ export function getWorkAreaSize(nodesRef) {
 export function fitNodesToFrame(canvasRef, nodesRef) {
     const stage = canvasRef.current;
     if (!stage) return;
-    const workArea = getWorkAreaSize(nodesRef);
+    const workArea = getWorkAreaSize({ nodesRef });
     if (workArea) {
         fitToFrame(stage, workArea, stage.width(), stage.height());
     } else {

@@ -6,7 +6,7 @@ export function useFitToFrame({ canvasRef, auto = true, nodesRef }) {
     const fitToFrame = useCallback(() => {
         const stage = canvasRef.current;
         if (!stage) return;
-        const workArea = getWorkAreaSize(nodesRef);
+        const workArea = getWorkAreaSize({ nodesRef });
 
         if (!workArea) {
             stage.scale({ x: 1, y: 1 });

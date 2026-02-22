@@ -1,6 +1,7 @@
 import { createDefaultPages } from "../fabrics";
 import {
     addPageCommand,
+    setPageWithThumbCommand,
     removePageCommand,
     setActiveCommand,
     updatePageCommand,
@@ -9,9 +10,12 @@ import {
 export const createPagesSlice = (api) => {
     return {
         activePageId: "page-1",
+        pageIdWithThumb: "page-1",
         pages: createDefaultPages(),
 
         setActivePage: (pageId) => setActiveCommand(api, pageId),
+
+        setPageIdWithThumb: (pageId) => setPageWithThumbCommand(api, pageId),
 
         addPage: (name, type) => addPageCommand(api, name, type),
 

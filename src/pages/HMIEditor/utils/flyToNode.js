@@ -38,7 +38,7 @@ export function flyToNode(stage, target, opts) {
         nodesRef = { current: set };
     }
 
-    const rect = getWorkAreaSize(nodesRef);
+    const rect = getWorkAreaSize({ nodesRef });
     if (!rect) return;
 
     const centerWorld = {

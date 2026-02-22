@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import {
     Flex,
     Heading,
     HStack,
+    Icon,
     IconButton,
     Input,
     Menu,
@@ -12,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useNodeStore } from "../store/node-store";
 import {
+    LuImage,
     LuLibraryBig,
     LuPencil,
     LuPlus,
@@ -20,6 +22,7 @@ import {
 } from "react-icons/lu";
 import { useActionsStore } from "../store/actions-store";
 import { LOCALE } from "../constants";
+import { Tooltip } from "@/components/ui/tooltip";
 
 const getAnchorRect = (x, y) =>
     DOMRect.fromRect({
@@ -30,22 +33,35 @@ const getAnchorRect = (x, y) =>
     });
 
 const PagesHeader = ({ onAddPage }) => {
+    const triggerId = useId();
     return (
         <Flex justify="space-between" align="center" mb={2}>
             <Heading size={"md"} userSelect={"none"}>
                 {LOCALE.pages}
             </Heading>
 
-            <Menu.Root positioning={{ placement: "bottom-end" }}>
-                <Menu.Trigger asChild>
-                    <IconButton
-                        size="2xs"
-                        aria-label="Add page"
-                        variant="solid"
-                    >
-                        <LuPlus />
-                    </IconButton>
-                </Menu.Trigger>
+            <Menu.Root
+                ids={{ trigger: triggerId }}
+                positioning={{ placement: "bottom-end" }}
+                unmountOnExit
+                lazyMount
+                size={"sm"}
+            >
+                <Tooltip
+                    ids={{ trigger: triggerId }}
+                    showArrow
+                    content={"Добавить страницу"}
+                >
+                    <Menu.Trigger asChild>
+                        <IconButton
+                            size="2xs"
+                            aria-label="Add page"
+                            variant="solid"
+                        >
+                            <LuPlus />
+                        </IconButton>
+                    </Menu.Trigger>
+                </Tooltip>
                 <Portal>
                     <Menu.Positioner>
                         <Menu.Content>
@@ -86,7 +102,7 @@ const PageName = ({
                 fontSize="sm"
                 fontWeight={isActive ? "medium" : "normal"}
                 isTruncated
-                ps={4}
+                ps={2}
             >
                 {name}
             </Text>
@@ -100,7 +116,7 @@ const PageName = ({
             border={"none"}
             outlineWidth={"2px"}
             outlineOffset={"-2px"}
-            ps={4}
+            ps={2}
             fontSize={"sm"}
             fontWeight={"medium"}
             _selection={{
@@ -132,6 +148,7 @@ const PageRowContextMenu = ({
     anchorPoint,
     onOpenChange,
     onStartRename,
+    onChangeThumb,
     onDelete,
     isDeleteDisabled,
 }) => {
@@ -155,6 +172,13 @@ const PageRowContextMenu = ({
                         <Menu.Item value="rename-page" onClick={onStartRename}>
                             <LuPencil />
                             Переименовать
+                        </Menu.Item>
+                        <Menu.Item
+                            value="make-thumbnail"
+                            onClick={onChangeThumb}
+                        >
+                            <LuImage />
+                            Сделать обложкой проекта
                         </Menu.Item>
                         <Menu.Item
                             value="delete-page"
@@ -181,16 +205,20 @@ const PageRow = ({
     onEditingNameChange,
     onCommitRename,
     onCancelRename,
+    onChangeThumb,
     onSelect,
     onStartRename,
     onDelete,
     isDeleteDisabled,
 }) => {
+    const pageIdWithThumb = useNodeStore((state) => state.pageIdWithThumb);
     const [menuState, setMenuState] = useState({
         open: false,
         x: 0,
         y: 0,
     });
+
+    const showThumb = page.id === pageIdWithThumb;
 
     return (
         <>
@@ -211,11 +239,17 @@ const PageRow = ({
                     e.stopPropagation();
                     setMenuState({ open: true, x: e.clientX, y: e.clientY });
                 }}
-                justify="space-between"
                 transition="all 0.2s"
                 userSelect={isEditing ? "text" : "none"}
-                p={0}
+                ps={4}
             >
+                {showThumb ? (
+                    <Tooltip showArrow content="Обложка проекта">
+                        <Icon as={LuImage} />
+                    </Tooltip>
+                ) : (
+                    <div style={{ width: "1rem" }} />
+                )}
                 <PageName
                     isActive={isActive}
                     isEditing={isEditing}
@@ -236,6 +270,10 @@ const PageRow = ({
                 onStartRename={() => {
                     setMenuState((prev) => ({ ...prev, open: false }));
                     onStartRename(page.id);
+                }}
+                onChangeThumb={() => {
+                    setMenuState((prev) => ({ ...prev, open: false }));
+                    onChangeThumb(page.id);
                 }}
                 onDelete={() => {
                     setMenuState((prev) => ({ ...prev, open: false }));
@@ -310,6 +348,10 @@ export const Pages = () => {
         useNodeStore.getState().removePage(id);
     };
 
+    const handleChangeThumb = (id) => {
+        useNodeStore.getState().setPageIdWithThumb(id);
+    };
+
     return (
         <Flex direction={"column"} h={"100%"} minH={0}>
             <PagesHeader onAddPage={handleAddPage} />
@@ -325,6 +367,7 @@ export const Pages = () => {
                         onEditingNameChange={setEditingName}
                         onCommitRename={handleCommitRename}
                         onCancelRename={handleCancelRename}
+                        onChangeThumb={handleChangeThumb}
                         onSelect={(id) =>
                             useNodeStore.getState().setActivePage(id)
                         }

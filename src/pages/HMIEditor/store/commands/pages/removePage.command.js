@@ -5,6 +5,7 @@ import {
     getPageNodeIds,
     removePageById,
     resolveNextPageIdAfterRemoval,
+    resolveNextThumbPageId,
 } from "../../utils/pages";
 import { runCommand } from "../runCommand";
 
@@ -29,6 +30,13 @@ export const removePageCommand = (api, id) => {
             state.activePageId,
         );
 
+        const newPageIdWithThumb = resolveNextThumbPageId(
+            newPages,
+            id,
+            state.pageIdWithThumb,
+            newActivePageId,
+        );
+
         const { varIndex, nodeIndex } = unindexNodesCOW({
             baseNodeIndex: state.nodeIndex,
             baseVarIndex: state.varIndex,
@@ -41,6 +49,7 @@ export const removePageCommand = (api, id) => {
             pages: newPages,
             nodes: newNodes,
             activePageId: newActivePageId,
+            pageIdWithThumb: newPageIdWithThumb,
             varIndex,
             nodeIndex,
         };
