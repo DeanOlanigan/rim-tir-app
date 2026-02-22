@@ -27,8 +27,6 @@ export const HMICanvas = ({
     useToggleHitRegion(canvasRef, nodesLayerRef);
     useStageKeyboard(canvasRef, manager);
 
-    console.log("CANVAS RENDER", canvasSize);
-
     const handlers = manager.handlers;
 
     return (

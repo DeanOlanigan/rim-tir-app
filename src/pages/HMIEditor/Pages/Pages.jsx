@@ -107,6 +107,7 @@ const PageName = ({
                 bg: "bg.emphasized",
             }}
             autoFocus
+            type="text"
             value={editingName}
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => onEditingNameChange(e.currentTarget.value)}

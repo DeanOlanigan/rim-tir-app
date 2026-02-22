@@ -22,6 +22,7 @@ export const useActionsStore = create(
             isUiExpanded: false,
             canvasSize: { width: 0, height: 0 },
             showRulers: true,
+            focusOwner: "canvas",
             lockTool: false,
 
             setCurrentAction: (action) =>
@@ -63,6 +64,15 @@ export const useActionsStore = create(
                 set({ canvasSize: size }, undefined, "setCanvasSize"),
             setShowRulers: (mode) =>
                 set({ showRulers: mode }, undefined, "setShowRulers"),
+            setFocusOwner: (owner) =>
+                set(
+                    (state) => {
+                        if (state.focusOwner === owner) return state;
+                        return { focusOwner: owner };
+                    },
+                    undefined,
+                    "setFocusOwner",
+                ),
             toggleLockTool: () =>
                 set(
                     (s) => ({ lockTool: !s.lockTool }),
