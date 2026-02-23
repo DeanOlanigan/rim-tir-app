@@ -13,9 +13,9 @@ function applyTextPatch(ids, text, undoable) {
 
     if (undoable) {
         patchStoreRaf.flushNow?.();
-        useNodeStore.getState().updateNodes(ids, patch);
+        useNodeStore.getState().updateNodes(patch);
     } else {
-        patchStoreRaf(ids, patch);
+        patchStoreRaf(patch);
     }
 }
 

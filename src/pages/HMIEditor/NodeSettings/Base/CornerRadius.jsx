@@ -181,7 +181,7 @@ export const CornerRadiusBlock = ({ ids, types }) => {
             if (!next) {
                 const base = baseRectCorners;
                 const patch = buildUniformPatch(base[0] ?? 0);
-                applyPatch(ids, patch, true);
+                applyPatch(patch, true);
             }
 
             return next;
@@ -204,12 +204,8 @@ export const CornerRadiusBlock = ({ ids, types }) => {
                         step={1}
                         min={0}
                         max={100}
-                        onScrub={(n) =>
-                            applyPatch(ids, buildUniformPatch(n), false)
-                        }
-                        onCommit={(n) =>
-                            applyPatch(ids, buildUniformPatch(n), true)
-                        }
+                        onScrub={(n) => applyPatch(buildUniformPatch(n), false)}
+                        onCommit={(n) => applyPatch(buildUniformPatch(n), true)}
                     />
                     {allRects && (
                         <IconButton
@@ -238,14 +234,12 @@ export const CornerRadiusBlock = ({ ids, types }) => {
                                     max={100}
                                     onScrub={(n) =>
                                         applyPatch(
-                                            ids,
                                             buildMixedRectPatch(index, n),
                                             false,
                                         )
                                     }
                                     onCommit={(n) =>
                                         applyPatch(
-                                            ids,
                                             buildMixedRectPatch(index, n),
                                             true,
                                         )

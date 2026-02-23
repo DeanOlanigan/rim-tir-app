@@ -99,7 +99,7 @@ export const DashBlock = ({ ids }) => {
             patch[id] = p;
         });
 
-        applyPatch(ids, patch, true);
+        applyPatch(patch, true);
     };
 
     const buildDashPatch = (index, rawNumber) => {
@@ -165,10 +165,10 @@ export const DashBlock = ({ ids }) => {
                             step={1}
                             min={0}
                             onScrub={(n) =>
-                                applyPatch(ids, buildDashPatch(0, n), false)
+                                applyPatch(buildDashPatch(0, n), false)
                             }
                             onCommit={(n) =>
-                                applyPatch(ids, buildDashPatch(0, n), true)
+                                applyPatch(buildDashPatch(0, n), true)
                             }
                         />
                     </Field.Root>
@@ -182,10 +182,10 @@ export const DashBlock = ({ ids }) => {
                             step={1}
                             min={0}
                             onScrub={(n) =>
-                                applyPatch(ids, buildDashPatch(1, n), false)
+                                applyPatch(buildDashPatch(1, n), false)
                             }
                             onCommit={(n) =>
-                                applyPatch(ids, buildDashPatch(1, n), true)
+                                applyPatch(buildDashPatch(1, n), true)
                             }
                         />
                     </Field.Root>

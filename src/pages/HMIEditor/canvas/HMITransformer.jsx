@@ -19,17 +19,17 @@ function transformHandler(e) {
     }
     // TODO во всех шейпах обновлять konva
     const res = shape.onTransform(node);
+    if (!res) return;
     if (type === SHAPES.group) {
         Object.assign(patch, res);
     } else {
         patch[id] = res;
     }
-    patchStoreRaf(Object.keys(patch), patch);
+    patchStoreRaf(patch);
 }
 
 function transformEndHandler(nodes) {
     if (nodes.length === 0) return;
-    const ids = nodes.map((node) => node.id());
     let patchesById = {};
     for (const node of nodes) {
         const { id, type } = node.attrs;
@@ -46,7 +46,7 @@ function transformEndHandler(nodes) {
         }
     }
     patchStoreRaf.flushNow();
-    useNodeStore.getState().updateNodes(ids, patchesById);
+    useNodeStore.getState().updateNodes(patchesById);
 }
 
 const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {

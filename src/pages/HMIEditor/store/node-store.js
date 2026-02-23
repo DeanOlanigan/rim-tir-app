@@ -8,6 +8,7 @@ import { createGroupsSlice } from "./slices/groups-slice";
 import { createNodesSlice } from "./slices/nodes-slice";
 import { createPagesSlice } from "./slices/pages-slice";
 import { createUiSlice } from "./slices/ui-slice";
+import { quantizePatch } from "./utils/patch/quantize";
 
 export const useNodeStore = create(
     devtools(
@@ -28,47 +29,68 @@ export const useNodeStore = create(
     ),
 );
 
+function stripNoops(id, patch, nodes) {
+    if (!patch) return null;
+    const cur = nodes[id];
+    if (!cur) return patch;
+
+    let out = null;
+    for (const k in patch) {
+        if (patch[k] !== cur[k]) {
+            if (!out) out = {};
+            out[k] = patch[k];
+        }
+    }
+    return out; // null => нет изменений
+}
+
 export const patchStoreRaf = (() => {
-    let queuedIds = new Set();
     let queuedPatch = {};
     let frame = null;
 
     const flush = () => {
-        if (!queuedIds.size) {
-            frame = null;
-            return;
-        }
+        frame = null;
 
-        const ids = Array.from(queuedIds);
+        const store = useNodeStore.getState();
+        const nodes = store.nodes;
+
         const patchById = queuedPatch;
+        queuedPatch = {};
+        const cleanedPatch = {};
 
-        try {
-            useNodeStore.getState().updateNodesRaf(ids, patchById);
-            queuedIds = new Set();
-            queuedPatch = {};
-            frame = null;
-        } catch (e) {
-            frame = null;
-            throw e;
-        } finally {
-            queuedIds = new Set();
-            queuedPatch = {};
-            frame = null;
+        for (const id in patchById) {
+            const raw = patchById[id];
+            if (!raw) continue;
+
+            const quant = quantizePatch(raw);
+            const cleaned = stripNoops(id, quant, nodes);
+            if (!cleaned) continue;
+
+            cleanedPatch[id] = cleaned;
         }
+
+        if (!Object.keys(cleanedPatch).length) return;
+
+        store.updateNodesRaf(cleanedPatch);
     };
 
     const schedule = () => {
         if (!frame) frame = requestAnimationFrame(flush);
     };
 
-    const fn = (ids, patchById) => {
-        ids.forEach((id) => {
-            queuedIds.add(id);
+    const fn = (patchById) => {
+        if (!patchById) return;
+
+        for (const id in patchById) {
+            const patch = patchById[id];
+            if (!patch) continue;
+
             queuedPatch[id] = {
                 ...(queuedPatch[id] || {}),
-                ...(patchById[id] || {}),
+                ...patch,
             };
-        });
+        }
+
         schedule();
     };
 
@@ -81,7 +103,6 @@ export const patchStoreRaf = (() => {
     fn.cancel = () => {
         if (frame) cancelAnimationFrame(frame);
         frame = null;
-        queuedIds = new Set();
         queuedPatch = {};
     };
 

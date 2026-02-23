@@ -137,10 +137,10 @@ export const DimensionsBlock = ({ ids, api }) => {
                         step={1}
                         min={0}
                         onScrub={(n) =>
-                            applyPatch(ids, buildPatch("width", n), false)
+                            applyPatch(buildPatch("width", n), false)
                         }
                         onCommit={(n) =>
-                            applyPatch(ids, buildPatch("width", n), true)
+                            applyPatch(buildPatch("width", n), true)
                         }
                     />
                     <CommittedNumberInput
@@ -151,10 +151,10 @@ export const DimensionsBlock = ({ ids, api }) => {
                         step={1}
                         min={0}
                         onScrub={(n) =>
-                            applyPatch(ids, buildPatch("height", n), false)
+                            applyPatch(buildPatch("height", n), false)
                         }
                         onCommit={(n) =>
-                            applyPatch(ids, buildPatch("height", n), true)
+                            applyPatch(buildPatch("height", n), true)
                         }
                     />
                     <IconButton

@@ -48,16 +48,16 @@ export function collectSelectionDimensions(api, ids, getType, widths, heights) {
     };
 }
 
-export function applyPatch(ids, patch, undoable) {
+export function applyPatch(patch, undoable) {
     if (!patch) return;
     const keys = Object.keys(patch);
     if (keys.length === 0) return;
 
     if (undoable) {
         patchStoreRaf.flushNow?.();
-        useNodeStore.getState().updateNodes(ids, patch);
+        useNodeStore.getState().updateNodes(patch);
     } else {
-        patchStoreRaf(ids, patch);
+        patchStoreRaf(patch);
     }
 }
 

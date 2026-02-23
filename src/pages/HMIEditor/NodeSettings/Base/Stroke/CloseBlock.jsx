@@ -9,10 +9,8 @@ export const CloseBlock = ({ ids }) => {
 
     const onChange = (value) => {
         const patch = {};
-        ids.forEach((id) => {
-            patch[id] = { closed: value };
-        });
-        useNodeStore.getState().updateNodes(ids, patch);
+        for (const id of ids) patch[id] = { closed: value };
+        useNodeStore.getState().updateNodes(patch);
     };
 
     return (

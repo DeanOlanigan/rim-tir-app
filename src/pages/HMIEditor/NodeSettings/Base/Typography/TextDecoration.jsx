@@ -28,11 +28,9 @@ export const TextDecorationBlock = ({ ids }) => {
     const handleChange = (e) => {
         const str = e.length === 0 ? "" : e.join(" ");
         const patch = {};
-        ids.forEach((id) => {
-            patch[id] = { textDecoration: str };
-        });
 
-        useNodeStore.getState().updateNodes(ids, patch);
+        for (const id of ids) patch[id] = { textDecoration: str };
+        useNodeStore.getState().updateNodes(patch);
     };
 
     return (

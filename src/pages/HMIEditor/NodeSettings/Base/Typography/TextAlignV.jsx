@@ -11,11 +11,9 @@ export const TextAlignVBlock = ({ ids }) => {
 
     const handleChange = (e) => {
         const patch = {};
-        ids.forEach((id) => {
-            patch[id] = { verticalAlign: e.value };
-        });
 
-        useNodeStore.getState().updateNodes(ids, patch);
+        for (const id of ids) patch[id] = { verticalAlign: e.value };
+        useNodeStore.getState().updateNodes(patch);
     };
 
     return (

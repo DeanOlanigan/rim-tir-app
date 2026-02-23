@@ -48,7 +48,7 @@ export const RotationBlock = ({ ids }) => {
 
     const rotateTo = (angle, undoable) => {
         const patch = buildRotationPatch(ids, angle);
-        applyPatch(ids, patch, undoable);
+        applyPatch(patch, undoable);
     };
 
     const rotateByDelta = (delta, undoable) => {
@@ -61,7 +61,7 @@ export const RotationBlock = ({ ids }) => {
             patch[id] = rotateNodeAroundCenterStore(n, next);
         });
 
-        applyPatch(ids, patch, undoable);
+        applyPatch(patch, undoable);
     };
 
     const flipHorizontal = () => {
@@ -73,7 +73,7 @@ export const RotationBlock = ({ ids }) => {
             patch[id] = flipNodeAroundWorldAxis(n, "x", { pivotWorld });
         });
 
-        applyPatch(ids, patch, true);
+        applyPatch(patch, true);
     };
 
     const flipVertical = () => {
@@ -85,7 +85,7 @@ export const RotationBlock = ({ ids }) => {
             patch[id] = flipNodeAroundWorldAxis(n, "y", { pivotWorld });
         });
 
-        applyPatch(ids, patch, true);
+        applyPatch(patch, true);
     };
 
     return (

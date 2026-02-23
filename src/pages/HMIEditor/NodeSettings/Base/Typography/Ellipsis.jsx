@@ -9,11 +9,8 @@ export const EllipsisBlock = ({ ids }) => {
 
     const onChange = (value) => {
         const patch = {};
-        ids.forEach((id) => {
-            patch[id] = { ellipsis: value };
-        });
-
-        useNodeStore.getState().updateNodes(ids, patch);
+        for (const id of ids) patch[id] = { ellipsis: value };
+        useNodeStore.getState().updateNodes(patch);
     };
 
     return (

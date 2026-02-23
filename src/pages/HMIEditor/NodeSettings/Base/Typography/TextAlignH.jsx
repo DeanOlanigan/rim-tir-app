@@ -15,11 +15,8 @@ export const TextAlignHBlock = ({ ids }) => {
 
     const handleChange = (e) => {
         const patch = {};
-        ids.forEach((id) => {
-            patch[id] = { align: e.value };
-        });
-
-        useNodeStore.getState().updateNodes(ids, patch);
+        for (const id of ids) patch[id] = { align: e.value };
+        useNodeStore.getState().updateNodes(patch);
     };
 
     return (

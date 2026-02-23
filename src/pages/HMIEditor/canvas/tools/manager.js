@@ -294,11 +294,12 @@ function movePrimitive(e, selectedIds) {
 
     const store = useNodeStore.getState();
     const patches = {};
-    selectedIds.forEach((id) => {
+
+    for (const id of selectedIds) {
         const node = store.nodes[id];
         patches[id] = { x: node.x + dx, y: node.y + dy };
-    });
-    store.updateNodes(selectedIds, patches);
+    }
+    store.updateNodes(patches);
 }
 
 function moveCanvas(e, api) {

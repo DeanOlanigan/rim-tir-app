@@ -8,15 +8,14 @@ export const PropertyColor = ({ ids, property }) => {
 
     const handleChangeColor = (color, undoable) => {
         const patch = {};
-        ids.forEach((id) => {
-            patch[id] = { [property]: color };
-        });
+
+        for (const id of ids) patch[id] = { [property]: color };
 
         if (undoable) {
             patchStoreRaf.flushNow?.();
-            useNodeStore.getState().updateNodes(ids, patch);
+            useNodeStore.getState().updateNodes(patch);
         } else {
-            patchStoreRaf(ids, patch);
+            patchStoreRaf(patch);
         }
     };
 

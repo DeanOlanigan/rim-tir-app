@@ -8,10 +8,8 @@ export const BezierBlock = ({ ids }) => {
 
     const onChange = (value) => {
         const patch = {};
-        ids.forEach((id) => {
-            patch[id] = { bezier: value };
-        });
-        useNodeStore.getState().updateNodes(ids, patch);
+        for (const id of ids) patch[id] = { bezier: value };
+        useNodeStore.getState().updateNodes(patch);
     };
 
     return (

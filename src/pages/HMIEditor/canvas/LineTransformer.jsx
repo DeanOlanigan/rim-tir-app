@@ -117,7 +117,7 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
         line.x(x);
         line.y(y);
         line.points(res.points);
-        patchStoreRaf([primaryNode.id], {
+        patchStoreRaf({
             [primaryNode.id]: {
                 x,
                 y,

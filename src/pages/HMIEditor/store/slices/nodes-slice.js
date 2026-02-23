@@ -21,11 +21,10 @@ export const createNodesSlice = (api) => {
 
         updateNode: (id, nodePatch) => updateNodeCommand(api, id, nodePatch),
 
-        updateNodesRaf: (ids, patchesById) =>
-            updateNodesRafCommand(api, ids, patchesById),
+        updateNodesRaf: (patchesById) =>
+            updateNodesRafCommand(api, patchesById),
 
-        updateNodes: (ids, patchesById) =>
-            updateNodesCommand(api, ids, patchesById),
+        updateNodes: (patchesById) => updateNodesCommand(api, patchesById),
 
         reorderLayers: (ids, dir) => reorderLayersCommand(api, ids, dir),
 

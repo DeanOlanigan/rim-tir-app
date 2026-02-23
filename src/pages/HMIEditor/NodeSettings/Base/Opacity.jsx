@@ -13,10 +13,8 @@ export const OpacityBlock = ({ ids }) => {
     const toggleOpacity = () => {
         const visible = !show;
         const patch = {};
-        ids.forEach((id) => {
-            patch[id] = { visible };
-        });
-        useNodeStore.getState().updateNodes(ids, patch);
+        for (const id of ids) patch[id] = { visible };
+        useNodeStore.getState().updateNodes(patch);
     };
 
     return (

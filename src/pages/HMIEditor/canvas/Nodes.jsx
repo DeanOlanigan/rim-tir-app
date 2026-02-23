@@ -85,7 +85,7 @@ const common = {
         if (!id) return;
         const patch = {};
         patch[id] = move(node);
-        patchStoreRaf([id], patch);
+        patchStoreRaf(patch);
     },
     onDragEnd(e) {
         const node = e.target;

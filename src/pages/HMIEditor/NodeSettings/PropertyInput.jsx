@@ -15,9 +15,9 @@ function updateNodeProperty(ids, value, property, undoable = false) {
 
     if (undoable) {
         patchStoreRaf.flushNow?.();
-        useNodeStore.getState().updateNodes(ids, patch);
+        useNodeStore.getState().updateNodes(patch);
     } else {
-        patchStoreRaf(ids, patch);
+        patchStoreRaf(patch);
     }
 }
 
