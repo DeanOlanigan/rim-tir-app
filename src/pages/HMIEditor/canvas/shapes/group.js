@@ -125,11 +125,11 @@ registerShape(SHAPES.group, {
             const id = ch.attrs.id;
             const shape = getShape(type);
 
-            if (!shape?.onTransformEnd) {
+            if (!shape?.onTransform) {
                 console.warn("No onTransformEnd handler for shape type:", type);
                 continue;
             }
-            const res = shape.onTransformEnd(ch);
+            const res = shape.onTransform(ch);
             if (type === SHAPES.group) {
                 Object.assign(patch, res);
             } else {

@@ -2,6 +2,7 @@ import { SHAPES } from "../../constants";
 import { clampVal, round4 } from "../../utils";
 import { registerShape } from "./registry";
 
+// [ ] Если для линии не использовать стандартный трансформер konva, то этот код не нужен
 registerShape(SHAPES.line, {
     onTransformEnd(konvaNode) {
         const sx = clampVal(konvaNode.scaleX());
