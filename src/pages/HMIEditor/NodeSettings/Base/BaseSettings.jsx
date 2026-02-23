@@ -11,6 +11,7 @@ import { SidesBlock } from "./Sides";
 import { TypographyBlock } from "./Typography";
 import { FillBlock } from "./Fill";
 import { StrokeBlock } from "./Stroke";
+import { Align } from "./Align";
 
 export const BaseSettings = ({ api, types, selectedIds }) => {
     const showCornerRadius = types.every(
@@ -19,6 +20,8 @@ export const BaseSettings = ({ api, types, selectedIds }) => {
     const showSides = types.every((type) => type === SHAPES.polygon);
     const showTypography = types.every((type) => type === SHAPES.text);
     const showFillStroke = types.every((type) => type !== SHAPES.group);
+    const showAlign =
+        types.every((type) => type === SHAPES.group) || selectedIds.length > 1;
 
     return (
         <VStack
@@ -27,6 +30,12 @@ export const BaseSettings = ({ api, types, selectedIds }) => {
             w={"100%"}
             separator={<StackSeparator borderColor={"colorPalette.solid"} />}
         >
+            {showAlign && (
+                <VStack align={"start"} w={"100%"}>
+                    <Heading size={"md"}>Выравнивание</Heading>
+                    <Align ids={selectedIds} />
+                </VStack>
+            )}
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>{LOCALE.layers}</Heading>
                 <Layers ids={selectedIds} />
