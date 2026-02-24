@@ -1,32 +1,42 @@
+import { withNodeHistoryMuted } from "../history-gate";
+
 export function runCommand(storeApi, actionName, build, opts) {
     const { set } = storeApi;
     const merge = opts?.merge ?? true;
+    const trackHistory = opts?.history !== false;
 
-    set(
-        (state) => {
-            const res = build(state);
-            if (!res) return state;
+    const exec = () =>
+        set(
+            (state) => {
+                const res = build(state);
+                if (!res) return state;
 
-            let nextState;
+                let nextState;
 
-            if (res.next) {
-                nextState = res.next;
-            } else if (res.patch) {
-                nextState = merge ? { ...state, ...res.patch } : res.patch;
-            } else {
-                nextState = state;
-            }
+                if (res.next) {
+                    nextState = res.next;
+                } else if (res.patch) {
+                    nextState = merge ? { ...state, ...res.patch } : res.patch;
+                } else {
+                    nextState = state;
+                }
 
-            // Policy
-            nextState = applyDirty(nextState, res);
-            nextState = applySelection(state, nextState, res);
-            nextState = applyTreeRev(nextState, res);
+                // Policy
+                nextState = applyDirty(nextState, res);
+                nextState = applySelection(state, nextState, res);
+                nextState = applyTreeRev(nextState, res);
 
-            return nextState;
-        },
-        undefined,
-        actionName,
-    );
+                return nextState;
+            },
+            undefined,
+            actionName,
+        );
+
+    if (!trackHistory) {
+        return withNodeHistoryMuted(exec);
+    }
+
+    return exec();
 }
 
 const applyDirty = (next, res) => {

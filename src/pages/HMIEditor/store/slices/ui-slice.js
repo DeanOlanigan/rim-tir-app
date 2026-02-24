@@ -1,4 +1,5 @@
 import { arraysEqual } from "@/utils/utils";
+import { useNodeStore } from "../node-store";
 
 // потенциальный кандидат на удаление, а selectedIds перенесется в actionsStore
 export const createUiSlice = (api) => ({
@@ -13,4 +14,20 @@ export const createUiSlice = (api) => ({
             undefined,
             "ui/setSelectedIds",
         ),
+
+    undo: () => {
+        const temporal = useNodeStore.temporal.getState();
+        temporal.undo();
+        // Если индексы исключены из history и это кэш:
+        // api.get().rebuildIndexes?.();
+    },
+    redo: () => {
+        const temporal = useNodeStore.temporal.getState();
+        temporal.redo();
+        // api.get().rebuildIndexes?.();
+    },
+    clearHistory: () => {
+        const temporal = useNodeStore.temporal.getState();
+        temporal.clear();
+    },
 });

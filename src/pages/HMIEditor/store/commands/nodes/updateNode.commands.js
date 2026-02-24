@@ -124,10 +124,15 @@ export const updateNodesCommand = (api, patchesById) => {
 };
 
 export const updateNodesRafCommand = (api, patchesById) => {
-    runCommand(api, "cmd/nodes/updateNodesRaf", (state) => {
-        const patch = updateRaf(patchesById, state.nodes);
-        return patch ? { patch } : null;
-    });
+    runCommand(
+        api,
+        "cmd/nodes/updateNodesRaf",
+        (state) => {
+            const patch = updateRaf(patchesById, state.nodes);
+            return patch ? { patch } : null;
+        },
+        { history: false },
+    );
 };
 
 export const updateNodeCommand = (api, id, nodePatch) => {
