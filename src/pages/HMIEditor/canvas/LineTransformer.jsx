@@ -2,7 +2,9 @@ import { useActionsStore } from "../store/actions-store";
 import { patchStoreRaf, useNodeStore } from "../store/node-store";
 import { Circle } from "react-konva";
 import { dragBound } from "./utils/dragBound";
-import { isLineLikeType, round4 } from "../utils";
+import { isLineLikeType } from "../utils";
+
+// TODO Выполнить рефактор
 
 function dragBoundFunc(pos) {
     const { gridSize, snapToGrid } = useActionsStore.getState();
@@ -56,8 +58,8 @@ function dragStartHandle(line, absCirclePos, newPoints) {
     });
 
     for (let i = 2; i < newPoints.length; i += 2) {
-        newPoints[i] = round4(newPoints[i] - localDelta.x);
-        newPoints[i + 1] = round4(newPoints[i + 1] - localDelta.y);
+        newPoints[i] = newPoints[i] - localDelta.x;
+        newPoints[i + 1] = newPoints[i + 1] - localDelta.y;
     }
     newPoints[0] = 0;
     newPoints[1] = 0;
@@ -71,8 +73,8 @@ function dragStartHandle(line, absCirclePos, newPoints) {
 
 function dragOtherHandle(line, absCirclePos, newPoints, pointIndex) {
     const local = overlayAbsToLineLocal(line, absCirclePos);
-    newPoints[pointIndex * 2] = round4(local.x);
-    newPoints[pointIndex * 2 + 1] = round4(local.y);
+    newPoints[pointIndex * 2] = local.x;
+    newPoints[pointIndex * 2 + 1] = local.y;
 
     return {
         x: line.x(),
@@ -88,10 +90,13 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
 
     const overlayLayer = overviewRef?.current;
     if (!overlayLayer) return null;
+
     if (selectedIds.length !== 1) return null;
     if (!primaryNode || !isLineLikeType(primaryNode.type)) return null;
+
     const line = nodesRef.current.get(primaryNode.id);
     if (!line) return null;
+
     const points = primaryNode.points;
     if (!points || points.length < 4) return null;
 
@@ -99,8 +104,8 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
         const circle = e.target;
         const pointIndex = circle.getAttr("insertIndex");
         const absCirclePos = circle.getAbsolutePosition();
-        const oldPoints = line.points();
 
+        const oldPoints = line.points();
         if (!oldPoints || oldPoints.length < 4) return;
 
         const newPoints = oldPoints.slice();
@@ -112,11 +117,13 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
             res = dragOtherHandle(line, absCirclePos, newPoints, pointIndex);
         }
 
-        const x = round4(res.x);
-        const y = round4(res.y);
+        const x = res.x;
+        const y = res.y;
+
         line.x(x);
         line.y(y);
         line.points(res.points);
+
         patchStoreRaf({
             [primaryNode.id]: {
                 x,
@@ -131,8 +138,8 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
     const onDragEnd = () => {
         const newPoints = line.points().slice();
         useNodeStore.getState().updateNode(primaryNode.id, {
-            x: round4(line.x()),
-            y: round4(line.y()),
+            x: line.x(),
+            y: line.y(),
             points: newPoints,
             width: line.width(),
             height: line.height(),
@@ -170,17 +177,18 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
     const deletePoint = (pointIndex) => {
         const oldPoints = line.points();
         if (!oldPoints || oldPoints.length < 4) return;
-        const pointsCount = oldPoints.length / 2;
 
+        const pointsCount = oldPoints.length / 2;
         if (pointsCount <= 2) return; // нельзя удалить, останется меньше 2х точек
         if (pointIndex === 0 || pointIndex === pointsCount - 1) return; // нельзя удалить первую и последнюю точки
 
         const newPoints = oldPoints.slice();
         newPoints.splice(pointIndex * 2, 2);
+
         line.points(newPoints);
         useNodeStore.getState().updateNode(primaryNode.id, {
-            x: round4(line.x()),
-            y: round4(line.y()),
+            x: line.x(),
+            y: line.y(),
             points: newPoints,
         });
     };

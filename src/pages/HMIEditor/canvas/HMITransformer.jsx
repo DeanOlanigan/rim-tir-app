@@ -17,7 +17,6 @@ function transformHandler(e) {
         console.warn("No onTransform handler for shape type:", type);
         return;
     }
-    // TODO во всех шейпах обновлять konva
     const res = shape.onTransform(node);
     if (!res) return;
     if (type === SHAPES.group) {
