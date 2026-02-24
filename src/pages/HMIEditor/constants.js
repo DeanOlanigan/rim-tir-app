@@ -75,7 +75,7 @@ export const HOTKEYS = {
     ellipseTool: { hotkey: "e", keyLabel: "E" },
     textTool: { hotkey: "t", keyLabel: "T" },
     lineTool: { hotkey: "l", keyLabel: "L" },
-    arrowTool: { hotkey: "shift+l", keyLabel: "Shift+L" },
+    arrowTool: { hotkey: "a", keyLabel: "A" },
     snapToGrid: { hotkey: "ctrl+shift+quote", keyLabel: "Ctrl+Shift+'" },
     toggleGrid: { hotkey: "ctrl+quote", keyLabel: "Shift+'" },
     toggleRulers: { hotkey: "shift+r", keyLabel: "Shift+R" },

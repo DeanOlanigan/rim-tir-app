@@ -140,9 +140,8 @@ function getLocalAnchorForRotation(node, sizeOverride) {
     const h = sizeOverride?.height ?? node.height ?? 0;
 
     const isEllipseLike = isHasRadius(node.type);
-    const isLineLike = Array.isArray(node.points); // если у тебя есть такие ноды
 
-    if (isEllipseLike || isLineLike) return { x: 0, y: 0 };
+    if (isEllipseLike) return { x: 0, y: 0 };
     return { x: w / 2, y: h / 2 };
 }
 
@@ -162,9 +161,9 @@ function rotateNodeAroundCenterStore(node, nextAngle, opts = {}) {
     const dy = pBefore.y - pAfter.y;
 
     return {
-        x: round4((node.x ?? 0) + dx),
-        y: round4((node.y ?? 0) + dy),
-        rotation: round4(nextAngle),
+        x: (node.x ?? 0) + dx,
+        y: (node.y ?? 0) + dy,
+        rotation: nextAngle,
         // если в модели уже есть skew/scale — оставляем как есть (не трогаем)
         skewX: node.skewX ?? 0,
         skewY: node.skewY ?? 0,
