@@ -122,37 +122,39 @@ export const DashBlock = ({ ids }) => {
 
     return (
         <>
-            <Select.Root
-                size={"xs"}
-                collection={lineTypes}
-                value={[dashEnabledSame]}
-                onValueChange={handleTypeChange}
-                lazyMount
-                unmountOnExit
-            >
-                <Select.HiddenSelect />
-                <Select.Label>{LOCALE.dash}</Select.Label>
-                <Select.Control>
-                    <Select.Trigger>
-                        <Select.ValueText />
-                    </Select.Trigger>
-                    <Select.IndicatorGroup>
-                        <Select.Indicator />
-                    </Select.IndicatorGroup>
-                </Select.Control>
-                <Portal>
-                    <Select.Positioner>
-                        <Select.Content>
-                            {lineTypes.items.map((item) => (
-                                <Select.Item key={item.value} item={item}>
-                                    {item.label}
-                                    <Select.ItemIndicator />
-                                </Select.Item>
-                            ))}
-                        </Select.Content>
-                    </Select.Positioner>
-                </Portal>
-            </Select.Root>
+            <Field.Root>
+                <Field.Label>{LOCALE.dash}</Field.Label>
+                <Select.Root
+                    size={"xs"}
+                    collection={lineTypes}
+                    value={[dashEnabledSame]}
+                    onValueChange={handleTypeChange}
+                    lazyMount
+                    unmountOnExit
+                >
+                    <Select.HiddenSelect />
+                    <Select.Control>
+                        <Select.Trigger>
+                            <Select.ValueText />
+                        </Select.Trigger>
+                        <Select.IndicatorGroup>
+                            <Select.Indicator />
+                        </Select.IndicatorGroup>
+                    </Select.Control>
+                    <Portal>
+                        <Select.Positioner>
+                            <Select.Content>
+                                {lineTypes.items.map((item) => (
+                                    <Select.Item key={item.value} item={item}>
+                                        {item.label}
+                                        <Select.ItemIndicator />
+                                    </Select.Item>
+                                ))}
+                            </Select.Content>
+                        </Select.Positioner>
+                    </Portal>
+                </Select.Root>
+            </Field.Root>
             {dashEnabledSame === "dashed" && (
                 <Group>
                     <Field.Root>
