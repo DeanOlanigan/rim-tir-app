@@ -106,6 +106,14 @@ export const HOTKEYS = {
     helpDialog: { hotkey: "?", keyLabel: "?" },
     importToServer: { hotkey: "ctrl+s", keyLabel: "Ctrl+S" },
 };
+export const ALIGN_OPS = {
+    LEFT: "left",
+    RIGHT: "right",
+    TOP: "top",
+    BOTTOM: "bottom",
+    HCENTER: "hCenter",
+    VCENTER: "vCenter",
+};
 export const LAYERS_OPS = {
     moveUp: "moveUp",
     moveDown: "moveDown",

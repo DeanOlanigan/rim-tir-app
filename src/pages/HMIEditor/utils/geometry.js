@@ -1,6 +1,10 @@
 import { SHAPES } from "../constants";
 import { round4 } from "./math";
 
+export function isGroupType(type) {
+    return type === SHAPES.group;
+}
+
 export function isLineLikeType(type) {
     return type === SHAPES.arrow || type === SHAPES.line;
 }

@@ -8,6 +8,7 @@ import {
     updateNodesRafCommand,
 } from "../commands";
 import { pastePayloadCommand } from "../commands/clipboard/pastePayload.command";
+import { alignNodesCommand } from "../commands/nodes/alignNodesCommand";
 
 export const createNodesSlice = (api) => {
     return {
@@ -32,5 +33,7 @@ export const createNodesSlice = (api) => {
             pastePayloadCommand(api, payload, placement),
 
         duplicateNodes: (ids, opts) => duplicateNodesCommand(api, ids, opts),
+
+        alignNodes: (ids, alignType) => alignNodesCommand(api, ids, alignType),
     };
 };

@@ -1,7 +1,7 @@
 import { SHAPES } from "@/pages/HMIEditor/constants";
 import { getNodeLocalTransformMatrix } from "@/pages/HMIEditor/utils/getNodeLocalTransformMatrix";
-import { getNodeLocalBounds } from "../geometry/getNodeLocalBounds";
-import { aabbOfTransformedBounds } from "../geometry/aabbOfTransformedBounds";
+import { calculateContentBounds } from "../geometry/calculateContentBounds";
+import { getNodeParentLocalAABB } from "../geometry/aabb";
 
 const EPS = 1e-6;
 const near0 = (v) => Math.abs(v) < EPS;
@@ -15,7 +15,9 @@ export function recalcGroupBBoxDraft(nodes, groupId) {
         return handleEmptyGroup(nodes, g);
     }
 
-    const bounds = calculateContentBounds(nodes, kids);
+    const bounds = calculateContentBounds(nodes, kids, (_id, node) =>
+        getNodeParentLocalAABB(node),
+    );
     if (!bounds) return false;
 
     const geometry = calculateNewGroupGeometry(g, bounds);
@@ -49,34 +51,6 @@ function handleEmptyGroup(nodes, groupNode) {
 
     nodes[groupNode.id] = { ...groupNode, width: 0, height: 0 };
     return true;
-}
-
-/**
- * Проходит по детям и считает общий bounding box
- */
-function calculateContentBounds(nodes, childIds) {
-    let minX = Infinity,
-        minY = Infinity,
-        maxX = -Infinity,
-        maxY = -Infinity;
-
-    for (const childId of childIds) {
-        const child = nodes[childId];
-        if (!child) continue;
-
-        const C = getNodeLocalTransformMatrix(child); // child local -> group local
-        const b = getNodeLocalBounds(child);
-        const aabb = aabbOfTransformedBounds(b, C);
-
-        minX = Math.min(minX, aabb.x);
-        minY = Math.min(minY, aabb.y);
-        maxX = Math.max(maxX, aabb.x + aabb.width);
-        maxY = Math.max(maxY, aabb.y + aabb.height);
-    }
-
-    if (!isFinite(minX) || !isFinite(minY)) return null;
-
-    return { minX, minY, maxX, maxY };
 }
 
 /**
