@@ -79,6 +79,10 @@ const common = {
             y: pos.y + delta.y,
         };
     },
+    onDragStart(e) {
+        const node = e.target;
+        if (e.evt.ctrlKey && node.isDragging()) node.stopDrag();
+    },
     onDragMove(e) {
         const node = e.target;
         const id = node.id();
@@ -288,9 +292,7 @@ const TextArea = ({ textNode, onClose, onChange }) => {
         if (!textareaRef.current) return;
 
         const textarea = textareaRef.current;
-        //const stage = textNode.getStage();
         const textPosition = textNode.position();
-        //const stageBox = stage.container().getBoundingClientRect();
         const areaPosition = {
             x: textPosition.x,
             y: textPosition.y,
