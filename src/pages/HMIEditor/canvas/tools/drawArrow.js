@@ -77,6 +77,8 @@ export function createDrawArrowTool() {
                 name: "Arrow",
                 x: info.x1,
                 y: info.y1,
+                width: Math.abs(info.dx),
+                height: Math.abs(info.dy),
                 points: [0, 0, info.dx, info.dy],
                 pointerLength: 10,
                 pointerWidth: 10,

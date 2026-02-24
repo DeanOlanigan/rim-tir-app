@@ -14,6 +14,7 @@ export function sameCheck(params) {
     return params.every((p) => p === first) ? first : null;
 }
 
+// ABANDONED
 export function collectSelectionDimensions(api, ids, getType, widths, heights) {
     let width;
     let height;

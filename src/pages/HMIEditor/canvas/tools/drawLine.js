@@ -74,6 +74,8 @@ export function createDrawLineTool() {
                 name: "Line",
                 x: info.x1,
                 y: info.y1,
+                width: Math.abs(info.dx),
+                height: Math.abs(info.dy),
                 points: [0, 0, info.dx, info.dy],
                 strokeWidth: 1,
                 stroke: "#000000",

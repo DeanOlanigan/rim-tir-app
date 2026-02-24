@@ -143,6 +143,7 @@ export function normalizeProjectTreeOLD(project, opts = {}) {
 }
 
 import { SHAPES } from "@/pages/HMIEditor/constants";
+import { isGroupType } from "../utils";
 
 /**
  * @typedef {{
@@ -216,10 +217,6 @@ function sanitizeBaseNodes(draftNodes, report) {
             draftNodes[key] = nextNode;
         }
     }
-}
-
-function isGroup(node) {
-    return node?.type === SHAPES.group;
 }
 
 function getChildrenArray(node) {
@@ -361,7 +358,7 @@ function walkPageAndSanitize({ pageId, rootIds, draftNodes, owner, report }) {
 
         // Если это группа, обрабатываем детей
         let childrenToVisit = [];
-        if (isGroup(n)) {
+        if (isGroupType(n.type)) {
             childrenToVisit = processGroupChildren({
                 groupId: id,
                 groupNode: n,

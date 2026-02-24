@@ -1,5 +1,6 @@
 import { round4 } from "../../utils";
 
+// ABANDONED
 export function rotateNodeAroundCenter(api, id, angle) {
     const node = api.canvas.getNodes().get(id);
     if (!node) return;
@@ -11,38 +12,7 @@ export function rotateNodeAroundCenter(api, id, angle) {
     return rotateNodeForStore(node, angle, { size });
 }
 
-/* function applyCenteredTransform(node, stage, transformFn) {
-    const isEllipse = isHasRadius(node.attrs.type);
-    // центр до трансформации
-    const oldRect = node.getClientRect({ relativeTo: stage });
-    const oldCenter = {
-        x: oldRect.x + oldRect.width / 2,
-        y: oldRect.y + oldRect.height / 2,
-    };
-    // сама трансформация (rotation / flip / что угодно)
-    transformFn();
-    // центр после трансформации
-    const newRect = node.getClientRect({ relativeTo: stage });
-    const newCenter = {
-        x: newRect.x + newRect.width / 2,
-        y: newRect.y + newRect.height / 2,
-    };
-    // сдвигаем ноду так, чтобы визуальный центр остался на месте
-    const dx = oldCenter.x - newCenter.x;
-    const dy = oldCenter.y - newCenter.y;
-    const newPosX = round4(node.x() + dx);
-    const newPosY = round4(node.y() + dy);
-
-    node.position({ x: newPosX, y: newPosY });
-
-    const pos = {
-        x: isEllipse ? newPosX - newRect.width / 2 : newPosX,
-        y: isEllipse ? newPosY - newRect.height / 2 : newPosY,
-    };
-
-    return pos;
-} */
-
+// ABANDONED
 export function getLineRect(api, id) {
     const node = api.canvas.getNodes().get(id);
     if (!node) return;
@@ -57,6 +27,7 @@ function clampSize(v) {
     return Math.max(MIN_SIZE, Math.abs(v));
 }
 
+// ABANDONED
 export function resizeLineLike(api, id, targetWidth, targetHeight) {
     const node = api.canvas.getNodes().get(id);
     if (!node) return;
@@ -100,6 +71,7 @@ function getPointsBounds(points) {
     return { minX, minY, width: maxX - minX, height: maxY - minY };
 }
 
+// ABANDONED
 export function changeLineDim(api, id, type, aspectRatio, val) {
     const rect = getLineRect(api, id);
     if (!rect) return;
@@ -128,6 +100,7 @@ export function changeLineDim(api, id, type, aspectRatio, val) {
     return resizeLineLike(api, id, targetWidth, targetHeight);
 }
 
+// ABANDONED
 export function scaleLinePointsLikeSelfRect(points, sx, sy) {
     const out = [];
     for (let i = 0; i < points.length; i += 2) {

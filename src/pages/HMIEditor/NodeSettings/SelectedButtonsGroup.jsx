@@ -33,6 +33,7 @@ export const SelectedButtonsGroup = ({ ids, api, types }) => {
     );
 };
 
+// TODO переделать без konva api
 const GroupSelected = ({ ids, api }) => {
     const nodes = api.canvas.getNodes();
     const handleGroup = () => {

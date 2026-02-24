@@ -52,11 +52,7 @@ export const NodeSettings = ({ api }) => {
                     </Tabs.Trigger>
                 </Tabs.List>
                 <Tabs.Content value="base" h={"100%"} mt={2} overflow={"auto"}>
-                    <BaseSettings
-                        api={api}
-                        types={types}
-                        selectedIds={selectedIds}
-                    />
+                    <BaseSettings types={types} selectedIds={selectedIds} />
                 </Tabs.Content>
                 <Tabs.Content
                     value="bindings"
@@ -64,11 +60,7 @@ export const NodeSettings = ({ api }) => {
                     flex={1}
                     overflow={"hidden"}
                 >
-                    <AdvancedSettings
-                        api={api}
-                        types={types}
-                        selectedIds={selectedIds}
-                    />
+                    <AdvancedSettings types={types} selectedIds={selectedIds} />
                 </Tabs.Content>
                 <Tabs.Content
                     value="actions"
@@ -76,11 +68,7 @@ export const NodeSettings = ({ api }) => {
                     mt={2}
                     overflow={"auto"}
                 >
-                    <ActionsSettings
-                        api={api}
-                        types={types}
-                        selectedIds={selectedIds}
-                    />
+                    <ActionsSettings selectedIds={selectedIds} />
                 </Tabs.Content>
             </Tabs.Root>
         </Flex>

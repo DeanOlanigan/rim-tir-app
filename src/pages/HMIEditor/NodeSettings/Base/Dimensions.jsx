@@ -2,16 +2,14 @@ import { Fieldset, Group, IconButton } from "@chakra-ui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LuProportions } from "react-icons/lu";
 import { useNodeStore } from "../../store/node-store";
-import {
-    applyPatch,
-    collectSelectionDimensions,
-    isFiniteValue,
-    useNodesByIds,
-} from "../utils";
+import { applyPatch, isFiniteValue, useNodesByIds } from "../utils";
 import { isLineLikeType } from "../../utils";
-import { changeLineDim } from "../../canvas/services/shapeTransforms";
 import { LOCALE } from "../../constants";
 import { CommittedNumberInput } from "../CommittedNumberInput";
+import {
+    changeLineDimByStore,
+    collectSelectionDimensions,
+} from "./dimensions.op";
 
 /**
  * Если вдруг ты в будущем будешь уметь менять тип фигуры
@@ -24,14 +22,13 @@ function getType(id) {
     return useNodeStore.getState().nodes[id].type;
 }
 
-export const DimensionsBlock = ({ ids, api }) => {
+export const DimensionsBlock = ({ ids }) => {
     const idsKey = ids.join("|");
 
     const widths = useNodesByIds(ids, "width");
     const heights = useNodesByIds(ids, "height");
 
     const { width, height } = collectSelectionDimensions(
-        api,
         ids,
         getType,
         widths,
@@ -69,7 +66,7 @@ export const DimensionsBlock = ({ ids, api }) => {
         const ratios = {};
         ids.forEach((id, idx) => {
             const t = getType(id);
-            if (isLineLikeType(t)) return; // для линий ratio внутри changeLineDim
+            if (isLineLikeType(t)) return;
             const prevW = widths[idx];
             const prevH = heights[idx];
             const r =
@@ -94,10 +91,14 @@ export const DimensionsBlock = ({ ids, api }) => {
 
         ids.forEach((id) => {
             const t = getType(id);
-            const isLineLike = isLineLikeType(t);
 
-            if (isLineLike) {
-                const res = changeLineDim(api, id, dimType, aspectRatio, val);
+            if (isLineLikeType(t)) {
+                const res = changeLineDimByStore(
+                    id,
+                    dimType,
+                    aspectRatio,
+                    target,
+                );
                 if (res) patch[id] = res;
                 return;
             }

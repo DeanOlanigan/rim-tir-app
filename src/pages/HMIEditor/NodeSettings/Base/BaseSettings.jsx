@@ -4,7 +4,6 @@ import { Layers } from "./Layers";
 import { PositionBlock } from "./Position";
 import { RotationBlock } from "./Rotation";
 import { DimensionsBlock } from "./Dimensions";
-import { SkewBlock } from "./Skew";
 import { OpacityBlock } from "./Opacity";
 import { CornerRadiusBlock } from "./CornerRadius";
 import { SidesBlock } from "./Sides";
@@ -13,7 +12,7 @@ import { FillBlock } from "./Fill";
 import { StrokeBlock } from "./Stroke";
 import { Align } from "./Align";
 
-export const BaseSettings = ({ api, types, selectedIds }) => {
+export const BaseSettings = ({ types, selectedIds }) => {
     const showCornerRadius = types.every(
         (type) => type === SHAPES.rect || type === SHAPES.polygon,
     );
@@ -47,8 +46,7 @@ export const BaseSettings = ({ api, types, selectedIds }) => {
             </VStack>
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>{LOCALE.layout}</Heading>
-                <DimensionsBlock ids={selectedIds} api={api} />
-                <SkewBlock ids={selectedIds} />
+                <DimensionsBlock ids={selectedIds} />
             </VStack>
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>{LOCALE.appearance}</Heading>
