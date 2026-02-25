@@ -1,22 +1,13 @@
 import { Field, Textarea } from "@chakra-ui/react";
-import { sameCheck, useNodesByIds } from "../../utils";
-import {
-    patchStoreRaf,
-    useNodeStore,
-} from "@/pages/HMIEditor/store/node-store";
+import { applyPatch, sameCheck, useNodesByIds } from "../../utils";
+import { useNodeStore } from "@/pages/HMIEditor/store/node-store";
 import { LOCALE } from "@/pages/HMIEditor/constants";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 function applyTextPatch(ids, text, undoable) {
     const patch = {};
     for (const id of ids) patch[id] = { text };
-
-    if (undoable) {
-        patchStoreRaf.flushNow?.();
-        useNodeStore.getState().updateNodes(patch);
-    } else {
-        patchStoreRaf(patch);
-    }
+    applyPatch(patch, undoable, ["text"]);
 }
 
 export const TextInputBlock = ({ ids }) => {
@@ -77,6 +68,7 @@ export const TextInputBlock = ({ ids }) => {
         const { ids: cIds } = getTarget();
         if (cIds && cIds.length) {
             applyTextPatch(cIds, text, true);
+            useNodeStore.getState().clearInteractiveSnapshot();
         }
 
         touchedRef.current = false;
@@ -142,6 +134,11 @@ export const TextInputBlock = ({ ids }) => {
                 maxHeight={"20"}
                 value={innerValue}
                 placeholder={mixed ? LOCALE.mixed : undefined}
+                onFocus={() =>
+                    useNodeStore
+                        .getState()
+                        .beginInteractiveSnapshot(ids, ["text"])
+                }
                 onChange={(e) => handleChange(e.target.value)}
                 onBlur={commit}
                 onKeyDown={(e) => {

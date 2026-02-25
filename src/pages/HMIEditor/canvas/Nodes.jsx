@@ -81,7 +81,13 @@ const common = {
     },
     onDragStart(e) {
         const node = e.target;
-        if (e.evt.ctrlKey && node.isDragging()) node.stopDrag();
+        const id = node.id();
+        if (!id) return;
+        if (e.evt.ctrlKey && node.isDragging()) {
+            node.stopDrag();
+            return;
+        }
+        useNodeStore.getState().beginInteractiveSnapshot([id], ["x", "y"]);
     },
     onDragMove(e) {
         const node = e.target;
@@ -95,7 +101,8 @@ const common = {
         const node = e.target;
         const id = node.id();
         if (!id) return;
-        useNodeStore.getState().updateNode(id, move(node));
+        patchStoreRaf.flushNow?.();
+        useNodeStore.getState().commitInteractiveSnapshot(["x", "y"]);
     },
 };
 

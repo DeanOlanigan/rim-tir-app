@@ -125,6 +125,8 @@ export const DimensionsBlock = ({ ids }) => {
 
     const toggleAspectRatio = () => setAspectRatio((prev) => !prev);
 
+    const store = useNodeStore.getState();
+
     return (
         <Fieldset.Root>
             <Fieldset.Legend>{LOCALE.dimensions}</Fieldset.Legend>
@@ -137,12 +139,23 @@ export const DimensionsBlock = ({ ids }) => {
                         placeholder={LOCALE.mixed}
                         step={1}
                         min={0}
-                        onScrub={(n) =>
-                            applyPatch(buildPatch("width", n), false)
-                        }
-                        onCommit={(n) =>
-                            applyPatch(buildPatch("width", n), true)
-                        }
+                        onFocusChange={(d) => {
+                            if (d.focused) {
+                                store.beginInteractiveSnapshot(ids, ["width"]);
+                            } else {
+                                store.clearInteractiveSnapshot();
+                            }
+                        }}
+                        onScrub={(n) => {
+                            const patch = buildPatch("width", n);
+                            applyPatch(patch, false, ["width"]);
+                        }}
+                        onCommit={(n) => {
+                            const patch = buildPatch("width", n);
+                            applyPatch(patch, false, ["width"]);
+                            applyPatch(patch, true, ["width"]);
+                            store.beginInteractiveSnapshot(ids, ["width"]);
+                        }}
                     />
                     <CommittedNumberInput
                         key={`dim:h:${sessionKey}`}
@@ -151,12 +164,22 @@ export const DimensionsBlock = ({ ids }) => {
                         placeholder={LOCALE.mixed}
                         step={1}
                         min={0}
-                        onScrub={(n) =>
-                            applyPatch(buildPatch("height", n), false)
-                        }
-                        onCommit={(n) =>
-                            applyPatch(buildPatch("height", n), true)
-                        }
+                        onFocusChange={(d) => {
+                            if (d.focused) {
+                                store.beginInteractiveSnapshot(ids, ["height"]);
+                            } else {
+                                store.clearInteractiveSnapshot();
+                            }
+                        }}
+                        onScrub={(n) => {
+                            const patch = buildPatch("height", n);
+                            applyPatch(patch, false, ["height"]);
+                        }}
+                        onCommit={(n) => {
+                            const patch = buildPatch("height", n);
+                            applyPatch(patch, false, ["height"]);
+                            applyPatch(patch, true, ["height"]);
+                        }}
                     />
                     <IconButton
                         size={"xs"}

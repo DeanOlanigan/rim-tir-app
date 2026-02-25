@@ -240,4 +240,13 @@ export function useEditorHotkeys(tools) {
         },
         { useKey: true },
     );
+    // undo/redo
+    useHotkeys(HOTKEYS.undo.hotkey, () => {
+        const store = useNodeStore.getState();
+        store.undo();
+    });
+    useHotkeys(HOTKEYS.redo.hotkey, () => {
+        const store = useNodeStore.getState();
+        store.redo();
+    });
 }

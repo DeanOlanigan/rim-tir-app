@@ -41,6 +41,7 @@ function buildRotationPatch(ids, angle) {
 export const RotationBlock = ({ ids }) => {
     const rotArr = useNodesByIds(ids, "rotation");
     const rSame = sameCheck(rotArr);
+    const store = useNodeStore.getState();
 
     const idsKey = ids.join("|");
     const uiValue =
@@ -48,10 +49,10 @@ export const RotationBlock = ({ ids }) => {
 
     const rotateTo = (angle, undoable) => {
         const patch = buildRotationPatch(ids, angle);
-        applyPatch(patch, undoable);
+        applyPatch(patch, undoable, ["rotation", "x", "y"]);
     };
 
-    const rotateByDelta = (delta, undoable) => {
+    const rotateByDelta = (delta) => {
         const patch = {};
         ids.forEach((id, idx) => {
             const n = useNodeStore.getState().nodes[id];
@@ -61,7 +62,7 @@ export const RotationBlock = ({ ids }) => {
             patch[id] = rotateNodeAroundCenterStore(n, next);
         });
 
-        applyPatch(patch, undoable);
+        store.updateNodes(patch);
     };
 
     const flipHorizontal = () => {
@@ -73,7 +74,7 @@ export const RotationBlock = ({ ids }) => {
             patch[id] = flipNodeAroundWorldAxis(n, "x", { pivotWorld });
         });
 
-        applyPatch(patch, true);
+        store.updateNodes(patch);
     };
 
     const flipVertical = () => {
@@ -85,7 +86,7 @@ export const RotationBlock = ({ ids }) => {
             patch[id] = flipNodeAroundWorldAxis(n, "y", { pivotWorld });
         });
 
-        applyPatch(patch, true);
+        store.updateNodes(patch);
     };
 
     return (
@@ -101,14 +102,33 @@ export const RotationBlock = ({ ids }) => {
                         step={1}
                         min={-360}
                         max={360}
+                        onFocusChange={(d) => {
+                            if (d.focused) {
+                                store.beginInteractiveSnapshot(ids, [
+                                    "rotation",
+                                    "x",
+                                    "y",
+                                ]);
+                            } else {
+                                store.clearInteractiveSnapshot();
+                            }
+                        }}
                         onScrub={(n) => rotateTo(n, false)}
-                        onCommit={(n) => rotateTo(n, true)}
+                        onCommit={(n) => {
+                            rotateTo(n, false);
+                            rotateTo(n, true);
+                            store.beginInteractiveSnapshot(ids, [
+                                "rotation",
+                                "x",
+                                "y",
+                            ]);
+                        }}
                     />
                     <Group attached>
                         <IconButton
                             size={"xs"}
                             variant={"outline"}
-                            onClick={() => rotateByDelta(90, true)}
+                            onClick={() => rotateByDelta(90)}
                         >
                             <LuRotateCwSquare />
                         </IconButton>

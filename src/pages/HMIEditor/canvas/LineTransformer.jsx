@@ -100,6 +100,15 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
     const points = primaryNode.points;
     if (!points || points.length < 4) return null;
 
+    const onDragStart = () => {
+        useNodeStore
+            .getState()
+            .beginInteractiveSnapshot(
+                [primaryNode.id],
+                ["points", "width", "height"],
+            );
+    };
+
     const onDragMove = (e) => {
         const circle = e.target;
         const pointIndex = circle.getAttr("insertIndex");
@@ -136,14 +145,10 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
     };
 
     const onDragEnd = () => {
-        const newPoints = line.points().slice();
-        useNodeStore.getState().updateNode(primaryNode.id, {
-            x: line.x(),
-            y: line.y(),
-            points: newPoints,
-            width: line.width(),
-            height: line.height(),
-        });
+        patchStoreRaf.flushNow?.();
+        useNodeStore
+            .getState()
+            .commitInteractiveSnapshot(["points", "width", "height"]);
     };
 
     const onMidDragStart = (e) => {
@@ -152,6 +157,12 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
         if (!oldPoints || oldPoints.length < 4) return;
 
         circle.setAttr("originalPoints", oldPoints.slice());
+        useNodeStore
+            .getState()
+            .beginInteractiveSnapshot(
+                [primaryNode.id],
+                ["points", "width", "height"],
+            );
     };
 
     const onMidDragMove = (e) => {
@@ -171,6 +182,13 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
     };
 
     const onMidDragEnd = () => {
+        patchStoreRaf({
+            [primaryNode.id]: {
+                points: line.points(),
+                width: line.width(),
+                height: line.height(),
+            },
+        });
         onDragEnd();
     };
 
@@ -261,6 +279,7 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
                 strokeWidth={1}
                 draggable
                 dragBoundFunc={dragBoundFunc}
+                onDragStart={onDragStart}
                 onDragMove={onDragMove}
                 onDragEnd={onDragEnd}
                 onDblClick={onPointDouble}

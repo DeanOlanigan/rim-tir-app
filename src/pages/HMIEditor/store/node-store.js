@@ -12,10 +12,8 @@ import { quantizePatch } from "./utils/patch/quantize";
 import { isNodeHistoryMuted } from "./history-gate";
 import { temporal } from "zundo";
 
-// Подстрой под свою структуру
 function partializeHistory(state) {
     return {
-        // Документная часть
         varIndex: state.varIndex,
         nodeIndex: state.nodeIndex,
         nodes: state.nodes,
@@ -23,32 +21,31 @@ function partializeHistory(state) {
         pageIdWithThumb: state.pageIdWithThumb,
         pages: state.pages,
         projectName: state.projectName,
-
-        // UX-зависит: если хочешь, чтобы undo/redo восстанавливали выделение
         selectedIds: state.selectedIds,
-
-        // Обычно НЕ включаем UI/meta/debug/temporary stuff
-        // meta: ... (обычно не надо, но см. комментарий ниже)
-        // varIndex/nodeIndex: ... (если это кэш, лучше исключить)
     };
 }
 
 // Важно: no-op set(state => state) не должен создавать шаг истории
 function historyEquality(a, b) {
     return (
+        a.varIndex === b.varIndex &&
+        a.nodeIndex === b.nodeIndex &&
         a.nodes === b.nodes &&
-        a.pages === b.pages &&
         a.activePageId === b.activePageId &&
+        a.pageIdWithThumb === b.pageIdWithThumb &&
+        a.pages === b.pages &&
+        a.projectName === b.projectName &&
         a.selectedIds === b.selectedIds
     );
 }
 
 // Трюк: используем diff как "фильтр" для конкретных команд.
 // Если возвращаем null — zundo не трекает этот апдейт.
-function historyDiff(_past, current) {
+function historyDiff(past) {
     if (isNodeHistoryMuted()) return null;
     // Возвращаем full current как "дельту" (рабочий компромисс)
-    return current;
+    // [ ] microdiff
+    return past;
 }
 
 export const useNodeStore = create(

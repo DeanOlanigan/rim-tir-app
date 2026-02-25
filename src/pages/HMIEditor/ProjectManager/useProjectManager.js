@@ -57,6 +57,7 @@ export function useProjectManager(tools, onOpenChange) {
             //navigate("/HMIEditor", { replace: true });
 
             useNodeStore.getState().close();
+            useNodeStore.temporal.getState().clear();
             fitNodesToFrame(tools.canvasRef, tools.nodesRef);
 
             toaster.create({

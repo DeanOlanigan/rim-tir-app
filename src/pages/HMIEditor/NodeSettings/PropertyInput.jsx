@@ -1,24 +1,16 @@
 import { useMemo } from "react";
-import { isFiniteValue, sameCheck, useNodesByIds } from "./utils";
-import { patchStoreRaf, useNodeStore } from "../store/node-store";
+import { applyPatch, isFiniteValue, sameCheck, useNodesByIds } from "./utils";
 import { CommittedNumberInput } from "./CommittedNumberInput";
+import { useNodeStore } from "../store/node-store";
 
 // Дефолтные трансформеры, если не переданы пропсы (1 к 1)
 const identity = (v) => v;
 
 function updateNodeProperty(ids, value, property, undoable = false) {
     if (!isFiniteValue(value)) return;
-
     const patch = {};
-
     for (const id of ids) patch[id] = { [property]: value };
-
-    if (undoable) {
-        patchStoreRaf.flushNow?.();
-        useNodeStore.getState().updateNodes(patch);
-    } else {
-        patchStoreRaf(patch);
-    }
+    applyPatch(patch, undoable, property);
 }
 
 export const PropertyInput = ({
@@ -33,6 +25,8 @@ export const PropertyInput = ({
     mapToStore = identity,
     placeholder,
 }) => {
+    const store = useNodeStore.getState();
+
     // 1. Получаем "сырые" данные из стора
     const rawValues = useNodesByIds(ids, property);
     const rawValue = sameCheck(rawValues);
@@ -56,15 +50,24 @@ export const PropertyInput = ({
             min={min}
             max={max}
             disabled={disabled}
+            onFocusChange={(d) => {
+                if (d.focused) {
+                    store.beginInteractiveSnapshot(ids, [property]);
+                } else {
+                    store.clearInteractiveSnapshot();
+                }
+            }}
             onScrub={(n) => {
                 const storeValue = mapToStore(n);
                 if (!isFiniteValue(storeValue)) return;
-                updateNodeProperty(ids, storeValue, property, false);
+                updateNodeProperty(ids, storeValue, [property], false);
             }}
             onCommit={(n) => {
                 const storeValue = mapToStore(n);
                 if (!isFiniteValue(storeValue)) return;
-                updateNodeProperty(ids, storeValue, property, true);
+                updateNodeProperty(ids, storeValue, [property], false);
+                updateNodeProperty(ids, storeValue, [property], true);
+                store.beginInteractiveSnapshot(ids, [property]);
             }}
         />
     );

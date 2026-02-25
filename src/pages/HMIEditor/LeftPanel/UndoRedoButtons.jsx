@@ -2,12 +2,18 @@ import { Group, IconButton } from "@chakra-ui/react";
 import { LuRedo, LuUndo, LuX } from "react-icons/lu";
 import { useActionsStore } from "../store/actions-store";
 import { useNodeStore } from "../store/node-store";
+import { useStore } from "zustand";
 
 export const UndoRedoButtons = () => {
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
-    const { futureStates, pastStates } = useNodeStore.temporal.getState();
-    const canUndo = !!pastStates.length;
-    const canRedo = !!futureStates.length;
+    const pastStatesCount = useStore(
+        useNodeStore.temporal,
+        (state) => state.pastStates,
+    );
+    const futureStatesCount = useStore(
+        useNodeStore.temporal,
+        (state) => state.futureStates,
+    );
 
     if (viewOnlyMode) return null;
 
@@ -16,7 +22,7 @@ export const UndoRedoButtons = () => {
             <IconButton
                 variant={"subtle"}
                 size={"xs"}
-                disabled={!canUndo}
+                disabled={pastStatesCount.length === 0}
                 onClick={() => useNodeStore.getState().undo()}
             >
                 <LuUndo />
@@ -24,7 +30,7 @@ export const UndoRedoButtons = () => {
             <IconButton
                 variant={"subtle"}
                 size={"xs"}
-                disabled={!canRedo}
+                disabled={futureStatesCount.length === 0}
                 onClick={() => useNodeStore.getState().redo()}
             >
                 <LuRedo />

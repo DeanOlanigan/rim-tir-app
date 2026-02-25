@@ -13,6 +13,7 @@ import {
 } from "../../utils";
 import { LOCALE } from "@/pages/HMIEditor/constants";
 import { CommittedNumberInput } from "../../CommittedNumberInput";
+import { useNodeStore } from "@/pages/HMIEditor/store/node-store";
 
 const lineTypes = createListCollection({
     items: [
@@ -56,6 +57,7 @@ function resolveDash(dashes) {
 }
 
 export const DashBlock = ({ ids }) => {
+    const store = useNodeStore.getState();
     const idsKey = ids.join("|");
 
     const allDashEnabled = useNodesByIds(ids, "dashEnabled");
@@ -99,7 +101,7 @@ export const DashBlock = ({ ids }) => {
             patch[id] = p;
         });
 
-        applyPatch(patch, true);
+        store.updateNodes(patch);
     };
 
     const buildDashPatch = (index, rawNumber) => {
@@ -166,12 +168,25 @@ export const DashBlock = ({ ids }) => {
                             placeholder={LOCALE.mixed}
                             step={1}
                             min={0}
-                            onScrub={(n) =>
-                                applyPatch(buildDashPatch(0, n), false)
-                            }
-                            onCommit={(n) =>
-                                applyPatch(buildDashPatch(0, n), true)
-                            }
+                            onFocusChange={(d) => {
+                                if (d.focused) {
+                                    store.beginInteractiveSnapshot(ids, [
+                                        "dash",
+                                    ]);
+                                } else {
+                                    store.clearInteractiveSnapshot();
+                                }
+                            }}
+                            onScrub={(n) => {
+                                const patch = buildDashPatch(0, n);
+                                applyPatch(patch, false, ["dash"]);
+                            }}
+                            onCommit={(n) => {
+                                const patch = buildDashPatch(0, n);
+                                applyPatch(patch, false, ["dash"]);
+                                applyPatch(patch, true, ["dash"]);
+                                store.beginInteractiveSnapshot(ids, ["dash"]);
+                            }}
                         />
                     </Field.Root>
                     <Field.Root>
@@ -183,12 +198,25 @@ export const DashBlock = ({ ids }) => {
                             placeholder={LOCALE.mixed}
                             step={1}
                             min={0}
-                            onScrub={(n) =>
-                                applyPatch(buildDashPatch(1, n), false)
-                            }
-                            onCommit={(n) =>
-                                applyPatch(buildDashPatch(1, n), true)
-                            }
+                            onFocusChange={(d) => {
+                                if (d.focused) {
+                                    store.beginInteractiveSnapshot(ids, [
+                                        "dash",
+                                    ]);
+                                } else {
+                                    store.clearInteractiveSnapshot();
+                                }
+                            }}
+                            onScrub={(n) => {
+                                const patch = buildDashPatch(1, n);
+                                applyPatch(patch, false, ["dash"]);
+                            }}
+                            onCommit={(n) => {
+                                const patch = buildDashPatch(1, n);
+                                applyPatch(patch, false, ["dash"]);
+                                applyPatch(patch, true, ["dash"]);
+                                store.beginInteractiveSnapshot(ids, ["dash"]);
+                            }}
                         />
                     </Field.Root>
                 </Group>

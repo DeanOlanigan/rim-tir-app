@@ -20,4 +20,5 @@ export const applyProjectData = (rawProjectData, mode, filename) => {
 
     const store = useNodeStore.getState();
     store.open(normalized, mode, filename);
+    useNodeStore.temporal.getState().clear();
 };

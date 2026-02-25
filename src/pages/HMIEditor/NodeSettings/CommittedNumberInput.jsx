@@ -15,6 +15,7 @@ export const CommittedNumberInput = ({
     min = -Infinity,
     max = Infinity,
     disabled = false,
+    onFocusChange,
     onScrub,
     onCommit,
     commitOnUnmount = true,
@@ -173,6 +174,7 @@ export const CommittedNumberInput = ({
             min={min}
             max={max}
             onValueChange={(e) => handleChange(e.value, e.valueAsNumber)}
+            onFocusChange={(d) => onFocusChange(d)}
             disabled={disabled}
         >
             <InputGroup

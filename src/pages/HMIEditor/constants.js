@@ -103,6 +103,8 @@ export const HOTKEYS = {
     copy: { hotkey: "ctrl+c", keyLabel: "Ctrl+C" },
     cut: { hotkey: "ctrl+x", keyLabel: "Ctrl+X" },
     paste: { hotkey: "ctrl+v", keyLabel: "Ctrl+V" },
+    undo: { hotkey: "ctrl+z", keyLabel: "Ctrl+Z" },
+    redo: { hotkey: "ctrl+y", keyLabel: "Ctrl+Y" },
     helpDialog: { hotkey: "?", keyLabel: "?" },
     importToServer: { hotkey: "ctrl+s", keyLabel: "Ctrl+S" },
 };

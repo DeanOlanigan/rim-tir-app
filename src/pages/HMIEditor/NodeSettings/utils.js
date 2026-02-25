@@ -49,14 +49,14 @@ export function collectSelectionDimensions(api, ids, getType, widths, heights) {
     };
 }
 
-export function applyPatch(patch, undoable) {
+export function applyPatch(patch, undoable, property) {
     if (!patch) return;
     const keys = Object.keys(patch);
     if (keys.length === 0) return;
 
     if (undoable) {
         patchStoreRaf.flushNow?.();
-        useNodeStore.getState().updateNodes(patch);
+        useNodeStore.getState().commitInteractiveSnapshot(property);
     } else {
         patchStoreRaf(patch);
     }

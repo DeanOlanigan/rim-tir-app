@@ -7,6 +7,12 @@ import { useActionsStore } from "../store/actions-store";
 import { dragBound } from "./utils/dragBound";
 import { isLineLikeType } from "../utils";
 
+function transformStartHandler(e) {
+    const node = e.target;
+    const id = node.attrs.id;
+    useNodeStore.getState().beginInteractiveSnapshot([id]);
+}
+
 function transformHandler(e) {
     const node = e.target;
     const id = node.attrs.id;
@@ -27,25 +33,9 @@ function transformHandler(e) {
     patchStoreRaf(patch);
 }
 
-function transformEndHandler(nodes) {
-    if (nodes.length === 0) return;
-    let patchesById = {};
-    for (const node of nodes) {
-        const { id, type } = node.attrs;
-        const shape = getShape(type);
-        if (!shape?.onTransformEnd) {
-            console.warn("No shape adapter for type:", type);
-            continue;
-        }
-        const res = shape.onTransformEnd(node);
-        if (type === SHAPES.group) {
-            Object.assign(patchesById, res);
-        } else {
-            patchesById[id] = res;
-        }
-    }
+function transformEndHandler() {
     patchStoreRaf.flushNow();
-    useNodeStore.getState().updateNodes(patchesById);
+    useNodeStore.getState().commitInteractiveSnapshot();
 }
 
 const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
@@ -104,11 +94,9 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
                 flipEnabled={false}
                 borderDash={selectedIds.length > 1 ? [4, 4] : undefined}
                 anchorDragBoundFunc={anchorBound}
-                onTransformEnd={() => {
-                    const nodes = transformerRef.current.nodes();
-                    transformEndHandler(nodes);
-                }}
+                onTransformEnd={transformEndHandler}
                 onTransform={transformHandler}
+                onTransformStart={transformStartHandler}
             />
             {selectedIds.length > 1 &&
                 selectedIds.map((id) => (
