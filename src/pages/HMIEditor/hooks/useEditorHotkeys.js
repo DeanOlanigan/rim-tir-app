@@ -8,12 +8,7 @@ import { calcBBox, fitNodesToFrame } from "../utils";
 import { EDIT_GRID_DIALOG_ID, editGridDialog } from "../editGridDialog";
 import { flyToNode } from "../utils/flyToNode";
 import { useRef } from "react";
-import {
-    copySelection,
-    cutSelection,
-    getPasteData,
-    pasteFromClipboard,
-} from "../actions/clipboardActions";
+import { copySelection, cutSelection } from "../actions/clipboardActions";
 import { toggleViewOnlyModeAction } from "../actions/toggleViewOnlyModeAction";
 import { HELP_DIALOG_ID, helpDialog } from "../helpDialog";
 import { useImportToServerAction } from "./useImportToServerAction";
@@ -224,14 +219,14 @@ export function useEditorHotkeys(tools) {
     useHotkeys(HOTKEYS.cut.hotkey, async () => {
         await cutSelection(useNodeStore.getState());
     });
-    useHotkeys(HOTKEYS.paste.hotkey, () => {
+    /* useHotkeys(HOTKEYS.paste.hotkey, () => {
         const { store, worldX, worldY, gridSize } = getPasteData(tools);
         pasteFromClipboard(store, {
             worldX,
             worldY,
             gridSize,
         });
-    });
+    }); */
     // help
     useHotkeys(
         HOTKEYS.helpDialog.hotkey,

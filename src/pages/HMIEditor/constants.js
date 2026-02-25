@@ -2,6 +2,7 @@ import {
     LuCircle,
     LuGroup,
     LuHexagon,
+    LuImage,
     LuMoveUpRight,
     LuSlash,
     LuSquare,
@@ -38,6 +39,7 @@ export const SHAPES = {
     line: "line",
     arrow: "arrow",
     group: "group",
+    image: "image",
 };
 export const SHAPES_WITH_SETTINGS = new Set([
     SHAPES.rect,
@@ -47,6 +49,7 @@ export const SHAPES_WITH_SETTINGS = new Set([
     SHAPES.line,
     SHAPES.arrow,
     SHAPES.group,
+    SHAPES.image,
 ]);
 export const SHAPES_NAMES = {
     [SHAPES.rect]: "Rectangle",
@@ -65,6 +68,7 @@ export const SHAPES_ICONS = {
     [SHAPES.line]: LuSlash,
     [SHAPES.arrow]: LuMoveUpRight,
     [SHAPES.group]: LuGroup,
+    [SHAPES.image]: LuImage,
 };
 export const MAX_POLY_CORNERS = 12;
 export const HOTKEYS = {

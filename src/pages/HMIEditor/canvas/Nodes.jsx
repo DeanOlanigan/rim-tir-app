@@ -1,4 +1,4 @@
-import { Arrow, Ellipse, Group, Line, Rect, Text } from "react-konva";
+import { Arrow, Ellipse, Group, Image, Line, Rect, Text } from "react-konva";
 import { useActionsStore } from "./../store/actions-store";
 import { patchStoreRaf, useNodeStore } from "./../store/node-store";
 import { ACTIONS, SHAPES } from "../constants";
@@ -8,6 +8,7 @@ import { VariablePolygon } from "./shapes/VariablePolygon.react";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Html } from "react-konva-utils";
 import { useHandlers } from "./hooks/useHandlers";
+import { getAssetObjectUrl } from "../assets/assetRuntimeRegistry";
 
 function ellipseToKonva(p) {
     const cx = p.x + p.width / 2;
@@ -238,6 +239,15 @@ const NodeInstance = ({ id, draggable, nodesRef }) => {
                     />
                 </Group>
             );
+        case SHAPES.image:
+            return (
+                <ImageNodeShape
+                    key={id}
+                    node={node}
+                    registerRef={registerRef}
+                    {...params}
+                />
+            );
         default:
             return null;
     }
@@ -390,4 +400,38 @@ const TextArea = ({ textNode, onClose, onChange }) => {
             }}
         />
     );
+};
+
+function useHtmlImage(src) {
+    const [img, setImg] = useState(null);
+
+    useEffect(() => {
+        if (!src) {
+            setImg(null);
+            return;
+        }
+
+        const el = new window.Image();
+
+        const onLoad = () => setImg(el);
+        const onError = () => setImg(null);
+
+        el.addEventListener("load", onLoad);
+        el.addEventListener("error", onError);
+        el.src = src;
+
+        return () => {
+            el.removeEventListener("load", onLoad);
+            el.removeEventListener("error", onError);
+        };
+    }, [src]);
+
+    return img;
+}
+
+const ImageNodeShape = ({ node, registerRef, ...params }) => {
+    const src = getAssetObjectUrl(node.assetId);
+    const img = useHtmlImage(src);
+
+    return <Image {...params} image={img || undefined} ref={registerRef} />;
 };

@@ -18,6 +18,7 @@ export const HMICanvas = ({
     nodesRef,
     selectionBoxRef,
     transformerRef,
+    api,
 }) => {
     const bgColor = useNodeStore(
         (state) => state.pages[state.activePageId].backgroundColor,
@@ -25,7 +26,7 @@ export const HMICanvas = ({
     const canvasSize = useActionsStore((state) => state.canvasSize);
 
     useToggleHitRegion(canvasRef, nodesLayerRef);
-    useStageKeyboard(canvasRef, manager);
+    useStageKeyboard(canvasRef, manager, { api });
 
     const handlers = manager.handlers;
 

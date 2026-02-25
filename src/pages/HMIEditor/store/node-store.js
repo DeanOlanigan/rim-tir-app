@@ -11,6 +11,7 @@ import { createUiSlice } from "./slices/ui-slice";
 import { quantizePatch } from "./utils/patch/quantize";
 import { isNodeHistoryMuted } from "./history-gate";
 import { temporal } from "zundo";
+import { createAssetsSlice } from "./slices/assets-slice";
 
 function partializeHistory(state) {
     return {
@@ -62,6 +63,7 @@ export const useNodeStore = create(
                     ...createPagesSlice(api),
                     ...createProjectSlice(api),
                     ...createUiSlice(api),
+                    ...createAssetsSlice(api),
                 };
             },
             {

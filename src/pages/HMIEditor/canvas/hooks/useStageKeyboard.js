@@ -1,8 +1,39 @@
 import { useEffect } from "react";
+import {
+    getPasteData,
+    pasteFromClipboardEvent,
+} from "../../actions/clipboardActions";
 
-export function useStageKeyboard(canvasRef, manager) {
+export function useStageKeyboard(canvasRef, manager, tools) {
     useEffect(() => {
         const stage = canvasRef.current;
+
+        const onPaste = async (e) => {
+            const {
+                store,
+                worldX,
+                worldY,
+                gridSize,
+                scale,
+                viewportHeight,
+                viewportWidth,
+            } = getPasteData(tools);
+
+            const handled = await pasteFromClipboardEvent(store, e, {
+                worldX,
+                worldY,
+                gridSize,
+                scale,
+                viewportHeight,
+                viewportWidth,
+            });
+
+            if (handled) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        };
+
         if (stage) {
             stage
                 .container()
@@ -10,6 +41,7 @@ export function useStageKeyboard(canvasRef, manager) {
             stage
                 .container()
                 .addEventListener("keyup", manager.handlers.onKeyUp, false);
+            stage.container().addEventListener("paste", onPaste, false);
         }
 
         return () => {
@@ -28,7 +60,8 @@ export function useStageKeyboard(canvasRef, manager) {
                         manager.handlers.onKeyUp,
                         false,
                     );
+                stage.container().removeEventListener("paste", onPaste, false);
             }
         };
-    }, [canvasRef, manager.handlers]);
+    }, [canvasRef, manager.handlers, tools]);
 }

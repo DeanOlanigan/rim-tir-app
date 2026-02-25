@@ -5,4 +5,5 @@ import "./arrow";
 import "./rect";
 import "./text";
 import "./group";
+import "./image";
 export { registerShape, getShape } from "./registry";
