@@ -67,6 +67,15 @@ export const ProjectCardList = ({ tools, onOpenChange }) => {
                         <Alert.Title>{LOCALE.projectsLoading}</Alert.Title>
                     </Alert.Root>
                 )}
+                {!isLoading && data?.data?.length === 0 && (
+                    <Alert.Root
+                        borderStartWidth="3px"
+                        borderStartColor="colorPalette.600"
+                    >
+                        <Alert.Indicator />
+                        <Alert.Title>Нет проектов на сервере</Alert.Title>
+                    </Alert.Root>
+                )}
                 <SimpleGrid columns={[1, 2, 3, 4]} gap={4}>
                     {!isLoading &&
                         data?.data?.map((project) => (
