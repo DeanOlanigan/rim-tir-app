@@ -13,31 +13,48 @@ export function useImportToServerAction() {
 
     const importToServer = useCallback(
         async (tools) => {
-            const state = useNodeStore.getState();
-            const { mode, filename: oldFilename } = state.meta;
-            const currentProjectName = safeFileName(state.projectName);
+            if (saveMutation.isPending || renameMutation.isPending) return;
+            const snapshot = useNodeStore.getState();
+            const { mode, filename: oldFilename } = snapshot.meta;
+            const currentProjectName = safeFileName(snapshot.projectName);
+
+            if (!currentProjectName) {
+                console.error("Project name is empry after sanitization");
+                return;
+            }
 
             try {
                 // ЛОГИКА ПЕРЕИМЕНОВАНИЯ:
                 // Если проект пришел с сервера и его имя в инпуте изменилось
-                if (mode === "server" && oldFilename !== currentProjectName) {
+                if (
+                    mode === "server" &&
+                    oldFilename &&
+                    oldFilename !== currentProjectName
+                ) {
                     await renameMutation.mutateAsync({
                         oldName: oldFilename,
                         newName: currentProjectName,
                     });
                 }
 
-                const { blob } = await buildProjectPackage({ state, tools });
+                const { blob } = await buildProjectPackage({
+                    state: snapshot,
+                    tools,
+                });
 
                 const formData = new FormData();
-                formData.append("file", blob, `${name}.tir-project`);
+                formData.append(
+                    "file",
+                    blob,
+                    `${currentProjectName}.tir-project`,
+                );
                 formData.append("name", currentProjectName);
 
-                saveMutation.mutate({
+                await saveMutation.mutateAsync({
                     filename: currentProjectName,
                     project: formData,
                 });
-                state.markAsImportedToServer();
+                snapshot.markAsImportedToServer();
             } catch (e) {
                 console.error(e);
             }
