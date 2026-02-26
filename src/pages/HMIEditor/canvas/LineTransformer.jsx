@@ -1,5 +1,6 @@
 import { useActionsStore } from "../store/actions-store";
-import { patchStoreRaf, useNodeStore } from "../store/node-store";
+import { useNodeStore } from "../store/node-store";
+import { patchStoreRaf } from "../store/patchStoreRaf";
 import { Circle } from "react-konva";
 import { dragBound } from "./utils/dragBound";
 import { isLineLikeType } from "../utils";

@@ -1,7 +1,8 @@
 import { Rect, Transformer } from "react-konva";
 import { ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS, SHAPES } from "../constants";
 import { memo, useCallback, useEffect } from "react";
-import { patchStoreRaf, useNodeStore } from "../store/node-store";
+import { useNodeStore } from "../store/node-store";
+import { patchStoreRaf } from "../store/patchStoreRaf";
 import { getShape } from "./shapes";
 import { useActionsStore } from "../store/actions-store";
 import { dragBound } from "./utils/dragBound";

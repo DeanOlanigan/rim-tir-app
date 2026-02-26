@@ -1,4 +1,5 @@
-import { patchStoreRaf, useNodeStore } from "../store/node-store";
+import { useNodeStore } from "../store/node-store";
+import { patchStoreRaf } from "../store/patchStoreRaf";
 import { useShallow } from "zustand/shallow";
 import { isLineLikeType } from "../utils";
 import { getLineRect } from "../canvas/services/shapeTransforms";

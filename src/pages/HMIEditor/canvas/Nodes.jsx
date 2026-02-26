@@ -1,6 +1,7 @@
 import { Arrow, Ellipse, Group, Image, Line, Rect, Text } from "react-konva";
 import { useActionsStore } from "./../store/actions-store";
-import { patchStoreRaf, useNodeStore } from "./../store/node-store";
+import { useNodeStore } from "./../store/node-store";
+import { patchStoreRaf } from "../store/patchStoreRaf";
 import { ACTIONS, SHAPES } from "../constants";
 import { dragBound } from "./utils/dragBound";
 import { isHasRadius, round4 } from "../utils";
