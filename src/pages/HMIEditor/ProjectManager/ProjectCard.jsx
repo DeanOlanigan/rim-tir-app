@@ -15,8 +15,10 @@ import {
 import { LuMonitor, LuTrash2 } from "react-icons/lu";
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 import { useOpeningState } from "./useOpeningState";
+import { useActionsStore } from "../store/actions-store";
 
 export const ProjectCard = ({ project, onClick, onDelete }) => {
+    const viewOnlyMode = useActionsStore((s) => s.viewOnlyMode);
     const { isOpening, openingMutation } = useOpeningState();
     const isCurrentOpenning = openingMutation.includes(project.value);
     const isDisabled = isOpening && !isCurrentOpenning;
@@ -52,28 +54,30 @@ export const ProjectCard = ({ project, onClick, onDelete }) => {
             position={"relative"}
             overflow="hidden"
         >
-            <Float offset={4}>
-                <IconButton
-                    size={"2xs"}
-                    display={{ base: "none", _groupHover: "flex" }}
-                    variant={"subtle"}
-                    colorPalette={"red"}
-                    onClick={async (e) => {
-                        e.stopPropagation();
-                        const isConfirmed = await confirmDialog.open(
-                            CONFIRM_DIALOG_ID,
-                            {
-                                title: "Удаление проекта",
-                                message: `Вы уверены, что хотите удалить ${project.label}?`,
-                            },
-                        );
-                        if (!isConfirmed) return;
-                        onDelete(project.value);
-                    }}
-                >
-                    <LuTrash2 />
-                </IconButton>
-            </Float>
+            {!viewOnlyMode && (
+                <Float offset={4} zIndex={"modal"}>
+                    <IconButton
+                        size={"2xs"}
+                        display={{ base: "none", _groupHover: "flex" }}
+                        variant={"subtle"}
+                        colorPalette={"red"}
+                        onClick={async (e) => {
+                            e.stopPropagation();
+                            const isConfirmed = await confirmDialog.open(
+                                CONFIRM_DIALOG_ID,
+                                {
+                                    title: "Удаление проекта",
+                                    message: `Вы уверены, что хотите удалить ${project.label}?`,
+                                },
+                            );
+                            if (!isConfirmed) return;
+                            onDelete(project.value);
+                        }}
+                    >
+                        <LuTrash2 />
+                    </IconButton>
+                </Float>
+            )}
             <Box
                 bg="bg"
                 w="144px"
