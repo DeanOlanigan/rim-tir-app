@@ -5,15 +5,16 @@ import { StrokeWeightBlock } from "./StrokeWeightBlock";
 import { LineJoinBlock } from "./LineJoinBlock";
 import { LineCapBlock } from "./LineCapBlock";
 import { CloseBlock } from "./CloseBlock";
-//import { BezierBlock } from "./BezierBlock";
 import { TensionBlock } from "./TensionBlock";
 import { isLineLikeType } from "@/pages/HMIEditor/utils";
-import { LOCALE } from "@/pages/HMIEditor/constants";
+import { LOCALE, SHAPES } from "@/pages/HMIEditor/constants";
 
 export const StrokeBlock = ({ ids, types }) => {
     const isMultiple = ids.length > 1;
     const showLineSpecifics =
         !isMultiple && types.every((type) => isLineLikeType(type));
+    const showClose =
+        !isMultiple && types.every((type) => type === SHAPES.line);
 
     return (
         <VStack align={"start"} w={"100%"}>
@@ -25,15 +26,8 @@ export const StrokeBlock = ({ ids, types }) => {
                 <LineJoinBlock ids={ids} />
                 <LineCapBlock ids={ids} />
             </HStack>
-            {showLineSpecifics && (
-                <HStack justify={"space-between"} w={"100%"}>
-                    <TensionBlock ids={ids} />
-                    <VStack>
-                        <CloseBlock ids={ids} />
-                        {/* <BezierBlock ids={ids} /> */}
-                    </VStack>
-                </HStack>
-            )}
+            {showLineSpecifics && <TensionBlock ids={ids} />}
+            {showClose && <CloseBlock ids={ids} />}
         </VStack>
     );
 };

@@ -20,10 +20,10 @@ export const CloseBlock = ({ ids }) => {
             onCheckedChange={(e) => onChange(e.checked)}
         >
             <Switch.HiddenInput />
-            <Switch.Label>{LOCALE.closePoly}</Switch.Label>
             <Switch.Control>
                 <Switch.Thumb />
             </Switch.Control>
+            <Switch.Label>{LOCALE.closePoly}</Switch.Label>
         </Switch.Root>
     );
 };
