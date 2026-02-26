@@ -78,7 +78,7 @@ export function createSelectTool() {
             if (e.target.hasName("node")) {
                 applySelectionClick(e, ctx, { allowToggle: true });
             } else if (e.target === stage) {
-                ctx.setSelectedIds([]);
+                if (ctx.getSelectedIds().length > 0) ctx.setSelectedIds([]);
                 const wp = toWorld(stage, stage.getPointerPosition());
                 start = wp;
                 showBox(ctx, { x: wp.x, y: wp.y, width: 0, height: 0 });
