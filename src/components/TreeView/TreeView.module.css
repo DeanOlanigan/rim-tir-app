@@ -21,6 +21,10 @@
     background-color: var(--chakra-colors-bg-emphasized);
 }
 
+[role="treeitem"]:has(.node:global(.highlighted)):hover {
+    background-color: var(--chakra-colors-color-palette-emphasized);
+}
+
 /* Выбранныей узел + ховер] */
 [role="treeitem"][aria-selected="true"]:has(.node):hover {
     background-color: var(--chakra-colors-color-palette-emphasized);
@@ -45,6 +49,18 @@
 }
 
 [role="treeitem"][aria-selected="true"]:has(
+        .node:global(.isSelectedStart.isSelectedEnd.isInternal)
+    ) {
+    border-radius: var(--chakra-radii-md) var(--chakra-radii-md) 0 0;
+}
+
+[role="treeitem"][aria-selected="true"]:has(
+        .node:global(.isSelectedEnd.isInternal)
+    ) {
+    border-radius: 0;
+}
+
+[role="treeitem"][aria-selected="true"]:has(
         .node:global(.isSelectedStart.isSelectedEnd)
     ) {
     border-radius: var(--chakra-radii-md);
@@ -53,6 +69,15 @@
 [role="treeitem"]:has(.node:global(.willReceiveDrop)) {
     outline: 2px solid var(--chakra-colors-color-palette-solid);
     outline-offset: -2px;
+}
+
+[role="treeitem"]:has(.node:global(.highlighted)) {
+    background-color: var(--chakra-colors-color-palette-subtle);
+    border-radius: 0;
+}
+
+[role="treeitem"]:has(.node:global(.roundBottom)) {
+    border-radius: 0 0 var(--chakra-radii-md) var(--chakra-radii-md);
 }
 
 .node {

@@ -9,7 +9,7 @@ const placeholderStyle = {
 const lineStyle = {
     flex: 1,
     height: "2px",
-    bg: "bg.inverted",
+    bg: "colorPalette.solid",
     borderRadius: "1px",
 };
 

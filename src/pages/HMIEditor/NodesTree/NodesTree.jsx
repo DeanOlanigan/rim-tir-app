@@ -9,11 +9,72 @@ import { useNodeStore } from "../store/node-store";
 import { flyToNode } from "../utils/flyToNode";
 import { IndentLines } from "@/components/TreeView/IndentLines";
 import { VisibleButton } from "./VisibleButton";
-import { setEquals, toSet, useNodesData } from "./helpers";
+import { setEquals, useNodesData } from "./helpers";
 import { useThrottledResizeObserver } from "@/hooks/useThrottledResizeObserver";
 import { LOCALE, SHAPES_ICONS } from "../constants";
 import { useArboristSelectionSync } from "./useArboristSelectionSync";
 import { useContextMenuStore } from "@/store/contextMenu-store";
+import { DropCursor } from "@/components/TreeView/DropCursor";
+
+function isSameOrInside(node, possibleAncestor) {
+    // node: NodeApi (куда дропаем)
+    // possibleAncestor: NodeApi (что тащим)
+    let cur = node;
+    while (cur) {
+        if (cur.id === possibleAncestor.id) return true; // в себя или в своего потомка
+        cur = cur.parent;
+    }
+    return false;
+}
+
+function collectDescendantIds(nodeApi) {
+    const out = [];
+    const stack = [...(nodeApi.children ?? [])];
+    while (stack.length) {
+        const n = stack.pop();
+        out.push(n.id);
+        if (n.children?.length) stack.push(...n.children);
+    }
+    return out;
+}
+
+function collectAncestorIds(nodeApi) {
+    const out = [];
+    let p = nodeApi.parent;
+    while (p) {
+        out.push(p.id);
+        p = p.parent;
+    }
+    return out;
+}
+
+function normalizeSelection(tree, nextSelected, addedIds) {
+    const selected = new Set(nextSelected);
+
+    for (const id of addedIds) {
+        const node = tree.get?.(id);
+        if (!node) continue;
+
+        // 1) если выбрали ребёнка — выкинуть предков
+        for (const ancId of collectAncestorIds(node)) selected.delete(ancId);
+
+        // 2) если выбрали родителя — выкинуть детей/всех потомков
+        for (const descId of collectDescendantIds(node))
+            selected.delete(descId);
+    }
+
+    return selected;
+}
+
+function getHighlightRootId(node) {
+    // ближайший выбранный предок (сам node не считается)
+    let p = node.parent;
+    while (p) {
+        if (p.isSelected) return p.id;
+        p = p.parent;
+    }
+    return null;
+}
 
 export const NodesTree = ({ api }) => {
     const data = useNodesData();
@@ -58,16 +119,20 @@ export const NodesTree = ({ api }) => {
         const tree = treeRef.current;
         if (!tree) return;
 
-        if (
-            setEquals(
-                tree.selectedIds,
-                toSet(useNodeStore.getState().selectedIds),
-            )
-        )
-            return;
+        const prev = new Set(useNodeStore.getState().selectedIds);
+        const next = new Set(tree.selectedIds);
+
+        if (setEquals(prev, next)) return;
+
+        const added = [];
+        for (const id of next) if (!prev.has(id)) added.push(id);
+
+        const normalized = added.length
+            ? normalizeSelection(tree, next, added)
+            : next;
 
         markSelectionFromTree();
-        useNodeStore.getState().setSelectedIds(Array.from(tree.selectedIds));
+        useNodeStore.getState().setSelectedIds(Array.from(normalized));
     };
 
     const handleRename = ({ id, name }) => {
@@ -77,12 +142,23 @@ export const NodesTree = ({ api }) => {
     const handleContextMenu = (e, id) => {
         e.preventDefault();
         e.stopPropagation();
+        useNodeStore.getState().setSelectedIds([id]);
         useContextMenuStore.getState().updateContext("sch", {
             x: e.clientX,
             y: e.clientY,
             apiPath: [id],
             visible: true,
         });
+    };
+
+    const handleDisableDrop = (args) => {
+        const { parentNode, dragNodes } = args;
+        if (!parentNode) return false;
+        return (
+            dragNodes.some((dragNode) =>
+                isSameOrInside(parentNode, dragNode),
+            ) ?? false
+        );
     };
 
     return (
@@ -117,9 +193,32 @@ export const NodesTree = ({ api }) => {
                         rowHeight={32}
                         onSelect={handleSelect}
                         onRename={handleRename}
-                        disableDrag
+                        disableDrop={handleDisableDrop}
+                        renderCursor={DropCursor}
+                        onMove={() => {}}
                     >
-                        {({ node, style, dragHandle }) => {
+                        {({ node, style, dragHandle, tree }) => {
+                            const rootId = getHighlightRootId(node);
+                            const hl = rootId != null && !node.isSelected;
+
+                            const visible = tree.visibleNodes;
+
+                            const next = Array.isArray(visible)
+                                ? visible[node.rowIndex + 1]
+                                : null;
+
+                            const nextRootId = next
+                                ? getHighlightRootId(next)
+                                : null;
+                            const nextHighlighted = next
+                                ? nextRootId != null && !next.isSelected
+                                : false;
+
+                            // roundBottom только если подсветка "заканчивается" в следующей строке
+                            const roundBottom =
+                                hl &&
+                                !(nextHighlighted && nextRootId === rootId);
+
                             return (
                                 <div
                                     ref={dragHandle}
@@ -128,6 +227,10 @@ export const NodesTree = ({ api }) => {
                                     }
                                     style={style}
                                     className={clsx(
+                                        {
+                                            highlighted: hl,
+                                            roundBottom: roundBottom,
+                                        },
                                         styles.node,
                                         node.state,
                                         "group",
