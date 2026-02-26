@@ -11,6 +11,7 @@ import {
 } from "../commands";
 import { pastePayloadCommand } from "../commands/clipboard/pastePayload.command";
 import { alignNodesCommand } from "../commands/nodes/alignNodesCommand";
+import { moveNodesInTreeCommand } from "../commands/nodes/moveNodesInTree";
 
 export const createNodesSlice = (api) => {
     return {
@@ -33,5 +34,7 @@ export const createNodesSlice = (api) => {
             pastePayloadCommand(api, payload, placement),
         duplicateNodes: (ids, opts) => duplicateNodesCommand(api, ids, opts),
         alignNodes: (ids, alignType) => alignNodesCommand(api, ids, alignType),
+        moveNodes: (ids, parentId, index) =>
+            moveNodesInTreeCommand(api, ids, parentId, index),
     };
 };

@@ -161,6 +161,10 @@ export const NodesTree = ({ api }) => {
         );
     };
 
+    const handleMove = ({ dragIds, parentId, index }) => {
+        useNodeStore.getState().moveNodes(dragIds, parentId ?? null, index);
+    };
+
     return (
         <Flex
             direction={"column"}
@@ -195,7 +199,7 @@ export const NodesTree = ({ api }) => {
                         onRename={handleRename}
                         disableDrop={handleDisableDrop}
                         renderCursor={DropCursor}
-                        onMove={() => {}}
+                        onMove={handleMove}
                     >
                         {({ node, style, dragHandle, tree }) => {
                             const rootId = getHighlightRootId(node);
