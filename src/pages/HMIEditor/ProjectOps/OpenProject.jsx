@@ -31,8 +31,8 @@ export const OpenProject = ({ children, onProjectLoad }) => {
             try {
                 const name = (file?.name ?? "").toLowerCase();
                 if (name.endsWith(".tir-project")) {
-                    const { project } = await parseProjectPackage(file);
-                    onProjectLoad(project, file.name);
+                    const { project, files } = await parseProjectPackage(file);
+                    onProjectLoad(project, file.name, files);
                 } else {
                     const text = await file.text();
                     const json = JSON.parse(text);

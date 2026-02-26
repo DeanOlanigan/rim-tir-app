@@ -7,6 +7,7 @@ import {
     THUMBNAIL_TARGET_WIDTH,
 } from "../constants";
 import "../canvas/shapes/VariablePolygon";
+import { getAssetRuntime } from "../assets/assetRuntimeRegistry";
 
 function pick(obj, keys) {
     const out = {};
@@ -25,7 +26,6 @@ const COMMON_ATTRS = [
     "skewY",
     "opacity",
     "visible",
-    "listening",
     "name",
 ];
 
@@ -34,29 +34,26 @@ const STYLE_ATTRS = [
     "fill",
     "stroke",
     "strokeWidth",
-    "dash",
-    "dashOffset",
-    "lineCap",
     "lineJoin",
-    "shadowColor",
-    "shadowBlur",
-    "shadowOffsetX",
-    "shadowOffsetY",
-    "shadowOpacity",
+    "lineCap",
+    "dashEnabled",
+    "dash",
 ];
 
 // Для текста
 const TEXT_ATTRS = [
-    "text",
     "fontSize",
-    "fontFamily",
-    "fontStyle",
+    "text",
+    "lineHeight",
+    "letterSpacing",
     "align",
     "verticalAlign",
-    "padding",
-    "lineHeight",
     "wrap",
     "ellipsis",
+    "padding",
+    "textDecoration",
+    "fontStyle",
+    "fontFamily",
     "fill", // text fill
 ];
 
@@ -72,10 +69,11 @@ function ellipseToKonva(p) {
     };
 }
 
-function createKonvaNodeFromState(node, nodesById) {
+async function createKonvaNodeFromStateAsync(node, nodesById) {
     if (!node) return null;
 
     const common = pick(node, COMMON_ATTRS);
+    const style = pick(node, STYLE_ATTRS);
     // На миниатюре слушатели не нужны
     common.listening = false;
 
@@ -84,7 +82,7 @@ function createKonvaNodeFromState(node, nodesById) {
             // предполагаю что в сторе width/height
             const attrs = {
                 ...common,
-                ...pick(node, STYLE_ATTRS),
+                ...style,
                 width: node.width ?? 0,
                 height: node.height ?? 0,
                 cornerRadius: node.cornerRadius ?? 0,
@@ -96,7 +94,7 @@ function createKonvaNodeFromState(node, nodesById) {
             const k = ellipseToKonva(node); // как у тебя в React-рендере
             const attrs = {
                 ...common,
-                ...pick(node, STYLE_ATTRS),
+                ...style,
                 x: k.x,
                 y: k.y,
                 radiusX: k.radiusX,
@@ -113,7 +111,7 @@ function createKonvaNodeFromState(node, nodesById) {
 
             return new VP({
                 ...common,
-                ...pick(node, STYLE_ATTRS),
+                ...style,
                 x: k.x,
                 y: k.y,
                 radiusX: k.radiusX,
@@ -127,11 +125,11 @@ function createKonvaNodeFromState(node, nodesById) {
         case SHAPES.line: {
             const attrs = {
                 ...common,
-                ...pick(node, STYLE_ATTRS),
+                ...style,
                 points: node.points ?? [],
                 // line-specific
                 tension: node.tension,
-                bezier: node.bezier,
+                closed: node.closed,
             };
             return new Konva.Line(attrs);
         }
@@ -158,17 +156,43 @@ function createKonvaNodeFromState(node, nodesById) {
         }
 
         case SHAPES.group: {
-            const grp = new Konva.Group({
-                ...common,
-            });
-
+            const grp = new Konva.Group({ ...common });
             const children = node.childrenIds ?? [];
             for (const childId of children) {
                 const child = nodesById[childId];
-                const childKonva = createKonvaNodeFromState(child, nodesById);
+                const childKonva = await createKonvaNodeFromStateAsync(
+                    child,
+                    nodesById,
+                );
                 if (childKonva) grp.add(childKonva);
             }
             return grp;
+        }
+
+        case SHAPES.image: {
+            const assetId = node.assetId;
+            if (!assetId) return null;
+
+            const blob = getAssetRuntime(assetId)?.blob;
+            if (!blob) return null;
+
+            let bitmap = null;
+            try {
+                bitmap = await createImageBitmap(blob);
+            } catch (e) {
+                console.warn("thumb image decode failed", assetId, e);
+                return null;
+            }
+
+            const attrs = {
+                ...common,
+                ...style,
+                width: node.width ?? bitmap.width ?? 0,
+                height: node.height ?? bitmap.height ?? 0,
+            };
+
+            const img = new Konva.Image({ ...attrs, image: bitmap });
+            return img;
         }
 
         default:
@@ -209,13 +233,12 @@ export async function renderPageToBlobOffscreen({ state, pageId }) {
     const renderedNodes = [];
     for (const id of rootIds) {
         const node = state.nodes?.[id];
-        const kn = createKonvaNodeFromState(node, state.nodes);
+        const kn = await createKonvaNodeFromStateAsync(node, state.nodes);
         if (kn) {
             layer.add(kn);
             renderedNodes.push(kn);
         }
     }
-
     layer.draw();
 
     // 2) workArea like your getWorkAreaSize

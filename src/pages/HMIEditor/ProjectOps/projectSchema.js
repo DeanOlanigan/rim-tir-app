@@ -1,6 +1,37 @@
 import Ajv from "ajv";
 import { SCHEMA_VERSION } from "../constants";
 
+const sha256Hex = {
+    type: "string",
+    pattern: "^[a-fA-F0-9]{64}$",
+};
+
+const assetMetaSchema = {
+    type: "object",
+    additionalProperties: true, // на старте лучше true, чтобы не падать от лишних полей
+    required: ["id", "mimeType", "byteSize", "hash", "storageKey"],
+    properties: {
+        id: { type: "string" },
+        kind: { type: "string", nullable: true }, // "image"
+        mimeType: { type: "string" },
+        ext: { type: "string", nullable: true },
+        fileName: { type: "string", nullable: true },
+        byteSize: { type: "number" },
+
+        width: { type: "number", nullable: true },
+        height: { type: "number", nullable: true },
+
+        hash: sha256Hex,
+
+        createdAt: { type: "number", nullable: true },
+        firstUsedAt: { type: "number", nullable: true },
+        lastUsedAt: { type: "number", nullable: true },
+
+        storageKey: { type: "string" }, // "assets/<id>.png"
+        source: { type: "string", nullable: true },
+    },
+};
+
 const schema = {
     type: "object",
     additionalProperties: false,
@@ -67,6 +98,15 @@ const schema = {
                     },
                 },
             },
+        },
+        assets: {
+            type: "object",
+            nullable: true,
+            additionalProperties: assetMetaSchema,
+        },
+        assetHashIndex: {
+            type: "object",
+            nullable: true,
         },
     },
 };

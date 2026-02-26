@@ -1,7 +1,12 @@
 import JSZip from "jszip";
-import { SCHEMA_VERSION, THUMB_SPEC } from "@/pages/HMIEditor/constants";
+import {
+    SCHEMA_VERSION,
+    SHAPES,
+    THUMB_SPEC,
+} from "@/pages/HMIEditor/constants";
 import { renderPageToBlobOffscreen } from "./generateThumbnail";
 import { sha256Blob, sha256Text, stableStringify } from "./utils";
+import { getAssetRuntime } from "../assets/assetRuntimeRegistry";
 
 function exportProject(state) {
     return {
@@ -12,7 +17,18 @@ function exportProject(state) {
         pageIdWithThumb: state.pageIdWithThumb,
         pages: state.pages,
         nodes: state.nodes,
+        assets: state.assets,
+        assetHashIndex: state.assetHashIndex,
     };
+}
+
+function collectUsedAssetIds(nodes) {
+    const out = new Set();
+    for (const id in nodes) {
+        const n = nodes[id];
+        if (n?.type === SHAPES.image && n.assetId) out.add(n.assetId);
+    }
+    return [...out];
 }
 
 /**
@@ -20,6 +36,7 @@ function exportProject(state) {
  * @returns {Promise<{ blob: Blob, manifest: any }>}
  */
 export async function buildProjectPackage({ state, tools }) {
+    const zip = new JSZip();
     const project = exportProject(state);
     const thumbPageId = project.pageIdWithThumb ?? project.activePageId;
 
@@ -72,6 +89,37 @@ export async function buildProjectPackage({ state, tools }) {
         });
     }
 
+    const usedAssetIds = collectUsedAssetIds(project.nodes);
+    const assetFiles = [];
+
+    for (const id of usedAssetIds) {
+        const meta = project.assets?.[id];
+        if (!meta) continue;
+
+        const runtime = getAssetRuntime(id);
+        const blob = runtime?.blob;
+        if (!blob) {
+            console.warn("[export] asset blob missing:", id);
+            continue;
+        }
+
+        const sha = await sha256Blob(blob);
+        const bytes = blob.size;
+        const path = `assets/${id}.${meta.ext || "bin"}`;
+
+        assetFiles.push({
+            path,
+            mime: meta.mimeType,
+            bytes,
+            sha256: sha,
+            id,
+        });
+
+        zip.file(path, blob, { compression: "STORE" });
+    }
+
+    files.push(...assetFiles);
+
     const manifest = {
         format: "tir-project",
         formatVersion: 1,
@@ -89,8 +137,6 @@ export async function buildProjectPackage({ state, tools }) {
     const manifestShaTxt = `${manifestSha}  manifest.json\n`;
 
     // 4) zip
-    const zip = new JSZip();
-
     zip.file("project.json", projectJson, {
         compression: "DEFLATE",
     });

@@ -17,24 +17,20 @@ export function useProjectManager(tools, onOpenChange) {
                 onSuccess: () => {
                     //navigate(`?project=${filename}`, { replace: true });
                     fitNodesToFrame(tools.canvasRef, tools.nodesRef);
-                    toaster.create({
-                        type: "success",
-                        title: "Проект загружен из сервера",
-                    });
                     onOpenChange?.({ open: false });
                 },
             });
         });
     };
 
-    const handleOpenLocalProject = (projectData, filename) => {
+    const handleOpenLocalProject = (projectData, filename, files) => {
         guard(() => {
             //navigate("/HMIEditor", { replace: true });
 
             const name = filename.split(".tir-project")[0];
 
             try {
-                applyProjectData(projectData, "local", name);
+                applyProjectData(projectData, "local", name, files);
                 fitNodesToFrame(tools.canvasRef, tools.nodesRef);
                 toaster.create({
                     type: "success",

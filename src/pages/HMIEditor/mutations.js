@@ -40,9 +40,9 @@ export function useOpenProjectMutation() {
         mutationFn: getProject,
         onSuccess: async (blob, filename) => {
             try {
-                const { project } = await parseProjectPackage(blob);
+                const { project, files } = await parseProjectPackage(blob);
 
-                applyProjectData(project, "server", filename);
+                applyProjectData(project, "server", filename, files);
 
                 toaster.create({
                     title: "Проект успешно загружен",

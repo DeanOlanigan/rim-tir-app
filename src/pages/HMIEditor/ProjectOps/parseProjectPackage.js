@@ -9,6 +9,28 @@ import {
     MAX_THUMB_FILE_SIZE,
 } from "../constants";
 
+function isAllowedPath(path) {
+    if (ALLOWED_PATHS.has(path)) return true;
+    return isAllowedAssetPath(path);
+}
+
+function isAllowedAssetPath(path) {
+    if (typeof path !== "string") return false;
+    if (!path.startsWith("assets/")) return false;
+
+    const name = path.slice("assets/".length);
+    if (!name) return false;
+
+    // запрет подпапок
+    if (name.includes("/")) return false;
+
+    // имя
+    if (name.length > 120) return false;
+    if (!/^[a-zA-Z0-9._-]+$/.test(name)) return false;
+
+    return true;
+}
+
 function assert(cond, msg) {
     if (!cond) throw new Error(msg);
 }
@@ -53,7 +75,7 @@ function normalizeAndValidateManifestText(manifestText) {
             `Некорректный пакет: небезопасный путь ${path}`,
         );
         assert(
-            ALLOWED_PATHS.has(path),
+            isAllowedPath(path),
             `Некорректный пакет: недопустимый файл в пакете: ${path}`,
         );
         if (typeof f?.sha256 === "string") {
@@ -99,7 +121,12 @@ async function loadZipSafely(fileOrBlob) {
         );
         // JSZip помечает директории флагом dir
         const zf = zip.files[name];
-        assert(!zf?.dir, "Некорректный пакет: директории не поддерживаются");
+        if (zf?.dir) {
+            assert(
+                name === "assets/",
+                "Некорректный пакет: неизвестная директория в архиве",
+            );
+        }
     }
 
     return zip;
@@ -131,7 +158,12 @@ function getDeclaredFileLimits(path) {
     if (path === "thumbnail.png") return MAX_THUMB_FILE_SIZE;
     if (path === "manifest.json" || path === "manifest.sha256")
         return 128 * 1024;
+    if (path.startsWith("assets/")) return 15 * 1024 * 1024;
     return 256 * 1024;
+}
+
+function bytesToBlob(bytes, mime) {
+    return new Blob([bytes], { type: mime || "application/octet-stream" });
 }
 
 async function extractAndVerifyFiles(zip, manifest) {
@@ -170,7 +202,9 @@ async function extractAndVerifyFiles(zip, manifest) {
             );
         }
 
-        extracted.set(path, { bytes });
+        const mime = f.mime;
+        const blob = bytesToBlob(bytes, mime);
+        extracted.set(path, { bytes, blob, mime });
     }
 
     return extracted;
