@@ -7,25 +7,26 @@ import { getShape } from "./shapes";
 import { useActionsStore } from "../store/actions-store";
 import { dragBound } from "./utils/dragBound";
 import { isLineLikeType } from "../utils";
+import { useInteractiveStore } from "../store/interactive-store";
 
-function transformStartHandler(e) {
-    const node = e.target;
-    const id = node.attrs.id;
-    useNodeStore.getState().beginInteractiveSnapshot([id]);
+function transformStartHandler() {
+    useInteractiveStore.getState().begin();
 }
 
 function transformHandler(e) {
     const node = e.target;
     const id = node.attrs.id;
     const type = node.attrs.type;
+
     const shape = getShape(type);
-    let patch = {};
     if (!shape?.onTransform) {
         console.warn("No onTransform handler for shape type:", type);
         return;
     }
     const res = shape.onTransform(node);
     if (!res) return;
+
+    let patch = {};
     if (type === SHAPES.group) {
         Object.assign(patch, res);
     } else {
@@ -34,9 +35,26 @@ function transformHandler(e) {
     patchStoreRaf(patch);
 }
 
-function transformEndHandler() {
+function transformEndHandler(nodes) {
+    if (nodes.length === 0) return;
+    let patchesById = {};
+    for (const node of nodes) {
+        const { id, type } = node.attrs;
+        const shape = getShape(type);
+        if (!shape?.onTransformEnd) {
+            console.warn("No shape adapter for type:", type);
+            continue;
+        }
+        const res = shape.onTransformEnd(node);
+        if (type === SHAPES.group) {
+            Object.assign(patchesById, res);
+        } else {
+            patchesById[id] = res;
+        }
+    }
+    patchStoreRaf(patchesById);
     patchStoreRaf.flushNow();
-    useNodeStore.getState().commitInteractiveSnapshot();
+    useInteractiveStore.getState().commit();
 }
 
 const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
@@ -95,7 +113,10 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
                 flipEnabled={false}
                 borderDash={selectedIds.length > 1 ? [4, 4] : undefined}
                 anchorDragBoundFunc={anchorBound}
-                onTransformEnd={transformEndHandler}
+                onTransformEnd={() => {
+                    const nodes = transformerRef.current.nodes();
+                    transformEndHandler(nodes);
+                }}
                 onTransform={transformHandler}
                 onTransformStart={transformStartHandler}
             />
@@ -112,9 +133,32 @@ const SelectionRect = ({ id, nodesRef }) => {
     // простая подписка только ради триггера
     useNodeStore((state) => {
         const n = state.nodes[id];
-        return n
-            ? `${n.x}-${n.y}-${n.width}-${n.height}-${n.rotation}-${n.skewX}-${n.skewY}`
-            : "";
+        if (!n) return "";
+        const x = n.x ?? "";
+        const y = n.y ?? "";
+        const w = n.width ?? "";
+        const h = n.height ?? "";
+        const r = n.rotation ?? "";
+        const sx = n.scaleX ?? "";
+        const sy = n.scaleY ?? "";
+        const kx = n.skewX ?? "";
+        const ky = n.skewY ?? "";
+        return `${x}-${y}-${w}-${h}-${r}-${sx}-${sy}-${kx}-${ky}`;
+    });
+
+    useInteractiveStore((s) => {
+        const p = s.patchesById[id];
+        if (!p) return "";
+        const x = p.x ?? "";
+        const y = p.y ?? "";
+        const w = p.width ?? "";
+        const h = p.height ?? "";
+        const r = p.rotation ?? "";
+        const sx = p.scaleX ?? "";
+        const sy = p.scaleY ?? "";
+        const kx = p.skewX ?? "";
+        const ky = p.skewY ?? "";
+        return `${x}-${y}-${w}-${h}-${r}-${sx}-${sy}-${kx}-${ky}`;
     });
 
     const kNode = nodesRef.current.get(id);

@@ -1,3 +1,4 @@
+import { useInteractiveStore } from "./interactive-store";
 import { useNodeStore } from "./node-store";
 import { quantizePatch } from "./utils/patch/quantize";
 
@@ -56,6 +57,7 @@ export const patchStoreRaf = (() => {
         const patchById = queuedPatch;
         queuedPatch = {};
         const cleanedPatch = {};
+        const clearedIds = [];
 
         for (const id in patchById) {
             const raw = patchById[id];
@@ -63,13 +65,26 @@ export const patchStoreRaf = (() => {
 
             const quant = quantizePatch(raw);
             const cleaned = stripNoops(id, quant, nodes);
-            if (!cleaned) continue;
+            if (!cleaned) {
+                clearedIds.push(id);
+                continue;
+            }
 
             cleanedPatch[id] = cleaned;
         }
 
-        if (!Object.keys(cleanedPatch).length) return;
+        if (!Object.keys(cleanedPatch).length && clearedIds.length === 0)
+            return;
 
+        const int = useInteractiveStore.getState();
+        if (int.active) {
+            if (Object.keys(cleanedPatch).length)
+                int.applyPatchNow(cleanedPatch);
+            if (clearedIds.length) int.clearIds(clearedIds);
+            return;
+        }
+
+        if (!Object.keys(cleanedPatch).length) return;
         store.updateNodesRaf(cleanedPatch);
     };
 

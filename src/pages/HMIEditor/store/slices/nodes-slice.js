@@ -1,13 +1,12 @@
 import {
     addNodeCommand,
-    cancelInteractiveSnapshotCommand,
-    commitInteractiveSnapshotCommand,
     duplicateNodesCommand,
     removeNodesCommand,
     reorderLayersCommand,
     updateNodeCommand,
     updateNodesCommand,
     updateNodesRafCommand,
+    updateNodesSilentCommand,
 } from "../commands";
 import { pastePayloadCommand } from "../commands/clipboard/pastePayload.command";
 import { alignNodesCommand } from "../commands/nodes/alignNodesCommand";
@@ -24,10 +23,8 @@ export const createNodesSlice = (api) => {
         updateNodesRaf: (patchesById) =>
             updateNodesRafCommand(api, patchesById),
         updateNodes: (patchesById) => updateNodesCommand(api, patchesById),
-
-        commitInteractiveSnapshot: (property) =>
-            commitInteractiveSnapshotCommand(api, property),
-        cancelInteractiveSnapshot: () => cancelInteractiveSnapshotCommand(api),
+        updateNodesSilent: (patchesById) =>
+            updateNodesSilentCommand(api, patchesById),
 
         reorderLayers: (ids, dir) => reorderLayersCommand(api, ids, dir),
         pastePayload: (payload, placement) =>

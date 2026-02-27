@@ -7,10 +7,10 @@ import {
     RxCornerTopRight,
 } from "react-icons/rx";
 import { LuMaximize } from "react-icons/lu";
-import { applyPatch, sameCheck, useNodesByIds } from "../utils";
+import { applyPatch, sameCheck, useEffectiveParamsByIds } from "../utils";
 import { LOCALE, SHAPES } from "../../constants";
 import { CommittedNumberInput } from "../CommittedNumberInput";
-import { useNodeStore } from "../../store/node-store";
+import { useInteractiveStore } from "../../store/interactive-store";
 
 const CORNER_ICONS = [
     RxCornerTopLeft,
@@ -54,12 +54,21 @@ function toRectCornerRadiusStore([tl, tr, bl, br]) {
 
 export const CornerRadiusBlock = ({ ids, types }) => {
     const idsKey = ids.join("|");
-    const rawCornerRadiuses = useNodesByIds(ids, "cornerRadius");
+    const rawCornerRadiuses = useEffectiveParamsByIds(ids, "cornerRadius");
 
     const allRects = useMemo(
         () => types.length > 0 && types.every((t) => t === SHAPES.rect),
         [types],
     );
+
+    const beginInteractive = () => {
+        const int = useInteractiveStore.getState();
+        if (!int.active) int.begin();
+    };
+    const cancelInteractive = () => {
+        const int = useInteractiveStore.getState();
+        if (int.active) int.cancel();
+    };
 
     // 1) униформное значение на ноду (для rect: только если все 4 угла равны)
     const uniformPerNode = useMemo(
@@ -192,8 +201,6 @@ export const CornerRadiusBlock = ({ ids, types }) => {
     const uniformUiValue =
         typeof uniformValue === "number" ? uniformValue : null;
 
-    const store = useNodeStore.getState();
-
     return (
         <Fieldset.Root>
             <Fieldset.Legend>{LOCALE.cornerRadius}</Fieldset.Legend>
@@ -208,24 +215,11 @@ export const CornerRadiusBlock = ({ ids, types }) => {
                         min={0}
                         max={100}
                         onFocusChange={(d) => {
-                            if (d.focused) {
-                                store.beginInteractiveSnapshot(ids, [
-                                    "cornerRadius",
-                                ]);
-                            } else {
-                                store.clearInteractiveSnapshot();
-                            }
+                            if (!d.focused) cancelInteractive();
                         }}
-                        onScrub={(n) =>
-                            applyPatch(buildUniformPatch(n), false, [
-                                "cornerRadius",
-                            ])
-                        }
-                        onCommit={(n) => {
-                            const patch = buildUniformPatch(n);
-                            applyPatch(patch, false, ["cornerRadius"]);
-                            applyPatch(patch, true, ["cornerRadius"]);
-                        }}
+                        onScrubStart={beginInteractive}
+                        onScrub={(n) => applyPatch(buildUniformPatch(n), false)}
+                        onCommit={(n) => applyPatch(buildUniformPatch(n), true)}
                     />
                     {allRects && (
                         <IconButton
@@ -253,38 +247,22 @@ export const CornerRadiusBlock = ({ ids, types }) => {
                                     min={0}
                                     max={100}
                                     onFocusChange={(d) => {
-                                        if (d.focused) {
-                                            store.beginInteractiveSnapshot(
-                                                ids,
-                                                ["cornerRadius"],
-                                            );
-                                        } else {
-                                            store.clearInteractiveSnapshot();
-                                        }
+                                        if (!d.focused) cancelInteractive();
                                     }}
+                                    onScrubStart={beginInteractive}
                                     onScrub={(n) => {
                                         const patch = buildMixedRectPatch(
                                             index,
                                             n,
                                         );
-                                        applyPatch(patch, false, [
-                                            "cornerRadius",
-                                        ]);
+                                        applyPatch(patch, false);
                                     }}
                                     onCommit={(n) => {
                                         const patch = buildMixedRectPatch(
                                             index,
                                             n,
                                         );
-                                        applyPatch(patch, false, [
-                                            "cornerRadius",
-                                        ]);
-                                        applyPatch(patch, true, [
-                                            "cornerRadius",
-                                        ]);
-                                        store.beginInteractiveSnapshot(ids, [
-                                            "cornerRadius",
-                                        ]);
+                                        applyPatch(patch, true);
                                     }}
                                 />
                             );

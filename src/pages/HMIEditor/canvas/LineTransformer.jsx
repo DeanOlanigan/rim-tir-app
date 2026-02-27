@@ -106,7 +106,7 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
             .getState()
             .beginInteractiveSnapshot(
                 [primaryNode.id],
-                ["points", "width", "height"],
+                ["x", "y", "points", "width", "height"],
             );
     };
 

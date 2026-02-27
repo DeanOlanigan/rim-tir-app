@@ -2,7 +2,7 @@ import { Fieldset, Group, IconButton } from "@chakra-ui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LuProportions } from "react-icons/lu";
 import { useNodeStore } from "../../store/node-store";
-import { applyPatch, isFiniteValue, useNodesByIds } from "../utils";
+import { applyPatch, isFiniteValue, useEffectiveParamsByIds } from "../utils";
 import { isLineLikeType } from "../../utils";
 import { LOCALE } from "../../constants";
 import { CommittedNumberInput } from "../CommittedNumberInput";
@@ -10,6 +10,7 @@ import {
     changeLineDimByStore,
     collectSelectionDimensions,
 } from "./dimensions.op";
+import { useInteractiveStore } from "../../store/interactive-store";
 
 /**
  * Если вдруг ты в будущем будешь уметь менять тип фигуры
@@ -25,8 +26,8 @@ function getType(id) {
 export const DimensionsBlock = ({ ids }) => {
     const idsKey = ids.join("|");
 
-    const widths = useNodesByIds(ids, "width");
-    const heights = useNodesByIds(ids, "height");
+    const widths = useEffectiveParamsByIds(ids, "width");
+    const heights = useEffectiveParamsByIds(ids, "height");
 
     const { width, height } = collectSelectionDimensions(
         ids,
@@ -125,7 +126,15 @@ export const DimensionsBlock = ({ ids }) => {
 
     const toggleAspectRatio = () => setAspectRatio((prev) => !prev);
 
-    const store = useNodeStore.getState();
+    const beginInteractive = () => {
+        const int = useInteractiveStore.getState();
+        if (!int.active) int.begin();
+    };
+
+    const cancelInteractive = () => {
+        const int = useInteractiveStore.getState();
+        if (int.active) int.cancel();
+    };
 
     return (
         <Fieldset.Root>
@@ -140,21 +149,16 @@ export const DimensionsBlock = ({ ids }) => {
                         step={1}
                         min={0}
                         onFocusChange={(d) => {
-                            if (d.focused) {
-                                store.beginInteractiveSnapshot(ids, ["width"]);
-                            } else {
-                                store.clearInteractiveSnapshot();
-                            }
+                            if (!d.focused) cancelInteractive();
                         }}
+                        onScrubStart={beginInteractive}
                         onScrub={(n) => {
                             const patch = buildPatch("width", n);
-                            applyPatch(patch, false, ["width"]);
+                            applyPatch(patch, false);
                         }}
                         onCommit={(n) => {
                             const patch = buildPatch("width", n);
-                            applyPatch(patch, false, ["width"]);
-                            applyPatch(patch, true, ["width"]);
-                            store.beginInteractiveSnapshot(ids, ["width"]);
+                            applyPatch(patch, true);
                         }}
                     />
                     <CommittedNumberInput
@@ -165,20 +169,16 @@ export const DimensionsBlock = ({ ids }) => {
                         step={1}
                         min={0}
                         onFocusChange={(d) => {
-                            if (d.focused) {
-                                store.beginInteractiveSnapshot(ids, ["height"]);
-                            } else {
-                                store.clearInteractiveSnapshot();
-                            }
+                            if (!d.focused) cancelInteractive();
                         }}
+                        onScrubStart={beginInteractive}
                         onScrub={(n) => {
                             const patch = buildPatch("height", n);
-                            applyPatch(patch, false, ["height"]);
+                            applyPatch(patch, false);
                         }}
                         onCommit={(n) => {
                             const patch = buildPatch("height", n);
-                            applyPatch(patch, false, ["height"]);
-                            applyPatch(patch, true, ["height"]);
+                            applyPatch(patch, true);
                         }}
                     />
                     <IconButton

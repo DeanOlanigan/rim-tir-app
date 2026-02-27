@@ -1,19 +1,19 @@
 import { Field, Textarea } from "@chakra-ui/react";
-import { applyPatch, sameCheck, useNodesByIds } from "../../utils";
-import { useNodeStore } from "@/pages/HMIEditor/store/node-store";
+import { applyPatch, sameCheck, useEffectiveParamsByIds } from "../../utils";
 import { LOCALE } from "@/pages/HMIEditor/constants";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useInteractiveStore } from "@/pages/HMIEditor/store/interactive-store";
 
 function applyTextPatch(ids, text, undoable) {
     const patch = {};
     for (const id of ids) patch[id] = { text };
-    applyPatch(patch, undoable, ["text"]);
+    applyPatch(patch, undoable);
 }
 
 export const TextInputBlock = ({ ids }) => {
     const idsKey = ids.join("|");
 
-    const texts = useNodesByIds(ids, "text");
+    const texts = useEffectiveParamsByIds(ids, "text");
     const sameText = sameCheck(texts);
     const mixed = sameText == null;
 
@@ -42,6 +42,16 @@ export const TextInputBlock = ({ ids }) => {
     const lastStringRef = useRef(baseStr); // то, что сейчас набрано
     const lastValidRef = useRef(baseStr); // то, на что откатываемся
 
+    const ensureInteractive = useCallback(() => {
+        const int = useInteractiveStore.getState();
+        if (!int.active) int.begin();
+    }, []);
+
+    const cancelInteractive = useCallback(() => {
+        const int = useInteractiveStore.getState();
+        if (int.active) int.cancel();
+    }, []);
+
     // 1) Синхронизация извне, если не редактируем
     useEffect(() => {
         if (touchedRef.current) return;
@@ -56,7 +66,9 @@ export const TextInputBlock = ({ ids }) => {
         targetRef.current = null;
         lastStringRef.current = lastValidRef.current ?? "";
         setInnerValue(lastValidRef.current ?? "");
-    }, []);
+
+        cancelInteractive();
+    }, [cancelInteractive]);
 
     const commit = useCallback(() => {
         if (committedRef.current) return;
@@ -68,12 +80,13 @@ export const TextInputBlock = ({ ids }) => {
         const { ids: cIds } = getTarget();
         if (cIds && cIds.length) {
             applyTextPatch(cIds, text, true);
-            useNodeStore.getState().clearInteractiveSnapshot();
         }
 
         touchedRef.current = false;
         targetRef.current = null;
-    }, []);
+
+        cancelInteractive();
+    }, [cancelInteractive]);
 
     // 2) Commit при смене выделения (как мы сделали для чисел через contextKey)
     useEffect(() => {
@@ -94,8 +107,10 @@ export const TextInputBlock = ({ ids }) => {
         lastStringRef.current = baseStr;
         lastValidRef.current = baseStr;
         setInnerValue(baseStr);
+
+        cancelInteractive();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [idsKey]); // граница контекста
+    }, [idsKey, cancelInteractive]); // граница контекста
 
     // 3) Safety commit при размонтировании
     useEffect(() => {
@@ -106,11 +121,14 @@ export const TextInputBlock = ({ ids }) => {
             if (cIds && cIds.length) {
                 applyTextPatch(cIds, text, true);
             }
+
+            useInteractiveStore.getState().cancel();
         };
     }, []);
 
     const handleChange = (text) => {
         lockTarget();
+        ensureInteractive();
 
         setInnerValue(text);
         lastStringRef.current = text;
@@ -134,11 +152,6 @@ export const TextInputBlock = ({ ids }) => {
                 maxHeight={"20"}
                 value={innerValue}
                 placeholder={mixed ? LOCALE.mixed : undefined}
-                onFocus={() =>
-                    useNodeStore
-                        .getState()
-                        .beginInteractiveSnapshot(ids, ["text"])
-                }
                 onChange={(e) => handleChange(e.target.value)}
                 onBlur={commit}
                 onKeyDown={(e) => {

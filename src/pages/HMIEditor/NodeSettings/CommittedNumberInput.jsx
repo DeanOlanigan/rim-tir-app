@@ -17,6 +17,7 @@ export const CommittedNumberInput = ({
     disabled = false,
     onFocusChange,
     onScrub,
+    onScrubStart,
     onCommit,
     commitOnUnmount = true,
 }) => {
@@ -186,6 +187,7 @@ export const CommittedNumberInput = ({
                             scrubbingRef.current = true;
                             touchedRef.current = true;
                             committedRef.current = false;
+                            onScrubStart?.();
                         }}
                     >
                         {label}
