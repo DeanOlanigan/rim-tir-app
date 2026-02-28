@@ -86,16 +86,6 @@ export const EditorMenu = ({ tools }) => {
                     hotkey: HOTKEYS.toggleRulers.keyLabel,
                 },
                 {
-                    label: LOCALE.showHitRegions,
-                    value: "show-hit-regions",
-                    type: "checkbox",
-                    isChecked: showHitRegions,
-                    command: () =>
-                        useActionsStore
-                            .getState()
-                            .setShowHitRegions(!showHitRegions),
-                },
-                {
                     label: LOCALE.showStartCoordMarker,
                     value: "show-start-coord-marker",
                     type: "checkbox",
@@ -139,6 +129,17 @@ export const EditorMenu = ({ tools }) => {
             ],
         },
     ];
+
+    if (debugMode) {
+        menuConfig[1].children.push({
+            label: LOCALE.showHitRegions,
+            value: "show-hit-regions",
+            type: "checkbox",
+            isChecked: showHitRegions,
+            command: () =>
+                useActionsStore.getState().setShowHitRegions(!showHitRegions),
+        });
+    }
 
     return (
         <Menu.Root size={"sm"} unmountOnExit lazyMount>
