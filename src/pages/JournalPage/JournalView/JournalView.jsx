@@ -28,7 +28,6 @@ export const JournalView = () => {
             size={"sm"}
             width={"100%"}
             h={"100%"}
-            shadow={"xl"}
             data-state={"open"}
             animationDuration={"slow"}
             animationStyle={{
@@ -90,7 +89,7 @@ const ColumnViewMenu = () => {
                     <LuColumns3 />
                 </IconButton>
             </Menu.Trigger>
-            <Portal>
+            <Portal disabled>
                 <Menu.Positioner>
                     <Menu.Content>
                         <Menu.ItemGroup>

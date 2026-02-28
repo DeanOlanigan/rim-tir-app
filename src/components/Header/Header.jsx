@@ -1,30 +1,15 @@
-import {
-    IconButton,
-    Menu,
-    Portal,
-    Dialog,
-    CloseButton,
-    Center,
-    Flex,
-    Icon,
-} from "@chakra-ui/react";
+import { IconButton, Center } from "@chakra-ui/react";
 import { ColorModeButton } from "@/components/ui/color-mode";
-import { LuSettings, LuLogOut } from "react-icons/lu";
-import {
-    GiChewedSkull,
-    GiGhost,
-    GiPumpkin,
-    GiPumpkinLantern,
-    GiPumpkinMask,
-} from "react-icons/gi";
-
+import { LuSettings, LuLogOut, LuNotebook } from "react-icons/lu";
 import Navigation from "@/components/Navigation/Navigation";
 import { NavLink } from "react-router-dom";
+import { JOURNAL_DIALOG_ID, journalDialog } from "@/journalDialog";
 
 function Header() {
     return (
         <Center as={"header"} gap={"2"} p={"2"}>
             <Navigation />
+            <OpenJournalDialogBtn />
             <SettingsMenu />
             <LogoutBtn />
             <ColorModeButton size={"xs"} />
@@ -35,7 +20,7 @@ export default Header;
 
 const SettingsMenu = () => {
     return (
-        <NavLink to={"settings"}>
+        <NavLink to={"settings"} tabIndex={-1}>
             {({ isActive }) => (
                 <IconButton
                     size={"xs"}
@@ -74,36 +59,21 @@ const LogoutBtn = () => {
     );
 };
 
-// TODO потом придумать куда деть
-// eslint-disable-next-line
-const Pumpkins = () => {
+const OpenJournalDialogBtn = () => {
     return (
-        <Flex gap={"6"}>
-            <Icon
-                as={GiPumpkinLantern}
-                size={"xl"}
-                color={"orange.700"}
-                rotate={"-10"}
-            />
-            <Icon as={GiPumpkinMask} size={"xl"} color={"orange.600"} />
-            <Icon
-                as={GiPumpkin}
-                size={"xl"}
-                color={"orange.700"}
-                rotate={"10"}
-            />
-            <Icon
-                as={GiGhost}
-                size={"xl"}
-                color={"orange.600"}
-                rotate={"-10"}
-            />
-            <Icon
-                as={GiChewedSkull}
-                size={"xl"}
-                color={"orange.700"}
-                rotate={"10"}
-            />
-        </Flex>
+        <IconButton
+            size={"xs"}
+            variant={"ghost"}
+            aria-label="Logout"
+            css={{
+                _icon: {
+                    width: "5",
+                    height: "5",
+                },
+            }}
+            onClick={() => journalDialog.open(JOURNAL_DIALOG_ID)}
+        >
+            <LuNotebook />
+        </IconButton>
     );
 };

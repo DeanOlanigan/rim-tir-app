@@ -5,6 +5,7 @@ import { Container, Flex, Heading } from "@chakra-ui/react";
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { useAppStore } from "@/store/app-store";
+import { journalDialog } from "@/journalDialog";
 
 export const PublicLayout = () => {
     return <Outlet />;
@@ -14,6 +15,7 @@ export const PrivateLayout = () => {
     const fullScreenMode = useAppStore((state) => state.fullScreenMode);
     return (
         <>
+            <journalDialog.Viewport />
             <Toaster />
             {!fullScreenMode && <Header />}
             <Outlet />

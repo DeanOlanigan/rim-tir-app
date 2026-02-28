@@ -1,13 +1,20 @@
 import { NavLink } from "react-router-dom";
-import { Button, Flex } from "@chakra-ui/react";
+import { Button, Flex, Icon } from "@chakra-ui/react";
+import {
+    LuActivity,
+    LuChartLine,
+    LuCog,
+    LuScrollText,
+    LuSquareMousePointer,
+} from "react-icons/lu";
 
 const navItems = [
-    { name: "Конфигурация", path: "configuration" },
-    { name: "Мониторинг", path: "monitoring" },
-    { name: "Логирование", path: "log" },
-    { name: "Журналирование", path: "journal" },
-    { name: "Графики", path: "graph" },
-    { name: "Редактор HMI", path: "HMIEditor" },
+    { name: "Конфигурация", path: "configuration", icon: LuCog },
+    { name: "Мониторинг", path: "monitoring", icon: LuActivity },
+    { name: "Логирование", path: "log", icon: LuScrollText },
+    //{ name: "Журналирование", path: "journal" },
+    { name: "Графики", path: "graph", icon: LuChartLine },
+    { name: "Редактор HMI", path: "HMIEditor", icon: LuSquareMousePointer },
 ];
 
 function Navigation() {
@@ -22,6 +29,7 @@ function Navigation() {
                             variant={isActive ? "solid" : "ghost"}
                             shadow={isActive ? "md" : ""}
                         >
+                            <Icon as={item.icon} />
                             {item.name}
                         </Button>
                     )}
