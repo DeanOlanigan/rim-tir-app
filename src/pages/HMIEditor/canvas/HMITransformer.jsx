@@ -1,4 +1,4 @@
-import { Rect, Transformer } from "react-konva";
+import { Transformer } from "react-konva";
 import { ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS, SHAPES } from "../constants";
 import { memo, useCallback, useEffect } from "react";
 import { useNodeStore } from "../store/node-store";
@@ -10,6 +10,7 @@ import { isLineLikeType } from "../utils";
 import { useInteractiveStore } from "../store/interactive-store";
 
 function transformStartHandler() {
+    patchStoreRaf.cancel();
     useInteractiveStore.getState().begin();
 }
 
@@ -103,83 +104,22 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
     );
 
     return (
-        <>
-            <Transformer
-                ref={transformerRef}
-                keepRatio={false}
-                rotationSnaps={ROTATION_SNAPS}
-                rotationSnapTolerance={ROTATION_SNAP_TOLERANCE}
-                ignoreStroke={true}
-                flipEnabled={false}
-                borderDash={selectedIds.length > 1 ? [4, 4] : undefined}
-                anchorDragBoundFunc={anchorBound}
-                onTransformEnd={() => {
-                    const nodes = transformerRef.current.nodes();
-                    transformEndHandler(nodes);
-                }}
-                onTransform={transformHandler}
-                onTransformStart={transformStartHandler}
-            />
-            {selectedIds.length > 1 &&
-                selectedIds.map((id) => (
-                    <SelectionRect key={id} id={id} nodesRef={nodesRef} />
-                ))}
-        </>
-    );
-};
-export default memo(HMITransformer);
-
-const SelectionRect = ({ id, nodesRef }) => {
-    // простая подписка только ради триггера
-    useNodeStore((state) => {
-        const n = state.nodes[id];
-        if (!n) return "";
-        const x = n.x ?? "";
-        const y = n.y ?? "";
-        const w = n.width ?? "";
-        const h = n.height ?? "";
-        const r = n.rotation ?? "";
-        const sx = n.scaleX ?? "";
-        const sy = n.scaleY ?? "";
-        const kx = n.skewX ?? "";
-        const ky = n.skewY ?? "";
-        return `${x}-${y}-${w}-${h}-${r}-${sx}-${sy}-${kx}-${ky}`;
-    });
-
-    useInteractiveStore((s) => {
-        const p = s.patchesById[id];
-        if (!p) return "";
-        const x = p.x ?? "";
-        const y = p.y ?? "";
-        const w = p.width ?? "";
-        const h = p.height ?? "";
-        const r = p.rotation ?? "";
-        const sx = p.scaleX ?? "";
-        const sy = p.scaleY ?? "";
-        const kx = p.skewX ?? "";
-        const ky = p.skewY ?? "";
-        return `${x}-${y}-${w}-${h}-${r}-${sx}-${sy}-${kx}-${ky}`;
-    });
-
-    const kNode = nodesRef.current.get(id);
-    if (!kNode) return null;
-
-    const bb = kNode.getClientRect({
-        relativeTo: kNode.getStage(),
-        skipStroke: true,
-        skipShadow: true,
-    });
-
-    return (
-        <Rect
-            x={bb.x}
-            y={bb.y}
-            width={bb.width}
-            height={bb.height}
-            stroke="rgb(0, 100, 255)"
-            strokeWidth={2}
-            strokeScaleEnabled={false}
-            listening={false}
+        <Transformer
+            ref={transformerRef}
+            keepRatio={false}
+            rotationSnaps={ROTATION_SNAPS}
+            rotationSnapTolerance={ROTATION_SNAP_TOLERANCE}
+            ignoreStroke={true}
+            flipEnabled={false}
+            borderDash={selectedIds.length > 1 ? [4, 4] : undefined}
+            anchorDragBoundFunc={anchorBound}
+            onTransformEnd={() => {
+                const nodes = transformerRef.current.nodes();
+                transformEndHandler(nodes);
+            }}
+            onTransform={transformHandler}
+            onTransformStart={transformStartHandler}
         />
     );
 };
+export default memo(HMITransformer);

@@ -53,14 +53,7 @@ export const PropertyInput = ({
             min={min}
             max={max}
             disabled={disabled}
-            onFocusChange={(d) => {
-                const int = useInteractiveStore.getState();
-                if (!d.focused) int.cancel();
-            }}
-            onScrubStart={() => {
-                const int = useInteractiveStore.getState();
-                if (!int.active) int.begin();
-            }}
+            onScrubStart={() => useInteractiveStore.getState().begin()}
             onScrub={(n) => {
                 const storeValue = mapToStore(n);
                 if (!isFiniteValue(storeValue)) return;

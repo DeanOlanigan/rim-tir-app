@@ -30,7 +30,6 @@ function partializeHistory(state) {
 function historyDiff(past) {
     if (isNodeHistoryMuted()) return null;
     // Возвращаем full current как "дельту" (рабочий компромисс)
-    // [ ] microdiff
     return past;
 }
 
@@ -70,7 +69,6 @@ export const useNodeStore = create(
                 partialize: partializeHistory,
                 equality: historyEquality,
                 diff: historyDiff,
-                onSave: (state) => console.log("h saved", state),
             },
         ),
         { name: "node-store" },

@@ -175,7 +175,7 @@ export const CommittedNumberInput = ({
             min={min}
             max={max}
             onValueChange={(e) => handleChange(e.value, e.valueAsNumber)}
-            onFocusChange={(d) => onFocusChange(d)}
+            onFocusChange={(d) => onFocusChange?.(d)}
             disabled={disabled}
         >
             <InputGroup

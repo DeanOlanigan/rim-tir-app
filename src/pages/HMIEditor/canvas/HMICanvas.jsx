@@ -9,6 +9,8 @@ import { useToggleHitRegion } from "./hooks/useToggleHitRegion";
 import { useStageKeyboard } from "./hooks/useStageKeyboard";
 import { StartCoords } from "./StartCoords";
 import { Ruler } from "./Ruler";
+import { useEffectiveNode } from "../store/interactive-store";
+import { getNodeParentLocalAABB } from "../store/utils/geometry";
 
 export const HMICanvas = ({
     manager,
@@ -66,8 +68,32 @@ export const HMICanvas = ({
                     canvasRef={canvasRef}
                     overviewRef={overviewLayerRef}
                 />
+                <SelectionRects />
                 <Ruler />
             </Layer>
         </Stage>
+    );
+};
+
+const SelectionRects = () => {
+    const selectedIds = useNodeStore((state) => state.selectedIds);
+    if (selectedIds.length < 2) return null;
+    return selectedIds.map((id) => <SelectionRect key={id} id={id} />);
+};
+
+const SelectionRect = ({ id }) => {
+    const node = useEffectiveNode(id);
+    const aabb = getNodeParentLocalAABB(node);
+    return (
+        <Rect
+            x={aabb.x}
+            y={aabb.y}
+            width={aabb.width}
+            height={aabb.height}
+            stroke="rgb(0, 100, 255)"
+            strokeWidth={2}
+            strokeScaleEnabled={false}
+            listening={false}
+        />
     );
 };

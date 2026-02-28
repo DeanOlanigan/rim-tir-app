@@ -84,6 +84,7 @@ export function createDrawArrowTool() {
                 pointerWidth: 10,
                 strokeWidth: 1,
                 stroke: "#000000",
+                tension: 0,
             });
         },
 

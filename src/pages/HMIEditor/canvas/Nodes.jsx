@@ -93,6 +93,7 @@ const common = {
             node.stopDrag();
             return;
         }
+        patchStoreRaf.cancel();
         useInteractiveStore.getState().begin();
     },
     onDragMove(e) {

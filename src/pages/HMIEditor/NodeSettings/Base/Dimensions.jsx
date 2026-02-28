@@ -128,12 +128,7 @@ export const DimensionsBlock = ({ ids }) => {
 
     const beginInteractive = () => {
         const int = useInteractiveStore.getState();
-        if (!int.active) int.begin();
-    };
-
-    const cancelInteractive = () => {
-        const int = useInteractiveStore.getState();
-        if (int.active) int.cancel();
+        int.begin();
     };
 
     return (
@@ -148,9 +143,6 @@ export const DimensionsBlock = ({ ids }) => {
                         placeholder={LOCALE.mixed}
                         step={1}
                         min={0}
-                        onFocusChange={(d) => {
-                            if (!d.focused) cancelInteractive();
-                        }}
                         onScrubStart={beginInteractive}
                         onScrub={(n) => {
                             const patch = buildPatch("width", n);
@@ -168,9 +160,6 @@ export const DimensionsBlock = ({ ids }) => {
                         placeholder={LOCALE.mixed}
                         step={1}
                         min={0}
-                        onFocusChange={(d) => {
-                            if (!d.focused) cancelInteractive();
-                        }}
                         onScrubStart={beginInteractive}
                         onScrub={(n) => {
                             const patch = buildPatch("height", n);

@@ -19,12 +19,14 @@ import {
     decomposeTRKS,
     getNodeLocalTransformMatrix,
     isHasRadius,
+    isLineLikeType,
     mul,
     round4,
 } from "../../utils";
 import { useNodeStore } from "../../store/node-store";
 import { patchStoreRaf } from "../../store/patchStoreRaf";
 import { useInteractiveStore } from "../../store/interactive-store";
+import { getNodeLocalBounds } from "../../store/utils/geometry";
 
 // TODO Проверить отражения, разобраться со Scale в сторе
 
@@ -48,7 +50,6 @@ function buildRotationPatch(ids, angle) {
 export const RotationBlock = ({ ids }) => {
     const rotArr = useEffectiveParamsByIds(ids, "rotation");
     const rSame = sameCheck(rotArr);
-    const store = useNodeStore.getState();
 
     const idsKey = ids.join("|");
     const uiValue =
@@ -60,15 +61,15 @@ export const RotationBlock = ({ ids }) => {
     };
 
     const finalizeInteractiveIfAny = () => {
-        patchStoreRaf.flushNow?.();
+        patchStoreRaf.cancel();
         const int = useInteractiveStore.getState();
-        if (int.active) int.cancel();
+        int.cancel();
     };
 
     const rotateByDelta = (delta) => {
         finalizeInteractiveIfAny();
 
-        const nodes = store.nodes;
+        const nodes = useNodeStore.getState().nodes;
         const patch = {};
 
         ids.forEach((id, idx) => {
@@ -80,13 +81,13 @@ export const RotationBlock = ({ ids }) => {
             patch[id] = rotateNodeAroundCenterStore(n, next);
         });
 
-        store.updateNodes(patch);
+        useNodeStore.getState().updateNodes(patch);
     };
 
     const flipHorizontal = () => {
         finalizeInteractiveIfAny();
 
-        const nodes = store.nodes;
+        const nodes = useNodeStore.getState().nodes;
         const nodesList = ids.map((id) => nodes[id]).filter(Boolean);
         const pivotWorld = calcGroupAABBCenter(nodesList);
         const patch = {};
@@ -96,12 +97,12 @@ export const RotationBlock = ({ ids }) => {
             patch[id] = flipNodeAroundWorldAxis(n, "x", { pivotWorld });
         });
 
-        store.updateNodes(patch);
+        useNodeStore.getState().updateNodes(patch);
     };
 
     const flipVertical = () => {
         finalizeInteractiveIfAny();
-        const nodes = store.nodes;
+        const nodes = useNodeStore.getState().nodes;
         const nodesList = ids.map((id) => nodes[id]).filter(Boolean);
         const pivotWorld = calcGroupAABBCenter(nodesList);
         const patch = {};
@@ -111,7 +112,7 @@ export const RotationBlock = ({ ids }) => {
             patch[id] = flipNodeAroundWorldAxis(n, "y", { pivotWorld });
         });
 
-        store.updateNodes(patch);
+        useNodeStore.getState().updateNodes(patch);
     };
 
     return (
@@ -127,14 +128,9 @@ export const RotationBlock = ({ ids }) => {
                         step={1}
                         min={-360}
                         max={360}
-                        onFocusChange={(d) => {
-                            if (!d.focused)
-                                useInteractiveStore.getState().cancel();
-                        }}
-                        onScrubStart={() => {
-                            const int = useInteractiveStore.getState();
-                            if (!int.active) int.begin();
-                        }}
+                        onScrubStart={() =>
+                            useInteractiveStore.getState().begin()
+                        }
                         onScrub={(n) => rotateTo(n, false)}
                         onCommit={(n) => rotateTo(n, true)}
                     />
@@ -170,12 +166,17 @@ export const RotationBlock = ({ ids }) => {
 };
 
 function getLocalAnchorForRotation(node, sizeOverride) {
+    const isEllipseLike = isHasRadius(node.type);
+    if (isEllipseLike) return { x: 0, y: 0 };
+
+    if (isLineLikeType(node.type)) {
+        const b = getNodeLocalBounds(node);
+        return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+    }
+
     const w = sizeOverride?.width ?? node.width ?? 0;
     const h = sizeOverride?.height ?? node.height ?? 0;
 
-    const isEllipseLike = isHasRadius(node.type);
-
-    if (isEllipseLike) return { x: 0, y: 0 };
     return { x: w / 2, y: h / 2 };
 }
 

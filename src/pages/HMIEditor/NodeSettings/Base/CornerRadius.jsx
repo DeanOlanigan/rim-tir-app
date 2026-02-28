@@ -63,11 +63,7 @@ export const CornerRadiusBlock = ({ ids, types }) => {
 
     const beginInteractive = () => {
         const int = useInteractiveStore.getState();
-        if (!int.active) int.begin();
-    };
-    const cancelInteractive = () => {
-        const int = useInteractiveStore.getState();
-        if (int.active) int.cancel();
+        int.begin();
     };
 
     // 1) униформное значение на ноду (для rect: только если все 4 угла равны)
@@ -214,9 +210,6 @@ export const CornerRadiusBlock = ({ ids, types }) => {
                         step={1}
                         min={0}
                         max={100}
-                        onFocusChange={(d) => {
-                            if (!d.focused) cancelInteractive();
-                        }}
                         onScrubStart={beginInteractive}
                         onScrub={(n) => applyPatch(buildUniformPatch(n), false)}
                         onCommit={(n) => applyPatch(buildUniformPatch(n), true)}
@@ -246,9 +239,6 @@ export const CornerRadiusBlock = ({ ids, types }) => {
                                     step={1}
                                     min={0}
                                     max={100}
-                                    onFocusChange={(d) => {
-                                        if (!d.focused) cancelInteractive();
-                                    }}
                                     onScrubStart={beginInteractive}
                                     onScrub={(n) => {
                                         const patch = buildMixedRectPatch(

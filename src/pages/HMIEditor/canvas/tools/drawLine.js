@@ -79,6 +79,7 @@ export function createDrawLineTool() {
                 points: [0, 0, info.dx, info.dy],
                 strokeWidth: 1,
                 stroke: "#000000",
+                tension: 0,
             });
         },
 

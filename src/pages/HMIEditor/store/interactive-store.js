@@ -2,58 +2,52 @@ import { create } from "zustand";
 import { useNodeStore } from "./node-store";
 import { useMemo } from "react";
 import { devtools } from "zustand/middleware";
-
-const ARRAY_COMPARE_KEYS = new Set(["points", "dash"]);
-
-function arraysEqualShallow(a, b) {
-    if (a === b) return true;
-    if (!Array.isArray(a) || !Array.isArray(b)) return false;
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
-    return true;
-}
-
-function valuesEqualByKey(key, nextVal, curVal) {
-    if (nextVal === curVal) return true;
-    if (ARRAY_COMPARE_KEYS.has(key)) return arraysEqualShallow(nextVal, curVal);
-    return false;
-}
-
-function stripNoopsAgainstBase(id, patch, baseNodes) {
-    if (!patch) return null;
-    const cur = baseNodes[id];
-    if (!cur) return patch;
-    let out = null;
-    for (const k in patch) {
-        if (!valuesEqualByKey(k, patch[k], cur[k])) {
-            if (!out) out = {};
-            out[k] = patch[k];
-        }
-    }
-    return out;
-}
+import { stripNoops } from "./utils/patchesOps";
+import { getNodeLocalTransformMatrix, mul } from "../utils";
 
 export const useInteractiveStore = create(
     devtools(
         (set, get) => ({
             active: false,
             patchesById: {},
+            baselineNodes: null,
 
             begin() {
-                set({ active: true, patchesById: {} }, undefined, "begin");
+                if (get().active) return;
+                const baseNodesSnapshot = useNodeStore.getState().nodes;
+                set(
+                    {
+                        active: true,
+                        patchesById: {},
+                        baselineNodes: baseNodesSnapshot,
+                    },
+                    undefined,
+                    "begin",
+                );
             },
 
-            // сюда будет писать patchStoreRaf.flush() когда active=true
-            applyPatchNow(patchById) {
-                if (!patchById) return;
+            replacePatches(patchById) {
+                if (!patchById || Object.keys(patchById).length === 0) return;
+
                 const cur = get().patchesById;
-                const next = { ...cur };
+                let changed = false;
+                let next = cur;
+
                 for (const id in patchById) {
-                    const p = patchById[id];
-                    if (!p) continue;
-                    next[id] = { ...(next[id] || {}), ...p };
+                    const incoming = patchById[id];
+                    if (cur[id] === incoming) continue;
+
+                    if (!changed) {
+                        next = { ...cur };
+                        changed = true;
+                    }
+
+                    next[id] = incoming;
                 }
-                set({ patchesById: next }, undefined, "applyPatchNow");
+
+                if (changed) {
+                    set({ patchesById: next }, undefined, "replacePatches");
+                }
             },
 
             clearIds(ids) {
@@ -71,38 +65,44 @@ export const useInteractiveStore = create(
                         delete next[id];
                     }
                 }
-                if (changed) set({ patchesById: next });
+                if (changed) set({ patchesById: next }, undefined, "clearIds");
             },
 
             clear() {
-                set({ active: false, patchesById: {} }, undefined, "clear");
+                set(
+                    { active: false, patchesById: {}, baselineNodes: null },
+                    undefined,
+                    "clear",
+                );
             },
 
             cancel() {
                 get().clear();
             },
 
-            commit({ undoable = true } = {}) {
+            commit() {
                 const nodeStore = useNodeStore.getState();
-                const { active, patchesById } = get();
+                const { active, patchesById, baselineNodes } = get();
                 if (!active) return;
 
-                const baseNodes = nodeStore.nodes;
                 const cleaned = {};
                 for (const id in patchesById) {
                     const p = patchesById[id];
                     if (!p) continue;
-                    const c = stripNoopsAgainstBase(id, p, baseNodes);
+                    const c = stripNoops(id, p, baselineNodes);
                     if (!c) continue;
                     cleaned[id] = c;
                 }
 
-                get().clear();
-
-                if (!Object.keys(cleaned).length) return;
-
-                if (undoable) nodeStore.updateNodes(cleaned);
-                else nodeStore.updateNodesSilent?.(cleaned);
+                if (!Object.keys(cleaned).length) {
+                    get().clear();
+                    return;
+                }
+                try {
+                    nodeStore.updateNodes(cleaned);
+                } finally {
+                    get().clear();
+                }
             },
         }),
         {
@@ -111,47 +111,52 @@ export const useInteractiveStore = create(
     ),
 );
 
+export function getEffectiveNodeWorldTransformMatrix(id) {
+    let node = getEffectiveNode(id);
+    if (!node) return null;
+
+    let M = getNodeLocalTransformMatrix(node);
+    let p = node.parentId ?? null;
+
+    const guard = new Set([id]);
+
+    while (p) {
+        if (guard.has(p)) break;
+        guard.add(p);
+
+        const parent = getEffectiveNode(p);
+        if (!parent) break;
+
+        const P = getNodeLocalTransformMatrix(parent);
+        M = mul(P, M);
+        p = parent.parentId ?? null;
+    }
+
+    return M;
+}
+
 export function getEffectiveNode(id) {
-    const base = useNodeStore.getState().nodes[id];
+    const int = useInteractiveStore.getState();
+    const base = int.active
+        ? (int.baselineNodes[id] ?? useNodeStore.getState().nodes[id])
+        : useNodeStore.getState().nodes[id];
+
     if (!base) return base;
-    const patch = useInteractiveStore.getState().patchesById[id];
+
+    const patch = int.patchesById[id];
     return patch ? { ...base, ...patch } : base;
 }
 
-export function getEffectiveNodesByIds(ids) {
-    const { nodes } = useNodeStore.getState();
-    const { patchesById } = useInteractiveStore.getState();
-    return ids.map((id) => {
-        const base = nodes[id];
-        if (!base) return base;
-        const patch = patchesById[id];
-        return patch ? { ...base, ...patch } : base;
-    });
-}
-
 export function useEffectiveNode(id) {
-    const base = useNodeStore((s) => s.nodes[id]);
+    const active = useInteractiveStore((s) => s.active);
+    const baseline = useInteractiveStore((s) => s.baselineNodes?.[id]);
     const patch = useInteractiveStore((s) => s.patchesById[id]);
+    const liveBase = useNodeStore((s) => s.nodes[id]);
 
     return useMemo(() => {
+        const base = active ? (baseline ?? liveBase) : liveBase;
         if (!base) return base;
         if (!patch) return base;
         return { ...base, ...patch };
-    }, [base, patch]);
-}
-
-export function useEffectiveNodesByIds(ids) {
-    // точечные подписки по каждому id
-    const bases = useNodeStore((s) => ids.map((id) => s.nodes[id]));
-    const patches = useInteractiveStore((s) =>
-        ids.map((id) => s.patchesById[id]),
-    );
-
-    return useMemo(() => {
-        return bases.map((base, i) => {
-            if (!base) return base;
-            const p = patches[i];
-            return p ? { ...base, ...p } : base;
-        });
-    }, [bases, patches]);
+    }, [patch, active, baseline, liveBase]);
 }

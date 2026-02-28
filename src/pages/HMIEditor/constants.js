@@ -14,8 +14,11 @@ export const SCROLL_STRENGTH = 25;
 export const DEFAULT_MIN_ZOOM = 0.2;
 export const DEFAULT_MAX_ZOOM = 30;
 export const FIT_PADDING = 0.85; // 85% of canvas
-export const ROTATION_SNAPS = [0, 45, 90, 135, 180, 225, 270, 315, 360];
-export const ROTATION_SNAP_TOLERANCE = 15;
+export const ROTATION_SNAPS = [
+    0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180, 195, 210, 225, 240,
+    255, 270, 285, 300, 315, 330, 345, 360,
+];
+export const ROTATION_SNAP_TOLERANCE = 10;
 export const GRID_OPACITY = 0.3;
 export const GRID_MAJOR_STEP = 25;
 export const ZOOM_PERCENTAGE_STEP = 0.1;

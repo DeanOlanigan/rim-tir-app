@@ -85,7 +85,7 @@ export const DashBlock = ({ ids }) => {
 
     const beginInteractive = () => {
         const int = useInteractiveStore.getState();
-        if (!int.active) int.begin();
+        int.begin();
     };
     const cancelInteractive = () => {
         const int = useInteractiveStore.getState();
@@ -180,9 +180,6 @@ export const DashBlock = ({ ids }) => {
                             placeholder={LOCALE.mixed}
                             step={1}
                             min={0}
-                            onFocusChange={(d) => {
-                                if (!d.focused) cancelInteractive();
-                            }}
                             onScrubStart={beginInteractive}
                             onScrub={(n) => {
                                 const patch = buildDashPatch(0, n);
@@ -203,9 +200,6 @@ export const DashBlock = ({ ids }) => {
                             placeholder={LOCALE.mixed}
                             step={1}
                             min={0}
-                            onFocusChange={(d) => {
-                                if (!d.focused) cancelInteractive();
-                            }}
                             onScrubStart={beginInteractive}
                             onScrub={(n) => {
                                 const patch = buildDashPatch(1, n);
