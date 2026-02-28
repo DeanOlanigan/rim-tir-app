@@ -17,6 +17,7 @@ import { fitNodesToFrame } from "./utils";
 import { helpDialog } from "./helpDialog";
 import { HelpButton } from "./HelpButton";
 import { KeepToolAfterDrawButton } from "./KeepToolAfterDrawButton";
+import { FullScreenButton } from "./FullScreenButton";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -74,6 +75,7 @@ const HMIEditorContent = () => {
             >
                 <RightPanel api={tools.api} />
             </Box>
+            <FullScreenButton />
             <HelpButton />
             <Box
                 position={"absolute"}

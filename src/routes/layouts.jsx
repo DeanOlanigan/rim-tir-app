@@ -4,18 +4,20 @@ import { Toaster } from "@/components/ui/toaster";
 import { Container, Flex, Heading } from "@chakra-ui/react";
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
+import { useAppStore } from "@/store/app-store";
 
 export const PublicLayout = () => {
     return <Outlet />;
 };
 
 export const PrivateLayout = () => {
+    const fullScreenMode = useAppStore((state) => state.fullScreenMode);
     return (
         <>
             <Toaster />
-            <Header />
+            {!fullScreenMode && <Header />}
             <Outlet />
-            <Footer />
+            {!fullScreenMode && <Footer />}
         </>
     );
 };
