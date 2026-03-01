@@ -4,6 +4,11 @@ import { useMemo } from "react";
 import { devtools } from "zustand/middleware";
 import { stripNoops } from "./utils/patchesOps";
 import { getNodeLocalTransformMatrix, mul } from "../utils";
+import { useShallow } from "zustand/shallow";
+import {
+    calculateContentBounds,
+    getNodeParentLocalAABB,
+} from "./utils/geometry";
 
 export const useInteractiveStore = create(
     devtools(
@@ -159,4 +164,50 @@ export function useEffectiveNode(id) {
         if (!patch) return base;
         return { ...base, ...patch };
     }, [patch, active, baseline, liveBase]);
+}
+
+export function useSelectionBounds(selectedIds) {
+    const active = useInteractiveStore((s) => s.active);
+    const baselineList = useInteractiveStore(
+        useShallow((s) => selectedIds.map((id) => s.baselineNodes?.[id])),
+    );
+    const patchList = useInteractiveStore(
+        useShallow((s) => selectedIds.map((id) => s.patchesById[id])),
+    );
+    const liveBaseList = useNodeStore(
+        useShallow((s) => selectedIds.map((id) => s.nodes[id])),
+    );
+
+    return useMemo(() => {
+        if (!selectedIds.length) return null;
+
+        const nodes = {};
+        for (let i = 0; i < selectedIds.length; i++) {
+            const liveBase = liveBaseList[i];
+            const baseline = baselineList[i];
+            const patch = patchList[i];
+
+            const base = active ? (baseline ?? liveBase) : liveBase;
+            if (!base) continue;
+
+            nodes[selectedIds[i]] = patch ? { ...base, ...patch } : base;
+        }
+
+        if (selectedIds.length === 1) {
+            const node = nodes[selectedIds[0]];
+            if (!node) return null;
+            return getNodeParentLocalAABB(node);
+        }
+
+        const bounds = calculateContentBounds(nodes, selectedIds, (_id, node) =>
+            getNodeParentLocalAABB(node),
+        );
+
+        return {
+            x: bounds.minX,
+            y: bounds.minY,
+            width: bounds.maxX - bounds.minX,
+            height: bounds.maxY - bounds.minY,
+        };
+    }, [selectedIds, active, baselineList, patchList, liveBaseList]);
 }
