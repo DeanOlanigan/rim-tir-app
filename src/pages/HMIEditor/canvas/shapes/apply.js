@@ -56,3 +56,43 @@ export function applyEllipsePatch(konvaNode) {
 
     return patch;
 }
+
+export function applyLinePatch(konvaNode) {
+    const sx = konvaNode.scaleX();
+    const sy = konvaNode.scaleY();
+
+    const oldPoints = konvaNode.points();
+    const newPoints = [];
+    for (let i = 0; i < oldPoints.length; i += 2) {
+        const px = oldPoints[i];
+        const py = oldPoints[i + 1];
+        newPoints[i] = px * sx;
+        newPoints[i + 1] = py * sy;
+    }
+
+    const patch = {
+        x: konvaNode.x(),
+        y: konvaNode.y(),
+        width: konvaNode.width(),
+        height: konvaNode.height(),
+        rotation: konvaNode.rotation(),
+        scaleX: 1,
+        scaleY: 1,
+        skewX: konvaNode.skewX(),
+        skewY: konvaNode.skewY(),
+        points: newPoints,
+    };
+
+    konvaNode.x(patch.x);
+    konvaNode.y(patch.y);
+    konvaNode.width(patch.width);
+    konvaNode.height(patch.height);
+    konvaNode.rotation(patch.rotation);
+    konvaNode.scaleX(1);
+    konvaNode.scaleY(1);
+    konvaNode.skewX(patch.skewX);
+    konvaNode.skewY(patch.skewY);
+    konvaNode.points(newPoints);
+
+    return patch;
+}
