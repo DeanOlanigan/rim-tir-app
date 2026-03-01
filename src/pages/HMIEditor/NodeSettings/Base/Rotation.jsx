@@ -1,4 +1,11 @@
-import { Fieldset, Flex, Group, IconButton } from "@chakra-ui/react";
+import {
+    Badge,
+    Fieldset,
+    Flex,
+    Group,
+    HStack,
+    IconButton,
+} from "@chakra-ui/react";
 import {
     LuFlipHorizontal2,
     LuFlipVertical2,
@@ -131,29 +138,34 @@ export const RotationBlock = ({ ids }) => {
                         onScrub={(n) => rotateTo(n, false)}
                         onCommit={(n) => rotateTo(n, true)}
                     />
-                    <Group attached>
-                        <IconButton
-                            size={"xs"}
-                            variant={"outline"}
-                            onClick={() => rotateByDelta(90)}
-                        >
-                            <LuRotateCwSquare />
-                        </IconButton>
-                        <IconButton
-                            size={"xs"}
-                            variant={"outline"}
-                            onClick={flipHorizontal}
-                        >
-                            <LuFlipHorizontal2 />
-                        </IconButton>
-                        <IconButton
-                            size={"xs"}
-                            variant={"outline"}
-                            onClick={flipVertical}
-                        >
-                            <LuFlipVertical2 />
-                        </IconButton>
-                    </Group>
+                    <HStack gap={2}>
+                        <Badge size={"sm"} colorPalette={"red"}>
+                            Experimental
+                        </Badge>
+                        <Group attached>
+                            <IconButton
+                                size={"xs"}
+                                variant={"outline"}
+                                onClick={() => rotateByDelta(90)}
+                            >
+                                <LuRotateCwSquare />
+                            </IconButton>
+                            <IconButton
+                                size={"xs"}
+                                variant={"outline"}
+                                onClick={flipHorizontal}
+                            >
+                                <LuFlipHorizontal2 />
+                            </IconButton>
+                            <IconButton
+                                size={"xs"}
+                                variant={"outline"}
+                                onClick={flipVertical}
+                            >
+                                <LuFlipVertical2 />
+                            </IconButton>
+                        </Group>
+                    </HStack>
                 </Flex>
             </Fieldset.Content>
         </Fieldset.Root>
