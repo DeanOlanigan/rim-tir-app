@@ -91,7 +91,7 @@ export const RotationBlock = ({ ids }) => {
         ids.forEach((id) => {
             const n = nodes[id];
             if (!n) return;
-            patch[id] = flipNodeAroundWorldAxis(n, "x", { pivotWorld });
+            patch[id] = flipNodeAroundWorldAxis(n, "y", { pivotWorld });
         });
 
         useNodeStore.getState().updateNodes(patch);
@@ -106,7 +106,7 @@ export const RotationBlock = ({ ids }) => {
         ids.forEach((id) => {
             const n = nodes[id];
             if (!n) return;
-            patch[id] = flipNodeAroundWorldAxis(n, "y", { pivotWorld });
+            patch[id] = flipNodeAroundWorldAxis(n, "x", { pivotWorld });
         });
 
         useNodeStore.getState().updateNodes(patch);

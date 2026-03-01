@@ -7,6 +7,7 @@ import {
 } from "./utils";
 import { CommittedNumberInput } from "./CommittedNumberInput";
 import { useInteractiveStore } from "../store/interactive-store";
+import { LOCALE } from "../constants";
 
 // Дефолтные трансформеры, если не переданы пропсы (1 к 1)
 const identity = (v) => v;
@@ -48,7 +49,7 @@ export const PropertyInput = ({
             contextKey={`${idsKey}:${property}`}
             uiValue={uiValue}
             label={label}
-            placeholder={placeholder}
+            placeholder={placeholder || LOCALE.mixed}
             step={step}
             min={min}
             max={max}
