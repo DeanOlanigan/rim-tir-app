@@ -17,9 +17,7 @@ export const FullScreenButton = () => {
             }
         >
             <IconButton
-                position={"absolute"}
-                top={4}
-                right={4}
+                pointerEvents={"auto"}
                 size={"sm"}
                 p={2}
                 variant={"subtle"}

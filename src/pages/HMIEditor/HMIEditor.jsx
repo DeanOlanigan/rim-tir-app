@@ -75,8 +75,16 @@ const HMIEditorContent = () => {
             >
                 <RightPanel api={tools.api} />
             </Box>
-            <FullScreenButton />
-            <HelpButton />
+            <Flex
+                position={"absolute"}
+                bottom={4}
+                right={4}
+                pointerEvents={"none"}
+                gap={2}
+            >
+                <FullScreenButton />
+                <HelpButton />
+            </Flex>
             <Box
                 position={"absolute"}
                 left={0}
