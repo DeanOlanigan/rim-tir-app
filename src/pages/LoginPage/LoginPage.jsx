@@ -65,16 +65,13 @@ const LoginCard = () => {
                 message: "Вход выполнен успешно",
             });
 
-            // Можно сразу положить данные в кэш, чтобы UI не мигал
             queryClient.setQueryData(authKeys.session(), {
                 authenticated: true,
                 user: data.user,
             });
 
-            // И затем подтянуть актуальную сессию с сервера
-            await queryClient.refetchQueries({
+            queryClient.invalidateQueries({
                 queryKey: authKeys.session(),
-                exact: true,
             });
 
             navigate(from, { replace: true });
@@ -113,7 +110,7 @@ const LoginCard = () => {
                     <Field.Root required invalid={!!errors.username}>
                         <Field.Label>Логин</Field.Label>
                         <Input
-                            autoComplete="off"
+                            autoComplete="username"
                             {...register("username", {
                                 required: "Вы должны ввести логин",
                             })}
@@ -127,6 +124,7 @@ const LoginCard = () => {
                     <Field.Root required invalid={!!errors.password}>
                         <Field.Label>Пароль</Field.Label>
                         <PasswordInput
+                            autoComplete="current-password"
                             {...register("password", {
                                 required: "Вы должны ввести пароль",
                             })}

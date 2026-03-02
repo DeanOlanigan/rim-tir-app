@@ -12,6 +12,7 @@ import { JournalTable } from "./JournalTable";
 import { JournalFilter } from "../JournalFilter/JournalFilter";
 import { useJournalStream } from "../JournalStores/journal-stream-store";
 import { useFilterStore } from "../JournalStores/FilterStore";
+import { CanAccess } from "@/CanAccess";
 
 const tableColumns = [
     { label: "Дата и время", value: "date" },
@@ -50,9 +51,11 @@ const JournalHeader = () => {
     return (
         <Flex justifyContent={"space-between"}>
             <Flex gap={"1"}>
-                <IconButton variant={"outline"} size={"xs"}>
-                    <LuDownload />
-                </IconButton>
+                <CanAccess right={"journal.download"}>
+                    <IconButton variant={"outline"} size={"xs"}>
+                        <LuDownload />
+                    </IconButton>
+                </CanAccess>
                 <IconButton
                     variant={"outline"}
                     size={"xs"}

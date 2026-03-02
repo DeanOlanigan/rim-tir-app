@@ -7,6 +7,7 @@ import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "../ProjectManager";
 import { HOTKEYS, LOCALE } from "../constants";
 import { toggleViewOnlyModeAction } from "../actions/toggleViewOnlyModeAction";
 import { useImportToServerAction } from "../hooks/useImportToServerAction";
+import { CanAccess } from "@/CanAccess";
 
 export const EditorMenu = ({ tools }) => {
     const debugMode = useActionsStore((state) => state.debugMode);
@@ -44,6 +45,8 @@ export const EditorMenu = ({ tools }) => {
                         importToServer(tools);
                     },
                     hotkey: HOTKEYS.importToServer.keyLabel,
+                    wrapper: CanAccess,
+                    wrapperProps: { right: "hmi.upload" },
                 },
                 {
                     label: `${LOCALE.download}...`,
@@ -96,6 +99,8 @@ export const EditorMenu = ({ tools }) => {
                             .setShowStartCoordMarker(!showStartCoordMarker),
                 },
             ],
+            wrapper: CanAccess,
+            wrapperProps: { right: "hmi.editor" },
         },
         {
             label: LOCALE.editor,
@@ -115,6 +120,8 @@ export const EditorMenu = ({ tools }) => {
                     value: "view-only-mode",
                     type: "checkbox",
                     isChecked: viewOnlyMode,
+                    wrapper: CanAccess,
+                    wrapperProps: { right: "hmi.editor" },
                     command: () => toggleViewOnlyModeAction(tools),
                     hotkey: HOTKEYS.toggleViewOnly.keyLabel,
                 },
@@ -127,6 +134,8 @@ export const EditorMenu = ({ tools }) => {
                     hotkey: HOTKEYS.openGridDialog.keyLabel,
                 },
             ],
+            wrapper: CanAccess,
+            wrapperProps: { right: "hmi.editor" },
         },
     ];
 
@@ -161,13 +170,33 @@ export const EditorMenu = ({ tools }) => {
     );
 };
 
+const wrapIfNeeded = (node, item) => {
+    if (!item.wrapper) return node;
+
+    const WrapperComponent = item.wrapper;
+    return (
+        <WrapperComponent {...(item.wrapperProps || {})}>
+            {node}
+        </WrapperComponent>
+    );
+};
+
+const renderItemContent = (item) => (
+    <>
+        <Box flex={1}>{item.label}</Box>
+        {item.hotkey && (
+            <Menu.ItemCommand size="sm">{item.hotkey}</Menu.ItemCommand>
+        )}
+    </>
+);
+
 const MenuItem = ({ item }) => {
     if (item.type === "divider") {
         return <Menu.Separator />;
     }
 
-    if (item.children && item.children.length > 0) {
-        return (
+    if (item.children?.length > 0) {
+        const submenu = (
             <Menu.Root
                 unmountOnExit
                 lazyMount
@@ -189,61 +218,34 @@ const MenuItem = ({ item }) => {
                 </Portal>
             </Menu.Root>
         );
+        return wrapIfNeeded(submenu, item);
     }
 
+    let node;
+
     if (item.type === "checkbox") {
-        return (
+        node = (
             <Menu.CheckboxItem
                 checked={item.isChecked}
                 onCheckedChange={item.command}
                 value={item.value}
             >
                 <Menu.ItemIndicator />
-                <Box flex={1}>{item.label}</Box>
-                {item.hotkey && (
-                    <Menu.ItemCommand size={"sm"}>
-                        {item.hotkey}
-                    </Menu.ItemCommand>
-                )}
+                {renderItemContent(item)}
             </Menu.CheckboxItem>
         );
-    }
-
-    if (item.type === "wrapper") {
-        const WrapperComponent = item.wrapper;
-        return (
-            <WrapperComponent {...(item.wrapperProps || {})}>
-                <Menu.Item value={item.value} ps={8}>
-                    <Box flex={1}>{item.label}</Box>
-                    {item.hotkey && (
-                        <Menu.ItemCommand size={"sm"}>
-                            {item.hotkey}
-                        </Menu.ItemCommand>
-                    )}
-                </Menu.Item>
-            </WrapperComponent>
-        );
-    }
-
-    if (item.command) {
-        return (
-            <Menu.Item value={item.value} onClick={item.command} ps={8}>
-                <Box flex={1}>{item.label}</Box>
-                {item.hotkey && (
-                    <Menu.ItemCommand size={"sm"}>
-                        {item.hotkey}
-                    </Menu.ItemCommand>
-                )}
+    } else {
+        node = (
+            <Menu.Item
+                value={item.value}
+                onClick={item.command}
+                disabled={item.disabled}
+                ps={8}
+            >
+                {renderItemContent(item)}
             </Menu.Item>
         );
     }
 
-    return (
-        <Menu.Item value={item.value} onClick={item.command} ps={8}>
-            <Box flex={1}>{item.label}</Box>
-            {item.hotkey && (
-                <Menu.ItemCommand size={"sm"}>{item.hotkey}</Menu.ItemCommand>
-            )}
-        </Menu.Item>
-    );
+    return wrapIfNeeded(node, item);
 };

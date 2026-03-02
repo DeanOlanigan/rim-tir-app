@@ -23,6 +23,7 @@ import { DownloadAllLogsButton } from "./DownloadAllLogsButton";
 import { NoData } from "@/components/NoData";
 import { ErrorInformer } from "@/components/ErrorInformer";
 import { Loader } from "@/components/Loader";
+import { CanAccess } from "@/CanAccess";
 
 const GROUPS = {
     internal: "Логи во внутренней памяти",
@@ -63,7 +64,9 @@ function LogSourceManager() {
                 </Box>
             </Card.Body>
             <Card.Footer>
-                <DownloadAllLogsButton />
+                <CanAccess right={"logs.download"}>
+                    <DownloadAllLogsButton />
+                </CanAccess>
             </Card.Footer>
         </Card.Root>
     );

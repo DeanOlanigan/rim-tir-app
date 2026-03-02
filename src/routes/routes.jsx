@@ -5,7 +5,7 @@ import {
     PublicLayout,
     WideLayout,
 } from "./layouts";
-import { AuthGate, GuestGate } from "./guards";
+import { AuthGate, GuestGate, PermissionGate } from "./guards";
 import {
     configurationLoader,
     monitoringLoader,
@@ -46,47 +46,99 @@ export const routes = [
                         element: <WideLayout />,
                         children: [
                             {
-                                path: "configuration",
-                                loader: configurationLoader,
-                                element: <ConfigurationPage />,
+                                element: (
+                                    <PermissionGate right={"config.view"} />
+                                ),
+                                children: [
+                                    {
+                                        path: "configuration",
+                                        loader: configurationLoader,
+                                        element: <ConfigurationPage />,
+                                    },
+                                ],
                             },
                             {
-                                path: "monitoring",
-                                loader: monitoringLoader,
-                                element: <MonitoringPage />,
+                                element: (
+                                    <PermissionGate right={"monitoring.view"} />
+                                ),
+                                children: [
+                                    {
+                                        path: "monitoring",
+                                        loader: monitoringLoader,
+                                        element: <MonitoringPage />,
+                                    },
+                                ],
                             },
                             {
-                                path: "HMIEditor",
-                                element: <HMIEditor />,
+                                element: <PermissionGate right={"hmi.view"} />,
+                                children: [
+                                    {
+                                        path: "HMIEditor",
+                                        element: <HMIEditor />,
+                                    },
+                                ],
                             },
                         ],
                     },
                     {
                         element: <CenteredLayout />,
                         children: [
-                            { path: "log", element: <LogPage /> },
-                            { path: "journal", element: <JournalPage /> },
-                            { path: "graph", element: <GraphPage /> },
                             {
-                                path: "settings",
-                                loader: settingsLoader,
-                                errorElement: (
-                                    <ErrorScreamer
-                                        text={
-                                            "Ошибка загрузки страницы настроек"
-                                        }
-                                        page={"/settings"}
-                                        keys={[
-                                            "settings",
-                                            "license",
-                                            "roles",
-                                            "users",
-                                        ]}
-                                    />
+                                element: <PermissionGate right={"logs.view"} />,
+                                children: [
+                                    { path: "log", element: <LogPage /> },
+                                ],
+                            },
+                            {
+                                element: (
+                                    <PermissionGate right={"journal.view"} />
                                 ),
-                                element: <SettingsPage />,
+                                children: [
+                                    {
+                                        path: "journal",
+                                        element: <JournalPage />,
+                                    },
+                                ],
+                            },
+                            {
+                                element: (
+                                    <PermissionGate right={"graphs.view"} />
+                                ),
+                                children: [
+                                    { path: "graph", element: <GraphPage /> },
+                                ],
+                            },
+                            {
+                                element: (
+                                    <PermissionGate right={"settings.view"} />
+                                ),
+                                children: [
+                                    {
+                                        path: "settings",
+                                        loader: settingsLoader,
+                                        errorElement: (
+                                            <ErrorScreamer
+                                                text={
+                                                    "Ошибка загрузки страницы настроек"
+                                                }
+                                                page={"/settings"}
+                                                keys={[
+                                                    "settings",
+                                                    "license",
+                                                    "roles",
+                                                    "users",
+                                                ]}
+                                            />
+                                        ),
+                                        element: <SettingsPage />,
+                                    },
+                                ],
                             },
                         ],
+                    },
+                    {
+                        path: "403",
+                        element: "403",
                     },
                 ],
             },

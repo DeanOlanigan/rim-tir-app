@@ -9,6 +9,7 @@ import {
 import { useVariablesStore } from "@/store/variables-store";
 import { useValidationStore } from "@/store/validation-store";
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
+import { CanAccess } from "@/CanAccess";
 
 export const ConfMenu = () => {
     return (
@@ -21,36 +22,43 @@ export const ConfMenu = () => {
             <Portal>
                 <Menu.Positioner>
                     <Menu.Content>
-                        <Menu.Item
-                            value="new-file"
-                            onClick={() =>
-                                configurationInfoDialog.open(
-                                    CONF_INFO_EDIT_DIALOG_ID,
-                                    {
-                                        mode: MODE.CREATE,
-                                    },
-                                )
-                            }
-                        >
-                            Создать...
-                        </Menu.Item>
-
-                        <ConfigurationUploader>
-                            <Menu.Item value="new-txt">Открыть...</Menu.Item>
-                        </ConfigurationUploader>
-                        <Menu.Item
-                            value="rename"
-                            onClick={() =>
-                                configurationInfoDialog.open(
-                                    CONF_INFO_EDIT_DIALOG_ID,
-                                    {
-                                        mode: MODE.EDIT,
-                                    },
-                                )
-                            }
-                        >
-                            Редактировать
-                        </Menu.Item>
+                        <CanAccess right={"config.create"}>
+                            <Menu.Item
+                                value="new-file"
+                                onClick={() =>
+                                    configurationInfoDialog.open(
+                                        CONF_INFO_EDIT_DIALOG_ID,
+                                        {
+                                            mode: MODE.CREATE,
+                                        },
+                                    )
+                                }
+                            >
+                                Создать...
+                            </Menu.Item>
+                        </CanAccess>
+                        <CanAccess right={"config.open"}>
+                            <ConfigurationUploader>
+                                <Menu.Item value="new-txt">
+                                    Открыть...
+                                </Menu.Item>
+                            </ConfigurationUploader>
+                        </CanAccess>
+                        <CanAccess right={"config.edit"}>
+                            <Menu.Item
+                                value="rename"
+                                onClick={() =>
+                                    configurationInfoDialog.open(
+                                        CONF_INFO_EDIT_DIALOG_ID,
+                                        {
+                                            mode: MODE.EDIT,
+                                        },
+                                    )
+                                }
+                            >
+                                Редактировать
+                            </Menu.Item>
+                        </CanAccess>
                         <Menu.Item value="new-win" onClick={downloadStateAsXml}>
                             Сохранить
                         </Menu.Item>

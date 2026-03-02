@@ -6,6 +6,7 @@ import { NODE_TYPES, TREE_TYPES } from "@/config/constants";
 import { crossSelect } from "../Tree/crossSelect";
 import { TbHandStop } from "react-icons/tb";
 import { infoDialog, signalEditDialog } from "../setValue/dialog";
+import { CanAccess } from "@/CanAccess";
 
 export const ContextMenu = () => {
     const { updateContext } = useContextMenuStore.getState();
@@ -56,34 +57,42 @@ export const ContextMenu = () => {
                         )}
                         {isVariable && (
                             <>
-                                <Menu.Item
-                                    value={"manual"}
-                                    onClick={() => {
-                                        signalEditDialog.open("manual", {
-                                            title: "Ручной ввод",
-                                            mode: "manual",
-                                            icon: TbHandStop,
-                                            nodeId,
-                                        });
-                                    }}
+                                <CanAccess
+                                    right={"monitoring.variables.manual_input"}
                                 >
-                                    <TbHandStop />
-                                    Ручной ввод
-                                </Menu.Item>
-                                <Menu.Item
-                                    value={"edit"}
-                                    onClick={() => {
-                                        signalEditDialog.open("edit", {
-                                            title: "Редактор сигнала",
-                                            mode: "edit",
-                                            icon: LuTextCursorInput,
-                                            nodeId,
-                                        });
-                                    }}
+                                    <Menu.Item
+                                        value={"manual"}
+                                        onClick={() => {
+                                            signalEditDialog.open("manual", {
+                                                title: "Ручной ввод",
+                                                mode: "manual",
+                                                icon: TbHandStop,
+                                                nodeId,
+                                            });
+                                        }}
+                                    >
+                                        <TbHandStop />
+                                        Ручной ввод
+                                    </Menu.Item>
+                                </CanAccess>
+                                <CanAccess
+                                    right={"monitoring.variables.signal_editor"}
                                 >
-                                    <LuTextCursorInput />
-                                    Редактор сигнала
-                                </Menu.Item>
+                                    <Menu.Item
+                                        value={"edit"}
+                                        onClick={() => {
+                                            signalEditDialog.open("edit", {
+                                                title: "Редактор сигнала",
+                                                mode: "edit",
+                                                icon: LuTextCursorInput,
+                                                nodeId,
+                                            });
+                                        }}
+                                    >
+                                        <LuTextCursorInput />
+                                        Редактор сигнала
+                                    </Menu.Item>
+                                </CanAccess>
                             </>
                         )}
                         <Menu.Item

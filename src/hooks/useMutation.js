@@ -138,7 +138,7 @@ export function useLogoutMutation() {
                 queryKey: authKeys.session(),
             });
 
-            await queryClient.clear();
+            queryClient.clear();
         },
     });
 }

@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation/Navigation";
 import { NavLink } from "react-router-dom";
 import { JOURNAL_DIALOG_ID, journalDialog } from "@/journalDialog";
 import { useLogoutMutation } from "@/hooks/useMutation";
+import { CanAccess } from "@/CanAccess";
 
 function Header() {
     return (
@@ -21,24 +22,26 @@ export default Header;
 
 const SettingsMenu = () => {
     return (
-        <NavLink to={"settings"} tabIndex={-1}>
-            {({ isActive }) => (
-                <IconButton
-                    size={"xs"}
-                    variant={isActive ? "solid" : "ghost"}
-                    shadow={isActive ? "md" : ""}
-                    aria-label="Settings"
-                    css={{
-                        _icon: {
-                            width: "5",
-                            height: "5",
-                        },
-                    }}
-                >
-                    <LuSettings />
-                </IconButton>
-            )}
-        </NavLink>
+        <CanAccess right={"settings.view"}>
+            <NavLink to={"settings"} tabIndex={-1}>
+                {({ isActive }) => (
+                    <IconButton
+                        size={"xs"}
+                        variant={isActive ? "solid" : "ghost"}
+                        shadow={isActive ? "md" : ""}
+                        aria-label="Settings"
+                        css={{
+                            _icon: {
+                                width: "5",
+                                height: "5",
+                            },
+                        }}
+                    >
+                        <LuSettings />
+                    </IconButton>
+                )}
+            </NavLink>
+        </CanAccess>
     );
 };
 
@@ -65,19 +68,21 @@ const LogoutBtn = () => {
 
 const OpenJournalDialogBtn = () => {
     return (
-        <IconButton
-            size={"xs"}
-            variant={"ghost"}
-            aria-label="Logout"
-            css={{
-                _icon: {
-                    width: "5",
-                    height: "5",
-                },
-            }}
-            onClick={() => journalDialog.open(JOURNAL_DIALOG_ID)}
-        >
-            <LuNotebook />
-        </IconButton>
+        <CanAccess right={"journal.view"}>
+            <IconButton
+                size={"xs"}
+                variant={"ghost"}
+                aria-label="Logout"
+                css={{
+                    _icon: {
+                        width: "5",
+                        height: "5",
+                    },
+                }}
+                onClick={() => journalDialog.open(JOURNAL_DIALOG_ID)}
+            >
+                <LuNotebook />
+            </IconButton>
+        </CanAccess>
     );
 };
