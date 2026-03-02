@@ -5,7 +5,7 @@ import {
     PublicLayout,
     WideLayout,
 } from "./layouts";
-import { AuthGate } from "./guards";
+import { AuthGate, GuestGate } from "./guards";
 import {
     configurationLoader,
     monitoringLoader,
@@ -25,10 +25,15 @@ const HMIEditor =           lazy(() => import("@/pages/HMIEditor/HMIEditor")); /
 
 export const routes = [
     {
-        element: <PublicLayout />,
+        element: <GuestGate />,
         children: [
-            { index: true, element: <LoginPage /> },
-            { path: "login", element: <LoginPage /> },
+            {
+                element: <PublicLayout />,
+                children: [
+                    { index: true, element: <LoginPage /> },
+                    { path: "login", element: <LoginPage /> },
+                ],
+            },
         ],
     },
     {

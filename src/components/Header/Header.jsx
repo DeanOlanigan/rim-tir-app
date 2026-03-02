@@ -4,6 +4,7 @@ import { LuSettings, LuLogOut, LuNotebook } from "react-icons/lu";
 import Navigation from "@/components/Navigation/Navigation";
 import { NavLink } from "react-router-dom";
 import { JOURNAL_DIALOG_ID, journalDialog } from "@/journalDialog";
+import { useLogoutMutation } from "@/hooks/useMutation";
 
 function Header() {
     return (
@@ -42,6 +43,8 @@ const SettingsMenu = () => {
 };
 
 const LogoutBtn = () => {
+    const logoutMutation = useLogoutMutation();
+
     return (
         <IconButton
             size={"xs"}
@@ -53,6 +56,7 @@ const LogoutBtn = () => {
                     height: "5",
                 },
             }}
+            onClick={logoutMutation.mutate}
         >
             <LuLogOut />
         </IconButton>

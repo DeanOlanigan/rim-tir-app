@@ -2,122 +2,108 @@ import {
     Input,
     Box,
     Alert,
-    Grid,
-    Flex,
     VStack,
     Heading,
     Fieldset,
     Field,
     Button,
+    Center,
 } from "@chakra-ui/react";
 import { PasswordInput } from "@/components/ui/password-input";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { LuLogIn } from "react-icons/lu";
-import { Navigate } from "react-router-dom";
-import Lightning from "@/components/Lightning/Lightning";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { login } from "@/api/auth";
+import { authKeys } from "@/api/queryKeys";
 
 function LoginForm() {
-    const isAuthenticated = true;
-
-    console.log("Render LoginForm; isAuthenticated:", isAuthenticated);
-
-    if (isAuthenticated) {
-        return <Navigate to="/configuration" replace />;
-    }
-
     return (
-        <Grid minH={"100svh"} templateColumns={{ base: "1fr", lg: "1fr 1fr" }}>
-            <Box
-                display={{ base: "none", lg: "block" }}
-                position={"relative"}
-                p={"4"}
-                bg={"bg.muted"}
-            >
-                <Lightning
-                    hue={220}
-                    xOffset={0}
-                    speed={0.6}
-                    intensity={0.4}
-                    size={1}
-                />
+        <Center w={"100%"} h={"100%"} bg={"bg.muted"}>
+            <Box w={"100%"} maxW={"xs"}>
+                <LoginCard />
             </Box>
-            <Flex
-                direction={"column"}
-                p={{ base: "6", md: "12" }}
-                bg={"bg.muted"}
-            >
-                <Flex flex={"1"} align={"center"} justify={"center"}>
-                    <Box w={"100%"} maxW={"xs"}>
-                        <LoginCard />
-                    </Box>
-                </Flex>
-            </Flex>
-        </Grid>
+        </Center>
     );
 }
 
 export default LoginForm;
 
 const LoginCard = () => {
-    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const queryClient = useQueryClient();
+
     const [sharedMessage, setSharedMessage] = useState({
         type: null,
         message: null,
     });
+
+    const from = location.state?.from?.pathname || "/configuration";
+
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm();
-    const onSubmit = async (data) => {
-        setLoading(true);
-        try {
-            const response = await fetch("/api/v1/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: new URLSearchParams({
-                    login: data.username,
-                    password: await sha1(data.password),
-                }),
-                credentials: "include",
+    } = useForm({
+        defaultValues: {
+            username: "",
+            password: "",
+        },
+    });
+
+    const loginMutation = useMutation({
+        mutationFn: ({ username, password }) =>
+            login({
+                login: username,
+                password,
+            }),
+        onSuccess: async (data) => {
+            setSharedMessage({
+                type: "success",
+                message: "Вход выполнен успешно",
             });
 
-            if (response.ok) {
-                const data = await response.json();
+            // Можно сразу положить данные в кэш, чтобы UI не мигал
+            queryClient.setQueryData(authKeys.session(), {
+                authenticated: true,
+                user: data.user,
+            });
 
-                if (!data.data.csrf_token) {
-                    setSharedMessage({ type: "error", message: data.message });
-                    return;
-                }
+            // И затем подтянуть актуальную сессию с сервера
+            await queryClient.refetchQueries({
+                queryKey: authKeys.session(),
+                exact: true,
+            });
 
-                setSharedMessage({ type: "success", message: data.message });
-                setLoading(false);
-                /* setTimeout(() => {
-                    login({
-                        serverTime: data.data.server_time,
-                        sessionTimeLeft: data.data.session_time_left,
-                        csrfToken: data.data.csrf_token,
-                    });
-                }, 500); */
-            } else {
-                const errorData = await response.json();
-                setLoading(false);
-                setSharedMessage({ type: "error", message: errorData.message });
-            }
-        } catch (error) {
-            setLoading(false);
-            setSharedMessage({ type: "error", message: error.message });
-        }
+            navigate(from, { replace: true });
+        },
+        onError: (error) => {
+            const message =
+                error?.response?.data?.message ||
+                error?.response?.data?.error ||
+                error?.message ||
+                "Не удалось выполнить вход";
+
+            setSharedMessage({
+                type: "error",
+                message,
+            });
+        },
+    });
+
+    const onSubmit = (data) => {
+        setSharedMessage({ type: null, message: null });
+        loginMutation.mutate(data);
     };
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <Fieldset.Root size={"lg"}>
                 <VStack>
                     <Fieldset.Legend>
-                        <Heading size={"3xl"}>Добро пожаловать!</Heading>
+                        <Heading size={"3xl"}>РиМ-ТИР</Heading>
                     </Fieldset.Legend>
                     <Fieldset.HelperText fontSize={"md"} fontWeight={"medium"}>
                         Введите логин и пароль
@@ -152,7 +138,11 @@ const LoginCard = () => {
                         )}
                     </Field.Root>
                 </Fieldset.Content>
-                <Button loading={loading} size={"xs"} type="submit">
+                <Button
+                    loading={loginMutation.isPending}
+                    size={"xs"}
+                    type="submit"
+                >
                     <LuLogIn />
                     Войти
                 </Button>
@@ -175,13 +165,3 @@ const LoginCard = () => {
         </form>
     );
 };
-
-async function sha1(data) {
-    const text = new TextEncoder().encode(data);
-    // TODO SHA-1 слаб
-    // eslint-disable-next-line
-    const hashBuffer = await crypto.subtle.digest("SHA-1", text);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-    return hash;
-}
