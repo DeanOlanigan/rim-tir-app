@@ -35,7 +35,14 @@ export const PageSuspesnse = () => {
 
 export const WideLayout = () => {
     return (
-        <Flex as={"section"} flex={1} minH={0} h={"100%"} direction={"column"}>
+        <Flex
+            as={"section"}
+            flex={1}
+            minH={0}
+            h={"100%"}
+            direction={"column"}
+            overflowY={"auto"}
+        >
             <Suspense fallback={<PageSuspesnse />}>
                 <Outlet />
             </Suspense>

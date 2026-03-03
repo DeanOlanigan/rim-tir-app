@@ -21,12 +21,12 @@ export const ServerSettings = () => {
 
     return (
         <>
-            <Heading paddingBottom={"2"}>Web Сервер</Heading>
+            <Heading paddingBottom={"2"}>Web-сервер</Heading>
             <Card.Root variant={"elevated"}>
                 <Card.Body>
                     <Fieldset.Root>
                         <Fieldset.Legend>
-                            <Text fontSize={"lg"}>Параметры Web Сервера</Text>
+                            <Text fontSize={"lg"}>Параметры Web-сервера</Text>
                         </Fieldset.Legend>
                         <Fieldset.Content>
                             <Field.Root

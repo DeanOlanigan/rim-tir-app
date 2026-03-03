@@ -13,14 +13,16 @@ export const useTableStore = create((set, get) => ({
     live: {},
     hydrate: (data) => set({ live: data }),
     isUserValid: (newUser) => {
-        return Object.keys(newUser).every(
-            (field) => newUser[field]?.length > 0,
-        );
+        return Object.keys(newUser).every((field) => {
+            if (field === "grandname" && newUser[field] === "") return true;
+            return newUser[field]?.length > 0;
+        });
     },
     isCyrillicOnly: (newUser) => {
         return Object.keys(newUser).every((field) => {
             if (field === "login" || field === "role" || field === "password")
                 return true;
+            if (field === "grandname" && newUser[field] === "") return true;
             if (field === "position")
                 return ROLE_NAME_REGEX.test(newUser[field]);
             return (

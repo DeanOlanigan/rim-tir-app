@@ -28,7 +28,7 @@ export const UsersView = () => {
             >
                 <Card.Header>
                     <Text fontSize={"lg"} fontWeight={"medium"}>
-                        Создание пользователя, ролей и их редактирование
+                        Создание пользователей, ролей и их редактирование
                     </Text>
                     <HStack justifyContent={"flex-end"}>
                         <RoleEditorAndAdder />

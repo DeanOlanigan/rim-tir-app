@@ -54,14 +54,6 @@ export const routes = [
                                 path: "HMIEditor",
                                 element: <HMIEditor />,
                             },
-                        ],
-                    },
-                    {
-                        element: <CenteredLayout />,
-                        children: [
-                            { path: "log", element: <LogPage /> },
-                            { path: "journal", element: <JournalPage /> },
-                            { path: "graph", element: <GraphPage /> },
                             {
                                 path: "settings",
                                 loader: settingsLoader,
@@ -81,6 +73,14 @@ export const routes = [
                                 ),
                                 element: <SettingsPage />,
                             },
+                        ],
+                    },
+                    {
+                        element: <CenteredLayout />,
+                        children: [
+                            { path: "log", element: <LogPage /> },
+                            { path: "journal", element: <JournalPage /> },
+                            { path: "graph", element: <GraphPage /> },
                         ],
                     },
                 ],

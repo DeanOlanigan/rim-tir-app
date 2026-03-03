@@ -3,6 +3,7 @@ import { handleRoleAdd } from "./handleRoleAdd";
 import { Group, IconButton, Input, Text } from "@chakra-ui/react";
 import { LuPlus } from "react-icons/lu";
 import { useRolePostMutation } from "../../hooks/useRolePostMutation";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export const NewRoleAdder = () => {
     const [newRoleName, setNewName] = useState("");
@@ -27,15 +28,18 @@ export const NewRoleAdder = () => {
                     size={"xs"}
                     placeholder="Введите название новой роли"
                 />
-                <IconButton
-                    loading={postMutation.isPending}
-                    size={"xs"}
-                    onClick={() => {
-                        handlePostRole();
-                    }}
-                >
-                    <LuPlus />
-                </IconButton>
+                <Tooltip showArrow content={<Text>Добавить роль</Text>}>
+                    <IconButton
+                        loading={postMutation.isPending}
+                        size={"xs"}
+                        onClick={() => {
+                            handlePostRole();
+                        }}
+                        borderLeftRadius={"0"}
+                    >
+                        <LuPlus />
+                    </IconButton>
+                </Tooltip>
             </Group>
         </>
     );

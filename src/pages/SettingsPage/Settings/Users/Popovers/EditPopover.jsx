@@ -17,11 +17,12 @@ import { useTableStore } from "../../SettingsStore/tablestore";
 import { toaster } from "@/components/ui/toaster";
 import { useUsersPutMutation } from "../../hooks/useUsersPutMutation";
 import { errors } from "../errors";
+import { Tooltip } from "@/components/ui/tooltip";
 
 const fieldNames = {
     name: "Имя",
     surname: "Фамилия",
-    grandname: "Отчество",
+    grandname: "Отчество (Необязательно)",
     position: "Должность",
     role: "Роль",
 };
@@ -148,28 +149,40 @@ export const EditPopover = () => {
                             paddingRight={"4px"}
                             justifyContent={"flex-end"}
                         >
-                            <IconButton
-                                size={"xs"}
-                                variant={"subtle"}
-                                color={"fg.success"}
-                                colorPalette={"green"}
-                                onClick={() => {
-                                    handleEdit();
-                                }}
+                            <Tooltip
+                                showArrow
+                                content={<Text>Применить изменения</Text>}
                             >
-                                <LuCheck />
-                            </IconButton>
-                            <IconButton
-                                onClick={() => {
-                                    setOpen("edit", false);
-                                }}
-                                size={"xs"}
-                                variant={"subtle"}
-                                color={"fg.error"}
-                                colorPalette={"red"}
+                                <IconButton
+                                    size={"xs"}
+                                    variant={"subtle"}
+                                    color={"fg.success"}
+                                    colorPalette={"green"}
+                                    onClick={() => {
+                                        handleEdit();
+                                    }}
+                                    borderRightRadius={"0"}
+                                >
+                                    <LuCheck />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip
+                                showArrow
+                                content={<Text>Отменить изменения</Text>}
                             >
-                                <LuX />
-                            </IconButton>
+                                <IconButton
+                                    onClick={() => {
+                                        setOpen("edit", false);
+                                    }}
+                                    size={"xs"}
+                                    variant={"subtle"}
+                                    color={"fg.error"}
+                                    colorPalette={"red"}
+                                    borderLeftRadius={"0"}
+                                >
+                                    <LuX />
+                                </IconButton>
+                            </Tooltip>
                         </Group>
                     </Popover.Content>
                 </Popover.Positioner>

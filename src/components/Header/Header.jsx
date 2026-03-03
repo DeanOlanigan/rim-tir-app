@@ -1,13 +1,4 @@
-import {
-    IconButton,
-    Menu,
-    Portal,
-    Dialog,
-    CloseButton,
-    Center,
-    Flex,
-    Icon,
-} from "@chakra-ui/react";
+import { IconButton, Center, Flex, Icon, Text } from "@chakra-ui/react";
 import { ColorModeButton } from "@/components/ui/color-mode";
 import { LuSettings, LuLogOut } from "react-icons/lu";
 import {
@@ -20,6 +11,7 @@ import {
 
 import Navigation from "@/components/Navigation/Navigation";
 import { NavLink } from "react-router-dom";
+import { Tooltip } from "../ui/tooltip";
 
 function Header() {
     return (
@@ -37,20 +29,22 @@ const SettingsMenu = () => {
     return (
         <NavLink to={"settings"}>
             {({ isActive }) => (
-                <IconButton
-                    size={"xs"}
-                    variant={isActive ? "solid" : "ghost"}
-                    shadow={isActive ? "md" : ""}
-                    aria-label="Settings"
-                    css={{
-                        _icon: {
-                            width: "5",
-                            height: "5",
-                        },
-                    }}
-                >
-                    <LuSettings />
-                </IconButton>
+                <Tooltip showArrow content={<Text>Настройки</Text>}>
+                    <IconButton
+                        size={"xs"}
+                        variant={isActive ? "solid" : "ghost"}
+                        shadow={isActive ? "md" : ""}
+                        aria-label="Settings"
+                        css={{
+                            _icon: {
+                                width: "5",
+                                height: "5",
+                            },
+                        }}
+                    >
+                        <LuSettings />
+                    </IconButton>
+                </Tooltip>
             )}
         </NavLink>
     );
