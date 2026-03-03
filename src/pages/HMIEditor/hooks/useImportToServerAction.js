@@ -54,17 +54,9 @@ export function useImportToServerAction() {
                     tools,
                 });
 
-                const formData = new FormData();
-                formData.append(
-                    "file",
-                    blob,
-                    `${currentProjectName}.tir-project`,
-                );
-                formData.append("name", currentProjectName);
-
                 await saveMutation.mutateAsync({
                     filename: currentProjectName,
-                    project: formData,
+                    project: blob,
                 });
                 snapshot.markAsImportedToServer();
             } catch (e) {
