@@ -2,13 +2,23 @@ import { useQuery } from "@tanstack/react-query";
 import { useActionsStore } from "../store/actions-store";
 import { getProjects } from "@/api/hmi";
 import { QK } from "@/api";
-import { Alert, Heading, SimpleGrid, Spinner, VStack } from "@chakra-ui/react";
+import {
+    Alert,
+    Heading,
+    Kbd,
+    SimpleGrid,
+    Spinner,
+    Switch,
+    VStack,
+} from "@chakra-ui/react";
 import { ActionCard } from "./ActionCard";
 import { LuCloudUpload, LuPlus } from "react-icons/lu";
 import { OpenProject } from "../ProjectOps";
 import { ProjectCard } from "./ProjectCard";
 import { useProjectManager } from "./useProjectManager";
 import { LOCALE } from "../constants";
+import { toggleViewOnlyModeAction } from "../actions/toggleViewOnlyModeAction";
+import { CanAccess } from "@/CanAccess";
 
 export const ProjectCardList = ({ tools, onOpenChange }) => {
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
@@ -26,6 +36,9 @@ export const ProjectCardList = ({ tools, onOpenChange }) => {
     return (
         <>
             <VStack align={"start"}>
+                <CanAccess right={"hmi.editor"}>
+                    <EditorModeAccess tools={tools} />
+                </CanAccess>
                 <Heading size={"md"}>Действия</Heading>
                 <SimpleGrid columns={[1, 2, 3, 4]} gap={4}>
                     <OpenProject onProjectLoad={handleOpenLocalProject}>
@@ -89,5 +102,35 @@ export const ProjectCardList = ({ tools, onOpenChange }) => {
                 </SimpleGrid>
             </VStack>
         </>
+    );
+};
+
+const EditorModeAccess = ({ tools }) => {
+    const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
+
+    return (
+        <Alert.Root
+            borderStartWidth="3px"
+            borderStartColor="colorPalette.600"
+            size={"sm"}
+        >
+            <Alert.Indicator />
+            <Alert.Content>
+                <Alert.Title>
+                    Для перехода в режим редактора используйте{" "}
+                    <Kbd size={"sm"}>Shift</Kbd>+<Kbd size={"sm"}>V</Kbd>
+                </Alert.Title>
+            </Alert.Content>
+            <Switch.Root
+                size={"sm"}
+                checked={!viewOnlyMode}
+                onCheckedChange={() => toggleViewOnlyModeAction(tools)}
+            >
+                <Switch.HiddenInput />
+                <Switch.Control>
+                    <Switch.Thumb />
+                </Switch.Control>
+            </Switch.Root>
+        </Alert.Root>
     );
 };
