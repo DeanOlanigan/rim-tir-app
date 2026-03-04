@@ -38,7 +38,6 @@ export const JournalSettings = () => {
                                     <Field.Root
                                         invalid={
                                             parseFloat(journal.size) < 0.5 ||
-                                            parseFloat(journal.size) > 5 ||
                                             journal.size.trim() === "" ||
                                             journal.size.trim() === "MB"
                                         }
@@ -57,7 +56,6 @@ export const JournalSettings = () => {
                                             }}
                                             w="100%"
                                             min="0.5"
-                                            max="5"
                                             step="0.5"
                                             size={"sm"}
                                             allowMouseWheel="true"
@@ -71,14 +69,12 @@ export const JournalSettings = () => {
                                             <NumberInput.Input />
                                         </NumberInput.Root>
                                         <Field.ErrorText>
-                                            *Размер не должен быть меньше 0.5
-                                            или больше 5 MB
+                                            *Размер не должен быть меньше 0.5 MB
                                         </Field.ErrorText>
                                     </Field.Root>
                                     <Field.Root
                                         invalid={
                                             Number(journal.files) < 1 ||
-                                            Number(journal.files) > 10 ||
                                             journal.files.trim() === ""
                                         }
                                     >
@@ -96,7 +92,6 @@ export const JournalSettings = () => {
                                             }}
                                             w="100%"
                                             min="1"
-                                            max="10"
                                             size="sm"
                                             allowMouseWheel="true"
                                         >
@@ -105,7 +100,7 @@ export const JournalSettings = () => {
                                         </NumberInput.Root>
                                         <Field.ErrorText>
                                             *Количество файлов не может быть
-                                            меньше 0 или больше 10
+                                            меньше 0
                                         </Field.ErrorText>
                                     </Field.Root>
                                     <Switch.Root

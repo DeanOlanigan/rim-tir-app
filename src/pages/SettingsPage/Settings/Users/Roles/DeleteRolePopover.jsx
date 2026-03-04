@@ -10,6 +10,7 @@ import { useRoleDeleteMutation } from "../../hooks/useRoleDeleteMutation";
 import { useRightsAndRolesStore } from "../../SettingsStore/rights-and-roles-store";
 import { useTableStore } from "../../SettingsStore/tablestore";
 import { LuX } from "react-icons/lu";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export const DeleteRolePopover = ({ id }) => {
     const deleteRoleMutation = useRoleDeleteMutation();
@@ -23,14 +24,16 @@ export const DeleteRolePopover = ({ id }) => {
     return (
         <Popover.Root>
             <Popover.Trigger>
-                <IconButton
-                    size={"2xs"}
-                    variant={"ghost"}
-                    colorPalette={"red"}
-                    borderLeftRadius={"0"}
-                >
-                    <LuX />
-                </IconButton>
+                <Tooltip showArrow content={<Text>Удалить роль</Text>}>
+                    <IconButton
+                        size={"2xs"}
+                        variant={"ghost"}
+                        colorPalette={"red"}
+                        borderLeftRadius={"0"}
+                    >
+                        <LuX />
+                    </IconButton>
+                </Tooltip>
             </Popover.Trigger>
             <Portal>
                 <Popover.Positioner>

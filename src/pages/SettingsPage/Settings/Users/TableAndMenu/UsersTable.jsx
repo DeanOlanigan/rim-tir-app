@@ -6,6 +6,7 @@ import { NoData } from "@/components/NoData";
 import { useEditStore } from "../../SettingsStore/user-edit-store";
 import { useRightsAndRolesStore } from "../../SettingsStore/rights-and-roles-store";
 import { useUsersHistory } from "../../hooks/useUsers";
+import { Tooltip } from "@/components/ui/tooltip";
 
 const tableColumns = [
     { label: "Логин", value: "login" },
@@ -145,19 +146,28 @@ export const UsersTable = () => {
                                             padding="4px"
                                             maxW={"100%"}
                                         >
-                                            <Text
-                                                truncate
-                                                title={
-                                                    key.value === "role"
-                                                        ? roles[cellValue]?.name
-                                                        : cellValue
+                                            <Tooltip
+                                                showArrow
+                                                content={
+                                                    <Text>
+                                                        {key.value === "role"
+                                                            ? roles[cellValue]
+                                                                  ?.name ||
+                                                              "Без роли"
+                                                            : cellValue ||
+                                                              "Отсутствует"}
+                                                    </Text>
                                                 }
                                             >
-                                                {key.value === "role"
-                                                    ? roles[cellValue]?.name ||
-                                                      "Без роли"
-                                                    : cellValue}
-                                            </Text>
+                                                <Text truncate>
+                                                    {key.value === "role"
+                                                        ? roles[cellValue]
+                                                              ?.name ||
+                                                          "Без роли"
+                                                        : cellValue ||
+                                                          "Отсутствует"}
+                                                </Text>
+                                            </Tooltip>
                                         </Table.Cell>
                                     );
                                 })}

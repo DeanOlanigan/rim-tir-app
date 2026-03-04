@@ -1,15 +1,16 @@
-import { Field, Group, IconButton, Input, Table } from "@chakra-ui/react";
+import { Field, Group, IconButton, Input, Table, Text } from "@chakra-ui/react";
 import { LuUserRoundPlus } from "react-icons/lu";
 import { RoleSelector } from "./Roles/RoleSelector";
 import { useUserStore } from "../SettingsStore/user-add-store";
 import { handleAdd } from "./handleAdd";
 import { useUserPostMutation } from "../hooks/useUserPostMutation";
 import { nanoid } from "nanoid";
+import { Tooltip } from "@/components/ui/tooltip";
 
 const inputs = [
     { id: "surname", label: "фамилию" },
     { id: "name", label: "имя" },
-    { id: "grandname", label: "отчество" },
+    { id: "grandname", label: "отчество (необязательно)" },
     { id: "position", label: "должность" },
 ];
 
@@ -31,16 +32,18 @@ export const UserAdder = ({ scrollToBottom }) => {
     return (
         <Table.Row>
             <Table.Cell padding={"4px"}>
-                <IconButton
-                    size={"xs"}
-                    variant={"ghost"}
-                    onClick={() => {
-                        handleUserPost();
-                    }}
-                    loading={postMutation.isPending}
-                >
-                    <LuUserRoundPlus />
-                </IconButton>
+                <Tooltip showArrow content={<Text>Добавить пользователя</Text>}>
+                    <IconButton
+                        size={"xs"}
+                        variant={"ghost"}
+                        onClick={() => {
+                            handleUserPost();
+                        }}
+                        loading={postMutation.isPending}
+                    >
+                        <LuUserRoundPlus />
+                    </IconButton>
+                </Tooltip>
             </Table.Cell>
             <Table.Cell padding={"4px"}>
                 <Group attached>

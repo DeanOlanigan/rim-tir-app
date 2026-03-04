@@ -27,7 +27,6 @@ export const LogSettings = () => {
                             <Field.Root
                                 invalid={
                                     parseFloat(size) < 0.5 ||
-                                    parseFloat(size) > 5 ||
                                     (size || "").trim() === "MB" ||
                                     (size || "").trim() === ""
                                 }
@@ -41,7 +40,6 @@ export const LogSettings = () => {
                                         editSettings(e.value, "size", "Logs");
                                     }}
                                     min={"0.5"}
-                                    max={"5"}
                                     step={"0.5"}
                                     allowMouseWheel="true"
                                     formatOptions={{
@@ -54,14 +52,12 @@ export const LogSettings = () => {
                                     <NumberInput.Input />
                                 </NumberInput.Root>
                                 <Field.ErrorText>
-                                    *Размер не должен быть меньше 0.5 или больше
-                                    5 MB
+                                    *Размер не должен быть меньше 0.5
                                 </Field.ErrorText>
                             </Field.Root>
                             <Field.Root
                                 invalid={
                                     Number(files) < 1 ||
-                                    Number(files) > 10 ||
                                     (size || "").trim === ""
                                 }
                             >
@@ -69,7 +65,6 @@ export const LogSettings = () => {
                                 <NumberInput.Root
                                     w="100%"
                                     min="1"
-                                    max="10"
                                     value={files || ""}
                                     size="sm"
                                     onValueChange={(e) => {
@@ -81,7 +76,6 @@ export const LogSettings = () => {
                                 </NumberInput.Root>
                                 <Field.ErrorText>
                                     *Количество файлов не может быть меньше 0
-                                    или больше 10
                                 </Field.ErrorText>
                             </Field.Root>
                             <Switch.Root

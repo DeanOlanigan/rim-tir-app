@@ -29,7 +29,7 @@ export const UsersView = () => {
             >
                 <Card.Header>
                     <Text fontSize={"lg"} fontWeight={"medium"}>
-                        Создание пользователя, ролей и их редактирование
+                        Создание пользователей, ролей и их редактирование
                     </Text>
                     <CanAccess right={"security.roles.edit"}>
                         <HStack justifyContent={"flex-end"}>
