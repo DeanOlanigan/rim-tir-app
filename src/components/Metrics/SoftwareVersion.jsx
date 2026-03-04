@@ -12,7 +12,7 @@ export const SoftwareVersion = () => {
 
     return (
         <Badge
-            variant={"subtle"}
+            variant={"outline"}
             colorPalette={isError ? "red" : "cyan"}
             textAlign={"center"}
             title={

@@ -9,11 +9,13 @@ import {
     applyPatch,
     isFiniteValue,
     sameCheck,
+    useEffectiveParamsByIds,
     useNodesByIds,
 } from "../../utils";
 import { LOCALE } from "@/pages/HMIEditor/constants";
 import { CommittedNumberInput } from "../../CommittedNumberInput";
 import { useNodeStore } from "@/pages/HMIEditor/store/node-store";
+import { useInteractiveStore } from "@/pages/HMIEditor/store/interactive-store";
 
 const lineTypes = createListCollection({
     items: [
@@ -75,13 +77,23 @@ export const DashBlock = ({ ids }) => {
             break;
     }
 
-    const dashes = useNodesByIds(ids, "dash");
+    const dashes = useEffectiveParamsByIds(ids, "dash");
     const { mixed: dashMixed, value: dashBase } = resolveDash(dashes);
 
     const dashUi0 = dashMixed ? null : normalizeDashPart(dashBase[0], 0);
     const dashUi1 = dashMixed ? null : normalizeDashPart(dashBase[1], 0);
 
+    const beginInteractive = () => {
+        const int = useInteractiveStore.getState();
+        int.begin();
+    };
+    const cancelInteractive = () => {
+        const int = useInteractiveStore.getState();
+        if (int.active) int.cancel();
+    };
+
     const handleTypeChange = (e) => {
+        cancelInteractive();
         const value = e.value[0];
 
         if (value !== "solid" && value !== "dashed") return;
@@ -168,24 +180,14 @@ export const DashBlock = ({ ids }) => {
                             placeholder={LOCALE.mixed}
                             step={1}
                             min={0}
-                            onFocusChange={(d) => {
-                                if (d.focused) {
-                                    store.beginInteractiveSnapshot(ids, [
-                                        "dash",
-                                    ]);
-                                } else {
-                                    store.clearInteractiveSnapshot();
-                                }
-                            }}
+                            onScrubStart={beginInteractive}
                             onScrub={(n) => {
                                 const patch = buildDashPatch(0, n);
-                                applyPatch(patch, false, ["dash"]);
+                                applyPatch(patch, false);
                             }}
                             onCommit={(n) => {
                                 const patch = buildDashPatch(0, n);
-                                applyPatch(patch, false, ["dash"]);
-                                applyPatch(patch, true, ["dash"]);
-                                store.beginInteractiveSnapshot(ids, ["dash"]);
+                                applyPatch(patch, true);
                             }}
                         />
                     </Field.Root>
@@ -198,24 +200,14 @@ export const DashBlock = ({ ids }) => {
                             placeholder={LOCALE.mixed}
                             step={1}
                             min={0}
-                            onFocusChange={(d) => {
-                                if (d.focused) {
-                                    store.beginInteractiveSnapshot(ids, [
-                                        "dash",
-                                    ]);
-                                } else {
-                                    store.clearInteractiveSnapshot();
-                                }
-                            }}
+                            onScrubStart={beginInteractive}
                             onScrub={(n) => {
                                 const patch = buildDashPatch(1, n);
-                                applyPatch(patch, false, ["dash"]);
+                                applyPatch(patch, false);
                             }}
                             onCommit={(n) => {
                                 const patch = buildDashPatch(1, n);
-                                applyPatch(patch, false, ["dash"]);
-                                applyPatch(patch, true, ["dash"]);
-                                store.beginInteractiveSnapshot(ids, ["dash"]);
+                                applyPatch(patch, true);
                             }}
                         />
                     </Field.Root>

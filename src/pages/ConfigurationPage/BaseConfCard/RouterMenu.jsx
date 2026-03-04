@@ -4,12 +4,12 @@ import { useVariablesStore } from "@/store/variables-store";
 import { useValidationStore } from "@/store/validation-store";
 import {
     useRefreshConfigurationMutation,
-    useRestartTirMutation,
     useStartTirMutation,
     useStopTirMutation,
     useUploadConfigurationMutation,
 } from "@/hooks/useMutation";
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
+import { CanAccess } from "@/CanAccess";
 
 export const RouterMenu = () => {
     const errorsTreeSize = useValidationStore((state) => state.errorsTree.size);
@@ -18,7 +18,6 @@ export const RouterMenu = () => {
 
     const startM = useStartTirMutation();
     const stopM = useStopTirMutation();
-    const restartM = useRestartTirMutation();
     const uploadM = useUploadConfigurationMutation();
     const refreshM = useRefreshConfigurationMutation();
 
@@ -39,15 +38,17 @@ export const RouterMenu = () => {
             <Portal>
                 <Menu.Positioner>
                     <Menu.Content>
-                        <Menu.Item
-                            value="new-txt"
-                            onClick={sendConfigHandler}
-                            disabled={uploadM.isPending || hasErrors}
-                        >
-                            {uploadM.isPending
-                                ? "Отправка..."
-                                : "Отправить конфигурацию"}
-                        </Menu.Item>
+                        <CanAccess right={"config.upload"}>
+                            <Menu.Item
+                                value="new-txt"
+                                onClick={sendConfigHandler}
+                                disabled={uploadM.isPending || hasErrors}
+                            >
+                                {uploadM.isPending
+                                    ? "Отправка..."
+                                    : "Отправить конфигурацию"}
+                            </Menu.Item>
+                        </CanAccess>
                         <Menu.Item
                             value="new-file"
                             disabled={refreshM.isPending || sync}
@@ -69,33 +70,28 @@ export const RouterMenu = () => {
                                 ? "Обновление..."
                                 : "Получить конфигурацию"}
                         </Menu.Item>
-                        <Menu.Item
-                            value="start"
-                            onClick={() => startM.mutate()}
-                            disabled={startM.isPending}
-                        >
-                            {startM.isPending
-                                ? "Запуск..."
-                                : "Запустить сервер"}
-                        </Menu.Item>
-                        <Menu.Item
-                            value="stop"
-                            onClick={() => stopM.mutate()}
-                            disabled={stopM.isPending}
-                        >
-                            {stopM.isPending
-                                ? "Остановка..."
-                                : "Остановить сервер"}
-                        </Menu.Item>
-                        <Menu.Item
-                            value="restart"
-                            onClick={() => restartM.mutate()}
-                            disabled={restartM.isPending}
-                        >
-                            {restartM.isPending
-                                ? "Перезапуск..."
-                                : "Перезапустить сервер"}
-                        </Menu.Item>
+                        <CanAccess right={"server.start"}>
+                            <Menu.Item
+                                value="start"
+                                onClick={() => startM.mutate()}
+                                disabled={startM.isPending}
+                            >
+                                {startM.isPending
+                                    ? "Запуск..."
+                                    : "Запустить сервер"}
+                            </Menu.Item>
+                        </CanAccess>
+                        <CanAccess right={"server.stop"}>
+                            <Menu.Item
+                                value="stop"
+                                onClick={() => stopM.mutate()}
+                                disabled={stopM.isPending}
+                            >
+                                {stopM.isPending
+                                    ? "Остановка..."
+                                    : "Остановить сервер"}
+                            </Menu.Item>
+                        </CanAccess>
                     </Menu.Content>
                 </Menu.Positioner>
             </Portal>

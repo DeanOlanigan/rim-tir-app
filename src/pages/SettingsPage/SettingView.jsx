@@ -3,6 +3,7 @@ import { Updates } from "./Settings/Updates";
 import { UsersView } from "./Settings/Users/UsersVeiw";
 import { License } from "./License";
 import { Settings } from "./Settings";
+import { CanAccess } from "@/CanAccess";
 
 export const SettingView = () => {
     return (
@@ -15,9 +16,15 @@ export const SettingView = () => {
             }}
         >
             <Settings />
-            <UsersView />
-            <Updates />
-            <License />
+            <CanAccess right={"security.users.edit"}>
+                <UsersView />
+            </CanAccess>
+            <CanAccess right={"system.software_update"}>
+                <Updates />
+            </CanAccess>
+            <CanAccess right={"security.licensing.manage"}>
+                <License />
+            </CanAccess>
         </Stack>
     );
 };

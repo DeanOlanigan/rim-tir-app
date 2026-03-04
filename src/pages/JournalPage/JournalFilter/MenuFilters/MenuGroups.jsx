@@ -29,7 +29,7 @@ export const MenuGroups = ({ name }) => {
                     <LuArrowBigDown />
                 </Box>
             </Menu.Trigger>
-            <Portal>
+            <Portal disabled>
                 <Menu.Positioner>
                     <Menu.Content>
                         <Menu.ItemGroup>

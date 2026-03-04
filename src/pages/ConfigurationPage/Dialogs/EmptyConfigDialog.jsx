@@ -16,6 +16,7 @@ import {
     CONF_INFO_EDIT_DIALOG_ID,
     MODE,
 } from "../Dialogs/configurationInfoDialog";
+import { CanAccess } from "@/CanAccess";
 
 export const EmptyConfigDialog = () => {
     const info = useVariablesStore((state) => state.info);
@@ -70,31 +71,33 @@ export const EmptyConfigDialog = () => {
                         </Dialog.Body>
                         <Dialog.Footer>
                             <Group grow>
-                                <ConfigurationUploader>
-                                    <Button size={"xs"}>
-                                        Загрузить конфигурацию
-                                    </Button>
-                                </ConfigurationUploader>
-
+                                <CanAccess right={"config.open"}>
+                                    <ConfigurationUploader>
+                                        <Button size={"xs"}>
+                                            Загрузить конфигурацию
+                                        </Button>
+                                    </ConfigurationUploader>
+                                </CanAccess>
                                 <Button
                                     size={"xs"}
                                     onClick={() => refreshM.mutate()}
                                 >
                                     Синхронизировать
                                 </Button>
-
-                                <Button
-                                    size={"xs"}
-                                    ref={ref}
-                                    onClick={() =>
-                                        configurationInfoDialog.open(
-                                            CONF_INFO_EDIT_DIALOG_ID,
-                                            { mode: MODE.CREATE },
-                                        )
-                                    }
-                                >
-                                    Создать конфигурацию
-                                </Button>
+                                <CanAccess right={"config.create"}>
+                                    <Button
+                                        size={"xs"}
+                                        ref={ref}
+                                        onClick={() =>
+                                            configurationInfoDialog.open(
+                                                CONF_INFO_EDIT_DIALOG_ID,
+                                                { mode: MODE.CREATE },
+                                            )
+                                        }
+                                    >
+                                        Создать конфигурацию
+                                    </Button>
+                                </CanAccess>
                             </Group>
                         </Dialog.Footer>
                         <Dialog.CloseTrigger asChild>

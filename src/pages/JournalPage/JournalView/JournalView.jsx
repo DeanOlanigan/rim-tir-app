@@ -12,6 +12,7 @@ import { JournalTable } from "./JournalTable";
 import { JournalFilter } from "../JournalFilter/JournalFilter";
 import { useJournalStream } from "../JournalStores/journal-stream-store";
 import { useFilterStore } from "../JournalStores/FilterStore";
+import { CanAccess } from "@/CanAccess";
 
 const tableColumns = [
     { label: "Дата и время", value: "date" },
@@ -28,7 +29,6 @@ export const JournalView = () => {
             size={"sm"}
             width={"100%"}
             h={"100%"}
-            shadow={"xl"}
             data-state={"open"}
             animationDuration={"slow"}
             animationStyle={{
@@ -46,18 +46,24 @@ export const JournalView = () => {
 };
 
 const JournalHeader = () => {
-    const { isPaused, pause, resume } = useJournalStream();
+    const isPaused = useJournalStream((state) => state.isPaused);
 
     return (
         <Flex justifyContent={"space-between"}>
             <Flex gap={"1"}>
-                <IconButton variant={"outline"} size={"xs"}>
-                    <LuDownload />
-                </IconButton>
+                <CanAccess right={"journal.download"}>
+                    <IconButton variant={"outline"} size={"xs"}>
+                        <LuDownload />
+                    </IconButton>
+                </CanAccess>
                 <IconButton
                     variant={"outline"}
                     size={"xs"}
-                    onClick={() => (isPaused ? resume() : pause())}
+                    onClick={() =>
+                        isPaused
+                            ? useJournalStream.getState().resume()
+                            : useJournalStream.getState().pause()
+                    }
                 >
                     {!isPaused ? <LuPlay /> : <LuPause />}
                 </IconButton>
@@ -72,7 +78,7 @@ const JournalHeader = () => {
 
 // TODO Встроить в таблицу
 const ColumnViewMenu = () => {
-    const { tableColumnsZus, setColons } = useFilterStore();
+    const tableColumnsZus = useFilterStore((state) => state.tableColumnsZus);
     const group = useCheckboxGroup({ value: tableColumnsZus });
 
     const handleCheckboxChange = (value, checked) => {
@@ -80,7 +86,7 @@ const ColumnViewMenu = () => {
             ? [...tableColumnsZus, value]
             : tableColumnsZus.filter((col) => col !== value);
 
-        setColons(newColumns);
+        useFilterStore.getState().setColons(newColumns);
     };
 
     return (
@@ -90,7 +96,7 @@ const ColumnViewMenu = () => {
                     <LuColumns3 />
                 </IconButton>
             </Menu.Trigger>
-            <Portal>
+            <Portal disabled>
                 <Menu.Positioner>
                     <Menu.Content>
                         <Menu.ItemGroup>

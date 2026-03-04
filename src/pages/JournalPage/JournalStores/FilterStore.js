@@ -10,10 +10,10 @@ const ArchiveInitialState = {
 
 export const useFilterStore = create((set) => ({
     selectedGroups: [
-        "Состояние",
-        "Аварийная",
-        "Предупредительная",
-        "Без Группы",
+        "state",
+        "danger",
+        "warn",
+        "noGroup",
         "Пауза",
         "Возобновлен",
     ],
@@ -40,9 +40,9 @@ export const useFilterStore = create((set) => ({
             },
         }),
 
-    tableColumnsZus: ["date", "type", "group", "var", "val", "desc"],
+    tableColumnsZus: ["ts", "type", "group", "var", "val", "desc"],
 
-    selectedMessages: ["ТС", "ТУ", "Пауза", "Старт"],
+    selectedMessages: ["ts", "tu", "Пауза", "Старт"],
 
     setSelectedGroups: (newGroups) => set({ selectedGroups: newGroups }),
 

@@ -7,6 +7,7 @@ import { useRoles } from "../hooks/useRoles";
 import { useEffect } from "react";
 import { useTableStore } from "../SettingsStore/tablestore";
 import { useRightsAndRolesStore } from "../SettingsStore/rights-and-roles-store";
+import { CanAccess } from "@/CanAccess";
 
 export const UsersView = () => {
     const dataUsers = useUsersHistory();
@@ -30,9 +31,11 @@ export const UsersView = () => {
                     <Text fontSize={"lg"} fontWeight={"medium"}>
                         Создание пользователей, ролей и их редактирование
                     </Text>
-                    <HStack justifyContent={"flex-end"}>
-                        <RoleEditorAndAdder />
-                    </HStack>
+                    <CanAccess right={"security.roles.edit"}>
+                        <HStack justifyContent={"flex-end"}>
+                            <RoleEditorAndAdder />
+                        </HStack>
+                    </CanAccess>
                 </Card.Header>
                 <Card.Body>
                     <TableMenu>

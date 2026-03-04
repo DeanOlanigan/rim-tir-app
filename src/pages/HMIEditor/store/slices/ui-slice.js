@@ -1,6 +1,9 @@
 import { arraysEqual } from "@/utils/utils";
 import { useNodeStore } from "../node-store";
-import { buildBaselineById } from "../utils/interactiveSnapshot";
+import {
+    beginInteractiveSnapshotCommand,
+    commitInteractiveSnapshotCommand,
+} from "../commands";
 
 // потенциальный кандидат на удаление, а selectedIds перенесется в actionsStore
 export const createUiSlice = (api) => ({
@@ -32,34 +35,6 @@ export const createUiSlice = (api) => ({
         temporal.clear();
     },
 
-    interactiveSnapshot: null,
-
-    beginInteractiveSnapshot: (ids, property) => {
-        const state = api.get();
-        const baselineById = buildBaselineById(
-            state.nodes,
-            ids || [],
-            property,
-        );
-        api.set(
-            (s) => ({
-                ...s,
-                interactiveSnapshot: {
-                    ids: [...(ids || [])],
-                    baselineById,
-                },
-            }),
-            false,
-            "ui/beginInteractiveSnapshot",
-        );
-    },
-
-    clearInteractiveSnapshot: () => {
-        api.set(
-            (s) =>
-                s.interactiveSnapshot ? { ...s, interactiveSnapshot: null } : s,
-            false,
-            "ui/clearInteractiveSnapshot",
-        );
-    },
+    beginInteractiveSnapshot: () => beginInteractiveSnapshotCommand(api),
+    commitInteractiveSnapshot: () => commitInteractiveSnapshotCommand(),
 });

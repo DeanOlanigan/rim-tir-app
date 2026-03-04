@@ -14,9 +14,7 @@ export const HelpButton = () => {
             }
         >
             <IconButton
-                position={"absolute"}
-                bottom={4}
-                right={4}
+                pointerEvents={"auto"}
                 size={"sm"}
                 p={2}
                 as={FaQuestion}

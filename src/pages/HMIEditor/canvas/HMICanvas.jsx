@@ -9,6 +9,8 @@ import { useToggleHitRegion } from "./hooks/useToggleHitRegion";
 import { useStageKeyboard } from "./hooks/useStageKeyboard";
 import { StartCoords } from "./StartCoords";
 import { Ruler } from "./Ruler";
+import { SelectionRects } from "./SelectionRects";
+import { SelectionSize } from "./SelectionSize";
 
 export const HMICanvas = ({
     manager,
@@ -66,6 +68,8 @@ export const HMICanvas = ({
                     canvasRef={canvasRef}
                     overviewRef={overviewLayerRef}
                 />
+                <SelectionRects />
+                <SelectionSize />
                 <Ruler />
             </Layer>
         </Stage>

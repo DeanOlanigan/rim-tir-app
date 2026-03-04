@@ -13,6 +13,8 @@ import { configuratorConfig } from "@/store/configurator-config";
 import { validateAll } from "@/utils/validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { messageFromError } from "@/utils/utils";
+import { logout } from "@/api/auth";
+import { authKeys } from "@/api/queryKeys";
 
 export function useStartTirMutation() {
     return useMutation({
@@ -118,6 +120,25 @@ export function useRefreshConfigurationMutation() {
                 description: messageFromError(err),
                 type: "error",
             });
+        },
+    });
+}
+
+export function useLogoutMutation() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: logout,
+        onSettled: async () => {
+            queryClient.setQueryData(authKeys.session(), {
+                authenticated: false,
+            });
+
+            await queryClient.invalidateQueries({
+                queryKey: authKeys.session(),
+            });
+
+            queryClient.clear();
         },
     });
 }

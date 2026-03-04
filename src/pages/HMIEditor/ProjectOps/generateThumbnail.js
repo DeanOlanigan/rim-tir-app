@@ -139,6 +139,7 @@ async function createKonvaNodeFromStateAsync(node, nodesById) {
                 ...common,
                 ...pick(node, STYLE_ATTRS),
                 points: node.points ?? [],
+                tension: node.tension,
                 pointerLength: node.pointerLength,
                 pointerWidth: node.pointerWidth,
             };

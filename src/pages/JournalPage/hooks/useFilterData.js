@@ -2,8 +2,8 @@ import { useMemo } from "react";
 
 const FilterData = (live, selectedGroups, selectedMessages) => {
     if (!live) return [];
+    if (!selectedGroups || !selectedMessages) return false;
     const filteredDataFunc = live.filter((item) => {
-        if (!selectedGroups || !selectedMessages) return false;
         return (
             selectedGroups.includes(item.group) &&
             selectedMessages.includes(item.type)

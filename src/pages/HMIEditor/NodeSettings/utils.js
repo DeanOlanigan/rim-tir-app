@@ -3,9 +3,23 @@ import { patchStoreRaf } from "../store/patchStoreRaf";
 import { useShallow } from "zustand/shallow";
 import { isLineLikeType } from "../utils";
 import { getLineRect } from "../canvas/services/shapeTransforms";
+import { useInteractiveStore } from "../store/interactive-store";
 
 export function useNodesByIds(ids, param) {
     return useNodeStore(useShallow((s) => ids.map((id) => s.nodes[id][param])));
+}
+
+export function useEffectiveParamsByIds(ids, param) {
+    const base = useNodeStore(
+        useShallow((s) => ids.map((id) => s.nodes[id]?.[param])),
+    );
+    const overlay = useInteractiveStore(
+        useShallow((s) => ids.map((id) => s.patchesById[id]?.[param])),
+    );
+
+    // patch ?? base
+    // ВАЖНО: используем именно ??, чтобы 0 не считался "пустым"
+    return base.map((b, i) => overlay[i] ?? b);
 }
 
 export function sameCheck(params) {
@@ -50,16 +64,24 @@ export function collectSelectionDimensions(api, ids, getType, widths, heights) {
     };
 }
 
-export function applyPatch(patch, undoable, property) {
+export function applyPatch(patch, undoable) {
     if (!patch) return;
     const keys = Object.keys(patch);
     if (keys.length === 0) return;
 
-    if (undoable) {
-        patchStoreRaf.flushNow?.();
-        useNodeStore.getState().commitInteractiveSnapshot(property);
-    } else {
+    const int = useInteractiveStore.getState();
+
+    if (!undoable) {
         patchStoreRaf(patch);
+        return;
+    }
+
+    patchStoreRaf.flushNow();
+
+    if (int.active) {
+        int.commit();
+    } else {
+        useNodeStore.getState().updateNodes(patch);
     }
 }
 

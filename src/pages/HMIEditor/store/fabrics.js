@@ -52,6 +52,8 @@ export function createDefaultNode(id) {
         dash: [0, 0],
         skewX: 0,
         skewY: 0,
+        scaleX: 1,
+        scaleY: 1,
         opacity: 1,
         visible: true,
         rotation: 0,

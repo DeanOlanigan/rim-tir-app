@@ -1,3 +1,7 @@
+import {
+    getEffectiveNode,
+    useInteractiveStore,
+} from "../../store/interactive-store";
 import { useNodeStore } from "../../store/node-store";
 import { isLineLikeType, round4 } from "../../utils";
 
@@ -41,7 +45,7 @@ function clampSize(v) {
  * x/y не трогаем — якорь (первая точка) остается на месте.
  */
 export function changeLineDimByStore(id, dimType, aspectRatio, rawVal) {
-    const node = useNodeStore.getState().nodes[id];
+    const node = getEffectiveNode(id);
     if (!node || !Array.isArray(node.points)) return null;
 
     const bounds = getPointsBounds(node.points);
@@ -125,8 +129,6 @@ export function collectSelectionDimensions(ids, getType, widths, heights) {
         return Math.abs(prev - next) < 0.5 ? prev : NaN;
     };
 
-    const nodes = useNodeStore.getState().nodes;
-
     ids.forEach((id, index) => {
         const type = getType(id);
 
@@ -134,10 +136,13 @@ export function collectSelectionDimensions(ids, getType, widths, heights) {
         let h;
 
         if (isLineLikeType(type)) {
-            const node = nodes[id];
-            if (!node || !Array.isArray(node.points)) return;
+            const base = useNodeStore.getState().nodes[id];
+            const overlayPoints =
+                useInteractiveStore.getState().patchesById[id]?.points;
+            const points = overlayPoints ?? base?.points;
+            if (!points || !Array.isArray(points)) return;
 
-            const rect = getPointsBounds(node.points);
+            const rect = getPointsBounds(points);
             w = rect.width;
             h = rect.height;
         } else {

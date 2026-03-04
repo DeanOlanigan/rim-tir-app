@@ -1,72 +1,34 @@
 import { SHAPES } from "../../constants";
-import { clampVal, round4 } from "../../utils";
+import { applyLinePatch } from "./apply";
 import { registerShape } from "./registry";
+import Konva from "konva";
 
-// [ ] Если для линии не использовать стандартный трансформер konva, то этот код не нужен
+// Editor semantic patch:
+// ignore arrow head in self bounds to match Figma/Excalidraw-like selection semantics
+Konva.Arrow.prototype.getSelfRect = function () {
+    return Konva.Line.prototype.getSelfRect.call(this);
+};
+
 registerShape(SHAPES.arrow, {
     onTransformEnd(konvaNode) {
-        const sx = clampVal(konvaNode.scaleX());
-        const sy = clampVal(konvaNode.scaleY());
-
-        const oldPoints = konvaNode.points();
-        const newPoints = [];
-        for (let i = 0; i < oldPoints.length; i += 2) {
-            const px = oldPoints[i];
-            const py = oldPoints[i + 1];
-            newPoints[i] = px * sx;
-            newPoints[i + 1] = py * sy;
-        }
-
-        konvaNode.points(newPoints);
-        konvaNode.scaleX(1);
-        konvaNode.scaleY(1);
-
-        const patch = {
-            x: round4(konvaNode.x()),
-            y: round4(konvaNode.y()),
-            rotation: konvaNode.rotation(),
-            points: newPoints,
-            width: konvaNode.width(),
-            height: konvaNode.height(),
-            scaleX: 1,
-            scaleY: 1,
-            skewX: konvaNode.skewX(),
-            skewY: konvaNode.skewY(),
-            pointerLength: konvaNode.pointerLength(),
-            pointerWidth: konvaNode.pointerWidth(),
-        };
+        const pointerLength = konvaNode.pointerLength();
+        const pointerWidth = konvaNode.pointerWidth();
+        const patch = applyLinePatch(konvaNode);
+        patch.pointerLength = pointerLength;
+        patch.pointerWidth = pointerWidth;
+        konvaNode.pointerLength(pointerLength);
+        konvaNode.pointerWidth(pointerWidth);
         return patch;
     },
 
     onTransform(konvaNode) {
-        const sx = clampVal(konvaNode.scaleX());
-        const sy = clampVal(konvaNode.scaleY());
-
-        const oldPoints = konvaNode.points();
-        const newPoints = [];
-        for (let i = 0; i < oldPoints.length; i += 2) {
-            const px = oldPoints[i];
-            const py = oldPoints[i + 1];
-            newPoints[i] = px * sx;
-            newPoints[i + 1] = py * sy;
-        }
-
-        konvaNode.points(newPoints);
-        konvaNode.scaleX(1);
-        konvaNode.scaleY(1);
-
-        const patch = {
-            x: round4(konvaNode.x()),
-            y: round4(konvaNode.y()),
-            rotation: konvaNode.rotation(),
-            points: newPoints,
-            width: konvaNode.width(),
-            height: konvaNode.height(),
-            scaleX: 1,
-            scaleY: 1,
-            skewX: konvaNode.skewX(),
-            skewY: konvaNode.skewY(),
-        };
+        const pointerLength = konvaNode.pointerLength();
+        const pointerWidth = konvaNode.pointerWidth();
+        const patch = applyLinePatch(konvaNode);
+        patch.pointerLength = pointerLength;
+        patch.pointerWidth = pointerWidth;
+        konvaNode.pointerLength(pointerLength);
+        konvaNode.pointerWidth(pointerWidth);
         return patch;
     },
 });

@@ -3,9 +3,12 @@ import { useNodeStore } from "../store/node-store";
 import { patchStoreRaf } from "../store/patchStoreRaf";
 import { Circle } from "react-konva";
 import { dragBound } from "./utils/dragBound";
-import { isLineLikeType } from "../utils";
-
-// TODO Выполнить рефактор
+import { applyToPoint, isLineLikeType } from "../utils";
+import {
+    getEffectiveNodeWorldTransformMatrix,
+    useEffectiveNode,
+    useInteractiveStore,
+} from "../store/interactive-store";
 
 function dragBoundFunc(pos) {
     const { gridSize, snapToGrid } = useActionsStore.getState();
@@ -13,13 +16,8 @@ function dragBoundFunc(pos) {
     return dragBound(pos, stage, gridSize, snapToGrid);
 }
 
-function lineLocalToOverlay(line, overlayLayer, x, y) {
-    // line-local -> stage(abs)
-    const abs = line.getAbsoluteTransform().point({ x, y });
-
-    // stage(abs) -> overlay-local
-    const invOverlay = overlayLayer.getAbsoluteTransform().copy().invert();
-    return invOverlay.point(abs);
+function lineLocalToOverlay(worldMatrix, x, y) {
+    return applyToPoint(worldMatrix, x, y);
 }
 
 function overlayAbsToLineLocal(line, absPos) {
@@ -87,7 +85,7 @@ function dragOtherHandle(line, absCirclePos, newPoints, pointIndex) {
 export const LineTransformer = ({ nodesRef, overviewRef }) => {
     const scale = useActionsStore((state) => state.scale);
     const selectedIds = useNodeStore((state) => state.selectedIds);
-    const primaryNode = useNodeStore((state) => state.nodes[selectedIds[0]]);
+    const primaryNode = useEffectiveNode(selectedIds[0]);
 
     const overlayLayer = overviewRef?.current;
     if (!overlayLayer) return null;
@@ -101,13 +99,12 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
     const points = primaryNode.points;
     if (!points || points.length < 4) return null;
 
+    const worldMatrix = getEffectiveNodeWorldTransformMatrix(primaryNode.id);
+    if (!worldMatrix) return null;
+
     const onDragStart = () => {
-        useNodeStore
-            .getState()
-            .beginInteractiveSnapshot(
-                [primaryNode.id],
-                ["points", "width", "height"],
-            );
+        patchStoreRaf.cancel();
+        useInteractiveStore.getState().begin();
     };
 
     const onDragMove = (e) => {
@@ -147,9 +144,7 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
 
     const onDragEnd = () => {
         patchStoreRaf.flushNow?.();
-        useNodeStore
-            .getState()
-            .commitInteractiveSnapshot(["points", "width", "height"]);
+        useInteractiveStore.getState().commit();
     };
 
     const onMidDragStart = (e) => {
@@ -158,12 +153,6 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
         if (!oldPoints || oldPoints.length < 4) return;
 
         circle.setAttr("originalPoints", oldPoints.slice());
-        useNodeStore
-            .getState()
-            .beginInteractiveSnapshot(
-                [primaryNode.id],
-                ["points", "width", "height"],
-            );
     };
 
     const onMidDragMove = (e) => {
@@ -183,14 +172,11 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
     };
 
     const onMidDragEnd = () => {
-        patchStoreRaf({
-            [primaryNode.id]: {
-                points: line.points(),
-                width: line.width(),
-                height: line.height(),
-            },
+        useNodeStore.getState().updateNode(primaryNode.id, {
+            points: line.points(),
+            width: line.width(),
+            height: line.height(),
         });
-        onDragEnd();
     };
 
     const deletePoint = (pointIndex) => {
@@ -233,8 +219,7 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
     for (let i = 0; i < midPoints.length; i += 2) {
         const segmentIndex = i / 2;
         const p = lineLocalToOverlay(
-            line,
-            overlayLayer,
+            worldMatrix,
             midPoints[i],
             midPoints[i + 1],
         );
@@ -260,12 +245,7 @@ export const LineTransformer = ({ nodesRef, overviewRef }) => {
 
     for (let i = 0; i < points.length; i += 2) {
         const pointIndex = i / 2;
-        const p = lineLocalToOverlay(
-            line,
-            overlayLayer,
-            points[i],
-            points[i + 1],
-        );
+        const p = lineLocalToOverlay(worldMatrix, points[i], points[i + 1]);
         res.push(
             <Circle
                 key={pointIndex}

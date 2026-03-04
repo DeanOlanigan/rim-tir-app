@@ -1,11 +1,23 @@
-import { Fieldset, Flex, Group, IconButton } from "@chakra-ui/react";
+import {
+    Badge,
+    Fieldset,
+    Flex,
+    Group,
+    HStack,
+    IconButton,
+} from "@chakra-ui/react";
 import {
     LuFlipHorizontal2,
     LuFlipVertical2,
     LuRotateCwSquare,
 } from "react-icons/lu";
 import { RxAngle } from "react-icons/rx";
-import { applyPatch, isFiniteValue, sameCheck, useNodesByIds } from "../utils";
+import {
+    applyPatch,
+    isFiniteValue,
+    sameCheck,
+    useEffectiveParamsByIds,
+} from "../utils";
 import { LOCALE } from "../../constants";
 import { CommittedNumberInput } from "../CommittedNumberInput";
 import {
@@ -14,12 +26,13 @@ import {
     decomposeTRKS,
     getNodeLocalTransformMatrix,
     isHasRadius,
+    isLineLikeType,
     mul,
-    round4,
 } from "../../utils";
 import { useNodeStore } from "../../store/node-store";
-
-// TODO Проверить отражения, разобраться со Scale в сторе
+import { patchStoreRaf } from "../../store/patchStoreRaf";
+import { useInteractiveStore } from "../../store/interactive-store";
+import { getNodeLocalBounds } from "../../store/utils/geometry";
 
 function toDegIn0To360Range(deg) {
     return ((deg % 360) + 360) % 360;
@@ -39,9 +52,8 @@ function buildRotationPatch(ids, angle) {
 }
 
 export const RotationBlock = ({ ids }) => {
-    const rotArr = useNodesByIds(ids, "rotation");
+    const rotArr = useEffectiveParamsByIds(ids, "rotation");
     const rSame = sameCheck(rotArr);
-    const store = useNodeStore.getState();
 
     const idsKey = ids.join("|");
     const uiValue =
@@ -49,44 +61,62 @@ export const RotationBlock = ({ ids }) => {
 
     const rotateTo = (angle, undoable) => {
         const patch = buildRotationPatch(ids, angle);
-        applyPatch(patch, undoable, ["rotation", "x", "y"]);
+        applyPatch(patch, undoable);
+    };
+
+    const finalizeInteractiveIfAny = () => {
+        patchStoreRaf.cancel();
+        const int = useInteractiveStore.getState();
+        int.cancel();
     };
 
     const rotateByDelta = (delta) => {
+        finalizeInteractiveIfAny();
+
+        const nodes = useNodeStore.getState().nodes;
         const patch = {};
+
         ids.forEach((id, idx) => {
-            const n = useNodeStore.getState().nodes[id];
+            const n = nodes[id];
+            if (!n) return;
             const curRaw = rotArr[idx];
             const cur = isFiniteValue(curRaw) ? curRaw : 0;
             const next = toDegIn0To360Range(cur + delta);
             patch[id] = rotateNodeAroundCenterStore(n, next);
         });
 
-        store.updateNodes(patch);
+        useNodeStore.getState().updateNodes(patch);
     };
 
     const flipHorizontal = () => {
-        const nodesList = ids.map((id) => useNodeStore.getState().nodes[id]);
+        finalizeInteractiveIfAny();
+
+        const nodes = useNodeStore.getState().nodes;
+        const nodesList = ids.map((id) => nodes[id]).filter(Boolean);
         const pivotWorld = calcGroupAABBCenter(nodesList);
         const patch = {};
         ids.forEach((id) => {
-            const n = useNodeStore.getState().nodes[id];
-            patch[id] = flipNodeAroundWorldAxis(n, "x", { pivotWorld });
-        });
-
-        store.updateNodes(patch);
-    };
-
-    const flipVertical = () => {
-        const nodesList = ids.map((id) => useNodeStore.getState().nodes[id]);
-        const pivotWorld = calcGroupAABBCenter(nodesList);
-        const patch = {};
-        ids.forEach((id) => {
-            const n = useNodeStore.getState().nodes[id];
+            const n = nodes[id];
+            if (!n) return;
             patch[id] = flipNodeAroundWorldAxis(n, "y", { pivotWorld });
         });
 
-        store.updateNodes(patch);
+        useNodeStore.getState().updateNodes(patch);
+    };
+
+    const flipVertical = () => {
+        finalizeInteractiveIfAny();
+        const nodes = useNodeStore.getState().nodes;
+        const nodesList = ids.map((id) => nodes[id]).filter(Boolean);
+        const pivotWorld = calcGroupAABBCenter(nodesList);
+        const patch = {};
+        ids.forEach((id) => {
+            const n = nodes[id];
+            if (!n) return;
+            patch[id] = flipNodeAroundWorldAxis(n, "x", { pivotWorld });
+        });
+
+        useNodeStore.getState().updateNodes(patch);
     };
 
     return (
@@ -102,53 +132,40 @@ export const RotationBlock = ({ ids }) => {
                         step={1}
                         min={-360}
                         max={360}
-                        onFocusChange={(d) => {
-                            if (d.focused) {
-                                store.beginInteractiveSnapshot(ids, [
-                                    "rotation",
-                                    "x",
-                                    "y",
-                                ]);
-                            } else {
-                                store.clearInteractiveSnapshot();
-                            }
-                        }}
+                        onScrubStart={() =>
+                            useInteractiveStore.getState().begin()
+                        }
                         onScrub={(n) => rotateTo(n, false)}
-                        onCommit={(n) => {
-                            rotateTo(n, false);
-                            rotateTo(n, true);
-                            store.beginInteractiveSnapshot(ids, [
-                                "rotation",
-                                "x",
-                                "y",
-                            ]);
-                        }}
+                        onCommit={(n) => rotateTo(n, true)}
                     />
-                    <Group attached>
-                        <IconButton
-                            size={"xs"}
-                            variant={"outline"}
-                            onClick={() => rotateByDelta(90)}
-                        >
-                            <LuRotateCwSquare />
-                        </IconButton>
-                        <IconButton
-                            size={"xs"}
-                            variant={"outline"}
-                            onClick={flipHorizontal}
-                            disabled
-                        >
-                            <LuFlipHorizontal2 />
-                        </IconButton>
-                        <IconButton
-                            size={"xs"}
-                            variant={"outline"}
-                            onClick={flipVertical}
-                            disabled
-                        >
-                            <LuFlipVertical2 />
-                        </IconButton>
-                    </Group>
+                    <HStack gap={2}>
+                        <Badge size={"sm"} colorPalette={"red"}>
+                            Experimental
+                        </Badge>
+                        <Group attached>
+                            <IconButton
+                                size={"xs"}
+                                variant={"outline"}
+                                onClick={() => rotateByDelta(90)}
+                            >
+                                <LuRotateCwSquare />
+                            </IconButton>
+                            <IconButton
+                                size={"xs"}
+                                variant={"outline"}
+                                onClick={flipHorizontal}
+                            >
+                                <LuFlipHorizontal2 />
+                            </IconButton>
+                            <IconButton
+                                size={"xs"}
+                                variant={"outline"}
+                                onClick={flipVertical}
+                            >
+                                <LuFlipVertical2 />
+                            </IconButton>
+                        </Group>
+                    </HStack>
                 </Flex>
             </Fieldset.Content>
         </Fieldset.Root>
@@ -156,12 +173,17 @@ export const RotationBlock = ({ ids }) => {
 };
 
 function getLocalAnchorForRotation(node, sizeOverride) {
+    const isEllipseLike = isHasRadius(node.type);
+    if (isEllipseLike) return { x: 0, y: 0 };
+
+    if (isLineLikeType(node.type)) {
+        const b = getNodeLocalBounds(node);
+        return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+    }
+
     const w = sizeOverride?.width ?? node.width ?? 0;
     const h = sizeOverride?.height ?? node.height ?? 0;
 
-    const isEllipseLike = isHasRadius(node.type);
-
-    if (isEllipseLike) return { x: 0, y: 0 };
     return { x: w / 2, y: h / 2 };
 }
 
@@ -203,46 +225,154 @@ function getWorldPivotForNode(node, opts = {}) {
  *  - "x" => Flip Horizontal (mirror по мировому X: отражаем относительно вертикальной линии)
  *  - "y" => Flip Vertical   (mirror по мировому Y: отражаем относительно горизонтальной линии)
  */
-function flipNodeAroundWorldAxis(node, axis /*"x"|"y"*/, opts = {}) {
+function flipNodeAroundWorldAxisRaw(node, axis, opts = {}) {
     if (!node) return null;
 
-    // 1) local->world
     const M1 = getNodeLocalTransformMatrix(node);
-
-    // 2) pivot в world (можно переопределить общим pivot для выделения)
     const pivot = opts.pivotWorld ?? getWorldPivotForNode(node, opts);
 
-    // 3) отражение в world
     const F =
         axis === "x"
-            ? { a: -1, b: 0, c: 0, d: 1, e: 2 * pivot.x, f: 0 } // Flip Horizontal
-            : { a: 1, b: 0, c: 0, d: -1, e: 0, f: 2 * pivot.y }; // Flip Vertical
+            ? { a: -1, b: 0, c: 0, d: 1, e: 2 * pivot.x, f: 0 }
+            : { a: 1, b: 0, c: 0, d: -1, e: 0, f: 2 * pivot.y };
 
-    // 4) новое local->world после отражения (ВАЖНО: слева)
     const M2 = mul(F, M1);
-
-    // 5) обратно в TRKS (в твоём порядке T*R*K*S)
     const dec = decomposeTRKS(M2);
 
-    // 6) поправка ellipse-like: у тебя в матрице T(x+w/2, y+h/2),
-    // а в сторе x/y = top-left bbox
-    let xStore = dec.x;
-    let yStore = dec.y;
+    return { M2, dec, pivot };
+}
 
-    if (isHasRadius(node.type)) {
-        const w = node.width ?? 0;
-        const h = node.height ?? 0;
-        xStore = dec.x - w / 2;
-        yStore = dec.y - h / 2;
+function flipNodeAroundWorldAxis(node, axis, opts = {}) {
+    const raw = flipNodeAroundWorldAxisRaw(node, axis, opts);
+    if (!raw) return null;
+
+    if (isLineLikeType(node.type)) {
+        return canonicalizeLineLikeFromMatrix(node, raw.M2);
     }
 
+    if (isHasRadius(node.type)) {
+        return canonicalizeEllipseLikeFromMatrix(node, raw.M2);
+    }
+
+    return canonicalizeRectLikeFromMatrix(node, raw.M2);
+}
+
+function cleanNumber(v, eps = 1e-10) {
+    if (Math.abs(v) < eps) return 0;
+    return v;
+}
+
+function canonicalizeRectLikeFromMatrix(node, M2) {
+    const w = node.width ?? 0;
+    const h = node.height ?? 0;
+
+    // Берем decomposition только чтобы понять,
+    // какие локальные оси были отражены
+    const dec = decomposeTRKS(M2);
+    const sx = dec.scaleX ?? 1;
+    const sy = dec.scaleY ?? 1;
+
+    const width = w * Math.abs(sx);
+    const height = h * Math.abs(sy);
+
+    // Выбираем локальный origin и соседей
+    const ox = sx < 0 ? w : 0;
+    const oy = sy < 0 ? h : 0;
+
+    const O = applyToPoint(M2, ox, oy);
+
     return {
-        x: round4(xStore),
-        y: round4(yStore),
-        rotation: round4(dec.rotation ?? 0),
-        skewX: round4(dec.skewX ?? 0),
-        skewY: round4(dec.skewY ?? 0),
-        scaleX: round4(dec.scaleX ?? 1),
-        scaleY: round4(dec.scaleY ?? 1),
+        x: cleanNumber(O.x),
+        y: cleanNumber(O.y),
+        width: cleanNumber(width),
+        height: cleanNumber(height),
+        rotation: cleanNumber(dec.rotation ?? 0),
+        skewX: cleanNumber(dec.skewX ?? 0),
+        skewY: cleanNumber(dec.skewY ?? 0),
+        scaleX: 1,
+        scaleY: 1,
+    };
+}
+
+function canonicalizeEllipseLikeFromMatrix(node, M2) {
+    const w = node.width ?? 0;
+    const h = node.height ?? 0;
+
+    const dec = decomposeTRKS(M2);
+
+    const sx = dec.scaleX ?? 1;
+    const sy = dec.scaleY ?? 1;
+
+    const width = w * Math.abs(sx);
+    const height = h * Math.abs(sy);
+
+    const C = applyToPoint(M2, 0, 0); // center
+
+    return {
+        x: cleanNumber(C.x - width / 2),
+        y: cleanNumber(C.y - height / 2),
+        width: cleanNumber(width),
+        height: cleanNumber(height),
+        rotation: cleanNumber(dec.rotation ?? 0),
+        skewX: cleanNumber(dec.skewX ?? 0),
+        skewY: cleanNumber(dec.skewY ?? 0),
+        scaleX: 1,
+        scaleY: 1,
+    };
+}
+
+function cleanPoints(points, eps = 1e-10) {
+    return points.map((v) => cleanNumber(v, eps));
+}
+
+function canonicalizeLineLikeFromMatrix(node, M2) {
+    const pts = node.points ?? [0, 0];
+    if (pts.length < 2) {
+        const O = applyToPoint(M2, 0, 0);
+        return {
+            x: cleanNumber(O.x),
+            y: cleanNumber(O.y),
+            points: [0, 0],
+            rotation: 0,
+            skewX: 0,
+            skewY: 0,
+            scaleX: 1,
+            scaleY: 1,
+        };
+    }
+
+    // Трансформируем все точки линии в world
+    const worldPts = [];
+    for (let i = 0; i < pts.length; i += 2) {
+        const W = applyToPoint(M2, pts[i], pts[i + 1]);
+        worldPts.push(cleanNumber(W.x), cleanNumber(W.y));
+    }
+
+    // Первая точка становится новой позицией узла
+    const ox = worldPts[0];
+    const oy = worldPts[1];
+
+    // points храним относительно первой точки
+    const newPoints = [];
+    for (let i = 0; i < worldPts.length; i += 2) {
+        newPoints.push(
+            cleanNumber(worldPts[i] - ox),
+            cleanNumber(worldPts[i + 1] - oy),
+        );
+    }
+
+    // Жестко соблюдаем инвариант модели
+    newPoints[0] = 0;
+    newPoints[1] = 0;
+
+    return {
+        x: ox,
+        y: oy,
+        points: cleanPoints(newPoints),
+        rotation: 0,
+        skewX: 0,
+        skewY: 0,
+        scaleX: 1,
+        scaleY: 1,
     };
 }

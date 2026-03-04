@@ -6,20 +6,32 @@ import {
 import { buildProjectPackage } from "../ProjectOps/buildProjectPackage";
 import { safeFileName } from "../ProjectOps/utils";
 import { useNodeStore } from "../store/node-store";
+import { useAuth } from "@/hooks/useAuth";
+import { hasRight } from "@/utils/permissions";
+import { toaster } from "@/components/ui/toaster";
 
 export function useImportToServerAction() {
     const saveMutation = useSaveProjectMutation();
     const renameMutation = useRenameProjectOnServerMutation();
+    const { user } = useAuth();
 
     const importToServer = useCallback(
         async (tools) => {
+            if (!hasRight(user, "hmi.upload")) {
+                toaster.create({
+                    title: "Недостаточно прав",
+                    description: "Недостаточно прав для выполнения операции",
+                    type: "error",
+                });
+                return;
+            }
             if (saveMutation.isPending || renameMutation.isPending) return;
             const snapshot = useNodeStore.getState();
             const { mode, filename: oldFilename } = snapshot.meta;
             const currentProjectName = safeFileName(snapshot.projectName);
 
             if (!currentProjectName) {
-                console.error("Project name is empry after sanitization");
+                console.error("Project name is empty after sanitization");
                 return;
             }
 
@@ -42,24 +54,16 @@ export function useImportToServerAction() {
                     tools,
                 });
 
-                const formData = new FormData();
-                formData.append(
-                    "file",
-                    blob,
-                    `${currentProjectName}.tir-project`,
-                );
-                formData.append("name", currentProjectName);
-
                 await saveMutation.mutateAsync({
                     filename: currentProjectName,
-                    project: formData,
+                    project: blob,
                 });
                 snapshot.markAsImportedToServer();
             } catch (e) {
                 console.error(e);
             }
         },
-        [saveMutation, renameMutation],
+        [saveMutation, renameMutation, user],
     );
 
     return importToServer;

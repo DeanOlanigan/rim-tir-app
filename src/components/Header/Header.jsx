@@ -1,22 +1,17 @@
-import { IconButton, Center, Flex, Icon, Text } from "@chakra-ui/react";
+import { IconButton, Center } from "@chakra-ui/react";
 import { ColorModeButton } from "@/components/ui/color-mode";
-import { LuSettings, LuLogOut } from "react-icons/lu";
-import {
-    GiChewedSkull,
-    GiGhost,
-    GiPumpkin,
-    GiPumpkinLantern,
-    GiPumpkinMask,
-} from "react-icons/gi";
-
+import { LuSettings, LuLogOut, LuNotebook } from "react-icons/lu";
 import Navigation from "@/components/Navigation/Navigation";
 import { NavLink } from "react-router-dom";
-import { Tooltip } from "../ui/tooltip";
+import { JOURNAL_DIALOG_ID, journalDialog } from "@/journalDialog";
+import { useLogoutMutation } from "@/hooks/useMutation";
+import { CanAccess } from "@/CanAccess";
 
 function Header() {
     return (
         <Center as={"header"} gap={"2"} p={"2"}>
             <Navigation />
+            <OpenJournalDialogBtn />
             <SettingsMenu />
             <LogoutBtn />
             <ColorModeButton size={"xs"} />
@@ -27,9 +22,9 @@ export default Header;
 
 const SettingsMenu = () => {
     return (
-        <NavLink to={"settings"}>
-            {({ isActive }) => (
-                <Tooltip showArrow content={<Text>Настройки</Text>}>
+        <CanAccess right={"settings.view"}>
+            <NavLink to={"settings"} tabIndex={-1}>
+                {({ isActive }) => (
                     <IconButton
                         size={"xs"}
                         variant={isActive ? "solid" : "ghost"}
@@ -44,13 +39,15 @@ const SettingsMenu = () => {
                     >
                         <LuSettings />
                     </IconButton>
-                </Tooltip>
-            )}
-        </NavLink>
+                )}
+            </NavLink>
+        </CanAccess>
     );
 };
 
 const LogoutBtn = () => {
+    const logoutMutation = useLogoutMutation();
+
     return (
         <IconButton
             size={"xs"}
@@ -62,42 +59,30 @@ const LogoutBtn = () => {
                     height: "5",
                 },
             }}
+            onClick={logoutMutation.mutate}
         >
             <LuLogOut />
         </IconButton>
     );
 };
 
-// TODO потом придумать куда деть
-// eslint-disable-next-line
-const Pumpkins = () => {
+const OpenJournalDialogBtn = () => {
     return (
-        <Flex gap={"6"}>
-            <Icon
-                as={GiPumpkinLantern}
-                size={"xl"}
-                color={"orange.700"}
-                rotate={"-10"}
-            />
-            <Icon as={GiPumpkinMask} size={"xl"} color={"orange.600"} />
-            <Icon
-                as={GiPumpkin}
-                size={"xl"}
-                color={"orange.700"}
-                rotate={"10"}
-            />
-            <Icon
-                as={GiGhost}
-                size={"xl"}
-                color={"orange.600"}
-                rotate={"-10"}
-            />
-            <Icon
-                as={GiChewedSkull}
-                size={"xl"}
-                color={"orange.700"}
-                rotate={"10"}
-            />
-        </Flex>
+        <CanAccess right={"journal.view"}>
+            <IconButton
+                size={"xs"}
+                variant={"ghost"}
+                aria-label="Logout"
+                css={{
+                    _icon: {
+                        width: "5",
+                        height: "5",
+                    },
+                }}
+                onClick={() => journalDialog.open(JOURNAL_DIALOG_ID)}
+            >
+                <LuNotebook />
+            </IconButton>
+        </CanAccess>
     );
 };

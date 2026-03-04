@@ -18,10 +18,13 @@ export async function deleteProject(filename) {
 }
 
 export async function saveProject({ filename, project }) {
+    const formData = new FormData();
+    formData.append("file", project, `${filename}.tir-project`);
+    formData.append("name", filename);
     const safeFilename = encodeURIComponent(filename);
     const { data: res } = await apiv2.put(
         `/hmi/project/${safeFilename}`,
-        project,
+        formData,
     );
     return res;
 }

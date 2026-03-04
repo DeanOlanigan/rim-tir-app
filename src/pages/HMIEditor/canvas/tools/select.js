@@ -15,7 +15,7 @@ export function createSelectTool() {
     /**
      * Возвращает id для выделения:
      * - обычный клик: поднимаемся к верхней группе (как сейчас)
-     * - Alt+клик: глубокое выделение (сам узел)
+     * - ctrl+клик: глубокое выделение (сам узел)
      */
     const resolveClickedId = (target, evt) => {
         if (!target?.hasName?.("node")) return null;
@@ -29,7 +29,7 @@ export function createSelectTool() {
         return parentGroups[parentGroups.length - 1]?.id() || target.id();
     };
 
-    const isMetaPressed = (evt) => evt.shiftKey;
+    const isToggleSelectionPressed = (evt) => evt.shiftKey;
 
     const applySelectionClick = (e, ctx, { allowToggle = true } = {}) => {
         if (e.evt.button !== 0) return false;
@@ -38,18 +38,18 @@ export function createSelectTool() {
         const clickedId = resolveClickedId(e.target, e.evt);
         if (!clickedId) return false;
 
-        const metaPressed = isMetaPressed(e.evt);
+        const isToggleSelection = isToggleSelectionPressed(e.evt);
         const selectedIds = ctx.getSelectedIds();
         const isSelected = selectedIds.includes(clickedId);
 
-        if (!metaPressed) {
-            if (!isSelected || selectedIds.length !== 1) {
+        if (!isToggleSelection) {
+            if (!isSelected) {
                 ctx.setSelectedIds([clickedId]);
             }
             return true;
         }
 
-        // toggle по Ctrl/Cmd/Shift
+        // toggle по Cmd/Shift
         if (allowToggle) {
             if (isSelected) {
                 ctx.setSelectedIds(
@@ -135,7 +135,7 @@ export function createSelectTool() {
             if (e.evt.button !== 0) return;
 
             if (e.target.hasName("node")) {
-                const metaPressed = isMetaPressed(e.evt);
+                const metaPressed = isToggleSelectionPressed(e.evt);
                 if (!metaPressed)
                     applySelectionClick(e, ctx, { allowToggle: false });
             }

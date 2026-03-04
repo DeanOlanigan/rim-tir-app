@@ -4,12 +4,16 @@ import { useNodeStore } from "./../store/node-store";
 import { patchStoreRaf } from "../store/patchStoreRaf";
 import { ACTIONS, SHAPES } from "../constants";
 import { dragBound } from "./utils/dragBound";
-import { isHasRadius, round4 } from "../utils";
+import { isHasRadius } from "../utils";
 import { VariablePolygon } from "./shapes/VariablePolygon.react";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Html } from "react-konva-utils";
 import { useHandlers } from "./hooks/useHandlers";
 import { getAssetObjectUrl } from "../assets/assetRuntimeRegistry";
+import {
+    useEffectiveNode,
+    useInteractiveStore,
+} from "../store/interactive-store";
 
 function ellipseToKonva(p) {
     const cx = p.x + p.width / 2;
@@ -33,11 +37,11 @@ function move(node) {
         const width = rx * 2;
         const height = ry * 2;
 
-        x = round4(node.x() - width / 2);
-        y = round4(node.y() - height / 2);
+        x = node.x() - width / 2;
+        y = node.y() - height / 2;
     } else {
-        x = round4(node.x());
-        y = round4(node.y());
+        x = node.x();
+        y = node.y();
     }
 
     return { x, y };
@@ -89,7 +93,8 @@ const common = {
             node.stopDrag();
             return;
         }
-        useNodeStore.getState().beginInteractiveSnapshot([id], ["x", "y"]);
+        patchStoreRaf.cancel();
+        useInteractiveStore.getState().begin();
     },
     onDragMove(e) {
         const node = e.target;
@@ -103,8 +108,8 @@ const common = {
         const node = e.target;
         const id = node.id();
         if (!id) return;
-        patchStoreRaf.flushNow?.();
-        useNodeStore.getState().commitInteractiveSnapshot(["x", "y"]);
+        patchStoreRaf.flushNow();
+        useInteractiveStore.getState().commit();
     },
 };
 
@@ -135,7 +140,7 @@ const NodeWrapper = memo(({ ids, draggable, nodesRef }) => {
 NodeWrapper.displayName = "NodeWrapper";
 
 const NodeInstance = ({ id, draggable, nodesRef }) => {
-    const node = useNodeStore((state) => state.nodes[id]);
+    const node = useEffectiveNode(id);
     const handlers = useHandlers(node);
 
     const prevHandlersRef = useRef(handlers);

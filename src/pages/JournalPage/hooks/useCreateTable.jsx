@@ -20,9 +20,9 @@ export const useCreateTable = (filtreColon, filtredData) => {
 
                     if (column.value === "group") {
                         const colorScheme = {
-                            Аварийная: "red",
-                            Предупредительная: "orange",
-                            Состояние: "blue",
+                            danger: "red",
+                            warn: "orange",
+                            state: "blue",
                             Пауза: "cyan",
                             Возобновлен: "green",
                         }[value];
@@ -37,7 +37,7 @@ export const useCreateTable = (filtreColon, filtredData) => {
                             </Badge>
                         );
                     }
-                    if (column.value === "date") {
+                    if (column.value === "ts") {
                         return <Text>{new Date(value).toLocaleString()}</Text>;
                     }
                     return (

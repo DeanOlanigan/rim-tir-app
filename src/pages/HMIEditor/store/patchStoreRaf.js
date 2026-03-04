@@ -1,46 +1,24 @@
-import { useNodeStore } from "./node-store";
+import { useInteractiveStore } from "./interactive-store";
 import { quantizePatch } from "./utils/patch/quantize";
+import { patchesEqual, stripNoops } from "./utils/patchesOps";
 
-const ARRAY_COMPARE_KEYS = new Set(["points", "dash"]);
+function applyTouchedKeysToOverlay(prevOverlay, quant, cleaned) {
+    const touchedKeys = Object.keys(quant);
+    let next = prevOverlay ? { ...prevOverlay } : {};
 
-function arraysEqualShallow(a, b) {
-    if (a === b) return true;
-    if (!Array.isArray(a) || !Array.isArray(b)) return false;
-    if (a.length !== b.length) return false;
-
-    for (let i = 0; i < a.length; i++) {
-        if (a[i] !== b[i]) return false;
+    // 1) удаляем все ключи, которые пришли в текущем raw/quant
+    for (const key of touchedKeys) {
+        if (key in next) delete next[key];
     }
 
-    return true;
-}
-
-function valuesEqualByKey(key, nextVal, curVal) {
-    if (nextVal === curVal) return true;
-
-    // Только для заранее известных ключей сравниваем массивы поэлементно
-    if (ARRAY_COMPARE_KEYS.has(key)) {
-        return arraysEqualShallow(nextVal, curVal);
-    }
-
-    return false;
-}
-
-function stripNoops(id, patch, nodes) {
-    if (!patch) return null;
-
-    const cur = nodes[id];
-    if (!cur) return patch;
-
-    let out = null;
-
-    for (const k in patch) {
-        if (!valuesEqualByKey(k, patch[k], cur[k])) {
-            if (!out) out = {};
-            out[k] = patch[k];
+    // 2) добавляем только те touched-ключи, которые реально отличаются от base
+    if (cleaned) {
+        for (const key in cleaned) {
+            next[key] = cleaned[key];
         }
     }
-    return out; // null => нет изменений
+
+    return Object.keys(next).length ? next : null;
 }
 
 export const patchStoreRaf = (() => {
@@ -49,28 +27,56 @@ export const patchStoreRaf = (() => {
 
     const flush = () => {
         frame = null;
-
-        const store = useNodeStore.getState();
-        const nodes = store.nodes;
-
         const patchById = queuedPatch;
         queuedPatch = {};
-        const cleanedPatch = {};
+
+        const int = useInteractiveStore.getState();
+        if (!int.active || !int.baselineNodes) {
+            console.warn(
+                "patchStoreRaf.flush called while interactive store is inactive",
+            );
+            return;
+        }
+
+        const baseNodes = int.baselineNodes;
+        const nextOverlayById = {};
+        const clearedIds = [];
 
         for (const id in patchById) {
             const raw = patchById[id];
             if (!raw) continue;
 
             const quant = quantizePatch(raw);
-            const cleaned = stripNoops(id, quant, nodes);
-            if (!cleaned) continue;
 
-            cleanedPatch[id] = cleaned;
+            const cleaned = stripNoops(id, quant, baseNodes);
+
+            const prevOverlay = int.patchesById[id];
+            const nextOverlay = applyTouchedKeysToOverlay(
+                prevOverlay,
+                quant,
+                cleaned,
+            );
+
+            if (!nextOverlay) {
+                if (prevOverlay) clearedIds.push(id);
+                continue;
+            }
+
+            if (patchesEqual(prevOverlay, nextOverlay)) continue;
+
+            nextOverlayById[id] = nextOverlay;
         }
 
-        if (!Object.keys(cleanedPatch).length) return;
+        const nextOverlayLength = Object.keys(nextOverlayById).length;
 
-        store.updateNodesRaf(cleanedPatch);
+        if (!nextOverlayLength && clearedIds.length === 0) return;
+
+        if (nextOverlayLength) {
+            int.replacePatches(nextOverlayById);
+        }
+        if (clearedIds.length) {
+            int.clearIds(clearedIds);
+        }
     };
 
     const schedule = () => {

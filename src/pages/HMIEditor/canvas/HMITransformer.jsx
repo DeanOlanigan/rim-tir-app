@@ -1,4 +1,4 @@
-import { Rect, Transformer } from "react-konva";
+import { Transformer } from "react-konva";
 import { ROTATION_SNAP_TOLERANCE, ROTATION_SNAPS, SHAPES } from "../constants";
 import { memo, useCallback, useEffect } from "react";
 import { useNodeStore } from "../store/node-store";
@@ -7,25 +7,27 @@ import { getShape } from "./shapes";
 import { useActionsStore } from "../store/actions-store";
 import { dragBound } from "./utils/dragBound";
 import { isLineLikeType } from "../utils";
+import { useInteractiveStore } from "../store/interactive-store";
 
-function transformStartHandler(e) {
-    const node = e.target;
-    const id = node.attrs.id;
-    useNodeStore.getState().beginInteractiveSnapshot([id]);
+function transformStartHandler() {
+    patchStoreRaf.cancel();
+    useInteractiveStore.getState().begin();
 }
 
 function transformHandler(e) {
     const node = e.target;
     const id = node.attrs.id;
     const type = node.attrs.type;
+
     const shape = getShape(type);
-    let patch = {};
     if (!shape?.onTransform) {
         console.warn("No onTransform handler for shape type:", type);
         return;
     }
     const res = shape.onTransform(node);
     if (!res) return;
+
+    let patch = {};
     if (type === SHAPES.group) {
         Object.assign(patch, res);
     } else {
@@ -34,9 +36,26 @@ function transformHandler(e) {
     patchStoreRaf(patch);
 }
 
-function transformEndHandler() {
+function transformEndHandler(nodes) {
+    if (nodes.length === 0) return;
+    let patchesById = {};
+    for (const node of nodes) {
+        const { id, type } = node.attrs;
+        const shape = getShape(type);
+        if (!shape?.onTransformEnd) {
+            console.warn("No shape adapter for type:", type);
+            continue;
+        }
+        const res = shape.onTransformEnd(node);
+        if (type === SHAPES.group) {
+            Object.assign(patchesById, res);
+        } else {
+            patchesById[id] = res;
+        }
+    }
+    patchStoreRaf(patchesById);
     patchStoreRaf.flushNow();
-    useNodeStore.getState().commitInteractiveSnapshot();
+    useInteractiveStore.getState().commit();
 }
 
 const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
@@ -85,57 +104,22 @@ const HMITransformer = ({ nodesRef, transformerRef, canvasRef }) => {
     );
 
     return (
-        <>
-            <Transformer
-                ref={transformerRef}
-                keepRatio={false}
-                rotationSnaps={ROTATION_SNAPS}
-                rotationSnapTolerance={ROTATION_SNAP_TOLERANCE}
-                ignoreStroke={true}
-                flipEnabled={false}
-                borderDash={selectedIds.length > 1 ? [4, 4] : undefined}
-                anchorDragBoundFunc={anchorBound}
-                onTransformEnd={transformEndHandler}
-                onTransform={transformHandler}
-                onTransformStart={transformStartHandler}
-            />
-            {selectedIds.length > 1 &&
-                selectedIds.map((id) => (
-                    <SelectionRect key={id} id={id} nodesRef={nodesRef} />
-                ))}
-        </>
-    );
-};
-export default memo(HMITransformer);
-
-const SelectionRect = ({ id, nodesRef }) => {
-    // простая подписка только ради триггера
-    useNodeStore((state) => {
-        const n = state.nodes[id];
-        return n
-            ? `${n.x}-${n.y}-${n.width}-${n.height}-${n.rotation}-${n.skewX}-${n.skewY}`
-            : "";
-    });
-
-    const kNode = nodesRef.current.get(id);
-    if (!kNode) return null;
-
-    const bb = kNode.getClientRect({
-        relativeTo: kNode.getStage(),
-        skipStroke: true,
-        skipShadow: true,
-    });
-
-    return (
-        <Rect
-            x={bb.x}
-            y={bb.y}
-            width={bb.width}
-            height={bb.height}
-            stroke="rgb(0, 100, 255)"
-            strokeWidth={2}
-            strokeScaleEnabled={false}
-            listening={false}
+        <Transformer
+            ref={transformerRef}
+            keepRatio={false}
+            rotationSnaps={ROTATION_SNAPS}
+            rotationSnapTolerance={ROTATION_SNAP_TOLERANCE}
+            ignoreStroke={true}
+            flipEnabled={false}
+            borderDash={selectedIds.length > 1 ? [4, 4] : undefined}
+            anchorDragBoundFunc={anchorBound}
+            onTransformEnd={() => {
+                const nodes = transformerRef.current.nodes();
+                transformEndHandler(nodes);
+            }}
+            onTransform={transformHandler}
+            onTransformStart={transformStartHandler}
         />
     );
 };
+export default memo(HMITransformer);

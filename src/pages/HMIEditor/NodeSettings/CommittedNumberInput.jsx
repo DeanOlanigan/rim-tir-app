@@ -17,6 +17,7 @@ export const CommittedNumberInput = ({
     disabled = false,
     onFocusChange,
     onScrub,
+    onScrubStart,
     onCommit,
     commitOnUnmount = true,
 }) => {
@@ -174,7 +175,7 @@ export const CommittedNumberInput = ({
             min={min}
             max={max}
             onValueChange={(e) => handleChange(e.value, e.valueAsNumber)}
-            onFocusChange={(d) => onFocusChange(d)}
+            onFocusChange={(d) => onFocusChange?.(d)}
             disabled={disabled}
         >
             <InputGroup
@@ -186,6 +187,7 @@ export const CommittedNumberInput = ({
                             scrubbingRef.current = true;
                             touchedRef.current = true;
                             committedRef.current = false;
+                            onScrubStart?.();
                         }}
                     >
                         {label}

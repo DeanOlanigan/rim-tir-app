@@ -58,7 +58,7 @@ function collectImpactedGroups(groupsSet, node, patch, oldNode, allNodes) {
     }
 }
 
-function update(patchesById, nodes) {
+export function update(patchesById, nodes) {
     let draftNodes = null;
     const startGroups = new Set();
 
@@ -102,7 +102,7 @@ function mergeIfChanged(base, patch) {
 
 // Намеренно нарушаем иммутабельность
 function updateRaf(patchesById, nodes) {
-    let hasChanges = false;
+    let draftNodes = null;
     for (const id in patchesById) {
         const base = nodes[id];
         const patch = patchesById[id];
@@ -110,10 +110,13 @@ function updateRaf(patchesById, nodes) {
 
         const next = mergeIfChanged(base, patch);
         if (next === base) continue;
-        nodes[id] = next;
-        hasChanges = true;
+
+        if (!draftNodes) draftNodes = { ...nodes }; // O(N) Spread в RAF
+
+        draftNodes[id] = next;
     }
-    return hasChanges ? { nodes } : null;
+    if (!draftNodes) return null;
+    return { nodes: draftNodes };
 }
 
 export const updateNodesCommand = (api, patchesById) => {
@@ -137,4 +140,16 @@ export const updateNodesRafCommand = (api, patchesById) => {
 
 export const updateNodeCommand = (api, id, nodePatch) => {
     return updateNodesCommand(api, { [id]: nodePatch });
+};
+
+export const updateNodesSilentCommand = (api, patchesById) => {
+    runCommand(
+        api,
+        "cmd/nodes/updateNodesSilent",
+        (state) => {
+            const patch = update(patchesById, state.nodes);
+            return patch ? { patch, dirty: true } : null;
+        },
+        { history: false },
+    );
 };
