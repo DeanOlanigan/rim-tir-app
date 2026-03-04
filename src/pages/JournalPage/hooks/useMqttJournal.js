@@ -4,14 +4,13 @@ import { useJournalStream } from "../JournalStores/journal-stream-store";
 
 export function useMqttJournal() {
     const { subscribe } = useMqttCore();
-    const push = useJournalStream((state) => state.push);
     useEffect(() => {
         const topic = "journal";
         const buf = [];
         let t = null;
         const flush = () => {
             if (!buf.length) return;
-            push(buf.splice(0, buf.length));
+            useJournalStream.getState().push(buf.splice(0, buf.length));
         };
 
         const unsub = subscribe(topic, { qos: 0, retain: false }, ({ msg }) => {
@@ -28,5 +27,5 @@ export function useMqttJournal() {
             if (t) clearTimeout(t);
             flush();
         };
-    }, [subscribe, push]);
+    }, [subscribe]);
 }

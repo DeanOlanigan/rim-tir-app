@@ -1,18 +1,16 @@
-import { Box, IconButton, Text } from "@chakra-ui/react";
+import { Box, IconButton } from "@chakra-ui/react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useFilterStore } from "../JournalStores/FilterStore";
 import { useStickToBottom } from "use-stick-to-bottom";
 import { NoData } from "@/components/NoData";
-import { Loader } from "@/components/Loader";
 import { useJournalStream } from "../JournalStores/journal-stream-store";
-import { useJournalData } from "../hooks/useJournalData";
 import { useFilterData } from "../hooks/useFilterData";
 import { useFilterColumns } from "../hooks/useFilterColumns";
 import { HeaderCell, TableData, useCreateTable } from "../hooks/useCreateTable";
 import { LuArrowDown } from "react-icons/lu";
 
 const tableColumns = [
-    { label: "Дата и время", value: "date", size: 250 },
+    { label: "Дата и время", value: "ts", size: 250 },
     { label: "Тип", value: "type", size: 145 },
     { label: "Группа", value: "group", size: 140 },
     { label: "Переменная", value: "var", size: 140 },
@@ -21,10 +19,12 @@ const tableColumns = [
 ];
 
 export const JournalTable = () => {
-    const { isLoading, isError, error } = useJournalData();
+    // TODO
+    // eslint-disable-next-line
+    /* const { isLoading, isError, error } = useJournalData(); */
     const { selectedGroups, selectedMessages, tableColumnsZus } =
         useFilterStore();
-    const { live } = useJournalStream();
+    const live = useJournalStream((state) => state.live);
 
     const sticky = useStickToBottom({
         initial: "instant",
@@ -47,8 +47,8 @@ export const JournalTable = () => {
 
     const virtualRows = virtualizer.getVirtualItems();
 
-    if (isLoading) return <Loader text={"Загрузка данных"} />;
-    if (isError) return <Text>Error: {error.message}</Text>;
+    //if (isLoading) return <Loader text={"Загрузка данных"} />;
+    //if (isError) return <Text>Error: {error.message}</Text>;
 
     return (
         <div

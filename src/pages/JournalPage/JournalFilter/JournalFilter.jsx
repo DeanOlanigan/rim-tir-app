@@ -14,7 +14,7 @@ import { LuListFilter } from "react-icons/lu";
 
 export const JournalFilter = () => {
     return (
-        <Drawer.Root>
+        <Drawer.Root lazyMount unmountOnExit>
             <Drawer.Trigger asChild>
                 <IconButton size={"xs"} variant={"solid"}>
                     <LuListFilter />

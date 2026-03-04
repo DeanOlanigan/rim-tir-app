@@ -46,7 +46,7 @@ export const JournalView = () => {
 };
 
 const JournalHeader = () => {
-    const { isPaused, pause, resume } = useJournalStream();
+    const isPaused = useJournalStream((state) => state.isPaused);
 
     return (
         <Flex justifyContent={"space-between"}>
@@ -59,7 +59,11 @@ const JournalHeader = () => {
                 <IconButton
                     variant={"outline"}
                     size={"xs"}
-                    onClick={() => (isPaused ? resume() : pause())}
+                    onClick={() =>
+                        isPaused
+                            ? useJournalStream.getState().resume()
+                            : useJournalStream.getState().pause()
+                    }
                 >
                     {!isPaused ? <LuPlay /> : <LuPause />}
                 </IconButton>
@@ -74,7 +78,7 @@ const JournalHeader = () => {
 
 // TODO Встроить в таблицу
 const ColumnViewMenu = () => {
-    const { tableColumnsZus, setColons } = useFilterStore();
+    const tableColumnsZus = useFilterStore((state) => state.tableColumnsZus);
     const group = useCheckboxGroup({ value: tableColumnsZus });
 
     const handleCheckboxChange = (value, checked) => {
@@ -82,7 +86,7 @@ const ColumnViewMenu = () => {
             ? [...tableColumnsZus, value]
             : tableColumnsZus.filter((col) => col !== value);
 
-        setColons(newColumns);
+        useFilterStore.getState().setColons(newColumns);
     };
 
     return (
