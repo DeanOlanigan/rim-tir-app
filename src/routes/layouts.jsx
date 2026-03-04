@@ -1,11 +1,11 @@
-import { Footer } from "@/components/Footer/Footer";
-import Header from "@/components/Header/Header";
 import { Toaster } from "@/components/ui/toaster";
 import { Container, Flex, Heading } from "@chakra-ui/react";
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { useAppStore } from "@/store/app-store";
 import { journalDialog } from "@/journalDialog";
+import { Sidebar } from "@/components/Sidebar/Sidebar";
+import { useMqttJournal } from "@/pages/JournalPage/hooks/useMqttJournal";
 
 export const PublicLayout = () => {
     return <Outlet />;
@@ -13,13 +13,15 @@ export const PublicLayout = () => {
 
 export const PrivateLayout = () => {
     const fullScreenMode = useAppStore((state) => state.fullScreenMode);
+    useMqttJournal();
     return (
         <>
             <journalDialog.Viewport />
             <Toaster />
-            {!fullScreenMode && <Header />}
-            <Outlet />
-            {!fullScreenMode && <Footer />}
+            <Flex w={"100%"} h={"100%"} flex={1}>
+                {!fullScreenMode && <Sidebar />}
+                <Outlet />
+            </Flex>
         </>
     );
 };
@@ -39,7 +41,15 @@ export const PageSuspesnse = () => {
 
 export const WideLayout = () => {
     return (
-        <Flex as={"section"} flex={1} minH={0} h={"100%"} direction={"column"}>
+        <Flex
+            as={"section"}
+            flex={1}
+            minH={0}
+            minW={0}
+            w={"100%"}
+            h={"100%"}
+            direction={"column"}
+        >
             <Suspense fallback={<PageSuspesnse />}>
                 <Outlet />
             </Suspense>
