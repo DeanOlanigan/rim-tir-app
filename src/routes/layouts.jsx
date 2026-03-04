@@ -59,17 +59,20 @@ export const WideLayout = () => {
 
 export const CenteredLayout = () => {
     return (
-        <Container
+        <Flex
             as={"section"}
+            flex={1}
             minH={0}
+            minW={0}
+            w={"100%"}
             h={"100%"}
-            maxW={"6xl"}
-            px={{ base: 4, md: 6 }}
-            py={{ base: 4, md: 6 }}
+            overflow={"auto"}
         >
-            <Suspense fallback={<PageSuspesnse />}>
-                <Outlet />
-            </Suspense>
-        </Container>
+            <Container maxH={"100%"} minH={0} maxW={"6xl"}>
+                <Suspense fallback={<PageSuspesnse />}>
+                    <Outlet />
+                </Suspense>
+            </Container>
+        </Flex>
     );
 };
