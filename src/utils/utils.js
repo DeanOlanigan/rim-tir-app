@@ -2,19 +2,21 @@ import { nanoid } from "nanoid";
 import { configuratorConfig } from "@/store/configurator-config";
 import { CONN_STATUS, NODE_TYPES } from "@/config/constants";
 import { isAxiosError } from "axios";
+import {
+    getLocalTimeZone,
+    now,
+    toCalendarDateTime,
+} from "@internationalized/date";
 
 export const getStartDate = () => {
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 3);
-    startDate.setMinutes(Math.round(startDate.getMinutes() / 15) * 15);
-    return startDate.getTime();
+    const current = toCalendarDateTime(now(getLocalTimeZone()));
+    const threeDaysAgo = current.subtract({ days: 3 });
+    return [threeDaysAgo];
 };
 
 export const getEndDate = () => {
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate());
-    endDate.setMinutes(Math.round(endDate.getMinutes() / 15) * 15);
-    return endDate.getTime();
+    const current = toCalendarDateTime(now(getLocalTimeZone()));
+    return [current];
 };
 
 export function getRandomColor() {
