@@ -1,50 +1,61 @@
-import { Button, Group, IconButton, Stack } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/react";
 import { ServerSettings } from "./WebServSettings";
 import { useSettings } from "./hooks/useSettings";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { CanAccess } from "@/CanAccess";
 import { useSettingsMutation } from "./hooks/useSettingsMutation";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LuRotateCcw } from "react-icons/lu";
 import { RetentionSettings } from "./RetentionSettings";
-import { settingsSchema } from "./settings.schema";
+import { createDefaultSettings, settingsSchema } from "./settings.schema";
+import { SettingsActions } from "./SettingsActions";
 
 export const Settings = () => {
-    const { data: settings, isLoading } = useSettings();
+    const { data: settings } = useSettings();
     const settingMutation = useSettingsMutation();
 
     const methods = useForm({
         resolver: zodResolver(settingsSchema),
         mode: "onChange",
-        defaultValues: {
-            webServer: {
-                port: 8080,
-                sessionTtlMinutes: 480,
-                https: false,
-                certificate: null,
-            },
-            retention: [],
-        },
+        defaultValues: createDefaultSettings(),
     });
 
-    const {
-        handleSubmit,
-        reset,
-        formState: { isDirty, isValid, isSubmitting },
-    } = methods;
+    const { handleSubmit, reset } = methods;
+
+    const didInitRef = useRef(false);
 
     useEffect(() => {
-        if (settings) {
+        if (!settings) return;
+        // первый приход данных — инициализируем форму
+        if (!didInitRef.current) {
+            console.log("effect reset");
+            reset(settings);
+            didInitRef.current = true;
+            return;
+        }
+
+        // если форма не редактируется — можно синхронизировать
+        if (!methods.formState.isDirty) {
+            console.log("effect reset2");
             reset(settings);
         }
-    }, [settings, reset]);
+    }, [settings, reset, methods.formState.isDirty]);
 
     const onSubmit = async (values) => {
         await settingMutation.mutateAsync(values);
+        reset({
+            ...values,
+            webServer: {
+                ...values.webServer,
+                certificateFile: null,
+            },
+        });
     };
 
-    if (isLoading) return null;
+    const onReset = () => {
+        if (!settings) return;
+        reset(settings);
+    };
 
     return (
         <FormProvider {...methods}>
@@ -63,31 +74,10 @@ export const Settings = () => {
                             "settings.journal.edit",
                         ]}
                     >
-                        <Group attached w={"100%"}>
-                            <Button
-                                flex={1}
-                                type={"submit"}
-                                disabled={!isDirty || !isValid}
-                                loading={
-                                    isSubmitting || settingMutation.isPending
-                                }
-                            >
-                                {!isDirty
-                                    ? "Нет изменений"
-                                    : "Применить изменения"}
-                            </Button>
-                            <IconButton
-                                disabled={!isDirty}
-                                title={
-                                    !isDirty ? "Нечего сбрасывать" : "Сбросить"
-                                }
-                                onClick={() => {
-                                    if (settings) reset(settings);
-                                }}
-                            >
-                                <LuRotateCcw />
-                            </IconButton>
-                        </Group>
+                        <SettingsActions
+                            onReset={onReset}
+                            isSaving={settingMutation.isPending}
+                        />
                     </CanAccess>
                 </Stack>
             </form>
