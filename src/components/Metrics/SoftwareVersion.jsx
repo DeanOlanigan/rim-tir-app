@@ -1,5 +1,5 @@
 import { getSoftwareVer, QK } from "@/api";
-import { Badge, Skeleton, Text } from "@chakra-ui/react";
+import { Skeleton, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 
 export const SoftwareVersion = () => {
@@ -8,21 +8,21 @@ export const SoftwareVersion = () => {
         queryFn: getSoftwareVer,
     });
 
-    if (isLoading) return <Skeleton w={"10ch"} />;
+    if (isLoading) return <Skeleton />;
 
     return (
-        <Badge
-            variant={"outline"}
-            colorPalette={isError ? "red" : "cyan"}
-            textAlign={"center"}
+        <Text
+            fontSize={"2xs"}
+            color={"fg.subtle"}
+            fontWeight={"bold"}
+            minW={"10ch"}
             title={
                 isError
                     ? "Ошибка считывания версии ПК"
                     : `Текущая версия ПК: ${data?.data}`
             }
-            size={"xs"}
         >
-            <Text minW={"10ch"}>{isError ? "Ошибка" : data?.data}</Text>
-        </Badge>
+            {isError ? "Ошибка" : data?.data}
+        </Text>
     );
 };

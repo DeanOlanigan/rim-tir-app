@@ -1,6 +1,8 @@
 import {
     Avatar,
     Badge,
+    Box,
+    Button,
     Circle,
     Float,
     HStack,
@@ -16,11 +18,14 @@ import {
     LuActivity,
     LuBadgeAlert,
     LuChartLine,
+    LuChevronRight,
     LuClock3,
     LuCog,
     LuCpu,
     LuLogOut,
     LuNotebook,
+    LuPanelLeftClose,
+    LuPanelLeftOpen,
     LuScrollText,
     LuSettings,
     LuSquareMousePointer,
@@ -39,6 +44,7 @@ import { CanAccess } from "@/CanAccess";
 import { JOURNAL_DIALOG_ID, journalDialog } from "@/journalDialog";
 import { useJournalStream } from "@/pages/JournalPage/JournalStores/journal-stream-store";
 import { SoftwareVersion } from "../Metrics/SoftwareVersion";
+import { useAppStore } from "@/store/app-store";
 
 const navItems = [
     {
@@ -87,47 +93,54 @@ const navItems = [
 
 export const Sidebar = () => {
     const { user } = useAuth();
+    const collapsed = useAppStore((s) => s.sideBarCollapsed);
+    const setCollapsed = useAppStore((s) => s.toggleSideBarCollapsed);
+
+    const W_COLLAPSED = "70px";
+    const W_WIDE = "230px";
 
     return (
         <VStack
-            w="72px"
-            minW="72px"
+            w={{ base: W_COLLAPSED, lg: collapsed ? W_COLLAPSED : W_WIDE }}
+            minW={{ base: W_COLLAPSED, lg: collapsed ? W_COLLAPSED : W_WIDE }}
             h="100vh"
             bg="bg.panel"
             borderRightWidth="0.25rem"
             borderColor="colorPalette.subtle"
-            px="2"
-            py="8"
+            px={{ base: "2", lg: "3" }}
+            py={{ base: "8", lg: "6" }}
+            align={"stretch"}
         >
+            <HStack justify="flex-end" w="100%">
+                <Tooltip
+                    content={collapsed ? "Развернуть меню" : "Свернуть меню"}
+                    positioning={{ placement: "right" }}
+                    openDelay={150}
+                >
+                    <IconButton
+                        onClick={setCollapsed}
+                        variant="ghost"
+                        size="sm"
+                        display={{ base: "none", lg: "inline-flex" }} // на мобилке не нужно
+                    >
+                        <Icon
+                            as={collapsed ? LuPanelLeftOpen : LuPanelLeftClose}
+                            boxSize="5"
+                        />
+                    </IconButton>
+                </Tooltip>
+            </HStack>
+
             {/* Верх */}
             <VStack gap="2" w={"100%"}>
                 {navItems
                     .filter((item) => hasRight(user, item.right))
                     .map((item) => (
-                        <NavLink key={item.path} to={item.path} tabIndex={-1}>
-                            {({ isActive }) => (
-                                <Tooltip
-                                    showArrow
-                                    content={item.name}
-                                    positioning={{ placement: "right" }}
-                                    openDelay={150}
-                                >
-                                    <IconButton
-                                        size={"md"}
-                                        variant={isActive ? "solid" : "ghost"}
-                                        aria-label={item.name}
-                                        css={{
-                                            _icon: {
-                                                width: "5",
-                                                height: "5",
-                                            },
-                                        }}
-                                    >
-                                        <Icon as={item.icon} />
-                                    </IconButton>
-                                </Tooltip>
-                            )}
-                        </NavLink>
+                        <SidebarNavItem
+                            key={item.path}
+                            item={item}
+                            collapsed={collapsed}
+                        />
                     ))}
                 <AlertJournal />
             </VStack>
@@ -135,7 +148,7 @@ export const Sidebar = () => {
             <Spacer />
 
             {/* Низ */}
-            <VStack gap="2" w={"100%"}>
+            <VStack gap="2" w={"100%"} align={"start"}>
                 <Connect />
                 <StatusTile
                     icon={LuClock3}
@@ -143,91 +156,114 @@ export const Sidebar = () => {
                     sub={"stats/time"}
                     color={"green"}
                     format={(value) => new Date(value).toLocaleTimeString()}
+                    collapsed={collapsed}
                 />
                 <StatusTile
                     icon={LuCpu}
                     label={"CPU"}
                     sub={"stats/cpu"}
                     color={"purple"}
+                    collapsed={collapsed}
                 />
                 <StatusTile
                     icon={LuCpu}
                     label={"RAM"}
                     sub={"stats/ram"}
                     color={"orange"}
+                    collapsed={collapsed}
                 />
                 <CanAccess right={"settings.view"}>
-                    <NavLink to={"settings"} tabIndex={-1}>
-                        {({ isActive }) => (
-                            <Tooltip
-                                content="Настройки"
-                                positioning={{ placement: "right" }}
-                                openDelay={150}
-                            >
-                                <IconButton
-                                    size={"md"}
-                                    variant={isActive ? "solid" : "ghost"}
-                                    shadow={isActive ? "md" : ""}
-                                    aria-label="Settings"
-                                    css={{
-                                        _icon: {
-                                            width: "5",
-                                            height: "5",
-                                        },
-                                    }}
-                                >
-                                    <LuSettings />
-                                </IconButton>
-                            </Tooltip>
-                        )}
-                    </NavLink>
+                    <SidebarSettingsItem collapsed={collapsed} />
                 </CanAccess>
-                <ThemeBtn />
-                <UserBlock user={user} />
+                <ThemeBtn collapsed={collapsed} />
+                <UserBlock user={user} collapsed={collapsed} />
                 <SoftwareVersion />
             </VStack>
         </VStack>
     );
 };
 
-const AlertJournal = () => {
-    const live = useJournalStream((state) => state.live);
+const SidebarNavItem = ({ item, collapsed }) => {
     return (
-        <CanAccess right={"journal.view"}>
+        <NavLink to={item.path} tabIndex={-1} style={{ width: "100%" }}>
+            {({ isActive }) => (
+                <Tooltip
+                    showArrow
+                    content={item.name}
+                    positioning={{ placement: "right" }}
+                    openDelay={150}
+                >
+                    <SidebarButton
+                        icon={item.icon}
+                        isActive={isActive}
+                        aria-label={item.name}
+                        collapsed={collapsed}
+                    >
+                        {item.name}
+                    </SidebarButton>
+                </Tooltip>
+            )}
+        </NavLink>
+    );
+};
+
+const SidebarSettingsItem = ({ collapsed }) => (
+    <NavLink to="settings" tabIndex={-1} style={{ width: "100%" }}>
+        {({ isActive }) => (
             <Tooltip
-                showArrow
-                content={"Журнал тревог"}
+                content="Настройки"
                 positioning={{ placement: "right" }}
                 openDelay={150}
             >
-                <IconButton
-                    size={"md"}
-                    variant={"ghost"}
-                    aria-label="Logout"
-                    position={"relative"}
-                    css={{
-                        _icon: {
-                            width: "5",
-                            height: "5",
-                        },
-                    }}
-                    onClick={() => journalDialog.open(JOURNAL_DIALOG_ID)}
+                <SidebarButton
+                    icon={LuSettings}
+                    isActive={isActive}
+                    aria-label="Настройки"
+                    collapsed={collapsed}
                 >
-                    <LuBadgeAlert />
+                    Настройки
+                </SidebarButton>
+            </Tooltip>
+        )}
+    </NavLink>
+);
+
+const AlertJournal = ({ collapsed }) => {
+    const live = useJournalStream((state) => state.live);
+
+    return (
+        <CanAccess right="journal.view">
+            <Tooltip
+                showArrow
+                content="Журнал тревог"
+                positioning={{ placement: "right" }}
+                openDelay={150}
+            >
+                <Box position="relative" w="100%">
+                    <SidebarButton
+                        icon={LuBadgeAlert}
+                        isActive={false}
+                        aria-label="Журнал тревог"
+                        collapsed={collapsed}
+                        onClick={() => journalDialog.open(JOURNAL_DIALOG_ID)}
+                    >
+                        Журнал тревог
+                    </SidebarButton>
+
                     {live.length > 0 && (
-                        <Float placement={"top-end"} offset={1}>
-                            <Circle size="4" bg="red" color="white">
-                                <Text fontSize={"xs"}>{live.length}</Text>
+                        <Float placement="top-end" offset={1}>
+                            <Circle size="4" bg="red.solid" color="white">
+                                <Text fontSize="2xs">{live.length}</Text>
                             </Circle>
                         </Float>
                     )}
-                </IconButton>
+                </Box>
             </Tooltip>
         </CanAccess>
     );
 };
 
-const ThemeBtn = () => {
+const ThemeBtn = ({ collapsed }) => {
     const { toggleColorMode } = useColorMode();
 
     return (
@@ -236,20 +272,15 @@ const ThemeBtn = () => {
             positioning={{ placement: "right" }}
             openDelay={150}
         >
-            <IconButton
+            <SidebarButton
+                icon={ColorModeIcon}
+                isActive={false}
+                aria-label="Сменить тему"
+                collapsed={collapsed}
                 onClick={toggleColorMode}
-                variant="ghost"
-                aria-label="Toggle color mode"
-                size="md"
-                css={{
-                    _icon: {
-                        width: "5",
-                        height: "5",
-                    },
-                }}
             >
-                <ColorModeIcon />
-            </IconButton>
+                Сменить тему
+            </SidebarButton>
         </Tooltip>
     );
 };
@@ -259,7 +290,7 @@ const pickPalette = (name) => {
     const index = name.charCodeAt(0) % colorPalette.length;
     return colorPalette[index];
 };
-const UserBlock = ({ user }) => {
+const UserBlock = ({ user, collapsed }) => {
     const logoutMutation = useLogoutMutation();
     return (
         <Menu.Root
@@ -267,15 +298,46 @@ const UserBlock = ({ user }) => {
             unmountOnExit
             positioning={{ placement: "right-end" }}
         >
-            <Menu.Trigger rounded="md" focusRing="outside">
-                <Avatar.Root
-                    size="md"
-                    colorPalette={pickPalette(user.name)}
-                    shape="rounded"
-                >
-                    <Avatar.Image src={user.avatar} />
-                    <Avatar.Fallback name={user.name} />
-                </Avatar.Root>
+            <Menu.Trigger rounded="md" focusRing="outside" w={"100%"} asChild>
+                <Button variant={"ghost"} p={0} w={"100%"}>
+                    <HStack
+                        w={"100%"}
+                        justify={{ base: "center", lg: "flex-start" }}
+                    >
+                        <Avatar.Root
+                            size="sm"
+                            colorPalette={pickPalette(user.name)}
+                            shape="rounded"
+                        >
+                            <Avatar.Image src={user.avatar} />
+                            <Avatar.Fallback name={user.name} />
+                        </Avatar.Root>
+                        <VStack
+                            align="start"
+                            gap={0}
+                            display={{
+                                base: "none",
+                                lg: collapsed ? "none" : "block",
+                            }}
+                        >
+                            <Text fontSize="sm" fontWeight="medium" truncate>
+                                {user.name}
+                            </Text>
+                            {user.roleNames.map((name) => (
+                                <Badge key={name} variant="subtle" size={"xs"}>
+                                    {name}
+                                </Badge>
+                            ))}
+                        </VStack>
+                    </HStack>
+                    <Icon
+                        as={LuChevronRight}
+                        display={{
+                            base: "none",
+                            lg: collapsed ? "none" : "block",
+                        }}
+                    />
+                </Button>
             </Menu.Trigger>
             <Portal>
                 <Menu.Positioner>
@@ -316,6 +378,7 @@ function StatusTile({
     sub,
     color,
     format = (value) => `${value}%`,
+    collapsed,
 }) {
     const { value, status } = useMqttMetrics(sub, {
         staleMs: 2500,
@@ -323,11 +386,11 @@ function StatusTile({
     });
 
     let data = "----";
-    if (status === CONN_STATUS.LIVE) {
-        data = format(value);
-    }
+    if (status === CONN_STATUS.LIVE) data = format(value);
 
     const bg = getMetricColor(status, color);
+
+    const wide = !collapsed;
 
     return (
         <Tooltip
@@ -337,30 +400,46 @@ function StatusTile({
         >
             <Badge
                 colorPalette={bg}
-                flexDirection={"column"}
-                py={1}
-                px={0}
-                w={"50px"}
-                variant={"outline"}
-                justifyContent={"center"}
+                variant="outline"
+                py={{ base: 1, lg: wide ? 2 : 1 }}
+                px={{ base: 0, lg: wide ? 3 : 0 }}
+                w={{ base: "50px", lg: wide ? "100%" : "50px" }}
+                display="flex"
+                flexDirection={{ base: "column", lg: wide ? "row" : "column" }}
+                alignItems="center"
+                justifyContent="center"
+                minW={0}
             >
-                <Icon as={icon} boxSize="4" />
+                <Icon as={icon} boxSize="4" flexShrink={0} />
+
                 <Text
+                    display={{ base: "block", lg: wide ? "none" : "block" }}
                     fontSize="2xs"
                     lineHeight="1"
                     textAlign="center"
-                    userSelect={"none"}
+                    userSelect="none"
                 >
                     {label}
                 </Text>
+
+                <Text
+                    display={{ base: "none", lg: wide ? "block" : "none" }}
+                    fontSize="xs"
+                    lineHeight="1"
+                    userSelect="none"
+                    flex="1"
+                    truncate
+                >
+                    {label}
+                </Text>
+
                 <Text
                     fontSize="2xs"
                     fontWeight="600"
                     lineHeight="1"
                     textAlign="center"
-                    maxW="100%"
-                    userSelect={"none"}
                     truncate
+                    userSelect="none"
                 >
                     {data}
                 </Text>
@@ -368,3 +447,42 @@ function StatusTile({
         </Tooltip>
     );
 }
+
+const SidebarButton = ({
+    icon,
+    children,
+    isActive,
+    onClick,
+    collapsed,
+    ...props
+}) => {
+    return (
+        <Button
+            onClick={onClick}
+            size="md"
+            variant={isActive ? "solid" : "ghost"}
+            justifyContent={{
+                base: "center",
+                lg: collapsed ? "center" : "flex-start",
+            }}
+            w="100%"
+            minW="0"
+            px={{ base: 0, lg: collapsed ? 0 : 3 }}
+            css={{ _icon: { width: "5", height: "5" } }}
+            {...props}
+        >
+            <Icon as={icon} flexShrink={0} />
+            <Text
+                display={{ base: "none", lg: collapsed ? "none" : "block" }}
+                ml="3"
+                fontSize="sm"
+                fontWeight="medium"
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+            >
+                {children}
+            </Text>
+        </Button>
+    );
+};

@@ -18,9 +18,11 @@ export const PrivateLayout = () => {
         <>
             <journalDialog.Viewport />
             <Toaster />
-            <Flex w={"100%"} h={"100%"} flex={1}>
+            <Flex w={"100%"} h={"100%"} flex={1} minH={0} minW={0}>
                 {!fullScreenMode && <Sidebar />}
-                <Outlet />
+                <Flex flex={1} minH={0} minW={0}>
+                    <Outlet />
+                </Flex>
             </Flex>
         </>
     );
