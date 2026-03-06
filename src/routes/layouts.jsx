@@ -1,11 +1,12 @@
 import { Toaster } from "@/components/ui/toaster";
-import { Container, Flex, Heading } from "@chakra-ui/react";
+import { Container, Flex, Heading, useBreakpointValue } from "@chakra-ui/react";
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { useAppStore } from "@/store/app-store";
 import { journalDialog } from "@/journalDialog";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
 import { useMqttJournal } from "@/pages/JournalPage/hooks/useMqttJournal";
+import { MobileHeader } from "@/components/Header/MobileHeader";
 
 export const PublicLayout = () => {
     return <Outlet />;
@@ -13,15 +14,28 @@ export const PublicLayout = () => {
 
 export const PrivateLayout = () => {
     const fullScreenMode = useAppStore((state) => state.fullScreenMode);
+    const isDesktop = useBreakpointValue({ base: false, lg: true });
+
     useMqttJournal();
     return (
         <>
             <journalDialog.Viewport />
             <Toaster />
-            <Flex w={"100%"} h={"100%"} flex={1} minH={0} minW={0}>
-                {!fullScreenMode && <Sidebar />}
+            <Flex
+                w={"100%"}
+                h={"100%"}
+                flex={1}
+                minH={0}
+                minW={0}
+                direction={"column"}
+            >
+                {!fullScreenMode && !isDesktop && <MobileHeader />}
+
                 <Flex flex={1} minH={0} minW={0}>
-                    <Outlet />
+                    {!fullScreenMode && isDesktop && <Sidebar />}
+                    <Flex flex={1} minH={0} minW={0}>
+                        <Outlet />
+                    </Flex>
                 </Flex>
             </Flex>
         </>

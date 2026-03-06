@@ -1,6 +1,7 @@
 import { getSoftwareVer, QK } from "@/api";
 import { Skeleton, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
+import { Tooltip } from "../ui/tooltip";
 
 export const SoftwareVersion = () => {
     const { data, isLoading, isError } = useQuery({
@@ -10,19 +11,20 @@ export const SoftwareVersion = () => {
 
     if (isLoading) return <Skeleton />;
 
+    const tooltip = isError
+        ? "Ошибка считывания версии ПК"
+        : `Текущая версия ПК: ${data?.data}`;
+
     return (
-        <Text
-            fontSize={"2xs"}
-            color={"fg.subtle"}
-            fontWeight={"bold"}
-            minW={"10ch"}
-            title={
-                isError
-                    ? "Ошибка считывания версии ПК"
-                    : `Текущая версия ПК: ${data?.data}`
-            }
+        <Tooltip
+            showArrow
+            content={tooltip}
+            positioning={{ placement: "right" }}
+            openDelay={1000}
         >
-            {isError ? "Ошибка" : data?.data}
-        </Text>
+            <Text fontSize={"2xs"} color={"fg.subtle"} fontWeight={"bold"}>
+                {isError ? "Ошибка" : data?.data}
+            </Text>
+        </Tooltip>
     );
 };

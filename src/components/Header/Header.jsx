@@ -7,6 +7,8 @@ import { JOURNAL_DIALOG_ID, journalDialog } from "@/journalDialog";
 import { useLogoutMutation } from "@/hooks/useMutation";
 import { CanAccess } from "@/CanAccess";
 
+/* [ ] Пока что deprecated */
+
 function Header() {
     return (
         <Center as={"header"} gap={"2"} p={"2"}>
