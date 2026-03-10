@@ -18,10 +18,6 @@ export const LogToolBox = () => {
     const { incLogTextSize, decLogTextSize, toggleLogTextWrapped } =
         useLogStore.getState();
 
-    /* const handleDownload = async () => {
-        window.location.href = `/api/v1/getLog?logfile=${logData.name}&type=${logData.type}`;
-    }; */
-
     return (
         <Group attached shadow={"xs"}>
             <IconButton
@@ -49,8 +45,10 @@ export const LogToolBox = () => {
                 variant={"surface"}
                 checked={isLogTextWrapped}
                 onCheckedChange={toggleLogTextWrapped}
-                borderColor={"colorPalette.muted"}
+                borderColor={"colorPalette.border"}
                 _hover={{ bg: "colorPalette.subtle" }}
+                transitionProperty="common"
+                transitionDuration="moderate"
             >
                 <CheckboxCard.HiddenInput />
                 <CheckboxCard.Control p={"0.45rem"}>
@@ -65,8 +63,10 @@ export const LogToolBox = () => {
                 variant={"surface"}
                 checked={isPaused}
                 onCheckedChange={(e) => (e.checked ? pause() : resume())}
-                borderColor={"colorPalette.muted"}
+                borderColor={"colorPalette.border"}
                 _hover={{ bg: "colorPalette.subtle" }}
+                transitionProperty="common"
+                transitionDuration="moderate"
             >
                 <CheckboxCard.HiddenInput />
                 <CheckboxCard.Control p={"0.45rem"}>

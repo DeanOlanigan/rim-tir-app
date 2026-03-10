@@ -74,7 +74,7 @@ function LogSourceManager() {
 
 export default LogSourceManager;
 
-const LogListBox = ({ data }) => {
+export const LogListBox = ({ data }) => {
     const logsToDwnl = useLogStore((state) => state.logsToDwnl);
     const { setLogsToDwnl } = useLogStore.getState();
     const collection = createListCollection({
@@ -95,7 +95,8 @@ const LogListBox = ({ data }) => {
         >
             <ListboxHeader collection={collection} />
             <Listbox.Content
-                rounded={0}
+                roundedTop={0}
+                roundedBottom={"l2"}
                 divideY="1px"
                 flex={1}
                 minH={0}
@@ -139,6 +140,7 @@ const ListboxHeader = ({ collection }) => {
     return (
         <Flex
             as="button"
+            bg={"bg.panel"}
             onClick={handleSelectAll}
             px="3"
             gap="2"
@@ -147,6 +149,7 @@ const ListboxHeader = ({ collection }) => {
             borderWidth="1px"
             minH="10"
             mb="-1px"
+            roundedTop={"l2"}
         >
             <Checkmark
                 filled

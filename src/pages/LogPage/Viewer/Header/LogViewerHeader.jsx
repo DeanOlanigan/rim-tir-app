@@ -10,16 +10,20 @@ export const LogViewerHeader = () => {
 
     return (
         <HStack align={"center"} justify={"space-between"} gap={"4"}>
-            <IconButton
-                size={"xs"}
-                shadow={"xs"}
-                onClick={() => setChosenLog(null)}
-            >
-                <LuArrowLeft />
-            </IconButton>
-            <LogName />
-            <LogTypesFilterButtons />
-            <LogToolBox />
+            <HStack>
+                <IconButton
+                    size={"xs"}
+                    shadow={"xs"}
+                    onClick={() => setChosenLog(null)}
+                >
+                    <LuArrowLeft />
+                </IconButton>
+                <LogName />
+            </HStack>
+            <HStack>
+                <LogTypesFilterButtons />
+                <LogToolBox />
+            </HStack>
         </HStack>
     );
 };
