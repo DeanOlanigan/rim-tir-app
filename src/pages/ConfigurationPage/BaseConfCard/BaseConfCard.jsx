@@ -1,24 +1,36 @@
-import { IconButton } from "@chakra-ui/react";
+import { Flex, Group, IconButton } from "@chakra-ui/react";
 import { ConfMenu } from "./ConfMenu";
 import { RouterMenu } from "./RouterMenu";
 import { ValidationErrorsContainer } from "../Validation/ValidationErrorsContainer";
 import { LuFlipHorizontal2, LuFlipVertical2 } from "react-icons/lu";
 import { useConfigStore } from "../stores";
-import { SubHeader } from "@/components/Header/SubHeader";
 import { ConfigInfo } from "@/components/ConfigInfo";
 import { ConfChecker } from "./ConfChecker";
 import { useVariablesStore } from "@/store/variables-store";
 
 export const BaseConfCard = () => {
     return (
-        <SubHeader>
-            <FlipButton />
-            <ConfMenu />
-            <RouterMenu />
-            <ConfigInfoWrapper />
+        <Flex
+            px={4}
+            py={1}
+            gap={4}
+            borderBottom={"0.25rem solid"}
+            borderColor={"colorPalette.subtle"}
+            h={"full"}
+            maxH={"40px"}
+            align={"center"}
+        >
+            <Flex gap={2} align={"center"}>
+                <ConfigInfoWrapper />
+                <ConfChecker />
+            </Flex>
+            <Group attached>
+                <FlipButton />
+                <ConfMenu />
+                <RouterMenu />
+            </Group>
             <ValidationErrorsContainer />
-            <ConfChecker />
-        </SubHeader>
+        </Flex>
     );
 };
 
@@ -36,10 +48,15 @@ const ConfigInfoWrapper = () => {
     );
 };
 
-const FlipButton = () => {
+const FlipButton = ({ ...props }) => {
     const { flip, setFlip } = useConfigStore((state) => state);
     return (
-        <IconButton variant="surface" size="2xs" onClick={() => setFlip()}>
+        <IconButton
+            variant="surface"
+            size="2xs"
+            onClick={() => setFlip()}
+            {...props}
+        >
             {flip === "vertical" ? <LuFlipHorizontal2 /> : <LuFlipVertical2 />}
         </IconButton>
     );

@@ -1,13 +1,12 @@
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
-import { useEffect, useState } from "react";
-import { Box, Switch } from "@chakra-ui/react";
+import { useEffect, useId, useState } from "react";
+import { Box, Flex, SimpleGrid, Switch } from "@chakra-ui/react";
 import { signalEditDialog, infoDialog } from "./setValue/dialog";
 import { ConfigInfoWrapper } from "./ConfigInfo";
 import { TreeCard } from "@/components/TreeView/TreeCard";
 import { TREE_TYPES } from "@/config/constants";
 import { TreeView } from "./Tree/TreeView";
-import { SubHeader } from "@/components/Header/SubHeader";
 import { SearchBar } from "./SearchBar";
 import { useQuery } from "@tanstack/react-query";
 import { getConfiguration, QK } from "@/api";
@@ -17,6 +16,7 @@ import { Loader } from "@/components/Loader";
 import { useMqttLive } from "./useMqttLive";
 import { useMonitoringLive } from "./store/mqtt-stream-store";
 import { ContextMenu } from "./ContextMenu/ContextMenu";
+import { Tooltip } from "@/components/ui/tooltip";
 
 function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -37,14 +37,24 @@ function MonitoringPage() {
 
     return (
         <>
-            <SubHeader>
-                <NameSwitcher />
-                <SearchBar
-                    searchTerm={searchTerm}
-                    setSearchTerm={setSearchTerm}
-                />
-                <ConfigInfoWrapper />
-            </SubHeader>
+            <SimpleGrid
+                columns={3}
+                px={4}
+                py={1}
+                borderBottom={"0.25rem solid"}
+                borderColor={"colorPalette.subtle"}
+            >
+                <Flex gap={2} align={"center"}>
+                    <ConfigInfoWrapper />
+                    <NameSwitcher />
+                </Flex>
+                <Flex justify={"center"} align={"center"}>
+                    <SearchBar
+                        searchTerm={searchTerm}
+                        setSearchTerm={setSearchTerm}
+                    />
+                </Flex>
+            </SimpleGrid>
             <Box h={"100%"} minH={0}>
                 <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                     <Panel collapsible={true} collapsedSize={0} minSize={25}>
@@ -99,17 +109,26 @@ const TreeWrapper = ({ data, treeType, searchTerm }) => {
 };
 
 const NameSwitcher = () => {
+    const id = useId();
     const nameSwitch = useMonitoringLive((state) => state.nameSwitch);
     const switchName = useMonitoringLive.getState().switchName;
 
     return (
-        <Switch.Root
-            checked={nameSwitch}
-            onCheckedChange={(e) => switchName(e.checked)}
+        <Tooltip
+            showArrow
+            content={"Переключить отображение имени/описания переменной"}
+            ids={{ trigger: id }}
         >
-            <Switch.HiddenInput />
-            <Switch.Control />
-            <Switch.Label>Переключить отображение имени</Switch.Label>
-        </Switch.Root>
+            <Switch.Root
+                ids={{ root: id }}
+                size={"sm"}
+                checked={nameSwitch}
+                onCheckedChange={(e) => switchName(e.checked)}
+            >
+                <Switch.HiddenInput />
+                <Switch.Control />
+                <Switch.Label>Отображение имени</Switch.Label>
+            </Switch.Root>
+        </Tooltip>
     );
 };

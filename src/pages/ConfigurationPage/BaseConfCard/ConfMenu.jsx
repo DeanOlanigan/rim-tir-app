@@ -11,11 +11,11 @@ import { useValidationStore } from "@/store/validation-store";
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 import { CanAccess } from "@/CanAccess";
 
-export const ConfMenu = () => {
+export const ConfMenu = ({ ...props }) => {
     return (
         <Menu.Root size={"sm"}>
             <Menu.Trigger asChild>
-                <Button variant="surface" size="2xs">
+                <Button variant="surface" size="2xs" {...props}>
                     Конфигурация
                 </Button>
             </Menu.Trigger>

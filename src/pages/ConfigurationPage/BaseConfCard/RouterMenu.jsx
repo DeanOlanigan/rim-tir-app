@@ -11,7 +11,7 @@ import {
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 import { CanAccess } from "@/CanAccess";
 
-export const RouterMenu = () => {
+export const RouterMenu = ({ ...props }) => {
     const errorsTreeSize = useValidationStore((state) => state.errorsTree.size);
     const sync = useVariablesStore((state) => state.sync);
     const hasErrors = errorsTreeSize > 0;
@@ -31,7 +31,7 @@ export const RouterMenu = () => {
     return (
         <Menu.Root size={"sm"}>
             <Menu.Trigger asChild>
-                <Button variant="surface" size="2xs">
+                <Button variant="surface" size="2xs" {...props}>
                     Роутер
                 </Button>
             </Menu.Trigger>
