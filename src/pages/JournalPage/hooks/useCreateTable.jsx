@@ -1,124 +1,131 @@
 import { useMemo } from "react";
-import { Text, Badge, Box } from "@chakra-ui/react";
-import {
-    useReactTable,
-    getCoreRowModel,
-    flexRender,
-} from "@tanstack/react-table";
+import { Text, Badge } from "@chakra-ui/react";
+import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import { MenuTypes } from "../JournalFilter/MenuFilters/MenuTypes";
 import { MenuGroups } from "../JournalFilter/MenuFilters/MenuGroups";
 
-export const useCreateTable = (filtreColon, filtredData) => {
+const groupPalette = {
+    noGroup: "gray",
+    danger: "red",
+    warn: "orange",
+    state: "blue",
+    pause: "cyan",
+    resume: "green",
+};
+
+const groupText = {
+    noGroup: "Без группы",
+    danger: "Аварийные",
+    warn: "Предупредительные",
+    state: "Оперативные",
+    pause: "Пауза",
+    resume: "Возобновлен",
+};
+
+const typeText = {
+    ts: "Телесигнал",
+    tu: "Телеуправление",
+    pause: "Пауза",
+    resume: "Возобновление",
+};
+
+const dateFormatter = new Intl.DateTimeFormat(undefined, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+});
+
+function formatJournalDate(value) {
+    if (!value) return "";
+    return dateFormatter.format(new Date(value));
+}
+
+export const useCreateTable = (filteredColumns, filteredData) => {
     const columns = useMemo(
         () =>
-            filtreColon.map((column) => ({
+            filteredColumns.map((column) => ({
+                id: column.value,
                 accessorKey: column.value,
-                header: column.label,
                 size: column.size,
-                cell: ({ getValue }) => {
-                    const value = getValue();
-
-                    if (column.value === "group") {
-                        const colorScheme = {
-                            danger: "red",
-                            warn: "orange",
-                            state: "blue",
-                            Пауза: "cyan",
-                            Возобновлен: "green",
-                        }[value];
-
-                        return (
-                            <Badge
-                                colorPalette={colorScheme}
-                                variant={"subtle"}
-                                fontSize={"500"}
-                            >
-                                {value}
-                            </Badge>
-                        );
+                header: () => {
+                    switch (column.value) {
+                        case "group":
+                            return <MenuGroups name={column.label} />;
+                        case "type":
+                            return <MenuTypes name={column.label} />;
+                        default:
+                            return column.label;
                     }
-                    if (column.value === "ts") {
-                        return <Text>{new Date(value).toLocaleString()}</Text>;
+                },
+                cell: ({ getValue, row }) => {
+                    switch (column.value) {
+                        case "ts": {
+                            const text = formatJournalDate(getValue());
+                            return (
+                                <Text
+                                    truncate
+                                    title={text}
+                                    fontSize={"sm"}
+                                    fontWeight={"medium"}
+                                >
+                                    {text}
+                                </Text>
+                            );
+                        }
+                        case "group": {
+                            const value = row.original.group;
+                            return (
+                                <Badge
+                                    w={"full"}
+                                    justifyContent={"center"}
+                                    colorPalette={groupPalette[value]}
+                                    variant={"solid"}
+                                >
+                                    {groupText[value]}
+                                </Badge>
+                            );
+                        }
+                        case "type": {
+                            const value = row.original.type;
+                            const text = typeText[value] || value;
+                            return (
+                                <Text
+                                    truncate
+                                    title={text}
+                                    fontSize={"sm"}
+                                    fontWeight={"medium"}
+                                >
+                                    {text}
+                                </Text>
+                            );
+                        }
+                        default: {
+                            const value = getValue();
+                            const text = String(value ?? "");
+                            return (
+                                <Text
+                                    truncate
+                                    title={text}
+                                    fontSize={"sm"}
+                                    fontWeight={"medium"}
+                                >
+                                    {text}
+                                </Text>
+                            );
+                        }
                     }
-                    return (
-                        <Text truncate title={value}>
-                            {value}
-                        </Text>
-                    );
                 },
             })),
-        [filtreColon],
+        [filteredColumns],
     );
 
-    const table = useReactTable({
-        data: filtredData,
+    return useReactTable({
+        data: filteredData,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        getRowId: (row, index) => row.id ?? `${row.ts}-${index}`,
     });
-
-    return table;
-};
-
-const cellType = {
-    group: (content) => <MenuGroups name={content} />,
-    type: (content) => <MenuTypes name={content} />,
-};
-
-export const HeaderCell = ({ header }) => {
-    if (header.isPlaceholder) return null;
-
-    const content = flexRender(
-        header.column.columnDef.header,
-        header.getContext(),
-    );
-
-    return (
-        <Box
-            as="th"
-            key={header.id}
-            bg="colorPalette.solid"
-            color="fg.inverted"
-            w={`${header.getSize()}px`}
-            py="1"
-            fontWeight="medium"
-        >
-            {cellType[header.id] ? cellType[header.id](content) : content}
-        </Box>
-    );
-};
-
-export const TableData = ({ virtualRows, rows }) => {
-    return (
-        <>
-            {virtualRows.map((virtualRow) => {
-                if (!rows) return null;
-                const row = rows[virtualRow.index];
-                return (
-                    <tr
-                        key={row.id}
-                        style={{
-                            height: `${virtualRow.size}px`,
-                        }}
-                    >
-                        {row.getVisibleCells().map((cell) => (
-                            <td
-                                key={cell.id}
-                                style={{
-                                    textAlign: "center",
-                                    fontSize: "sm",
-                                    fontWeight: "500",
-                                    padding: "4px",
-                                }}
-                            >
-                                {flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext(),
-                                )}
-                            </td>
-                        ))}
-                    </tr>
-                );
-            })}
-        </>
-    );
 };

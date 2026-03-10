@@ -1,5 +1,5 @@
 import { Stack, CheckboxGroup, Checkbox } from "@chakra-ui/react";
-import { useFilterStore } from "../JournalStores/FilterStore";
+import { useFilterStore } from "../JournalStores/filter-store";
 
 const groups = [
     { label: "Без группы", value: "Без Группы" },

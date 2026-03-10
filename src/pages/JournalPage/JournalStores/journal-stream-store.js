@@ -1,6 +1,41 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
+const MAX_ROWS = 10000;
+
+function trimToMax(arr, max = MAX_ROWS) {
+    if (arr.length <= max) return arr;
+    return arr.slice(arr.length - max);
+}
+
+function createMarkerRow(kind) {
+    const ts = Date.now();
+
+    if (kind === "pause") {
+        return {
+            id: `pause-${ts}`,
+            ts,
+            type: "pause",
+            group: "pause",
+            var: "",
+            val: "",
+            desc: "Журнал на паузе",
+            needAck: false,
+        };
+    }
+
+    return {
+        id: `resume-${ts}`,
+        ts,
+        type: "resume",
+        group: "resume",
+        var: "",
+        val: "",
+        desc: "Журнал возобновлен",
+        needAck: false,
+    };
+}
+
 export const useJournalStream = create(
     devtools(
         (set) => ({
@@ -10,7 +45,10 @@ export const useJournalStream = create(
 
             hydrate: (data) =>
                 set(
-                    () => ({ live: data, paused: [] }),
+                    () => ({
+                        live: trimToMax(data),
+                        pausedData: [],
+                    }),
                     undefined,
                     "journal/hydrate",
                 ),
@@ -19,14 +57,9 @@ export const useJournalStream = create(
                 set(
                     (state) => ({
                         isPaused: true,
-                        live: state.live.concat({
-                            date: Date.now(),
-                            type: "Пауза",
-                            var: "null",
-                            val: "null",
-                            group: "Пауза",
-                            desc: "Журнал На Паузе",
-                        }),
+                        live: trimToMax(
+                            state.live.concat(createMarkerRow("pause")),
+                        ),
                     }),
                     undefined,
                     "journal/pause",
@@ -36,14 +69,11 @@ export const useJournalStream = create(
                 set(
                     (state) => ({
                         isPaused: false,
-                        live: state.live.concat(state.pausedData).concat({
-                            date: Date.now(),
-                            type: "Старт",
-                            var: "null",
-                            val: "null",
-                            group: "Возобновлен",
-                            desc: "Журнал Возобновлен",
-                        }),
+                        live: trimToMax(
+                            state.live
+                                .concat(state.pausedData)
+                                .concat(createMarkerRow("resume")),
+                        ),
                         pausedData: [],
                     }),
                     undefined,
@@ -53,9 +83,11 @@ export const useJournalStream = create(
             push: (rows) =>
                 set(
                     (state) => {
-                        if (!rows.length) return {};
+                        if (!rows.length) return state;
+
                         const target = state.isPaused ? "pausedData" : "live";
-                        const next = state[target].concat(rows);
+                        const next = trimToMax(state[target].concat(rows));
+
                         return { [target]: next };
                     },
                     undefined,

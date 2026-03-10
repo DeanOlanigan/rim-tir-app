@@ -1,21 +1,19 @@
 import { useMemo } from "react";
 
-const FilterData = (live, selectedGroups, selectedMessages) => {
-    if (!live) return [];
-    if (!selectedGroups || !selectedMessages) return false;
-    const filteredDataFunc = live.filter((item) => {
+const filterData = (live, selectedGroups, selectedMessages) => {
+    if (!live?.length) return [];
+    if (!selectedGroups?.size || !selectedMessages?.size) return [];
+
+    return live.filter((item) => {
         return (
-            selectedGroups.includes(item.group) &&
-            selectedMessages.includes(item.type)
+            selectedGroups.has(item.group) && selectedMessages.has(item.type)
         );
     });
-    return filteredDataFunc;
 };
 
 export const useFilterData = (live, selectedGroups, selectedMessages) => {
-    const FilteredData = useMemo(
-        () => FilterData(live, selectedGroups, selectedMessages),
+    return useMemo(
+        () => filterData(live, selectedGroups, selectedMessages),
         [live, selectedGroups, selectedMessages],
     );
-    return FilteredData;
 };

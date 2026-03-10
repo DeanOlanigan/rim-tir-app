@@ -1,5 +1,6 @@
 import { Flex } from "@chakra-ui/react";
-import { JournalView } from "./JournalView/JournalView";
+import { JournalHeader } from "./JournalView/JournalView";
+import { JournalTable } from "./JournalView/JournalTable";
 
 function JournalPage() {
     return (
@@ -12,8 +13,11 @@ function JournalPage() {
             animationStyle={{
                 _open: "scale-fade-in",
             }}
+            direction={"column"}
+            py={4}
         >
-            <JournalView />
+            <JournalHeader />
+            <JournalTable />
         </Flex>
     );
 }

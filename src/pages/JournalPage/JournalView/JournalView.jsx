@@ -1,21 +1,14 @@
-import {
-    Card,
-    Flex,
-    IconButton,
-    Menu,
-    Portal,
-    useCheckboxGroup,
-} from "@chakra-ui/react";
+import { Card, HStack, IconButton, Menu, Portal } from "@chakra-ui/react";
 import { LuPlay, LuDownload, LuColumns3, LuPause } from "react-icons/lu";
 
 import { JournalTable } from "./JournalTable";
 import { JournalFilter } from "../JournalFilter/JournalFilter";
 import { useJournalStream } from "../JournalStores/journal-stream-store";
-import { useFilterStore } from "../JournalStores/FilterStore";
+import { useFilterStore } from "../JournalStores/filter-store";
 import { CanAccess } from "@/CanAccess";
 
 const tableColumns = [
-    { label: "Дата и время", value: "date" },
+    { label: "Дата и время", value: "ts" },
     { label: "Тип", value: "type" },
     { label: "Группа", value: "group" },
     { label: "Переменная", value: "var" },
@@ -45,12 +38,12 @@ export const JournalView = () => {
     );
 };
 
-const JournalHeader = () => {
+export const JournalHeader = () => {
     const isPaused = useJournalStream((state) => state.isPaused);
 
     return (
-        <Flex justifyContent={"space-between"}>
-            <Flex gap={"1"}>
+        <HStack justifyContent={"space-between"}>
+            <HStack>
                 <CanAccess right={"journal.download"}>
                     <IconButton variant={"outline"} size={"xs"}>
                         <LuDownload />
@@ -67,30 +60,40 @@ const JournalHeader = () => {
                 >
                     {!isPaused ? <LuPlay /> : <LuPause />}
                 </IconButton>
-            </Flex>
-            <Flex gap={"1"}>
+            </HStack>
+            <HStack>
                 <JournalFilter />
                 <ColumnViewMenu />
-            </Flex>
-        </Flex>
+            </HStack>
+        </HStack>
     );
 };
 
 // TODO Встроить в таблицу
 const ColumnViewMenu = () => {
     const tableColumnsZus = useFilterStore((state) => state.tableColumnsZus);
-    const group = useCheckboxGroup({ value: tableColumnsZus });
+    const setColons = useFilterStore((state) => state.setColons);
 
-    const handleCheckboxChange = (value, checked) => {
-        const newColumns = checked
-            ? [...tableColumnsZus, value]
-            : tableColumnsZus.filter((col) => col !== value);
+    const handleToggle = (value) => {
+        const exists = tableColumnsZus.includes(value);
 
-        useFilterStore.getState().setColons(newColumns);
+        let next;
+        if (exists) {
+            if (tableColumnsZus.length === 1) return;
+            next = tableColumnsZus.filter((col) => col !== value);
+        } else {
+            next = tableColumns
+                .map((col) => col.value)
+                .filter(
+                    (col) => col === value || tableColumnsZus.includes(col),
+                );
+        }
+
+        setColons(next);
     };
 
     return (
-        <Menu.Root closeOnSelect={false}>
+        <Menu.Root closeOnSelect={false} lazyMount unmountOnExit size={"sm"}>
             <Menu.Trigger asChild>
                 <IconButton size={"xs"}>
                     <LuColumns3 />
@@ -104,11 +107,8 @@ const ColumnViewMenu = () => {
                                 <Menu.CheckboxItem
                                     key={value}
                                     value={value}
-                                    checked={group.isChecked(value)}
-                                    onCheckedChange={(checked) => {
-                                        handleCheckboxChange(value, checked);
-                                        group.toggleValue(value);
-                                    }}
+                                    checked={tableColumnsZus.includes(value)}
+                                    onCheckedChange={() => handleToggle(value)}
                                 >
                                     {label}
                                     <Menu.ItemIndicator />

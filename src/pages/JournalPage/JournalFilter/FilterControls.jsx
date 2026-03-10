@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/react";
-import { useFilterStore } from "../JournalStores/FilterStore";
+import { useFilterStore } from "../JournalStores/filter-store";
 
 export const FilterControls = () => {
     const { setSelectedGroups, setSelectedMessages, setArchiveInitial } =

@@ -7,24 +7,28 @@ export function useMqttJournal() {
     useEffect(() => {
         const topic = "journal";
         const buf = [];
-        let t = null;
+        let timer = null;
+
         const flush = () => {
             if (!buf.length) return;
-            useJournalStream.getState().push(buf.splice(0, buf.length));
+            const batch = buf.splice(0, buf.length);
+            useJournalStream.getState().push(batch);
         };
 
         const unsub = subscribe(topic, { qos: 0, retain: false }, ({ msg }) => {
             buf.push(msg);
-            if (!t)
-                t = setTimeout(() => {
-                    t = null;
-                    flush();
-                }, 100);
+
+            if (timer) return;
+
+            timer = setTimeout(() => {
+                timer = null;
+                flush();
+            }, 100);
         });
 
         return () => {
             unsub();
-            if (t) clearTimeout(t);
+            if (timer) clearTimeout(timer);
             flush();
         };
     }, [subscribe]);

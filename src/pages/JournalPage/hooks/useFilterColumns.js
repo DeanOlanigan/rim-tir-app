@@ -1,17 +1,14 @@
 import { useMemo } from "react";
 
-const FilterColumns = (tableColumns, tableColumnsZus) => {
-    const filteredColumnsFunc = tableColumns.filter((colon) => {
-        if (!tableColumnsZus) return false;
-        return tableColumnsZus.includes(colon.value);
-    });
-    return filteredColumnsFunc;
+const filterColumns = (tableColumns, tableColumnsZus) => {
+    if (!tableColumns?.length || !tableColumnsZus?.length) return [];
+    const selected = new Set(tableColumnsZus);
+    return tableColumns.filter((column) => selected.has(column.value));
 };
 
 export const useFilterColumns = (tableColumns, tableColumnsZus) => {
-    const filteredColumns = useMemo(
-        () => FilterColumns(tableColumns, tableColumnsZus),
+    return useMemo(
+        () => filterColumns(tableColumns, tableColumnsZus),
         [tableColumns, tableColumnsZus],
     );
-    return filteredColumns;
 };

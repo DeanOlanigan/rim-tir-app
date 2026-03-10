@@ -3,7 +3,7 @@ import { useJournalStream } from "../JournalStores/journal-stream-store";
 import { useEffect } from "react";
 
 export const useJournalHistory = () => {
-    const { hydrate } = useJournalStream.getState();
+    const hydrate = useJournalStream((s) => s.hydrate);
 
     const q = useQuery({
         queryKey: ["journal"],
@@ -12,23 +12,21 @@ export const useJournalHistory = () => {
             const count = 1000;
 
             for (let i = 0; i < count; i++) {
-                out.push({
-                    date: new Date(),
+                // eslint-disable-next-line sonarjs/pseudo-random
+                const type = ["ts", "tu"][Math.floor(Math.random() * 2)];
+                const group = ["noGroup", "danger", "warn", "state"][
                     // eslint-disable-next-line sonarjs/pseudo-random
-                    type: ["ТС", "ТУ"][Math.floor(Math.random() * 2)],
+                    Math.floor(Math.random() * 4)
+                ];
+
+                out.push({
+                    ts: new Date(),
+                    type,
                     var: "тест",
                     // eslint-disable-next-line sonarjs/pseudo-random
                     val: Math.floor(Math.random() * 100),
-                    group: [
-                        "Без Группы",
-                        "Аварийная",
-                        "Предупредительная",
-                        "Состояние",
-                    ][
-                        // eslint-disable-next-line sonarjs/pseudo-random
-                        Math.floor(Math.random() * 4)
-                    ],
-                    desc: "test Descripbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbtion",
+                    group,
+                    desc: "test desc",
                 });
             }
             await new Promise((resolve) => setTimeout(resolve, 1000));
