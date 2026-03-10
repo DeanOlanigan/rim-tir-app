@@ -10,26 +10,36 @@ import { flexRender } from "@tanstack/react-table";
 import { memo } from "react";
 import { useFilterData } from "../hooks/useFilterData";
 import { useFilterColumns } from "../hooks/useFilterColumns";
+import { useShallow } from "zustand/shallow";
+import { MenuGroups } from "../JournalFilter/MenuFilters/MenuGroups";
+import { MenuTypes } from "../JournalFilter/MenuFilters/MenuTypes";
 
 const ROW_HEIGHT = 36;
 const OVERSCAN = 10;
 
 const tableColumns = [
-    { label: "Дата и время", value: "ts", size: 250 },
+    { label: "Дата и время", value: "ts", size: 200 },
     { label: "Тип", value: "type", size: 145 },
     { label: "Группа", value: "group", size: 140 },
     { label: "Переменная", value: "var", size: 140 },
-    { label: "Значение", value: "val", size: 140 },
+    { label: "Значение", value: "val", size: 100 },
     { label: "Описание", value: "desc", size: 240 },
+    { label: "Пользователь", value: "user", size: 140 },
+    { label: "Время квитирования", value: "ack_time", size: 200 },
 ];
+
+const selectJournalTableFilters = (state) => ({
+    selectedGroups: state.selectedGroups,
+    selectedMessages: state.selectedMessages,
+    tableColumnsZus: state.tableColumnsZus,
+});
 
 export const JournalTable = () => {
     // TODO
     // eslint-disable-next-line
     /* const { isLoading, isError, error } = useJournalData(); */
-    const selectedGroups = useFilterStore((s) => s.selectedGroups);
-    const selectedMessages = useFilterStore((s) => s.selectedMessages);
-    const tableColumnsZus = useFilterStore((s) => s.tableColumnsZus);
+    const { selectedGroups, selectedMessages, tableColumnsZus } =
+        useFilterStore(useShallow(selectJournalTableFilters));
 
     const live = useJournalStream((s) => s.live);
 
@@ -63,31 +73,50 @@ export const JournalTable = () => {
                     textAlign: "center",
                 }}
             >
-                <JournalHeader table={table} />
+                <JournalHeader columns={filteredColumns} />
                 <JournalBody table={table} sticky={sticky} />
             </table>
-            {!sticky.isAtBottom && (
-                <Box
-                    position="sticky"
-                    float="right"
-                    bottom="2"
-                    right="2"
-                    zIndex="sticky"
-                >
-                    <IconButton
-                        size={"sm"}
-                        onClick={() => sticky.scrollToBottom("instant")}
-                        variant={"solid"}
-                    >
-                        <LuArrowDown />
-                    </IconButton>
-                </Box>
-            )}
+
+            <ScrollToBottomButton
+                isAtBottom={sticky.isAtBottom}
+                onClick={() => sticky.scrollToBottom("instant")}
+            />
         </Box>
     );
 };
 
-const JournalHeader = ({ table }) => {
+const ScrollToBottomButton = memo(({ isAtBottom, onClick }) => {
+    if (isAtBottom) return null;
+
+    return (
+        <Box
+            position="sticky"
+            float="right"
+            bottom="2"
+            right="2"
+            zIndex="sticky"
+        >
+            <IconButton size="sm" onClick={onClick} variant="solid">
+                <LuArrowDown />
+            </IconButton>
+        </Box>
+    );
+});
+ScrollToBottomButton.displayName = "ScrollToBottomButton";
+
+const renderHeaderContent = (column) => {
+    switch (column.value) {
+        case "group":
+            return <MenuGroups name={column.label} />;
+        case "type":
+            return <MenuTypes name={column.label} />;
+        default:
+            return column.label;
+    }
+};
+
+const JournalHeader = memo(({ columns }) => {
+    console.log("render header");
     return (
         <thead
             style={{
@@ -97,48 +126,41 @@ const JournalHeader = ({ table }) => {
                 zIndex: 10,
             }}
         >
-            {table.getHeaderGroups().map((headerGroup) => (
-                <tr
-                    key={headerGroup.id}
-                    style={{
-                        display: "flex",
-                        width: "100%",
-                    }}
-                >
-                    {headerGroup.headers.map((header) => (
-                        <Box
-                            as="th"
-                            key={header.id}
-                            display={"flex"}
-                            justifyContent={"center"}
-                            bg="colorPalette.muted"
-                            py="1"
-                            fontWeight="medium"
-                            style={{
-                                width: header.getSize(),
-                            }}
-                            _first={{
-                                borderTopLeftRadius: "l2",
-                                borderBottomLeftRadius: "l2",
-                            }}
-                            _last={{
-                                borderTopRightRadius: "l2",
-                                borderBottomRightRadius: "l2",
-                            }}
-                        >
-                            {header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                      header.column.columnDef.header,
-                                      header.getContext(),
-                                  )}
-                        </Box>
-                    ))}
-                </tr>
-            ))}
+            <tr
+                style={{
+                    display: "flex",
+                    width: "100%",
+                }}
+            >
+                {columns.map((column) => (
+                    <Box
+                        as="th"
+                        key={column.value}
+                        display={"flex"}
+                        justifyContent={"center"}
+                        bg="colorPalette.muted"
+                        py="1"
+                        fontWeight="medium"
+                        style={{
+                            width: column.size,
+                        }}
+                        _first={{
+                            borderTopLeftRadius: "l2",
+                            borderBottomLeftRadius: "l2",
+                        }}
+                        _last={{
+                            borderTopRightRadius: "l2",
+                            borderBottomRightRadius: "l2",
+                        }}
+                    >
+                        {renderHeaderContent(column)}
+                    </Box>
+                ))}
+            </tr>
         </thead>
     );
-};
+});
+JournalHeader.displayName = "JournalHeader";
 
 const JournalBody = memo(({ table, sticky }) => {
     const { rows } = table.getRowModel();

@@ -22,7 +22,16 @@ const initialSelectedMessages = new Set(["ts", "tu", "pause", "resume"]);
 export const useFilterStore = create((set) => ({
     selectedGroups: initialSelectedGroups,
     selectedMessages: initialSelectedMessages,
-    tableColumnsZus: ["ts", "type", "group", "var", "val", "desc"],
+    tableColumnsZus: [
+        "ts",
+        "type",
+        "group",
+        "var",
+        "val",
+        "desc",
+        "user",
+        "ack_time",
+    ],
     ...archiveInitialState,
 
     setArchive: (data) => set({ isArchive: data }),
@@ -34,7 +43,7 @@ export const useFilterStore = create((set) => ({
         set(() => ({ stringsQuantity: { value: newQuantity } })),
 
     chooseLocation: (newLocation) =>
-        set(() => ({ Location: { value: newLocation } })),
+        set(() => ({ location: { value: newLocation } })),
 
     setArchiveInitial: () =>
         set({

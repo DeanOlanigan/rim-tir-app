@@ -1,8 +1,6 @@
 import { useMemo } from "react";
 import { Text, Badge } from "@chakra-ui/react";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
-import { MenuTypes } from "../JournalFilter/MenuFilters/MenuTypes";
-import { MenuGroups } from "../JournalFilter/MenuFilters/MenuGroups";
 
 const groupPalette = {
     noGroup: "gray",
@@ -50,16 +48,7 @@ export const useCreateTable = (filteredColumns, filteredData) => {
                 id: column.value,
                 accessorKey: column.value,
                 size: column.size,
-                header: () => {
-                    switch (column.value) {
-                        case "group":
-                            return <MenuGroups name={column.label} />;
-                        case "type":
-                            return <MenuTypes name={column.label} />;
-                        default:
-                            return column.label;
-                    }
-                },
+                header: column.label,
                 cell: ({ getValue, row }) => {
                     switch (column.value) {
                         case "ts": {
