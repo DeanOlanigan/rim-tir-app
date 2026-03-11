@@ -78,17 +78,6 @@ export const routes = [
                                     },
                                 ],
                             },
-                        ],
-                    },
-                    {
-                        element: <CenteredLayout />,
-                        children: [
-                            {
-                                element: <PermissionGate right={"logs.view"} />,
-                                children: [
-                                    { path: "log", element: <LogPage /> },
-                                ],
-                            },
                             {
                                 element: (
                                     <PermissionGate right={"journal.view"} />
@@ -98,6 +87,17 @@ export const routes = [
                                         path: "journal",
                                         element: <JournalPage />,
                                     },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        element: <CenteredLayout />,
+                        children: [
+                            {
+                                element: <PermissionGate right={"logs.view"} />,
+                                children: [
+                                    { path: "log", element: <LogPage /> },
                                 ],
                             },
                             {

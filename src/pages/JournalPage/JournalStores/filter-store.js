@@ -17,20 +17,29 @@ const initialSelectedGroups = new Set([
     "resume",
 ]);
 
-const initialSelectedMessages = new Set(["ts", "tu", "pause", "resume"]);
+const initialSelectedMessages = new Set([
+    "error",
+    "warn",
+    "info",
+    "pause",
+    "resume",
+]);
 
 export const useFilterStore = create((set) => ({
     selectedGroups: initialSelectedGroups,
     selectedMessages: initialSelectedMessages,
     tableColumnsZus: [
-        "ts",
         "type",
+        "ts",
+        "event",
+        "info",
         "group",
         "var",
         "val",
         "desc",
         "user",
         "ack_time",
+        "who_ack",
     ],
     ...archiveInitialState,
 

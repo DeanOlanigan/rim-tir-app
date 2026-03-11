@@ -39,7 +39,7 @@ export const ArchiveFilter = () => {
         isArchive,
         endDate,
         stringsQuantity,
-        Location,
+        location,
     } = useFilterStore();
 
     return (
@@ -133,7 +133,7 @@ export const ArchiveFilter = () => {
                 </Select.Positioner>
             </Select.Root>
             <Select.Root
-                value={Location.value}
+                value={location.value}
                 collection={mountType}
                 size={"xs"}
                 onValueChange={(value) => chooseLocation(value.value)}

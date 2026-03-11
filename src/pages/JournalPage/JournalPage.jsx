@@ -14,7 +14,7 @@ function JournalPage() {
                 _open: "scale-fade-in",
             }}
             direction={"column"}
-            py={4}
+            p={4}
         >
             <JournalHeader />
             <JournalTable />

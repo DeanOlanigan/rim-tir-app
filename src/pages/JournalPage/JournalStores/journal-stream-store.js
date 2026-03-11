@@ -1,3 +1,5 @@
+import { authKeys } from "@/api/queryKeys";
+import { queryClient } from "@/queryClients";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
@@ -9,29 +11,26 @@ function trimToMax(arr, max = MAX_ROWS) {
 }
 
 function createMarkerRow(kind) {
+    const data = queryClient.getQueryData(authKeys.session());
     const ts = Date.now();
 
     if (kind === "pause") {
         return {
-            id: `pause-${ts}`,
-            ts,
             type: "pause",
-            group: "pause",
-            var: "",
-            val: "",
-            desc: "Журнал на паузе",
+            ts,
+            info: "Поток журнала поставлен на паузу",
+            user: data?.user?.name ?? "",
+            id: `pause-${ts}`,
             needAck: false,
         };
     }
 
     return {
-        id: `resume-${ts}`,
-        ts,
         type: "resume",
-        group: "resume",
-        var: "",
-        val: "",
-        desc: "Журнал возобновлен",
+        ts,
+        info: "Поток журнала возобновлен",
+        user: data?.user?.name ?? "",
+        id: `resume-${ts}`,
         needAck: false,
     };
 }

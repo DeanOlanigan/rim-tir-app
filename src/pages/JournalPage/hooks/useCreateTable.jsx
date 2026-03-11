@@ -1,6 +1,13 @@
 import { useMemo } from "react";
-import { Text, Badge } from "@chakra-ui/react";
+import { Badge, Icon } from "@chakra-ui/react";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
+import {
+    LuCircleAlert,
+    LuInfo,
+    LuPause,
+    LuPlay,
+    LuTriangleAlert,
+} from "react-icons/lu";
 
 const groupPalette = {
     noGroup: "gray",
@@ -20,11 +27,24 @@ const groupText = {
     resume: "Возобновлен",
 };
 
-const typeText = {
-    ts: "Телесигнал",
-    tu: "Телеуправление",
-    pause: "Пауза",
-    resume: "Возобновление",
+const typePalette = {
+    info: "fg.info",
+    warn: "fg.warning",
+    error: "fg.error",
+    ts: "blue",
+    tu: "blue",
+    pause: "green",
+    resume: "green",
+};
+
+const typeIcon = {
+    info: LuInfo,
+    warn: LuCircleAlert,
+    error: LuTriangleAlert,
+    ts: LuInfo,
+    tu: LuInfo,
+    pause: LuPause,
+    resume: LuPlay,
 };
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
@@ -51,19 +71,9 @@ export const useCreateTable = (filteredColumns, filteredData) => {
                 header: column.label,
                 cell: ({ getValue, row }) => {
                     switch (column.value) {
-                        case "ts": {
-                            const text = formatJournalDate(getValue());
-                            return (
-                                <Text
-                                    truncate
-                                    title={text}
-                                    fontSize={"sm"}
-                                    fontWeight={"medium"}
-                                >
-                                    {text}
-                                </Text>
-                            );
-                        }
+                        case "ts":
+                        case "ack_time":
+                            return formatJournalDate(getValue());
                         case "group": {
                             const value = row.original.group;
                             return (
@@ -79,31 +89,17 @@ export const useCreateTable = (filteredColumns, filteredData) => {
                         }
                         case "type": {
                             const value = row.original.type;
-                            const text = typeText[value] || value;
                             return (
-                                <Text
-                                    truncate
-                                    title={text}
-                                    fontSize={"sm"}
-                                    fontWeight={"medium"}
-                                >
-                                    {text}
-                                </Text>
+                                <Icon
+                                    as={typeIcon[value]}
+                                    color={typePalette[value]}
+                                    size={"lg"}
+                                />
                             );
                         }
                         default: {
                             const value = getValue();
-                            const text = String(value ?? "");
-                            return (
-                                <Text
-                                    truncate
-                                    title={text}
-                                    fontSize={"sm"}
-                                    fontWeight={"medium"}
-                                >
-                                    {text}
-                                </Text>
-                            );
+                            return String(value ?? "");
                         }
                     }
                 },

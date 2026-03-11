@@ -6,9 +6,6 @@ import {
     IconButton,
 } from "@chakra-ui/react";
 import { ArchiveFilter } from "./ArchiveFilter";
-import { VariablesChoser } from "./VariablesChoser";
-import { MessageTypes } from "./MessageTypes";
-import { GroupFilter } from "./GroupFilter";
 import { FilterControls } from "./FilterControls";
 import { LuListFilter } from "react-icons/lu";
 
@@ -48,7 +45,7 @@ export const JournalFilter = () => {
                                     <ArchiveFilter />
                                 </Accordion.ItemContent>
                             </Accordion.Item>
-                            <Accordion.Item value="2">
+                            {/* <Accordion.Item value="2">
                                 <Accordion.ItemTrigger>
                                     <Span flex={1}>Группы</Span>
                                     <Accordion.ItemIndicator />
@@ -65,9 +62,9 @@ export const JournalFilter = () => {
                                 <Accordion.ItemContent>
                                     <MessageTypes />
                                 </Accordion.ItemContent>
-                            </Accordion.Item>
+                            </Accordion.Item> */}
                         </Accordion.Root>
-                        <VariablesChoser noPortal />
+                        {/* <VariablesChoser noPortal /> */}
                     </Drawer.Body>
                     <Drawer.Footer justifyContent={"space-between"}>
                         <FilterControls />

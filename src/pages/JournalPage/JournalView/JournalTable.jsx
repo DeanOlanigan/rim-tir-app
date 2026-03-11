@@ -8,7 +8,7 @@ import { useCreateTable } from "../hooks/useCreateTable";
 import { LuArrowDown } from "react-icons/lu";
 import { flexRender } from "@tanstack/react-table";
 import { memo } from "react";
-import { useFilterData } from "../hooks/useFilterData";
+import { useFilterDataM } from "../hooks/useFilterData";
 import { useFilterColumns } from "../hooks/useFilterColumns";
 import { useShallow } from "zustand/shallow";
 import { MenuGroups } from "../JournalFilter/MenuFilters/MenuGroups";
@@ -18,18 +18,20 @@ const ROW_HEIGHT = 36;
 const OVERSCAN = 10;
 
 const tableColumns = [
-    { label: "Дата и время", value: "ts", size: 200 },
-    { label: "Тип", value: "type", size: 145 },
-    { label: "Группа", value: "group", size: 140 },
-    { label: "Переменная", value: "var", size: 140 },
-    { label: "Значение", value: "val", size: 100 },
-    { label: "Описание", value: "desc", size: 240 },
+    { label: "Тип", value: "type", size: 75 },
+    { label: "Метка времени", value: "ts", size: 200 },
+    { label: "Событие", value: "event", size: 300 },
+    { label: "Информация", value: "info", size: 400 },
+    //{ label: "Группа", value: "group", size: 140 }, // ?
+    //{ label: "Переменная", value: "var", size: 140 }, // ?
+    //{ label: "Значение", value: "val", size: 100 }, // ?
+    //{ label: "Описание", value: "desc", size: 240 }, // ?
     { label: "Пользователь", value: "user", size: 140 },
     { label: "Время квитирования", value: "ack_time", size: 200 },
+    { label: "Квитировал", value: "who_ack", size: 200 },
 ];
 
 const selectJournalTableFilters = (state) => ({
-    selectedGroups: state.selectedGroups,
     selectedMessages: state.selectedMessages,
     tableColumnsZus: state.tableColumnsZus,
 });
@@ -38,8 +40,9 @@ export const JournalTable = () => {
     // TODO
     // eslint-disable-next-line
     /* const { isLoading, isError, error } = useJournalData(); */
-    const { selectedGroups, selectedMessages, tableColumnsZus } =
-        useFilterStore(useShallow(selectJournalTableFilters));
+    const { selectedMessages, tableColumnsZus } = useFilterStore(
+        useShallow(selectJournalTableFilters),
+    );
 
     const live = useJournalStream((s) => s.live);
 
@@ -48,7 +51,7 @@ export const JournalTable = () => {
         resize: "instant",
     });
 
-    const filteredData = useFilterData(live, selectedGroups, selectedMessages);
+    const filteredData = useFilterDataM(live, selectedMessages);
     const filteredColumns = useFilterColumns(tableColumns, tableColumnsZus);
     const table = useCreateTable(filteredColumns, filteredData);
 
@@ -122,6 +125,7 @@ const JournalHeader = memo(({ columns }) => {
             style={{
                 display: "grid",
                 position: "sticky",
+                justifyContent: "center",
                 top: 0,
                 zIndex: 10,
             }}
@@ -203,8 +207,10 @@ const JournalRow = memo(({ row, virtualRow }) => {
     return (
         <tr
             data-index={virtualRow.index}
+            key={row.id}
             style={{
                 display: "flex",
+                justifyContent: "center",
                 position: "absolute",
                 transform: `translateY(${virtualRow.start}px)`,
                 width: "100%",
@@ -215,12 +221,14 @@ const JournalRow = memo(({ row, virtualRow }) => {
                 <td
                     key={cell.id}
                     style={{
-                        display: "flex",
-                        width: `${cell.column.getSize()}px`,
-                        alignItems: "center",
-                        justifyContent: "center",
+                        width: cell.column.getSize(),
+                        alignContent: "center",
                         padding: "0 8px",
                         overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        fontWeight: "500",
+                        fontSize: "0.875rem",
                     }}
                 >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

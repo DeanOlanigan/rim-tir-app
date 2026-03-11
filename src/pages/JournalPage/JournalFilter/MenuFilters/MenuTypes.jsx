@@ -3,8 +3,13 @@ import { useFilterStore } from "../../JournalStores/filter-store";
 import { FilterCheckboxMenu } from "./FilterCheckboxMenu";
 
 const TYPE_FILTER_ITEMS = [
-    { label: "ТС", value: "ts" },
-    { label: "Пользовательские ТУ", value: "tu" },
+    //{ label: "ТС", value: "ts" },
+    //{ label: "Пользовательские ТУ", value: "tu" },
+    //{ label: "Пауза", value: "pause" },
+    //{ label: "Возобновление", value: "resume" },
+    { label: "Тревога", value: "error" },
+    { label: "Информация", value: "info" },
+    { label: "Предупреждение", value: "warn" },
     { label: "Пауза", value: "pause" },
     { label: "Возобновление", value: "resume" },
 ];

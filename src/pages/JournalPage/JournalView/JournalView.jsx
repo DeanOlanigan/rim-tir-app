@@ -1,19 +1,37 @@
-import { Card, HStack, IconButton, Menu, Portal } from "@chakra-ui/react";
-import { LuPlay, LuDownload, LuColumns3, LuPause } from "react-icons/lu";
+import {
+    Card,
+    Field,
+    HStack,
+    IconButton,
+    Input,
+    Menu,
+    Portal,
+} from "@chakra-ui/react";
+import {
+    LuPlay,
+    LuDownload,
+    LuColumns3,
+    LuPause,
+    LuCheck,
+} from "react-icons/lu";
 
 import { JournalTable } from "./JournalTable";
-import { JournalFilter } from "../JournalFilter/JournalFilter";
 import { useJournalStream } from "../JournalStores/journal-stream-store";
 import { useFilterStore } from "../JournalStores/filter-store";
 import { CanAccess } from "@/CanAccess";
 
 const tableColumns = [
-    { label: "Дата и время", value: "ts" },
-    { label: "Тип", value: "type" },
-    { label: "Группа", value: "group" },
-    { label: "Переменная", value: "var" },
-    { label: "Значение", value: "val" },
-    { label: "Описание", value: "desc" },
+    { label: "Тип", value: "type", size: 145 },
+    { label: "Метка времени", value: "ts", size: 200 },
+    { label: "Событие", value: "event", size: 200 },
+    { label: "Информация", value: "info", size: 200 },
+    //{ label: "Группа", value: "group", size: 140 }, // ?
+    //{ label: "Переменная", value: "var", size: 140 }, // ?
+    //{ label: "Значение", value: "val", size: 100 }, // ?
+    //{ label: "Описание", value: "desc", size: 240 }, // ?
+    { label: "Пользователь", value: "user", size: 140 },
+    { label: "Время квитирования", value: "ack_time", size: 200 },
+    { label: "Квитировал", value: "who_ack", size: 200 },
 ];
 
 export const JournalView = () => {
@@ -62,14 +80,26 @@ export const JournalHeader = () => {
                 </IconButton>
             </HStack>
             <HStack>
-                <JournalFilter />
-                <ColumnViewMenu />
+                <Field.Root orientation="horizontal">
+                    <Field.Label fontSize="sm">От</Field.Label>
+                    <Input size={"xs"} autoComplete="off" />
+                </Field.Root>
+                <Field.Root orientation="horizontal">
+                    <Field.Label fontSize="sm">До</Field.Label>
+                    <Input size={"xs"} autoComplete="off" />
+                </Field.Root>
+                <IconButton variant={"outline"} size={"xs"}>
+                    <LuCheck />
+                </IconButton>
+                {/* <JournalFilter />
+                <ColumnViewMenu /> */}
             </HStack>
         </HStack>
     );
 };
 
 // TODO Встроить в таблицу
+// eslint-disable-next-line
 const ColumnViewMenu = () => {
     const tableColumnsZus = useFilterStore((state) => state.tableColumnsZus);
     const setColons = useFilterStore((state) => state.setColons);
