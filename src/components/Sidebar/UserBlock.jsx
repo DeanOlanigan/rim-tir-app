@@ -7,7 +7,6 @@ import {
     Icon,
     Menu,
     Portal,
-    Spacer,
     Text,
     VStack,
 } from "@chakra-ui/react";
@@ -77,8 +76,8 @@ const UserBtn = ({ user, collapsed, ...props }) => {
                 <Avatar.Image src={user.avatar} />
                 <Avatar.Fallback name={user.name} />
             </Avatar.Root>
-            <VStack gap={0}>
-                <Text fontSize="sm" fontWeight="medium" truncate>
+            <VStack gap={0} flexGrow={1} minW={0} align={"start"}>
+                <Text w={"full"} fontSize="sm" fontWeight="medium" truncate>
                     {user.name}
                 </Text>
                 {user.roleNames.map((name) => (
@@ -87,7 +86,6 @@ const UserBtn = ({ user, collapsed, ...props }) => {
                     </Badge>
                 ))}
             </VStack>
-            <Spacer />
             <Icon as={LuChevronRight} boxSize={5} />
         </Button>
     );
@@ -96,32 +94,29 @@ const UserBtn = ({ user, collapsed, ...props }) => {
 const UserContent = ({ user }) => {
     const logoutMutation = useLogoutMutation();
     return (
-        <Menu.Content
-            display={"flex"}
-            flexDirection={"column"}
-            zIndex={"popover"}
-            gap="2"
-        >
-            <HStack>
-                <Avatar.Root
-                    size="lg"
-                    colorPalette={pickPalette(user.name)}
-                    borderRadius="lg"
-                >
-                    <Avatar.Image src={user.avatar} />
-                    <Avatar.Fallback name={user.name} />
-                </Avatar.Root>
-                <Text>{user.name}</Text>
-            </HStack>
-            {user.roleNames.map((name) => (
-                <Badge key={name} variant="subtle">
-                    {name}
-                </Badge>
-            ))}
-            <Menu.Item value={"logout"} onClick={logoutMutation.mutate}>
-                <LuLogOut />
-                Выйти
-            </Menu.Item>
+        <Menu.Content zIndex={"popover"}>
+            <VStack maxW={"10rem"} align={"start"}>
+                <HStack w={"full"}>
+                    <Avatar.Root
+                        size="lg"
+                        colorPalette={pickPalette(user.name)}
+                        borderRadius="lg"
+                    >
+                        <Avatar.Image src={user.avatar} />
+                        <Avatar.Fallback name={user.name} />
+                    </Avatar.Root>
+                    <Text truncate>{user.name}</Text>
+                </HStack>
+                {user.roleNames.map((name) => (
+                    <Badge key={name} variant="subtle">
+                        {name}
+                    </Badge>
+                ))}
+                <Menu.Item value={"logout"} onClick={logoutMutation.mutate}>
+                    <LuLogOut />
+                    Выйти
+                </Menu.Item>
+            </VStack>
         </Menu.Content>
     );
 };

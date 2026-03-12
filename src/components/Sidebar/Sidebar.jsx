@@ -81,7 +81,7 @@ export const Sidebar = () => {
             {/* Низ */}
             <VStack gap={4} align={"center"} separator={<StackSeparator />}>
                 <StatusBlock collapsed={collapsed} />
-                <VStack>
+                <VStack w={"100%"}>
                     <SidebarSettingsItem collapsed={collapsed} />
                     <ThemeBtn collapsed={collapsed} />
                     <UserBlock user={user} collapsed={collapsed} />
