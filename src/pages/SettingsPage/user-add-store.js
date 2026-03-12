@@ -6,7 +6,7 @@ const defaultValues = {
     name: "",
     grandname: "",
     position: "",
-    role: "",
+    roles: "",
 };
 
 export const useUserStore = create((set) => ({

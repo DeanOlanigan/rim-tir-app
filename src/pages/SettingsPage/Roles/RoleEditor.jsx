@@ -11,7 +11,12 @@ export const RoleEditor = () => {
     function handlePutRole() {
         const isAllRights = handleEdit();
         if (!isAllRights) return;
-        putMutation.mutate(useRightsAndRolesStore.getState().selectedRole);
+
+        const selectedRole = useRightsAndRolesStore.getState().selectedRole;
+        putMutation.mutate({
+            id: selectedRole.id,
+            params: { name: selectedRole.name, rights: selectedRole.rights },
+        });
     }
 
     return (

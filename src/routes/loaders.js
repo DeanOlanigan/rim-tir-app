@@ -1,7 +1,7 @@
 import { QK } from "@/api";
 import { apiv2 } from "@/api/baseUrl";
-import { getRoles } from "@/api/getRoles";
-import { getUsers } from "@/api/getUsers";
+import { getRoles } from "@/api/roles";
+import { getUsers } from "@/api/users";
 import { queryClient } from "@/queryClients";
 import { configuratorConfig } from "@/store/configurator-config";
 
@@ -25,11 +25,11 @@ export async function settingsLoader() {
         }),
         queryClient.prefetchQuery({
             queryKey: QK.users,
-            queryFn: async () => getUsers(),
+            queryFn: getUsers,
         }),
         queryClient.prefetchQuery({
             queryKey: QK.roles,
-            queryFn: async () => getRoles(),
+            queryFn: getRoles,
         }),
     ]);
 }

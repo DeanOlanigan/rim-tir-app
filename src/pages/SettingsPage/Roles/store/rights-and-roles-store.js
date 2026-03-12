@@ -1,60 +1,10 @@
 import { nanoid } from "nanoid";
 import { create } from "zustand";
 
-const defaultRoles = {
-    1: {
-        name: "Глядун",
-        rights: [
-            "lookConf",
-            "lookMonitor",
-            "lookLog",
-            "lookJourn",
-            "lookGraphs",
-            "lookSettings",
-        ],
-    },
-    2: {
-        name: "Конфигуратор",
-        rights: [
-            "createConf",
-            "editConf",
-            "createConfVar",
-            "varInteract",
-            "renameVar",
-            "deleteVar",
-            "cutVar",
-            "copyVar",
-            "chooseVar",
-            "descriptVar",
-            "GPIOget",
-            "COMPORTget",
-            "IEC-104get",
-            "Modbusget",
-            "GPIOgive",
-            "COMPORTgive",
-            "IEC-104give",
-            "Modbusgive",
-            "sendConf",
-            "startServ",
-            "stopServ",
-            "restartServ",
-        ],
-    },
-    3: {
-        name: "Мониторщик",
-        rights: [
-            "lookMonitor",
-            "handleInputMonitorVar",
-            "signalEditMonitorVar",
-            "lookGraphs",
-        ],
-    },
-};
-
 const ROLE_NAME_REGEX = /^[\p{L}\d\s-]+$/u;
 
 export const useRightsAndRolesStore = create((set, get) => ({
-    roles: defaultRoles,
+    roles: {},
 
     selectedRole: {
         id: undefined,

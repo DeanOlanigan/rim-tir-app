@@ -115,8 +115,8 @@ export const EditPopover = () => {
                                 {Object.keys(user).map((data) => {
                                     if (
                                         data != "login" &&
-                                        data != "role" &&
-                                        data != "password"
+                                        data != "roles" &&
+                                        data != "passwordHash"
                                     ) {
                                         return (
                                             <Field.Root key={data}>

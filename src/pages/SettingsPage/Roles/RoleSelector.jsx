@@ -4,7 +4,7 @@ import { useUserStore } from "../user-add-store";
 import { useRightsAndRolesStore } from "./store/rights-and-roles-store";
 
 export const RoleSelector = ({ isEditing }) => {
-    const usersRole = useEditStore((s) => s.tempUser?.data.role);
+    const usersRoles = useEditStore((s) => s.tempUser?.data.roles);
     const editTempUser = useEditStore.getState().editTempUser;
     const { newUser, makeUser } = useUserStore();
     const roles = useRightsAndRolesStore((s) => s.roles);
@@ -20,11 +20,11 @@ export const RoleSelector = ({ isEditing }) => {
 
     const content = (
         <Select.Root
-            value={isEditing ? [usersRole] : newUser?.role || []}
+            value={isEditing ? usersRoles : newUser?.roles || []}
             onValueChange={(e) =>
                 isEditing
-                    ? editTempUser("role", e.value[0])
-                    : makeUser(["role", e.value])
+                    ? editTempUser("roles", e.value[0])
+                    : makeUser(["roles", e.value])
             }
             w="100%"
             size="xs"

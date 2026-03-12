@@ -1,5 +1,5 @@
 import { QK } from "@/api";
-import { apiv2 } from "@/api/baseUrl";
+import { updateSettings } from "@/api/settings";
 import { toaster } from "@/components/ui/toaster";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -8,13 +8,7 @@ export const useSettingsMutation = () => {
     const q = useQueryClient();
     return useMutation({
         mutationKey: ["settingsSender"],
-        mutationFn: async (settings) => {
-            const res = await apiv2.put("/setsettings", settings, {
-                headers: { "Content-Type": "application/json" },
-                title: "New Settings",
-            });
-            return res;
-        },
+        mutationFn: updateSettings,
         onSuccess: () => {
             q.invalidateQueries({ queryKey: QK.settings });
             toaster.create({

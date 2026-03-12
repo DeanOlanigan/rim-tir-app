@@ -23,10 +23,11 @@ export const UserAdder = ({ scrollToBottom }) => {
     const baseText = "Введите";
 
     function handleUserPost() {
-        const newId = nanoid();
+        const id = nanoid();
 
-        const isCorrect = handleAdd(newId, newUser, password, scrollToBottom);
-        if (isCorrect) postMutation.mutate({ newId, newUser, password });
+        const isCorrect = handleAdd(id, newUser, password, scrollToBottom);
+        if (isCorrect)
+            postMutation.mutate({ id, userData: { ...newUser, password } });
     }
 
     return (

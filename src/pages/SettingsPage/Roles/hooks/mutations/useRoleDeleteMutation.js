@@ -1,16 +1,13 @@
-import { apiv2 } from "@/api/baseUrl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { rolesSuccessMutate } from "../../rolesSuccessMutate";
 import { rolesErrorMutate } from "../../rolesErrorMutate";
+import { deleteRole } from "@/api/roles";
 
 export const useRoleDeleteMutation = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationKey: ["delete-role"],
-        mutationFn: async (id) => {
-            const res = await apiv2.delete(`roles/${id}`);
-            return res;
-        },
+        mutationFn: deleteRole,
         onSuccess: () => rolesSuccessMutate(queryClient, "DELETE_ROLE_SUC"),
         onError: (err) => rolesErrorMutate(err, queryClient, "DELETE_ERR"),
     });

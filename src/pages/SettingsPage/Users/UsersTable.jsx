@@ -13,7 +13,7 @@ const tableColumns = [
     { label: "Имя", value: "name" },
     { label: "Отчество", value: "grandname" },
     { label: "Должность", value: "position" },
-    { label: "Роль", value: "role" },
+    { label: "Роль", value: "roles" },
 ];
 
 export const UsersTable = () => {
@@ -131,7 +131,7 @@ export const UsersTable = () => {
                             {tableColumns.map((key) => {
                                 const cellValue = live[row][key.value];
                                 const role =
-                                    key.value === "role"
+                                    key.value === "roles"
                                         ? roles[cellValue]?.name || "Без роли"
                                         : cellValue || "Отсутствует";
                                 return (

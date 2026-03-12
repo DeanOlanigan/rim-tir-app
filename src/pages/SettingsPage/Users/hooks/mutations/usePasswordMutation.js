@@ -1,27 +1,15 @@
-import { apiv2 } from "@/api/baseUrl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { usersSuccessMutate } from "../../usersSuccessMutate";
 import { usersErrorMutate } from "../../usersErrorMutate";
 import { useEditStore } from "../../../user-edit-store";
+import { changePassword } from "@/api/users";
 
 export const usePasswordMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationKey: ["edit-password"],
-        mutationFn: async ({ userId, editedPassword }) => {
-            const res = await apiv2.put(
-                "/chngPsswd",
-                {
-                    userId: userId,
-                    editedPassword: editedPassword,
-                },
-                {
-                    headers: { "Content-Type": "application/json" },
-                },
-            );
-            return res;
-        },
+        mutationFn: changePassword,
         onSuccess: () => {
             usersSuccessMutate(queryClient, "PUT_PSWD_SUC");
             useEditStore.getState().setNewPassword("");

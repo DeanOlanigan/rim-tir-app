@@ -20,7 +20,7 @@ export const useTableStore = create((set, get) => ({
     },
     isCyrillicOnly: (newUser) => {
         return Object.keys(newUser).every((field) => {
-            if (field === "login" || field === "role" || field === "password")
+            if (field === "login" || field === "roles" || field === "password")
                 return true;
             if (field === "grandname" && newUser[field] === "") return true;
             if (field === "position")

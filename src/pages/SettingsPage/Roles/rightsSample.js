@@ -3,210 +3,89 @@ export const rightsSample = {
     name: "",
     children: [
         {
-            id: "confPage",
+            id: "config",
             name: 'Страница "Конфигурация"',
             disabled: false,
             children: [
                 {
-                    id: "lookConf",
+                    id: "config.view",
                     name: "Просмотр страницы",
                     disabled: false,
                 },
                 {
-                    id: "get",
-                    name: "Прием",
+                    id: "config.upload",
+                    name: "Отправка конфигурации на сервер",
                     disabled: false,
-                    children: [
-                        {
-                            id: "GPIOget",
-                            name: "Создание GPIO",
-                            disabled: false,
-                        },
-                        {
-                            id: "COMPORTget",
-                            name: "Создание COM-порта",
-                            disabled: false,
-                        },
-                        {
-                            id: "IEC-104get",
-                            name: "Создание IEC 60870-5-104",
-                            disabled: false,
-                        },
-                        {
-                            id: "ModbusRTUget",
-                            name: "Создание Modbus-RTU",
-                            disabled: false,
-                        },
-                        {
-                            id: "ModbusTCPget",
-                            name: "Создание Modbus-TCP",
-                            disabled: false,
-                        },
-                    ],
                 },
                 {
-                    id: "give",
-                    name: "Передача",
+                    id: "config.create",
+                    name: "Создать конфигурацию",
                     disabled: false,
-                    children: [
-                        {
-                            id: "GPIOgive",
-                            name: "Создание GPIO",
-                            disabled: false,
-                        },
-                        {
-                            id: "COMPORTgive",
-                            name: "Создание COM-порта",
-                            disabled: false,
-                        },
-                        {
-                            id: "IEC-104give",
-                            name: "Создание IEC 60870-5-104",
-                            disabled: false,
-                        },
-                        {
-                            id: "ModbusRTUgive",
-                            name: "Создание Modbus-RTU",
-                            disabled: false,
-                        },
-                        {
-                            id: "ModbusTCPgive",
-                            name: "Создание Modbus-TCP",
-                            disabled: false,
-                        },
-                    ],
                 },
                 {
-                    id: "varConf",
-                    name: "Переменные",
+                    id: "config.open",
+                    name: "Открыть конфигурацию",
                     disabled: false,
-                    children: [
-                        {
-                            id: "createConfVar",
-                            name: "Создание переменных",
-                            disabled: false,
-                        },
-                        {
-                            id: "varInteract",
-                            name: "Взаимодействие с переменными",
-                            disabled: false,
-                            children: [
-                                {
-                                    id: "renameVar",
-                                    name: "Переименование",
-                                },
-                                {
-                                    id: "deleteVar",
-                                    name: "Удаление",
-                                },
-                                {
-                                    id: "ignorVar",
-                                    name: "Игнорирование",
-                                },
-                                {
-                                    id: "cutVar",
-                                    name: "Вырезание",
-                                },
-                                {
-                                    id: "copyVar",
-                                    name: "Копирование",
-                                },
-                                {
-                                    id: "chooseVar",
-                                    name: "Выбор типа данных",
-                                },
-                                {
-                                    id: "descriptVar",
-                                    name: "Изменение описания",
-                                },
-                            ],
-                        },
-                    ],
                 },
                 {
-                    id: "router",
-                    name: "Роутер",
+                    id: "config.edit",
+                    name: "Редактировать конфигурацию",
                     disabled: false,
-                    children: [
-                        {
-                            id: "config",
-                            name: "Конфигурация",
-                            disabled: false,
-                            children: [
-                                {
-                                    id: "sendConf",
-                                    name: "Отправка конфигурации на сервер",
-                                    disabled: false,
-                                },
-                            ],
-                        },
-                        {
-                            id: "server",
-                            name: "Сервер",
-                            disabled: false,
-                            children: [
-                                {
-                                    id: "startServ",
-                                    name: "Запуск сервера",
-                                    disabled: false,
-                                },
-                                {
-                                    id: "stopServ",
-                                    name: "Остановка сервера",
-                                    disabled: false,
-                                },
-                                {
-                                    id: "restartServ",
-                                    name: "Перезапуск сервера",
-                                    disabled: false,
-                                },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    id: "conf",
-                    name: "Конфигурация",
-                    disabled: false,
-                    children: [
-                        {
-                            id: "createConf",
-                            name: "Создать конфигурацию",
-                            disabled: false,
-                        },
-                        {
-                            id: "editConf",
-                            name: "Редактировать конфигурацию",
-                            disabled: false,
-                        },
-                    ],
                 },
             ],
         },
 
         {
-            id: "monitorPage",
+            id: "server",
+            name: "Взаимодействие с сервером",
+            disabled: false,
+            children: [
+                {
+                    id: "server.start",
+                    name: "Запуск сервера",
+                    disabled: false,
+                },
+                {
+                    id: "server.stop",
+                    name: "Остановка сервера",
+                    disabled: false,
+                },
+                {
+                    id: "server.restart",
+                    name: "Перезапуск сервера",
+                    disabled: false,
+                },
+            ],
+        },
+
+        {
+            id: "monitoring",
             name: 'Страница "Мониторинг"',
             disabled: false,
             children: [
                 {
-                    id: "lookMonitor",
+                    id: "monitoring.view",
                     name: "Просмотр страницы",
                     disabled: false,
                 },
                 {
-                    id: "variablesMonitor",
+                    id: "monitoring.variables",
                     name: "Переменные",
                     disabled: false,
                     children: [
                         {
-                            id: "handleInputMonitorVar",
+                            id: "monitoring.variables.manual_input",
                             name: "Ручной ввод",
                             disabled: false,
                         },
                         {
-                            id: "signalEditMonitorVar",
+                            id: "monitoring.variables.signal_editor",
                             name: "Редактор сигнала",
+                            disabled: false,
+                        },
+                        {
+                            id: "monitoring.variables.telecontrol",
+                            name: "Телеизмерение",
                             disabled: false,
                         },
                     ],
@@ -215,13 +94,13 @@ export const rightsSample = {
         },
 
         {
-            id: "logPage",
+            id: "logs",
             name: 'Страница "Логирование"',
             disabled: false,
             children: [
-                { id: "lookLog", name: "Просмотр страницы", disabled: false },
+                { id: "logs.view", name: "Просмотр страницы", disabled: false },
                 {
-                    id: "downloadLog",
+                    id: "logs.download",
                     name: "Скачивание лог-файлов",
                     disabled: false,
                 },
@@ -229,13 +108,17 @@ export const rightsSample = {
         },
 
         {
-            id: "journPage",
+            id: "journal",
             name: 'Страница "Журналирование"',
             disabled: false,
             children: [
-                { id: "lookJourn", name: "Просмотр страницы", disabled: false },
                 {
-                    id: "downloadJourn",
+                    id: "journal.view",
+                    name: "Просмотр страницы",
+                    disabled: false,
+                },
+                {
+                    id: "journal.download",
                     name: "Скачивание записей",
                     disabled: false,
                 },
@@ -243,12 +126,12 @@ export const rightsSample = {
         },
 
         {
-            id: "graphsPage",
+            id: "graphs",
             name: 'Страница "Графики"',
             disabled: false,
             children: [
                 {
-                    id: "lookGraphs",
+                    id: "graphs.view",
                     name: "Просмотр страницы графиков",
                     disabled: false,
                 },
@@ -256,41 +139,72 @@ export const rightsSample = {
         },
 
         {
-            id: "settingsPage",
+            id: "hmi",
+            name: 'Редактор "HMI"',
+            disabled: false,
+            children: [
+                {
+                    id: "hmi.view",
+                    name: "Просмотр страницы HMI",
+                    disabled: false,
+                },
+                {
+                    id: "hmi.editor",
+                    name: "Редактор HMI",
+                    disabled: false,
+                },
+                {
+                    id: "hmi.upload",
+                    name: "Загрузка HMI",
+                    disabled: false,
+                },
+            ],
+        },
+
+        {
+            id: "settings",
             name: 'Страница "Настройки"',
             disabled: false,
             children: [
                 {
-                    id: "lookSettings",
+                    id: "settings.view",
                     name: "Просмотр страницы",
                     disabled: false,
                 },
                 {
-                    id: "webServSettings",
+                    id: "settings.web_server.edit",
                     name: 'Настройка "Web-Сервера"',
                     disabled: false,
                 },
                 {
-                    id: "logSettings",
+                    id: "settings.logs.edit",
                     name: 'Настройка "Лог-файлов"',
                     disabled: false,
                 },
                 {
-                    id: "journSettings",
+                    id: "settings.journal.edit",
                     name: 'Настройка "Журналов"',
                     disabled: false,
-                    children: [
-                        {
-                            id: "journEventSettings",
-                            name: "Журнал Событий",
-                            disabled: false,
-                        },
-                        {
-                            id: "journTISettings",
-                            name: "Журнал ТИ",
-                            disabled: false,
-                        },
-                    ],
+                },
+                {
+                    id: "security.users.edit",
+                    name: 'Настройка "Пользователей"',
+                    disabled: false,
+                },
+                {
+                    id: "security.roles.edit",
+                    name: 'Настройка "Ролей"',
+                    disabled: false,
+                },
+                {
+                    id: "security.licensing.manage",
+                    name: 'Настройка "Лицензий"',
+                    disabled: false,
+                },
+                {
+                    id: "system.software_update",
+                    name: 'Настройка "Обновление ПО"',
+                    disabled: false,
                 },
             ],
         },
