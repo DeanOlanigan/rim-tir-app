@@ -10,7 +10,6 @@ import { flexRender } from "@tanstack/react-table";
 import { memo } from "react";
 import { useFilterDataM } from "../hooks/useFilterData";
 import { useFilterColumns } from "../hooks/useFilterColumns";
-import { useShallow } from "zustand/shallow";
 import { MenuGroups } from "../JournalFilter/MenuFilters/MenuGroups";
 import { MenuTypes } from "../JournalFilter/MenuFilters/MenuTypes";
 
@@ -19,7 +18,7 @@ const OVERSCAN = 10;
 
 const tableColumns = [
     { label: "Тип", value: "type", size: 75 },
-    { label: "Метка времени", value: "ts", size: 200 },
+    { label: "Метка времени", value: "tsText", size: 200 },
     { label: "Событие", value: "event", size: 300 },
     { label: "Информация", value: "info", size: 400 },
     //{ label: "Группа", value: "group", size: 140 }, // ?
@@ -27,38 +26,26 @@ const tableColumns = [
     //{ label: "Значение", value: "val", size: 100 }, // ?
     //{ label: "Описание", value: "desc", size: 240 }, // ?
     { label: "Пользователь", value: "user", size: 140 },
-    { label: "Время квитирования", value: "ack_time", size: 200 },
+    { label: "Время квитирования", value: "ackTimeText", size: 200 },
     { label: "Квитировал", value: "who_ack", size: 200 },
+    { label: "", value: "needAck", size: 75 },
 ];
-
-const selectJournalTableFilters = (state) => ({
-    selectedMessages: state.selectedMessages,
-    tableColumnsZus: state.tableColumnsZus,
-});
 
 export const JournalTable = () => {
     // TODO
     // eslint-disable-next-line
     /* const { isLoading, isError, error } = useJournalData(); */
-    const { selectedMessages, tableColumnsZus } = useFilterStore(
-        useShallow(selectJournalTableFilters),
-    );
-
-    const live = useJournalStream((s) => s.live);
-
+    const tableColumnsZus = useFilterStore((s) => s.tableColumnsZus);
     const sticky = useStickToBottom({
         initial: "instant",
         resize: "instant",
     });
-
-    const filteredData = useFilterDataM(live, selectedMessages);
     const filteredColumns = useFilterColumns(tableColumns, tableColumnsZus);
-    const table = useCreateTable(filteredColumns, filteredData);
 
     //if (isLoading) return <Loader text={"Загрузка данных"} />;
     //if (isError) return <Text>Error: {error.message}</Text>;
 
-    if (!filteredData.length || !filteredColumns.length) return <NoData />;
+    if (!filteredColumns.length) return <NoData />;
 
     return (
         <Box
@@ -77,7 +64,11 @@ export const JournalTable = () => {
                 }}
             >
                 <JournalHeader columns={filteredColumns} />
-                <JournalBody table={table} sticky={sticky} />
+                <JournalBody
+                    filteredColumns={filteredColumns}
+                    scroll={sticky.scrollRef}
+                    content={sticky.contentRef}
+                />
             </table>
 
             <ScrollToBottomButton
@@ -166,12 +157,19 @@ const JournalHeader = memo(({ columns }) => {
 });
 JournalHeader.displayName = "JournalHeader";
 
-const JournalBody = memo(({ table, sticky }) => {
+const JournalBody = memo(({ filteredColumns, scroll, content }) => {
+    const live = useJournalStream((s) => s.live);
+    const selectedMessages = useFilterStore((s) => s.selectedMessages);
+
+    const filteredData = useFilterDataM(live, selectedMessages);
+
+    const table = useCreateTable(filteredColumns, filteredData);
+
     const { rows } = table.getRowModel();
 
     const rowVirtualizer = useVirtualizer({
         count: rows.length,
-        getScrollElement: () => sticky.scrollRef.current,
+        getScrollElement: () => scroll.current,
         estimateSize: () => ROW_HEIGHT,
         overscan: OVERSCAN,
         getItemKey: (index) => rows[index]?.id ?? index,
@@ -179,9 +177,11 @@ const JournalBody = memo(({ table, sticky }) => {
 
     const virtualRows = rowVirtualizer.getVirtualItems();
 
+    console.log("render t body", rows, virtualRows);
+
     return (
         <tbody
-            ref={sticky.contentRef}
+            ref={content}
             style={{
                 display: "grid",
                 height: `${rowVirtualizer.getTotalSize()}px`,
@@ -203,7 +203,13 @@ const JournalBody = memo(({ table, sticky }) => {
 });
 JournalBody.displayName = "JournalBody";
 
-const JournalRow = memo(({ row, virtualRow }) => {
+const JournalRow = ({ row, virtualRow }) => {
+    const isPause = row.original.type === "pause";
+    const isResume = row.original.type === "resume";
+
+    const bg =
+        isPause || isResume ? "var(--chakra-colors-bg-success)" : undefined;
+
     return (
         <tr
             data-index={virtualRow.index}
@@ -215,6 +221,7 @@ const JournalRow = memo(({ row, virtualRow }) => {
                 transform: `translateY(${virtualRow.start}px)`,
                 width: "100%",
                 height: `${virtualRow.size}px`,
+                background: bg,
             }}
         >
             {row.getVisibleCells().map((cell) => (
@@ -236,5 +243,4 @@ const JournalRow = memo(({ row, virtualRow }) => {
             ))}
         </tr>
     );
-});
-JournalRow.displayName = "JournalRow";
+};

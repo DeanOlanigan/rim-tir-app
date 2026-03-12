@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { Badge, Icon } from "@chakra-ui/react";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import {
     LuCircleAlert,
@@ -8,33 +7,17 @@ import {
     LuPlay,
     LuTriangleAlert,
 } from "react-icons/lu";
-
-const groupPalette = {
-    noGroup: "gray",
-    danger: "red",
-    warn: "orange",
-    state: "blue",
-    pause: "cyan",
-    resume: "green",
-};
-
-const groupText = {
-    noGroup: "Без группы",
-    danger: "Аварийные",
-    warn: "Предупредительные",
-    state: "Оперативные",
-    pause: "Пауза",
-    resume: "Возобновлен",
-};
+import { AckButtonCellChakra } from "../JournalView/AckButtonCell";
+import { Icon } from "@chakra-ui/react";
 
 const typePalette = {
-    info: "fg.info",
-    warn: "fg.warning",
-    error: "fg.error",
-    ts: "blue",
-    tu: "blue",
-    pause: "green",
-    resume: "green",
+    info: "var(--chakra-colors-fg-info)",
+    warn: "var(--chakra-colors-fg-warning)",
+    error: "var(--chakra-colors-fg-error)",
+    ts: "var(--chakra-colors-fg-info)",
+    tu: "var(--chakra-colors-fg-info)",
+    pause: "var(--chakra-colors-fg-success)",
+    resume: "var(--chakra-colors-fg-success)",
 };
 
 const typeIcon = {
@@ -47,20 +30,6 @@ const typeIcon = {
     resume: LuPlay,
 };
 
-const dateFormatter = new Intl.DateTimeFormat(undefined, {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-});
-
-function formatJournalDate(value) {
-    if (!value) return "";
-    return dateFormatter.format(new Date(value));
-}
-
 export const useCreateTable = (filteredColumns, filteredData) => {
     const columns = useMemo(
         () =>
@@ -71,28 +40,23 @@ export const useCreateTable = (filteredColumns, filteredData) => {
                 header: column.label,
                 cell: ({ getValue, row }) => {
                     switch (column.value) {
-                        case "ts":
-                        case "ack_time":
-                            return formatJournalDate(getValue());
-                        case "group": {
-                            const value = row.original.group;
-                            return (
-                                <Badge
-                                    w={"full"}
-                                    justifyContent={"center"}
-                                    colorPalette={groupPalette[value]}
-                                    variant={"solid"}
-                                >
-                                    {groupText[value]}
-                                </Badge>
-                            );
+                        case "needAck": {
+                            if (!getValue()) return null;
+                            return <AckButtonCellChakra id={row.original.id} />;
                         }
                         case "type": {
-                            const value = row.original.type;
+                            const type = row.original.type;
+                            const cellColor = typePalette[type];
+                            const CellIcon = typeIcon[type];
+                            /* return (
+                                CellIcon && (
+                                    <CellIcon size={24} color={cellColor} />
+                                )
+                            ); */
                             return (
                                 <Icon
-                                    as={typeIcon[value]}
-                                    color={typePalette[value]}
+                                    as={CellIcon}
+                                    color={cellColor}
                                     size={"lg"}
                                 />
                             );

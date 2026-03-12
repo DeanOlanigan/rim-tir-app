@@ -3,7 +3,31 @@ import { queryClient } from "@/queryClients";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
+const dateFormatter = new Intl.DateTimeFormat(undefined, {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: false,
+    fractionalSecondDigits: 3,
+});
+
+function formatJournalDate(value) {
+    if (!value) return "";
+    return dateFormatter.format(new Date(value));
+}
+
 const MAX_ROWS = 10000;
+
+function enrichJournalRow(row) {
+    return {
+        ...row,
+        tsText: row.ts ? formatJournalDate(row.ts) : "",
+        ackTimeText: row.ack_time ? formatJournalDate(row.ack_time) : "",
+    };
+}
 
 function trimToMax(arr, max = MAX_ROWS) {
     if (arr.length <= max) return arr;
@@ -45,7 +69,7 @@ export const useJournalStream = create(
             hydrate: (data) =>
                 set(
                     () => ({
-                        live: trimToMax(data),
+                        live: trimToMax(data.map(enrichJournalRow)),
                         pausedData: [],
                     }),
                     undefined,
@@ -85,7 +109,8 @@ export const useJournalStream = create(
                         if (!rows.length) return state;
 
                         const target = state.isPaused ? "pausedData" : "live";
-                        const next = trimToMax(state[target].concat(rows));
+                        const prepared = rows.map(enrichJournalRow);
+                        const next = trimToMax(state[target].concat(prepared));
 
                         return { [target]: next };
                     },

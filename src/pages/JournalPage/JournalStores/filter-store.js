@@ -30,7 +30,7 @@ export const useFilterStore = create((set) => ({
     selectedMessages: initialSelectedMessages,
     tableColumnsZus: [
         "type",
-        "ts",
+        "tsText",
         "event",
         "info",
         "group",
@@ -38,8 +38,9 @@ export const useFilterStore = create((set) => ({
         "val",
         "desc",
         "user",
-        "ack_time",
+        "ackTimeText",
         "who_ack",
+        "needAck",
     ],
     ...archiveInitialState,
 
