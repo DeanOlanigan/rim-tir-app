@@ -7,7 +7,6 @@ import { useMqttValues } from "./hooks/useMqttValues";
 import { editGridDialog } from "./editGridDialog";
 import { LeftPanel } from "./LeftPanel";
 import { RightPanel } from "./RightPanel/RightPanel";
-import { confirmDialog } from "@/components/confirmDialog";
 import { OPEN_PROJECT_DIALOG_ID, openProjectDialog } from "./ProjectManager";
 import { useEditorHotkeys } from "./hooks/useEditorHotkeys";
 import { useHMICanvasResize } from "./hooks/useHMICanvasResize";
@@ -52,7 +51,6 @@ const HMIEditorContent = () => {
         >
             <openProjectDialog.Viewport />
             <editGridDialog.Viewport />
-            <confirmDialog.Viewport />
             <helpDialog.Viewport />
             <ContextMenu tools={tools} />
             <HMICanvas {...tools} />

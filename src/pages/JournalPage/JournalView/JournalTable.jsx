@@ -5,30 +5,37 @@ import { useStickToBottom } from "use-stick-to-bottom";
 import { NoData } from "@/components/NoData";
 import { useJournalStream } from "../JournalStores/journal-stream-store";
 import { useCreateTable } from "../hooks/useCreateTable";
-import { LuArrowDown } from "react-icons/lu";
+import { LuArrowDown, LuCheckCheck } from "react-icons/lu";
 import { flexRender } from "@tanstack/react-table";
 import { memo } from "react";
 import { useFilterDataM } from "../hooks/useFilterData";
 import { useFilterColumns } from "../hooks/useFilterColumns";
 import { MenuGroups } from "../JournalFilter/MenuFilters/MenuGroups";
 import { MenuTypes } from "../JournalFilter/MenuFilters/MenuTypes";
+import { Tooltip } from "@/components/ui/tooltip";
+import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 
 const ROW_HEIGHT = 36;
 const OVERSCAN = 10;
 
 const tableColumns = [
-    { label: "Тип", value: "type", size: 75 },
-    { label: "Метка времени", value: "tsText", size: 200 },
-    { label: "Событие", value: "event", size: 300 },
-    { label: "Информация", value: "info", size: 400 },
+    { label: "Тип", value: "type", minSize: 75, grow: 0 },
+    { label: "Метка времени", value: "tsText", minSize: 170, grow: 1 },
+    { label: "Событие", value: "event", minSize: 200, grow: 2 },
+    { label: "Информация", value: "info", minSize: 400, grow: 3 },
     //{ label: "Группа", value: "group", size: 140 }, // ?
     //{ label: "Переменная", value: "var", size: 140 }, // ?
     //{ label: "Значение", value: "val", size: 100 }, // ?
     //{ label: "Описание", value: "desc", size: 240 }, // ?
-    { label: "Пользователь", value: "user", size: 140 },
-    { label: "Время квитирования", value: "ackTimeText", size: 200 },
-    { label: "Квитировал", value: "who_ack", size: 200 },
-    { label: "", value: "needAck", size: 75 },
+    { label: "Пользователь", value: "user", minSize: 140, grow: 1 },
+    {
+        label: "Время квитирования",
+        value: "ackTimeText",
+        minSize: 170,
+        grow: 1,
+    },
+    { label: "Квитировал", value: "who_ack", minSize: 140, grow: 1 },
+    { label: "", value: "needAck", minSize: 75, grow: 0 },
 ];
 
 export const JournalTable = () => {
@@ -48,29 +55,30 @@ export const JournalTable = () => {
     if (!filteredColumns.length) return <NoData />;
 
     return (
-        <Box
-            ref={sticky.scrollRef}
-            overflow={"auto"}
-            position={"relative"}
-            w={"full"}
-            h={"full"}
-            minH={0}
-        >
-            <table
-                style={{
-                    display: "grid",
-                    width: "100%",
-                    textAlign: "center",
-                }}
+        <Box w={"full"} h={"full"} minH={0} position={"relative"}>
+            <Box
+                ref={sticky.scrollRef}
+                overflow={"auto"}
+                position={"relative"}
+                w={"full"}
+                h={"full"}
+                minH={0}
             >
-                <JournalHeader columns={filteredColumns} />
-                <JournalBody
-                    filteredColumns={filteredColumns}
-                    scroll={sticky.scrollRef}
-                    content={sticky.contentRef}
-                />
-            </table>
-
+                <table
+                    style={{
+                        display: "grid",
+                        width: "100%",
+                        minWidth: "700px",
+                        textAlign: "center",
+                    }}
+                >
+                    <JournalHeader columns={filteredColumns} />
+                    <JournalBody
+                        filteredColumns={filteredColumns}
+                        sticky={sticky}
+                    />
+                </table>
+            </Box>
             <ScrollToBottomButton
                 isAtBottom={sticky.isAtBottom}
                 onClick={() => sticky.scrollToBottom("instant")}
@@ -84,11 +92,11 @@ const ScrollToBottomButton = memo(({ isAtBottom, onClick }) => {
 
     return (
         <Box
-            position="sticky"
+            position="absolute"
             float="right"
             bottom="2"
             right="2"
-            zIndex="sticky"
+            zIndex="overlay"
         >
             <IconButton size="sm" onClick={onClick} variant="solid">
                 <LuArrowDown />
@@ -104,6 +112,29 @@ const renderHeaderContent = (column) => {
             return <MenuGroups name={column.label} />;
         case "type":
             return <MenuTypes name={column.label} />;
+        case "needAck":
+            return (
+                <Tooltip
+                    showArrow
+                    content={"Квитировать все события за период"}
+                >
+                    <IconButton
+                        variant="ghost"
+                        size="2xs"
+                        color={"fg"}
+                        onClick={() =>
+                            confirmDialog.open(CONFIRM_DIALOG_ID, {
+                                onAccept: () => console.log("ACK ALL"),
+                                title: "Квитировать все события?",
+                                message:
+                                    "Будут квитированы все события за выбранный период.",
+                            })
+                        }
+                    >
+                        <LuCheckCheck />
+                    </IconButton>
+                </Tooltip>
+            );
         default:
             return column.label;
     }
@@ -116,7 +147,7 @@ const JournalHeader = memo(({ columns }) => {
             style={{
                 display: "grid",
                 position: "sticky",
-                justifyContent: "center",
+                width: "100%",
                 top: 0,
                 zIndex: 10,
             }}
@@ -137,7 +168,9 @@ const JournalHeader = memo(({ columns }) => {
                         py="1"
                         fontWeight="medium"
                         style={{
-                            width: column.size,
+                            minWidth: column.minSize,
+                            flexGrow: column.grow ?? 1,
+                            flexBasis: column.minSize,
                         }}
                         _first={{
                             borderTopLeftRadius: "l2",
@@ -157,7 +190,7 @@ const JournalHeader = memo(({ columns }) => {
 });
 JournalHeader.displayName = "JournalHeader";
 
-const JournalBody = memo(({ filteredColumns, scroll, content }) => {
+const JournalBody = memo(({ filteredColumns, sticky }) => {
     const live = useJournalStream((s) => s.live);
     const selectedMessages = useFilterStore((s) => s.selectedMessages);
 
@@ -169,7 +202,7 @@ const JournalBody = memo(({ filteredColumns, scroll, content }) => {
 
     const rowVirtualizer = useVirtualizer({
         count: rows.length,
-        getScrollElement: () => scroll.current,
+        getScrollElement: () => sticky.scrollRef.current,
         estimateSize: () => ROW_HEIGHT,
         overscan: OVERSCAN,
         getItemKey: (index) => rows[index]?.id ?? index,
@@ -177,14 +210,13 @@ const JournalBody = memo(({ filteredColumns, scroll, content }) => {
 
     const virtualRows = rowVirtualizer.getVirtualItems();
 
-    console.log("render t body", rows, virtualRows);
-
     return (
         <tbody
-            ref={content}
+            ref={sticky.contentRef}
             style={{
                 display: "grid",
                 height: `${rowVirtualizer.getTotalSize()}px`,
+                width: "100%",
                 position: "relative",
             }}
         >
@@ -216,7 +248,6 @@ const JournalRow = ({ row, virtualRow }) => {
             key={row.id}
             style={{
                 display: "flex",
-                justifyContent: "center",
                 position: "absolute",
                 transform: `translateY(${virtualRow.start}px)`,
                 width: "100%",
@@ -228,7 +259,9 @@ const JournalRow = ({ row, virtualRow }) => {
                 <td
                     key={cell.id}
                     style={{
-                        width: cell.column.getSize(),
+                        minWidth: cell.column.columnDef.minSize,
+                        flexGrow: cell.column.columnDef.meta.grow ?? 1,
+                        flexBasis: cell.column.columnDef.minSize,
                         alignContent: "center",
                         padding: "0 8px",
                         overflow: "hidden",

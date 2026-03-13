@@ -1,3 +1,4 @@
+import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 import { IconButton } from "@chakra-ui/react";
 import { memo } from "react";
 import { LuCheck } from "react-icons/lu";
@@ -30,9 +31,13 @@ export const AckButtonCell = memo(({ id }) => {
 AckButtonCell.displayName = "AckButtonCell";
 
 export const AckButtonCellChakra = memo(({ id }) => {
-    const handleClick = () => {
-        console.log("ACK", id);
-    };
+    const handleClick = () =>
+        confirmDialog.open(CONFIRM_DIALOG_ID, {
+            onAccept: () => {
+                console.log("ACK", id);
+            },
+            title: "Квитировать событие?",
+        });
 
     return (
         <IconButton size={"xs"} variant={"outline"} onClick={handleClick}>

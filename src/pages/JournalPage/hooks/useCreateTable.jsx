@@ -36,8 +36,11 @@ export const useCreateTable = (filteredColumns, filteredData) => {
             filteredColumns.map((column) => ({
                 id: column.value,
                 accessorKey: column.value,
-                size: column.size,
                 header: column.label,
+                minSize: column.minSize,
+                meta: {
+                    grow: column.grow,
+                },
                 cell: ({ getValue, row }) => {
                     switch (column.value) {
                         case "needAck": {

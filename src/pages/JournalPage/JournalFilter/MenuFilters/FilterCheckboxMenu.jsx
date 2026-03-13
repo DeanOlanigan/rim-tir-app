@@ -1,4 +1,4 @@
-import { HStack, Menu, Portal } from "@chakra-ui/react";
+import { Button, Menu, Portal } from "@chakra-ui/react";
 import { LuChevronDown } from "react-icons/lu";
 import { memo } from "react";
 
@@ -11,24 +11,20 @@ export const FilterCheckboxMenu = memo(function FilterCheckboxMenu({
     return (
         <Menu.Root closeOnSelect={false} lazyMount unmountOnExit size="sm">
             <Menu.Trigger asChild>
-                <HStack
-                    cursor="pointer"
-                    justify="center"
-                    px="2"
-                    _hover={{ bg: "colorPalette.emphasized" }}
-                    borderRadius="l2"
-                    transitionProperty="common"
-                    transitionDuration="moderate"
-                    userSelect="none"
+                <Button
+                    size={"2xs"}
+                    variant={"ghost"}
+                    fontSize={"md"}
+                    color={"fg"}
                 >
                     {name}
                     <LuChevronDown />
-                </HStack>
+                </Button>
             </Menu.Trigger>
 
-            <Portal disabled>
+            <Portal>
                 <Menu.Positioner>
-                    <Menu.Content minW="220px">
+                    <Menu.Content>
                         <Menu.ItemGroup>
                             {items.map(({ value, label }) => (
                                 <Menu.CheckboxItem

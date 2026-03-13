@@ -7,6 +7,7 @@ import { journalDialog } from "@/journalDialog";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
 import { useMqttJournal } from "@/pages/JournalPage/hooks/useMqttJournal";
 import { MobileHeader } from "@/components/Header/MobileHeader";
+import { confirmDialog } from "@/components/confirmDialog";
 
 export const PublicLayout = () => {
     return <Outlet />;
@@ -20,6 +21,7 @@ export const PrivateLayout = () => {
     return (
         <>
             <journalDialog.Viewport />
+            <confirmDialog.Viewport />
             <Toaster />
             <Flex
                 w={"100%"}

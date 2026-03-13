@@ -20,14 +20,12 @@ import { TreeCard } from "@/components/TreeView/TreeCard";
 import { TreeView } from "./Tree/TreeView";
 import { BaseConfCard } from "./BaseConfCard/BaseConfCard";
 import { ConfSyncManager } from "./ConfSyncManager";
-import { confirmDialog } from "@/components/confirmDialog";
 import { configurationInfoDialog } from "./Dialogs/configurationInfoDialog";
 
 function ConfigurationPage() {
     return (
         <>
             <configurationInfoDialog.Viewport />
-            <confirmDialog.Viewport />
             <EmptyConfigDialog />
             <ContextMenu />
             <ConfSyncManager />
