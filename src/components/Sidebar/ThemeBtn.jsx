@@ -7,6 +7,7 @@ export const ThemeBtn = ({ collapsed }) => {
 
     return (
         <Tooltip
+            showArrow
             content="Сменить тему"
             positioning={{ placement: "right" }}
             openDelay={150}

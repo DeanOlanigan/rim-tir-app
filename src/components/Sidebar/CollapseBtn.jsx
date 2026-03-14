@@ -5,6 +5,7 @@ import { LuPanelLeftClose, LuPanelLeftOpen } from "react-icons/lu";
 export const CollapseBtn = ({ collapsed, setCollapsed }) => {
     return (
         <Tooltip
+            showArrow
             content={collapsed ? "Развернуть меню" : "Свернуть меню"}
             positioning={{ placement: "right" }}
             openDelay={150}

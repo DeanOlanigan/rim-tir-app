@@ -20,6 +20,7 @@ export const ExpandButton = ({ treeApi }) => {
 
     return (
         <Tooltip
+            showArrow
             content={expanded ? "Свернуть все узлы" : "Развернуть все узлы"}
         >
             <IconButton size={"2xs"} variant={"subtle"} onClick={handleExpand}>

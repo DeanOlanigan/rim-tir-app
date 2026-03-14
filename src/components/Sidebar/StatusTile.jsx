@@ -26,6 +26,7 @@ export function StatusTile({
 
     return (
         <Tooltip
+            showArrow
             content={`${label}: ${data}`}
             positioning={{ placement: "right" }}
             openDelay={150}

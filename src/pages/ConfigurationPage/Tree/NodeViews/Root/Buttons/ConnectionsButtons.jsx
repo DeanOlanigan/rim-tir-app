@@ -17,6 +17,7 @@ export const ConnectionsButtons = ({ treeApi, type }) => {
             size={"sm"}
         >
             <Tooltip
+                showArrow
                 content={"Создать соединение"}
                 ids={{ trigger: triggerId }}
             >

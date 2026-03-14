@@ -14,7 +14,10 @@ export const IgnoreButton = ({ treeApi }) => {
     };
 
     return (
-        <Tooltip content={ignoreMode ? "Использовать" : "Игнорировать"}>
+        <Tooltip
+            showArrow
+            content={ignoreMode ? "Использовать" : "Игнорировать"}
+        >
             <IconButton size={"2xs"} variant={"subtle"} onClick={handleIgnore}>
                 {ignoreMode ? (
                     <Icon as={LuCheckCheck} color={"fg.success"} />

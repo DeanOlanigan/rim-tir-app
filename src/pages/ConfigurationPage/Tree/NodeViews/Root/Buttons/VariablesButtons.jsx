@@ -30,7 +30,7 @@ export const VariablesButtons = ({ treeApi }) => {
 
     return (
         <>
-            <Tooltip content={"Создать переменную..."}>
+            <Tooltip showArrow content={"Создать переменную..."}>
                 <IconButton
                     size={"2xs"}
                     variant={"subtle"}
@@ -39,7 +39,7 @@ export const VariablesButtons = ({ treeApi }) => {
                     <LuFilePlus />
                 </IconButton>
             </Tooltip>
-            <Tooltip content={"Создать папку..."}>
+            <Tooltip showArrow content={"Создать папку..."}>
                 <IconButton
                     size={"2xs"}
                     variant={"subtle"}
