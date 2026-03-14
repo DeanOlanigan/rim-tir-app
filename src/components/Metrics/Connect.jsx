@@ -3,7 +3,7 @@ import { Badge, Icon, Text } from "@chakra-ui/react";
 import { LuCloudOff } from "react-icons/lu";
 import { Tooltip } from "../ui/tooltip";
 
-export const Connect = () => {
+export const Connect = ({ collapsed }) => {
     const { connected } = useMqttCore();
     const status = "Нет соединения";
 
@@ -16,24 +16,24 @@ export const Connect = () => {
                 content={status}
             >
                 <Badge
-                    w={{ base: "50px", lg: "100%" }}
-                    h={{ base: "50px", lg: "auto" }}
-                    py={{ base: 1, lg: 2 }}
-                    px={{ base: 0, lg: 3 }}
+                    w={collapsed ? "50px" : "100%"}
+                    py={collapsed ? 3 : 2}
+                    px={collapsed ? 1 : 3}
                     variant={"outline"}
-                    justifyContent={{ base: "center", lg: "flex-start" }}
+                    justifyContent={collapsed ? "center" : "flex-start"}
                     colorPalette={"red"}
                 >
                     <Icon as={LuCloudOff} size={"sm"} />
-                    <Text
-                        display={{ base: "none", lg: "block" }}
-                        fontWeight="medium"
-                        overflow="hidden"
-                        textOverflow="ellipsis"
-                        whiteSpace="nowrap"
-                    >
-                        {status}
-                    </Text>
+                    {!collapsed && (
+                        <Text
+                            fontWeight="medium"
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap"
+                        >
+                            {status}
+                        </Text>
+                    )}
                 </Badge>
             </Tooltip>
         )

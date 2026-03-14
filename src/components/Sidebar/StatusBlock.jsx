@@ -6,7 +6,7 @@ import { LuClock3, LuCpu, LuMemoryStick } from "react-icons/lu";
 export const StatusBlock = ({ collapsed }) => {
     return (
         <VStack w={"full"} gap={1}>
-            <Connect />
+            <Connect collapsed={collapsed} />
             <StatusTile
                 icon={LuClock3}
                 label={"Время"}
