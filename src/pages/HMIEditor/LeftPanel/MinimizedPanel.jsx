@@ -4,12 +4,13 @@ import {
     Flex,
     Heading,
     HStack,
+    Icon,
     Kbd,
     Text,
 } from "@chakra-ui/react";
 import { useNodeStore } from "../store/node-store";
 import { useActionsStore } from "../store/actions-store";
-import { LuPanelLeft } from "react-icons/lu";
+import { LuPanelLeftOpen } from "react-icons/lu";
 import { EditorMenu } from "../EditorSettings";
 import { ProjectStatusInformer } from "./ProjectStatusInformer";
 import { HOTKEYS } from "../constants";
@@ -24,7 +25,7 @@ export const MinimizedPanel = ({ tools }) => {
         <Flex
             maxW={"500px"}
             gap={2}
-            bg={"bg"}
+            bg={"bg.panel"}
             p={3}
             borderRadius={"md"}
             shadow={"md"}
@@ -63,7 +64,7 @@ export const MinimizedPanel = ({ tools }) => {
                         {projectName}
                     </Heading>
                     <Badge variant={"solid"}>{activePage.name}</Badge>
-                    <LuPanelLeft />
+                    <Icon as={LuPanelLeftOpen} boxSize="5" />
                 </Button>
             </Tooltip>
         </Flex>

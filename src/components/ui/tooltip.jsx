@@ -23,8 +23,8 @@ export const Tooltip = React.forwardRef(function Tooltip(props, ref) {
                     <ChakraTooltip.Content
                         ref={ref}
                         css={{
-                            "--tooltip-bg": "colors.bg.muted",
-                            color: "fg.muted",
+                            "--tooltip-bg": "colors.bg.emphasized",
+                            color: "fg",
                         }}
                         {...contentProps}
                     >

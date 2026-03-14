@@ -33,9 +33,9 @@ export const PrivateLayout = () => {
             >
                 {!fullScreenMode && !isDesktop && <MobileHeader />}
 
-                <Flex flex={1} minH={0} minW={0}>
+                <Flex flex={1} minH={0} minW={0} p={2} gap={2}>
                     {!fullScreenMode && isDesktop && <Sidebar />}
-                    <Flex flex={1} minH={0} minW={0}>
+                    <Flex flex={1} minH={0} minW={0} borderRadius={"lg"}>
                         <Outlet />
                     </Flex>
                 </Flex>

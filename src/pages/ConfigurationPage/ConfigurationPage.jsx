@@ -24,13 +24,29 @@ import { configurationInfoDialog } from "./Dialogs/configurationInfoDialog";
 
 function ConfigurationPage() {
     return (
-        <>
+        <VStack
+            w={"full"}
+            h={"full"}
+            data-state={"open"}
+            animationDuration={"slow"}
+            animationStyle={{
+                _open: "scale-fade-in",
+            }}
+        >
             <configurationInfoDialog.Viewport />
             <EmptyConfigDialog />
             <ContextMenu />
             <ConfSyncManager />
             <BaseConfCard />
-            <Box minH={0} h={"100%"}>
+            <Box
+                minH={0}
+                h={"100%"}
+                w={"100%"}
+                bg={"bg.panel"}
+                borderRadius={"lg"}
+                shadow={"md"}
+                p={1}
+            >
                 <PanelGroup
                     autoSaveId="configuration-main-panel"
                     direction="horizontal"
@@ -64,7 +80,7 @@ function ConfigurationPage() {
                     </Panel>
                 </PanelGroup>
             </Box>
-        </>
+        </VStack>
     );
 }
 export default ConfigurationPage;

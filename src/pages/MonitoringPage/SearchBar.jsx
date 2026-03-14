@@ -41,7 +41,7 @@ export const SearchBar = ({ searchTerm, setSearchTerm }) => {
             <Input
                 placeholder="Поиск"
                 size={"2xs"}
-                bg={"bg.subtle"}
+                bg={"bg"}
                 borderRadius={"full"}
                 value={innerTerm}
                 onChange={(e) => {

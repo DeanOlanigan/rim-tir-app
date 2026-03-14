@@ -18,7 +18,7 @@ export const NodeSettings = ({ api }) => {
 
     return (
         <Flex
-            bg={"bg"}
+            bg={"bg.panel"}
             w={"500px"}
             h={"100%"}
             p={2}

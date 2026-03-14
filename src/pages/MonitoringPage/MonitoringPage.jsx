@@ -1,7 +1,7 @@
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
 import { useEffect, useId, useState } from "react";
-import { Box, Flex, SimpleGrid, Switch } from "@chakra-ui/react";
+import { Box, Flex, SimpleGrid, Switch, VStack } from "@chakra-ui/react";
 import { signalEditDialog, infoDialog } from "./setValue/dialog";
 import { ConfigInfoWrapper } from "./ConfigInfo";
 import { TreeCard } from "@/components/TreeView/TreeCard";
@@ -36,13 +36,24 @@ function MonitoringPage() {
     if (isFetching) return <Loader text={"Обновление данных"} />;
 
     return (
-        <>
+        <VStack
+            w="full"
+            h={"full"}
+            data-state={"open"}
+            animationDuration={"slow"}
+            animationStyle={{
+                _open: "scale-fade-in",
+            }}
+        >
             <SimpleGrid
+                w={"full"}
                 columns={3}
                 px={4}
                 py={1}
-                borderBottom={"0.25rem solid"}
-                borderColor={"colorPalette.subtle"}
+                bg={"bg.panel"}
+                minH={"40px"}
+                borderRadius={"lg"}
+                shadow={"md"}
             >
                 <Flex gap={2} align={"center"}>
                     <ConfigInfoWrapper />
@@ -55,7 +66,15 @@ function MonitoringPage() {
                     />
                 </Flex>
             </SimpleGrid>
-            <Box h={"100%"} minH={0}>
+            <Box
+                w={"full"}
+                h={"100%"}
+                minH={0}
+                bg={"bg.panel"}
+                borderRadius={"lg"}
+                shadow={"md"}
+                p={1}
+            >
                 <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                     <Panel collapsible={true} collapsedSize={0} minSize={25}>
                         <TreeWrapper
@@ -85,7 +104,7 @@ function MonitoringPage() {
                 <infoDialog.Viewport />
                 <ContextMenu />
             </Box>
-        </>
+        </VStack>
     );
 }
 export default MonitoringPage;

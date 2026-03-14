@@ -73,7 +73,7 @@ export const ToolBar = ({ manager }) => {
         <HStack
             gap={1}
             p={2}
-            bg={"bg.subtle"}
+            bg={"bg.panel"}
             borderRadius={"xl"}
             shadow={"md"}
             pointerEvents={"auto"}

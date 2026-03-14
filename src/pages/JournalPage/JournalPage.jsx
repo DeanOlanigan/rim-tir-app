@@ -15,6 +15,9 @@ function JournalPage() {
             }}
             direction={"column"}
             p={4}
+            bg={"bg.panel"}
+            borderRadius={"lg"}
+            shadow={"lg"}
         >
             <JournalHeader />
             <JournalTable />

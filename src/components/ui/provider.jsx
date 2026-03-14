@@ -42,6 +42,18 @@ const config = defineConfig({
         keyframes: {
             emergencyBlink: emergencyKeyframes,
         },
+        semanticTokens: {
+            colors: {
+                bg: {
+                    DEFAULT: {
+                        value: {
+                            _light: "{colors.gray.100}",
+                            _dark: "#000000",
+                        },
+                    },
+                },
+            },
+        },
     },
     globalCss: {
         html: {

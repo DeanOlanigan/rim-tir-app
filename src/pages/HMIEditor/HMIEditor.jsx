@@ -48,6 +48,12 @@ const HMIEditorContent = () => {
             position={"relative"}
             direction={"column"}
             overflow={"hidden"}
+            borderRadius={"lg"}
+            data-state={"open"}
+            animationDuration={"slow"}
+            animationStyle={{
+                _open: "scale-fade-in",
+            }}
         >
             <openProjectDialog.Viewport />
             <editGridDialog.Viewport />

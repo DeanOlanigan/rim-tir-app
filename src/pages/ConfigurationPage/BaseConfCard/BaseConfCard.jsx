@@ -14,8 +14,10 @@ export const BaseConfCard = () => {
             px={4}
             py={1}
             gap={4}
-            borderBottom={"0.25rem solid"}
-            borderColor={"colorPalette.subtle"}
+            bg={"bg.panel"}
+            borderRadius={"lg"}
+            shadow={"md"}
+            w={"100%"}
             h={"full"}
             maxH={"40px"}
             align={"center"}

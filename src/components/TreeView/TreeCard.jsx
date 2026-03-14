@@ -14,11 +14,6 @@ export const TreeCard = memo(function TreeCard({ data = [], tree, empty }) {
             h={"100%"}
             position={"relative"}
             className="group"
-            data-state={"open"}
-            animationDuration={"slow"}
-            animationStyle={{
-                _open: "scale-fade-in",
-            }}
             px={"2"}
         >
             {isEmpty && empty}

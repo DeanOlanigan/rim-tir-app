@@ -37,8 +37,8 @@ export const Sidebar = () => {
             minH={0}
             maxW={collapsed ? "16" : "48"}
             bg="bg.panel"
-            borderRightWidth="0.25rem"
-            borderColor="colorPalette.subtle"
+            borderRadius={"lg"}
+            shadow={"md"}
             py={4}
             px={2}
             align={"stretch"}

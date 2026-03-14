@@ -1,6 +1,7 @@
 import {
     Box,
     HStack,
+    Icon,
     IconButton,
     Kbd,
     Tabs,
@@ -8,7 +9,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { useActionsStore } from "../store/actions-store";
-import { LuPanelLeft } from "react-icons/lu";
+import { LuPanelLeftClose } from "react-icons/lu";
 import { ProjectRename } from "./ProjectRename";
 import { Pages } from "../Pages/Pages";
 import { NodesTree } from "../NodesTree";
@@ -24,7 +25,7 @@ export const ExpandedPanel = ({ tools }) => {
 
     return (
         <VStack
-            bg={"bg"}
+            bg={"bg.panel"}
             borderRadius={"md"}
             shadow={"md"}
             align={"stretch"}
@@ -60,7 +61,7 @@ export const ExpandedPanel = ({ tools }) => {
                                 )
                         }
                     >
-                        <LuPanelLeft />
+                        <Icon as={LuPanelLeftClose} boxSize="5" />
                     </IconButton>
                 </Tooltip>
             </HStack>
