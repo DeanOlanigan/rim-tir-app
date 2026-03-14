@@ -1,0 +1,1 @@
+При получении event.acknowledged клиент должен считать, что событие с payload.targetEvent.id перешло в состояние acknowledged, а ack.by и ack.at берутся соответственно из actor и ts события квитирования.

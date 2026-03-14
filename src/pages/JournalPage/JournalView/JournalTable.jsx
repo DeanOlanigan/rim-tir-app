@@ -7,13 +7,16 @@ import { useJournalStream } from "../JournalStores/journal-stream-store";
 import { useCreateTable } from "../hooks/useCreateTable";
 import { LuArrowDown, LuCheckCheck } from "react-icons/lu";
 import { flexRender } from "@tanstack/react-table";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { useFilterDataM } from "../hooks/useFilterData";
 import { useFilterColumns } from "../hooks/useFilterColumns";
-import { MenuGroups } from "../JournalFilter/MenuFilters/MenuGroups";
 import { MenuTypes } from "../JournalFilter/MenuFilters/MenuTypes";
 import { Tooltip } from "@/components/ui/tooltip";
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
+import {
+    JOURNAL_INFO_DRAWER_ID,
+    journalAdditionalInfoDrawer,
+} from "@/journalAdditionalInfoDrawer";
 
 const ROW_HEIGHT = 36;
 const OVERSCAN = 10;
@@ -23,10 +26,6 @@ const tableColumns = [
     { label: "Метка времени", value: "tsText", minSize: 170, grow: 1 },
     { label: "Событие", value: "event", minSize: 200, grow: 2 },
     { label: "Информация", value: "info", minSize: 400, grow: 3 },
-    //{ label: "Группа", value: "group", size: 140 }, // ?
-    //{ label: "Переменная", value: "var", size: 140 }, // ?
-    //{ label: "Значение", value: "val", size: 100 }, // ?
-    //{ label: "Описание", value: "desc", size: 240 }, // ?
     { label: "Пользователь", value: "user", minSize: 140, grow: 1 },
     {
         label: "Время квитирования",
@@ -69,7 +68,6 @@ export const JournalTable = () => {
                         display: "grid",
                         width: "100%",
                         minWidth: "700px",
-                        textAlign: "center",
                     }}
                 >
                     <JournalHeader columns={filteredColumns} />
@@ -108,8 +106,6 @@ ScrollToBottomButton.displayName = "ScrollToBottomButton";
 
 const renderHeaderContent = (column) => {
     switch (column.value) {
-        case "group":
-            return <MenuGroups name={column.label} />;
         case "type":
             return <MenuTypes name={column.label} />;
         case "needAck":
@@ -141,7 +137,6 @@ const renderHeaderContent = (column) => {
 };
 
 const JournalHeader = memo(({ columns }) => {
-    console.log("render header");
     return (
         <thead
             style={{
@@ -191,11 +186,13 @@ const JournalHeader = memo(({ columns }) => {
 JournalHeader.displayName = "JournalHeader";
 
 const JournalBody = memo(({ filteredColumns, sticky }) => {
-    const live = useJournalStream((s) => s.live);
+    const ids = useJournalStream((s) => s.ids);
+    const entities = useJournalStream((s) => s.entities);
     const selectedMessages = useFilterStore((s) => s.selectedMessages);
 
-    const filteredData = useFilterDataM(live, selectedMessages);
+    const data = useMemo(() => ids.map((id) => entities[id]), [ids, entities]);
 
+    const filteredData = useFilterDataM(data, selectedMessages);
     const table = useCreateTable(filteredColumns, filteredData);
 
     const { rows } = table.getRowModel();
@@ -236,11 +233,16 @@ const JournalBody = memo(({ filteredColumns, sticky }) => {
 JournalBody.displayName = "JournalBody";
 
 const JournalRow = ({ row, virtualRow }) => {
-    const isPause = row.original.type === "pause";
-    const isResume = row.original.type === "resume";
+    const isWarning = row.original.severity === "warning";
+    const isError =
+        row.original.severity === "error" ||
+        row.original.severity === "critical";
+    const isNeedAck = row.original.ack?.state === "pending";
 
-    const bg =
-        isPause || isResume ? "var(--chakra-colors-bg-success)" : undefined;
+    let bg;
+    if (isError) bg = "var(--chakra-colors-bg-error)";
+    else if (isWarning) bg = "var(--chakra-colors-bg-warning)";
+    else if (isNeedAck) bg = "var(--chakra-colors-bg-info)";
 
     return (
         <tr
@@ -255,25 +257,40 @@ const JournalRow = ({ row, virtualRow }) => {
                 background: bg,
             }}
         >
-            {row.getVisibleCells().map((cell) => (
-                <td
-                    key={cell.id}
-                    style={{
-                        minWidth: cell.column.columnDef.minSize,
-                        flexGrow: cell.column.columnDef.meta.grow ?? 1,
-                        flexBasis: cell.column.columnDef.minSize,
-                        alignContent: "center",
-                        padding: "0 8px",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        fontWeight: "500",
-                        fontSize: "0.875rem",
-                    }}
-                >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-            ))}
+            {row.getVisibleCells().map((cell) => {
+                const isInfo = cell.column.id === "info";
+                const infoStyle = isInfo ? { cursor: "pointer" } : undefined;
+                return (
+                    <td
+                        key={cell.id}
+                        style={{
+                            minWidth: cell.column.columnDef.minSize,
+                            flexGrow: cell.column.columnDef.meta.grow ?? 1,
+                            flexBasis: cell.column.columnDef.minSize,
+                            alignContent: "center",
+                            padding: "0 8px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            fontWeight: "500",
+                            fontSize: "0.875rem",
+                            ...infoStyle,
+                        }}
+                        onClick={() => {
+                            if (isInfo)
+                                journalAdditionalInfoDrawer.open(
+                                    JOURNAL_INFO_DRAWER_ID,
+                                    { eventId: cell.row.id },
+                                );
+                        }}
+                    >
+                        {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                        )}
+                    </td>
+                );
+            })}
         </tr>
     );
 };

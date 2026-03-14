@@ -8,21 +8,13 @@ const archiveInitialState = {
     location: { value: ["sd"] },
 };
 
-const initialSelectedGroups = new Set([
-    "state",
-    "danger",
-    "warn",
-    "noGroup",
-    "pause",
-    "resume",
-]);
+const initialSelectedGroups = new Set(["state", "danger", "warn", "noGroup"]);
 
 const initialSelectedMessages = new Set([
     "error",
-    "warn",
+    "warning",
     "info",
-    "pause",
-    "resume",
+    "critical",
 ]);
 
 export const useFilterStore = create((set) => ({

@@ -8,6 +8,7 @@ import { Sidebar } from "@/components/Sidebar/Sidebar";
 import { useMqttJournal } from "@/pages/JournalPage/hooks/useMqttJournal";
 import { MobileHeader } from "@/components/Header/MobileHeader";
 import { confirmDialog } from "@/components/confirmDialog";
+import { journalAdditionalInfoDrawer } from "@/journalAdditionalInfoDrawer";
 
 export const PublicLayout = () => {
     return <Outlet />;
@@ -21,6 +22,7 @@ export const PrivateLayout = () => {
     return (
         <>
             <journalDialog.Viewport />
+            <journalAdditionalInfoDrawer.Viewport />
             <confirmDialog.Viewport />
             <Toaster />
             <Flex

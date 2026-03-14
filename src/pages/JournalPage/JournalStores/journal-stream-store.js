@@ -1,7 +1,7 @@
-import { authKeys } from "@/api/queryKeys";
-import { queryClient } from "@/queryClients";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+
+const MAX_ROWS = 10000;
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
     year: "numeric",
@@ -19,103 +19,319 @@ function formatJournalDate(value) {
     return dateFormatter.format(new Date(value));
 }
 
-const MAX_ROWS = 10000;
+function getActorText(actor) {
+    if (!actor) return "";
+    return actor.name || actor.login || actor.id || "";
+}
 
-function enrichJournalRow(row) {
+function getAckByText(ack) {
+    if (!ack?.by) return "";
+    return ack.by.name || ack.by.login || ack.by.id || "";
+}
+
+function isPendingAck(event) {
+    return event?.ack?.state === "pending";
+}
+
+function enrichJournalEvent(event) {
     return {
-        ...row,
-        tsText: row.ts ? formatJournalDate(row.ts) : "",
-        ackTimeText: row.ack_time ? formatJournalDate(row.ack_time) : "",
+        ...event,
+        tsText: event.ts ? formatJournalDate(event.ts) : "",
+        ackTimeText: event.ack?.at ? formatJournalDate(event.ack.at) : "",
+        actorText: getActorText(event.actor),
+        ackByText: getAckByText(event.ack),
     };
 }
 
-function trimToMax(arr, max = MAX_ROWS) {
-    if (arr.length <= max) return arr;
-    return arr.slice(arr.length - max);
+function buildEntities(rows) {
+    const entities = {};
+    for (const row of rows) {
+        entities[row.id] = enrichJournalEvent(row);
+    }
+    return entities;
 }
 
-function createMarkerRow(kind) {
-    const data = queryClient.getQueryData(authKeys.session());
-    const ts = Date.now();
+function buildMetaFromRows(rows) {
+    let unackedCount = 0;
+    let unackedAlarmCount = 0;
+    let unackedWarningCount = 0;
+    let unackedInfoCount = 0;
 
-    if (kind === "pause") {
-        return {
-            type: "pause",
-            ts,
-            info: "Поток журнала поставлен на паузу",
-            user: data?.user?.name ?? "",
-            id: `pause-${ts}`,
-            needAck: false,
-        };
+    for (const row of rows) {
+        const bucket = getAckBlinkBucket(row);
+
+        if (bucket) unackedCount += 1;
+
+        if (bucket === "alarm") unackedAlarmCount += 1;
+        if (bucket === "warning") unackedWarningCount += 1;
+        if (bucket === "info") unackedInfoCount += 1;
     }
 
     return {
-        type: "resume",
-        ts,
-        info: "Поток журнала возобновлен",
-        user: data?.user?.name ?? "",
-        id: `resume-${ts}`,
-        needAck: false,
+        newCount: 0,
+        unackedCount,
+        unackedAlarmCount,
+        unackedWarningCount,
+        unackedInfoCount,
+        hasBlinkingAlarm:
+            unackedAlarmCount > 0 ||
+            unackedWarningCount > 0 ||
+            unackedInfoCount > 0,
+        seenThroughId: rows.length ? rows[rows.length - 1].id : null,
+        lastOpenedAt: null,
+    };
+}
+
+function trimState(ids, entities, max = MAX_ROWS) {
+    if (ids.length <= max) {
+        return { ids, entities };
+    }
+
+    const nextIds = ids.slice(ids.length - max);
+    const nextEntities = {};
+
+    for (const id of nextIds) {
+        nextEntities[id] = entities[id];
+    }
+
+    return {
+        ids: nextIds,
+        entities: nextEntities,
+    };
+}
+
+function getAckBlinkBucket(event) {
+    if (!isPendingAck(event)) return null;
+
+    if (event?.severity === "critical" || event?.severity === "error") {
+        return "alarm";
+    }
+
+    if (event?.severity === "warning") {
+        return "warning";
+    }
+
+    return "info";
+}
+
+function recalcMetaFromState(ids, entities, prevMeta) {
+    let unackedCount = 0;
+    let unackedAlarmCount = 0;
+    let unackedWarningCount = 0;
+    let unackedInfoCount = 0;
+
+    for (const id of ids) {
+        const event = entities[id];
+        if (!event) continue;
+
+        const bucket = getAckBlinkBucket(event);
+
+        if (bucket) unackedCount += 1;
+
+        if (bucket === "alarm") unackedAlarmCount += 1;
+        if (bucket === "warning") unackedWarningCount += 1;
+        if (bucket === "info") unackedInfoCount += 1;
+    }
+
+    let seenThroughId = prevMeta.seenThroughId;
+    if (seenThroughId && !entities[seenThroughId]) {
+        seenThroughId = ids.length ? ids[ids.length - 1] : null;
+    }
+
+    return {
+        ...prevMeta,
+        unackedCount,
+        unackedAlarmCount,
+        unackedWarningCount,
+        unackedInfoCount,
+        hasBlinkingAlarm:
+            unackedAlarmCount > 0 ||
+            unackedWarningCount > 0 ||
+            unackedInfoCount > 0,
+        seenThroughId,
+    };
+}
+
+function applyAcknowledgedProjection(targetEvent, ackEvent) {
+    const explicitAck = ackEvent?.payload?.ack;
+
+    const ack = explicitAck
+        ? explicitAck
+        : {
+              state: "acknowledged",
+              by: ackEvent?.actor
+                  ? {
+                        id: ackEvent.actor.id ?? "",
+                        login: ackEvent.actor.login ?? "",
+                        name: ackEvent.actor.name ?? "",
+                    }
+                  : null,
+              at: ackEvent?.ts ?? Date.now(),
+          };
+
+    return enrichJournalEvent({
+        ...targetEvent,
+        ack,
+    });
+}
+
+/**
+ * Обрабатывает логику подтверждения (acknowledgment) для конкретной сущности.
+ */
+function handleAcknowledgment(entities, incoming) {
+    const targetId = incoming.payload?.targetEvent?.id;
+    const currentTarget = targetId ? entities[targetId] : null;
+
+    if (currentTarget && isPendingAck(currentTarget)) {
+        entities[targetId] = applyAcknowledgedProjection(
+            currentTarget,
+            incoming,
+        );
+    }
+}
+
+/**
+ * Обрабатывает одну входящую строку и обновляет состояние.
+ */
+function processRow(row, context) {
+    const { nextEntities, nextIds } = context;
+
+    if (!row?.id || nextEntities[row.id]) {
+        return false;
+    }
+
+    const incoming = enrichJournalEvent(row);
+
+    nextEntities[incoming.id] = incoming;
+    nextIds.push(incoming.id);
+
+    if (incoming.event === "event.acknowledged") {
+        handleAcknowledgment(nextEntities, incoming);
+    }
+
+    return true;
+}
+
+function projectIncomingRows(state, rows) {
+    if (!rows?.length) return state;
+
+    let nextIds = [...state.ids];
+    let nextEntities = { ...state.entities };
+    let addedCount = 0;
+
+    for (const row of rows) {
+        const isAdded = processRow(row, { nextEntities, nextIds });
+        if (isAdded) addedCount++;
+    }
+
+    if (addedCount === 0) return state;
+
+    const { ids, entities } = trimState(nextIds, nextEntities, MAX_ROWS);
+
+    const meta = recalcMetaFromState(ids, entities, {
+        ...state.meta,
+        newCount: state.meta.newCount + addedCount,
+    });
+
+    return {
+        ids,
+        entities,
+        meta,
     };
 }
 
 export const useJournalStream = create(
     devtools(
         (set) => ({
-            isPaused: false,
-            pausedData: [],
-            live: [],
+            ids: [],
+            entities: {},
 
-            hydrate: (data) =>
+            meta: {
+                newCount: 0,
+                unackedCount: 0,
+                unackedAlarmCount: 0,
+                unackedWarningCount: 0,
+                unackedInfoCount: 0,
+                hasBlinkingAlarm: false,
+                seenThroughId: null,
+                lastOpenedAt: null,
+            },
+
+            hydrate: (rows) =>
                 set(
-                    () => ({
-                        live: trimToMax(data.map(enrichJournalRow)),
-                        pausedData: [],
-                    }),
+                    () => {
+                        const trimmed = (rows ?? [])
+                            .filter((r) => r?.id)
+                            .slice(-MAX_ROWS);
+
+                        const entries = buildEntities(trimmed);
+                        const ids = trimmed.map((r) => r.id);
+                        const meta = buildMetaFromRows(trimmed);
+
+                        return {
+                            ids,
+                            entries,
+                            meta,
+                        };
+                    },
                     undefined,
                     "journal/hydrate",
                 ),
 
-            pause: () =>
-                set(
-                    (state) => ({
-                        isPaused: true,
-                        live: trimToMax(
-                            state.live.concat(createMarkerRow("pause")),
-                        ),
-                    }),
-                    undefined,
-                    "journal/pause",
-                ),
-
-            resume: () =>
-                set(
-                    (state) => ({
-                        isPaused: false,
-                        live: trimToMax(
-                            state.live
-                                .concat(state.pausedData)
-                                .concat(createMarkerRow("resume")),
-                        ),
-                        pausedData: [],
-                    }),
-                    undefined,
-                    "journal/resume",
-                ),
-
             push: (rows) =>
                 set(
-                    (state) => {
-                        if (!rows.length) return state;
-
-                        const target = state.isPaused ? "pausedData" : "live";
-                        const prepared = rows.map(enrichJournalRow);
-                        const next = trimToMax(state[target].concat(prepared));
-
-                        return { [target]: next };
-                    },
+                    (state) => projectIncomingRows(state, rows),
                     undefined,
                     "journal/push",
+                ),
+
+            openJournal: () =>
+                set(
+                    (state) => ({
+                        meta: {
+                            ...state.meta,
+                            newCount: 0,
+                            lastOpenedAt: Date.now(),
+                        },
+                    }),
+                    undefined,
+                    "journal/openJournal",
+                ),
+
+            markSeenThrough: (id) =>
+                set(
+                    (state) => {
+                        if (!id) return state;
+                        if (!state.entities[id]) return state;
+                        if (state.meta.seenThroughId === id) return state;
+
+                        return {
+                            meta: {
+                                ...state.meta,
+                                seenThroughId: id,
+                            },
+                        };
+                    },
+                    undefined,
+                    "journal/markSeenThrough",
+                ),
+
+            reset: () =>
+                set(
+                    () => ({
+                        ids: [],
+                        entities: {},
+                        meta: {
+                            newCount: 0,
+                            unackedCount: 0,
+                            unackedAlarmCount: 0,
+                            hasBlinkingAlarm: false,
+                            seenThroughId: null,
+                            lastOpenedAt: null,
+                        },
+                    }),
+                    undefined,
+                    "journal/reset",
                 ),
         }),
         {

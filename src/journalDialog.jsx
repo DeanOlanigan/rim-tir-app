@@ -1,6 +1,6 @@
 import { CloseButton, createOverlay, Dialog, Portal } from "@chakra-ui/react";
-import { JournalHeader } from "./pages/JournalPage/JournalView/JournalView";
 import { JournalTable } from "./pages/JournalPage/JournalView/JournalTable";
+import { JournalHeader } from "./pages/JournalPage/JournalView/JournalHeader";
 
 export const JOURNAL_DIALOG_ID = "JOURNAL_DIALOG_ID";
 export const journalDialog = createOverlay((props) => {

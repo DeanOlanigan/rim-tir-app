@@ -16,7 +16,7 @@ const filterDataM = (live, selectedMessages) => {
     if (!selectedMessages?.size) return [];
 
     return live.filter((item) => {
-        return selectedMessages.has(item.type);
+        return selectedMessages.has(item.severity);
     });
 };
 

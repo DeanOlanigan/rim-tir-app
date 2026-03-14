@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
-import { JournalHeader } from "./JournalView/JournalView";
 import { JournalTable } from "./JournalView/JournalTable";
+import { JournalHeader } from "./JournalView/JournalHeader";
 
 function JournalPage() {
     return (
