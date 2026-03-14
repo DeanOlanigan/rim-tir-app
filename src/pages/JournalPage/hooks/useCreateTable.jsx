@@ -3,8 +3,7 @@ import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import {
     LuCircleAlert,
     LuInfo,
-    LuPause,
-    LuPlay,
+    LuSiren,
     LuTriangleAlert,
 } from "react-icons/lu";
 import { AckButtonCellChakra } from "../JournalView/AckButtonCell";
@@ -29,7 +28,7 @@ const EVENT_LABEL_MAP = {
     "config.updated": "Конфигурация обновлена",
 
     "hmi.opened": "Открыта мнемосхема",
-    "hmi.upload": "Мнемосхема загружена",
+    "hmi.uploaded": "Мнемосхема загружена",
     "hmi.saved": "Мнемосхема сохранена",
     "hmi.deleted": "Мнемосхема удалена",
 
@@ -60,21 +59,13 @@ const typePalette = {
     warning: "var(--chakra-colors-fg-warning)",
     error: "var(--chakra-colors-fg-error)",
     critical: "var(--chakra-colors-fg-error)",
-    ts: "var(--chakra-colors-fg-info)",
-    tu: "var(--chakra-colors-fg-info)",
-    pause: "var(--chakra-colors-fg-success)",
-    resume: "var(--chakra-colors-fg-success)",
 };
 
 const typeIcon = {
     info: LuInfo,
     warning: LuCircleAlert,
     error: LuTriangleAlert,
-    critical: LuTriangleAlert,
-    ts: LuInfo,
-    tu: LuInfo,
-    pause: LuPause,
-    resume: LuPlay,
+    critical: LuSiren,
 };
 
 const buildAccessor = (column) => {

@@ -2,7 +2,7 @@ import { CanAccess } from "@/CanAccess";
 import { Field, HStack, IconButton, Input } from "@chakra-ui/react";
 import { LuCheck, LuDownload } from "react-icons/lu";
 
-export const JournalHeader = () => {
+export const JournalHistoryHeader = () => {
     return (
         <HStack justifyContent={"space-between"}>
             <HStack>

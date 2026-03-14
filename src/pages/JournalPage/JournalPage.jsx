@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
-import { JournalTable } from "./JournalView/JournalTable";
-import { JournalHeader } from "./JournalView/JournalHeader";
+import { JournalHistoryHeader } from "./JournalView/JournalHistoryHeader";
+import { JournalHistoryTable } from "./JournalHistoryTable";
 
 function JournalPage() {
     return (
@@ -19,8 +19,8 @@ function JournalPage() {
             borderRadius={"lg"}
             shadow={"lg"}
         >
-            <JournalHeader />
-            <JournalTable />
+            <JournalHistoryHeader />
+            <JournalHistoryTable />
         </Flex>
     );
 }

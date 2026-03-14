@@ -1,18 +1,11 @@
 import { Box, IconButton } from "@chakra-ui/react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useFilterStore } from "../JournalStores/filter-store";
 import { useStickToBottom } from "use-stick-to-bottom";
 import { NoData } from "@/components/NoData";
-import { useJournalStream } from "../JournalStores/journal-stream-store";
 import { useCreateTable } from "../hooks/useCreateTable";
-import { LuArrowDown, LuCheckCheck } from "react-icons/lu";
+import { LuArrowDown } from "react-icons/lu";
 import { flexRender } from "@tanstack/react-table";
-import { memo, useMemo } from "react";
-import { useFilterDataM } from "../hooks/useFilterData";
-import { useFilterColumns } from "../hooks/useFilterColumns";
-import { MenuTypes } from "../JournalFilter/MenuFilters/MenuTypes";
-import { Tooltip } from "@/components/ui/tooltip";
-import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
+import { memo } from "react";
 import {
     JOURNAL_INFO_DRAWER_ID,
     journalAdditionalInfoDrawer,
@@ -21,37 +14,13 @@ import {
 const ROW_HEIGHT = 36;
 const OVERSCAN = 10;
 
-const tableColumns = [
-    { label: "Тип", value: "type", minSize: 75, grow: 0 },
-    { label: "Метка времени", value: "tsText", minSize: 170, grow: 1 },
-    { label: "Событие", value: "event", minSize: 200, grow: 2 },
-    { label: "Информация", value: "info", minSize: 400, grow: 3 },
-    { label: "Пользователь", value: "user", minSize: 140, grow: 1 },
-    {
-        label: "Время квитирования",
-        value: "ackTimeText",
-        minSize: 170,
-        grow: 1,
-    },
-    { label: "Квитировал", value: "who_ack", minSize: 140, grow: 1 },
-    { label: "", value: "needAck", minSize: 75, grow: 0 },
-];
-
-export const JournalTable = () => {
-    // TODO
-    // eslint-disable-next-line
-    /* const { isLoading, isError, error } = useJournalData(); */
-    const tableColumnsZus = useFilterStore((s) => s.tableColumnsZus);
+export const JournalTableBase = ({ columns, data, renderHeaderContent }) => {
     const sticky = useStickToBottom({
         initial: "instant",
         resize: "instant",
     });
-    const filteredColumns = useFilterColumns(tableColumns, tableColumnsZus);
 
-    //if (isLoading) return <Loader text={"Загрузка данных"} />;
-    //if (isError) return <Text>Error: {error.message}</Text>;
-
-    if (!filteredColumns.length) return <NoData />;
+    if (!columns?.length) return <NoData />;
 
     return (
         <Box w={"full"} h={"full"} minH={0} position={"relative"}>
@@ -70,9 +39,13 @@ export const JournalTable = () => {
                         minWidth: "700px",
                     }}
                 >
-                    <JournalHeader columns={filteredColumns} />
-                    <JournalBody
-                        filteredColumns={filteredColumns}
+                    <TableHeader
+                        columns={columns}
+                        renderHeaderContent={renderHeaderContent}
+                    />
+                    <TableBody
+                        filteredColumns={columns}
+                        data={data}
                         sticky={sticky}
                     />
                 </table>
@@ -104,39 +77,11 @@ const ScrollToBottomButton = memo(({ isAtBottom, onClick }) => {
 });
 ScrollToBottomButton.displayName = "ScrollToBottomButton";
 
-const renderHeaderContent = (column) => {
-    switch (column.value) {
-        case "type":
-            return <MenuTypes name={column.label} />;
-        case "needAck":
-            return (
-                <Tooltip
-                    showArrow
-                    content={"Квитировать все события за период"}
-                >
-                    <IconButton
-                        variant="ghost"
-                        size="2xs"
-                        color={"fg"}
-                        onClick={() =>
-                            confirmDialog.open(CONFIRM_DIALOG_ID, {
-                                onAccept: () => console.log("ACK ALL"),
-                                title: "Квитировать все события?",
-                                message:
-                                    "Будут квитированы все события за выбранный период.",
-                            })
-                        }
-                    >
-                        <LuCheckCheck />
-                    </IconButton>
-                </Tooltip>
-            );
-        default:
-            return column.label;
-    }
-};
+const defaultRenderHeaderContent = (column) => column.label;
 
-const JournalHeader = memo(({ columns }) => {
+const TableHeader = memo(({ columns, renderHeaderContent }) => {
+    const renderContent = renderHeaderContent ?? defaultRenderHeaderContent;
+
     return (
         <thead
             style={{
@@ -162,6 +107,7 @@ const JournalHeader = memo(({ columns }) => {
                         bg="colorPalette.muted"
                         py="1"
                         fontWeight="medium"
+                        fontSize={16}
                         style={{
                             minWidth: column.minSize,
                             flexGrow: column.grow ?? 1,
@@ -176,24 +122,17 @@ const JournalHeader = memo(({ columns }) => {
                             borderBottomRightRadius: "l2",
                         }}
                     >
-                        {renderHeaderContent(column)}
+                        {renderContent(column)}
                     </Box>
                 ))}
             </tr>
         </thead>
     );
 });
-JournalHeader.displayName = "JournalHeader";
+TableHeader.displayName = "JournalHeader";
 
-const JournalBody = memo(({ filteredColumns, sticky }) => {
-    const ids = useJournalStream((s) => s.ids);
-    const entities = useJournalStream((s) => s.entities);
-    const selectedMessages = useFilterStore((s) => s.selectedMessages);
-
-    const data = useMemo(() => ids.map((id) => entities[id]), [ids, entities]);
-
-    const filteredData = useFilterDataM(data, selectedMessages);
-    const table = useCreateTable(filteredColumns, filteredData);
+const TableBody = memo(({ filteredColumns, data, sticky }) => {
+    const table = useCreateTable(filteredColumns, data);
 
     const { rows } = table.getRowModel();
 
@@ -220,19 +159,15 @@ const JournalBody = memo(({ filteredColumns, sticky }) => {
             {virtualRows.map((virtualRow) => {
                 const row = rows[virtualRow.index];
                 return (
-                    <JournalRow
-                        key={row.id}
-                        row={row}
-                        virtualRow={virtualRow}
-                    />
+                    <TableRow key={row.id} row={row} virtualRow={virtualRow} />
                 );
             })}
         </tbody>
     );
 });
-JournalBody.displayName = "JournalBody";
+TableBody.displayName = "JournalBody";
 
-const JournalRow = ({ row, virtualRow }) => {
+const TableRow = ({ row, virtualRow }) => {
     const isWarning = row.original.severity === "warning";
     const isError =
         row.original.severity === "error" ||

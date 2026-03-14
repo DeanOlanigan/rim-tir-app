@@ -3,9 +3,10 @@ import { useFilterStore } from "../../JournalStores/filter-store";
 import { FilterCheckboxMenu } from "./FilterCheckboxMenu";
 
 const TYPE_FILTER_ITEMS = [
+    { label: "Критическая", value: "critical" },
     { label: "Тревога", value: "error" },
-    { label: "Информация", value: "info" },
     { label: "Предупреждение", value: "warning" },
+    { label: "Информация", value: "info" },
 ];
 
 export const MenuTypes = memo(function MenuTypes({ name }) {

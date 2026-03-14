@@ -1,8 +1,8 @@
 import { Card, IconButton, Menu, Portal } from "@chakra-ui/react";
 import { LuColumns3 } from "react-icons/lu";
-import { JournalTable } from "./JournalTable";
+import { JournalTableBase } from "./JournalTableBase";
 import { useFilterStore } from "../JournalStores/filter-store";
-import { JournalHeader } from "./JournalHeader";
+import { JournalHistoryHeader } from "./JournalHistoryHeader";
 
 const tableColumns = [
     { label: "Тип", value: "type", size: 145 },
@@ -27,10 +27,10 @@ export const JournalView = () => {
             }}
         >
             <Card.Header>
-                <JournalHeader />
+                <JournalHistoryHeader />
             </Card.Header>
             <Card.Body h={"100%"} pt={"0"} mt={"1rem"} overflow="auto">
-                <JournalTable />
+                <JournalTableBase />
             </Card.Body>
         </Card.Root>
     );
