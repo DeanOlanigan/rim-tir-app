@@ -47,6 +47,7 @@ export const useActionsRunner = () => {
         async (action) => {
             const { type, options } = action;
 
+            // TODO: Заменить на /api/v2/variable/telecontrol
             function sendCommand(varId, value) {
                 console.log(`[MQTT] Write ${varId} = ${value}`);
                 const data = JSON.stringify({ v: value });

@@ -2,6 +2,8 @@ import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 import { IconButton } from "@chakra-ui/react";
 import { memo } from "react";
 import { LuCheck } from "react-icons/lu";
+import { useJournalStream } from "../JournalStores/journal-stream-store";
+import { eventAcknowledge } from "@/api/commands";
 
 export const AckButtonCell = memo(({ id }) => {
     const handleClick = () => {
@@ -34,7 +36,12 @@ export const AckButtonCellChakra = memo(({ id }) => {
     const handleClick = () =>
         confirmDialog.open(CONFIRM_DIALOG_ID, {
             onAccept: () => {
-                console.log("ACK", id);
+                const event = useJournalStream.getState().entities[id].event;
+                eventAcknowledge({
+                    eventId: id,
+                    event,
+                    message: `Квитирование события ${event}`,
+                });
             },
             title: "Квитировать событие?",
         });
