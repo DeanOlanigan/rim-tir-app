@@ -1,69 +1,121 @@
 import { useMemo } from "react";
 import { useFilterStore } from "./JournalStores/filter-store";
-import { useJournalStream } from "./JournalStores/journal-stream-store";
 import { JournalTableBase } from "./JournalView/JournalTableBase";
 import { JOURNAL_HISTORY_COLUMNS } from "./JournalView/tableColumns";
 import { useFilterDataM } from "./hooks/useFilterData";
-import { MenuTypes } from "./JournalFilter/MenuFilters/MenuTypes";
 import { Tooltip } from "@/components/ui/tooltip";
-import { IconButton } from "@chakra-ui/react";
+import { Button, Center, IconButton, Spinner, VStack } from "@chakra-ui/react";
 import { LuCheckCheck } from "react-icons/lu";
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
-import { MenuCategories } from "./JournalFilter/MenuFilters/MenuCategories";
+import { useJournalHistoryStore } from "./JournalStores/journal-history-store";
+import { useJournalHistoryQuery } from "./hooks/useJournalHistoryQuery";
+import { eventAcknowledgeRange } from "@/api/commands";
 
 const renderHistoryHeaderContent = (column) => {
-    switch (column.value) {
-        case "type":
-            return <MenuTypes name={column.label} />;
-        case "category":
-            return <MenuCategories name={column.label} />;
-        case "needAck":
-            return (
-                <Tooltip
-                    showArrow
-                    content={"Квитировать все события за выбранный период"}
+    if (column.value === "needAck")
+        return (
+            <Tooltip
+                showArrow
+                content={"Квитировать все события за выбранный период"}
+            >
+                <IconButton
+                    variant="ghost"
+                    size="2xs"
+                    color={"fg"}
+                    onClick={() =>
+                        confirmDialog.open(CONFIRM_DIALOG_ID, {
+                            onAccept: () => {
+                                const fromTs = new Date(
+                                    useJournalHistoryStore.getState().from,
+                                ).getTime();
+                                const toTs = new Date(
+                                    useJournalHistoryStore.getState().to,
+                                ).getTime();
+                                eventAcknowledgeRange({
+                                    fromTs,
+                                    toTs,
+                                });
+                            },
+                            title: "Квитировать все события?",
+                            message:
+                                "Будут квитированы все события за выбранный период.",
+                        })
+                    }
                 >
-                    <IconButton
-                        variant="ghost"
-                        size="2xs"
-                        color={"fg"}
-                        onClick={() =>
-                            confirmDialog.open(CONFIRM_DIALOG_ID, {
-                                onAccept: () => console.log("ACK ALL HISTORY"),
-                                title: "Квитировать все события?",
-                                message:
-                                    "Будут квитированы все события за выбранный период.",
-                            })
-                        }
-                    >
-                        <LuCheckCheck />
-                    </IconButton>
-                </Tooltip>
-            );
-
-        default:
-            return column.label;
-    }
+                    <LuCheckCheck />
+                </IconButton>
+            </Tooltip>
+        );
+    return column.label;
 };
 
 export const JournalHistoryTable = () => {
-    const ids = useJournalStream((s) => s.ids);
-    const entities = useJournalStream((s) => s.entities);
     const selectedMessages = useFilterStore((s) => s.selectedMessages);
     const selectedCategory = useFilterStore((s) => s.selectedCategory);
 
+    const from = useJournalHistoryStore((s) => s.from);
+    const to = useJournalHistoryStore((s) => s.to);
+    const limit = useJournalHistoryStore((s) => s.limit);
+
+    const {
+        data,
+        isLoading,
+        isError,
+        error,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
+    } = useJournalHistoryQuery({
+        from,
+        to,
+        limit,
+    });
+
     const rowData = useMemo(
-        () => ids.map((id) => entities[id]),
-        [ids, entities],
+        () => data?.pages.flatMap((page) => page.items ?? []) ?? [],
+        [data],
     );
 
-    const data = useFilterDataM(rowData, selectedMessages, selectedCategory);
+    const filteredData = useFilterDataM(
+        rowData,
+        selectedMessages,
+        selectedCategory,
+    );
+
+    if (isLoading) {
+        return (
+            <Center h="100%">
+                <Spinner size="sm" />
+            </Center>
+        );
+    }
+
+    if (isError) {
+        return (
+            <Center h="100%">
+                Ошибка загрузки журнала: {error?.message ?? "unknown error"}
+            </Center>
+        );
+    }
 
     return (
-        <JournalTableBase
-            columns={JOURNAL_HISTORY_COLUMNS}
-            data={data}
-            renderHeaderContent={renderHistoryHeaderContent}
-        />
+        <VStack align={"stretch"} flex={1} h={"100%"} minH={0}>
+            <JournalTableBase
+                columns={JOURNAL_HISTORY_COLUMNS}
+                data={filteredData}
+                renderHeaderContent={renderHistoryHeaderContent}
+            />
+
+            {hasNextPage && (
+                <Button
+                    size={"xs"}
+                    variant={"outline"}
+                    onClick={() => fetchNextPage()}
+                    isLoading={isFetchingNextPage}
+                >
+                    Загрузить ещё
+                </Button>
+            )}
+        </VStack>
     );
 };

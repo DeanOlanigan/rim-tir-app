@@ -23,7 +23,7 @@ export const LogViewerBody = () => {
         logTextSize,
         isLogTextWrapped,
     } = useLogData();
-    const sticky = useStickToBottom();
+    const sticky = useStickToBottom({ initial: "instant", resize: "instant" });
 
     const rowVirtualizer = useVirtualizer({
         count: live.length,
@@ -91,7 +91,7 @@ export const LogViewerBody = () => {
                     <IconButton
                         size="sm"
                         onClick={() => {
-                            sticky.scrollToBottom("instant");
+                            sticky.scrollToBottom({ animation: "instant" });
                             rowVirtualizer.measure();
                         }}
                         colorScheme="blue"

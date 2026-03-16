@@ -12,7 +12,6 @@ import {
     Stack,
     Text,
 } from "@chakra-ui/react";
-import { useJournalStream } from "./pages/JournalPage/JournalStores/journal-stream-store";
 import { CONFIRM_DIALOG_ID, confirmDialog } from "./components/confirmDialog";
 import { eventAcknowledge } from "./api/commands";
 
@@ -313,11 +312,7 @@ function EventPayloadView({ event }) {
 }
 
 export const journalAdditionalInfoDrawer = createOverlay((props) => {
-    const { eventId, ...rest } = props;
-
-    const event = useJournalStream((state) =>
-        eventId ? state.entities[eventId] : null,
-    );
+    const { event, ...rest } = props;
 
     const severityPalette = getSeverityColorPalette(event?.severity);
 

@@ -5,7 +5,7 @@ import { NoData } from "@/components/NoData";
 import { useCreateTable } from "../hooks/useCreateTable";
 import { LuArrowDown } from "react-icons/lu";
 import { flexRender } from "@tanstack/react-table";
-import { memo } from "react";
+import { memo, useCallback, useState } from "react";
 import {
     JOURNAL_INFO_DRAWER_ID,
     journalAdditionalInfoDrawer,
@@ -15,67 +15,123 @@ const ROW_HEIGHT = 36;
 const OVERSCAN = 10;
 
 export const JournalTableBase = ({ columns, data, renderHeaderContent }) => {
-    const sticky = useStickToBottom({
-        initial: "instant",
-        resize: "instant",
-    });
+    const table = useCreateTable(columns, data);
+    const rows = table.getRowModel().rows;
 
     if (!columns?.length) return <NoData />;
 
     return (
-        <Box w={"full"} h={"full"} minH={0} position={"relative"}>
-            <Box
-                ref={sticky.scrollRef}
-                overflow={"auto"}
-                position={"relative"}
-                w={"full"}
-                h={"full"}
-                minH={0}
-            >
-                <table
-                    style={{
-                        display: "grid",
-                        width: "100%",
-                        minWidth: "700px",
-                    }}
-                >
-                    <TableHeader
-                        columns={columns}
-                        renderHeaderContent={renderHeaderContent}
-                    />
-                    <TableBody
-                        filteredColumns={columns}
-                        data={data}
-                        sticky={sticky}
-                    />
-                </table>
-            </Box>
-            <ScrollToBottomButton
-                isAtBottom={sticky.isAtBottom}
-                onClick={() => sticky.scrollToBottom("instant")}
-            />
-        </Box>
+        <StickToBottomShell>
+            {({ contentRef, scrollElement }) => (
+                <JournalTableContent
+                    columns={columns}
+                    rows={rows}
+                    renderHeaderContent={renderHeaderContent}
+                    contentRef={contentRef}
+                    scrollElement={scrollElement}
+                />
+            )}
+        </StickToBottomShell>
     );
 };
 
-const ScrollToBottomButton = memo(({ isAtBottom, onClick }) => {
-    if (isAtBottom) return null;
+function StickToBottomShell({ children }) {
+    const { scrollRef, contentRef, isAtBottom, scrollToBottom } =
+        useStickToBottom({
+            initial: "instant",
+            resize: "instant",
+        });
+
+    const [scrollElement, setScrollElement] = useState(null);
+
+    const setScrollNode = useCallback(
+        (node) => {
+            setScrollElement(node);
+            scrollRef(node);
+        },
+        [scrollRef],
+    );
 
     return (
-        <Box
-            position="absolute"
-            float="right"
-            bottom="2"
-            right="2"
-            zIndex="overlay"
-        >
-            <IconButton size="sm" onClick={onClick} variant="solid">
-                <LuArrowDown />
-            </IconButton>
+        <Box w="full" h="full" minH={0} position="relative">
+            <Box
+                ref={setScrollNode}
+                overflow="auto"
+                position="relative"
+                w="full"
+                h="full"
+                minH={0}
+            >
+                {children({ contentRef, scrollElement })}
+            </Box>
+
+            {!isAtBottom && (
+                <Box position="absolute" bottom="2" right="2" zIndex="overlay">
+                    <IconButton
+                        size="sm"
+                        onClick={() => scrollToBottom({ animation: "instant" })}
+                        variant="solid"
+                    >
+                        <LuArrowDown />
+                    </IconButton>
+                </Box>
+            )}
         </Box>
     );
+}
+
+const JournalTableContent = memo(function JournalTableContent({
+    columns,
+    rows,
+    renderHeaderContent,
+    contentRef,
+    scrollElement,
+}) {
+    const rowVirtualizer = useVirtualizer({
+        count: rows.length,
+        getScrollElement: () => scrollElement,
+        estimateSize: () => ROW_HEIGHT,
+        overscan: OVERSCAN,
+        getItemKey: (index) => rows[index]?.id ?? index,
+    });
+
+    const virtualRows = rowVirtualizer.getVirtualItems();
+
+    return (
+        <table
+            style={{
+                display: "grid",
+                width: "100%",
+                minWidth: "700px",
+            }}
+        >
+            <TableHeader
+                columns={columns}
+                renderHeaderContent={renderHeaderContent}
+            />
+            <tbody
+                ref={contentRef}
+                style={{
+                    display: "grid",
+                    height: `${rowVirtualizer.getTotalSize()}px`,
+                    width: "100%",
+                    position: "relative",
+                }}
+            >
+                {virtualRows.map((virtualRow) => {
+                    const row = rows[virtualRow.index];
+                    return (
+                        <TableRow
+                            key={row.id}
+                            row={row}
+                            virtualRow={virtualRow}
+                        />
+                    );
+                })}
+            </tbody>
+        </table>
+    );
 });
-ScrollToBottomButton.displayName = "ScrollToBottomButton";
 
 const defaultRenderHeaderContent = (column) => column.label;
 
@@ -129,43 +185,7 @@ const TableHeader = memo(({ columns, renderHeaderContent }) => {
         </thead>
     );
 });
-TableHeader.displayName = "JournalHeader";
-
-const TableBody = memo(({ filteredColumns, data, sticky }) => {
-    const table = useCreateTable(filteredColumns, data);
-
-    const { rows } = table.getRowModel();
-
-    const rowVirtualizer = useVirtualizer({
-        count: rows.length,
-        getScrollElement: () => sticky.scrollRef.current,
-        estimateSize: () => ROW_HEIGHT,
-        overscan: OVERSCAN,
-        getItemKey: (index) => rows[index]?.id ?? index,
-    });
-
-    const virtualRows = rowVirtualizer.getVirtualItems();
-
-    return (
-        <tbody
-            ref={sticky.contentRef}
-            style={{
-                display: "grid",
-                height: `${rowVirtualizer.getTotalSize()}px`,
-                width: "100%",
-                position: "relative",
-            }}
-        >
-            {virtualRows.map((virtualRow) => {
-                const row = rows[virtualRow.index];
-                return (
-                    <TableRow key={row.id} row={row} virtualRow={virtualRow} />
-                );
-            })}
-        </tbody>
-    );
-});
-TableBody.displayName = "JournalBody";
+TableHeader.displayName = "TableHeader";
 
 const TableRow = ({ row, virtualRow }) => {
     const isWarning = row.original.severity === "warning";
@@ -182,7 +202,6 @@ const TableRow = ({ row, virtualRow }) => {
     return (
         <tr
             data-index={virtualRow.index}
-            key={row.id}
             style={{
                 display: "flex",
                 position: "absolute",
@@ -215,7 +234,7 @@ const TableRow = ({ row, virtualRow }) => {
                             if (isInfo)
                                 journalAdditionalInfoDrawer.open(
                                     JOURNAL_INFO_DRAWER_ID,
-                                    { eventId: cell.row.id },
+                                    { event: cell.row.original },
                                 );
                         }}
                     >
