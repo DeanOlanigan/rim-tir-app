@@ -11,15 +11,6 @@ const filterData = (live, selectedGroups, selectedMessages) => {
     });
 };
 
-const filterDataM = (live, selectedMessages) => {
-    if (!live?.length) return [];
-    if (!selectedMessages?.size) return [];
-
-    return live.filter((item) => {
-        return selectedMessages.has(item.severity);
-    });
-};
-
 export const useFilterData = (live, selectedGroups, selectedMessages) => {
     return useMemo(
         () => filterData(live, selectedGroups, selectedMessages),
@@ -27,9 +18,21 @@ export const useFilterData = (live, selectedGroups, selectedMessages) => {
     );
 };
 
-export const useFilterDataM = (live, selectedMessages) => {
+const filterDataM = (live, selectedMessages, selectedCategory) => {
+    if (!live?.length) return [];
+    if (!selectedMessages?.size) return [];
+
+    return live.filter((item) => {
+        return (
+            selectedMessages.has(item.severity) &&
+            selectedCategory.has(item.category)
+        );
+    });
+};
+
+export const useFilterDataM = (live, selectedMessages, selectedCategory) => {
     return useMemo(
-        () => filterDataM(live, selectedMessages),
-        [live, selectedMessages],
+        () => filterDataM(live, selectedMessages, selectedCategory),
+        [live, selectedMessages, selectedCategory],
     );
 };

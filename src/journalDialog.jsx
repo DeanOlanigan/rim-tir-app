@@ -17,7 +17,7 @@ export const journalDialog = createOverlay((props) => {
             <Portal>
                 <Dialog.Backdrop />
                 <Dialog.Positioner>
-                    <Dialog.Content h={"80vh"} maxW={"60vw"}>
+                    <Dialog.Content h={"80vh"} maxW={"80vw"}>
                         <Dialog.CloseTrigger asChild>
                             <CloseButton size={"xs"} />
                         </Dialog.CloseTrigger>

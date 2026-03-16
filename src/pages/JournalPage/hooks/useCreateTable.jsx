@@ -24,6 +24,7 @@ const EVENT_LABEL_MAP = {
     "user.resume": "Возобновление журнала",
 
     "event.acknowledged": "Событие квитировано",
+    "event.acknowledged.range": "Диапазон событий квитирован",
 
     "config.updated": "Конфигурация обновлена",
 
@@ -54,6 +55,18 @@ const EVENT_LABEL_MAP = {
     "system.software_update.canceled": "Обновление ПО отменено",
 };
 
+const CATEGORY_LABEL_MAP = {
+    variable: "Переменная",
+    user: "Пользователь",
+    event: "Событие",
+    config: "Конфигурация",
+    hmi: "HMI",
+    server: "Сервер",
+    settings: "Настройки",
+    security: "Безопасность",
+    system: "Система",
+};
+
 const typePalette = {
     info: "var(--chakra-colors-fg-info)",
     warning: "var(--chakra-colors-fg-warning)",
@@ -74,6 +87,9 @@ const buildAccessor = (column) => {
             return (row) => row.severity;
         case "tsText":
             return (row) => row.tsText;
+        case "category":
+            return (row) =>
+                CATEGORY_LABEL_MAP[row.category] ?? "Неизвестная категория";
         case "event":
             return (row) => EVENT_LABEL_MAP[row.event] ?? "Неизвестное событие";
         case "info":

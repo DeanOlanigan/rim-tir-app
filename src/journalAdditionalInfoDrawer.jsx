@@ -13,6 +13,8 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { useJournalStream } from "./pages/JournalPage/JournalStores/journal-stream-store";
+import { CONFIRM_DIALOG_ID, confirmDialog } from "./components/confirmDialog";
+import { eventAcknowledge } from "./api/commands";
 
 export const JOURNAL_INFO_DRAWER_ID = "JOURNAL_INFO_DRAWER_ID";
 
@@ -433,15 +435,26 @@ export const journalAdditionalInfoDrawer = createOverlay((props) => {
                         </Drawer.Body>
 
                         <Drawer.Footer>
-                            <Button
-                                size={"xs"}
-                                disabled={
-                                    !event?.ack ||
-                                    event?.ack?.state !== "pending"
-                                }
-                            >
-                                Квитировать событие
-                            </Button>
+                            {event?.ack && (
+                                <Button
+                                    size={"xs"}
+                                    disabled={event?.ack?.state !== "pending"}
+                                    onClick={() =>
+                                        confirmDialog.open(CONFIRM_DIALOG_ID, {
+                                            onAccept: () => {
+                                                eventAcknowledge({
+                                                    eventId: event.id,
+                                                    event: event.event,
+                                                    message: `Квитирование события ${event.event}`,
+                                                });
+                                            },
+                                            title: "Квитировать событие?",
+                                        })
+                                    }
+                                >
+                                    Квитировать событие
+                                </Button>
+                            )}
                         </Drawer.Footer>
                     </Drawer.Content>
                 </Drawer.Positioner>

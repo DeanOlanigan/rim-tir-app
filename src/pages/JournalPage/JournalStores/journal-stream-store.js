@@ -190,6 +190,20 @@ function handleAcknowledgment(entities, incoming) {
     }
 }
 
+function handleAcknowledgmentRange(entities, incoming) {
+    const fromTs = incoming.payload?.fromTs;
+    const toTs = incoming.payload?.toTs;
+
+    for (const id of Object.keys(entities)) {
+        const event = entities[id];
+        if (!event) continue;
+
+        if (event.ts >= fromTs && event.ts <= toTs) {
+            entities[id] = applyAcknowledgedProjection(event, incoming);
+        }
+    }
+}
+
 /**
  * Обрабатывает одну входящую строку и обновляет состояние.
  */
@@ -207,6 +221,10 @@ function processRow(row, context) {
 
     if (incoming.event === "event.acknowledged") {
         handleAcknowledgment(nextEntities, incoming);
+    }
+
+    if (incoming.event === "event.acknowledged.range") {
+        handleAcknowledgmentRange(nextEntities, incoming);
     }
 
     return true;

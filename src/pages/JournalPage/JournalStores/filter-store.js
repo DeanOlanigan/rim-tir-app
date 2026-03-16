@@ -8,6 +8,18 @@ const archiveInitialState = {
     location: { value: ["sd"] },
 };
 
+const initialCategoryFilter = new Set([
+    "variable",
+    "user",
+    "event",
+    "config",
+    "hmi",
+    "server",
+    "settings",
+    "security",
+    "system",
+]);
+
 const initialSelectedGroups = new Set(["state", "danger", "warn", "noGroup"]);
 
 const initialSelectedMessages = new Set([
@@ -20,6 +32,7 @@ const initialSelectedMessages = new Set([
 export const useFilterStore = create((set) => ({
     selectedGroups: initialSelectedGroups,
     selectedMessages: initialSelectedMessages,
+    selectedCategory: initialCategoryFilter,
     tableColumnsZus: [
         "type",
         "tsText",
@@ -80,6 +93,14 @@ export const useFilterStore = create((set) => ({
             if (next.has(message)) next.delete(message);
             else next.add(message);
             return { selectedMessages: next };
+        }),
+
+    toggleCategory: (category) =>
+        set((state) => {
+            const next = new Set(state.selectedCategory);
+            if (next.has(category)) next.delete(category);
+            else next.add(category);
+            return { selectedCategory: next };
         }),
 
     setColons: (newColumns) => set({ tableColumnsZus: newColumns }),

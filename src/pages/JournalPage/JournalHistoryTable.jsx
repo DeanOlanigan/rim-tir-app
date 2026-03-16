@@ -9,12 +9,14 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { IconButton } from "@chakra-ui/react";
 import { LuCheckCheck } from "react-icons/lu";
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
+import { MenuCategories } from "./JournalFilter/MenuFilters/MenuCategories";
 
 const renderHistoryHeaderContent = (column) => {
     switch (column.value) {
         case "type":
             return <MenuTypes name={column.label} />;
-
+        case "category":
+            return <MenuCategories name={column.label} />;
         case "needAck":
             return (
                 <Tooltip
@@ -48,13 +50,14 @@ export const JournalHistoryTable = () => {
     const ids = useJournalStream((s) => s.ids);
     const entities = useJournalStream((s) => s.entities);
     const selectedMessages = useFilterStore((s) => s.selectedMessages);
+    const selectedCategory = useFilterStore((s) => s.selectedCategory);
 
     const rowData = useMemo(
         () => ids.map((id) => entities[id]),
         [ids, entities],
     );
 
-    const data = useFilterDataM(rowData, selectedMessages);
+    const data = useFilterDataM(rowData, selectedMessages, selectedCategory);
 
     return (
         <JournalTableBase
