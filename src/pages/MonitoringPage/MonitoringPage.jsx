@@ -5,7 +5,7 @@ import { Box, Flex, SimpleGrid, Switch, VStack } from "@chakra-ui/react";
 import { signalEditDialog, infoDialog } from "./setValue/dialog";
 import { ConfigInfoWrapper } from "./ConfigInfo";
 import { TreeCard } from "@/components/TreeView/TreeCard";
-import { TREE_TYPES } from "@/config/constants";
+import { RADII_MAIN, TREE_TYPES } from "@/config/constants";
 import { TreeView } from "./Tree/TreeView";
 import { SearchBar } from "./SearchBar";
 import { useQuery } from "@tanstack/react-query";
@@ -44,15 +44,15 @@ function MonitoringPage() {
             animationStyle={{
                 _open: "scale-fade-in",
             }}
+            gap={4}
         >
             <SimpleGrid
                 w={"full"}
                 columns={3}
-                px={4}
-                py={1}
+                px={6}
+                py={4}
                 bg={"bg.panel"}
-                minH={"40px"}
-                borderRadius={"lg"}
+                borderRadius={RADII_MAIN}
                 shadow={"md"}
             >
                 <Flex gap={2} align={"center"}>
@@ -71,9 +71,10 @@ function MonitoringPage() {
                 h={"100%"}
                 minH={0}
                 bg={"bg.panel"}
-                borderRadius={"lg"}
+                borderRadius={RADII_MAIN}
                 shadow={"md"}
-                p={1}
+                px={6}
+                py={4}
             >
                 <PanelGroup direction="horizontal" autoSaveId={"monitoring"}>
                     <Panel collapsible={true} collapsedSize={0} minSize={25}>
@@ -140,7 +141,7 @@ const NameSwitcher = () => {
         >
             <Switch.Root
                 ids={{ root: id }}
-                size={"sm"}
+                size={"md"}
                 checked={nameSwitch}
                 onCheckedChange={(e) => switchName(e.checked)}
             >

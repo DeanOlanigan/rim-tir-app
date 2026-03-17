@@ -7,26 +7,27 @@ import { useConfigStore } from "../stores";
 import { ConfigInfo } from "@/components/ConfigInfo";
 import { ConfChecker } from "./ConfChecker";
 import { useVariablesStore } from "@/store/variables-store";
+import { RADII_MAIN } from "@/config/constants";
 
 export const BaseConfCard = () => {
     return (
         <Flex
-            px={4}
-            py={1}
+            px={6}
+            py={4}
             gap={4}
             bg={"bg.panel"}
-            borderRadius={"lg"}
+            borderRadius={RADII_MAIN}
             shadow={"md"}
             w={"100%"}
             h={"full"}
-            maxH={"40px"}
+            maxH={"4rem"}
             align={"center"}
         >
             <Flex gap={2} align={"center"}>
                 <ConfigInfoWrapper />
                 <ConfChecker />
             </Flex>
-            <Group attached>
+            <Group>
                 <FlipButton />
                 <ConfMenu />
                 <RouterMenu />

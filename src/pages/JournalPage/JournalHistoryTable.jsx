@@ -6,6 +6,7 @@ import { useJournalHistoryStore } from "./JournalStores/journal-history-store";
 import { useJournalHistoryQuery } from "./hooks/useJournalHistoryQuery";
 import { AckButtonRange } from "./JournalView/AckButtonRange";
 import { getLocalTimeZone } from "@internationalized/date";
+import { RADII_MAIN } from "@/config/constants";
 
 function toISO(data) {
     return data.toDate(getLocalTimeZone()).toISOString();
@@ -67,7 +68,18 @@ export const JournalHistoryTable = () => {
     }
 
     return (
-        <VStack align={"stretch"} flex={1} h={"100%"} minH={0}>
+        <VStack
+            align={"stretch"}
+            flex={1}
+            h={"100%"}
+            minH={0}
+            w={"full"}
+            px={6}
+            py={4}
+            bg={"bg.panel"}
+            borderRadius={RADII_MAIN}
+            shadow={"md"}
+        >
             <JournalTableBase
                 columns={JOURNAL_HISTORY_COLUMNS}
                 data={rowData}

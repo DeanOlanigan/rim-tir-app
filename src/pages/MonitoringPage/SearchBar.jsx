@@ -8,7 +8,7 @@ export const SearchBar = ({ searchTerm, setSearchTerm }) => {
     return (
         <InputGroup
             px={"2"}
-            maxW={"20rem"}
+            maxW={"25rem"}
             startElement={<LuSearch />}
             endElement={
                 innerTerm && (
@@ -40,7 +40,7 @@ export const SearchBar = ({ searchTerm, setSearchTerm }) => {
         >
             <Input
                 placeholder="Поиск"
-                size={"2xs"}
+                size={"xs"}
                 bg={"bg"}
                 borderRadius={"full"}
                 value={innerTerm}

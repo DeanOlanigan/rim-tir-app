@@ -17,6 +17,7 @@ import { helpDialog } from "./helpDialog";
 import { HelpButton } from "./HelpButton";
 import { KeepToolAfterDrawButton } from "./KeepToolAfterDrawButton";
 import { FullScreenButton } from "./FullScreenButton";
+import { RADII_MAIN } from "@/config/constants";
 
 function HMIEditor() {
     return <HMIEditorContent />;
@@ -48,7 +49,7 @@ const HMIEditorContent = () => {
             position={"relative"}
             direction={"column"}
             overflow={"hidden"}
-            borderRadius={"lg"}
+            borderRadius={RADII_MAIN}
             data-state={"open"}
             animationDuration={"slow"}
             animationStyle={{

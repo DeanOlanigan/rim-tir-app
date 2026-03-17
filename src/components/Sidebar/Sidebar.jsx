@@ -17,6 +17,7 @@ import { CollapseBtn } from "./CollapseBtn";
 import { StatusBlock } from "./StatusBlock";
 import { useMemo } from "react";
 import { navItems } from "../Navigation/nav-items";
+import { RADII_MAIN } from "@/config/constants";
 
 export const Sidebar = () => {
     const { user } = useAuth();
@@ -37,7 +38,7 @@ export const Sidebar = () => {
             minH={0}
             maxW={collapsed ? "16" : "48"}
             bg="bg.panel"
-            borderRadius={"lg"}
+            borderRadius={RADII_MAIN}
             shadow={"md"}
             py={4}
             px={2}

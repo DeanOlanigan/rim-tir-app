@@ -56,3 +56,5 @@ export {
     LOG_LEVELS,
     CONN_STATUS,
 };
+
+export const RADII_MAIN = "xl";

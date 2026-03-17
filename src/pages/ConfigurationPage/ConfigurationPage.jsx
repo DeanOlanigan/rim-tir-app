@@ -12,7 +12,7 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "@/components/ResizebalePanel/ResizebalePanel.css";
 import { useVariablesStore } from "@/store/variables-store";
 import { EditorCard } from "./Editor/EditorCard";
-import { TREE_TYPES } from "@/config/constants";
+import { RADII_MAIN, TREE_TYPES } from "@/config/constants";
 import { EmptyConfigDialog } from "./Dialogs/EmptyConfigDialog";
 import { ContextMenu } from "./ContextMenu/ContextMenu";
 import { LuBadgePlus, LuLock } from "react-icons/lu";
@@ -32,6 +32,7 @@ function ConfigurationPage() {
             animationStyle={{
                 _open: "scale-fade-in",
             }}
+            gap={4}
         >
             <configurationInfoDialog.Viewport />
             <EmptyConfigDialog />
@@ -43,9 +44,10 @@ function ConfigurationPage() {
                 h={"100%"}
                 w={"100%"}
                 bg={"bg.panel"}
-                borderRadius={"lg"}
+                borderRadius={RADII_MAIN}
                 shadow={"md"}
-                p={1}
+                px={6}
+                py={4}
             >
                 <PanelGroup
                     autoSaveId="configuration-main-panel"

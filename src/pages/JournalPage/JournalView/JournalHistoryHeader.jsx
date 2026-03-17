@@ -14,6 +14,7 @@ import { LuCalendar, LuChevronDown, LuDownload } from "react-icons/lu";
 import { useJournalHistoryStore } from "../JournalStores/journal-history-store";
 import { useEffect, useMemo, useState } from "react";
 import { journalFiltersToApiPayload } from "../journal-history-period";
+import { RADII_MAIN } from "@/config/constants";
 
 const SEVERITY_FILTER_ITEMS = [
     { label: "Критическая", value: "critical" },
@@ -109,8 +110,15 @@ export const JournalHistoryHeader = () => {
     };
 
     return (
-        <HStack justifyContent={"space-between"}>
-            <HStack>
+        <HStack
+            w={"full"}
+            px={6}
+            py={2}
+            bg={"bg.panel"}
+            borderRadius={RADII_MAIN}
+            shadow={"md"}
+        >
+            <HStack align={"end"}>
                 <SeverityMenu
                     value={localFilters.severity}
                     onToggle={(value) =>
@@ -162,8 +170,8 @@ const DatePeriod = ({ value, onChange }) => {
     const pickerValue = useMemo(() => periodToPickerValue(value), [value]);
     const maxDate = today(tz);
     return (
-        <Field.Root orientation="horizontal">
-            <Field.Label fontSize="sm" justifyContent="end">
+        <Field.Root orientation={"vertical"}>
+            <Field.Label fontSize="xs" color="fg.muted">
                 Период
             </Field.Label>
             <DatePicker.Root
@@ -175,6 +183,8 @@ const DatePeriod = ({ value, onChange }) => {
                 max={maxDate}
                 value={pickerValue}
                 onValueChange={onChange}
+                lazyMount
+                unmountOnExit
             >
                 <DatePicker.Control>
                     <DatePicker.Input index={0} placeholder="С" />
