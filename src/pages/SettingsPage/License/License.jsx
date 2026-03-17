@@ -8,6 +8,7 @@ import {
     HStack,
     Field,
     Icon,
+    Clipboard,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { LuCheck, LuSend, LuTriangleAlert } from "react-icons/lu";
@@ -46,10 +47,17 @@ export const License = () => {
                 <Card.Body>
                     <HStack justifyContent={"space-between"} align={"stretch"}>
                         <Field.Root>
-                            <Field.Label>
-                                Ваш универсальный уникальный идентификатор
-                            </Field.Label>
-                            <Text>{uuid}</Text>
+                            <Field.Label>Уникальный идентификатор</Field.Label>
+                            <HStack gap={4}>
+                                <Text>{uuid}</Text>
+                                <Clipboard.Root value={uuid}>
+                                    <Clipboard.Trigger asChild>
+                                        <IconButton variant="surface" size="xs">
+                                            <Clipboard.Indicator />
+                                        </IconButton>
+                                    </Clipboard.Trigger>
+                                </Clipboard.Root>
+                            </HStack>
                         </Field.Root>
                         {data.isActive && !isKeyEnd ? (
                             <KeyIsActive />

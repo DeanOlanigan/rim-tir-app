@@ -1,5 +1,4 @@
 import {
-    Box,
     Button,
     Card,
     FileUpload,
@@ -29,13 +28,7 @@ const ConditionalDropzone = () => {
         <FileUpload.Dropzone>
             <Icon size="md" color="fg.muted" as={LuUpload} />
             <FileUpload.DropzoneContent>
-                <Box>
-                    Перетащите файл обновления сюда или кликните по этой области
-                </Box>
-                <Box color="fg.muted">
-                    {MAX_FILES - acceptedFiles.length} файл формата
-                    &quot;.ipk&quot; для загрузки
-                </Box>
+                Перетащите файл обновления сюда или кликните по этой области
             </FileUpload.DropzoneContent>
         </FileUpload.Dropzone>
     );
