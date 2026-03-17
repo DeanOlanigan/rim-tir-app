@@ -136,8 +136,8 @@ export async function useBadApple(graphRef, type) {
     console.log("data loaded", data);
 
     graphRef.current.options = {
-        responsive: false,
-        maintainAspectRatio: true,
+        responsive: true,
+        maintainAspectRatio: false,
         animation: false,
         events: [],
         parsing: false,
@@ -167,7 +167,7 @@ export async function useBadApple(graphRef, type) {
             data: c.pts,
             pointStyle: false,
             borderWidth: 1,
-            borderColor: "#000000ff",
+            borderColor: "rgb(110, 20, 20)",
             tension: 0,
         }));
         graphRef.current.update("none");
