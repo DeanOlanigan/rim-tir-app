@@ -1,24 +1,6 @@
 import { useMemo } from "react";
 
-const filterData = (live, selectedGroups, selectedMessages) => {
-    if (!live?.length) return [];
-    if (!selectedGroups?.size || !selectedMessages?.size) return [];
-
-    return live.filter((item) => {
-        return (
-            selectedGroups.has(item.group) && selectedMessages.has(item.type)
-        );
-    });
-};
-
-export const useFilterData = (live, selectedGroups, selectedMessages) => {
-    return useMemo(
-        () => filterData(live, selectedGroups, selectedMessages),
-        [live, selectedGroups, selectedMessages],
-    );
-};
-
-const filterDataM = (live, selectedMessages, selectedCategory) => {
+const filterData = (live, selectedMessages, selectedCategory) => {
     if (!live?.length) return [];
     if (!selectedMessages?.size) return [];
 
@@ -30,9 +12,9 @@ const filterDataM = (live, selectedMessages, selectedCategory) => {
     });
 };
 
-export const useFilterDataM = (live, selectedMessages, selectedCategory) => {
+export const useFilterData = (live, selectedMessages, selectedCategory) => {
     return useMemo(
-        () => filterDataM(live, selectedMessages, selectedCategory),
+        () => filterData(live, selectedMessages, selectedCategory),
         [live, selectedMessages, selectedCategory],
     );
 };

@@ -1,7 +1,11 @@
 // src/pages/JournalPage/journal-history-store.js
+import { getLocalTimeZone, today } from "@internationalized/date";
 import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 
-const initialCategory = new Set([
+const DEFAULT_PERIOD_DAYS = 3;
+const DEFAULT_SEVERITY = ["error", "warning", "info", "critical"];
+const DEFAULT_CATEGORY = [
     "variable",
     "user",
     "event",
@@ -11,39 +15,57 @@ const initialCategory = new Set([
     "settings",
     "security",
     "system",
-]);
+];
 
-const initialSeverity = new Set(["error", "warning", "info", "critical"]);
-
-function getDefaultRange() {
-    const to = new Date();
-    const from = new Date(to.getTime() - 3 * 24 * 60 * 60 * 1000);
+function getDefaultHistoryFilters() {
+    const tz = getLocalTimeZone();
+    const to = today(tz);
+    const from = to.subtract({ days: DEFAULT_PERIOD_DAYS });
 
     return {
-        from: from.toISOString(),
-        to: to.toISOString(),
+        period: {
+            from,
+            to,
+        },
+        severity: DEFAULT_SEVERITY,
+        category: DEFAULT_CATEGORY,
     };
 }
 
-export const useJournalHistoryStore = create((set) => ({
-    ...getDefaultRange(),
-    severity: initialSeverity,
-    category: initialCategory,
-    limit: 100,
-    setPeriod: ({ from, to }) => set({ from, to }),
-    setLimit: (limit) => set({ limit }),
-    toggleSeverity: (severity) =>
-        set((state) => {
-            const next = new Set(state.severity);
-            if (next.has(severity)) next.delete(severity);
-            else next.add(severity);
-            return { severity: next };
+export const DEFAULT_JOURNAL_HISTORY_FILTERS = getDefaultHistoryFilters();
+
+export const useJournalHistoryStore = create(
+    devtools(
+        (set) => ({
+            filters: DEFAULT_JOURNAL_HISTORY_FILTERS,
+
+            setFilters: (nextFilters) =>
+                set((state) => ({
+                    filters: {
+                        period: {
+                            from:
+                                nextFilters?.period?.from ??
+                                state.filters.period.from,
+                            to:
+                                nextFilters?.period?.to ??
+                                state.filters.period.to,
+                        },
+                        severity: Array.isArray(nextFilters?.severity)
+                            ? nextFilters.severity
+                            : [],
+                        category: Array.isArray(nextFilters?.category)
+                            ? nextFilters.category
+                            : [],
+                    },
+                })),
+
+            resetFilters: () =>
+                set(() => ({
+                    filters: getDefaultHistoryFilters(),
+                })),
         }),
-    toggleCategory: (category) =>
-        set((state) => {
-            const next = new Set(state.category);
-            if (next.has(category)) next.delete(category);
-            else next.add(category);
-            return { category: next };
-        }),
-}));
+        {
+            name: "journal-history-store",
+        },
+    ),
+);

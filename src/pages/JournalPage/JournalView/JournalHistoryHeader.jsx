@@ -1,263 +1,26 @@
 import { CanAccess } from "@/CanAccess";
 import {
     Button,
-    createListCollection,
     DatePicker,
     Field,
     Flex,
     HStack,
-    IconButton,
     Menu,
     Portal,
-    Select,
     VStack,
 } from "@chakra-ui/react";
-import { now } from "@internationalized/date";
-import { useState } from "react";
-import { LuCalendar, LuCheck, LuChevronDown, LuDownload } from "react-icons/lu";
+import { getLocalTimeZone, today } from "@internationalized/date";
+import { LuCalendar, LuChevronDown, LuDownload } from "react-icons/lu";
 import { useJournalHistoryStore } from "../JournalStores/journal-history-store";
+import { useEffect, useMemo, useState } from "react";
+import { journalFiltersToApiPayload } from "../journal-history-period";
 
-export const JournalHistoryHeader = () => {
-    return (
-        <HStack justifyContent={"space-between"}>
-            <HStack>
-                <CanAccess right={"journal.download"}>
-                    <IconButton variant={"outline"} size={"xs"}>
-                        <LuDownload />
-                    </IconButton>
-                </CanAccess>
-            </HStack>
-            <HStack>
-                <SeverityMenu />
-                <CategoryMenu />
-                <LimitSelect />
-                <DatePriod />
-            </HStack>
-        </HStack>
-    );
-};
-
-const limits = createListCollection({
-    items: [
-        { label: "25", value: 25 },
-        { label: "50", value: 50 },
-        { label: "75", value: 75 },
-        { label: "100", value: 100 },
-        { label: "150", value: 150 },
-        { label: "300", value: 300 },
-    ],
-});
-
-const LimitSelect = () => {
-    const limit = useJournalHistoryStore((s) => s.limit);
-    const setLimit = useJournalHistoryStore((s) => s.setLimit);
-
-    return (
-        <Select.Root
-            value={[limit]}
-            onValueChange={(e) => setLimit(e.value[0])}
-            collection={limits}
-            size="xs"
-            width="150px"
-        >
-            <Select.HiddenSelect />
-            <Select.Control>
-                <Select.Trigger>
-                    <Select.ValueText placeholder="Выберите лимит" />
-                </Select.Trigger>
-                <Select.IndicatorGroup>
-                    <Select.Indicator />
-                </Select.IndicatorGroup>
-            </Select.Control>
-            <Portal>
-                <Select.Positioner>
-                    <Select.Content>
-                        {limits.items.map((limit) => (
-                            <Select.Item item={limit} key={limit.value}>
-                                {limit.label}
-                                <Select.ItemIndicator />
-                            </Select.Item>
-                        ))}
-                    </Select.Content>
-                </Select.Positioner>
-            </Portal>
-        </Select.Root>
-    );
-};
-
-const DatePriod = () => {
-    const setPeriod = useJournalHistoryStore((s) => s.setPeriod);
-
-    const today = now();
-    const threeDaysAgo = today.subtract({ days: 3 });
-
-    const [value, setValue] = useState([threeDaysAgo, today]);
-
-    const handleApply = () => {
-        const from = value[0].toAbsoluteString();
-        const to = value[1].toAbsoluteString();
-
-        if (!from || !to) return;
-
-        setPeriod({ from, to });
-    };
-
-    return (
-        <HStack>
-            <Field.Root orientation="horizontal">
-                <Field.Label fontSize="sm">Период</Field.Label>
-                <DatePicker.Root
-                    selectionMode="range"
-                    maxWidth="20rem"
-                    size={"xs"}
-                    locale="ru-RU"
-                    max={today}
-                    value={value}
-                    onValueChange={(e) => setValue(e.value)}
-                >
-                    <DatePicker.Control>
-                        <DatePicker.Input index={0} placeholder="С" />
-                        <DatePicker.Input index={1} placeholder="По" />
-                        <DatePicker.IndicatorGroup>
-                            <DatePicker.Trigger>
-                                <LuCalendar />
-                            </DatePicker.Trigger>
-                        </DatePicker.IndicatorGroup>
-                    </DatePicker.Control>
-                    <Portal>
-                        <DatePicker.Positioner>
-                            <DatePicker.Content>
-                                <Flex gap="6">
-                                    <Flex direction="column" flex="1" minW={0}>
-                                        <DatePicker.View view="day">
-                                            <DatePicker.Header />
-                                            <DatePicker.DayTable />
-                                        </DatePicker.View>
-                                        <DatePicker.View view="month">
-                                            <DatePicker.Header />
-                                            <DatePicker.MonthTable />
-                                        </DatePicker.View>
-                                        <DatePicker.View view="year">
-                                            <DatePicker.Header />
-                                            <DatePicker.YearTable />
-                                        </DatePicker.View>
-                                    </Flex>
-                                    <VStack
-                                        align="stretch"
-                                        gap="2"
-                                        minW="140px"
-                                        height="100%"
-                                    >
-                                        <DatePicker.PresetTrigger
-                                            value="last7Days"
-                                            asChild
-                                        >
-                                            <Button
-                                                variant="surface"
-                                                size="xs"
-                                                width="100%"
-                                            >
-                                                Последние 7 дней
-                                            </Button>
-                                        </DatePicker.PresetTrigger>
-                                        <DatePicker.PresetTrigger
-                                            value="last30Days"
-                                            asChild
-                                        >
-                                            <Button
-                                                variant="surface"
-                                                size="xs"
-                                                width="100%"
-                                            >
-                                                Последние 30 дней
-                                            </Button>
-                                        </DatePicker.PresetTrigger>
-                                        <DatePicker.PresetTrigger
-                                            value="thisMonth"
-                                            asChild
-                                        >
-                                            <Button
-                                                variant="surface"
-                                                size="xs"
-                                                width="100%"
-                                            >
-                                                Этот месяц
-                                            </Button>
-                                        </DatePicker.PresetTrigger>
-                                        <DatePicker.PresetTrigger
-                                            value="lastMonth"
-                                            asChild
-                                        >
-                                            <Button
-                                                variant="surface"
-                                                size="xs"
-                                                width="100%"
-                                            >
-                                                Прошлый месяц
-                                            </Button>
-                                        </DatePicker.PresetTrigger>
-                                    </VStack>
-                                </Flex>
-                            </DatePicker.Content>
-                        </DatePicker.Positioner>
-                    </Portal>
-                </DatePicker.Root>
-            </Field.Root>
-            <IconButton variant={"outline"} size={"xs"} onClick={handleApply}>
-                <LuCheck />
-            </IconButton>
-        </HStack>
-    );
-};
-
-const TYPE_FILTER_ITEMS = [
+const SEVERITY_FILTER_ITEMS = [
     { label: "Критическая", value: "critical" },
     { label: "Тревога", value: "error" },
     { label: "Предупреждение", value: "warning" },
     { label: "Информация", value: "info" },
 ];
-
-const SeverityMenu = () => {
-    const severity = useJournalHistoryStore((s) => s.severity);
-    const toggleSeverity = useJournalHistoryStore((s) => s.toggleSeverity);
-    return (
-        <Menu.Root closeOnSelect={false} lazyMount unmountOnExit size="sm">
-            <Menu.Trigger asChild>
-                <Button
-                    size={"xs"}
-                    variant={"outline"}
-                    colorPalette={"gray"}
-                    gap={4}
-                >
-                    Тип
-                    <LuChevronDown />
-                </Button>
-            </Menu.Trigger>
-
-            <Portal>
-                <Menu.Positioner>
-                    <Menu.Content>
-                        <Menu.ItemGroup>
-                            {TYPE_FILTER_ITEMS.map(({ value, label }) => (
-                                <Menu.CheckboxItem
-                                    key={value}
-                                    value={value}
-                                    checked={severity.has(value)}
-                                    onCheckedChange={() =>
-                                        toggleSeverity(value)
-                                    }
-                                >
-                                    {label}
-                                    <Menu.ItemIndicator />
-                                </Menu.CheckboxItem>
-                            ))}
-                        </Menu.ItemGroup>
-                    </Menu.Content>
-                </Menu.Positioner>
-            </Portal>
-        </Menu.Root>
-    );
-};
 
 const CATEGORY_FILTER_ITEMS = [
     { label: "Переменная", value: "variable" },
@@ -271,18 +34,319 @@ const CATEGORY_FILTER_ITEMS = [
     { label: "Система", value: "system" },
 ];
 
-const CategoryMenu = () => {
-    const category = useJournalHistoryStore((s) => s.category);
-    const toggleCategory = useJournalHistoryStore((s) => s.toggleCategory);
+function toggleInArray(list, value) {
+    return list.includes(value)
+        ? list.filter((item) => item !== value)
+        : [...list, value];
+}
+
+function filtersToLocalState(filters) {
+    return {
+        period: {
+            from: filters?.period?.from ?? null,
+            to: filters?.period?.to ?? null,
+        },
+        severity: Array.isArray(filters?.severity) ? filters.severity : [],
+        category: Array.isArray(filters?.category) ? filters.category : [],
+    };
+}
+
+function periodToPickerValue(period) {
+    const from = period?.from ?? null;
+    const to = period?.to ?? null;
+
+    if (!from && !to) return [];
+    if (from && !to) return [from];
+    if (!from && to) return [to];
+    return [from, to];
+}
+
+export const JournalHistoryHeader = () => {
+    const appliedFilters = useJournalHistoryStore((s) => s.filters);
+    const setFilters = useJournalHistoryStore((s) => s.setFilters);
+
+    const [localFilters, setLocalFilters] = useState(() =>
+        filtersToLocalState(appliedFilters),
+    );
+
+    useEffect(() => {
+        setLocalFilters(filtersToLocalState(appliedFilters));
+    }, [appliedFilters]);
+
+    const canApply =
+        localFilters.period.from &&
+        localFilters.period.to &&
+        localFilters.period.from.compare(localFilters.period.to) <= 0;
+
+    const handleApply = () => {
+        if (!canApply) return;
+
+        setFilters({
+            period: {
+                from: localFilters.period.from,
+                to: localFilters.period.to,
+            },
+            severity: localFilters.severity,
+            category: localFilters.category,
+        });
+    };
+
+    const handleDownloadCsv = () => {
+        const payload = journalFiltersToApiPayload(localFilters);
+        console.log("export csv with filters", { payload, localFilters });
+    };
+
+    const handlePeriodChange = (details) => {
+        const [from, to] = Array.isArray(details?.value) ? details.value : [];
+
+        setLocalFilters((prev) => ({
+            ...prev,
+            period: {
+                from: from ?? null,
+                to: to ?? null,
+            },
+        }));
+    };
+
+    return (
+        <HStack justifyContent={"space-between"}>
+            <HStack>
+                <SeverityMenu
+                    value={localFilters.severity}
+                    onToggle={(value) =>
+                        setLocalFilters((prev) => ({
+                            ...prev,
+                            severity: toggleInArray(prev.severity, value),
+                        }))
+                    }
+                />
+                <CategoryMenu
+                    value={localFilters.category}
+                    onToggle={(value) =>
+                        setLocalFilters((prev) => ({
+                            ...prev,
+                            category: toggleInArray(prev.category, value),
+                        }))
+                    }
+                />
+                <DatePeriod
+                    value={localFilters.period}
+                    onChange={handlePeriodChange}
+                />
+                <Button
+                    variant="solid"
+                    size="xs"
+                    onClick={handleApply}
+                    disabled={!canApply}
+                    aria-label="Применить фильтры"
+                >
+                    Применить фильтры
+                </Button>
+                <CanAccess right="journal.download">
+                    <Button
+                        size="xs"
+                        onClick={handleDownloadCsv}
+                        aria-label="Экспорт в CSV"
+                    >
+                        <LuDownload />
+                        Экспорт в CSV
+                    </Button>
+                </CanAccess>
+            </HStack>
+        </HStack>
+    );
+};
+
+const DatePeriod = ({ value, onChange }) => {
+    const tz = getLocalTimeZone();
+    const pickerValue = useMemo(() => periodToPickerValue(value), [value]);
+    const maxDate = today(tz);
+    return (
+        <Field.Root orientation="horizontal">
+            <Field.Label fontSize="sm" justifyContent="end">
+                Период
+            </Field.Label>
+            <DatePicker.Root
+                selectionMode="range"
+                maxWidth="20rem"
+                size={"xs"}
+                locale="ru-RU"
+                timezone={tz}
+                max={maxDate}
+                value={pickerValue}
+                onValueChange={onChange}
+            >
+                <DatePicker.Control>
+                    <DatePicker.Input index={0} placeholder="С" />
+                    <DatePicker.Input index={1} placeholder="По" />
+                    <DatePicker.IndicatorGroup>
+                        <DatePicker.Trigger>
+                            <LuCalendar />
+                        </DatePicker.Trigger>
+                    </DatePicker.IndicatorGroup>
+                </DatePicker.Control>
+                <Portal>
+                    <DatePicker.Positioner>
+                        <DatePicker.Content>
+                            <Flex gap="6">
+                                <Flex direction="column" flex="1" minW={0}>
+                                    <DatePicker.View view="day">
+                                        <DatePicker.Header />
+                                        <DatePicker.DayTable />
+                                    </DatePicker.View>
+                                    <DatePicker.View view="month">
+                                        <DatePicker.Header />
+                                        <DatePicker.MonthTable />
+                                    </DatePicker.View>
+                                    <DatePicker.View view="year">
+                                        <DatePicker.Header />
+                                        <DatePicker.YearTable />
+                                    </DatePicker.View>
+                                </Flex>
+                                <VStack
+                                    align="stretch"
+                                    gap="2"
+                                    minW="140px"
+                                    height="100%"
+                                >
+                                    <DatePicker.PresetTrigger
+                                        value="last3Days"
+                                        asChild
+                                    >
+                                        <Button
+                                            variant="surface"
+                                            size="xs"
+                                            width="100%"
+                                        >
+                                            Последние 3 дня
+                                        </Button>
+                                    </DatePicker.PresetTrigger>
+                                    <DatePicker.PresetTrigger
+                                        value="last7Days"
+                                        asChild
+                                    >
+                                        <Button
+                                            variant="surface"
+                                            size="xs"
+                                            width="100%"
+                                        >
+                                            Последние 7 дней
+                                        </Button>
+                                    </DatePicker.PresetTrigger>
+                                    <DatePicker.PresetTrigger
+                                        value="thisWeek"
+                                        asChild
+                                    >
+                                        <Button
+                                            variant="surface"
+                                            size="xs"
+                                            width="100%"
+                                        >
+                                            Эта неделя
+                                        </Button>
+                                    </DatePicker.PresetTrigger>
+                                    <DatePicker.PresetTrigger
+                                        value="lastWeek"
+                                        asChild
+                                    >
+                                        <Button
+                                            variant="surface"
+                                            size="xs"
+                                            width="100%"
+                                        >
+                                            Прошлая неделя
+                                        </Button>
+                                    </DatePicker.PresetTrigger>
+                                    <DatePicker.PresetTrigger
+                                        value="last30Days"
+                                        asChild
+                                    >
+                                        <Button
+                                            variant="surface"
+                                            size="xs"
+                                            width="100%"
+                                        >
+                                            Последние 30 дней
+                                        </Button>
+                                    </DatePicker.PresetTrigger>
+                                    <DatePicker.PresetTrigger
+                                        value="thisMonth"
+                                        asChild
+                                    >
+                                        <Button
+                                            variant="surface"
+                                            size="xs"
+                                            width="100%"
+                                        >
+                                            Этот месяц
+                                        </Button>
+                                    </DatePicker.PresetTrigger>
+                                    <DatePicker.PresetTrigger
+                                        value="lastMonth"
+                                        asChild
+                                    >
+                                        <Button
+                                            variant="surface"
+                                            size="xs"
+                                            width="100%"
+                                        >
+                                            Прошлый месяц
+                                        </Button>
+                                    </DatePicker.PresetTrigger>
+                                </VStack>
+                            </Flex>
+                        </DatePicker.Content>
+                    </DatePicker.Positioner>
+                </Portal>
+            </DatePicker.Root>
+        </Field.Root>
+    );
+};
+
+const SeverityMenu = ({ value, onToggle }) => {
     return (
         <Menu.Root closeOnSelect={false} lazyMount unmountOnExit size="sm">
             <Menu.Trigger asChild>
-                <Button
-                    size={"xs"}
-                    variant={"outline"}
-                    colorPalette={"gray"}
-                    gap={4}
-                >
+                <Button size={"xs"} gap={4}>
+                    Тип
+                    <LuChevronDown />
+                </Button>
+            </Menu.Trigger>
+
+            <Portal>
+                <Menu.Positioner>
+                    <Menu.Content>
+                        <Menu.ItemGroup>
+                            {SEVERITY_FILTER_ITEMS.map((item) => {
+                                const checked = value.includes(item.value);
+
+                                return (
+                                    <Menu.CheckboxItem
+                                        key={item.value}
+                                        value={item.value}
+                                        checked={checked}
+                                        onCheckedChange={() =>
+                                            onToggle(item.value)
+                                        }
+                                    >
+                                        {item.label}
+                                        <Menu.ItemIndicator />
+                                    </Menu.CheckboxItem>
+                                );
+                            })}
+                        </Menu.ItemGroup>
+                    </Menu.Content>
+                </Menu.Positioner>
+            </Portal>
+        </Menu.Root>
+    );
+};
+
+const CategoryMenu = ({ value, onToggle }) => {
+    return (
+        <Menu.Root closeOnSelect={false} lazyMount unmountOnExit size="sm">
+            <Menu.Trigger asChild>
+                <Button size={"xs"} gap={4}>
                     Категория
                     <LuChevronDown />
                 </Button>
@@ -292,19 +356,23 @@ const CategoryMenu = () => {
                 <Menu.Positioner>
                     <Menu.Content>
                         <Menu.ItemGroup>
-                            {CATEGORY_FILTER_ITEMS.map(({ value, label }) => (
-                                <Menu.CheckboxItem
-                                    key={value}
-                                    value={value}
-                                    checked={category.has(value)}
-                                    onCheckedChange={() =>
-                                        toggleCategory(value)
-                                    }
-                                >
-                                    {label}
-                                    <Menu.ItemIndicator />
-                                </Menu.CheckboxItem>
-                            ))}
+                            {CATEGORY_FILTER_ITEMS.map((item) => {
+                                const checked = value.includes(item.value);
+
+                                return (
+                                    <Menu.CheckboxItem
+                                        key={item.value}
+                                        value={item.value}
+                                        checked={checked}
+                                        onCheckedChange={() =>
+                                            onToggle(item.value)
+                                        }
+                                    >
+                                        {item.label}
+                                        <Menu.ItemIndicator />
+                                    </Menu.CheckboxItem>
+                                );
+                            })}
                         </Menu.ItemGroup>
                     </Menu.Content>
                 </Menu.Positioner>
