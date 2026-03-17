@@ -89,6 +89,14 @@ export const routes = [
                                     },
                                 ],
                             },
+                            {
+                                element: (
+                                    <PermissionGate right={"graphs.view"} />
+                                ),
+                                children: [
+                                    { path: "graph", element: <GraphPage /> },
+                                ],
+                            },
                         ],
                     },
                     {
@@ -98,14 +106,6 @@ export const routes = [
                                 element: <PermissionGate right={"logs.view"} />,
                                 children: [
                                     { path: "log", element: <LogPage /> },
-                                ],
-                            },
-                            {
-                                element: (
-                                    <PermissionGate right={"graphs.view"} />
-                                ),
-                                children: [
-                                    { path: "graph", element: <GraphPage /> },
                                 ],
                             },
                             {
