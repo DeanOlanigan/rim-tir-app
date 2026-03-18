@@ -11,12 +11,21 @@ import {
     Portal,
     SegmentGroup,
     Select,
+    Text,
     VStack,
 } from "@chakra-ui/react";
-import { parseDate, today } from "@internationalized/date";
+import { today } from "@internationalized/date";
+import { useController, useFormContext, useWatch } from "react-hook-form";
 import { LuCalendar } from "react-icons/lu";
 
 export const Header = () => {
+    const { control } = useFormContext();
+
+    const mode = useWatch({
+        control,
+        name: "mode",
+    });
+
     return (
         <Flex
             px={6}
@@ -29,30 +38,49 @@ export const Header = () => {
             justify={"space-between"}
             align={"center"}
         >
-            <HStack>
-                <Mode />
-                <DatePeriod />
-                <PointLimit />
+            <HStack align={"start"}>
+                <ModeField />
+
+                {mode === "period" && (
+                    <>
+                        <DatePeriod />
+                        <PointLimit />
+                    </>
+                )}
+
+                {mode === "realTime" && <RealTimeInfo />}
             </HStack>
             <Box>
-                <Badge size={"md"}>Текущие</Badge>
+                <Badge size={"md"}>
+                    {mode === "realTime" ? "Текущие" : "Период"}
+                </Badge>
             </Box>
         </Flex>
     );
 };
 
-const Mode = () => {
+const ModeField = () => {
+    const { control } = useFormContext();
+    const { field } = useController({
+        name: "mode",
+        control,
+    });
+
     return (
         <Field.Root orientation={"vertical"}>
             <Field.Label fontSize="xs" color="fg.muted">
                 Режим
             </Field.Label>
-            <SegmentGroup.Root size={"sm"} defaultValue="realTime">
+            <SegmentGroup.Root
+                size={"sm"}
+                value={field.value}
+                onValueChange={({ value }) => field.onChange(value)}
+            >
                 <SegmentGroup.Indicator bg={"colorPalette.solid"} />
                 <SegmentGroup.Items
                     items={[
                         { value: "realTime", label: "Текущие" },
-                        { value: "window", label: "Период" },
+                        { value: "period", label: "Период" },
                     ]}
                 />
             </SegmentGroup.Root>
@@ -61,9 +89,20 @@ const Mode = () => {
 };
 
 const DatePeriod = () => {
+    const { control } = useFormContext();
+
+    const {
+        field,
+        fieldState: { error },
+    } = useController({
+        name: "range",
+        control,
+    });
+
     const maxDate = today();
+
     return (
-        <Field.Root orientation={"vertical"}>
+        <Field.Root orientation={"vertical"} invalid={!!error}>
             <Field.Label fontSize="xs" color="fg.muted">
                 Период
             </Field.Label>
@@ -73,7 +112,11 @@ const DatePeriod = () => {
                 size={"xs"}
                 locale="ru-RU"
                 max={maxDate}
-                defaultValue={[parseDate("2026-03-01"), maxDate]}
+                value={field.value ?? []}
+                onValueChange={({ value }) => {
+                    field.onChange(value ?? []);
+                }}
+                invalid={!!error}
                 lazyMount
                 unmountOnExit
             >
@@ -200,6 +243,7 @@ const DatePeriod = () => {
                     </DatePicker.Positioner>
                 </Portal>
             </DatePicker.Root>
+            <Field.ErrorText>{error?.message}</Field.ErrorText>
         </Field.Root>
     );
 };
@@ -216,6 +260,15 @@ const points = createListCollection({
 });
 
 const PointLimit = () => {
+    const { control } = useFormContext();
+    const {
+        field,
+        fieldState: { error },
+    } = useController({
+        name: "pointLimit",
+        control,
+    });
+
     return (
         <Field.Root orientation={"vertical"}>
             <Field.Label fontSize="xs" color="fg.muted">
@@ -223,7 +276,10 @@ const PointLimit = () => {
             </Field.Label>
             <Select.Root
                 collection={points}
-                defaultValue={[150]}
+                value={[field.value]}
+                onValueChange={({ value }) =>
+                    field.onChange(Number(value?.[0] ?? 150))
+                }
                 size="xs"
                 w="100px"
                 lazyMount
@@ -251,6 +307,22 @@ const PointLimit = () => {
                     </Select.Positioner>
                 </Portal>
             </Select.Root>
+            <Field.ErrorText>{error?.message}</Field.ErrorText>
+        </Field.Root>
+    );
+};
+
+const RealTimeInfo = () => {
+    return (
+        <Field.Root orientation="vertical">
+            <Field.Label fontSize="xs" color="fg.muted">
+                Режим текущих данных
+            </Field.Label>
+            <HStack h="32px" px={3}>
+                <Text fontSize="sm" color="fg.muted">
+                    Пауза и live-управление добавим на следующем шаге
+                </Text>
+            </HStack>
         </Field.Root>
     );
 };
