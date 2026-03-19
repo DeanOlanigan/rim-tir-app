@@ -50,6 +50,7 @@ const HMIEditorContent = () => {
             direction={"column"}
             overflow={"hidden"}
             borderRadius={RADII_MAIN}
+            shadow={"md"}
             data-state={"open"}
             animationDuration={"slow"}
             animationStyle={{

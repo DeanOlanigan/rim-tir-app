@@ -53,9 +53,7 @@ const ColorSetter = ({ value, onChange }) => {
                 setC(e.value);
             }}
             onValueChangeEnd={(e) => {
-                const asString =
-                    e.valueAsString ?? e.value?.toString?.() ?? "#ff0000";
-                onChange?.(asString);
+                onChange?.(e.value.toString("hexa"));
             }}
             lazyMount
             unmountOnExit

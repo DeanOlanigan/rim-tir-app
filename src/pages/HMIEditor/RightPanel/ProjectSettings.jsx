@@ -12,6 +12,7 @@ import {
 import { useNodeStore } from "../store/node-store";
 import { useEffect, useState } from "react";
 import { LOCALE } from "../constants";
+import { LuCheck } from "react-icons/lu";
 
 export const ProjectSettings = () => {
     return (
@@ -85,6 +86,14 @@ const ColorComp = ({ param }) => {
                     [param]: e.value.toString("hex"),
                 })
             }
+            onOpenChange={(e) => {
+                if (e.open) return;
+                set(useNodeStore.getState().activePageId, {
+                    [param]: color.toString("hex"),
+                });
+            }}
+            lazyMount
+            unmountOnExit
         >
             <ColorPicker.HiddenInput />
             <ColorPicker.Control>
@@ -94,12 +103,37 @@ const ColorComp = ({ param }) => {
             <ColorPicker.Positioner>
                 <ColorPicker.Content>
                     <ColorPicker.Area />
-                    <ColorPicker.Sliders />
+                    <ColorPicker.ChannelSlider channel={"hue"} />
+                    <ColorPicker.SwatchGroup>
+                        {swatches.map((swatch) => (
+                            <ColorPicker.SwatchTrigger
+                                key={swatch}
+                                value={swatch}
+                            >
+                                <ColorPicker.Swatch value={swatch}>
+                                    <ColorPicker.SwatchIndicator>
+                                        <LuCheck />
+                                    </ColorPicker.SwatchIndicator>
+                                </ColorPicker.Swatch>
+                            </ColorPicker.SwatchTrigger>
+                        ))}
+                    </ColorPicker.SwatchGroup>
                 </ColorPicker.Content>
             </ColorPicker.Positioner>
         </ColorPicker.Root>
     );
 };
+
+const swatches = [
+    "#F7F8FA",
+    "#F5F7FB",
+    "#FAF7F2",
+    "#F3F6F4",
+    "#121417",
+    "#161A1F",
+    "#11161C",
+    "#1A1D22",
+];
 
 const InDev = () => {
     return (

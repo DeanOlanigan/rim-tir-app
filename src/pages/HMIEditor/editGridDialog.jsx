@@ -115,12 +115,17 @@ export const editGridDialog = createOverlay((props) => {
                                         render={({ field }) => (
                                             <ColorPicker.Root
                                                 size="xs"
-                                                value={parseColor(field.value)}
+                                                name={field.name}
+                                                defaultValue={parseColor(
+                                                    field.value,
+                                                )}
                                                 onValueChange={(e) =>
                                                     field.onChange(
                                                         e.valueAsString,
                                                     )
                                                 }
+                                                lazyMount
+                                                unmountOnExit
                                             >
                                                 <ColorPicker.HiddenInput />
                                                 <ColorPicker.Label>

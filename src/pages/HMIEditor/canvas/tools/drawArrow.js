@@ -72,7 +72,6 @@ export function createDrawArrowTool() {
             if (!info) return;
 
             ctx.addNode({
-                ...BASE_PARAMS,
                 type: SHAPES.arrow,
                 name: "Arrow",
                 x: info.x1,

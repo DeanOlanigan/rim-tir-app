@@ -47,6 +47,9 @@ const defaultColors = [
     "#00FFFF", // Aqua
     "#8A2BE2", // Blue Violet
     "#DC143C",
+    "#FFC0CB",
+    "#FF0000",
+    "#FFFF00",
 ];
 
 function createDefaultDataset(index = 0) {
@@ -328,7 +331,8 @@ const VariableColor = ({ index }) => {
     return (
         <ColorPicker.Root
             variant={"subtle"}
-            value={field.value ? parseColor(field.value) : undefined}
+            name={field.name}
+            defaultValue={field.value ? parseColor(field.value) : undefined}
             onValueChange={({ valueAsString }) => field.onChange(valueAsString)}
             size={"xs"}
             lazyMount
@@ -347,7 +351,7 @@ const VariableColor = ({ index }) => {
                 <ColorPicker.Positioner>
                     <ColorPicker.Content>
                         <ColorPicker.Area />
-                        <ColorPicker.Sliders />
+                        <ColorPicker.ChannelSlider channel="hue" />
                         <ColorPicker.SwatchGroup>
                             {defaultColors.map((swatch) => (
                                 <ColorPicker.SwatchTrigger

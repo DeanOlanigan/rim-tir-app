@@ -43,8 +43,8 @@ export function createDefaultNode(id) {
     return {
         id,
         parentId: null,
-        fill: "rgba(195, 195, 195, 1)",
-        stroke: "rgba(0, 0, 0, 1)",
+        fill: "#c3c3c3FF",
+        stroke: "#000000FF",
         strokeWidth: 0,
         lineJoin: "miter",
         lineCap: "butt",

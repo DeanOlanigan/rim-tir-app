@@ -2,6 +2,7 @@ import { ColorPicker, parseColor } from "@chakra-ui/react";
 import { applyPatch, sameCheck, useEffectiveParamsByIds } from "./utils";
 import { useInteractiveStore } from "../store/interactive-store";
 
+// TODO Не обновляется при redo/undo
 export const PropertyColor = ({ ids, property }) => {
     const values = useEffectiveParamsByIds(ids, property);
     const base = sameCheck(values) || values[0] || "#000000";
@@ -21,13 +22,13 @@ export const PropertyColor = ({ ids, property }) => {
     return (
         <ColorPicker.Root
             size={"xs"}
-            value={value}
+            defaultValue={value}
             onValueChange={(e) => {
                 ensureInteractive();
-                handleChangeColor(e.valueAsString, false);
+                handleChangeColor(e.value.toString("hexa"), false);
             }}
             onValueChangeEnd={(e) => {
-                handleChangeColor(e.valueAsString, true);
+                handleChangeColor(e.value.toString("hexa"), true);
             }}
             onOpenChange={(e) => {
                 const int = useInteractiveStore.getState();
