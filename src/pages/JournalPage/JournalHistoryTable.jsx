@@ -7,6 +7,7 @@ import { useJournalHistoryQuery } from "./hooks/useJournalHistoryQuery";
 import { AckButtonRange } from "./JournalView/AckButtonRange";
 import { getLocalTimeZone } from "@internationalized/date";
 import { RADII_MAIN } from "@/config/constants";
+import { formatJournalDate } from "./formatJournalDate";
 
 function toISO(data) {
     return data.toDate(getLocalTimeZone()).toISOString();
@@ -47,7 +48,13 @@ export const JournalHistoryTable = () => {
     } = useJournalHistoryQuery(filters);
 
     const rowData = useMemo(
-        () => data?.pages.flatMap((page) => page.items ?? []) ?? [],
+        () =>
+            data?.pages.flatMap((page) =>
+                (page.items ?? []).map((item) => ({
+                    ...item,
+                    tsText: formatJournalDate(item.ts),
+                })),
+            ) ?? [],
         [data],
     );
 

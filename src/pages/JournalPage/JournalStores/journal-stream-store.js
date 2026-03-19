@@ -1,23 +1,8 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import { formatJournalDate } from "../formatJournalDate";
 
 const MAX_ROWS = 10000;
-
-const dateFormatter = new Intl.DateTimeFormat(undefined, {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-    hour12: false,
-    fractionalSecondDigits: 3,
-});
-
-function formatJournalDate(value) {
-    if (!value) return "";
-    return dateFormatter.format(new Date(value));
-}
 
 function getActorText(actor) {
     if (!actor) return "";
