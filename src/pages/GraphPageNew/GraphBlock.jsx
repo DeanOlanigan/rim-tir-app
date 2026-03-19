@@ -20,7 +20,7 @@ export const GraphBlock = memo(function GraphBlock({ appliedConfig }) {
         >
             {!hasDatasets ? (
                 <Center w={"full"} h={"full"}>
-                    <Text color={"fg.muted"}>
+                    <Text color={"fg.muted"} fontWeight={"medium"}>
                         Добавьте и примените хотя бы один датасет
                     </Text>
                 </Center>

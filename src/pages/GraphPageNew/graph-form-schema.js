@@ -3,6 +3,7 @@ import { z } from "zod";
 const datasetSchema = z.object({
     id: z.string(),
     variable: z.string().min(1, "Выберите переменную"),
+    variableId: z.string().min(1, "Выберите переменную"),
     alias: z
         .string()
         .trim()

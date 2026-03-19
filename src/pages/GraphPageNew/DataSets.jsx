@@ -16,11 +16,12 @@ import {
     parseColor,
     Portal,
     Select,
+    Spinner,
     Text,
     VStack,
 } from "@chakra-ui/react";
 import { nanoid } from "nanoid";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import {
     useController,
     useFieldArray,
@@ -28,15 +29,31 @@ import {
     useWatch,
 } from "react-hook-form";
 import { LuCheck, LuPlus, LuTrash } from "react-icons/lu";
+import { useVariables } from "./useVariables";
 
 const MAX_DATASET_COUNT = 5;
 
-const defaultColors = ["#eb5e41", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6"];
+const defaultColors = [
+    "#eb5e41",
+    "#3b82f6",
+    "#10b981",
+    "#f59e0b",
+    "#8b5cf6",
+    "#000000", // Black
+    "#33FF57", // Green
+    "#3357FF", // Blue
+    "#FF33A6", // Pink
+    "#FFD700", // Gold
+    "#00FFFF", // Aqua
+    "#8A2BE2", // Blue Violet
+    "#DC143C",
+];
 
 function createDefaultDataset(index = 0) {
     return {
         id: nanoid(8),
         variable: "",
+        variableId: "",
         alias: "",
         color: defaultColors[index % defaultColors.length],
     };
@@ -90,22 +107,62 @@ const DataSetList = () => {
         trigger("datasets");
     }, [fields.length, trigger]);
 
+    const { data, isLoading, isError, error } = useVariables();
+
+    const variableCollection = useMemo(() => {
+        return createListCollection({
+            items: data ?? [],
+            itemToString: (variable) => variable.name,
+            itemToValue: (variable) => variable.id,
+        });
+    }, [data]);
+
     const canAdd = fields.length < MAX_DATASET_COUNT;
     return (
-        <HStack w={"full"} justify={"start"} overflow={"auto"} py={2}>
-            {fields.map((field, index) => (
-                <DataSetCard
-                    key={field.fieldKey ?? field.id}
-                    index={index}
-                    onRemove={() => remove(index)}
-                />
-            ))}
-            {canAdd && (
-                <AddDataSet
-                    onAdd={() => append(createDefaultDataset(fields.length))}
-                />
+        <VStack w={"full"} align={"stretch"}>
+            {isError && (
+                <Text color="fg.error" fontWeight={"medium"} textStyle={"sm"}>
+                    {error.message}
+                </Text>
             )}
-        </HStack>
+
+            {!isError &&
+                !isLoading &&
+                variableCollection.items.length === 0 && (
+                    <Text
+                        color="fg.muted"
+                        fontWeight={"medium"}
+                        textStyle={"sm"}
+                    >
+                        Нет доступных переменных для выбора
+                    </Text>
+                )}
+            <HStack
+                w={"full"}
+                align={"start"}
+                justify={"start"}
+                overflow={"auto"}
+                py={2}
+            >
+                {fields.map((field, index) => (
+                    <DataSetCard
+                        key={field.fieldKey ?? field.id}
+                        index={index}
+                        variableCollection={variableCollection}
+                        variablesLoading={isLoading}
+                        variablesError={isError ? error : null}
+                        onRemove={() => remove(index)}
+                    />
+                ))}
+                {canAdd && (
+                    <AddDataSet
+                        onAdd={() =>
+                            append(createDefaultDataset(fields.length))
+                        }
+                    />
+                )}
+            </HStack>
+        </VStack>
     );
 };
 
@@ -119,13 +176,19 @@ const FieldArrayError = () => {
     if (!message) return null;
 
     return (
-        <Text fontSize="sm" color="fg.error">
+        <Text color="fg.error" fontWeight={"medium"} textStyle={"sm"}>
             {message}
         </Text>
     );
 };
 
-const DataSetCard = ({ index, onRemove }) => {
+const DataSetCard = ({
+    index,
+    onRemove,
+    variableCollection,
+    variablesLoading,
+    variablesError,
+}) => {
     return (
         <VStack
             align={"start"}
@@ -152,31 +215,39 @@ const DataSetCard = ({ index, onRemove }) => {
             </Float>
             <AliasField index={index} />
             <HStack align={"start"}>
-                <VariableSelect index={index} />
+                <VariableSelect
+                    index={index}
+                    collection={variableCollection}
+                    isLoading={variablesLoading}
+                    requestError={variablesError}
+                />
                 <VariableColor index={index} />
             </HStack>
         </VStack>
     );
 };
 
-const variables = createListCollection({
-    items: [
-        { label: "variable 1", value: "var_1" },
-        { label: "variable 2", value: "var_2" },
-        { label: "variable 3", value: "var_3" },
-    ],
-});
-
-const VariableSelect = ({ index }) => {
-    const { control } = useFormContext();
+const VariableSelect = ({ index, collection, isLoading, requestError }) => {
+    const { control, setValue } = useFormContext();
 
     const {
         field,
         fieldState: { error },
     } = useController({
-        name: `datasets.${index}.variable`,
+        name: `datasets.${index}.variableId`,
         control,
     });
+
+    const isDisabled =
+        isLoading || !!requestError || collection.items.length === 0;
+
+    let placeholder = "Выберите переменную";
+
+    if (isLoading) {
+        if (collection.items.length === 0)
+            placeholder = "Нет доступных переменных";
+        else placeholder = "Загрузка переменных";
+    } else if (requestError) placeholder = "Ошибка загрузки переменных";
 
     return (
         <Field.Root invalid={!!error}>
@@ -185,34 +256,55 @@ const VariableSelect = ({ index }) => {
             </Field.Label>
             <Select.Root
                 name={field.name}
-                collection={variables}
+                collection={collection}
                 value={field.value ? [field.value] : []}
-                onValueChange={({ value }) => field.onChange(value?.[0] ?? "")}
+                onValueChange={({ value }) => {
+                    const nextId = value?.[0] ?? "";
+                    const selected = collection.items.find(
+                        (item) => String(item.id) === String(nextId),
+                    );
+                    field.onChange(nextId);
+
+                    setValue(
+                        `datasets.${index}.variable`,
+                        selected?.name ?? "",
+                        {
+                            shouldDirty: true,
+                            shouldTouch: true,
+                            shouldValidate: true,
+                        },
+                    );
+                }}
                 onInteractOutside={() => field.onBlur()}
                 size="xs"
                 variant={"subtle"}
                 width="180px"
                 lazyMount
                 unmountOnExit
+                disabled={isDisabled}
             >
                 <Select.HiddenSelect />
                 <Select.Control>
                     <Select.Trigger>
-                        <Select.ValueText placeholder="Выберите переменную" />
+                        <Select.ValueText placeholder={placeholder} />
                     </Select.Trigger>
                     <Select.IndicatorGroup>
+                        {isLoading && (
+                            <Spinner
+                                size="xs"
+                                borderWidth="1.5px"
+                                color="fg.muted"
+                            />
+                        )}
                         <Select.Indicator />
                     </Select.IndicatorGroup>
                 </Select.Control>
                 <Portal>
                     <Select.Positioner>
                         <Select.Content>
-                            {variables.items.map((variable) => (
-                                <Select.Item
-                                    item={variable}
-                                    key={variable.value}
-                                >
-                                    {variable.label}
+                            {collection.items.map((variable) => (
+                                <Select.Item key={variable.id} item={variable}>
+                                    {variable.name}
                                     <Select.ItemIndicator />
                                 </Select.Item>
                             ))}
@@ -256,7 +348,6 @@ const VariableColor = ({ index }) => {
                     <ColorPicker.Content>
                         <ColorPicker.Area />
                         <ColorPicker.Sliders />
-                        <ColorPicker.ValueSwatch />
                         <ColorPicker.SwatchGroup>
                             {defaultColors.map((swatch) => (
                                 <ColorPicker.SwatchTrigger

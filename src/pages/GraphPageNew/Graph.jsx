@@ -14,9 +14,12 @@ import {
     RealTimeScale,
     StreamingPlugin,
 } from "@robloche/chartjs-plugin-streaming";
-import { useMemo, useRef } from "react";
-import { generateChartData } from "./generateChartData";
+import { useEffect, useMemo, useRef } from "react";
 import { Box, VStack } from "@chakra-ui/react";
+import { useSignalHistoryQuery } from "./useSignalHistoryQuery";
+import { useMqttChart } from "./useMqttChart";
+import { createOptions } from "./chart-options";
+import { createRealtimeDatasets } from "./createRealtimeDatasets";
 
 ChartJS.register(
     LinearScale,
@@ -33,75 +36,56 @@ ChartJS.register(
 export const Graph = ({ appliedConfig }) => {
     console.log("appliedConfig", appliedConfig);
     const chartRef = useRef(null);
+    const isRealTime = appliedConfig?.mode === "realTime";
 
-    const chartData = useMemo(() => {
-        return generateChartData(appliedConfig);
-    }, [appliedConfig]);
+    const startMs = useMemo(() => {
+        const value = appliedConfig?.range?.utcFrom;
+        const ms = value ? new Date(value).getTime() : NaN;
+        return Number.isFinite(ms) ? ms : undefined;
+    }, [appliedConfig?.range?.utcFrom]);
+
+    const endMs = useMemo(() => {
+        const value = appliedConfig?.range?.utcTo;
+        const ms = value ? new Date(value).getTime() : NaN;
+        return Number.isFinite(ms) ? ms : undefined;
+    }, [appliedConfig?.range?.utcTo]);
 
     const options = useMemo(() => {
+        return createOptions(appliedConfig?.mode, startMs, endMs);
+    }, [appliedConfig?.mode, startMs, endMs]);
+
+    const { data, isLoading, isError, error } =
+        useSignalHistoryQuery(appliedConfig);
+
+    const realtimeData = useMemo(() => {
         return {
-            responsive: true,
-            maintainAspectRatio: false,
-            parsing: false,
-            normalized: true,
-            animation: true,
-            interaction: {
-                mode: "index",
-                intersect: true,
-                axis: "xy",
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    position: "top",
-                    align: "end",
-                    labels: {
-                        usePointStyle: true,
-                        boxWidth: 10,
-                        boxHeight: 10,
-                    },
-                },
-                tooltip: {
-                    enabled: true,
-                },
-                zoom: {
-                    pan: {
-                        enabled: true,
-                        mode: "x",
-                    },
-                    zoom: {
-                        pinch: {
-                            enabled: true,
-                        },
-                        wheel: {
-                            enabled: true,
-                        },
-                        mode: "x",
-                    },
-                },
-            },
-            scales: {
-                x: {
-                    type: "time",
-                    ticks: {
-                        maxRotation: 0,
-                        autoSkip: true,
-                    },
-                },
-                y: {
-                    beginAtZero: false,
-                },
-            },
+            datasets: createRealtimeDatasets(appliedConfig),
         };
-    }, []);
+    }, [appliedConfig]);
+
+    const chartData = isRealTime
+        ? realtimeData
+        : (data?.chartData ?? { datasets: [] });
+
+    useMqttChart(chartRef, appliedConfig);
+
+    useEffect(() => {
+        const chart = chartRef.current;
+        if (!chart) return;
+
+        if (isRealTime) {
+            for (const dataset of chart.data.datasets) {
+                dataset.data = [];
+            }
+            chart.update("quiet");
+        }
+    }, [isRealTime, appliedConfig]);
+
+    if (!isRealTime && isLoading) return <div>Loading...</div>;
+    if (!isRealTime && isError) return <div>Error: {error.message}</div>;
 
     return (
         <VStack w="full" h="full" align="stretch" gap={4}>
-            {/* <GraphLegendContainer
-                chartRef={chartRef}
-                datasets={appliedConfig.datasets}
-            /> */}
-
             <Box flex={1} minH="320px">
                 <Line ref={chartRef} data={chartData} options={options} />
             </Box>

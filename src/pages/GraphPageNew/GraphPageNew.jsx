@@ -11,10 +11,11 @@ import { graphFormSchema } from "./graph-form-schema";
 function getDefaultValues() {
     const tz = getLocalTimeZone();
     const now = today(tz);
+    const threeDaysAgo = now.subtract({ days: 3 });
 
     return {
         mode: "period", // "period" | "realTime"
-        range: [now.subtract({ days: 7 }), now],
+        range: [threeDaysAgo, now],
         pointLimit: 150,
         datasets: [],
     };
@@ -24,13 +25,17 @@ function normalizeGraphForm(values) {
     const from = values.range?.[0] ?? null;
     const to = values.range?.[1] ?? null;
 
+    const utcFrom = from ? from.toDate().toISOString() : null;
+    const utcTo = to ? to.toDate().toISOString() : null;
+
     return {
         mode: values.mode,
-        range: values.mode === "period" ? { from, to } : null,
+        range: values.mode === "period" ? { utcFrom, utcTo } : null,
         pointLimit: values.mode === "period" ? Number(values.pointLimit) : null,
         datasets: values.datasets.map((ds) => ({
             id: ds.id,
             variable: ds.variable,
+            variableId: ds.variableId,
             alias: ds.alias?.trim() || "",
             color: ds.color,
         })),

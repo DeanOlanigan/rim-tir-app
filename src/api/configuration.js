@@ -15,3 +15,19 @@ export async function getConfiguration() {
     const { data } = await apiv2.get("/configuration");
     return parseXmlToState(data?.data);
 }
+
+export async function getVariables() {
+    const { data } = await apiv2.get("/configuration/variables");
+    return data;
+}
+
+export async function getGraphVariables() {
+    try {
+        const { data } = await apiv2.get("/configuration/variables/graph");
+        return data?.data ?? [];
+    } catch (error) {
+        throw new Error(
+            error?.response?.data?.message || "Не удалось получить переменные",
+        );
+    }
+}
