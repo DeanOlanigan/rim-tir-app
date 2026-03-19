@@ -12,7 +12,7 @@ export const NodeValues = memo(function NodeValues({ id }) {
             justifyContent={"center"}
             truncate
         >
-            {live?.v?.toString()}
+            {live?.value?.toString()}
         </Code>
     );
 });

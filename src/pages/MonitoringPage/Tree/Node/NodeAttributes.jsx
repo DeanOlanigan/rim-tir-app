@@ -12,7 +12,7 @@ export const NodeAttributes = memo(function NodeAttributes({ id }) {
             {attributes.map(
                 (attr) =>
                     attr?.icon?.as &&
-                    live?.q?.attrs?.includes(attr.name) && (
+                    live?.quality?.attributes?.includes(attr.name) && (
                         <Icon
                             key={attr.name}
                             size={"md"}
@@ -25,7 +25,9 @@ export const NodeAttributes = memo(function NodeAttributes({ id }) {
             <Icon
                 as={LuCircle}
                 fill={
-                    live?.q?.attrs?.includes("used") ? "fg.success" : "fg.error"
+                    live?.quality?.attributes?.includes("used")
+                        ? "fg.success"
+                        : "fg.error"
                 }
             />
         </>

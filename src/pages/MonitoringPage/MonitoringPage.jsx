@@ -29,7 +29,7 @@ function MonitoringPage() {
         useMonitoringLive.getState().clear();
     }, [data]);
 
-    useMqttLive("monitoring/node/#");
+    useMqttLive("signals/live/by-id/#");
 
     if (isLoading) return <Loader text={"Загрузка данных"} />;
     if (isError) return <ErrorInformer error={error} />;

@@ -15,9 +15,11 @@ export const useMonitoringLive = create((set) => ({
             if (!batch.size) return state;
             let changed = false;
             const next = new Map(state.latest);
+
             for (const [id, msg] of batch) {
                 const prev = next.get(id);
-                if (!prev || prev.v !== msg.v) {
+
+                if (!prev || hasLiveChanged(prev, msg)) {
                     next.set(id, msg);
                     changed = true;
                 }
@@ -28,17 +30,20 @@ export const useMonitoringLive = create((set) => ({
     appendManySpark: (batch) =>
         set((state) => {
             if (!batch.size) return state;
+
             let changed = false;
             const cap = state.capacity;
             const next = new Map(state.spark);
 
             for (const [id, msg] of batch) {
-                const y = Number(msg.v);
+                if (msg.valueType === "bool") continue;
+
+                const y = Number(msg.value);
                 if (!Number.isFinite(y)) continue;
 
                 const arr = next.get(id);
-
                 let out = [];
+
                 if (!arr) {
                     out = [{ x: 0, y }];
                 } else if (arr.length < cap) {
@@ -59,7 +64,10 @@ export const useMonitoringLive = create((set) => ({
         }),
 
     clear: () =>
-        set({ latest: new Map(), series: new Map(), spark: new Map() }),
+        set({
+            latest: new Map(),
+            spark: new Map(),
+        }),
 }));
 
 export function useLiveValue(id) {
@@ -68,4 +76,23 @@ export function useLiveValue(id) {
 
 export function useSpark(id) {
     return useMonitoringLive((s) => s.spark.get(id), Object.is);
+}
+
+function hasLiveChanged(prev, next) {
+    if (prev.ts !== next.ts) return true;
+    if (prev.value !== next.value) return true;
+    if (prev.valueType !== next.valueType) return true;
+    if (prev.unit !== next.unit) return true;
+    if (prev.version !== next.version) return true;
+    if (prev.quality?.good !== next.quality?.good) return true;
+
+    const prevAttrs = prev.quality?.attributes ?? [];
+    const nextAttrs = next.quality?.attributes ?? [];
+    if (prevAttrs.length !== nextAttrs.length) return true;
+
+    for (let i = 0; i < prevAttrs.length; i++) {
+        if (prevAttrs[i] !== nextAttrs[i]) return true;
+    }
+
+    return false;
 }
