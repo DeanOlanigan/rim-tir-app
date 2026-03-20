@@ -4,8 +4,6 @@ import { useVariablesStore } from "@/store/variables-store";
 import { useValidationStore } from "@/store/validation-store";
 import {
     useRefreshConfigurationMutation,
-    useStartTirMutation,
-    useStopTirMutation,
     useUploadConfigurationMutation,
 } from "@/hooks/useMutation";
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
@@ -16,8 +14,6 @@ export const RouterMenu = ({ ...props }) => {
     const sync = useVariablesStore((state) => state.sync);
     const hasErrors = errorsTreeSize > 0;
 
-    const startM = useStartTirMutation();
-    const stopM = useStopTirMutation();
     const uploadM = useUploadConfigurationMutation();
     const refreshM = useRefreshConfigurationMutation();
 
@@ -32,7 +28,7 @@ export const RouterMenu = ({ ...props }) => {
         <Menu.Root size={"sm"}>
             <Menu.Trigger asChild>
                 <Button variant="surface" size="2xs" {...props}>
-                    Роутер
+                    Сервер
                 </Button>
             </Menu.Trigger>
             <Portal>
@@ -70,28 +66,6 @@ export const RouterMenu = ({ ...props }) => {
                                 ? "Обновление..."
                                 : "Получить конфигурацию"}
                         </Menu.Item>
-                        <CanAccess right={"server.start"}>
-                            <Menu.Item
-                                value="start"
-                                onClick={() => startM.mutate()}
-                                disabled={startM.isPending}
-                            >
-                                {startM.isPending
-                                    ? "Запуск..."
-                                    : "Запустить сервер"}
-                            </Menu.Item>
-                        </CanAccess>
-                        <CanAccess right={"server.stop"}>
-                            <Menu.Item
-                                value="stop"
-                                onClick={() => stopM.mutate()}
-                                disabled={stopM.isPending}
-                            >
-                                {stopM.isPending
-                                    ? "Остановка..."
-                                    : "Остановить сервер"}
-                            </Menu.Item>
-                        </CanAccess>
                     </Menu.Content>
                 </Menu.Positioner>
             </Portal>

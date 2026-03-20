@@ -11,6 +11,8 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { LuChevronRight, LuLogOut } from "react-icons/lu";
+import { SidebarTooltip } from "./SidebarTooltip";
+import { useId } from "react";
 
 const colorPalette = ["red", "blue", "green", "yellow", "purple", "orange"];
 const pickPalette = (name) => {
@@ -18,15 +20,24 @@ const pickPalette = (name) => {
     return colorPalette[index];
 };
 export const UserBlock = ({ user, collapsed }) => {
+    const triggerId = useId();
     return (
         <Menu.Root
             lazyMount
             unmountOnExit
             positioning={{ placement: "right-end" }}
+            ids={{ trigger: triggerId }}
+            size={"sm"}
         >
-            <Menu.Trigger asChild>
-                <UserBtn user={user} collapsed={collapsed} />
-            </Menu.Trigger>
+            <SidebarTooltip
+                content={`${user.name} • ${user.roleNames.join(", ")}`}
+                collapsed={collapsed}
+                id={triggerId}
+            >
+                <Menu.Trigger asChild>
+                    <UserBtn user={user} collapsed={collapsed} />
+                </Menu.Trigger>
+            </SidebarTooltip>
             <Portal>
                 <Menu.Positioner>
                     <UserContent user={user} />

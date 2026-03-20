@@ -50,11 +50,6 @@ export const rightsSample = {
                     name: "Остановка сервера",
                     disabled: false,
                 },
-                {
-                    id: "server.restart",
-                    name: "Перезапуск сервера",
-                    disabled: false,
-                },
             ],
         },
 
