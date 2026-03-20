@@ -3,7 +3,6 @@ import {
     LuChartLine,
     LuCog,
     LuNotebook,
-    LuScrollText,
     LuSquareMousePointer,
 } from "react-icons/lu";
 
@@ -19,12 +18,6 @@ export const navItems = [
         path: "monitoring",
         icon: LuActivity,
         right: "monitoring.view",
-    },
-    {
-        name: "Логирование",
-        path: "log",
-        icon: LuScrollText,
-        right: "logs.view",
     },
     {
         name: "Журналирование",

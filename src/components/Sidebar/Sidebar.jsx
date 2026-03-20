@@ -18,8 +18,8 @@ import { StatusBlock } from "./StatusBlock";
 import { useMemo } from "react";
 import { navItems } from "../Navigation/nav-items";
 import { RADII_MAIN } from "@/config/constants";
-import { ServerMenu } from "./ServerMenu";
-import { CanAccess } from "@/CanAccess";
+import { SidebarLogsItem } from "./SidebarLogsItem";
+import { SidebarServerItem } from "./SidebarServerItem";
 
 export const Sidebar = () => {
     const { user } = useAuth();
@@ -85,9 +85,8 @@ export const Sidebar = () => {
             <VStack gap={4} align={"center"} separator={<StackSeparator />}>
                 <StatusBlock collapsed={collapsed} />
                 <VStack w={"100%"}>
-                    <CanAccess anyOf={["server.start", "server.stop"]}>
-                        <ServerMenu collapsed={collapsed} />
-                    </CanAccess>
+                    <SidebarServerItem collapsed={collapsed} />
+                    <SidebarLogsItem collapsed={collapsed} />
                     <SidebarSettingsItem collapsed={collapsed} />
                     <ThemeBtn collapsed={collapsed} />
                     <UserBlock user={user} collapsed={collapsed} />
