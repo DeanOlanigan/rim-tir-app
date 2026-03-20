@@ -1,12 +1,13 @@
 import { useMemo } from "react";
 import { useFilterStore } from "./JournalStores/filter-store";
 import { useJournalStream } from "./JournalStores/journal-stream-store";
-import { JournalTableBase } from "./JournalView/JournalTableBase";
 import { JOURNAL_LIVE_COLUMNS } from "./JournalView/tableColumns";
 import { useFilterData } from "./hooks/useFilterData";
 import { MenuTypes } from "./JournalFilter/MenuFilters/MenuTypes";
 import { MenuCategories } from "./JournalFilter/MenuFilters/MenuCategories";
 import { AckButtonRange } from "./JournalView/AckButtonRange";
+import { hasRight } from "@/utils/permissions";
+import { JournalLiveTableBase } from "./JournalView/JournalLiveTableBase";
 
 const getFrom = () => {
     const ts = Object.values(useJournalStream.getState().entities)?.[0]?.ts;
@@ -28,26 +29,20 @@ function getPeriod() {
     };
 }
 
-const renderLiveHeaderContent = (column) => {
-    switch (column.value) {
-        case "type":
-            return <MenuTypes name={column.label} />;
-        case "category":
-            return <MenuCategories name={column.label} />;
-        case "needAck":
-            return (
-                <AckButtonRange
-                    tooltip={"Квитировать все события текущей сессии"}
-                    confirmMessage={
-                        "Будут квитированы все события текущей сессии"
-                    }
-                    getPeriod={getPeriod}
-                />
-            );
-
-        default:
-            return column.label;
+const renderLiveHeaderContent = ({ column, user }) => {
+    if (column.value === "type") return <MenuTypes name={column.label} />;
+    if (column.value === "category")
+        return <MenuCategories name={column.label} />;
+    if (column.value === "needAck" && hasRight(user, "journal.ack")) {
+        return (
+            <AckButtonRange
+                tooltip={"Квитировать все события текущей сессии"}
+                confirmMessage={"Будут квитированы все события текущей сессии"}
+                getPeriod={getPeriod}
+            />
+        );
     }
+    return column.label;
 };
 
 export const JournalLiveTable = () => {
@@ -64,7 +59,7 @@ export const JournalLiveTable = () => {
     const data = useFilterData(rowData, selectedMessages, selectedCategory);
 
     return (
-        <JournalTableBase
+        <JournalLiveTableBase
             columns={JOURNAL_LIVE_COLUMNS}
             data={data}
             renderHeaderContent={renderLiveHeaderContent}

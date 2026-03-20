@@ -1,13 +1,14 @@
-import { useMemo } from "react";
-import { JournalTableBase } from "./JournalView/JournalTableBase";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { JOURNAL_HISTORY_COLUMNS } from "./JournalView/tableColumns";
-import { Button, Center, Spinner, VStack } from "@chakra-ui/react";
+import { Center, Spinner, VStack } from "@chakra-ui/react";
 import { useJournalHistoryStore } from "./JournalStores/journal-history-store";
 import { useJournalHistoryQuery } from "./hooks/useJournalHistoryQuery";
 import { AckButtonRange } from "./JournalView/AckButtonRange";
 import { getLocalTimeZone } from "@internationalized/date";
 import { RADII_MAIN } from "@/config/constants";
 import { formatJournalDate } from "./formatJournalDate";
+import { hasRight } from "@/utils/permissions";
+import { JournalHistoryTableBase } from "./JournalView/JournalHistoryTableBase";
 
 function toISO(data) {
     return data.toDate(getLocalTimeZone()).toISOString();
@@ -20,8 +21,8 @@ function getPeriod() {
     };
 }
 
-const renderHistoryHeaderContent = (column) => {
-    if (column.value === "needAck")
+const renderHistoryHeaderContent = ({ column, user }) => {
+    if (column.value === "needAck" && hasRight(user, "journal.ack"))
         return (
             <AckButtonRange
                 tooltip={"Квитировать все события за выбранный период"}
@@ -34,8 +35,11 @@ const renderHistoryHeaderContent = (column) => {
     return column.label;
 };
 
+const BOTTOM_OFFSET_PX = 500;
+
 export const JournalHistoryTable = () => {
     const filters = useJournalHistoryStore((s) => s.filters);
+    const tableContainerRef = useRef(null);
 
     const {
         data,
@@ -44,6 +48,7 @@ export const JournalHistoryTable = () => {
         error,
         hasNextPage,
         fetchNextPage,
+        isFetching,
         isFetchingNextPage,
     } = useJournalHistoryQuery(filters);
 
@@ -57,6 +62,25 @@ export const JournalHistoryTable = () => {
             ) ?? [],
         [data],
     );
+
+    const fetchMoreOnBottomReached = useCallback(
+        (container) => {
+            if (!container) return;
+            if (!hasNextPage || isFetchingNextPage) return;
+
+            const { scrollHeight, scrollTop, clientHeight } = container;
+            const distanceToBottom = scrollHeight - scrollTop - clientHeight;
+
+            if (distanceToBottom < BOTTOM_OFFSET_PX && !isFetching) {
+                fetchNextPage();
+            }
+        },
+        [fetchNextPage, isFetching, hasNextPage, isFetchingNextPage],
+    );
+
+    useEffect(() => {
+        fetchMoreOnBottomReached(tableContainerRef.current);
+    }, [fetchMoreOnBottomReached, rowData.length]);
 
     if (isLoading) {
         return (
@@ -87,21 +111,18 @@ export const JournalHistoryTable = () => {
             borderRadius={RADII_MAIN}
             shadow={"md"}
         >
-            <JournalTableBase
+            <JournalHistoryTableBase
                 columns={JOURNAL_HISTORY_COLUMNS}
                 data={rowData}
                 renderHeaderContent={renderHistoryHeaderContent}
+                containerRef={tableContainerRef}
+                onScroll={(e) => fetchMoreOnBottomReached(e.currentTarget)}
             />
 
-            {hasNextPage && (
-                <Button
-                    size={"xs"}
-                    variant={"outline"}
-                    onClick={() => fetchNextPage()}
-                    isLoading={isFetchingNextPage}
-                >
-                    Загрузить ещё
-                </Button>
+            {isFetchingNextPage && (
+                <Center py={2}>
+                    <Spinner size="sm" />
+                </Center>
             )}
         </VStack>
     );

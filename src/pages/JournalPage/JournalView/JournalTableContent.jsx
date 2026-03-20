@@ -1,88 +1,15 @@
-import { Box, IconButton } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useStickToBottom } from "use-stick-to-bottom";
-import { NoData } from "@/components/NoData";
-import { useCreateTable } from "../hooks/useCreateTable";
-import { LuArrowDown } from "react-icons/lu";
 import { flexRender } from "@tanstack/react-table";
-import { memo, useCallback, useState } from "react";
-import {
-    JOURNAL_INFO_DRAWER_ID,
-    journalAdditionalInfoDrawer,
-} from "@/journalAdditionalInfoDrawer";
+import { memo } from "react";
 
 const ROW_HEIGHT = 36;
 const OVERSCAN = 10;
 
-export const JournalTableBase = ({ columns, data, renderHeaderContent }) => {
-    const table = useCreateTable(columns, data);
-    const rows = table.getRowModel().rows;
-
-    if (!columns?.length) return <NoData />;
-
-    return (
-        <StickToBottomShell>
-            {({ contentRef, scrollElement }) => (
-                <JournalTableContent
-                    columns={columns}
-                    rows={rows}
-                    renderHeaderContent={renderHeaderContent}
-                    contentRef={contentRef}
-                    scrollElement={scrollElement}
-                />
-            )}
-        </StickToBottomShell>
-    );
-};
-
-function StickToBottomShell({ children }) {
-    const { scrollRef, contentRef, isAtBottom, scrollToBottom } =
-        useStickToBottom({
-            initial: "instant",
-            resize: "instant",
-        });
-
-    const [scrollElement, setScrollElement] = useState(null);
-
-    const setScrollNode = useCallback(
-        (node) => {
-            setScrollElement(node);
-            scrollRef(node);
-        },
-        [scrollRef],
-    );
-
-    return (
-        <Box w="full" h="full" minH={0} position="relative">
-            <Box
-                ref={setScrollNode}
-                overflow="auto"
-                position="relative"
-                w="full"
-                h="full"
-                minH={0}
-            >
-                {children({ contentRef, scrollElement })}
-            </Box>
-
-            {!isAtBottom && (
-                <Box position="absolute" bottom="2" right="2" zIndex="overlay">
-                    <IconButton
-                        size="sm"
-                        onClick={() => scrollToBottom({ animation: "instant" })}
-                        variant="solid"
-                    >
-                        <LuArrowDown />
-                    </IconButton>
-                </Box>
-            )}
-        </Box>
-    );
-}
-
-const JournalTableContent = memo(function JournalTableContent({
+export const JournalTableContent = memo(function JournalTableContent({
     columns,
     rows,
+    user,
     renderHeaderContent,
     contentRef,
     scrollElement,
@@ -107,6 +34,7 @@ const JournalTableContent = memo(function JournalTableContent({
         >
             <TableHeader
                 columns={columns}
+                user={user}
                 renderHeaderContent={renderHeaderContent}
             />
             <tbody
@@ -133,9 +61,13 @@ const JournalTableContent = memo(function JournalTableContent({
     );
 });
 
-const defaultRenderHeaderContent = (column) => column.label;
+const defaultRenderHeaderContent = ({ column }) => column.label;
 
-const TableHeader = memo(({ columns, renderHeaderContent }) => {
+const TableHeader = memo(function TableHeader({
+    columns,
+    user,
+    renderHeaderContent,
+}) {
     const renderContent = renderHeaderContent ?? defaultRenderHeaderContent;
 
     return (
@@ -178,14 +110,13 @@ const TableHeader = memo(({ columns, renderHeaderContent }) => {
                             borderBottomRightRadius: "l2",
                         }}
                     >
-                        {renderContent(column)}
+                        {renderContent({ column, user })}
                     </Box>
                 ))}
             </tr>
         </thead>
     );
 });
-TableHeader.displayName = "TableHeader";
 
 const TableRow = ({ row, virtualRow }) => {
     const isWarning = row.original.severity === "warning";
@@ -212,8 +143,6 @@ const TableRow = ({ row, virtualRow }) => {
             }}
         >
             {row.getVisibleCells().map((cell) => {
-                const isInfo = cell.column.id === "info";
-                const infoStyle = isInfo ? { cursor: "pointer" } : undefined;
                 return (
                     <td
                         key={cell.id}
@@ -228,14 +157,6 @@ const TableRow = ({ row, virtualRow }) => {
                             whiteSpace: "nowrap",
                             fontWeight: "500",
                             fontSize: "0.875rem",
-                            ...infoStyle,
-                        }}
-                        onClick={() => {
-                            if (isInfo)
-                                journalAdditionalInfoDrawer.open(
-                                    JOURNAL_INFO_DRAWER_ID,
-                                    { event: cell.row.original },
-                                );
                         }}
                     >
                         {flexRender(

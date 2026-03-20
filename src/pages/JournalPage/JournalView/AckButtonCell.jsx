@@ -47,7 +47,7 @@ export const AckButtonCellChakra = memo(({ id }) => {
         });
 
     return (
-        <IconButton size={"xs"} variant={"outline"} onClick={handleClick}>
+        <IconButton size={"2xs"} variant={"outline"} onClick={handleClick}>
             <LuCheck />
         </IconButton>
     );

@@ -1,13 +1,19 @@
 import { useMemo } from "react";
 import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import {
+    LuChevronRight,
     LuCircleAlert,
     LuInfo,
     LuSiren,
     LuTriangleAlert,
 } from "react-icons/lu";
 import { AckButtonCellChakra } from "../JournalView/AckButtonCell";
-import { Icon } from "@chakra-ui/react";
+import { Icon, IconButton } from "@chakra-ui/react";
+import { hasRight } from "@/utils/permissions";
+import {
+    JOURNAL_INFO_DRAWER_ID,
+    journalAdditionalInfoDrawer,
+} from "@/journalAdditionalInfoDrawer";
 
 const EVENT_LABEL_MAP = {
     "variable.value_changed": "Изменение значения переменной",
@@ -107,7 +113,46 @@ const buildAccessor = (column) => {
     }
 };
 
-export const useCreateTable = (filteredColumns, filteredData) => {
+const infoCell = ({ value, row }) => {
+    return (
+        <div
+            style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                width: "100%",
+                minWidth: 0,
+            }}
+            className="group"
+        >
+            <span
+                style={{
+                    flex: 1,
+                    minWidth: 0,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                }}
+            >
+                {String(value ?? "")}
+            </span>
+            <IconButton
+                display={{ base: "none", _groupHover: "flex" }}
+                size={"2xs"}
+                variant={"outline"}
+                onClick={() =>
+                    journalAdditionalInfoDrawer.open(JOURNAL_INFO_DRAWER_ID, {
+                        event: row.original,
+                    })
+                }
+            >
+                <LuChevronRight />
+            </IconButton>
+        </div>
+    );
+};
+
+export const useCreateTable = (filteredColumns, filteredData, user) => {
     const columns = useMemo(
         () =>
             filteredColumns.map((column) => ({
@@ -120,8 +165,13 @@ export const useCreateTable = (filteredColumns, filteredData) => {
                 },
                 cell: ({ getValue, row }) => {
                     switch (column.value) {
+                        case "info": {
+                            const value = getValue();
+                            return infoCell({ value, row });
+                        }
                         case "needAck": {
-                            if (!getValue()) return null;
+                            if (!getValue() || !hasRight(user, "journal.ack"))
+                                return null;
                             return <AckButtonCellChakra id={row.original.id} />;
                         }
                         case "type": {
@@ -145,7 +195,7 @@ export const useCreateTable = (filteredColumns, filteredData) => {
                     }
                 },
             })),
-        [filteredColumns],
+        [filteredColumns, user],
     );
 
     return useReactTable({

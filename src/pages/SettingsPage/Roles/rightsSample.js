@@ -112,6 +112,11 @@ export const rightsSample = {
                     name: "Скачивание записей",
                     disabled: false,
                 },
+                {
+                    id: "journal.ack",
+                    name: "Квитирование записей",
+                    disabled: false,
+                },
             ],
         },
 
