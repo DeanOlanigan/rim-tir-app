@@ -2,11 +2,15 @@ import { useVariablesStore } from "@/store/variables-store";
 import { Input, InputGroup } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ErrorSign } from "./ErrorSign";
+import { useAuth } from "@/hooks/useAuth";
+import { hasRight } from "@/utils/permissions";
 
 export const NameInput = (props) => {
     const { id, value, errors, ...rest } = props;
+    const { user } = useAuth();
     const [innerName, setInnerName] = useState(value);
     const renameNode = useVariablesStore((state) => state.renameNode);
+    const disabled = !hasRight(user, "config.editor");
 
     useEffect(() => {
         setInnerName(value);
@@ -20,6 +24,7 @@ export const NameInput = (props) => {
         >
             <Input
                 size={"xs"}
+                disabled={disabled}
                 value={innerName}
                 onChange={(e) => setInnerName(e.target.value)}
                 onBlur={(e) => {

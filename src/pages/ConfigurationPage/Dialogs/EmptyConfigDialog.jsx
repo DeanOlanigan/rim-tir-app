@@ -84,7 +84,7 @@ export const EmptyConfigDialog = () => {
                                 >
                                     Синхронизировать
                                 </Button>
-                                <CanAccess right={"config.create"}>
+                                <CanAccess right={"config.editor"}>
                                     <Button
                                         size={"xs"}
                                         ref={ref}

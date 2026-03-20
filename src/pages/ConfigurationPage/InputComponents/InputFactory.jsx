@@ -11,6 +11,8 @@ import { memo } from "react";
 import { Field, Text } from "@chakra-ui/react";
 import { configuratorConfig } from "@/store/configurator-config";
 import { InfoTip } from "@/components/ui/toggle-tip";
+import { useAuth } from "@/hooks/useAuth";
+import { hasRight } from "@/utils/permissions";
 
 const inputRenderers = {
     drop: (props) => <ComboboxInput {...props} />,
@@ -40,16 +42,18 @@ export const InputFactory = memo(function InputFactory(props) {
         showLabel = false,
         ...rest
     } = props;
+    const { user } = useAuth();
     const errors = useValidationStore((state) =>
         state.errorsTree.get(id)?.get(inputParam),
     );
-
+    const disabled = !hasRight(user, "config.editor");
     const renderer = inputRenderers[type] || inputRenderers.default;
     const inputProps = {
         id,
         targetkey: inputParam,
         value,
         errors,
+        disabled,
         ...rest,
     };
     if (type === "enum") {

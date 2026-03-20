@@ -8,6 +8,8 @@ import { NODE_TYPES } from "@/config/constants";
 import { useTreeRegistry } from "@/store/tree-registry-store";
 import { Box } from "@chakra-ui/react";
 import { useTreeHostkeys } from "./useTreeHostkeys";
+import { useAuth } from "@/hooks/useAuth";
+import { hasRight } from "@/utils/permissions";
 
 export const TreeView = memo(function TreeView({
     data,
@@ -15,7 +17,8 @@ export const TreeView = memo(function TreeView({
     width = 500,
     height = 900,
 }) {
-    console.log("%cRender NEW TreeView", "color: white; background: red;");
+    const { user } = useAuth();
+    const allowed = hasRight(user, "editor.config");
     const { setApi } = useTreeRegistry.getState();
     const {
         handleRenameNode,
@@ -25,7 +28,7 @@ export const TreeView = memo(function TreeView({
         handleContextMenu,
         handleSelect,
         handleDisableDrop,
-    } = useTreeViewHandlers(treeType);
+    } = useTreeViewHandlers(treeType, allowed);
     const apiRef = useRef(null);
     const registerApi = useCallback(
         (api) => {
@@ -56,10 +59,19 @@ export const TreeView = memo(function TreeView({
                 onMove={handleMoveNode}
                 onSelect={handleSelect}
                 onContextMenu={handleContextMenu}
+                disableDrag={!allowed}
                 disableDrop={handleDisableDrop}
                 disableEdit={(data) => data.type === NODE_TYPES.root}
             >
-                {Node}
+                {({ node, style, dragHandle, tree }) => (
+                    <Node
+                        node={node}
+                        dragHandle={dragHandle}
+                        style={style}
+                        tree={tree}
+                        allowed={allowed}
+                    />
+                )}
             </Tree>
         </Box>
     );

@@ -6,9 +6,6 @@ import {
     configurationInfoDialog,
     MODE,
 } from "../Dialogs/configurationInfoDialog";
-import { useVariablesStore } from "@/store/variables-store";
-import { useValidationStore } from "@/store/validation-store";
-import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 import { CanAccess } from "@/CanAccess";
 
 export const ConfMenu = ({ ...props }) => {
@@ -22,7 +19,7 @@ export const ConfMenu = ({ ...props }) => {
             <Portal>
                 <Menu.Positioner>
                     <Menu.Content>
-                        <CanAccess right={"config.create"}>
+                        <CanAccess right={"config.editor"}>
                             <Menu.Item
                                 value="new-file"
                                 onClick={() =>
@@ -44,7 +41,7 @@ export const ConfMenu = ({ ...props }) => {
                                 </Menu.Item>
                             </ConfigurationUploader>
                         </CanAccess>
-                        <CanAccess right={"config.edit"}>
+                        <CanAccess right={"config.editor"}>
                             <Menu.Item
                                 value="rename"
                                 onClick={() =>
@@ -62,7 +59,7 @@ export const ConfMenu = ({ ...props }) => {
                         <Menu.Item value="new-win" onClick={downloadStateAsXml}>
                             Сохранить
                         </Menu.Item>
-                        <Menu.Item
+                        {/* <Menu.Item
                             value="export"
                             onClick={() =>
                                 confirmDialog.open(CONFIRM_DIALOG_ID, {
@@ -80,7 +77,7 @@ export const ConfMenu = ({ ...props }) => {
                             }
                         >
                             Закрыть
-                        </Menu.Item>
+                        </Menu.Item> */}
                     </Menu.Content>
                 </Menu.Positioner>
             </Portal>

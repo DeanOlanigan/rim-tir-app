@@ -46,9 +46,6 @@ export const Badge = ({ id, param, childrenParams, isEditing }) => {
                 />
             )}
             {paramData.icon && <Icon as={iconsMap[paramData.icon]} />}
-            {/* {paramData.shortname && (
-                        <Text fontSize={"2xs"}>{paramData.shortname}</Text>
-                    )} */}
             {childrenParams && (
                 <ChildParamViewer
                     params={Object.values(childrenParams).map((param) => ({

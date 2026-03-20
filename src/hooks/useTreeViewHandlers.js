@@ -5,7 +5,7 @@ import { useContextMenuStore } from "@/store/contextMenu-store";
 import { TREE_TYPES, TREE_TYPES_SET } from "@/config/constants";
 import { useTreeRegistry } from "@/store/tree-registry-store";
 
-export function useTreeViewHandlers(treeType) {
+export function useTreeViewHandlers(treeType, allowed) {
     const {
         addNode,
         renameNode,
@@ -53,14 +53,16 @@ export function useTreeViewHandlers(treeType) {
     );
     const handleDeleteNode = useCallback(
         ({ ids }) => {
-            if (ids.some((id) => TREE_TYPES_SET.has(id))) {
-                api.focus(ids[0]);
-            } else {
-                removeNode(treeType, ids);
+            if (allowed) {
+                if (ids.some((id) => TREE_TYPES_SET.has(id))) {
+                    api.focus(ids[0]);
+                } else {
+                    removeNode(treeType, ids);
+                }
             }
             api.deselectAll();
         },
-        [removeNode, treeType, api],
+        [removeNode, treeType, api, allowed],
     );
     const handleMoveNode = useCallback(
         ({ dragIds, parentId, index }) => {
@@ -71,9 +73,9 @@ export function useTreeViewHandlers(treeType) {
     );
     const handleContextMenu = useCallback(
         (e) => {
-            if (!api) return;
             e.preventDefault();
             e.stopPropagation();
+            if (!api || !allowed) return;
             api.root.focus();
             api.root.select();
             updateContext("cfg", {
@@ -83,7 +85,7 @@ export function useTreeViewHandlers(treeType) {
                 visible: true,
             });
         },
-        [api, updateContext],
+        [api, updateContext, allowed],
     );
     const handleSelect = useCallback(() => {
         if (!api) return;

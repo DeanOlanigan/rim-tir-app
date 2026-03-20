@@ -9,7 +9,7 @@ import { hasIgnoreAccessor } from "@/utils/checkers";
 import { ParamViewer } from "@/components/TreeView/ParamViewer";
 import { NODE_TYPES } from "@/config/constants";
 
-export const Node = ({ node, style, dragHandle, tree }) => {
+export const Node = ({ node, style, dragHandle, tree, allowed }) => {
     const { updateContext } = useContextMenuStore.getState();
 
     const isIgnored = useVariablesStore(
@@ -25,6 +25,7 @@ export const Node = ({ node, style, dragHandle, tree }) => {
     const handleContextMenu = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if (!allowed) return;
         node.focus();
         node.open();
         updateContext("cfg", {
@@ -43,12 +44,15 @@ export const Node = ({ node, style, dragHandle, tree }) => {
             style={style}
             className={clsx(styles.node, node.state)}
             onContextMenu={handleContextMenu}
-            onDoubleClick={() => node.edit()}
+            onDoubleClick={() => {
+                if (!allowed) return;
+                node.edit();
+            }}
         >
             <NodeBase
                 node={node}
                 paddingLeft={style.paddingLeft}
-                visual={<NodeVisual node={node} />}
+                visual={<NodeVisual node={node} allowed={allowed} />}
                 params={
                     <ParamViewerWrapper
                         id={node.data.id}

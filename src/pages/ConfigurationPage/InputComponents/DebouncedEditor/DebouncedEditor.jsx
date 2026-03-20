@@ -8,6 +8,8 @@ import { luaAstParse } from "@/utils/validation";
 import { getCompletionSnippets } from "./snippets";
 
 import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
+import { useAuth } from "@/hooks/useAuth";
+import { hasRight } from "@/utils/permissions";
 
 function createVariableDecorations(usages) {
     return usages.map((usage) => ({
@@ -29,6 +31,9 @@ export const DebouncedEditor = memo(function DebouncedEditor({
     height,
     width,
 }) {
+    const { user } = useAuth();
+    const disabled = !hasRight(user, "config.editor");
+
     const [ready, setReady] = useState(false);
 
     useEffect(() => {
@@ -145,6 +150,7 @@ export const DebouncedEditor = memo(function DebouncedEditor({
             onChange={onChangeHandler}
             onMount={handleEditorDidMount}
             options={{
+                readOnly: disabled,
                 minimap: { enabled: false },
                 lineNumbers: "on",
                 renderLineHighlight: "all",

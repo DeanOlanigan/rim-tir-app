@@ -13,6 +13,8 @@ import { useVariablesStore } from "@/store/variables-store";
 import { iconsMap } from "@/config/icons";
 import { validateVisibility } from "@/utils/validation/runners/validateVisibility";
 import { configuratorConfig } from "@/store/configurator-config";
+import { useAuth } from "@/hooks/useAuth";
+import { hasRight } from "@/utils/permissions";
 
 /**
  * props:
@@ -27,6 +29,8 @@ export const CompositeSection = ({
     data,
     label,
 }) => {
+    const { user } = useAuth();
+    const disabled = !hasRight(user, "config.editor");
     const { settings, setSettings } = useVariablesStore.getState();
     const dep =
         configuratorConfig.nodePaths?.[data.path]?.settings[checkedParam];
@@ -50,15 +54,17 @@ export const CompositeSection = ({
                 bg: "colorPalette.subtle",
             }}
             variant="subtle"
-            onClick={() =>
+            onClick={() => {
+                if (disabled) return;
                 setSettings(data.id, {
                     [checkedParam]: !isChecked,
-                })
-            }
+                });
+            }}
         >
             <Card.Body gap={4}>
                 <Float placement={"top-start"} offset={"6"}>
                     <Checkbox.Root
+                        disabled={disabled}
                         checked={isChecked}
                         size={"lg"}
                         variant={"subtle"}

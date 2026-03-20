@@ -18,18 +18,13 @@ export const rightsSample = {
                     disabled: false,
                 },
                 {
-                    id: "config.create",
-                    name: "Создать конфигурацию",
-                    disabled: false,
-                },
-                {
                     id: "config.open",
                     name: "Открыть конфигурацию",
                     disabled: false,
                 },
                 {
-                    id: "config.edit",
-                    name: "Редактировать конфигурацию",
+                    id: "config.editor",
+                    name: "Редактирование конфигурации",
                     disabled: false,
                 },
             ],
