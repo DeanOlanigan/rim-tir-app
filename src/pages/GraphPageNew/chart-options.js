@@ -1,4 +1,13 @@
-export function createOptions(mode, start, end) {
+function toMs(value) {
+    const ms = value ? new Date(value).getTime() : NaN;
+    return Number.isFinite(ms) ? ms : undefined;
+}
+
+export function createOptions(appliedConfig) {
+    const mode = appliedConfig?.mode;
+    const start = toMs(appliedConfig?.range?.utcFrom);
+    const end = toMs(appliedConfig?.range?.utcTo);
+
     const isRealTime = mode === "realTime";
 
     return {
@@ -33,7 +42,7 @@ export function createOptions(mode, start, end) {
                 },
             },
             zoom: createZoomOptions(mode, start, end),
-            streaming: isRealTime ? streamingOptions : undefined,
+            ...(isRealTime ? { streaming: streamingOptions } : {}),
         },
     };
 }

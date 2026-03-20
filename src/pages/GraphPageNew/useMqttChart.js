@@ -58,7 +58,21 @@ export function useMqttChart(chartRef, appliedConfig) {
             buf.length = 0;
 
             if (changed) {
-                chart.update("quiet");
+                chart.update("none");
+            }
+        };
+
+        const handleMessage = ({ topic, msg }) => {
+            const normalized = normalizeLiveMessage(topic, msg);
+            if (!normalized) return;
+
+            buf.push(normalized);
+
+            if (!t) {
+                t = setTimeout(() => {
+                    t = null;
+                    flush();
+                }, 100);
             }
         };
 
@@ -66,31 +80,16 @@ export function useMqttChart(chartRef, appliedConfig) {
             subscribe(
                 `signals/live/by-id/${signalId}`,
                 { qos: 0, retain: false },
-                ({ topic, msg }) =>
-                    subscribeCallback(topic, msg, buf, flush, t),
+                handleMessage,
             ),
         );
 
         return () => {
             for (const unsub of unsubs) unsub();
             if (t) clearTimeout(t);
-            flush();
+            buf.length = 0;
         };
     }, [chartRef, appliedConfig, connected, subscribe]);
-}
-
-function subscribeCallback(topic, msg, buf, flush, t) {
-    const normalized = normalizeLiveMessage(topic, msg);
-    if (!normalized) return;
-
-    buf.push(normalized);
-
-    if (!t) {
-        t = setTimeout(() => {
-            t = null;
-            flush();
-        }, 100);
-    }
 }
 
 function normalizeLiveMessage(topic, msg) {

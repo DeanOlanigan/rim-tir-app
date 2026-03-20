@@ -21,7 +21,7 @@ import {
     VStack,
 } from "@chakra-ui/react";
 import { nanoid } from "nanoid";
-import { useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import {
     useController,
     useFieldArray,
@@ -62,7 +62,7 @@ function createDefaultDataset(index = 0) {
     };
 }
 
-export const DataSets = () => {
+export const DataSets = memo(function DataSets() {
     return (
         <Flex
             px={6}
@@ -85,7 +85,7 @@ export const DataSets = () => {
             </VStack>
         </Flex>
     );
-};
+});
 
 const DataSetBadge = () => {
     const { control } = useFormContext();

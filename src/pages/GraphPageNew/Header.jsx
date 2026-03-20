@@ -11,7 +11,6 @@ import {
     Portal,
     SegmentGroup,
     Select,
-    Text,
     VStack,
 } from "@chakra-ui/react";
 import { today } from "@internationalized/date";
@@ -40,15 +39,12 @@ export const Header = () => {
         >
             <HStack align={"start"}>
                 <ModeField />
-
                 {mode === "period" && (
                     <>
                         <DatePeriod />
                         <PointLimit />
                     </>
                 )}
-
-                {mode === "realTime" && <RealTimeInfo />}
             </HStack>
             <Box>
                 <Badge size={"md"}>
@@ -308,21 +304,6 @@ const PointLimit = () => {
                 </Portal>
             </Select.Root>
             <Field.ErrorText>{error?.message}</Field.ErrorText>
-        </Field.Root>
-    );
-};
-
-const RealTimeInfo = () => {
-    return (
-        <Field.Root orientation="vertical">
-            <Field.Label fontSize="xs" color="fg.muted">
-                Режим текущих данных
-            </Field.Label>
-            <HStack h="32px" px={3}>
-                <Text fontSize="sm" color="fg.muted">
-                    Пауза и live-управление добавим на следующем шаге
-                </Text>
-            </HStack>
         </Field.Root>
     );
 };
