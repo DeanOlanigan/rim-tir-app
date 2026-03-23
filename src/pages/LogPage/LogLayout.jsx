@@ -43,8 +43,6 @@ function LogPage() {
             </Card.Footer>
         </Card.Root>
     );
-
-    //return hasChosenLog ? <LogViewer /> : <LogSourceManager />;
 }
 
 export default LogPage;

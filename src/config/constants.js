@@ -35,7 +35,7 @@ const HOSTKEYS = {
 const LOG_LEVELS = {
     debug: "debug",
     info: "info",
-    warn: "warn",
+    warn: "warning",
     error: "error",
     status: "status",
 };

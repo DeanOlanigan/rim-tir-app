@@ -10,7 +10,7 @@ export const LogViewerHeader = () => {
 
     return (
         <HStack align={"center"} justify={"space-between"} gap={"4"}>
-            <HStack>
+            <HStack gap={4}>
                 <IconButton
                     size={"xs"}
                     shadow={"xs"}

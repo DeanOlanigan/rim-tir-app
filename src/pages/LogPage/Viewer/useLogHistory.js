@@ -4,9 +4,15 @@ import { useEffect } from "react";
 import { useLogStream } from "../store/stream-store";
 
 export function useLogHistory(type, name, limit) {
-    const { hydrate } = useLogStream.getState();
+    const { hydrate, reset } = useLogStream.getState();
+
+    useEffect(() => {
+        reset();
+    }, [type, name, reset]);
+
     const q = useQuery({
         queryKey: ["log", type, name, limit],
+        enabled: Boolean(type && name && limit > 0),
         queryFn: async () => {
             const res = await getLog(name, type, limit, "json");
             return res?.data ?? [];
@@ -14,8 +20,8 @@ export function useLogHistory(type, name, limit) {
     });
 
     useEffect(() => {
-        if (q.data) hydrate(q.data);
-    }, [q.data, hydrate]);
+        if (q.isSuccess) hydrate(q.data ?? []);
+    }, [q.data, hydrate, q.isSuccess]);
 
     return q;
 }

@@ -2,6 +2,7 @@ import { CheckboxCard, CheckboxGroup, Group } from "@chakra-ui/react";
 import { LuCircleAlert, LuInfo, LuTriangleAlert } from "react-icons/lu";
 import { useLogStore } from "../../store/store";
 import { LOG_LEVELS } from "@/config/constants";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export const LogTypesFilterButtons = () => {
     const filter = useLogStore((state) => state.filter);
@@ -11,6 +12,7 @@ export const LogTypesFilterButtons = () => {
         <CheckboxGroup
             onValueChange={(activeFilters) => setFilter(activeFilters)}
             value={filter}
+            zIndex={1}
         >
             <Group attached shadow={"xs"}>
                 <CheckboxCard.Root
@@ -19,19 +21,24 @@ export const LogTypesFilterButtons = () => {
                     value={LOG_LEVELS.warn}
                 >
                     <CheckboxCard.HiddenInput />
-                    <CheckboxCard.Control p={"0.45rem"}>
-                        <LuTriangleAlert size={"16px"} />
-                    </CheckboxCard.Control>
+                    <Tooltip showArrow content={"Предупреждения"}>
+                        <CheckboxCard.Control p={"0.45rem"}>
+                            <LuTriangleAlert size={"16px"} />
+                        </CheckboxCard.Control>
+                    </Tooltip>
                 </CheckboxCard.Root>
+
                 <CheckboxCard.Root
                     variant={"surface"}
                     colorPalette={"red"}
                     value={LOG_LEVELS.error}
                 >
                     <CheckboxCard.HiddenInput />
-                    <CheckboxCard.Control p={"0.45rem"}>
-                        <LuCircleAlert size={"16px"} />
-                    </CheckboxCard.Control>
+                    <Tooltip showArrow content={"Ошибки"}>
+                        <CheckboxCard.Control p={"0.45rem"}>
+                            <LuCircleAlert size={"16px"} />
+                        </CheckboxCard.Control>
+                    </Tooltip>
                 </CheckboxCard.Root>
                 <CheckboxCard.Root
                     variant={"surface"}
@@ -39,9 +46,11 @@ export const LogTypesFilterButtons = () => {
                     value={LOG_LEVELS.info}
                 >
                     <CheckboxCard.HiddenInput />
-                    <CheckboxCard.Control p={"0.45rem"}>
-                        <LuInfo size={"16px"} />
-                    </CheckboxCard.Control>
+                    <Tooltip showArrow content={"Информация"}>
+                        <CheckboxCard.Control p={"0.45rem"}>
+                            <LuInfo size={"16px"} />
+                        </CheckboxCard.Control>
+                    </Tooltip>
                 </CheckboxCard.Root>
             </Group>
         </CheckboxGroup>

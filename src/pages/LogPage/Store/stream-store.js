@@ -5,50 +5,20 @@ function trim(arr, limit) {
     return arr.length > limit ? arr.slice(-limit) : arr;
 }
 
-const MAX_ROWS = 50000;
+const MAX_ROWS = 50_000;
 
 export const useLogStream = create((set) => ({
-    isPaused: false,
     live: [],
-    paused: [],
 
-    hydrate: (rows) => set(() => ({ live: trim(rows, MAX_ROWS), paused: [] })),
-    reset: () => set({ live: [], paused: [], isPaused: false }),
-    pause: () =>
-        set((state) => ({
-            isPaused: true,
-            live: trim(
-                state.live.concat({
-                    epochMs: Date.now(),
-                    ts: new Date().toISOString(),
-                    level: "status",
-                    message: "Поставлено на паузу",
-                }),
-                MAX_ROWS,
-            ),
-        })),
+    hydrate: (rows) => set(() => ({ live: trim(rows, MAX_ROWS) })),
 
-    resume: () =>
-        set((state) => ({
-            isPaused: false,
-            live: trim(
-                state.live.concat(state.paused).concat({
-                    epochMs: Date.now(),
-                    ts: new Date().toISOString(),
-                    level: "status",
-                    message: "Возобновлено",
-                }),
-                MAX_ROWS,
-            ),
-            paused: [],
-        })),
+    reset: () => set({ live: [] }),
 
     push: (rows) =>
         set((state) => {
             if (!rows.length) return {};
-            const target = state.isPaused ? "paused" : "live";
-            const next = state[target].concat(rows);
-            return { [target]: trim(next, MAX_ROWS) };
+            const next = state.live.concat(rows);
+            return { live: trim(next, MAX_ROWS) };
         }),
 }));
 

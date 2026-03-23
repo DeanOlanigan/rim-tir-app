@@ -11,7 +11,9 @@ export function useLogData() {
         chosenLog?.label,
         logRowsCount,
     );
-    useMqttLogs(chosenLog?.category, chosenLog?.label);
+    useMqttLogs(chosenLog?.category, chosenLog?.label, {
+        enabled: q.isSuccess,
+    });
 
     const filterSet = new Set(filter);
     const live = useFilteredLogs(filterSet);
