@@ -1,13 +1,12 @@
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 import { IconButton } from "@chakra-ui/react";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import { LuCheck } from "react-icons/lu";
-import { useJournalStream } from "../JournalStores/journal-stream-store";
-import { eventAcknowledge } from "@/api/commands";
+import { useAckEventStreamMutation } from "../hooks/useAckEventMutation";
 
-export const AckButtonCell = memo(({ id }) => {
+export const AckButtonCell = memo(({ event }) => {
     const handleClick = () => {
-        console.log("ACK", id);
+        console.log("ACK", event.id);
     };
 
     return (
@@ -32,22 +31,33 @@ export const AckButtonCell = memo(({ id }) => {
 });
 AckButtonCell.displayName = "AckButtonCell";
 
-export const AckButtonCellChakra = memo(({ id }) => {
-    const handleClick = () =>
+export const AckButtonCellChakra = memo(({ event }) => {
+    // TODO Вынести квитирования в функцию компонента верхнего уровня
+    const ackMutation = useAckEventStreamMutation();
+
+    const isPending = ackMutation.isPending;
+
+    const handleClick = useCallback(() => {
         confirmDialog.open(CONFIRM_DIALOG_ID, {
             onAccept: () => {
-                const event = useJournalStream.getState().entities[id].event;
-                eventAcknowledge({
-                    eventId: id,
-                    event,
-                    message: `Квитирование события ${event}`,
+                ackMutation.mutate({
+                    eventId: event.id,
+                    event: event.event,
+                    message: `Квитирование события ${event.event}`,
                 });
             },
             title: "Квитировать событие?",
         });
+    }, [ackMutation, event.id, event.event]);
 
     return (
-        <IconButton size={"2xs"} variant={"outline"} onClick={handleClick}>
+        <IconButton
+            size={"2xs"}
+            variant={"outline"}
+            onClick={handleClick}
+            disabled={isPending}
+            loading={isPending}
+        >
             <LuCheck />
         </IconButton>
     );

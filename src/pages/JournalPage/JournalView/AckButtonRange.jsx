@@ -1,4 +1,3 @@
-import { eventAcknowledgeRange } from "@/api/commands";
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 import { Tooltip } from "@/components/ui/tooltip";
 import { IconButton } from "@chakra-ui/react";
@@ -8,7 +7,8 @@ export const AckButtonRange = ({
     tooltip,
     confirmTitle = "Квитировать все события?",
     confirmMessage,
-    getPeriod,
+    onAccept,
+    isPending = false,
 }) => {
     return (
         <Tooltip showArrow content={tooltip}>
@@ -16,15 +16,11 @@ export const AckButtonRange = ({
                 variant="ghost"
                 size="2xs"
                 color={"fg"}
+                loading={isPending}
+                disabled={isPending}
                 onClick={() =>
                     confirmDialog.open(CONFIRM_DIALOG_ID, {
-                        onAccept: () => {
-                            const { from, to } = getPeriod();
-                            eventAcknowledgeRange({
-                                from,
-                                to,
-                            });
-                        },
+                        onAccept,
                         title: confirmTitle,
                         message: confirmMessage,
                     })

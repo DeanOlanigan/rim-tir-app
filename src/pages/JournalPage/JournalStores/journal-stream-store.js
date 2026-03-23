@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { formatJournalDate } from "../formatJournalDate";
 
-const MAX_ROWS = 10000;
+const MAX_ROWS = 10_000;
 
 function getActorText(actor) {
     if (!actor) return "";
@@ -183,7 +183,7 @@ function handleAcknowledgmentRange(entities, incoming) {
         const event = entities[id];
         if (!event) continue;
 
-        if (event.ts >= fromTs && event.ts <= toTs) {
+        if (event.ts >= fromTs && event.ts <= toTs && isPendingAck(event)) {
             entities[id] = applyAcknowledgedProjection(event, incoming);
         }
     }

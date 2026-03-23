@@ -172,7 +172,7 @@ export const useCreateTable = (filteredColumns, filteredData, user) => {
                         case "needAck": {
                             if (!getValue() || !hasRight(user, "journal.ack"))
                                 return null;
-                            return <AckButtonCellChakra id={row.original.id} />;
+                            return <AckButtonCellChakra event={row.original} />;
                         }
                         case "type": {
                             const severity = row.original.severity;

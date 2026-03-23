@@ -9,36 +9,19 @@ import { RADII_MAIN } from "@/config/constants";
 import { formatJournalDate } from "./formatJournalDate";
 import { hasRight } from "@/utils/permissions";
 import { JournalHistoryTableBase } from "./JournalView/JournalHistoryTableBase";
+import { useAckRangeHistoryMutation } from "./hooks/useAckRangeMutation";
+import { journalFiltersToApiPayload } from "./journal-history-period";
 
-function toISO(data) {
-    return data.toDate(getLocalTimeZone()).toISOString();
+function toTS(data) {
+    return data.toDate(getLocalTimeZone()).getTime();
 }
-
-function getPeriod() {
-    return {
-        from: toISO(useJournalHistoryStore.getState().filters.period.from),
-        to: toISO(useJournalHistoryStore.getState().filters.period.to),
-    };
-}
-
-const renderHistoryHeaderContent = ({ column, user }) => {
-    if (column.value === "needAck" && hasRight(user, "journal.ack"))
-        return (
-            <AckButtonRange
-                tooltip={"Квитировать все события за выбранный период"}
-                confirmMessage={
-                    "Будут квитированы все события за выбранный период"
-                }
-                getPeriod={getPeriod}
-            />
-        );
-    return column.label;
-};
 
 const BOTTOM_OFFSET_PX = 500;
 
 export const JournalHistoryTable = () => {
     const filters = useJournalHistoryStore((s) => s.filters);
+    const apiFilters = journalFiltersToApiPayload(filters);
+
     const tableContainerRef = useRef(null);
 
     const {
@@ -50,7 +33,9 @@ export const JournalHistoryTable = () => {
         fetchNextPage,
         isFetching,
         isFetchingNextPage,
-    } = useJournalHistoryQuery(filters);
+    } = useJournalHistoryQuery(apiFilters);
+
+    const ackRangeMutation = useAckRangeHistoryMutation(apiFilters);
 
     const rowData = useMemo(
         () =>
@@ -76,6 +61,28 @@ export const JournalHistoryTable = () => {
             }
         },
         [fetchNextPage, isFetching, hasNextPage, isFetchingNextPage],
+    );
+
+    const renderHistoryHeaderContent = useCallback(
+        ({ column, user }) => {
+            if (column.value === "needAck" && hasRight(user, "journal.ack"))
+                return (
+                    <AckButtonRange
+                        tooltip={"Квитировать все события за выбранный период"}
+                        confirmMessage={
+                            "Будут квитированы все события за выбранный период"
+                        }
+                        isPending={ackRangeMutation.isPending}
+                        onAccept={() => {
+                            const fromTs = toTS(filters.period.from);
+                            const toTs = toTS(filters.period.to);
+                            ackRangeMutation.mutate({ fromTs, toTs });
+                        }}
+                    />
+                );
+            return column.label;
+        },
+        [ackRangeMutation, filters],
     );
 
     useEffect(() => {
