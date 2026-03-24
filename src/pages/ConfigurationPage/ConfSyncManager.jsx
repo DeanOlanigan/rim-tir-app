@@ -1,4 +1,5 @@
-import { getConfiguration, QK } from "@/api";
+import { QK } from "@/api";
+import { fetchConfigurationState } from "@/api/new/configuration.services";
 import { useVariablesStore } from "@/store/variables-store";
 import { useQuery } from "@tanstack/react-query";
 import { canonicalize } from "json-canonicalize";
@@ -17,7 +18,7 @@ export const ConfSyncManager = () => {
     const { setSync } = useVariablesStore.getState();
     const { data } = useQuery({
         queryKey: QK.configuration,
-        queryFn: getConfiguration,
+        queryFn: fetchConfigurationState,
         select: (state) => toSyncPayload(state),
     });
 

@@ -1,4 +1,4 @@
-import { getConfiguration } from "@/api/configuration";
+import { fetchConfigurationState } from "@/api/new/configuration.services";
 import { QK } from "@/api/queryKeys";
 import { NODE_TYPES } from "@/config/constants";
 import { useQuery } from "@tanstack/react-query";
@@ -22,7 +22,7 @@ function buildAliasIndex(settings) {
 export const useSearchMatch = () => {
     const { data: settings } = useQuery({
         queryKey: QK.configuration,
-        queryFn: getConfiguration,
+        queryFn: fetchConfigurationState,
         select: (state) => state.settings,
     });
 

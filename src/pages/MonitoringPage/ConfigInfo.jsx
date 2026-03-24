@@ -1,4 +1,4 @@
-import { getConfiguration } from "@/api/configuration";
+import { fetchConfigurationState } from "@/api/new/configuration.services";
 import { QK } from "@/api/queryKeys";
 import { ConfigInfo } from "@/components/ConfigInfo";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 export const ConfigInfoWrapper = () => {
     const { data: config } = useQuery({
         queryKey: QK.configuration,
-        queryFn: getConfiguration,
+        queryFn: fetchConfigurationState,
         select: (state) => state.info,
     });
 

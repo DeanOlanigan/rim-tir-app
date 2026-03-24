@@ -1,11 +1,4 @@
-import {
-    getConfiguration,
-    restartTir,
-    startTir,
-    stopTir,
-    uploadConfiguration,
-    QK,
-} from "@/api";
+import { restartTir, startTir, stopTir, uploadConfiguration, QK } from "@/api";
 import { toaster } from "@/components/ui/toaster";
 import { useValidationStore } from "@/store/validation-store";
 import { useVariablesStore } from "@/store/variables-store";
@@ -15,6 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { messageFromError } from "@/utils/utils";
 import { logout } from "@/api/auth";
 import { authKeys } from "@/api/queryKeys";
+import { fetchConfigurationState } from "@/api/new/configuration.services";
 
 export function useStartTirMutation() {
     return useMutation({
@@ -101,7 +95,7 @@ export function useUploadConfigurationMutation() {
 export function useRefreshConfigurationMutation() {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: getConfiguration,
+        mutationFn: fetchConfigurationState,
         onSuccess: (state) => {
             useVariablesStore.setState(state);
             qc.setQueryData(QK.configuration, state);

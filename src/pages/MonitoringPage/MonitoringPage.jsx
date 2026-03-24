@@ -9,7 +9,7 @@ import { RADII_MAIN, TREE_TYPES } from "@/config/constants";
 import { TreeView } from "./Tree/TreeView";
 import { SearchBar } from "./SearchBar";
 import { useQuery } from "@tanstack/react-query";
-import { getConfiguration, QK } from "@/api";
+import { QK } from "@/api";
 import { NoData } from "@/components/NoData";
 import { ErrorInformer } from "@/components/ErrorInformer";
 import { Loader } from "@/components/Loader";
@@ -17,12 +17,13 @@ import { useMqttLive } from "./useMqttLive";
 import { useMonitoringLive } from "./store/mqtt-stream-store";
 import { ContextMenu } from "./ContextMenu/ContextMenu";
 import { Tooltip } from "@/components/ui/tooltip";
+import { fetchConfigurationState } from "@/api/new/configuration.services";
 
 function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const { data, isLoading, isFetching, isError, error } = useQuery({
         queryKey: QK.configuration,
-        queryFn: getConfiguration,
+        queryFn: fetchConfigurationState,
     });
     useEffect(() => {
         if (!data) return;
