@@ -19,7 +19,7 @@ const ConfigurationPage =   lazy(() => import("@/pages/ConfigurationPage/Configu
 const MonitoringPage =      lazy(() => import("@/pages/MonitoringPage/MonitoringPage")); // prettier-ignore
 const LogPage =             lazy(() => import("@/pages/LogPage/LogLayout")); // prettier-ignore
 const JournalPage =         lazy(() => import("@/pages/JournalPage/JournalPage")); // prettier-ignore
-const GraphPageNew =        lazy(() => import("@/pages/GraphPageNew/GraphPageNew")); // prettier-ignore
+const GraphPage =        lazy(() => import("@/pages/GraphPage/GraphPage")); // prettier-ignore
 const SettingsPage =        lazy(() => import("@/pages/SettingsPage/SettingsPage")); // prettier-ignore
 const HMIEditor =           lazy(() => import("@/pages/HMIEditor/HMIEditor")); // prettier-ignore
 
@@ -96,7 +96,7 @@ export const routes = [
                                 children: [
                                     {
                                         path: "graph",
-                                        element: <GraphPageNew />,
+                                        element: <GraphPage />,
                                     },
                                 ],
                             },

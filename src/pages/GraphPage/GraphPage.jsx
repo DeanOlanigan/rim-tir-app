@@ -42,7 +42,7 @@ function normalizeGraphForm(values) {
     };
 }
 
-function GraphPageNew() {
+function GraphPage() {
     const defaultValues = useMemo(() => getDefaultValues(), []);
     const form = useForm({
         defaultValues,
@@ -86,4 +86,4 @@ function GraphPageNew() {
     );
 }
 
-export default GraphPageNew;
+export default GraphPage;
