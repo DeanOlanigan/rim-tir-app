@@ -33,7 +33,7 @@ export const BindingCard = ({
     const isOverride = !binding.useGlobal;
 
     const globalVarName =
-        variables?.find((v) => v.value === globalVariable)?.label || "";
+        variables?.find((v) => v.id === globalVariable)?.label || "";
     const fallbackValue = useNodeStore(
         (s) => s.nodes[selectedIds[0]]?.[binding.property],
     );

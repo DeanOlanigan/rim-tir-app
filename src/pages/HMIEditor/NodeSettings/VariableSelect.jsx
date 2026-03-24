@@ -5,14 +5,22 @@ import {
     useListCollection,
 } from "@chakra-ui/react";
 import { LOCALE } from "../constants";
+import { useEffect } from "react";
 
 export const VariableSelect = ({ variables, value, onChange, disabled }) => {
     const { contains } = useFilter({ sensitivity: "base" });
 
-    const { collection, filter } = useListCollection({
+    const { collection, filter, set } = useListCollection({
         initialItems: variables || [],
+        itemToString: (item) => item.name,
+        itemToValue: (item) => item.id,
         filter: contains,
     });
+
+    useEffect(() => {
+        if (!variables) return;
+        set(variables);
+    }, [variables, set]);
 
     return (
         <Combobox.Root
@@ -37,8 +45,8 @@ export const VariableSelect = ({ variables, value, onChange, disabled }) => {
                     <Combobox.Content>
                         <Combobox.Empty>{LOCALE.noItemsFound}</Combobox.Empty>
                         {collection.items.map((item) => (
-                            <Combobox.Item key={item.value} item={item}>
-                                {item.label}
+                            <Combobox.Item key={item.id} item={item}>
+                                {item.name}
                                 <Combobox.ItemIndicator />
                             </Combobox.Item>
                         ))}

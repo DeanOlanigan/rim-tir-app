@@ -1,10 +1,11 @@
 import { Field, HStack, Input } from "@chakra-ui/react";
-import { useVariables } from "../use-variables";
+import { useVariables } from "../useVariables";
 import { VariableSelect } from "../VariableSelect";
 import { LOCALE } from "../../constants";
 
 export const WriteTag = ({ action, handleChange }) => {
-    const { data: variables } = useVariables();
+    const { data } = useVariables();
+    const variables = data?.data;
 
     return (
         <HStack gap={2} w={"100%"}>

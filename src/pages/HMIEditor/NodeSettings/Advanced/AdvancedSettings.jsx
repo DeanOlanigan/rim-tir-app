@@ -7,11 +7,12 @@ import { getCommonSupportedProps } from "./shape-supported-props";
 import { useShallow } from "zustand/shallow";
 import { useActionsStore } from "../../store/actions-store";
 import { VariableSelect } from "../VariableSelect";
-import { useVariables } from "../use-variables";
+import { useVariables } from "../useVariables";
 import { LOCALE } from "../../constants";
 
 export const AdvancedSettings = ({ types, selectedIds }) => {
-    const { data: variables } = useVariables();
+    const { data } = useVariables();
+    const variables = data?.data;
     const bindingsItems = useNodeStore(
         useShallow((s) => s.nodes[selectedIds[0]]?.bindings?.byProp || {}),
     );
