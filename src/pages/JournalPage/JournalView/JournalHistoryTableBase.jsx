@@ -9,11 +9,19 @@ export const JournalHistoryTableBase = ({
     columns,
     data,
     renderHeaderContent,
+    onAckEvent,
+    isAckEventPending,
     containerRef,
     onScroll,
 }) => {
     const { user } = useAuth();
-    const table = useCreateTable(columns, data, user);
+    const table = useCreateTable(
+        columns,
+        data,
+        user,
+        onAckEvent,
+        isAckEventPending,
+    );
     const rows = table.getRowModel().rows;
     const [scrollElement, setScrollElement] = useState(null);
 

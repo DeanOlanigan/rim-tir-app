@@ -11,9 +11,17 @@ export const JournalLiveTableBase = ({
     columns,
     data,
     renderHeaderContent,
+    onAckEvent,
+    isAckEventPending,
 }) => {
     const { user } = useAuth();
-    const table = useCreateTable(columns, data, user);
+    const table = useCreateTable(
+        columns,
+        data,
+        user,
+        onAckEvent,
+        isAckEventPending,
+    );
     const rows = table.getRowModel().rows;
 
     const { scrollRef, contentRef, isAtBottom, scrollToBottom } =

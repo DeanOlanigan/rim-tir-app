@@ -1,7 +1,6 @@
 import {
     Badge,
     Box,
-    Button,
     CloseButton,
     Code,
     createOverlay,
@@ -12,8 +11,6 @@ import {
     Stack,
     Text,
 } from "@chakra-ui/react";
-import { CONFIRM_DIALOG_ID, confirmDialog } from "./components/confirmDialog";
-import { useAckEventStreamMutation } from "./pages/JournalPage/hooks/useAckEventMutation";
 
 export const JOURNAL_INFO_DRAWER_ID = "JOURNAL_INFO_DRAWER_ID";
 
@@ -314,10 +311,9 @@ function EventPayloadView({ event }) {
 export const journalAdditionalInfoDrawer = createOverlay((props) => {
     const { event, ...rest } = props;
 
-    const ackMutation = useAckEventStreamMutation();
-    const isPending = ackMutation.isPending;
-
     const severityPalette = getSeverityColorPalette(event?.severity);
+
+    console.log(event);
 
     return (
         <Drawer.Root {...rest} lazyMount unmountOnExit size={"md"}>
@@ -432,33 +428,7 @@ export const journalAdditionalInfoDrawer = createOverlay((props) => {
                             )}
                         </Drawer.Body>
 
-                        <Drawer.Footer>
-                            {/* TODO Вынести квитирования в функцию компонента верхнего уровня */}
-                            {event?.ack && (
-                                <Button
-                                    size={"xs"}
-                                    disabled={
-                                        event?.ack?.state !== "pending" ||
-                                        isPending
-                                    }
-                                    loading={isPending}
-                                    onClick={() =>
-                                        confirmDialog.open(CONFIRM_DIALOG_ID, {
-                                            onAccept: () => {
-                                                ackMutation.mutate({
-                                                    eventId: event.id,
-                                                    event: event.event,
-                                                    message: `Квитирование события ${event.event}`,
-                                                });
-                                            },
-                                            title: "Квитировать событие?",
-                                        })
-                                    }
-                                >
-                                    Квитировать событие
-                                </Button>
-                            )}
-                        </Drawer.Footer>
+                        <Drawer.Footer />
                     </Drawer.Content>
                 </Drawer.Positioner>
             </Portal>

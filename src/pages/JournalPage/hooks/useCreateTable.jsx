@@ -152,7 +152,13 @@ const infoCell = ({ value, row }) => {
     );
 };
 
-export const useCreateTable = (filteredColumns, filteredData, user) => {
+export const useCreateTable = (
+    filteredColumns,
+    filteredData,
+    user,
+    onAckEvent,
+    isAckEventPending,
+) => {
     const columns = useMemo(
         () =>
             filteredColumns.map((column) => ({
@@ -172,7 +178,15 @@ export const useCreateTable = (filteredColumns, filteredData, user) => {
                         case "needAck": {
                             if (!getValue() || !hasRight(user, "journal.ack"))
                                 return null;
-                            return <AckButtonCellChakra event={row.original} />;
+                            return (
+                                <AckButtonCellChakra
+                                    event={row.original}
+                                    onAckEvent={onAckEvent}
+                                    isAckEventPending={isAckEventPending(
+                                        row.original,
+                                    )}
+                                />
+                            );
                         }
                         case "type": {
                             const severity = row.original.severity;
@@ -195,7 +209,7 @@ export const useCreateTable = (filteredColumns, filteredData, user) => {
                     }
                 },
             })),
-        [filteredColumns, user],
+        [filteredColumns, user, onAckEvent, isAckEventPending],
     );
 
     return useReactTable({

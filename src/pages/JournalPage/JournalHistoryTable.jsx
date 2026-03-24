@@ -11,6 +11,7 @@ import { hasRight } from "@/utils/permissions";
 import { JournalHistoryTableBase } from "./JournalView/JournalHistoryTableBase";
 import { useAckRangeHistoryMutation } from "./hooks/useAckRangeMutation";
 import { journalFiltersToApiPayload } from "./journal-history-period";
+import { useAckEventHistoryMutation } from "./hooks/useAckEventMutation";
 
 function toTS(data) {
     return data.toDate(getLocalTimeZone()).getTime();
@@ -36,6 +37,7 @@ export const JournalHistoryTable = () => {
     } = useJournalHistoryQuery(apiFilters);
 
     const ackRangeMutation = useAckRangeHistoryMutation(apiFilters);
+    const ackEventMutation = useAckEventHistoryMutation(apiFilters);
 
     const rowData = useMemo(
         () =>
@@ -85,6 +87,24 @@ export const JournalHistoryTable = () => {
         [ackRangeMutation, filters],
     );
 
+    const onAckEvent = useCallback(
+        (event) => {
+            ackEventMutation.mutate({
+                eventId: event.id,
+                event: event.event,
+                message: `Квитирование события ${event.event}`,
+            });
+        },
+        [ackEventMutation],
+    );
+
+    const isAckEventPending = useCallback(
+        (event) =>
+            ackEventMutation.isPending &&
+            ackEventMutation.variables?.eventId === event.id,
+        [ackEventMutation],
+    );
+
     useEffect(() => {
         fetchMoreOnBottomReached(tableContainerRef.current);
     }, [fetchMoreOnBottomReached, rowData.length]);
@@ -122,6 +142,8 @@ export const JournalHistoryTable = () => {
                 columns={JOURNAL_HISTORY_COLUMNS}
                 data={rowData}
                 renderHeaderContent={renderHistoryHeaderContent}
+                onAckEvent={onAckEvent}
+                isAckEventPending={isAckEventPending}
                 containerRef={tableContainerRef}
                 onScroll={(e) => fetchMoreOnBottomReached(e.currentTarget)}
             />

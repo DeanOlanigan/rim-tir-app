@@ -48,12 +48,59 @@ export const JournalTableContent = memo(function JournalTableContent({
             >
                 {virtualRows.map((virtualRow) => {
                     const row = rows[virtualRow.index];
+                    const isWarning = row.original.severity === "warning";
+                    const isError =
+                        row.original.severity === "error" ||
+                        row.original.severity === "critical";
+                    const isNeedAck = row.original.ack?.state === "pending";
+
+                    let bg = "inherit";
+                    if (isError) bg = "var(--chakra-colors-bg-error)";
+                    else if (isWarning) bg = "var(--chakra-colors-bg-warning)";
+                    else if (isNeedAck) bg = "var(--chakra-colors-bg-info)";
+
                     return (
-                        <TableRow
+                        <tr
                             key={row.id}
-                            row={row}
-                            virtualRow={virtualRow}
-                        />
+                            data-index={virtualRow.index}
+                            style={{
+                                display: "flex",
+                                position: "absolute",
+                                transform: `translateY(${virtualRow.start}px)`,
+                                width: "100%",
+                                height: `${virtualRow.size}px`,
+                                background: bg,
+                            }}
+                        >
+                            {row.getVisibleCells().map((cell) => {
+                                return (
+                                    <td
+                                        key={cell.id}
+                                        style={{
+                                            minWidth:
+                                                cell.column.columnDef.minSize,
+                                            flexGrow:
+                                                cell.column.columnDef.meta
+                                                    .grow ?? 1,
+                                            flexBasis:
+                                                cell.column.columnDef.minSize,
+                                            alignContent: "center",
+                                            padding: "0 8px",
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                            whiteSpace: "nowrap",
+                                            fontWeight: "500",
+                                            fontSize: "0.875rem",
+                                        }}
+                                    >
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext(),
+                                        )}
+                                    </td>
+                                );
+                            })}
+                        </tr>
                     );
                 })}
             </tbody>
@@ -117,55 +164,3 @@ const TableHeader = memo(function TableHeader({
         </thead>
     );
 });
-
-const TableRow = ({ row, virtualRow }) => {
-    const isWarning = row.original.severity === "warning";
-    const isError =
-        row.original.severity === "error" ||
-        row.original.severity === "critical";
-    const isNeedAck = row.original.ack?.state === "pending";
-
-    let bg;
-    if (isError) bg = "var(--chakra-colors-bg-error)";
-    else if (isWarning) bg = "var(--chakra-colors-bg-warning)";
-    else if (isNeedAck) bg = "var(--chakra-colors-bg-info)";
-
-    return (
-        <tr
-            data-index={virtualRow.index}
-            style={{
-                display: "flex",
-                position: "absolute",
-                transform: `translateY(${virtualRow.start}px)`,
-                width: "100%",
-                height: `${virtualRow.size}px`,
-                background: bg,
-            }}
-        >
-            {row.getVisibleCells().map((cell) => {
-                return (
-                    <td
-                        key={cell.id}
-                        style={{
-                            minWidth: cell.column.columnDef.minSize,
-                            flexGrow: cell.column.columnDef.meta.grow ?? 1,
-                            flexBasis: cell.column.columnDef.minSize,
-                            alignContent: "center",
-                            padding: "0 8px",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            fontWeight: "500",
-                            fontSize: "0.875rem",
-                        }}
-                    >
-                        {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                        )}
-                    </td>
-                );
-            })}
-        </tr>
-    );
-};

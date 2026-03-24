@@ -9,14 +9,13 @@ import { AckButtonRange } from "./JournalView/AckButtonRange";
 import { hasRight } from "@/utils/permissions";
 import { JournalLiveTableBase } from "./JournalView/JournalLiveTableBase";
 import { useAckEventStreamMutation } from "./hooks/useAckEventMutation";
+import { useAckRangeStreamMutation } from "./hooks/useAckRangeMutation";
 
 const getFrom = () => {
-    const ts = Object.values(useJournalStream.getState().entities)?.[0]?.ts;
-    if (ts) {
-        return ts;
-    } else {
-        return getTo();
-    }
+    const state = useJournalStream.getState();
+    const firstId = state.ids?.[0];
+    const ts = firstId ? state.entities?.[firstId]?.ts : null;
+    return ts ?? Date.now();
 };
 
 const getTo = () => {
@@ -29,7 +28,8 @@ export const JournalLiveTable = () => {
     const selectedMessages = useFilterStore((s) => s.selectedMessages);
     const selectedCategory = useFilterStore((s) => s.selectedCategory);
 
-    const ackRangeMutation = useAckEventStreamMutation();
+    const ackRangeMutation = useAckRangeStreamMutation();
+    const ackEventMutation = useAckEventStreamMutation();
 
     const rowData = useMemo(
         () => ids.map((id) => entities[id]),
@@ -64,11 +64,31 @@ export const JournalLiveTable = () => {
         [ackRangeMutation],
     );
 
+    const onAckEvent = useCallback(
+        (event) => {
+            ackEventMutation.mutate({
+                eventId: event.id,
+                event: event.event,
+                message: `Квитирование события ${event.event}`,
+            });
+        },
+        [ackEventMutation],
+    );
+
+    const isAckEventPending = useCallback(
+        (event) =>
+            ackEventMutation.isPending &&
+            ackEventMutation.variables?.eventId === event.id,
+        [ackEventMutation],
+    );
+
     return (
         <JournalLiveTableBase
             columns={JOURNAL_LIVE_COLUMNS}
             data={data}
             renderHeaderContent={renderLiveHeaderContent}
+            onAckEvent={onAckEvent}
+            isAckEventPending={isAckEventPending}
         />
     );
 };
