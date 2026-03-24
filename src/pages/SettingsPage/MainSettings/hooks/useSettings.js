@@ -1,4 +1,4 @@
-import { getSettings } from "@/api/getSettings";
+import { getSettings } from "@/api/settings";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const useSettings = () => {

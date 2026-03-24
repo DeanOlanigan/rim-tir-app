@@ -76,7 +76,7 @@ export const LogViewerBody = () => {
                                     : "pre",
                                 fontFamily: "monospace",
                                 fontSize: logTextSize,
-                                color: LEVEL_COLOR[row.level],
+                                color: LEVEL_COLOR[row.level] ?? "inherit",
                             }}
                         >
                             {`[${row.ts}]\t${(
