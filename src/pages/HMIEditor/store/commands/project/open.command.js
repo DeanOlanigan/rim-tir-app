@@ -5,8 +5,13 @@ import { runCommand } from "../runCommand";
 export const openProjectCommand = (
     api,
     project,
-    mode = "new",
-    filename = "untitled",
+    {
+        mode = "new",
+        projectId = null,
+        projectName = project.projectName,
+        sourceFilename = null,
+        importedFromProjectId = null,
+    } = {},
 ) => {
     runCommand(
         api,
@@ -18,12 +23,19 @@ export const openProjectCommand = (
 
             const next = {
                 ...createInitial(),
-                meta: { mode, filename, isDirty: false, treeRev: 0 },
+                meta: {
+                    mode,
+                    projectId,
+                    sourceFilename,
+                    importedFromProjectId,
+                    isDirty: false,
+                    treeRev: 0,
+                },
                 nodes: project.nodes,
                 activePageId: project.activePageId,
                 pageIdWithThumb: project.pageIdWithThumb,
                 pages: project.pages,
-                projectName: project.projectName,
+                projectName: projectName ?? project.projectName,
                 varIndex,
                 nodeIndex,
             };

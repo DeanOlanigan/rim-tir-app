@@ -1,6 +1,7 @@
 import { SHAPES } from "@/pages/HMIEditor/constants";
+import { nanoid } from "nanoid";
 
-export const createDefaultPages = () => {
+export function createDefaultPages() {
     return {
         "page-1": {
             id: "page-1",
@@ -10,14 +11,15 @@ export const createDefaultPages = () => {
             backgroundColor: "#1E1E1E",
         },
     };
-};
+}
 
-export const createInitial = () => {
+export function createInitial() {
     return {
         varIndex: {},
         nodeIndex: {},
         meta: {
             mode: "new",
+            projectId: nanoid(12),
             filename: "untitled",
             isDirty: false,
             treeRev: 0,
@@ -37,7 +39,7 @@ export const createInitial = () => {
         projectName: "New project",
         selectedIds: [],
     };
-};
+}
 
 export function createDefaultNode(id) {
     return {

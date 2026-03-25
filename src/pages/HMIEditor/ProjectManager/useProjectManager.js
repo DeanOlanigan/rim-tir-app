@@ -3,6 +3,7 @@ import { fitNodesToFrame, handleActionWithGuard } from "../utils";
 import { useNodeStore } from "../store/node-store";
 import { toaster } from "@/components/ui/toaster";
 import { applyProjectData } from "../ProjectOps/applyProjectData";
+import { nanoid } from "nanoid";
 
 export function useProjectManager(tools, onOpenChange) {
     const deleteMutation = useDeleteProjectMutation();
@@ -15,7 +16,6 @@ export function useProjectManager(tools, onOpenChange) {
         guard(() => {
             openMutation.mutate(filename, {
                 onSuccess: () => {
-                    //navigate(`?project=${filename}`, { replace: true });
                     fitNodesToFrame(tools.canvasRef, tools.nodesRef);
                     onOpenChange?.({ open: false });
                 },
@@ -23,14 +23,17 @@ export function useProjectManager(tools, onOpenChange) {
         });
     };
 
-    const handleOpenLocalProject = (projectData, filename, files) => {
+    const handleOpenLocalProject = (projectData, sourceFilename, files) => {
         guard(() => {
-            //navigate("/HMIEditor", { replace: true });
-
-            const name = filename.split(".tir-project")[0];
-
             try {
-                applyProjectData(projectData, "local", name, files);
+                applyProjectData(projectData, {
+                    mode: "local",
+                    projectId: nanoid(12),
+                    importedFromProjectId: projectData.projectId ?? null,
+                    projectName: projectData.projectName,
+                    sourceFilename,
+                    files,
+                });
                 fitNodesToFrame(tools.canvasRef, tools.nodesRef);
                 toaster.create({
                     type: "success",
@@ -50,8 +53,6 @@ export function useProjectManager(tools, onOpenChange) {
 
     const handleCreateNewProject = () => {
         guard(() => {
-            //navigate("/HMIEditor", { replace: true });
-
             useNodeStore.getState().close();
             useNodeStore.temporal.getState().clear();
             fitNodesToFrame(tools.canvasRef, tools.nodesRef);

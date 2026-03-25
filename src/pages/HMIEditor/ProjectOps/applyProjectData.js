@@ -4,7 +4,17 @@ import { normalizeProjectTree } from "./normalizeProjectTree";
 import { validateProjectStructure } from "./projectSchema";
 import { putAssetRuntime } from "../assets/assetRuntimeRegistry";
 
-export const applyProjectData = (rawProjectData, mode, filename, files) => {
+export const applyProjectData = (
+    rawProjectData,
+    {
+        mode,
+        projectId,
+        projectName,
+        sourceFilename,
+        files,
+        importedFromProjectId = null,
+    },
+) => {
     const validation = validateProjectStructure(rawProjectData);
     if (!validation.ok) throw new Error(validation.errors.join(", "));
 
@@ -24,7 +34,13 @@ export const applyProjectData = (rawProjectData, mode, filename, files) => {
     });
 
     const store = useNodeStore.getState();
-    store.open(normalized, mode, filename);
+    store.open(normalized, {
+        mode,
+        projectId,
+        projectName: projectName ?? normalized.projectName,
+        sourceFilename,
+        importedFromProjectId,
+    });
 
     useNodeStore.temporal.getState().clear();
 };

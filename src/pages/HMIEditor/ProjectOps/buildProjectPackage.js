@@ -12,6 +12,7 @@ function exportProject(state) {
     return {
         kind: "HMIEditorProject",
         schemaVersion: SCHEMA_VERSION,
+        projectId: state.meta.projectId,
         projectName: state.projectName,
         activePageId: state.activePageId,
         pageIdWithThumb: state.pageIdWithThumb,
@@ -124,6 +125,7 @@ export async function buildProjectPackage({ state, tools }) {
         format: "tir-project",
         formatVersion: 1,
         schemaVersion: SCHEMA_VERSION,
+        projectId: project.projectId,
         projectName: project.projectName,
         activePageId: project.activePageId,
         exportedAt,

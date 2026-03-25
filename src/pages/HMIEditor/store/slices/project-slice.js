@@ -13,8 +13,7 @@ export const createProjectSlice = (api) => {
 
         close: () => closeProjectCommand(api),
 
-        open: (project, mode, filename) =>
-            openProjectCommand(api, project, mode, filename),
+        open: (project, options) => openProjectCommand(api, project, options),
 
         markAsImportedToServer: () => markAsImportedToServerCommand(api),
     };

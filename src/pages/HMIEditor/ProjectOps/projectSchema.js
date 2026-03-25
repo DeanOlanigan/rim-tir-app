@@ -38,6 +38,7 @@ const schema = {
     required: [
         "kind",
         "schemaVersion",
+        "projectId",
         "projectName",
         "activePageId",
         "pageIdWithThumb",
@@ -47,6 +48,7 @@ const schema = {
     properties: {
         kind: { const: "HMIEditorProject" },
         schemaVersion: { const: SCHEMA_VERSION },
+        projectId: { type: "string" },
         projectName: { type: "string" },
         activePageId: { type: "string" },
         pageIdWithThumb: { type: "string" },
