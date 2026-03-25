@@ -15,7 +15,8 @@
         "depgraph-report": "depcruise --include-only \"^src/pages/HMIEditor\" --output-type err-html src > depgraph_report.html",
         "depgraph-err": "depcruise --include-only \"^src/pages/HMIEditor\"",
         "depgraph-v": "depcruise --include-only \"^src/pages/HMIEditor\" --output-type dot src | dot -T svg | depcruise-wrap-stream-in-html > depgraph_v.html",
-        "prepare": "husky"
+        "prepare": "husky",
+        "knip": "knip"
     },
     "lint-staged": {
         "**/*.{js,jsx,ts,tsx}": [
@@ -42,6 +43,7 @@
         "chart.js": "^4.4.7",
         "chartjs-adapter-luxon": "^1.3.1",
         "chartjs-plugin-zoom": "^2.2.0",
+        "clsx": "^2.1.1",
         "debounce": "^2.2.0",
         "json-canonicalize": "^2.0.0",
         "json-logic-js": "^2.0.5",
@@ -49,7 +51,6 @@
         "konva": "^10.0.8",
         "luaparse": "^0.3.1",
         "luxon": "^3.7.2",
-        "microdiff": "^1.5.0",
         "monaco-editor": "^0.53.0",
         "mqtt": "^5.14.0",
         "nanoid": "^5.1.5",
@@ -57,7 +58,6 @@
         "react": "^18.3.1",
         "react-arborist": "^3.4.0",
         "react-chartjs-2": "^5.3.0",
-        "react-dnd": "^16.0.1",
         "react-dom": "^18.3.1",
         "react-hook-form": "^7.54.0",
         "react-hotkeys-hook": "^5.2.4",
@@ -78,6 +78,7 @@
         "@eslint/js": "^9.15.0",
         "@redux-devtools/extension": "^3.3.0",
         "@tanstack/eslint-plugin-query": "^5.83.1",
+        "@types/node": "^25.5.0",
         "@types/react": "^18.3.12",
         "@types/react-dom": "^18.3.1",
         "@vitejs/plugin-react": "^4.3.4",
@@ -91,10 +92,11 @@
         "eslint-plugin-sonarjs": "^3.0.4",
         "globals": "^15.12.0",
         "husky": "^9.1.7",
+        "knip": "^5.88.1",
         "lint-staged": "^16.2.7",
-        "msw": "^2.10.5",
         "prettier": "3.7.4",
         "rollup-plugin-visualizer": "^6.0.3",
+        "typescript": "^5.9.3",
         "vite": "^6.0.1"
     },
     "msw": {
