@@ -2,6 +2,7 @@ import { getSignalHistory } from "@/api/graph";
 import { useQuery } from "@tanstack/react-query";
 import { toChartJsData } from "./toChartJsData";
 
+// TODO В будущем нужно будет убрать из массива переменных имена - вместо них id
 function normalizeGraphFormToApiPayload(appliedConfig) {
     const datasets = appliedConfig?.datasets ?? [];
     return {

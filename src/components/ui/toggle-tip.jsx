@@ -26,6 +26,10 @@ export const ToggleTip = React.forwardRef(function ToggleTip(props, ref) {
                         py="1"
                         textStyle="xs"
                         rounded="sm"
+                        css={{
+                            "--popover-bg": "colors.bg.emphasized",
+                            color: "fg",
+                        }}
                         ref={ref}
                     >
                         {showArrow && (

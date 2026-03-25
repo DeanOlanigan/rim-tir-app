@@ -33,7 +33,7 @@ function getJournalTooltip({
         return `Новых событий: ${newCount}`;
     }
 
-    return "Журнал тревог";
+    return "Журнал событий";
 }
 
 function getJournalAnimation(meta) {
@@ -71,7 +71,7 @@ export const AlertJournal = ({ collapsed }) => {
                 <Box position="relative" w={!collapsed && "full"}>
                     <SidebarAction
                         icon={LuBadgeAlert}
-                        label={"Журнал тревог"}
+                        label={"Журнал событий"}
                         isActive={false}
                         collapsed={collapsed}
                         onClick={() => {
