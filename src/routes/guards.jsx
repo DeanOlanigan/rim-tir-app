@@ -27,6 +27,7 @@ export const AuthGate = () => {
 };
 
 export const GuestGate = () => {
+    const location = useLocation();
     const sessionQuery = useSessionQuery();
 
     if (sessionQuery.isLoading) {
@@ -40,7 +41,11 @@ export const GuestGate = () => {
     const isAuthenticated = sessionQuery.data?.authenticated === true;
 
     if (isAuthenticated) {
-        return <Navigate to="/configuration" replace />;
+        const from = location.state?.from;
+        const redirectTo = from
+            ? `${from.pathname || ""}${from.search || ""}${from.hash || ""}`
+            : "/configuration";
+        return <Navigate to={redirectTo} replace />;
     }
 
     return <Outlet />;

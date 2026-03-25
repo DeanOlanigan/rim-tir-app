@@ -40,8 +40,6 @@ const LoginCard = () => {
         message: null,
     });
 
-    const from = location.state?.from?.pathname || "/configuration";
-
     const {
         register,
         handleSubmit,
@@ -70,11 +68,12 @@ const LoginCard = () => {
                 user: data.user,
             });
 
-            queryClient.invalidateQueries({
-                queryKey: authKeys.session(),
-            });
+            const from = location.state?.from;
+            const redirectTo = from
+                ? `${from.pathname || ""}${from.search || ""}${from.hash || ""}`
+                : "/configuration";
 
-            navigate(from, { replace: true });
+            navigate(redirectTo, { replace: true });
         },
         onError: (error) => {
             const message =
