@@ -1,4 +1,3 @@
-// configuration.services.js
 import { getConfiguration } from "./configuration.api";
 import { mapConfigurationResponseToState } from "./configuration.adapters";
 

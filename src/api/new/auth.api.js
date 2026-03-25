@@ -15,6 +15,9 @@ export async function logout() {
     return response.data;
 }
 
+// Это не повторный логин и не создание новой сессии.
+// Это кратковременное повышение доверия к уже существующей сессии для чувствительных операций.
+// TODO Переименовать эндпоинт для лучшего понимания
 export async function reauth({ password }) {
     const response = await apiv2.post("/auth/reauth", { password });
     return response.data;
