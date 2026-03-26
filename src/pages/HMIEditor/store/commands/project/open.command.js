@@ -36,6 +36,8 @@ export const openProjectCommand = (
                 pageIdWithThumb: project.pageIdWithThumb,
                 pages: project.pages,
                 projectName: projectName ?? project.projectName,
+                assets: project.assets,
+                assetHashIndex: project.assetHashIndex,
                 varIndex,
                 nodeIndex,
             };

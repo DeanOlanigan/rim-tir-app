@@ -1,4 +1,4 @@
-import { apiv2 } from "./client";
+import { apiv2 } from "../client";
 
 export async function getSettings() {
     const response = await apiv2.get("/settings");

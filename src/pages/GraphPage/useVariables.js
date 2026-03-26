@@ -1,4 +1,4 @@
-import { getGraphVariables } from "@/api/configuration";
+import { getGraphVariables } from "@/api/routes/configuration.api";
 import { useQuery } from "@tanstack/react-query";
 
 export const useVariables = () => {

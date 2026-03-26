@@ -41,12 +41,7 @@ export const Updates = () => {
         accept: ".ipk",
     });
 
-    const sendFileMutation = useUpdateMutation(
-        setDown,
-        setLogs,
-        isDown,
-        fileUpload,
-    );
+    const sendFileMutation = useUpdateMutation(setDown, setLogs, isDown);
 
     const { data, isError, error } = useUpdatesLogs(isDown);
 
@@ -105,7 +100,11 @@ export const Updates = () => {
                         disabled={fileUpload?.acceptedFiles.length === 0}
                         loading={isDown}
                         loadingText={"Установка обновления"}
-                        onClick={() => sendFileMutation.mutate()}
+                        onClick={() =>
+                            sendFileMutation.mutate({
+                                file: fileUpload.acceptedFiles[0],
+                            })
+                        }
                     >
                         {fileUpload.acceptedFiles.length > 0
                             ? "Установить"

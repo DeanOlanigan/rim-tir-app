@@ -17,7 +17,7 @@ import { useMqttLive } from "./useMqttLive";
 import { useMonitoringLive } from "./store/mqtt-stream-store";
 import { ContextMenu } from "./ContextMenu/ContextMenu";
 import { Tooltip } from "@/components/ui/tooltip";
-import { fetchConfigurationState } from "@/api/new/configuration.services";
+import { fetchConfigurationState } from "@/api/services/configuration.services";
 
 function MonitoringPage() {
     const [searchTerm, setSearchTerm] = useState("");

@@ -20,14 +20,14 @@ import { useActionsStore } from "../store/actions-store";
 export const ProjectCard = ({ project, onClick, onDelete }) => {
     const viewOnlyMode = useActionsStore((s) => s.viewOnlyMode);
     const { isOpening, openingMutation } = useOpeningState();
-    const isCurrentOpenning = openingMutation.includes(project.value);
+    const isCurrentOpenning = openingMutation.includes(project.id);
     const isDisabled = isOpening && !isCurrentOpenning;
 
     const thumbnailURL = `${import.meta.env.VITE_HTTP_HOST}${project.thumbnail}`;
     const Thumbnail = project.thumbnail ? (
         <Image
             src={thumbnailURL}
-            alt={project.label}
+            alt={project.name}
             fit={"cover"}
             w={"full"}
             h={"full"}
@@ -40,10 +40,8 @@ export const ProjectCard = ({ project, onClick, onDelete }) => {
     const style = {
         opacity: isDisabled ? 0.4 : 1,
         cursor: isDisabled ? "not-allowed" : "pointer",
-        _hover: isDisabled
-            ? {}
-            : { borderColor: "colorPalette.500", shadow: "sm" },
-        onClick: isDisabled ? () => {} : () => onClick(project.value),
+        _hover: isDisabled ? {} : { bg: "colorPalette.subtle", shadow: "sm" },
+        onClick: isDisabled ? () => {} : () => onClick(project.id),
         className: isDisabled ? "" : "group",
     };
 
@@ -67,11 +65,11 @@ export const ProjectCard = ({ project, onClick, onDelete }) => {
                                 CONFIRM_DIALOG_ID,
                                 {
                                     title: "Удаление проекта",
-                                    message: `Вы уверены, что хотите удалить ${project.label}?`,
+                                    message: `Вы уверены, что хотите удалить ${project.name}?`,
                                 },
                             );
                             if (!isConfirmed) return;
-                            onDelete(project.value);
+                            onDelete(project.id);
                         }}
                     >
                         <LuTrash2 />
@@ -102,9 +100,9 @@ export const ProjectCard = ({ project, onClick, onDelete }) => {
                     <Text
                         fontWeight="medium"
                         lineClamp={1}
-                        title={project.label}
+                        title={project.name}
                     >
-                        {project.label}
+                        {project.name}
                     </Text>
                     <HStack
                         color="gray.500"

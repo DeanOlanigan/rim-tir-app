@@ -1,4 +1,4 @@
-import { apiv2 } from "./client";
+import { apiv2 } from "../client";
 
 export async function getSession() {
     const response = await apiv2.get("/auth/session");
@@ -15,10 +15,8 @@ export async function logout() {
     return response.data;
 }
 
-// Это не повторный логин и не создание новой сессии.
 // Это кратковременное повышение доверия к уже существующей сессии для чувствительных операций.
-// TODO Переименовать эндпоинт для лучшего понимания
-export async function reauth({ password }) {
-    const response = await apiv2.post("/auth/reauth", { password });
+export async function confirm({ password }) {
+    const response = await apiv2.post("/auth/confirm", { password });
     return response.data;
 }

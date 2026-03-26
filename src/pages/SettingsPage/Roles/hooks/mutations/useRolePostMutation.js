@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { rolesErrorMutate } from "../../rolesErrorMutate";
 import { rolesSuccessMutate } from "../../rolesSuccessMutate";
-import { createRole } from "@/api/roles";
+import { createRole } from "@/api/routes/roles.api";
 
 export const useRolePostMutation = () => {
     const queryClient = useQueryClient();

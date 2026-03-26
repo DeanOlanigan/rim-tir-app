@@ -1,12 +1,13 @@
-import { getSoftwareVer, QK } from "@/api";
+import { QK } from "@/api";
 import { Skeleton, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Tooltip } from "../ui/tooltip";
+import { getSoftwareVersion } from "@/api/routes/system.api";
 
 export const SoftwareVersion = () => {
     const { data, isLoading, isError } = useQuery({
         queryKey: QK.version,
-        queryFn: getSoftwareVer,
+        queryFn: getSoftwareVersion,
     });
 
     if (isLoading) return <Skeleton />;

@@ -15,8 +15,8 @@ import { useState } from "react";
 import { LuLogIn } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { login } from "@/api/auth";
 import { authKeys } from "@/api/queryKeys";
+import { login } from "@/api/routes/auth.api";
 
 function LoginForm() {
     return (

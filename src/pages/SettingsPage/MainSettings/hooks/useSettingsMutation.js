@@ -1,5 +1,5 @@
 import { QK } from "@/api";
-import { updateSettings } from "@/api/settings";
+import { updateSettings } from "@/api/routes/settings.api";
 import { toaster } from "@/components/ui/toaster";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";

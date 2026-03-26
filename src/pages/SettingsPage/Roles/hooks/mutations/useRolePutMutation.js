@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/queryClients";
 import { rolesSuccessMutate } from "../../rolesSuccessMutate";
 import { rolesErrorMutate } from "../../rolesErrorMutate";
-import { updateRole } from "@/api/roles";
+import { updateRole } from "@/api/routes/roles.api";
 
 export const useRolePutMutation = () => {
     return useMutation({

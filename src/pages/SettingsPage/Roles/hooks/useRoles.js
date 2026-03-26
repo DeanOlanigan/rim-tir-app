@@ -1,5 +1,5 @@
 import { QK } from "@/api";
-import { getRoles } from "@/api/roles";
+import { getRoles } from "@/api/routes/roles.api";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const useRoles = () => {

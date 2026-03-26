@@ -1,5 +1,5 @@
-import { getSession } from "@/api/auth";
 import { authKeys } from "@/api/queryKeys";
+import { getSession } from "@/api/routes/auth.api";
 import { useQuery } from "@tanstack/react-query";
 
 export function useSessionQuery() {

@@ -1,16 +1,11 @@
-import { apiv2 } from "@/api/baseUrl";
+import { initiateUpdate } from "@/api/routes/update.api";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
-export const useUpdateMutation = (setDown, setLogs, isDown, fileUpload) => {
+export const useUpdateMutation = (setDown, setLogs, isDown) => {
     return useMutation({
         mutationKey: ["senderFile"],
-        mutationFn: async () => {
-            const formData = new FormData();
-            formData.append("downloader", fileUpload.acceptedFiles[0]);
-            const res = await apiv2.post("/getUpdate", formData);
-            return res;
-        },
+        mutationFn: initiateUpdate,
         onSuccess: () => {
             setDown(!isDown);
             setLogs([]);

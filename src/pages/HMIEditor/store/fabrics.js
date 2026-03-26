@@ -17,6 +17,8 @@ export function createInitial() {
     return {
         varIndex: {},
         nodeIndex: {},
+        assets: {},
+        assetHashIndex: {},
         meta: {
             mode: "new",
             projectId: nanoid(12),

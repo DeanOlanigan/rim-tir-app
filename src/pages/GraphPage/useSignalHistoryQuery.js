@@ -1,6 +1,6 @@
-import { getSignalHistory } from "@/api/graph";
 import { useQuery } from "@tanstack/react-query";
 import { toChartJsData } from "./toChartJsData";
+import { getSignalHistory } from "@/api/routes/signals.api";
 
 // TODO В будущем нужно будет убрать из массива переменных имена - вместо них id
 function normalizeGraphFormToApiPayload(appliedConfig) {
@@ -24,7 +24,13 @@ export function useSignalHistoryQuery(appliedConfig) {
 
     return useQuery({
         queryKey: ["signal-history", payload],
-        queryFn: () => getSignalHistory(payload),
+        queryFn: () =>
+            getSignalHistory({
+                fromUTC: payload.from,
+                toUTC: payload.to,
+                pointLimit: payload.pointLimit,
+                variables: payload.variables,
+            }),
         enabled:
             !!payload?.from &&
             !!payload?.to &&

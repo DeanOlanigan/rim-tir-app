@@ -1,4 +1,4 @@
-import { apiv2 } from "./client";
+import { apiv2 } from "../client";
 
 function toCsv(value) {
     if (!value) return undefined;
@@ -33,6 +33,7 @@ export async function downloadJournal({
     limit,
     severity,
     category,
+    format = "csv",
 }) {
     const response = await apiv2.get("/journal/export", {
         params: {
@@ -41,18 +42,20 @@ export async function downloadJournal({
             limit,
             severity: toCsv(severity),
             category: toCsv(category),
+            format,
         },
-        responseType: "blob",
+        responseType: "blob", // file
     });
     return response.data;
 }
 
-export async function eventAcknowledge({ id }) {
+// Пока что оставляем command style API для квитирования
+export async function ackJournalEvent({ id }) {
     const response = await apiv2.post("/journal/ack/event", { id });
     return response.data;
 }
 
-export async function eventAcknowledgeRange({ fromUTC, toUTC }) {
+export async function ackJournalRange({ fromUTC, toUTC }) {
     // // ISO 8601 UTC
     const response = await apiv2.post("/journal/ack/range", { fromUTC, toUTC });
     return response.data;

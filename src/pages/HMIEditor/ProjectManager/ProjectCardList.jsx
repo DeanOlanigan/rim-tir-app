@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { useActionsStore } from "../store/actions-store";
-import { getProjects } from "@/api/hmi";
 import { QK } from "@/api";
 import {
     Alert,
@@ -19,6 +18,7 @@ import { useProjectManager } from "./useProjectManager";
 import { LOCALE } from "../constants";
 import { toggleViewOnlyModeAction } from "../actions/toggleViewOnlyModeAction";
 import { CanAccess } from "@/CanAccess";
+import { getProjects } from "@/api/routes/hmi.api";
 
 export const ProjectCardList = ({ tools, onOpenChange }) => {
     const viewOnlyMode = useActionsStore((state) => state.viewOnlyMode);
@@ -93,7 +93,7 @@ export const ProjectCardList = ({ tools, onOpenChange }) => {
                     {!isLoading &&
                         data?.data?.map((project) => (
                             <ProjectCard
-                                key={project.value}
+                                key={project.id}
                                 project={project}
                                 onClick={handleOpenServerProject}
                                 onDelete={handleDeleteServerProject}

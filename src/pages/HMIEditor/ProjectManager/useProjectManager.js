@@ -12,14 +12,17 @@ export function useProjectManager(tools, onOpenChange) {
     const guard = (cb) =>
         handleActionWithGuard(useNodeStore.getState().meta.isDirty, cb);
 
-    const handleOpenServerProject = async (filename) => {
+    const handleOpenServerProject = async (id) => {
         guard(() => {
-            openMutation.mutate(filename, {
-                onSuccess: () => {
-                    fitNodesToFrame(tools.canvasRef, tools.nodesRef);
-                    onOpenChange?.({ open: false });
+            openMutation.mutate(
+                { id },
+                {
+                    onSuccess: () => {
+                        fitNodesToFrame(tools.canvasRef, tools.nodesRef);
+                        onOpenChange?.({ open: false });
+                    },
                 },
-            });
+            );
         });
     };
 
@@ -66,8 +69,8 @@ export function useProjectManager(tools, onOpenChange) {
         });
     };
 
-    const handleDeleteServerProject = async (filename) => {
-        deleteMutation.mutate(filename);
+    const handleDeleteServerProject = async (id) => {
+        deleteMutation.mutate({ id });
     };
 
     return {

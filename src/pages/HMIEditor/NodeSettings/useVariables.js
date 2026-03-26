@@ -1,4 +1,4 @@
-import { getVariables } from "@/api/configuration";
+import { getVariables } from "@/api/routes/configuration.api";
 import { useQuery } from "@tanstack/react-query";
 
 export const useVariables = () => {

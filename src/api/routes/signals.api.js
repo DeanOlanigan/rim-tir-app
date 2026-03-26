@@ -1,8 +1,8 @@
-import { apiv2 } from "./client";
+import { apiv2 } from "../client";
 
 // TODO Уточнить payload
 export async function changeSignal({ id, payload }) {
-    const response = await apiv2.put("/signals", { id, payload });
+    const response = await apiv2.put(`/signals/${id}`, { payload });
     return response.data;
 }
 

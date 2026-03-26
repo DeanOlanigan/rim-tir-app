@@ -1,6 +1,6 @@
 // src/pages/JournalPage/hooks/useJournalHistoryQuery.js
+import { getJournals } from "@/api/routes/journal.api";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getJournals } from "@/api/journal";
 
 export function useJournalHistoryQuery(filters) {
     const { from, to, severity, category } = filters;
@@ -8,8 +8,8 @@ export function useJournalHistoryQuery(filters) {
         queryKey: ["journal-history", { from, to, severity, category }],
         queryFn: ({ pageParam }) =>
             getJournals({
-                from,
-                to,
+                fromUTC: from,
+                toUTC: to,
                 severity,
                 category,
                 before: pageParam ?? undefined,

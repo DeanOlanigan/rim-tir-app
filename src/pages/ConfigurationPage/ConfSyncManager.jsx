@@ -1,5 +1,5 @@
 import { QK } from "@/api";
-import { fetchConfigurationState } from "@/api/new/configuration.services";
+import { fetchConfigurationState } from "@/api/services/configuration.services";
 import { useVariablesStore } from "@/store/variables-store";
 import { useQuery } from "@tanstack/react-query";
 import { canonicalize } from "json-canonicalize";

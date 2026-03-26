@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { usersSuccessMutate } from "../../usersSuccessMutate";
 import { usersErrorMutate } from "../../usersErrorMutate";
 import { useEditStore } from "../../../user-edit-store";
-import { changePassword } from "@/api/users";
+import { changePassword } from "@/api/routes/users.api";
 
 export const usePasswordMutation = () => {
     const queryClient = useQueryClient();

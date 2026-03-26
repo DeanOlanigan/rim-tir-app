@@ -1,13 +1,9 @@
-import { apiv2 } from "@/api/baseUrl";
+import { getLicense } from "@/api/routes/license.api";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const useLicenseCheck = (uuid) => {
     return useSuspenseQuery({
         queryKey: ["license", uuid],
-        queryFn: async ({ queryKey }) => {
-            const [, uuid] = queryKey;
-            const res = await apiv2.get(`checkLecense?uuid=${uuid}`);
-            return res.data;
-        },
+        queryFn: getLicense,
     });
 };

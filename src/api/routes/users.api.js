@@ -1,4 +1,4 @@
-import { apiv2 } from "./client";
+import { apiv2 } from "../client";
 
 export async function getUsers() {
     const response = await apiv2.get("/users");
@@ -16,7 +16,7 @@ export async function updateUser({ id, user }) {
 }
 
 export async function deleteUser({ id }) {
-    const response = await apiv2.delete("/users", { params: { id } });
+    const response = await apiv2.delete(`/users/${id}`);
     return response.data;
 }
 

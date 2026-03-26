@@ -1,15 +1,10 @@
 import { QK } from "@/api";
-import {
-    deleteProject,
-    getProject,
-    renameProject,
-    saveProject,
-} from "@/api/hmi";
 import { toaster } from "@/components/ui/toaster";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { applyProjectData } from "./ProjectOps/applyProjectData";
 import { messageFromError } from "@/utils/utils";
 import { parseProjectPackage } from "./ProjectOps/parseProjectPackage";
+import { deleteProject, getProject, saveProject } from "@/api/routes/hmi.api";
 
 export function useDeleteProjectMutation() {
     const q = useQueryClient();
@@ -38,11 +33,16 @@ export function useOpenProjectMutation() {
     return useMutation({
         mutationKey: ["openHmiProject"],
         mutationFn: getProject,
-        onSuccess: async (blob, filename) => {
+        onSuccess: async (blob) => {
             try {
                 const { project, files } = await parseProjectPackage(blob);
 
-                applyProjectData(project, "server", filename, files);
+                applyProjectData(project, {
+                    mode: "server",
+                    projectId: project.projectId,
+                    projectName: project.projectName,
+                    files,
+                });
 
                 toaster.create({
                     title: "Проект успешно загружен",
@@ -88,17 +88,6 @@ export function useSaveProjectMutation() {
                 description: messageFromError(err),
                 type: "error",
             });
-        },
-    });
-}
-
-export function useRenameProjectOnServerMutation() {
-    const q = useQueryClient();
-    return useMutation({
-        mutationKey: ["renameHmiProject"],
-        mutationFn: renameProject,
-        onSuccess: () => {
-            q.invalidateQueries({ queryKey: QK.hmiProjects });
         },
     });
 }

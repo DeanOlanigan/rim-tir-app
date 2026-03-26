@@ -1,7 +1,7 @@
 import { QK } from "@/api";
-import { apiv2 } from "@/api/baseUrl";
-import { getRoles } from "@/api/roles";
-import { getUsers } from "@/api/users";
+import { getRoles } from "@/api/routes/roles.api";
+import { getSettings } from "@/api/routes/settings.api";
+import { getUsers } from "@/api/routes/users.api";
 import { queryClient } from "@/queryClients";
 import { configuratorConfig } from "@/store/configurator-config";
 
@@ -16,11 +16,7 @@ export async function settingsLoader() {
     return await Promise.all([
         queryClient.prefetchQuery({
             queryKey: ["settings"],
-            queryFn: async () => {
-                const res = await apiv2.get("/settings");
-                await new Promise((res) => setTimeout(res, 1000));
-                return res.data;
-            },
+            queryFn: getSettings,
             retry: false,
         }),
         queryClient.prefetchQuery({

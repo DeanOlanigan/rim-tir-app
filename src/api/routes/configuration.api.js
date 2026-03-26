@@ -1,6 +1,7 @@
-import { apiv2 } from "./client";
+import { apiv2 } from "../client";
 
 // TODO Определиться в каком виде передавать данные конфигурации
+// Потенциальный переход только на json
 export async function uploadConfiguration({ xml }) {
     const response = await apiv2.put("/configuration", xml, {
         headers: {

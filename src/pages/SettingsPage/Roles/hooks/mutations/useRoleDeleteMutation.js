@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { rolesSuccessMutate } from "../../rolesSuccessMutate";
 import { rolesErrorMutate } from "../../rolesErrorMutate";
-import { deleteRole } from "@/api/roles";
+import { deleteRole } from "@/api/routes/roles.api";
 
 export const useRoleDeleteMutation = () => {
     const queryClient = useQueryClient();

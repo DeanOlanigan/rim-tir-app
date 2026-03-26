@@ -5,11 +5,12 @@ import { LogFileViewerControls } from "./SourceManager/LogFileViewerControls";
 import { NoData } from "@/components/NoData";
 import { LogListBox } from "./SourceManager/LogSourceManager";
 import { useQuery } from "@tanstack/react-query";
-import { getLoglist, QK } from "@/api";
+import { QK } from "@/api";
 import { ErrorInformer } from "@/components/ErrorInformer";
 import { CanAccess } from "@/CanAccess";
 import { DownloadAllLogsButton } from "./SourceManager/DownloadAllLogsButton";
 import { LogViewerBody } from "./Viewer/LogViewerBody";
+import { getLogList } from "@/api/routes/logs.api";
 
 function LogPage() {
     const hasChosenLog = useHasChosenLog();
@@ -50,7 +51,7 @@ export default LogPage;
 const LogFiles = () => {
     const { data, isLoading, isError, error } = useQuery({
         queryKey: QK.logs,
-        queryFn: getLoglist,
+        queryFn: getLogList,
     });
 
     if (isLoading) return <Loader text={"Загрузка данных"} />;

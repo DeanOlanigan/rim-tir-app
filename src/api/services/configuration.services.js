@@ -1,5 +1,5 @@
-import { getConfiguration } from "./configuration.api";
-import { mapConfigurationResponseToState } from "./configuration.adapters";
+import { getConfiguration } from "../routes/configuration.api";
+import { mapConfigurationResponseToState } from "../adapters/configuration.adapters";
 
 export async function fetchConfigurationState() {
     const response = await getConfiguration();

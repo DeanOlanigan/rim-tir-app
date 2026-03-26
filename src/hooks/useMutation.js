@@ -1,4 +1,4 @@
-import { restartTir, startTir, stopTir, uploadConfiguration, QK } from "@/api";
+import { QK } from "@/api";
 import { toaster } from "@/components/ui/toaster";
 import { useValidationStore } from "@/store/validation-store";
 import { useVariablesStore } from "@/store/variables-store";
@@ -6,13 +6,19 @@ import { configuratorConfig } from "@/store/configurator-config";
 import { validateAll } from "@/utils/validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { messageFromError } from "@/utils/utils";
-import { logout } from "@/api/auth";
 import { authKeys } from "@/api/queryKeys";
-import { fetchConfigurationState } from "@/api/new/configuration.services";
+import { fetchConfigurationState } from "@/api/services/configuration.services";
+import {
+    restartSystem,
+    startSystem,
+    stopSystem,
+} from "@/api/routes/system.api";
+import { logout } from "@/api/routes/auth.api";
+import { uploadConfiguration } from "@/api/routes/configuration.api";
 
 export function useStartTirMutation() {
     return useMutation({
-        mutationFn: startTir,
+        mutationFn: startSystem,
         onSuccess: () => {
             toaster.create({
                 title: "Сервер запущен",
@@ -32,7 +38,7 @@ export function useStartTirMutation() {
 
 export function useStopTirMutation() {
     return useMutation({
-        mutationFn: stopTir,
+        mutationFn: stopSystem,
         onSuccess: () => {
             toaster.create({
                 title: "Сервер остановлен",
@@ -52,7 +58,7 @@ export function useStopTirMutation() {
 
 export function useRestartTirMutation() {
     return useMutation({
-        mutationFn: restartTir,
+        mutationFn: restartSystem,
         onSuccess: () => {
             toaster.create({
                 title: "Сервер перезапущен",

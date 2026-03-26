@@ -1,4 +1,4 @@
-import { apiv2 } from "@/api/baseUrl";
+import { activateLicense } from "@/api/routes/license.api";
 import { toaster } from "@/components/ui/toaster";
 import { queryClient } from "@/queryClients";
 import { useMutation } from "@tanstack/react-query";
@@ -7,11 +7,7 @@ import axios from "axios";
 export const useLicenseMutation = (setIsKeyEnd, uuid) => {
     return useMutation({
         mutationKey: ["licenseActivator"],
-        mutationFn: async ({ uuid, key }) => {
-            await new Promise((res) => setTimeout(res, 1000));
-            const res = await apiv2.post("activateLec", { uuid, key });
-            return res;
-        },
+        mutationFn: activateLicense,
         onSuccess: () => {
             queryClient.setQueryData(["license", uuid], (oldData) => {
                 if (!oldData) return { isActive: false };

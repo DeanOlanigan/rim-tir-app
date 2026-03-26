@@ -1,4 +1,4 @@
-import { fetchConfigurationState } from "@/api/new/configuration.services";
+import { fetchConfigurationState } from "@/api/services/configuration.services";
 import { QK } from "@/api/queryKeys";
 import { ConfigInfo } from "@/components/ConfigInfo";
 import { useQuery } from "@tanstack/react-query";
