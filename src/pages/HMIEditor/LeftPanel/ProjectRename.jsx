@@ -19,6 +19,7 @@ export const ProjectRename = () => {
             onValueCommit={(e) => {
                 const next = e.value.trim();
                 if (next) useNodeStore.getState().renameProject(next);
+                else setName(projectName);
             }}
             submitMode="both"
             activationMode="click"

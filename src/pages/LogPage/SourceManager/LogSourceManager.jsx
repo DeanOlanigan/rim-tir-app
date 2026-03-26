@@ -1,6 +1,5 @@
 import {
     Box,
-    Card,
     Checkmark,
     createListCollection,
     Flex,
@@ -14,65 +13,13 @@ import {
     useListboxContext,
     useListboxItemContext,
 } from "@chakra-ui/react";
-import { LogFileViewerControls } from "./LogFileViewerControls";
-import { useQuery } from "@tanstack/react-query";
-import { getLoglist, QK } from "@/api";
 import { LuArrowRight } from "react-icons/lu";
 import { useLogStore } from "../store/store";
-import { DownloadAllLogsButton } from "./DownloadAllLogsButton";
-import { NoData } from "@/components/NoData";
-import { ErrorInformer } from "@/components/ErrorInformer";
-import { Loader } from "@/components/Loader";
-import { CanAccess } from "@/CanAccess";
 
 const GROUPS = {
     internal: "Логи во внутренней памяти",
     sd: "Логи во внешней памяти",
 };
-
-function LogSourceManager() {
-    console.log("Render LogSourceManager");
-
-    const { data, isLoading, isError, error } = useQuery({
-        queryKey: QK.logs,
-        queryFn: getLoglist,
-    });
-
-    if (isLoading) return <Loader text={"Загрузка данных"} />;
-    if (isError) return <ErrorInformer error={error} />;
-
-    return (
-        <Card.Root
-            size={"sm"}
-            shadow={"md"}
-            h={"100%"}
-            data-state={"open"}
-            animationDuration={"slow"}
-            animationStyle={{ _open: "scale-fade-in" }}
-        >
-            <Card.Header>
-                <Card.Title>Выберите файл</Card.Title>
-            </Card.Header>
-            <Card.Body gap={"2"} minH={0}>
-                <LogFileViewerControls />
-                <Box flex={1} minH={0}>
-                    {data?.data?.length > 0 ? (
-                        <LogListBox data={data.data} />
-                    ) : (
-                        <NoData />
-                    )}
-                </Box>
-            </Card.Body>
-            <Card.Footer>
-                <CanAccess right={"logs.download"}>
-                    <DownloadAllLogsButton />
-                </CanAccess>
-            </Card.Footer>
-        </Card.Root>
-    );
-}
-
-export default LogSourceManager;
 
 export const LogListBox = ({ data }) => {
     const logsToDwnl = useLogStore((state) => state.logsToDwnl);

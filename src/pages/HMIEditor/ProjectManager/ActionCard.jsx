@@ -18,7 +18,7 @@ export const ActionCard = ({
         cursor: isDisabled ? "not-allowed" : "pointer",
         _hover: isDisabled
             ? {}
-            : { bg: "colorPalette.500/10", borderColor: "colorPalette.500" },
+            : { bg: "colorPalette.subtle", borderColor: "colorPalette.500" },
         onClick: isDisabled ? () => {} : onClick,
     };
 
