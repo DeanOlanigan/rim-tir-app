@@ -18,7 +18,7 @@ export const TreeView = memo(function TreeView({
     height = 900,
 }) {
     const { user } = useAuth();
-    const allowed = hasRight(user, "editor.config");
+    const allowed = hasRight(user, "config.editor");
     const { setApi } = useTreeRegistry.getState();
     const {
         handleRenameNode,
