@@ -11,8 +11,7 @@ import { useVariables } from "../useVariables";
 import { LOCALE } from "../../constants";
 
 export const AdvancedSettings = ({ types, selectedIds }) => {
-    const { data } = useVariables();
-    const variables = data?.data;
+    const { data: variables } = useVariables();
     const bindingsItems = useNodeStore(
         useShallow((s) => s.nodes[selectedIds[0]]?.bindings?.byProp || {}),
     );

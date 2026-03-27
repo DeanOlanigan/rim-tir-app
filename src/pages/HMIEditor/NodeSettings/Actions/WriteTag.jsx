@@ -4,8 +4,7 @@ import { VariableSelect } from "../VariableSelect";
 import { LOCALE } from "../../constants";
 
 export const WriteTag = ({ action, handleChange }) => {
-    const { data } = useVariables();
-    const variables = data?.data;
+    const { data: variables } = useVariables();
 
     return (
         <HStack gap={2} w={"100%"}>

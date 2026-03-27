@@ -7,13 +7,11 @@ export async function getLogList() {
 
 /**
  * get log
- * @param {string} dir sd | internal
  * @param {string} format raw | json
  * @returns response data
  */
-// TODO: Потенциально убрать dir, т.к. сервер будет сам определять место хранения данных
-export async function getLog({ name, dir, limit, format }) {
-    const response = await apiv2.get(`/logs/${dir}/${name}`, {
+export async function getLog({ name, limit, format }) {
+    const response = await apiv2.get(`/logs/${name}`, {
         params: {
             limit,
             format,

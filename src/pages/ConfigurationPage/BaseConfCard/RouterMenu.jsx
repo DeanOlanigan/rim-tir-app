@@ -1,5 +1,4 @@
 import { Button, Menu, Portal } from "@chakra-ui/react";
-import { convertStateToXml } from "@/utils/xml/storeToXml";
 import { useVariablesStore } from "@/store/variables-store";
 import { useValidationStore } from "@/store/validation-store";
 import {
@@ -8,6 +7,16 @@ import {
 } from "@/hooks/useMutation";
 import { CONFIRM_DIALOG_ID, confirmDialog } from "@/components/confirmDialog";
 import { CanAccess } from "@/CanAccess";
+
+function buildConfigurationPayload(state) {
+    return {
+        info: state.info,
+        settings: state.settings,
+        variables: state.variables,
+        receive: state.receive,
+        send: state.send,
+    };
+}
 
 export const RouterMenu = ({ ...props }) => {
     const errorsTreeSize = useValidationStore((state) => state.errorsTree.size);
@@ -20,8 +29,8 @@ export const RouterMenu = ({ ...props }) => {
     const sendConfigHandler = () => {
         if (hasErrors) return;
         const currentState = useVariablesStore.getState();
-        const xml = convertStateToXml(currentState);
-        uploadM.mutate(xml);
+        const config = buildConfigurationPayload(currentState);
+        uploadM.mutate({ config });
     };
 
     return (
