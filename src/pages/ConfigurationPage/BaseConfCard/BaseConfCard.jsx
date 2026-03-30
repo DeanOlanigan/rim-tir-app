@@ -1,6 +1,5 @@
 import { Flex, Group, IconButton } from "@chakra-ui/react";
 import { ConfMenu } from "./ConfMenu";
-import { RouterMenu } from "./RouterMenu";
 import { ValidationErrorsContainer } from "../Validation/ValidationErrorsContainer";
 import { LuFlipHorizontal2, LuFlipVertical2 } from "react-icons/lu";
 import { useConfigStore } from "../stores";
@@ -30,7 +29,6 @@ export const BaseConfCard = () => {
             <Group>
                 <FlipButton />
                 <ConfMenu />
-                <RouterMenu />
             </Group>
             <ValidationErrorsContainer />
         </Flex>
