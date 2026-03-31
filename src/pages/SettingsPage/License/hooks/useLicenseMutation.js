@@ -1,23 +1,12 @@
 import { activateLicense } from "@/api/routes/license.api";
 import { toaster } from "@/components/ui/toaster";
-import { queryClient } from "@/queryClients";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
-export const useLicenseMutation = (setIsKeyEnd, uuid) => {
+export const useLicenseMutation = () => {
     return useMutation({
-        mutationKey: ["licenseActivator"],
+        mutationKey: ["license", "activate"],
         mutationFn: activateLicense,
-        onSuccess: () => {
-            queryClient.setQueryData(["license", uuid], (oldData) => {
-                if (!oldData) return { isActive: false };
-                return {
-                    ...oldData,
-                    isActive: true,
-                };
-            });
-            setIsKeyEnd(false);
-        },
         onError: (err) => {
             console.log(err);
             if (axios.isAxiosError(err)) {

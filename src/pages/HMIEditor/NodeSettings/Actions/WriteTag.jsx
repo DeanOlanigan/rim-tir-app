@@ -4,14 +4,14 @@ import { VariableSelect } from "../VariableSelect";
 import { LOCALE } from "../../constants";
 
 export const WriteTag = ({ action, handleChange }) => {
-    const { data: variables } = useVariables();
+    const { data } = useVariables();
 
     return (
         <HStack gap={2} w={"100%"}>
             <Field.Root>
                 <Field.Label fontSize="sm">{LOCALE.variable}</Field.Label>
                 <VariableSelect
-                    variables={variables}
+                    variables={data?.variables ?? []}
                     value={action.options.varId}
                     onChange={(v) => handleChange("varId", v)}
                 />

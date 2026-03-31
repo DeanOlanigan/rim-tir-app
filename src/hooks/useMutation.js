@@ -124,21 +124,27 @@ export function useRefreshConfigurationMutation() {
     });
 }
 
+function isSessionQuery(queryKey) {
+    const sessionKey = authKeys.session();
+    return (
+        queryKey.length === sessionKey.length &&
+        queryKey.every((part, index) => part === sessionKey[index])
+    );
+}
+
 export function useLogoutMutation() {
     const queryClient = useQueryClient();
-
     return useMutation({
         mutationFn: logout,
-        onSettled: async () => {
+        onSuccess: async () => {
+            await queryClient.cancelQueries();
             queryClient.setQueryData(authKeys.session(), {
                 authenticated: false,
             });
-
-            await queryClient.invalidateQueries({
-                queryKey: authKeys.session(),
+            queryClient.removeQueries({
+                predicate: (query) => !isSessionQuery(query.queryKey),
             });
-
-            queryClient.clear();
+            queryClient.getMutationCache().clear();
         },
     });
 }

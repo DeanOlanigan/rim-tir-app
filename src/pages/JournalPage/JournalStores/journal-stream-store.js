@@ -176,8 +176,8 @@ function handleAcknowledgment(entities, incoming) {
 }
 
 function handleAcknowledgmentRange(entities, incoming) {
-    const fromTs = incoming.payload?.fromTs;
-    const toTs = incoming.payload?.toTs;
+    const fromTs = new Date(incoming.payload?.fromUTC).getTime();
+    const toTs = new Date(incoming.payload?.toUTC).getTime();
 
     for (const id of Object.keys(entities)) {
         const event = entities[id];

@@ -123,9 +123,12 @@ const UserContent = ({ user }) => {
                         {name}
                     </Badge>
                 ))}
-                <Menu.Item value={"logout"} onClick={logoutMutation.mutate}>
+                <Menu.Item
+                    value={"logout"}
+                    onClick={() => logoutMutation.mutate()}
+                >
                     <LuLogOut />
-                    Выйти
+                    Выйти
                 </Menu.Item>
             </VStack>
         </Menu.Content>

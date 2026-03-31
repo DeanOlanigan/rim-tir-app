@@ -15,11 +15,11 @@ const getFrom = () => {
     const state = useJournalStream.getState();
     const firstId = state.ids?.[0];
     const ts = firstId ? state.entities?.[firstId]?.ts : null;
-    return ts ?? Date.now();
+    return new Date(ts ?? Date.now()).toISOString();
 };
 
 const getTo = () => {
-    return Date.now();
+    return new Date().toISOString();
 };
 
 export const JournalLiveTable = () => {
@@ -52,9 +52,9 @@ export const JournalLiveTable = () => {
                             "Будут квитированы все события текущей сессии"
                         }
                         onAccept={() => {
-                            const fromTs = getFrom();
-                            const toTs = getTo();
-                            ackRangeMutation.mutate({ fromTs, toTs });
+                            const fromUTC = getFrom();
+                            const toUTC = getTo();
+                            ackRangeMutation.mutate({ fromUTC, toUTC });
                         }}
                     />
                 );
@@ -68,8 +68,6 @@ export const JournalLiveTable = () => {
         (event) => {
             ackEventMutation.mutate({
                 eventId: event.id,
-                event: event.event,
-                message: `Квитирование события ${event.event}`,
             });
         },
         [ackEventMutation],

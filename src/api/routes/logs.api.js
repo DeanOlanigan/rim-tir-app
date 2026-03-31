@@ -7,15 +7,23 @@ export async function getLogList() {
 
 /**
  * get log
- * @param {string} format raw | json
  * @returns response data
  */
-export async function getLog({ name, limit, format }) {
+export async function getLog({ name, limit }) {
     const response = await apiv2.get(`/logs/${name}`, {
         params: {
             limit,
-            format,
         },
+    });
+    return response.data;
+}
+
+export async function downloadLogs({ names }) {
+    const body = {
+        items: names.map((name) => ({ name })),
+    };
+    const response = await apiv2.post("/logs/export", body, {
+        responseType: "blob", // file
     });
     return response.data;
 }

@@ -114,7 +114,7 @@ const DataSetList = () => {
 
     const variableCollection = useMemo(() => {
         return createListCollection({
-            items: data ?? [],
+            items: data?.variables ?? [],
             itemToString: (variable) => variable.name,
             itemToValue: (variable) => variable.id,
         });

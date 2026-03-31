@@ -61,8 +61,8 @@ const LogFiles = () => {
         <>
             <LogFileViewerControls />
             <Box flex={1} minH={0}>
-                {data?.data?.length > 0 ? (
-                    <LogListBox data={data.data} />
+                {data?.items?.length > 0 ? (
+                    <LogListBox data={data?.items} />
                 ) : (
                     <NoData />
                 )}

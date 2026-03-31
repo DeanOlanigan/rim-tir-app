@@ -313,8 +313,6 @@ export const journalAdditionalInfoDrawer = createOverlay((props) => {
 
     const severityPalette = getSeverityColorPalette(event?.severity);
 
-    console.log(event);
-
     return (
         <Drawer.Root {...rest} lazyMount unmountOnExit size={"md"}>
             <Portal>

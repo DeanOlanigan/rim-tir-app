@@ -2,13 +2,13 @@ import { useEffect } from "react";
 import { useLogStream } from "../store/stream-store";
 import { useMqttCore } from "@/utils/mqtt/mqtt-provider";
 
-export function useMqttLogs(type, name, { enabled = true } = {}) {
+export function useMqttLogs(name, { enabled = true } = {}) {
     const { subscribe } = useMqttCore();
     const { push } = useLogStream.getState();
 
     useEffect(() => {
-        if (!type || !name || !enabled) return;
-        const topic = `log/${type}/${name}`;
+        if (!name || !enabled) return;
+        const topic = `log/${name}`;
         const buf = [];
         let t = null;
 
@@ -31,5 +31,5 @@ export function useMqttLogs(type, name, { enabled = true } = {}) {
             if (t) clearTimeout(t);
             buf.length = 0;
         };
-    }, [type, name, subscribe, push, enabled]);
+    }, [name, subscribe, push, enabled]);
 }

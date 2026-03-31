@@ -1,6 +1,12 @@
 // src/pages/JournalPage/utils/journal-history-period.js
 import { getLocalTimeZone } from "@internationalized/date";
 
+function toCsv(value) {
+    if (!value) return undefined;
+    if (Array.isArray(value)) return value.length ? value.join(",") : undefined;
+    return value;
+}
+
 export function journalFiltersToApiPayload(filters) {
     const tz = getLocalTimeZone();
 
@@ -11,8 +17,12 @@ export function journalFiltersToApiPayload(filters) {
         return {
             from: null,
             to: null,
-            severity: Array.isArray(filters?.severity) ? filters.severity : [],
-            category: Array.isArray(filters?.category) ? filters.category : [],
+            severity: Array.isArray(filters?.severity)
+                ? toCsv(filters.severity)
+                : [],
+            category: Array.isArray(filters?.category)
+                ? toCsv(filters.category)
+                : [],
         };
     }
 
@@ -25,7 +35,11 @@ export function journalFiltersToApiPayload(filters) {
     return {
         from: fromUtc,
         to: toUtc,
-        severity: Array.isArray(filters?.severity) ? filters.severity : [],
-        category: Array.isArray(filters?.category) ? filters.category : [],
+        severity: Array.isArray(filters?.severity)
+            ? toCsv(filters.severity)
+            : [],
+        category: Array.isArray(filters?.category)
+            ? toCsv(filters.category)
+            : [],
     };
 }

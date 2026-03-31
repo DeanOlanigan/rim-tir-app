@@ -12,7 +12,6 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { LuCheck, LuSend, LuTriangleAlert } from "react-icons/lu";
-import { useLicenseCheck } from "./hooks/useLicenseCheck";
 import { useLicenseMutation } from "./hooks/useLicenseMutation";
 import { useLicense } from "./hooks/useLicense";
 
@@ -28,12 +27,22 @@ function checkDate(endDate, setIsKeyEnd) {
 }
 
 export const License = () => {
-    const { data: uuid } = useLicense();
-    const { data } = useLicenseCheck(uuid);
+    const { data } = useLicense();
+    // TODO
+    /* пример данных, которые приходят с бэка
+        {
+            isActive: true,
+            expireDate: '2028-12-31T23:59:59.000Z',
+            someData: {
+                company: 'Example Company',
+                licenseType: 'Pro',
+                maxDevices: 100
+            },
+            deviceCode: '019d438c-b75e-7657-b1fe-a8890b37a6a3'
+        }
+    */
     const [isKeyEnd, setIsKeyEnd] = useState(false);
     useEffect(() => checkDate(data.endDate, setIsKeyEnd), [data.endDate]);
-
-    const licenseMutation = useLicenseMutation(setIsKeyEnd, uuid);
 
     return (
         <>
@@ -49,8 +58,8 @@ export const License = () => {
                         <Field.Root>
                             <Field.Label>Уникальный идентификатор</Field.Label>
                             <HStack gap={4}>
-                                <Text>{uuid}</Text>
-                                <Clipboard.Root value={uuid}>
+                                <Text>{data?.deviceCode}</Text>
+                                <Clipboard.Root value={data?.deviceCode}>
                                     <Clipboard.Trigger asChild>
                                         <IconButton variant="surface" size="xs">
                                             <Clipboard.Indicator />
@@ -66,10 +75,7 @@ export const License = () => {
                                 <Field.Label>
                                     Ввод ключа для активации ПО
                                 </Field.Label>
-                                <KeyInput
-                                    licenseMutation={licenseMutation}
-                                    uuid={uuid}
-                                />
+                                <KeyInput />
                             </Field.Root>
                         )}
                     </HStack>
@@ -90,7 +96,8 @@ export const License = () => {
         </>
     );
 };
-const KeyInput = ({ licenseMutation, uuid }) => {
+const KeyInput = () => {
+    const licenseMutation = useLicenseMutation();
     const [key, setKey] = useState("");
     return (
         <Group attached w={"100%"}>
@@ -104,12 +111,7 @@ const KeyInput = ({ licenseMutation, uuid }) => {
             <IconButton
                 loading={licenseMutation.isPending}
                 variant={"plain"}
-                onClick={() =>
-                    licenseMutation.mutate({
-                        uuid: uuid,
-                        key: `${key}`,
-                    })
-                }
+                onClick={() => licenseMutation.mutate({ license: key })}
             >
                 <LuSend />
             </IconButton>

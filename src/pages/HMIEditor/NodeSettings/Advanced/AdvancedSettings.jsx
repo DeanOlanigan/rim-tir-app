@@ -11,7 +11,7 @@ import { useVariables } from "../useVariables";
 import { LOCALE } from "../../constants";
 
 export const AdvancedSettings = ({ types, selectedIds }) => {
-    const { data: variables } = useVariables();
+    const { data } = useVariables();
     const bindingsItems = useNodeStore(
         useShallow((s) => s.nodes[selectedIds[0]]?.bindings?.byProp || {}),
     );
@@ -35,7 +35,7 @@ export const AdvancedSettings = ({ types, selectedIds }) => {
             <VStack align={"start"} w={"100%"}>
                 <Heading size={"md"}>{LOCALE.globalVar}</Heading>
                 <VariableSelect
-                    variables={variables}
+                    variables={data?.variables ?? []}
                     value={globalVariable}
                     onChange={(e) =>
                         useNodeStore
@@ -89,7 +89,7 @@ export const AdvancedSettings = ({ types, selectedIds }) => {
                                     key={property}
                                     binding={binding}
                                     config={PARAMS_CONFIG[property]}
-                                    variables={variables}
+                                    variables={data?.variables ?? []}
                                     isMultiple={selectedIds.length > 1}
                                     selectedIds={selectedIds}
                                     globalVariable={globalVariable}

@@ -7,7 +7,7 @@ export function useAckEventHistoryMutation(filters) {
     const queryKey = ["journal-history", filters];
 
     return useMutation({
-        mutationFn: ({ id }) => ackJournalEvent({ id }),
+        mutationFn: ({ eventId }) => ackJournalEvent({ eventId }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey });
         },
@@ -16,6 +16,6 @@ export function useAckEventHistoryMutation(filters) {
 
 export function useAckEventStreamMutation() {
     return useMutation({
-        mutationFn: ({ id }) => ackJournalEvent({ id }),
+        mutationFn: ({ eventId }) => ackJournalEvent({ eventId }),
     });
 }

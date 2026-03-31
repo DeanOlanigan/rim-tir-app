@@ -13,8 +13,9 @@ import { useAckRangeHistoryMutation } from "./hooks/useAckRangeMutation";
 import { journalFiltersToApiPayload } from "./journal-history-period";
 import { useAckEventHistoryMutation } from "./hooks/useAckEventMutation";
 
-function toTS(data) {
-    return data.toDate(getLocalTimeZone()).getTime();
+function convertToUTC(data) {
+    const tz = getLocalTimeZone();
+    return data.toDate(tz).toISOString();
 }
 
 const BOTTOM_OFFSET_PX = 500;
@@ -76,9 +77,9 @@ export const JournalHistoryTable = () => {
                         }
                         isPending={ackRangeMutation.isPending}
                         onAccept={() => {
-                            const fromTs = toTS(filters.period.from);
-                            const toTs = toTS(filters.period.to);
-                            ackRangeMutation.mutate({ fromTs, toTs });
+                            const fromUTC = convertToUTC(filters.period.from);
+                            const toUTC = convertToUTC(filters.period.to);
+                            ackRangeMutation.mutate({ fromUTC, toUTC });
                         }}
                     />
                 );
@@ -89,11 +90,7 @@ export const JournalHistoryTable = () => {
 
     const onAckEvent = useCallback(
         (event) => {
-            ackEventMutation.mutate({
-                eventId: event.id,
-                event: event.event,
-                message: `Квитирование события ${event.event}`,
-            });
+            ackEventMutation.mutate({ eventId: event.id });
         },
         [ackEventMutation],
     );

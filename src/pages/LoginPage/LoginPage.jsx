@@ -17,6 +17,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authKeys } from "@/api/queryKeys";
 import { login } from "@/api/routes/auth.api";
+import { isAxiosError } from "axios";
+import { ERROR_CODES } from "@/api/errorCodes";
 
 function LoginForm() {
     return (
@@ -63,6 +65,7 @@ const LoginCard = () => {
                 message: "Вход выполнен успешно",
             });
 
+            queryClient.clear();
             queryClient.setQueryData(authKeys.session(), {
                 authenticated: true,
                 user: data.user,
@@ -76,12 +79,11 @@ const LoginCard = () => {
             navigate(redirectTo, { replace: true });
         },
         onError: (error) => {
-            const message =
-                error?.response?.data?.message ||
-                error?.response?.data?.error ||
-                error?.message ||
-                "Не удалось выполнить вход";
-
+            let message = "Не удалось выполнить вход";
+            if (isAxiosError(error)) {
+                message =
+                    ERROR_CODES[error?.response?.data?.error?.code] || message;
+            }
             setSharedMessage({
                 type: "error",
                 message,

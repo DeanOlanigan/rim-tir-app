@@ -2,6 +2,7 @@ import { CanAccess } from "@/CanAccess";
 import {
     Button,
     DatePicker,
+    DownloadTrigger,
     Field,
     Flex,
     HStack,
@@ -15,6 +16,7 @@ import { useJournalHistoryStore } from "../JournalStores/journal-history-store";
 import { useEffect, useMemo, useState } from "react";
 import { journalFiltersToApiPayload } from "../journal-history-period";
 import { RADII_MAIN } from "@/config/constants";
+import { downloadJournal } from "@/api/routes/journal.api";
 
 const SEVERITY_FILTER_ITEMS = [
     { label: "Критическая", value: "critical" },
@@ -92,9 +94,15 @@ export const JournalHistoryHeader = () => {
         });
     };
 
-    const handleDownloadCsv = () => {
-        const payload = journalFiltersToApiPayload(localFilters);
-        console.log("export csv with filters", { payload, localFilters });
+    const fetchData = async () => {
+        const filters = journalFiltersToApiPayload(appliedFilters);
+
+        return await downloadJournal({
+            fromUTC: filters.from,
+            toUTC: filters.to,
+            severity: filters.severity,
+            category: filters.category,
+        });
     };
 
     const handlePeriodChange = (details) => {
@@ -151,14 +159,17 @@ export const JournalHistoryHeader = () => {
                     Применить фильтры
                 </Button>
                 <CanAccess right="journal.download">
-                    <Button
-                        size="xs"
-                        onClick={handleDownloadCsv}
-                        aria-label="Экспорт в CSV"
+                    <DownloadTrigger
+                        data={fetchData}
+                        fileName={`journal_export_${new Date().toISOString()}.csv`}
+                        mimeType="text/csv"
+                        asChild
                     >
-                        <LuDownload />
-                        Экспорт в CSV
-                    </Button>
+                        <Button size="xs" aria-label="Экспорт в CSV">
+                            <LuDownload />
+                            Экспорт в CSV
+                        </Button>
+                    </DownloadTrigger>
                 </CanAccess>
             </HStack>
         </HStack>

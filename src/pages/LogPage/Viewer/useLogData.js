@@ -6,12 +6,8 @@ import { useMqttLogs } from "./useMqttLogs";
 export function useLogData() {
     const { chosenLog, logRowsCount, logTextSize, isLogTextWrapped, filter } =
         useLogStore();
-    const q = useLogHistory(
-        chosenLog?.category,
-        chosenLog?.label,
-        logRowsCount,
-    );
-    useMqttLogs(chosenLog?.category, chosenLog?.label, {
+    const q = useLogHistory(chosenLog?.label, logRowsCount);
+    useMqttLogs(chosenLog?.label, {
         enabled: q.isSuccess,
     });
 

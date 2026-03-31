@@ -50,8 +50,8 @@ export async function downloadJournal({
 }
 
 // Пока что оставляем command style API для квитирования
-export async function ackJournalEvent({ id }) {
-    const response = await apiv2.post("/journal/ack/event", { id });
+export async function ackJournalEvent({ eventId }) {
+    const response = await apiv2.post("/journal/ack/event", { eventId });
     return response.data;
 }
 

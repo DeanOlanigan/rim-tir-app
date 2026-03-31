@@ -12,9 +12,11 @@ export const SoftwareVersion = () => {
 
     if (isLoading) return <Skeleton />;
 
+    const version = data?.version || "неизвестно";
+
     const tooltip = isError
         ? "Ошибка считывания версии ПК"
-        : `Текущая версия ПК: ${data?.data}`;
+        : `Текущая версия ПК: ${version}`;
 
     return (
         <Tooltip
@@ -24,7 +26,7 @@ export const SoftwareVersion = () => {
             openDelay={1000}
         >
             <Text fontSize={"2xs"} color={"fg.subtle"} fontWeight={"bold"}>
-                {isError ? "Ошибка" : data?.data}
+                {isError ? "Ошибка" : version}
             </Text>
         </Tooltip>
     );

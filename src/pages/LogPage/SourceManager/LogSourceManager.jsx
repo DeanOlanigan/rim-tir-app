@@ -16,19 +16,12 @@ import {
 import { LuArrowRight } from "react-icons/lu";
 import { useLogStore } from "../store/store";
 
-const GROUPS = {
-    internal: "Логи во внутренней памяти",
-    sd: "Логи во внешней памяти",
-};
-
 export const LogListBox = ({ data }) => {
     const logsToDwnl = useLogStore((state) => state.logsToDwnl);
     const { setLogsToDwnl } = useLogStore.getState();
     const collection = createListCollection({
         items: data,
-        groupBy: (item) => item.category,
     });
-
     return (
         <Listbox.Root
             collection={collection}
@@ -49,21 +42,14 @@ export const LogListBox = ({ data }) => {
                 minH={0}
                 maxH={"none"}
             >
-                {collection.group().map(([category, items]) => (
-                    <Listbox.ItemGroup key={category}>
-                        <Listbox.ItemGroupLabel asChild>
-                            <Text fontWeight={"medium"}>
-                                {GROUPS[category]}
-                            </Text>
-                        </Listbox.ItemGroupLabel>
-                        {items.map((item) => (
-                            <ListboxItem
-                                key={`${item.category}/${item.value}`}
-                                item={item}
-                            />
-                        ))}
-                    </Listbox.ItemGroup>
-                ))}
+                <Listbox.ItemGroup>
+                    {collection.items.map((item) => (
+                        <ListboxItem
+                            key={`${item.category}/${item.value}`}
+                            item={item}
+                        />
+                    ))}
+                </Listbox.ItemGroup>
             </Listbox.Content>
         </Listbox.Root>
     );
