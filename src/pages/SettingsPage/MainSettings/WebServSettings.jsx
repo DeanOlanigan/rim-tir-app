@@ -9,6 +9,7 @@ import {
     Text,
     Button,
     Stack,
+    VStack,
 } from "@chakra-ui/react";
 import { LuUpload } from "react-icons/lu";
 import { useController, useFormContext, useWatch } from "react-hook-form";
@@ -22,7 +23,7 @@ export const ServerSettings = () => {
     });
 
     return (
-        <>
+        <VStack align={"stretch"}>
             <Heading>Web-сервер</Heading>
             <Card.Root variant={"elevated"}>
                 <Card.Body>
@@ -41,7 +42,7 @@ export const ServerSettings = () => {
                     </Fieldset.Root>
                 </Card.Body>
             </Card.Root>
-        </>
+        </VStack>
     );
 };
 

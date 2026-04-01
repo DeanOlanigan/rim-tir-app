@@ -1,9 +1,24 @@
 import { useState } from "react";
 import { handleRoleAdd } from "./handleRoleAdd";
-import { Group, IconButton, Input, Text } from "@chakra-ui/react";
+import { Field, IconButton, Input, InputGroup } from "@chakra-ui/react";
 import { LuPlus } from "react-icons/lu";
-import { Tooltip } from "@/components/ui/tooltip";
 import { useRolePostMutation } from "./hooks/mutations/useRolePostMutation";
+
+const AddRoleButton = ({ isPending, handleSubmit }) => {
+    return (
+        <IconButton
+            variant={"surface"}
+            size={"2xs"}
+            me="-2"
+            loading={isPending}
+            onClick={() => {
+                handleSubmit();
+            }}
+        >
+            <LuPlus />
+        </IconButton>
+    );
+};
 
 export const NewRoleAdder = () => {
     const [newRoleName, setNewName] = useState("");
@@ -17,30 +32,29 @@ export const NewRoleAdder = () => {
     }
 
     return (
-        <>
-            <Text fontWeight={"500"} mt={"auto"}>
-                Добавление новой роли
-            </Text>
-            <Group attached w={"100%"}>
+        <Field.Root>
+            <Field.Label>Добавить роль</Field.Label>
+            <InputGroup
+                endElement={
+                    <AddRoleButton
+                        isPending={postMutation.isPending}
+                        handleSubmit={handlePostRole}
+                    />
+                }
+            >
                 <Input
+                    size={"xs"}
                     value={newRoleName}
                     onChange={(e) => setNewName(e.target.value)}
-                    size={"xs"}
-                    placeholder="Введите название новой роли"
-                />
-                <Tooltip showArrow content={<Text>Добавить роль</Text>}>
-                    <IconButton
-                        loading={postMutation.isPending}
-                        size={"xs"}
-                        onClick={() => {
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            e.preventDefault();
                             handlePostRole();
-                        }}
-                        borderLeftRadius={"0"}
-                    >
-                        <LuPlus />
-                    </IconButton>
-                </Tooltip>
-            </Group>
-        </>
+                        }
+                    }}
+                    placeholder={"Введите название новой роли"}
+                />
+            </InputGroup>
+        </Field.Root>
     );
 };

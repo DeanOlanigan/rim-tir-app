@@ -6,11 +6,7 @@ import {
     WideLayout,
 } from "./layouts";
 import { AuthGate, GuestGate, PermissionGate } from "./guards";
-import {
-    configurationLoader,
-    monitoringLoader,
-    settingsLoader,
-} from "./loaders";
+import { configurationLoader, monitoringLoader } from "./loaders";
 import { createBrowserRouter } from "react-router-dom";
 import { ErrorScreamer } from "@/components/Error/Error";
 
@@ -118,7 +114,6 @@ export const routes = [
                                 children: [
                                     {
                                         path: "settings",
-                                        loader: settingsLoader,
                                         errorElement: (
                                             <ErrorScreamer
                                                 text={

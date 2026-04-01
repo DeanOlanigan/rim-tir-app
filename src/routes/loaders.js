@@ -1,8 +1,3 @@
-import { QK } from "@/api";
-import { getRoles } from "@/api/routes/roles.api";
-import { getSettings } from "@/api/routes/settings.api";
-import { getUsers } from "@/api/routes/users.api";
-import { queryClient } from "@/queryClients";
 import { configuratorConfig } from "@/store/configurator-config";
 
 export async function monitoringLoader() {
@@ -10,24 +5,6 @@ export async function monitoringLoader() {
         await import("@/utils/configurationParser");
     await ensureConfiguratorConfig();
     return null;
-}
-
-export async function settingsLoader() {
-    return await Promise.all([
-        queryClient.prefetchQuery({
-            queryKey: ["settings"],
-            queryFn: getSettings,
-            retry: false,
-        }),
-        queryClient.prefetchQuery({
-            queryKey: QK.users,
-            queryFn: getUsers,
-        }),
-        queryClient.prefetchQuery({
-            queryKey: QK.roles,
-            queryFn: getRoles,
-        }),
-    ]);
 }
 
 export async function configurationLoader() {

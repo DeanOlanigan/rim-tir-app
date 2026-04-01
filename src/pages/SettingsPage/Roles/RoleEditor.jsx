@@ -24,7 +24,12 @@ export const RoleEditor = () => {
             <Heading>Редактирование роли</Heading>
             <InputField />
             <RoleTree />
-            <Button w={"100%"} mt={"auto"} onClick={() => handlePutRole()}>
+            <Button
+                size={"xs"}
+                w={"100%"}
+                mt={"auto"}
+                onClick={() => handlePutRole()}
+            >
                 Применить
             </Button>
         </VStack>

@@ -9,11 +9,13 @@ import {
 import { useRoleDeleteMutation } from "./hooks/mutations/useRoleDeleteMutation";
 import { useRightsAndRolesStore } from "./store/rights-and-roles-store";
 import { useTableStore } from "../tablestore";
-import { LuX } from "react-icons/lu";
+import { LuTrash2 } from "react-icons/lu";
 import { Tooltip } from "@/components/ui/tooltip";
+import { useId } from "react";
 
 export const DeleteRolePopover = ({ id }) => {
     const deleteRoleMutation = useRoleDeleteMutation();
+    const triggerId = useId();
 
     function handleDelete() {
         useRightsAndRolesStore.getState().delRole(id);
@@ -22,19 +24,22 @@ export const DeleteRolePopover = ({ id }) => {
     }
 
     return (
-        <Popover.Root>
-            <Popover.Trigger>
-                <Tooltip showArrow content={"Удалить роль"}>
+        <Popover.Root ids={{ trigger: triggerId }}>
+            <Tooltip
+                showArrow
+                ids={{ trigger: triggerId }}
+                content={"Удалить роль"}
+            >
+                <Popover.Trigger asChild>
                     <IconButton
-                        size={"2xs"}
-                        variant={"ghost"}
+                        size={"xs"}
+                        variant={"outline"}
                         colorPalette={"red"}
-                        borderLeftRadius={"0"}
                     >
-                        <LuX />
+                        <LuTrash2 />
                     </IconButton>
-                </Tooltip>
-            </Popover.Trigger>
+                </Popover.Trigger>
+            </Tooltip>
             <Portal>
                 <Popover.Positioner>
                     <Popover.Content>

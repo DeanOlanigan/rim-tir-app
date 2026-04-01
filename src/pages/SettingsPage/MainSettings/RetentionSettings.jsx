@@ -1,13 +1,13 @@
 import { useAuth } from "@/hooks/useAuth";
 import { hasRight } from "@/utils/permissions";
-import { Heading, SimpleGrid } from "@chakra-ui/react";
+import { Heading, SimpleGrid, VStack } from "@chakra-ui/react";
 import { RETENTION_KEYS, RETENTION_META } from "./settings.schema";
 import { RetentionPolicyCard } from "./RetentionPolicyCard";
 
 export const RetentionSettings = () => {
     const { user } = useAuth();
     return (
-        <>
+        <VStack align={"stretch"}>
             <Heading>Хранение данных</Heading>
             <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
                 {RETENTION_KEYS.map((key) => {
@@ -23,6 +23,6 @@ export const RetentionSettings = () => {
                     );
                 })}
             </SimpleGrid>
-        </>
+        </VStack>
     );
 };

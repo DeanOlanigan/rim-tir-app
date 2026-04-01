@@ -8,13 +8,131 @@ import {
     Textarea,
     useFileUpload,
     useFileUploadContext,
+    VStack,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { LuUpload } from "react-icons/lu";
 import { useUpdateMutation } from "./hooks/useUpdateMutation";
 import { useUpdatesLogs } from "./hooks/useUpdateLogs";
 
 const MAX_FILES = 1;
+const STATUS_TIMEOUT_MS = 2 * 60 * 1000;
+
+const initialState = {
+    phase: "idle", // idle | starting | polling | success | error
+    logs: [],
+    progress: null,
+    message: "",
+    lastSeenAt: null,
+    errorText: "",
+};
+
+function formatStartError(err) {
+    const status = err?.response?.status;
+    const code =
+        err?.response?.data?.error?.code ||
+        err?.response?.data?.error ||
+        err?.code ||
+        err?.message ||
+        "UNKNOWN";
+
+    return `Ошибка при запуске обновления: ${status ?? ""} ${code}`.trim();
+}
+
+function updatesReducer(state, action) {
+    switch (action.type) {
+        case "START_REQUEST":
+            return {
+                ...state,
+                phase: "starting",
+                logs: ["Отправка пакета обновления..."],
+                progress: null,
+                message: "",
+                lastSeenAt: null,
+                errorText: "",
+            };
+
+        case "START_SUCCESS":
+            return {
+                ...state,
+                phase: "polling",
+                logs: [
+                    "Отправка пакета обновления...",
+                    "Пакет загружен. Ожидание статуса установки...",
+                ],
+                lastSeenAt: Date.now(),
+                errorText: "",
+            };
+
+        case "START_ERROR":
+            return {
+                ...state,
+                phase: "error",
+                logs: [formatStartError(action.error)],
+                errorText: formatStartError(action.error),
+            };
+
+        case "STATUS_SUCCESS": {
+            const payload = action.payload ?? {};
+            const serverPhase = payload.phase;
+            const nextLogs = Array.isArray(payload.log)
+                ? payload.log
+                : state.logs;
+
+            if (serverPhase === "success" || payload.progress === 100) {
+                return {
+                    ...state,
+                    phase: "success",
+                    logs: nextLogs,
+                    progress: payload.progress ?? 100,
+                    message: payload.message ?? "Обновление завершено",
+                    lastSeenAt: Date.now(),
+                    errorText: "",
+                };
+            }
+
+            if (serverPhase === "error") {
+                return {
+                    ...state,
+                    phase: "error",
+                    logs: nextLogs,
+                    progress: payload.progress ?? state.progress,
+                    message: payload.message ?? "Ошибка обновления",
+                    lastSeenAt: Date.now(),
+                    errorText: payload.message ?? "Ошибка обновления",
+                };
+            }
+
+            return {
+                ...state,
+                phase: "polling",
+                logs: nextLogs,
+                progress:
+                    typeof payload.progress === "number"
+                        ? payload.progress
+                        : state.progress,
+                message: payload.message ?? state.message,
+                lastSeenAt: Date.now(),
+                errorText: "",
+            };
+        }
+
+        case "STATUS_TIMEOUT":
+            return {
+                ...state,
+                phase: "error",
+                logs: [
+                    ...state.logs,
+                    "Ошибка обновления: устройство не отвечало более 5 минут. Возможен выход устройства из строя.",
+                ],
+                errorText:
+                    "Устройство не отвечало более 5 минут. Возможен выход устройства из строя.",
+            };
+
+        default:
+            return state;
+    }
+}
 
 const ConditionalDropzone = () => {
     const fileUpload = useFileUploadContext();
@@ -35,39 +153,95 @@ const ConditionalDropzone = () => {
 };
 
 export const Updates = () => {
-    const [isDown, setDown] = useState(false);
-    const [logs, setLogs] = useState([]);
+    const [state, dispatch] = useReducer(updatesReducer, initialState);
+    const timeoutFiredRef = useRef(false);
+
     const fileUpload = useFileUpload({
         accept: ".ipk",
+        maxFiles: MAX_FILES,
     });
 
-    const sendFileMutation = useUpdateMutation(setDown, setLogs, isDown);
+    const selectedFile = fileUpload.acceptedFiles[0] ?? null;
+    const startUpdateMutation = useUpdateMutation();
 
-    const { data, isError, error } = useUpdatesLogs(isDown);
+    const pollingEnabled = state.phase === "polling";
 
-    useEffect(() => {
-        if (isError) {
-            setLogs(["Ошибка при установке обновления: ", error]);
-            setDown(false);
+    const statusQuery = useUpdatesLogs(pollingEnabled);
+
+    const handleStart = () => {
+        if (
+            !selectedFile ||
+            state.phase === "starting" ||
+            state.phase === "polling"
+        ) {
+            return;
         }
-    }, [isError, error]);
+
+        timeoutFiredRef.current = false;
+        dispatch({ type: "START_REQUEST" });
+
+        startUpdateMutation.mutate(
+            { file: selectedFile },
+            {
+                onSuccess: () => {
+                    dispatch({ type: "START_SUCCESS" });
+                },
+                onError: (error) => {
+                    dispatch({ type: "START_ERROR", error });
+                },
+            },
+        );
+    };
 
     useEffect(() => {
-        if (data?.message) {
-            setLogs((prev) => [
-                ...prev.concat(data.message + data.progress + "%"),
-            ]);
-            if (data.progress === 100) {
-                setLogs(["Обновление установлено!!!"]);
-                setDown(false);
-                fileUpload.clearFiles();
+        if (!pollingEnabled) {
+            return;
+        }
+
+        if (statusQuery.data) {
+            dispatch({ type: "STATUS_SUCCESS", payload: statusQuery.data });
+        }
+    }, [pollingEnabled, statusQuery.data]);
+
+    useEffect(() => {
+        if (!pollingEnabled) {
+            return;
+        }
+
+        if (state.phase !== "polling") {
+            return;
+        }
+
+        if (!state.lastSeenAt) {
+            return;
+        }
+
+        const id = setInterval(() => {
+            if (timeoutFiredRef.current) {
+                return;
             }
+
+            const elapsed = Date.now() - state.lastSeenAt;
+            if (elapsed >= STATUS_TIMEOUT_MS) {
+                timeoutFiredRef.current = true;
+                dispatch({ type: "STATUS_TIMEOUT" });
+            }
+        }, 1000);
+
+        return () => clearInterval(id);
+    }, [pollingEnabled, state.phase, state.lastSeenAt]);
+
+    useEffect(() => {
+        if (state.phase === "success") {
+            fileUpload.clearFiles();
         }
-    }, [data, fileUpload]);
+    }, [state.phase, fileUpload]);
+
+    const isBusy = state.phase === "starting" || state.phase === "polling";
 
     return (
-        <>
-            <Heading paddingBottom={"2"}>Обновления </Heading>
+        <VStack align={"stretch"}>
+            <Heading>Обновления </Heading>
             <Card.Root variant={"elevated"}>
                 <Card.Header>
                     <Text fontSize={"lg"} fontWeight="medium">
@@ -76,7 +250,7 @@ export const Updates = () => {
                 </Card.Header>
                 <Card.Body>
                     <Textarea
-                        value={logs.join("\n") || ""}
+                        value={state.logs.join("\n") || ""}
                         variant="subtle"
                         readOnly
                         placeholder="Здесь будет виден процесс установки"
@@ -91,27 +265,28 @@ export const Updates = () => {
                         alignItems="stretch"
                     >
                         <FileUpload.HiddenInput />
-                        <ConditionalDropzone />
-                        <FileUpload.List clearable />
+                        {!isBusy && <ConditionalDropzone />}
+                        <FileUpload.List clearable={!isBusy} />
                     </FileUpload.RootProvider>
                 </Card.Body>
                 <Card.Footer>
                     <Button
-                        disabled={fileUpload?.acceptedFiles.length === 0}
-                        loading={isDown}
-                        loadingText={"Установка обновления"}
-                        onClick={() =>
-                            sendFileMutation.mutate({
-                                file: fileUpload.acceptedFiles[0],
-                            })
+                        size={"xs"}
+                        disabled={!selectedFile || isBusy}
+                        loading={isBusy}
+                        loadingText={
+                            state.phase === "starting"
+                                ? "Запуск..."
+                                : "Ожидание..."
                         }
+                        onClick={handleStart}
                     >
-                        {fileUpload.acceptedFiles.length > 0
-                            ? "Установить"
-                            : "Загрузите установочный файл"}
+                        {selectedFile
+                            ? "Начать обновление"
+                            : "Выберите файл обновления"}
                     </Button>
                 </Card.Footer>
             </Card.Root>
-        </>
+        </VStack>
     );
 };

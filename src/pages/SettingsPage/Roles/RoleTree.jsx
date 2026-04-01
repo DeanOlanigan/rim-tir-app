@@ -47,6 +47,7 @@ export const RoleTree = () => {
             }}
             maxH={"xs"}
             overflow={"auto"}
+            p={1}
         >
             <TreeView.Label>Cписок прав</TreeView.Label>
             <TreeView.Tree>

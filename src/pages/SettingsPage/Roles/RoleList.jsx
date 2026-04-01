@@ -1,4 +1,4 @@
-import { Card, Group, Heading, Text, VStack } from "@chakra-ui/react";
+import { Button, Heading, HStack, VStack } from "@chakra-ui/react";
 import { useRightsAndRolesStore } from "./store/rights-and-roles-store";
 import { DeleteRolePopover } from "./DeleteRolePopover";
 import { NewRoleAdder } from "./NewRoleAdder";
@@ -10,45 +10,38 @@ export const RoleList = () => {
     return (
         <VStack h="md" w="50%" align={"start"}>
             <Heading>Роли</Heading>
-            <Card.Root size={"sm"} h={"sm"} overflow={"auto"} w={"100%"}>
-                <Card.Body>
-                    {Object.keys(roles).map((id) => (
-                        <Group key={id} attached>
-                            <Text
-                                p="4px"
-                                _hover={{
-                                    bg:
-                                        selRoleId === id
-                                            ? "colorPalette.subtle"
-                                            : "var(--global-color-border)",
-                                }}
-                                bg={
-                                    selRoleId === id
-                                        ? "colorPalette.subtle"
-                                        : "none"
-                                }
-                                borderRadius="xs"
-                                cursor={"pointer"}
-                                w={"100%"}
-                                onClick={() => {
-                                    useRightsAndRolesStore
-                                        .getState()
-                                        .setSelectedRole(
-                                            id,
-                                            roles[id].name,
-                                            roles[id].rights,
-                                        );
-                                }}
-                                fontWeight={"medium"}
-                            >
-                                {roles[id].name}
-                            </Text>
-                            <DeleteRolePopover id={id} />
-                        </Group>
-                    ))}
-                </Card.Body>
-            </Card.Root>
-            <NewRoleAdder />
+            <VStack
+                w={"100%"}
+                h={"100%"}
+                align={"stretch"}
+                overflow={"auto"}
+                p={1}
+            >
+                {Object.keys(roles).map((id) => (
+                    <HStack key={id}>
+                        <Button
+                            flex={1}
+                            size={"xs"}
+                            variant={selRoleId === id ? "solid" : "outline"}
+                            onClick={() => {
+                                useRightsAndRolesStore
+                                    .getState()
+                                    .setSelectedRole(
+                                        id,
+                                        roles[id].name,
+                                        roles[id].rights,
+                                    );
+                            }}
+                        >
+                            {roles[id].name}
+                        </Button>
+                        <DeleteRolePopover id={id} />
+                    </HStack>
+                ))}
+            </VStack>
+            <VStack align={"stretch"} w={"100%"}>
+                <NewRoleAdder />
+            </VStack>
         </VStack>
     );
 };
