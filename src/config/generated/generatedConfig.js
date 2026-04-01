@@ -2974,4 +2974,602 @@ export const config = [
             },
         ],
     },
+    {
+        node: "goose_pub",
+        type: "protocol",
+        label: "GOOSE Публикатор",
+        usedIn: "send",
+        shortname: "GOOSE pub",
+        color: "red",
+        settings: {
+            logging: {
+                type: "boolean",
+                label: "Логирование",
+                shortname: "log",
+                default: false,
+                showInTree: true,
+            },
+            name: {
+                type: "string",
+                label: "Имя подкючения",
+                default: "goose_pub_1",
+                showInTree: false,
+            },
+            lan: {
+                type: "string",
+                label: "LAN интерфейс",
+                default: "eth0",
+                showInTree: true,
+            },
+            mac5: {
+                type: "string",
+                label: "5 байт MAC-адреса",
+                default: "00",
+                showInTree: false,
+            },
+            mac6: {
+                type: "string",
+                label: "6 байт MAC-адреса",
+                default: "00",
+                showInTree: false,
+            },
+            appId: {
+                type: "number",
+                label: "APPID",
+                default: 1,
+                showInTree: false,
+            },
+            goCbRef: {
+                type: "string",
+                label: "goCbRef",
+                default: "goose_pub_1",
+                showInTree: false,
+            },
+            vlanId: {
+                type: "number",
+                label: "VLAN ID",
+                default: 0,
+                showInTree: false,
+            },
+            vlanPriority: {
+                type: "number",
+                label: "VLAN Priority",
+                default: 0,
+                showInTree: false,
+            },
+            revision: {
+                type: "number",
+                label: "Ревизия",
+                default: 1,
+                showInTree: false,
+            },
+            retry: {
+                type: "number",
+                label: "Количество повторов",
+                default: 3,
+                showInTree: false,
+            },
+            newMsgPeriod: {
+                type: "number",
+                label: "Период новых сообщений (мс)",
+                default: 100,
+                showInTree: false,
+            },
+            oldMsgPeriod: {
+                type: "number",
+                label: "Период старых сообщений (мс)",
+                default: 100,
+                showInTree: false,
+            },
+            ttl: {
+                type: "number",
+                label: "Время жизни (мс)",
+                default: 3000,
+                showInTree: false,
+            },
+        },
+        children: [
+            {
+                node: "dataSet",
+                type: "protocolSpecific",
+                label: "Набор данных",
+                shortname: "ds",
+                color: "orange",
+                settings: {
+                    dataSetRef: {
+                        type: "string",
+                        label: "Имя ссылки",
+                        default: "ds1",
+                        showInTree: false,
+                    },
+                    countFlag: {
+                        type: "boolean",
+                        label: "Флаг количества",
+                        default: false,
+                        showInTree: false,
+                    },
+                    tsFlag: {
+                        type: "boolean",
+                        label: "Флаг метки времени",
+                        default: false,
+                        showInTree: false,
+                    },
+                    qIdx: {
+                        type: "number",
+                        label: "Индекс качества",
+                        default: 0,
+                        showInTree: false,
+                    },
+                    tsIdx: {
+                        type: "number",
+                        label: "Индекс метки времени",
+                        default: 0,
+                        showInTree: false,
+                    },
+                },
+                children: [
+                    {
+                        node: "dataObject",
+                        type: "dataObject",
+                        label: "Объект данных",
+                        bulkCreation: {
+                            enabled: true,
+                            presets: [1, 2, 3, 5, 10],
+                        },
+                        icon: "fileDigit",
+                        settings: {
+                            type: {
+                                type: "enum",
+                                label: "Тип данных",
+                                enumValues: [
+                                    {
+                                        label: "1 бит - bool",
+                                        value: "bit",
+                                        min: 0,
+                                        max: 1,
+                                        step: 1,
+                                        integer: true,
+                                    },
+                                    {
+                                        label: "2 байта - целое без знака",
+                                        value: "ushort",
+                                        min: 0,
+                                        max: 65535,
+                                        step: 1,
+                                        integer: true,
+                                    },
+                                    {
+                                        label: "2 байта - целое",
+                                        value: "short",
+                                        min: -32768,
+                                        max: 32767,
+                                        step: 1,
+                                        integer: true,
+                                    },
+                                    {
+                                        label: "4 байта - целое",
+                                        value: "int",
+                                        min: -2147483648,
+                                        max: 2147483647,
+                                        step: 1,
+                                        integer: true,
+                                    },
+                                    {
+                                        label: "4 байта - целое без знака",
+                                        value: "uint",
+                                        min: 0,
+                                        max: 4294967295,
+                                        step: 1,
+                                        integer: true,
+                                    },
+                                    {
+                                        label: "4 байта - с плавающей точкой",
+                                        value: "float",
+                                        min: -3.402823466e38,
+                                        max: 3.402823466e38,
+                                        step: 0.1,
+                                        integer: false,
+                                        precision: 6,
+                                    },
+                                    {
+                                        label: "Int64",
+                                        value: "int64",
+                                        step: 0.1,
+                                        integer: false,
+                                        precision: 6,
+                                    },
+                                    {
+                                        label: "Bit string",
+                                        value: "bitstring",
+                                    },
+                                ],
+                                default: "bit",
+                            },
+                            valDeep: {
+                                type: "number",
+                                label: "Глубина вложенности значения",
+                                default: 0,
+                            },
+                            iusfMag: {
+                                type: "boolean",
+                                label: "IusfMag",
+                                default: false,
+                                visibleIf: {
+                                    or: [
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "bit",
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "ushort",
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "short",
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "int",
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "uint",
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "float",
+                                            ],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                    {
+                        node: "structure",
+                        type: "folder",
+                        label: "Структура данных",
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        node: "goose_sub",
+        type: "protocol",
+        label: "GOOSE Подписчик",
+        usedIn: "receive",
+        shortname: "GOOSE sub",
+        color: "red",
+        settings: {
+            logging: {
+                type: "boolean",
+                label: "Логирование",
+                shortname: "log",
+                default: false,
+                showInTree: true,
+            },
+            name: {
+                type: "string",
+                label: "Имя подкючения",
+                default: "goose_pub_1",
+                showInTree: false,
+            },
+            lan: {
+                type: "string",
+                label: "LAN интерфейс",
+                default: "eth0",
+                showInTree: true,
+            },
+            mac5: {
+                type: "string",
+                label: "5 байт MAC-адреса",
+                default: "00",
+                showInTree: false,
+            },
+            mac6: {
+                type: "string",
+                label: "6 байт MAC-адреса",
+                default: "00",
+                showInTree: false,
+            },
+            appId: {
+                type: "number",
+                label: "APPID",
+                default: 1,
+                showInTree: false,
+            },
+            goCbRef: {
+                type: "string",
+                label: "goCbRef",
+                default: "goose_pub_1",
+                showInTree: false,
+            },
+            vlanId: {
+                type: "number",
+                label: "VLAN ID",
+                default: 0,
+                showInTree: false,
+            },
+            vlanPriority: {
+                type: "number",
+                label: "VLAN Priority",
+                default: 0,
+                showInTree: false,
+            },
+        },
+        children: [
+            {
+                node: "dataSet",
+                type: "protocolSpecific",
+                label: "Набор данных",
+                shortname: "ds",
+                color: "orange",
+                settings: {
+                    dataSetRef: {
+                        type: "string",
+                        label: "Имя ссылки",
+                        default: "ds1",
+                        showInTree: false,
+                    },
+                    countFlag: {
+                        type: "boolean",
+                        label: "Флаг количества",
+                        default: false,
+                        showInTree: false,
+                    },
+                    tsFlag: {
+                        type: "boolean",
+                        label: "Флаг метки времени",
+                        default: false,
+                        showInTree: false,
+                    },
+                    qIdx: {
+                        type: "number",
+                        label: "Индекс качества",
+                        default: 0,
+                        showInTree: false,
+                    },
+                    tsIdx: {
+                        type: "number",
+                        label: "Индекс метки времени",
+                        default: 0,
+                        showInTree: false,
+                    },
+                },
+                children: [
+                    {
+                        node: "dataObject",
+                        type: "dataObject",
+                        label: "Объект данных",
+                        bulkCreation: {
+                            enabled: true,
+                            presets: [1, 2, 3, 5, 10],
+                        },
+                        icon: "fileDigit",
+                        settings: {
+                            type: {
+                                type: "enum",
+                                label: "Тип данных",
+                                enumValues: [
+                                    {
+                                        label: "1 бит - bool",
+                                        value: "bit",
+                                        min: 0,
+                                        max: 1,
+                                        step: 1,
+                                        integer: true,
+                                    },
+                                    {
+                                        label: "2 байта - целое без знака",
+                                        value: "ushort",
+                                        min: 0,
+                                        max: 65535,
+                                        step: 1,
+                                        integer: true,
+                                    },
+                                    {
+                                        label: "2 байта - целое",
+                                        value: "short",
+                                        min: -32768,
+                                        max: 32767,
+                                        step: 1,
+                                        integer: true,
+                                    },
+                                    {
+                                        label: "4 байта - целое",
+                                        value: "int",
+                                        min: -2147483648,
+                                        max: 2147483647,
+                                        step: 1,
+                                        integer: true,
+                                    },
+                                    {
+                                        label: "4 байта - целое без знака",
+                                        value: "uint",
+                                        min: 0,
+                                        max: 4294967295,
+                                        step: 1,
+                                        integer: true,
+                                    },
+                                    {
+                                        label: "4 байта - с плавающей точкой",
+                                        value: "float",
+                                        min: -3.402823466e38,
+                                        max: 3.402823466e38,
+                                        step: 0.1,
+                                        integer: false,
+                                        precision: 6,
+                                    },
+                                    {
+                                        label: "Int64",
+                                        value: "int64",
+                                        step: 0.1,
+                                        integer: false,
+                                        precision: 6,
+                                    },
+                                    {
+                                        label: "Bit string",
+                                        value: "bitstring",
+                                    },
+                                ],
+                                default: "bit",
+                            },
+                            valDeep: {
+                                type: "number",
+                                label: "Глубина вложенности значения",
+                                default: 0,
+                            },
+                            iusfMag: {
+                                type: "boolean",
+                                label: "IusfMag",
+                                default: false,
+                                visibleIf: {
+                                    or: [
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "bit",
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "ushort",
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "short",
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "int",
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "uint",
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "float",
+                                            ],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    },
+                    {
+                        node: "structure",
+                        type: "folder",
+                        label: "Структура данных",
+                    },
+                ],
+            },
+        ],
+    },
 ];
