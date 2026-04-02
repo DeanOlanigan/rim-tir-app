@@ -2,11 +2,16 @@ import { CheckboxGroup, Fieldset, SimpleGrid } from "@chakra-ui/react";
 import { attributesGrouped, attributes } from "./attributes";
 import { AttributeCheckbox } from "./AttributeCheckbox";
 import { useState } from "react";
+import { useMonitoringLive } from "../../store/mqtt-stream-store";
 
-export const AttributeChooser = ({ mode }) => {
+export const AttributeChooser = ({ mode, id }) => {
+    const curChecked =
+        useMonitoringLive.getState().latest.get(id)?.quality?.attributes ?? [];
     const defChecked =
-        mode === "manual" ? ["blocked", "substituted", "invalid"] : ["invalid"];
-    const [checked, setChecked] = useState(defChecked);
+        mode === "manual"
+            ? ["blocked", "substituted", "outdated"]
+            : ["invalid"];
+    const [checked, setChecked] = useState([...curChecked, ...defChecked]);
     const handleChange = (value) => setChecked(value);
 
     return (

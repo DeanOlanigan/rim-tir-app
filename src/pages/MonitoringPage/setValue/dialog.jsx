@@ -58,7 +58,7 @@ export const signalEditDialog = createOverlay((props) => {
                                 ) : (
                                     <VariableValueInput dataType={dataType} />
                                 )}
-                                <AttributeChooser mode={mode} />
+                                <AttributeChooser mode={mode} id={nodeId} />
                             </Stack>
                         </Dialog.Body>
                         <Dialog.Footer>

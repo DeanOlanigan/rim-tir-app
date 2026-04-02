@@ -2,13 +2,7 @@ import { Checkbox, HStack, Icon, IconButton, Popover } from "@chakra-ui/react";
 import { LuInfo } from "react-icons/lu";
 
 export const AttributeCheckbox = ({ attr, mode }) => {
-    const isDisabled =
-        (mode === "manual" &&
-            (attr.name === "invalid" ||
-                attr.name === "blocked" ||
-                attr.name === "substituted")) ||
-        (mode === "edit" &&
-            (attr.name === "used" || attr.name === "additionalCalc"));
+    const isDisabled = mode === "manual";
     return (
         <HStack align={"center"} justify={"start"}>
             {attr?.icon?.as && <Icon size={"md"} {...attr.icon} aria-hidden />}
