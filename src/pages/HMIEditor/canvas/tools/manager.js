@@ -23,6 +23,7 @@ export function createToolManager({ toolsMap, api }) {
     };
 
     const setActive = (name) => {
+        if (api.ui.viewOnlyMode()) return;
         const next = toolsMap[name];
         if (!next) {
             console.warn(`Tool "${name}" not found`);
