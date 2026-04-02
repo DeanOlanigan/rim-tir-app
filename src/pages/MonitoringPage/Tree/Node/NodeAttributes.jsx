@@ -9,19 +9,19 @@ export const NodeAttributes = memo(function NodeAttributes({ id }) {
 
     return (
         <>
-            {attributes.map(
-                (attr) =>
-                    attr?.icon?.as &&
-                    live?.quality?.attributes?.includes(attr.name) && (
-                        <Icon
-                            key={attr.name}
-                            size={"md"}
-                            {...attr.icon}
-                            aria-hidden
-                            title={attr.label}
-                        />
-                    ),
-            )}
+            {live?.quality?.attributes?.map((attr) => {
+                const attribute = attributes[attr];
+                if (!attribute) return null;
+                return (
+                    <Icon
+                        key={attribute.name}
+                        size={"md"}
+                        {...attribute.icon}
+                        aria-hidden
+                        title={attribute.label}
+                    />
+                );
+            })}
             <Icon
                 as={LuCircle}
                 fill={

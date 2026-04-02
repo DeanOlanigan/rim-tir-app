@@ -5,7 +5,7 @@ export const AttributeCheckbox = ({ attr, mode }) => {
     const isDisabled =
         (mode === "manual" &&
             (attr.name === "invalid" ||
-                attr.name === "manual" ||
+                attr.name === "blocked" ||
                 attr.name === "substituted")) ||
         (mode === "edit" &&
             (attr.name === "used" || attr.name === "additionalCalc"));

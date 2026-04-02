@@ -1,85 +1,131 @@
 import {
+    LuAudioWaveform,
     LuCircleX,
-    LuHardDriveUpload,
-    LuMonitorCheck,
+    LuFlaskConical,
+    LuLayers,
+    LuMoveHorizontal,
+    LuOctagonAlert,
     LuOctagonMinus,
-    LuSquareFunction,
+    LuRefreshCcw,
+    LuReplace,
+    LuTrendingUpDown,
 } from "react-icons/lu";
-import {
-    TbClockExclamation,
-    TbExclamationMark,
-    TbHandStop,
-    TbHelpHexagonFilled,
-} from "react-icons/tb";
+import { TbClockExclamation } from "react-icons/tb";
+import { PiNetworkXFill } from "react-icons/pi";
 
-export const attributes = [
-    {
-        name: "used",
-        short: "US",
-        label: "Используется",
-        description: "Значение привязано к источнику",
-        icon: { as: LuMonitorCheck, color: "green" },
+export const attributes = {
+    test: {
+        name: "test",
+        label: "Тестовый",
+        description:
+            "Помечает значение как тестовое. Используется в режимах проверки и не должно восприниматься как рабочее измерение или команда.",
+        icon: { as: LuFlaskConical, color: "fg.info" },
     },
-    {
-        name: "additionalCalc",
-        short: "AC",
-        label: "Доп. расчет",
-        description: "Значение дорасчитывается",
-        icon: { as: LuSquareFunction },
+    inaccurate: {
+        name: "inaccurate",
+        label: "Неточный",
+        description:
+            "Отмечает значение как недостаточно точное относительно заявленной точности источника.",
+        icon: { as: LuTrendingUpDown, color: "fg.error" },
     },
-    {
+    inconsistent: {
+        name: "inconsistent",
+        label: "Несогласованный",
+        description: "Функция оценки обнаружила несогласованность данных.",
+        icon: { as: PiNetworkXFill, color: "fg.error" },
+    },
+    failure: {
+        name: "failure",
+        label: "Аварийный",
+        description:
+            "Указывает, что значение получено в результате отказа или неисправности.",
+        icon: { as: LuOctagonAlert, color: "fg.error" },
+    },
+    oscillatory: {
+        name: "oscillatory",
+        label: "Колебательный",
+        description:
+            "Указывает, что бинарный сигнал быстро колеблется и распознан как осциллирующий.",
+        icon: { as: LuAudioWaveform, color: "fg.warning" },
+    },
+    badReference: {
+        name: "badReference",
+        label: "Неверная опорная величина",
+        description:
+            "Значение может быть некорректным из-за некорректной опорной величины.",
+        icon: { as: LuRefreshCcw, color: "fg.warning" },
+    },
+    outOfRange: {
+        name: "outOfRange",
+        label: "Выход за пределы",
+        description:
+            "Указывает, что значение вышло за заранее определённый допустимый диапазон.",
+        icon: { as: LuMoveHorizontal, color: "fg.warning" },
+    },
+    blocked: {
         name: "blocked",
-        short: "BL",
         label: "Заблокирован",
         description:
-            "Значение сигнала заблокировано - обновление и дорасчет не будут выполняться при поступлении данных",
-        icon: { as: LuOctagonMinus, fill: "red", color: "bg" },
+            "Указывает, что дальнейшее обновление значения остановлено оператором.",
+        icon: { as: LuOctagonMinus, color: "fg.error" },
     },
-    {
-        name: "overflow",
-        short: "OV",
+    overflowed: {
+        name: "overflowed",
         label: "Переполнен",
-        description: "Описатель качества 101 протокола - OV",
-        icon: { as: LuHardDriveUpload },
-    },
-    {
-        name: "unknown",
-        short: "UN",
-        label: "Неизвестный",
         description:
-            "Неопределенное состояние двухпозиционного сигнала:\n- контакты НР и НЗ замкнуты (значение сигнала равно 1);\n- контакты НР и НЗ разомкнуты (значение сигнала равно 0)",
-        icon: { as: TbHelpHexagonFilled, color: "teal" },
+            "Указывает, что значение превысило максимально допустимое значение для данного типа данных.",
+        icon: { as: LuLayers, color: "fg.error" },
     },
-    {
-        name: "manual",
-        short: "BL",
-        label: "Ручной",
-        description:
-            "Описатель качества 101 протокола - BL:\nуправление объектом информации передано пользователю, из-за чего передача реального значения не выполняется (ручное управление параметром средствами ОИК энергообъекта или АРМ ТМ)",
-        icon: { as: TbHandStop, color: "fg.info" },
-    },
-    {
-        name: "substituted",
-        short: "SB",
-        label: "Замещен",
-        description:
-            "Описатель качества 101 протокола - SB:\nвыполнено замещение значения резервным значением автоматически из альтернативной системы сбора\nили значение установлено пользователем вручную (ручной BL)",
-        icon: { as: TbExclamationMark, color: "fg.error" },
-    },
-    {
-        name: "notTopical",
-        short: "NT",
-        label: "Устаревший",
-        description:
-            "Описатель качества 101 протокола - NT:\nзначение не обновлялось в течение контрольного промежутка времени\n- соответствует переходному состоянию информационного объекта\nот действительного к недействительному состоянию, когда значение объекта устарело,\nно еще не выявлено явной неисправности в системе ТМ",
-        icon: { as: TbClockExclamation, color: "fg.error" },
-    },
-    {
+    invalid: {
         name: "invalid",
-        short: "IV",
         label: "Недостоверный",
         description:
-            "Описатель качества 101 протокола - IV:\nпервичный сбор информации не выполнялся",
-        icon: { as: LuCircleX, fill: "fg.warning", color: "bg" },
+            "Указывает, что значение считается недействительным и не должно использоваться как достоверное.",
+        icon: { as: LuCircleX, color: "fg.error" },
+    },
+    outdated: {
+        name: "outdated",
+        label: "Устаревший",
+        description:
+            "Помечает значение как неактуальное: последнее обновление не удалось или данные устарели.",
+        icon: { as: TbClockExclamation, color: "fg.warning" },
+    },
+    substituted: {
+        name: "substituted",
+        label: "Замещен",
+        description:
+            "Указывает, что значение было заменено оператором или автоматикой.",
+        icon: { as: LuReplace, color: "fg.warning" },
+    },
+};
+
+export const attributesGrouped = [
+    {
+        name: "61850-7-3",
+        label: "Атрибуты качества IEC 61850-7-3",
+        attributes: [
+            "test",
+            "inaccurate",
+            "inconsistent",
+            "failure",
+            "oscillatory",
+            "badReference",
+            "outOfRange",
+            "blocked",
+            "overflowed",
+            "outdated",
+            "substituted",
+        ],
+    },
+    {
+        name: "iec101",
+        label: "Атрибуты качества IEC 60870-5-101/104",
+        attributes: [
+            "invalid",
+            "outOfRange",
+            "blocked",
+            "outdated",
+            "substituted",
+        ],
     },
 ];

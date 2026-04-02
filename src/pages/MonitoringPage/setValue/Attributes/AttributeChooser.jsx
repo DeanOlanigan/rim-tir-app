@@ -1,39 +1,46 @@
 import { CheckboxGroup, Fieldset, SimpleGrid } from "@chakra-ui/react";
-import { attributes } from "./attributes";
+import { attributesGrouped, attributes } from "./attributes";
 import { AttributeCheckbox } from "./AttributeCheckbox";
 import { useState } from "react";
 
 export const AttributeChooser = ({ mode }) => {
     const defChecked =
-        mode === "manual" ? ["manual", "substituted", "invalid"] : ["invalid"];
+        mode === "manual" ? ["blocked", "substituted", "invalid"] : ["invalid"];
     const [checked, setChecked] = useState(defChecked);
     const handleChange = (value) => setChecked(value);
 
     return (
-        <Fieldset.Root>
-            <Fieldset.Legend>Атрибуты</Fieldset.Legend>
-            <Fieldset.Content>
-                <CheckboxGroup
-                    name="attributes"
-                    value={checked}
-                    onValueChange={handleChange}
-                >
-                    <SimpleGrid
-                        columns={2}
-                        columnGap={"2"}
-                        rowGap={"2"}
-                        w={"100%"}
-                    >
-                        {attributes.map((attr) => (
-                            <AttributeCheckbox
-                                key={attr.name}
-                                attr={attr}
-                                mode={mode}
-                            />
-                        ))}
-                    </SimpleGrid>
-                </CheckboxGroup>
-            </Fieldset.Content>
-        </Fieldset.Root>
+        <CheckboxGroup
+            name="attributes"
+            value={checked}
+            onValueChange={handleChange}
+        >
+            {attributesGrouped.map((group) => {
+                return (
+                    <Fieldset.Root key={group.name}>
+                        <Fieldset.Legend>{group.label}</Fieldset.Legend>
+                        <Fieldset.Content>
+                            <SimpleGrid
+                                columns={2}
+                                columnGap={"2"}
+                                rowGap={"2"}
+                                w={"100%"}
+                            >
+                                {group.attributes.map((attr) => {
+                                    const attribute = attributes[attr];
+                                    return (
+                                        <AttributeCheckbox
+                                            key={attribute.name}
+                                            attr={attribute}
+                                            mode={mode}
+                                        />
+                                    );
+                                })}
+                            </SimpleGrid>
+                        </Fieldset.Content>
+                    </Fieldset.Root>
+                );
+            })}
+        </CheckboxGroup>
     );
 };
