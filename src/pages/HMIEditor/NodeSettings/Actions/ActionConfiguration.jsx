@@ -18,18 +18,23 @@ export const ActionConfiguration = ({ action, onUpdate }) => {
         return <WriteTag action={action} handleChange={handleChange} />;
     }
 
-    // 2. CONFIRMATION
-    if (action.type === "CONFIRMATION") {
-        return <Confirmation action={action} handleChange={handleChange} />;
+    // 2. TOGGLE_TAG
+    if (action.type === "TOGGLE_TAG") {
+        return <ToggleTag action={action} handleChange={handleChange} />;
     }
 
-    // 3. NAVIGATE
+    if (action.type === "RESET_BLOCK") {
+        return <ToggleTag action={action} handleChange={handleChange} />;
+    }
+
+    // 4. NAVIGATE
     if (action.type === "NAVIGATE") {
         return <Navigate action={action} handleChange={handleChange} />;
     }
 
-    if (action.type === "TOGGLE_TAG") {
-        return <ToggleTag action={action} handleChange={handleChange} />;
+    // 5. CONFIRMATION
+    if (action.type === "CONFIRMATION") {
+        return <Confirmation action={action} handleChange={handleChange} />;
     }
 
     return (

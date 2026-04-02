@@ -1,10 +1,20 @@
-import { Box, Flex, IconButton, Spacer, Text, VStack } from "@chakra-ui/react";
-import { LuGripVertical, LuTrash2 } from "react-icons/lu";
+import {
+    Box,
+    Flex,
+    HStack,
+    Icon,
+    IconButton,
+    Spacer,
+    Text,
+    VStack,
+} from "@chakra-ui/react";
+import { LuGripVertical, LuTrash2, LuTriangleAlert } from "react-icons/lu";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useNodeStore } from "../../store/node-store";
 import { ActionConfiguration } from "./ActionConfiguration";
 import { ACTION_TYPES } from "./constants";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export const ActionItem = ({ selectedNodeId, action, eventType, onRemove }) => {
     const {
@@ -55,9 +65,22 @@ export const ActionItem = ({ selectedNodeId, action, eventType, onRemove }) => {
                 >
                     <LuGripVertical />
                 </Box>
-                <Text ms={2}>
-                    {ACTION_TYPES.find((a) => a.type === action.type).label}
-                </Text>
+                <HStack>
+                    <Text ms={2}>
+                        {ACTION_TYPES.find((a) => a.type === action.type).label}
+                    </Text>
+                    {(action.type === "WRITE_TAG" ||
+                        action.type === "TOGGLE_TAG") && (
+                        <Tooltip
+                            showArrow
+                            content={
+                                "Выполнение этого действия приводит к блокировке"
+                            }
+                        >
+                            <Icon as={LuTriangleAlert} color={"fg.warning"} />
+                        </Tooltip>
+                    )}
+                </HStack>
 
                 <Spacer />
 

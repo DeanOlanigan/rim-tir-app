@@ -11,6 +11,7 @@ export const EVENT_TYPES = [
 export const ACTION_TYPES = [
     { type: "WRITE_TAG", label: LOCALE.writeTag },
     { type: "TOGGLE_TAG", label: LOCALE.toggleTag },
+    { type: "RESET_BLOCK", label: "Сброс блокировки" },
     { type: "NAVIGATE", label: LOCALE.navigate },
     { type: "CONFIRMATION", label: LOCALE.confirmation },
 ];
