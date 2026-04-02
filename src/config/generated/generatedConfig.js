@@ -3000,72 +3000,230 @@ export const config = [
                 label: "LAN интерфейс",
                 default: "eth0",
                 showInTree: true,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                ],
             },
             mac5: {
                 type: "string",
                 label: "5 байт MAC-адреса",
                 default: "00",
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 0,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 0 до 255",
+                    },
+                ],
             },
             mac6: {
                 type: "string",
                 label: "6 байт MAC-адреса",
                 default: "00",
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 0,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 0 до 255",
+                    },
+                ],
             },
             appId: {
                 type: "number",
                 label: "APPID",
                 default: 1,
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 0,
+                            max: 65535,
+                        },
+                        message:
+                            "Значение должно быть в диапазоне от 0 до 65535",
+                    },
+                ],
             },
             goCbRef: {
                 type: "string",
                 label: "goCbRef",
                 default: "goose_pub_1",
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                ],
             },
             vlanId: {
                 type: "number",
                 label: "VLAN ID",
                 default: 0,
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 0,
+                            max: 65535,
+                        },
+                        message:
+                            "Значение должно быть в диапазоне от 0 до 65535",
+                    },
+                ],
             },
             vlanPriority: {
                 type: "number",
                 label: "VLAN Priority",
-                default: 0,
+                default: 4,
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 0,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 0 до 255",
+                    },
+                ],
             },
             revision: {
                 type: "number",
                 label: "Ревизия",
                 default: 1,
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 0,
+                            max: 4_294_967_295,
+                        },
+                        message:
+                            "Значение должно быть в диапазоне от 0 до 4_294_967_295",
+                    },
+                ],
             },
             retry: {
                 type: "number",
                 label: "Количество повторов",
                 default: 3,
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 0,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 0 до 255",
+                    },
+                ],
             },
             newMsgPeriod: {
                 type: "number",
                 label: "Период новых сообщений (мс)",
                 default: 100,
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 0,
+                            max: 65535,
+                        },
+                        message:
+                            "Значение должно быть в диапазоне от 0 до 65535",
+                    },
+                ],
             },
             oldMsgPeriod: {
                 type: "number",
                 label: "Период старых сообщений (мс)",
                 default: 100,
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 0,
+                            max: 65535,
+                        },
+                        message:
+                            "Значение должно быть в диапазоне от 0 до 65535",
+                    },
+                ],
             },
             ttl: {
                 type: "number",
                 label: "Время жизни (мс)",
                 default: 3000,
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 0,
+                            max: 4294_967_295,
+                        },
+                        message:
+                            "Значение должно быть в диапазоне от 0 до 4_294_967_295",
+                    },
+                ],
             },
         },
         children: [
@@ -3081,6 +3239,12 @@ export const config = [
                         label: "Имя ссылки",
                         default: "ds1",
                         showInTree: false,
+                        rules: [
+                            {
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
+                            },
+                        ],
                     },
                     countFlag: {
                         type: "boolean",
@@ -3097,14 +3261,44 @@ export const config = [
                     qIdx: {
                         type: "number",
                         label: "Индекс качества",
-                        default: 0,
+                        default: 1,
                         showInTree: false,
+                        rules: [
+                            {
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
+                            },
+                            {
+                                validator: "range",
+                                params: {
+                                    min: 0,
+                                    max: 2,
+                                },
+                                message:
+                                    "Значение должно быть в диапазоне от 0 до 2",
+                            },
+                        ],
                     },
                     tsIdx: {
                         type: "number",
                         label: "Индекс метки времени",
-                        default: 0,
+                        default: 2,
                         showInTree: false,
+                        rules: [
+                            {
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
+                            },
+                            {
+                                validator: "range",
+                                params: {
+                                    min: 0,
+                                    max: 2,
+                                },
+                                message:
+                                    "Значение должно быть в диапазоне от 0 до 2",
+                            },
+                        ],
                     },
                 },
                 children: [
@@ -3189,6 +3383,22 @@ export const config = [
                                 type: "number",
                                 label: "Глубина вложенности значения",
                                 default: 0,
+                                rules: [
+                                    {
+                                        validator: "required",
+                                        message:
+                                            "Это поле обязательно для заполнения",
+                                    },
+                                    {
+                                        validator: "range",
+                                        params: {
+                                            min: 0,
+                                            max: 10,
+                                        },
+                                        message:
+                                            "Значение должно быть в диапазоне от 0 до 10",
+                                    },
+                                ],
                             },
                             iusfMag: {
                                 type: "boolean",
@@ -3314,42 +3524,85 @@ export const config = [
                 label: "LAN интерфейс",
                 default: "eth0",
                 showInTree: true,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                ],
             },
             mac5: {
                 type: "string",
                 label: "5 байт MAC-адреса",
                 default: "00",
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 0,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 0 до 255",
+                    },
+                ],
             },
             mac6: {
                 type: "string",
                 label: "6 байт MAC-адреса",
                 default: "00",
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 0,
+                            max: 255,
+                        },
+                        message: "Значение должно быть в диапазоне от 0 до 255",
+                    },
+                ],
             },
             appId: {
                 type: "number",
                 label: "APPID",
                 default: 1,
                 showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                    {
+                        validator: "range",
+                        params: {
+                            min: 0,
+                            max: 65535,
+                        },
+                        message:
+                            "Значение должно быть в диапазоне от 0 до 65535",
+                    },
+                ],
             },
             goCbRef: {
                 type: "string",
                 label: "goCbRef",
                 default: "goose_pub_1",
                 showInTree: false,
-            },
-            vlanId: {
-                type: "number",
-                label: "VLAN ID",
-                default: 0,
-                showInTree: false,
-            },
-            vlanPriority: {
-                type: "number",
-                label: "VLAN Priority",
-                default: 0,
-                showInTree: false,
+                rules: [
+                    {
+                        validator: "required",
+                        message: "Это поле обязательно для заполнения",
+                    },
+                ],
             },
         },
         children: [
@@ -3365,11 +3618,17 @@ export const config = [
                         label: "Имя ссылки",
                         default: "ds1",
                         showInTree: false,
+                        rules: [
+                            {
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
+                            },
+                        ],
                     },
-                    countFlag: {
+                    qFlag: {
                         type: "boolean",
-                        label: "Флаг количества",
-                        default: false,
+                        label: "Флаг качества",
+                        default: true,
                         showInTree: false,
                     },
                     tsFlag: {
@@ -3381,14 +3640,44 @@ export const config = [
                     qIdx: {
                         type: "number",
                         label: "Индекс качества",
-                        default: 0,
+                        default: 1,
                         showInTree: false,
+                        rules: [
+                            {
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
+                            },
+                            {
+                                validator: "range",
+                                params: {
+                                    min: 0,
+                                    max: 2,
+                                },
+                                message:
+                                    "Значение должно быть в диапазоне от 0 до 2",
+                            },
+                        ],
                     },
                     tsIdx: {
                         type: "number",
                         label: "Индекс метки времени",
-                        default: 0,
+                        default: 2,
                         showInTree: false,
+                        rules: [
+                            {
+                                validator: "required",
+                                message: "Это поле обязательно для заполнения",
+                            },
+                            {
+                                validator: "range",
+                                params: {
+                                    min: 0,
+                                    max: 2,
+                                },
+                                message:
+                                    "Значение должно быть в диапазоне от 0 до 2",
+                            },
+                        ],
                     },
                 },
                 children: [
@@ -3473,6 +3762,22 @@ export const config = [
                                 type: "number",
                                 label: "Глубина вложенности значения",
                                 default: 0,
+                                rules: [
+                                    {
+                                        validator: "required",
+                                        message:
+                                            "Это поле обязательно для заполнения",
+                                    },
+                                    {
+                                        validator: "range",
+                                        params: {
+                                            min: 0,
+                                            max: 10,
+                                        },
+                                        message:
+                                            "Значение должно быть в диапазоне от 0 до 10",
+                                    },
+                                ],
                             },
                             iusfMag: {
                                 type: "boolean",
