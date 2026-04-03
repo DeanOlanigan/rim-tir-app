@@ -2989,12 +2989,6 @@ export const config = [
                 default: false,
                 showInTree: true,
             },
-            name: {
-                type: "string",
-                label: "Имя подкючения",
-                default: "goose_pub_1",
-                showInTree: false,
-            },
             lan: {
                 type: "string",
                 label: "LAN интерфейс",
@@ -3400,25 +3394,12 @@ export const config = [
                                     },
                                 ],
                             },
-                            iusfMag: {
+                            instMag: {
                                 type: "boolean",
-                                label: "IusfMag",
+                                label: "InstMag",
                                 default: false,
                                 visibleIf: {
                                     or: [
-                                        {
-                                            "==": [
-                                                {
-                                                    find: [
-                                                        {
-                                                            what: "type",
-                                                            where: "self",
-                                                        },
-                                                    ],
-                                                },
-                                                "bit",
-                                            ],
-                                        },
                                         {
                                             "==": [
                                                 {
@@ -3484,6 +3465,19 @@ export const config = [
                                                 "float",
                                             ],
                                         },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "int64",
+                                            ],
+                                        },
                                     ],
                                 },
                             },
@@ -3512,12 +3506,6 @@ export const config = [
                 shortname: "log",
                 default: false,
                 showInTree: true,
-            },
-            name: {
-                type: "string",
-                label: "Имя подкючения",
-                default: "goose_pub_1",
-                showInTree: false,
             },
             lan: {
                 type: "string",
@@ -3779,25 +3767,12 @@ export const config = [
                                     },
                                 ],
                             },
-                            iusfMag: {
+                            instMag: {
                                 type: "boolean",
-                                label: "IusfMag",
+                                label: "InstMag",
                                 default: false,
                                 visibleIf: {
                                     or: [
-                                        {
-                                            "==": [
-                                                {
-                                                    find: [
-                                                        {
-                                                            what: "type",
-                                                            where: "self",
-                                                        },
-                                                    ],
-                                                },
-                                                "bit",
-                                            ],
-                                        },
                                         {
                                             "==": [
                                                 {
@@ -3861,6 +3836,19 @@ export const config = [
                                                     ],
                                                 },
                                                 "float",
+                                            ],
+                                        },
+                                        {
+                                            "==": [
+                                                {
+                                                    find: [
+                                                        {
+                                                            what: "type",
+                                                            where: "self",
+                                                        },
+                                                    ],
+                                                },
+                                                "int64",
                                             ],
                                         },
                                     ],
