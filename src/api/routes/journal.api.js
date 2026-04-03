@@ -60,3 +60,15 @@ export async function ackJournalRange({ fromUTC, toUTC }) {
     const response = await apiv2.post("/journal/ack/range", { fromUTC, toUTC });
     return response.data;
 }
+
+// Пока что оставляем command style API для квитирования
+export async function ackEvent({ eventId }) {
+    const response = await apiv2.post(`/events/${eventId}/ack`);
+    return response.data;
+}
+
+export async function ackEventRange({ fromUTC, toUTC }) {
+    // // ISO 8601 UTC
+    const response = await apiv2.post("/events/ack", { fromUTC, toUTC });
+    return response.data;
+}
