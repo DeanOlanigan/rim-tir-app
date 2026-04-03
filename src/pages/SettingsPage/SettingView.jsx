@@ -1,12 +1,11 @@
-import { Card, Heading, Skeleton, Stack, VStack } from "@chakra-ui/react";
+import { Skeleton, Stack } from "@chakra-ui/react";
 import { Updates } from "./Update/Updates";
 import { UsersView } from "./Users/UsersVeiw";
 import { License } from "./License/License";
 import { Settings } from "./MainSettings/Settings";
 import { CanAccess } from "@/CanAccess";
 import { Suspense } from "react";
-import { RoleList } from "./Roles/RoleList";
-import { RoleEditor } from "./Roles/RoleEditor";
+import { RolesCard } from "./Roles/RolesCard";
 
 export const SettingView = () => {
     return (
@@ -26,15 +25,7 @@ export const SettingView = () => {
                 <UsersView />
             </CanAccess>
             <CanAccess right={"security.roles.edit"}>
-                <VStack align={"stretch"}>
-                    <Heading>Редактор ролей</Heading>
-                    <Card.Root w={"100%"} variant={"elevated"} maxH={"2xl"}>
-                        <Card.Body flexDirection={"row"} gap={4}>
-                            <RoleList />
-                            <RoleEditor />
-                        </Card.Body>
-                    </Card.Root>
-                </VStack>
+                <RolesCard />
             </CanAccess>
             <CanAccess right={"system.software_update"}>
                 <Updates />
